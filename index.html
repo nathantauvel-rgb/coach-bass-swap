@@ -60,18 +60,18 @@ a.chip{color:var(--fg);text-decoration:none}
 a.chip:hover{border-color:var(--muted)}
 
 /* Carte des niveaux */
-.map{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding-top:4px}
-.map::before{content:"";position:absolute;left:12.5%;right:12.5%;top:36px;height:4px;border-radius:2px;background:var(--line)}
-.map .prog{position:absolute;left:12.5%;top:36px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--a),var(--xp));transition:width .6s}
+.map{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding-top:4px}
+.map::before{content:"";position:absolute;left:7.14%;right:7.14%;top:31px;height:4px;border-radius:2px;background:var(--line)}
+.map .prog{position:absolute;left:7.14%;top:31px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--a),var(--xp));transition:width .6s}
 .node{position:relative;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;text-align:center;min-width:0}
-.node .dot{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:26px;background:var(--panel);border:3px solid var(--line);transition:transform .15s}
+.node .dot{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:26px;background:var(--panel);border:3px solid var(--line);transition:transform .15s}
 .node:hover .dot{transform:translateY(-2px)}
 .node.done .dot{background:linear-gradient(135deg,var(--a),var(--xp));border-color:transparent;color:var(--ink)}
 .node[aria-pressed="true"] .dot{box-shadow:0 0 0 4px var(--bg),0 0 0 7px var(--fg)}
-.node .t{font-weight:600;font-size:15px;line-height:1.2}
+.node .t{font-weight:600;font-size:14px;line-height:1.2}
 .node .s{font-size:14px;letter-spacing:.12em;color:var(--line)}
 .node .s b{color:var(--mid);font-weight:400}
-@media (max-width:560px){.node .dot{width:54px;height:54px;font-size:21px}.map::before,.map .prog{top:29px}.node .t{font-size:13px}}
+@media (max-width:760px){.map{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:16px}.map::before,.map .prog{display:none}.node .dot{width:52px;height:52px;font-size:20px}.node .t{font-size:13px}}
 
 /* Scène */
 .stage{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:26px;padding:24px;display:flex;flex-direction:column;gap:20px;overflow:hidden}
@@ -150,6 +150,11 @@ a.chip:hover{border-color:var(--muted)}
 .cmp-leg{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .cmp-leg i{display:inline-block;width:22px;height:0;border-top:2px dashed var(--fg);vertical-align:middle;margin-right:6px}
 .cmp-leg u{display:inline-block;width:22px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--a),var(--b));vertical-align:middle;margin-right:6px;text-decoration:none}
+.echo{width:104px;height:104px;border-radius:50%;border:3px solid var(--xp);background:var(--panel-2);color:var(--xp);font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.04em;transition:background .08s,box-shadow .08s}
+.echo[aria-pressed="true"]{background:var(--xp);color:var(--ink);box-shadow:0 0 40px color-mix(in srgb,var(--xp) 60%,transparent)}
+.echo:disabled{opacity:.35;cursor:default}
+.setup .learn{border:1px solid var(--b);background:transparent;color:var(--b);border-radius:10px;padding:5px 10px;font-weight:700;font-size:13px}
+.setup .learn.on{background:var(--b);color:var(--ink)}
 .start:disabled{background:var(--panel-2);color:var(--muted);box-shadow:none;cursor:default}
 .start.ready{animation:readyPulse 1.2s ease-in-out infinite}
 @keyframes readyPulse{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--xp) 25%,transparent),0 0 40px color-mix(in srgb,var(--xp) 45%,transparent)}}
@@ -207,6 +212,10 @@ a.chip:hover{border-color:var(--muted)}
     <div class="bar" aria-hidden="true"><i id="progFill"></i></div>
     <div class="controls">
       <div class="group" id="gPlay"><button type="button" class="launch" id="launchB" disabled><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l10-6.2a.8.8 0 0 0 0-1.4l-10-6.2A.8.8 0 0 0 6 3.8Z"/></svg>LANCE B</button></div>
+      <div class="group" id="gCfx"><span class="gl">Filtre · CFX</span><div class="pair">
+        <div class="chan chanA" id="wCfxA"><div class="knob" data-k="cfxA" aria-label="Filtre de A"></div><span class="cl">A</span></div>
+      </div></div>
+      <div class="group" id="gEcho"><span class="gl">Effet</span><button type="button" class="echo" id="echoBtn" aria-pressed="false">ECHO</button></div>
       <div class="group" id="gLow"><span class="gl">Basses · LOW</span><div class="pair">
         <div class="chan chanA" id="wLowA"><div class="knob" data-k="lowA" aria-label="Basses de A"></div><span class="cl">A</span></div>
         <div class="chan chanB" id="wLowB"><div class="knob" data-k="lowB" aria-label="Basses de B"></div><span class="cl">B</span></div>
@@ -240,7 +249,7 @@ a.chip:hover{border-color:var(--muted)}
     </div>
   </section>
 
-  <p class="after">Deux morceaux faits pour s'enchaîner : même tempo, tonalités voisines, outro et intro de 32 temps. <b>Niveau réussi ? Refais le même geste dans rekordbox avec ta musique.</b> FLX4 : PLAY droite, potards LOW, faders. Clavier : espace pour lancer B.</p>
+  <p class="after">Deux morceaux faits pour s'enchaîner : même tempo, tonalités voisines, outro et intro de 32 temps. <b>Niveau réussi ? Refais le même geste dans rekordbox avec ta musique.</b> FLX4 : PLAY droite, potards LOW et CFX, faders, ON de l'effet. Clavier : espace pour lancer B, E pour l'écho.</p>
 </div>
 
 <script>
@@ -307,9 +316,10 @@ const playB = withBass => I => { const roots = [40, 40, 43, 38], mel = [[0, 0], 
 /* ---------- Audio ---------- */
 let ac = null, master = null, tracks = null, outChannels = 2;
 const deck = { A: { node: null, gain: null }, B: { node: null, gain: null } };
-const ctrl = { faderA: 1, faderB: 0, lowA: .5, lowB: .5 };
+const ctrl = { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5 };
 const db2g = db => Math.pow(10, db / 20);
 const lowDb = v => v <= .5 ? -40 + 80 * v : (v - .5) * 12;
+const cfxText = v => Math.abs(v - .5) < .03 ? 'neutre' : v > .5 ? 'coupe-bas ' + Math.round((v - .5) * 200) + ' %' : 'coupe-haut ' + Math.round((.5 - v) * 200) + ' %';
 function ensureAudio(){
   if (ac) return;
   ac = new (window.AudioContext || window.webkitAudioContext)();
@@ -326,7 +336,16 @@ function ensureAudio(){
   } catch (e){ try { lim.disconnect(); } catch (_) {} lim.connect(dest); }
   for (const k of ['A', 'B']){ const d = deck[k];
     d.eq = ac.createBiquadFilter(); d.eq.type = 'lowshelf'; d.eq.frequency.value = 220; d.gain = ac.createGain();
-    d.eq.connect(d.gain); d.gain.connect(master); }
+    if (k === 'A'){
+      // Filtre CFX (coupe-bas à droite, coupe-haut à gauche) et écho envoyé après le fader : l'écho résonne encore quand le fader est coupé
+      d.hp = ac.createBiquadFilter(); d.hp.type = 'highpass'; d.hp.frequency.value = 10; d.hp.Q.value = 1.1;
+      d.lp = ac.createBiquadFilter(); d.lp.type = 'lowpass'; d.lp.frequency.value = 22000; d.lp.Q.value = 1.1;
+      d.eq.connect(d.hp); d.hp.connect(d.lp); d.lp.connect(d.gain);
+      d.echoIn = ac.createGain(); d.echoIn.gain.value = 0; d.delay = ac.createDelay(4); d.delay.delayTime.value = P * .75;
+      d.fb = ac.createGain(); d.fb.gain.value = .58; d.wet = ac.createGain(); d.wet.gain.value = .85;
+      d.gain.connect(d.echoIn); d.echoIn.connect(d.delay); d.delay.connect(d.fb); d.fb.connect(d.delay); d.delay.connect(d.wet); d.wet.connect(master);
+    } else d.eq.connect(d.gain);
+    d.gain.connect(master); }
   applyCtrl();
 }
 function bufferOf(t){ const b = ac.createBuffer(2, t.N, SR); b.getChannelData(0).set(t.L); b.getChannelData(1).set(t.R); return b; }
@@ -339,6 +358,8 @@ function applyCtrl(){
   if (!ac) return; const t = ac.currentTime;
   deck.A.eq.gain.setTargetAtTime(lowDb(ctrl.lowA), t, .01); deck.B.eq.gain.setTargetAtTime(lowDb(ctrl.lowB), t, .01);
   deck.A.gain.gain.setTargetAtTime(ctrl.faderA * ctrl.faderA, t, .015); deck.B.gain.gain.setTargetAtTime(ctrl.faderB * ctrl.faderB, t, .015);
+  const c = ctrl.cfxA, hpF = c > .52 ? 20 * Math.pow(400, (c - .5) * 2) : 10, lpF = c < .48 ? 20000 * Math.pow(1 / 150, (.5 - c) * 2) : 22000;
+  deck.A.hp.frequency.setTargetAtTime(hpF, t, .02); deck.A.lp.frequency.setTargetAtTime(lpF, t, .02);
 }
 function play(k, buf, when, pos, loop){
   const d = deck[k]; stop(k);
@@ -379,7 +400,7 @@ function renderControl(k){
   if (el.classList.contains('knob')){
     const a = -SWEEP + v * 2 * SWEEP; el.querySelector('.arc').setAttribute('d', arc(30, 30, 25, 0, a));
     const p = el.querySelector('.ptr'); p.setAttribute('x2', (30 + 13 * Math.sin(a)).toFixed(2)); p.setAttribute('y2', (30 - 13 * Math.cos(a)).toFixed(2));
-    const t = v < .04 ? 'coupé' : (lowDb(v) > 0 ? '+' : '') + lowDb(v).toFixed(0) + ' dB'; el.querySelector('.kv').textContent = t; el.setAttribute('aria-valuetext', t);
+    const t = k === 'cfxA' ? cfxText(v) : v < .04 ? 'coupé' : (lowDb(v) > 0 ? '+' : '') + lowDb(v).toFixed(0) + ' dB'; el.querySelector('.kv').textContent = t; el.setAttribute('aria-valuetext', t);
   }
 }
 
@@ -397,10 +418,20 @@ const LESSONS = [
     show: ['gLow'], bBass: true, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: 0 }, user: ['lowA', 'lowB'] },
   { title: 'La transition complète', goal: 'Tout toi-même, comme en soirée.',
     how: 'Coupe le LOW de B, lance B sur la ligne, monte son fader, swap des basses à la phrase suivante, puis fais sortir A avant le drop.',
-    show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: ['faderA', 'faderB', 'lowA', 'lowB'] }
+    show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: ['faderA', 'faderB', 'lowA', 'lowB'] },
+  { kind: 'filter', title: 'Le filtre', goal: 'Efface A en douceur avec le filtre pendant que B monte.',
+    how: 'B arrive tout seul. Quand « FILTRE » touche la ligne, tourne le potard CFX de A vers la droite, lentement : il doit être à fond quand « À FOND » arrive, juste avant le drop de B.',
+    show: ['gCfx'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5 }, user: ['cfxA'], start: 24, end: 112 },
+  { kind: 'echo', title: 'L\'echo out', goal: 'Fais disparaître A dans un écho, puis B tombe sur son drop.',
+    how: 'Sur le dernier temps avant la ligne, active l\'écho (bouton ECHO, ON de l\'effet sur la FLX4, ou touche E), puis baisse d\'un coup le fader de A sur la ligne. B démarre tout seul sur son drop.',
+    show: ['gEcho', 'gFad'], bBass: false, autoLaunch: true, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], btn: ['echo'], start: 40, end: 96 },
+  { kind: 'cut', title: 'La coupure sèche', goal: 'Coupe A et lance B sur son drop, au même instant.',
+    how: 'B est calé sur son drop. Quand les losanges touchent la ligne, lance B (PLAY droite ou espace) et baisse d\'un coup le fader de A, dans le même geste.',
+    show: ['gPlay', 'gFad'], bBass: false, autoLaunch: false, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], start: 40, end: 96 }
 ];
-const TARGETS = { 0: [[32, 'LANCE B', 'B']], 1: [[64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'SWAP', 'AB']], 3: [[32, 'LANCE B', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
-const RING_LAB = { 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
+LESSONS.forEach(l => { l.kind = l.kind || 'swap'; l.init.cfxA = l.init.cfxA ?? .5; l.launchBeat = l.launchBeat || 32; l.bCue = l.bCue || 0; l.start = l.start || 16; l.end = l.end || 116; l.btn = l.btn || []; });
+const TARGETS = { 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A']], 6: [[64, 'LANCE B', 'B'], [64, 'COUPE A', 'A']], 0: [[32, 'LANCE B', 'B']], 1: [[64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'SWAP', 'AB']], 3: [[32, 'LANCE B', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
+const RING_LAB = { 'FILTRE': 'temps avant de tourner le filtre', 'À FOND': 'temps : filtre à fond avant le drop', 'ECHO': 'temps avant d\'activer l\'écho', 'COUPE A': 'temps avant de couper A', 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
 let li = 0, run = null;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 const isAuto = k => !!(run && run.demo) || !LESSONS[li].user.includes(k);
@@ -417,13 +448,13 @@ function renderHud(){
     b.innerHTML = `<span class="dot">${stars[i] === 3 ? '★' : i + 1}</span><span class="t"></span><span class="s"><b>${'★'.repeat(stars[i] || 0)}</b>${'★'.repeat(3 - (stars[i] || 0))}</span>`;
     b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${stars[i] || 0} étoile(s) sur 3`);
     b.addEventListener('click', () => selectLesson(i)); map.appendChild(b); });
-  $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * 75) + '%';
+  $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * 85.7) + '%';
 }
 function selectLesson(i){
-  stopRun(); li = i; const l = LESSONS[i];
+  stopRun(); li = i; const l = LESSONS[i]; START = l.start; END = l.end;
   $('lnum').textContent = `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
-  for (const g of ['gPlay', 'gLow', 'gFad']) $(g).hidden = !l.show.includes(g);
-  for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB']]) $(w).classList.toggle('auto', isAuto(k));
+  for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho']) $(g).hidden = !l.show.includes(g);
+  for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA']]) $(w).classList.toggle('auto', isAuto(k));
   Object.assign(ctrl, l.init); applyCtrl();
   $('result').hidden = true; setStartBtn(false); $('launchB').disabled = true;
   $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
@@ -432,7 +463,7 @@ function selectLesson(i){
 }
 function setStartBtn(running){ const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
 
-const START = 16, END = 116;
+let START = 16, END = 116;
 function startRun(demo = false){
   if (!demo && needSetup() && !setupReady()){ updateSetup(); return; }
   ensureAudio(); if (ac.state !== 'running') ac.resume();
@@ -443,17 +474,19 @@ function startRun(demo = false){
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
     run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0 };
-    if (l.autoLaunch || demo) launchAt(32);
+    setEcho(false); run.echoAt = null;
+    if (l.autoLaunch || demo) launchAt(l.launchBeat);
     $('stage').classList.toggle('demo', demo); $('demoTag').hidden = !demo; $('watchBtn').disabled = true;
     $('result').hidden = true; setStartBtn(true); $('setup').hidden = true; $('startBtn').disabled = false; $('startBtn').classList.remove('ready'); $('launchB').disabled = !!l.autoLaunch; $('startBtn').blur();
-    $('hint').textContent = demo ? 'Démonstration : regarde les contrôles bouger et écoute le résultat.' : !l.autoLaunch ? 'Astuce : la barre d\'espace lance aussi B.' : '';
-    if (demo) for (const w of ['wLowA', 'wLowB', 'wFadA', 'wFadB']) $(w).classList.add('auto');
+    $('hint').textContent = demo ? 'Démonstration : regarde les contrôles bouger et écoute le résultat.' : l.btn.includes('echo') ? 'Astuce : la touche E active aussi l\'écho.' : !l.autoLaunch ? 'Astuce : la barre d\'espace lance aussi B.' : '';
+    if (demo) for (const w of ['wLowA', 'wLowB', 'wFadA', 'wFadB', 'wCfxA']) $(w).classList.add('auto');
+    $('echoBtn').disabled = demo || !l.btn.includes('echo');
   }, 30);
 }
 const beatNow = () => run ? (ac.currentTime - run.t0) / P + START : null;
-function launchAt(k){ run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, run.t0 + (k - START) * P, 0, true); $('launchB').disabled = true; }
+function launchAt(k){ run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, run.t0 + (k - START) * P, LESSONS[li].bCue * P, true); $('launchB').disabled = true; }
 function judgeLaunch(k){
-  const e = k - 32;
+  const e = k - LESSONS[li].launchBeat;
   if (e === 0){ pop('PARFAIT !', 'ok'); run.status['LANCE B'] = 'ok'; chime(true); }
   else if (Math.abs(e) <= 2){ pop(`${Math.abs(e)} temps trop ${e > 0 ? 'tard' : 'tôt'}`, 'mid'); run.status['LANCE B'] = 'mid'; chime(false); }
   else if (e % 32 === 0){ pop('Bonne phrase… mais pas la bonne', 'mid'); run.status['LANCE B'] = 'mid'; }
@@ -463,14 +496,27 @@ function launchB(){
   if (!run || run.launch !== null || LESSONS[li].autoLaunch) return;
   const b = beatNow(), k = Math.round(b);
   if (k >= b) launchAt(k);
-  else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, (b - k) * P + .01, true); $('launchB').disabled = true; }
+  else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, LESSONS[li].bCue * P + (b - k) * P + .01, true); $('launchB').disabled = true; }
   judgeLaunch(k);
 }
-function stopRun(){ const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); } run = null; setStartBtn(false); $('launchB').disabled = true;
+function stopRun(){ const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; setStartBtn(false); $('launchB').disabled = true;
   $('stage').classList.remove('demo'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
-  if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, LESSONS[li].init); applyCtrl(); }
+  if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, LESSONS[li].init); applyCtrl(); }
   updateSetup(); }
+let echoOn = false;
+function setEcho(on){ echoOn = !!on; if (ac && deck.A.echoIn) deck.A.echoIn.gain.setTargetAtTime(echoOn ? 1 : 0, ac.currentTime, .004); const b = $('echoBtn'); b.setAttribute('aria-pressed', String(echoOn)); }
+function toggleEcho(){
+  if (!run || run.demo || !LESSONS[li].btn.includes('echo')) return;
+  setEcho(!echoOn);
+  if (echoOn && run.echoAt == null){ const b = beatNow(); run.echoAt = b; const e = b - 63;
+    if (e >= -1.5 && e <= .6){ pop('Écho lancé !', 'ok'); run.status.ECHO = 'ok'; chime(true); }
+    else { pop(e < 0 ? 'Écho trop tôt' : 'Écho trop tard', 'mid'); run.status.ECHO = 'mid'; } }
+}
 function ideal(k, b, i = li){
+  const kd = LESSONS[i].kind, r = (x, a, d) => clamp01((x - a) / d);
+  if (kd === 'filter'){ if (k === 'cfxA') return .5 + .5 * r(b, 64, 28); if (k === 'faderB') return r(b, 32, 16); if (k === 'faderA') return 1 - r(b, 96, 4); return k === 'echo' ? 0 : .5; }
+  if (kd === 'echo' || kd === 'cut'){ if (k === 'faderA') return 1 - r(b, 63.75, .25); if (k === 'faderB') return 1; if (k === 'echo') return kd === 'echo' && b >= 63 && b < 72 ? 1 : 0; return .5; }
+  if (k === 'cfxA') return .5; if (k === 'echo') return 0;
   const bass = LESSONS[i].bBass, ramp = (x, a, d) => clamp01((x - a) / d);
   if (k === 'faderB') return ramp(b, 32, 24);
   if (k === 'faderA') return 1 - ramp(b, 72, 20);
@@ -481,13 +527,18 @@ const DEMO_CAPS = { 0: [[32, 'B part sur le 1 de l\'outro'], [96, 'Le drop de B 
   1: [[32, 'B entre, fader en bas'], [56, 'B est à fond'], [92, 'A est sorti'], [96, 'Drop de B !']],
   2: [[32, 'B arrive, basses coupées'], [64, 'Swap : A coupé, B ouvert'], [96, 'Drop de B !']],
   3: [[30, 'LOW de B coupé avant de lancer'], [32, 'B part sur le 1'], [56, 'B est à fond'], [64, 'Swap des basses'], [92, 'A est sorti'], [96, 'Drop de B !']] };
+Object.assign(DEMO_CAPS, { 4: [[32, 'B arrive'], [64, 'Le filtre commence : A perd ses basses'], [80, 'On continue lentement'], [92, 'Filtre à fond : A n\'est plus qu\'un souffle'], [96, 'Drop de B !']],
+  5: [[60, 'Écoute la fin de phrase de A'], [63, 'Écho activé sur le dernier temps'], [64, 'Fader de A coupé : l\'écho résonne'], [66, 'B tombe sur son drop']],
+  6: [[60, 'Prépare tes deux mains'], [64, 'A coupé et B lancé, au même instant'], [70, 'Transition nette, sans mélange']] });
 function demoCaptions(b){ const caps = DEMO_CAPS[li]; while (run.cap < caps.length && b >= caps[run.cap][0]){ pop(caps[run.cap][1], 'ok'); run.cap++; } }
 function automate(b){
   const L = run.launch; let ch = false;
-  if (run.demo){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB']){ const v = ideal(k, b); if (Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } } if (ch) applyCtrl(); return; }
+  if (run.demo){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA']){ const v = ideal(k, b); if (Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } } if (ch) applyCtrl(); const ev = ideal('echo', b) > .5; if (ev !== echoOn) setEcho(ev); return; }
   const set = (k, v) => { if (isAuto(k) && Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } };
   if (li === 0 && L !== null){ set('faderB', clamp01((b - L) / 16)); set('faderA', 1 - clamp01((b - (L + 48)) / 16)); }
   if (li === 2){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 80) / 16)); }
+  if (LESSONS[li].kind === 'filter'){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 96) / 4)); }
+  if (LESSONS[li].kind === 'echo' && echoOn && b > 72) setEcho(false);
   if (ch) applyCtrl();
 }
 function liveJudge(b){
@@ -508,14 +559,29 @@ function liveJudge(b){
     if (!s['A SORTI'] && b >= 40 && ctrl.faderA <= .05){ const ok = b >= 60 && b <= 98; pop(ok ? 'A sorti à temps !' : 'A sorti trop tôt', ok ? 'ok' : 'mid'); s['A SORTI'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
     if (!s['A SORTI'] && b > 98){ pop('Deux basses en même temps !', 'bad'); s['A SORTI'] = 'bad'; }
   }
-  if ((li === 0 || li === 3) && run.launch === null && b > 35 && !s['LANCE B']){ pop('Trop tard ! Lance B', 'bad'); s['LANCE B'] = 'late'; }
+  const L0 = LESSONS[li];
+  if (!L0.autoLaunch && run.launch === null && b > L0.launchBeat + 3 && !s['LANCE B']){ pop('Trop tard ! Lance B', 'bad'); s['LANCE B'] = 'late'; }
+  if (L0.kind === 'filter'){
+    if (!p.wrong && ctrl.cfxA < .4){ p.wrong = 1; pop('Mauvais côté ! Tourne vers la droite', 'bad'); }
+    if (!s.FILTRE && b >= 40 && ctrl.cfxA > .56){ const ok = b >= 58 && b <= 70; pop(ok ? 'Filtre lancé !' : b < 58 ? 'Filtre trop tôt' : 'Filtre en retard', ok ? 'ok' : 'mid'); s.FILTRE = ok ? 'ok' : 'mid'; if (ok) chime(true); p.fStart = b; }
+    if (!s.FILTRE && b > 80){ pop('Tourne le filtre !', 'bad'); s.FILTRE = 'bad'; }
+    if (!s['À FOND'] && b >= 40 && ctrl.cfxA >= .9){ const d = p.fStart != null ? b - p.fStart : 0, ok = b <= 98 && d >= 12; pop(ok ? 'A s\'efface en douceur !' : d < 12 ? 'Trop brusque !' : 'Un peu tard', ok ? 'ok' : 'mid'); s['À FOND'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
+    if (!s['À FOND'] && b > 99){ pop('A n\'est pas filtré au drop !', 'bad'); s['À FOND'] = 'bad'; }
+  }
+  if (L0.kind === 'echo' || L0.kind === 'cut'){
+    if (L0.kind === 'echo' && !s.ECHO && b > 64.5){ pop('Pas d\'écho !', 'bad'); s.ECHO = 'bad'; }
+    if (!s['COUPE A'] && b >= 56 && ctrl.faderA < .1){ const e = b - 64, ok = Math.abs(e) <= .6, withEcho = L0.kind === 'cut' || run.echoAt != null;
+      pop(ok ? (L0.kind === 'echo' ? (withEcho ? 'ECHO OUT PARFAIT !' : 'Coupé… mais sans écho') : 'Coupure nette !') : `Coupé ${e > 0 ? 'en retard' : 'trop tôt'}`, ok && withEcho ? 'ok' : 'mid');
+      s['COUPE A'] = ok && withEcho ? 'ok' : 'mid'; if (ok && withEcho) chime(true); }
+    if (!s['COUPE A'] && b > 66){ pop('Coupe A !', 'bad'); s['COUPE A'] = 'bad'; }
+  }
 }
 function frame(){
   requestAnimationFrame(frame);
   if (!run){ return; }
   const b = beatNow(); if (b < START) return;
   automate(b); if (run.demo) demoCaptions(b); else liveJudge(b);
-  run.frames.push({ b, fa: ctrl.faderA, fb: ctrl.faderB, la: ctrl.lowA, lb: ctrl.lowB });
+  run.frames.push({ b, fa: ctrl.faderA, fb: ctrl.faderB, la: ctrl.lowA, lb: ctrl.lowB, ca: ctrl.cfxA, ec: echoOn ? 1 : 0 });
   const tg = TARGETS[li].find(([x, lab]) => x > b - .5 && !(run.status[lab] && run.status[lab] !== 'late'));
   const ring = $('ring');
   if (tg){ const n = Math.max(0, Math.ceil(tg[0] - b)); $('cdNum').textContent = n; $('cdLab').textContent = RING_LAB[tg[1]]; ring.classList.toggle('hot', n <= 4); }
@@ -524,14 +590,14 @@ function frame(){
   $('progFill').style.width = clamp01((b - START) / (END - START)) * 100 + '%';
   drawHighway(b);
   if (b >= END) finish();
-  if ((li === 0 || li === 3) && run && run.launch === null && b > 72) finish();
+  if (run && !LESSONS[li].autoLaunch && run.launch === null && b > LESSONS[li].launchBeat + 40) finish();
 }
 const fr1 = v => (Math.round(v * 10) / 10).toString().replace('.', ',');
 const firstAt = (fr, from, test) => { const f = fr.find(x => x.b >= from && test(x)); return f ? f.b : null; };
-function evalLaunch(L){
+function evalLaunch(L, target = 32){
   if (L === null) return ['bad', 'Tu n\'as pas lancé B : écoute le compte à rebours et appuie quand il arrive à zéro.', 0];
-  const e = L - 32;
-  if (e === 0) return ['ok', 'B est parti pile sur le 1 de l\'outro de A.', 1];
+  const e = L - target;
+  if (e === 0) return ['ok', target === 32 ? 'B est parti pile sur le 1 de l\'outro de A.' : 'B est parti pile sur le début de la phrase.', 1];
   if (Math.abs(e) <= 2) return ['mid', `B est parti ${Math.abs(e)} temps ${e > 0 ? 'trop tard' : 'trop tôt'} : son drop tombe ${Math.abs(e)} temps ${e > 0 ? 'après' : 'avant'} la fin de phrase de A, ça s'entend comme un décalage.`, .5];
   if (e % 32 === 0) return ['mid', `B est parti sur le début d'une autre phrase (${e > 0 ? 'une phrase trop tard' : 'une phrase trop tôt'}) : c'est en rythme, mais pas au bon moment du morceau.`, .5];
   return ['bad', `B est parti au temps ${(((L % 32) + 32) % 32) + 1} de la phrase, en plein milieu : les deux morceaux ne changent plus en même temps. Attends le zéro du compte à rebours.`, 0];
@@ -557,6 +623,30 @@ function evalSwap(fr){
   return out;
 }
 
+function evalFilter(fr){
+  const out = [], st = firstAt(fr, 40, x => x.ca > .56), full = firstAt(fr, 40, x => x.ca >= .9);
+  if (fr.some(x => x.ca < .4)) out.push(['bad', 'Tu as tourné le filtre vers la gauche : de ce côté il enlève les aigus et garde les basses. Pour effacer A, tourne vers la droite.', 0]);
+  out.push(st == null ? ['bad', 'Le filtre n\'a jamais été tourné : tourne le CFX de A vers la droite.', 0] : st >= 58 && st <= 70 ? ['ok', `Filtre lancé au temps ${Math.round(st)}, au début de la phrase.`, 1] : ['mid', `Filtre lancé au temps ${Math.round(st)} : commence quand « FILTRE » touche la ligne (temps 64).`, .5]);
+  if (st != null) out.push(full == null || full > 99 ? ['bad', 'A n\'était pas complètement filtré au drop de B : va jusqu\'au bout du potard avant « À FOND ».', 0] : full - st < 12 ? ['mid', `Filtre monté trop vite (${Math.round(full - st)} temps) : étale le geste sur 16 à 32 temps.`, .5] : ['ok', `Filtre monté en ${Math.round(full - st)} temps : A s'efface en douceur.`, 1]);
+  return out;
+}
+function evalEcho(fr, at){
+  const out = [], cut = firstAt(fr, 56, x => x.fa < .1);
+  if (at == null) out.push(['bad', 'Tu n\'as pas activé l\'écho : appuie sur ECHO juste avant de couper A.', 0]);
+  else { const e = at - 63; out.push(e >= -1.5 && e <= .6 ? ['ok', 'Écho activé sur le dernier temps de la phrase.', 1] : ['mid', `Écho activé ${fr1(Math.abs(e))} temps ${e > 0 ? 'trop tard' : 'trop tôt'} : vise le dernier temps avant la ligne.`, .5]); }
+  if (cut == null) out.push(['bad', 'A n\'a jamais été coupé : baisse son fader d\'un coup sur la ligne.', 0]);
+  else { const e = cut - 64; out.push(Math.abs(e) <= .6 ? ['ok', 'A coupé pile au début de la phrase : B tombe dans l\'écho.', 1] : Math.abs(e) <= 1.5 ? ['mid', `A coupé ${fr1(Math.abs(e))} temps ${e > 0 ? 'en retard' : 'trop tôt'}.`, .5] : ['bad', `A coupé à ${fr1(Math.abs(e))} temps de la ligne.`, 0]); }
+  if (at != null && cut != null) out.push(at < cut ? ['ok', 'L\'écho était lancé avant la coupure : A s\'éteint en douceur.', 1] : ['bad', 'Tu as coupé A avant de lancer l\'écho : il n\'y avait plus rien à faire résonner.', 0]);
+  return out;
+}
+function evalCut(fr, L){
+  const cut = firstAt(fr, 56, x => x.fa < .1);
+  if (cut == null) return [['bad', 'A n\'a jamais été coupé : baisse son fader d\'un coup au moment où B démarre.', 0]];
+  const e = cut - 64, out = [];
+  out.push(Math.abs(e) <= .5 ? ['ok', 'A coupé pile sur la ligne.', 1] : Math.abs(e) <= 1.5 ? ['mid', `A coupé ${fr1(Math.abs(e))} temps ${e > 0 ? 'en retard' : 'trop tôt'}.`, .5] : ['bad', `A coupé à ${fr1(Math.abs(e))} temps de la ligne.`, 0]);
+  if (L != null){ const d = cut - L; out.push(Math.abs(d) <= .75 ? ['ok', 'Coupure et lancement en même temps : la transition est nette.', 1] : d > 0 ? ['mid', `A et B ont joué ensemble pendant ${fr1(d)} temps : coupe A dans le même geste.`, .5] : ['mid', `Il y a eu un blanc de ${fr1(-d)} temps entre la coupure et le lancement de B.`, .5]); }
+  return out;
+}
 function finish(){
   if (!run) return; const r = run; stopRun();
   if (r.demo){ $('hint').textContent = 'À toi ! Appuie sur Jouer et refais exactement la même chose.'; $('startBtn').classList.add('ready'); $('cdNum').textContent = '—'; $('cdLab').textContent = 'À toi de jouer'; $('ring').classList.remove('hot'); return; }
@@ -567,6 +657,9 @@ function finish(){
   if (li === 3){ items = [evalLaunch(r.launch)];
     if (r.launch !== null) items.push(r.lowBAtLaunch < .15 ? ['ok', 'Basses de B coupées avant de le lancer.', 1] : ['bad', 'B est parti avec ses basses ouvertes : coupe son LOW avant de le lancer.', 0]);
     items = items.concat(evalSwap(r.frames), evalFaders(r.frames).filter((_, i) => i !== 1)); }
+  if (LESSONS[li].kind === 'filter') items = evalFilter(r.frames);
+  if (LESSONS[li].kind === 'echo') items = evalEcho(r.frames, r.echoAt);
+  if (LESSONS[li].kind === 'cut') items = [evalLaunch(r.launch, 64)].concat(evalCut(r.frames, r.launch));
   const score = items.reduce((s, x) => s + x[2], 0) / items.length, st = score >= .9 ? 3 : score >= .55 ? 2 : 1;
   const before = stars[li] || 0; stars[li] = Math.max(before, st); try { localStorage.setItem('coach-lecons', JSON.stringify(stars)); } catch (e) {}
   const rs = $('rStars'); rs.innerHTML = '';
@@ -603,9 +696,9 @@ function drawHighway(b){
     g.globalAlpha = strong ? .9 : .28; g.fillStyle = col; rr(g, a + 1, y, z - a - 2, H, 10); g.fill(); g.globalAlpha = 1;
     const lx = Math.max(a + 12, 8); if (Math.min(z, w) - lx > 80){ g.fillStyle = strong ? COL.ink : COL.fg; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText(label, lx, y + 28); } };
   block(16, 32, yA, COL.a, true, 'A · corps'); block(32, 128, yA, COL.a, false, 'A · outro : la musique se dépouille');
-  const l = LESSONS[li], L = run && run.launch !== null ? run.launch : (l.autoLaunch ? 32 : null);
-  if (L !== null){ block(L, L + 64, yB, COL.b, false, l.bBass ? 'B · intro avec basse' : 'B · intro sans basse'); block(L + 64, L + 160, yB, COL.b, true, 'B · DROP'); }
-  else { const a = X(32); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(96) - a - 2, H, 10); g.stroke(); g.setLineDash([]);
+  const l = LESSONS[li], L = run && run.launch !== null ? run.launch : (l.autoLaunch ? l.launchBeat : null);
+  if (L !== null){ if (l.bCue){ block(L, L + 160, yB, COL.b, true, 'B · DROP'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'B · intro avec basse' : 'B · intro sans basse'); block(L + 64, L + 160, yB, COL.b, true, 'B · DROP'); } }
+  else { const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, 10); g.stroke(); g.setLineDash([]);
     if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 12, 8), yB + 28); } }
   // gestes à faire
   for (const [v, lab, lane] of TARGETS[li]){
@@ -615,17 +708,18 @@ function drawHighway(b){
     g.save(); g.shadowColor = col; g.shadowBlur = 18; g.fillStyle = col;
     g.beginPath(); g.moveTo(x, y - 17); g.lineTo(x + 17, y); g.lineTo(x, y + 17); g.lineTo(x - 17, y); g.closePath(); g.fill(); g.restore();
     g.fillStyle = COL.ink; g.font = '800 15px ' + COL.font; g.textAlign = 'center'; g.fillText(st === 'ok' ? '✓' : st ? '!' : '◆', x, y + 5);
-    g.fillStyle = col; g.font = '800 13px ' + COL.disp; g.fillText(lab, x, lane === 'B' ? yB + H + 18 : 18);
+    g.fillStyle = col; g.font = '800 13px ' + COL.disp; g.fillText(lab, x, lane === 'A' ? 18 : yB + H + 18);
   }
   // ligne de frappe
   g.save(); g.shadowColor = COL.fg; g.shadowBlur = 16; g.strokeStyle = COL.fg; g.lineWidth = 3;
   g.beginPath(); g.moveTo(hitX, 28); g.lineTo(hitX, h - 8); g.stroke(); g.restore();
   g.fillStyle = COL.muted; g.font = '600 11px ' + COL.font; g.textAlign = 'center'; g.fillText('MAINTENANT', hitX, h - 0);
 }
-const SHORT = { faderA: 'Fader A', faderB: 'Fader B', lowA: 'LOW A', lowB: 'LOW B' };
+const SHORT = { faderA: 'Fader A', faderB: 'Fader B', lowA: 'LOW A', lowB: 'LOW B', cfxA: 'CFX A', echo: 'Écho' };
+const FK = { faderA: 'fa', faderB: 'fb', lowA: 'la', lowB: 'lb', cfxA: 'ca', echo: 'ec' };
 function drawCompare(fr, i, launch){
   if (!COL.a) loadCol();
-  const lanes = LESSONS[i].user.slice(), showLaunch = i === 0 || i === 3, cv = $('cmp');
+  const lanes = LESSONS[i].user.slice().concat(LESSONS[i].btn), showLaunch = !LESSONS[i].autoLaunch, cv = $('cmp');
   const H = 10 + (showLaunch ? 46 : 0) + lanes.length * 58 + 18; cv.style.height = H + 'px';
   const dpr = window.devicePixelRatio || 1, w = cv.clientWidth; cv.width = Math.round(w * dpr); cv.height = Math.round(H * dpr);
   const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, H);
@@ -637,9 +731,9 @@ function drawCompare(fr, i, launch){
   if (showLaunch){
     label('Lancer B', y + 22);
     const yy = y + 18, dia = (x, fill, col) => { g.beginPath(); g.moveTo(x, yy - 10); g.lineTo(x + 10, yy); g.lineTo(x, yy + 10); g.lineTo(x - 10, yy); g.closePath(); if (fill){ g.fillStyle = col; g.fill(); } else { g.strokeStyle = col; g.lineWidth = 2; g.setLineDash([3, 3]); g.stroke(); g.setLineDash([]); } };
-    dia(X(32), false, COL.fg);
-    if (launch !== null){ dia(X(launch), true, COL.b); if (launch !== 32){ g.fillStyle = COL.b; g.font = '600 12px ' + COL.font; g.textAlign = 'center'; g.fillText(`toi : temps ${launch}`, X(launch), yy + 26); } }
-    else { g.fillStyle = COL.bad; g.font = '600 12px ' + COL.font; g.textAlign = 'left'; g.fillText('pas lancé', X(32) + 16, yy + 4); }
+    dia(X(LESSONS[i].launchBeat), false, COL.fg);
+    if (launch !== null){ dia(X(launch), true, COL.b); if (launch !== LESSONS[i].launchBeat){ g.fillStyle = COL.b; g.font = '600 12px ' + COL.font; g.textAlign = 'center'; g.fillText(`toi : temps ${launch}`, X(launch), yy + 26); } }
+    else { g.fillStyle = COL.bad; g.font = '600 12px ' + COL.font; g.textAlign = 'left'; g.fillText('pas lancé', X(LESSONS[i].launchBeat) + 16, yy + 4); }
     y += 46;
   }
   for (const k of lanes){
@@ -648,8 +742,8 @@ function drawCompare(fr, i, launch){
     g.fillStyle = COL['panel-2'] || '#211d44'; g.globalAlpha = .5; g.fillRect(L0, top, w - L0 - 10, 44); g.globalAlpha = 1;
     g.strokeStyle = COL.fg; g.lineWidth = 2; g.setLineDash([5, 4]); g.beginPath();
     for (let b = START; b <= END; b += .5){ const yv = Y(ideal(k, b, i)); b === START ? g.moveTo(X(b), yv) : g.lineTo(X(b), yv); } g.stroke(); g.setLineDash([]);
-    g.strokeStyle = k.endsWith('A') ? COL.a : COL.b; g.lineWidth = 3; g.lineJoin = 'round'; g.beginPath();
-    fr.forEach((f, j) => { const yv = Y(f[k === 'faderA' ? 'fa' : k === 'faderB' ? 'fb' : k === 'lowA' ? 'la' : 'lb']); j ? g.lineTo(X(f.b), yv) : g.moveTo(X(f.b), yv); }); g.stroke();
+    g.strokeStyle = k === 'echo' ? COL.xp : k.endsWith('A') ? COL.a : COL.b; g.lineWidth = 3; g.lineJoin = 'round'; g.beginPath();
+    fr.forEach((f, j) => { const yv = Y(f[FK[k]]); j ? g.lineTo(X(f.b), yv) : g.moveTo(X(f.b), yv); }); g.stroke();
     y += 58;
   }
   $('cmpBox').hidden = false;
@@ -676,8 +770,11 @@ const DEFAULT_MAP = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: 
 let map = DEFAULT_MAP; try { const s = JSON.parse(localStorage.getItem('coach-midi-map') || 'null'); if (s) map = s; } catch (e) {}
 function onMidi(e){
   const [st, d1, d2] = e.data, type = st & 0xF0, ch = st & 0x0F;
-  if (type === 0xB0){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB']){ const m = map[k]; if (m && m.ch === ch && m.n === d1){ phys[k] = d2 / 127; if (!isAuto(k)){ ctrl[k] = d2 / 127; applyCtrl(); } if (!run) updateSetup(); return; } } }
-  else if (type === 0x90 && d2 > 0){ const m = map.playB; if (m && m.ch === ch && m.n === d1) launchB(); }
+  if (learnKey){ const want = learnKey === 'fxOn' ? (type === 0x90 && d2 > 0) : (type === 0xB0 && !(d1 >= 32 && d1 < 64));
+    if (want){ map = Object.assign({}, map, { [learnKey]: { ch, n: d1 } }); try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); } catch (_) {}
+      if (type === 0xB0) phys[learnKey] = d2 / 127; learnKey = null; updateSetup(); } return; }
+  if (type === 0xB0){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA']){ const m = map[k]; if (m && m.ch === ch && m.n === d1){ phys[k] = d2 / 127; if (!isAuto(k)){ ctrl[k] = d2 / 127; applyCtrl(); } if (!run) updateSetup(); return; } } }
+  else if (type === 0x90 && d2 > 0){ const m = map.playB, f = map.fxOn; if (m && m.ch === ch && m.n === d1) launchB(); else if (f && f.ch === ch && f.n === d1) toggleEcho(); }
 }
 async function initMidi(){
   const pill = $('midiPill'), txt = pill.lastElementChild;
@@ -690,25 +787,35 @@ async function initMidi(){
 
 
 /* ---------- Mise en place de la table ---------- */
-const phys = {}; let midiCount = 0, mouseMode = false;
-const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B' };
-function targetText(k, v){ return k.startsWith('fader') ? (v >= .5 ? 'tout en haut' : 'tout en bas') : (v < .1 ? 'tout à gauche (basses coupées)' : 'au milieu (cran central)'); }
+const phys = {}; let midiCount = 0, mouseMode = false, learnKey = null;
+const LEARN_TXT = { cfxA: 'Tourne le potard CFX de A…', fxOn: 'Appuie sur ON de l\'effet…' };
+const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B', cfxA: 'Potard CFX de A' };
+function targetText(k, v){ if (k === 'cfxA') return 'au milieu (cran central, filtre neutre)'; return k.startsWith('fader') ? (v >= .5 ? 'tout en haut' : 'tout en bas') : (v < .1 ? 'tout à gauche (basses coupées)' : 'au milieu (cran central)'); }
 function inPlace(k, v, p){ if (p == null) return null; return k.startsWith('fader') ? (v >= .5 ? p >= .94 : p <= .06) : (v < .1 ? p <= .05 : Math.abs(p - .5) <= .07); }
 const needSetup = () => midiCount > 0 && !mouseMode && LESSONS[li].user.length > 0;
-function setupReady(){ const l = LESSONS[li]; return l.user.every(k => inPlace(k, l.init[k], phys[k]) === true); }
+function setupReady(){ const l = LESSONS[li]; return l.user.every(k => map[k] && inPlace(k, l.init[k], phys[k]) === true); }
 function updateSetup(){
   const box = $('setup'), btn = $('startBtn');
   if (run || !needSetup()){ box.hidden = true; if (!run){ btn.disabled = false; btn.classList.remove('ready'); if (btn.textContent !== 'Préparation…') btn.textContent = 'Jouer'; } return; }
   const l = LESSONS[li], ul = $('setupList'); ul.innerHTML = '';
   for (const k of l.user){
-    const v = l.init[k], p = phys[k], ok = inPlace(k, v, p);
+    const v = l.init[k], p = map[k] ? phys[k] : null, ok = map[k] ? inPlace(k, v, p) : null;
     const li2 = document.createElement('li'); li2.className = ok === true ? 'ok' : ok === false ? 'wrong' : '';
     const ic = document.createElement('span'); ic.className = 'ic'; ic.textContent = ok === true ? '✓' : ok === false ? '!' : '?';
     const nm = document.createElement('span'); nm.innerHTML = '<b></b> '; nm.querySelector('b').textContent = CTRL_LABEL[k]; nm.appendChild(document.createTextNode(': ' + targetText(k, v)));
     const wh = document.createElement('span'); wh.className = 'what';
     wh.textContent = ok === true ? 'en place' : ok === null ? 'bouge-le un peu' : k.startsWith('fader') ? (p < v ? 'monte-le' : 'descends-le') : (p < v ? 'tourne à droite' : 'tourne à gauche');
+    if (!map[k]){ wh.textContent = ''; const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'learn' + (learnKey === k ? ' on' : '');
+      bt.textContent = learnKey === k ? LEARN_TXT[k] : 'Apprendre ce contrôle'; bt.addEventListener('click', () => { learnKey = k; updateSetup(); }); wh.appendChild(bt); }
     li2.append(ic, nm, wh); ul.appendChild(li2);
     if (!isAuto(k) && p != null){ ctrl[k] = p; }
+  }
+  if (l.btn.includes('echo') && !map.fxOn){
+    const li3 = document.createElement('li'); const ic = document.createElement('span'); ic.className = 'ic'; ic.textContent = '?';
+    const nm = document.createElement('span'); nm.textContent = 'Bouton ON de l\'effet (facultatif : sinon bouton ECHO ou touche E)';
+    const wh = document.createElement('span'); wh.className = 'what'; const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'learn' + (learnKey === 'fxOn' ? ' on' : '');
+    bt.textContent = learnKey === 'fxOn' ? LEARN_TXT.fxOn : 'Apprendre'; bt.addEventListener('click', () => { learnKey = 'fxOn'; updateSetup(); }); wh.appendChild(bt);
+    li3.append(ic, nm, wh); ul.appendChild(li3);
   }
   applyCtrl();
   box.hidden = false;
@@ -727,7 +834,8 @@ $('result').addEventListener('click', e => { if (e.target === $('result')) $('re
 document.addEventListener('keydown', e => { if (e.key === 'Escape') $('result').hidden = true; });
 $('retry').addEventListener('click', () => { $('result').hidden = true; startRun(); });
 $('next').addEventListener('click', () => { selectLesson(Math.min(LESSONS.length - 1, li + 1)); });
-document.addEventListener('keydown', e => { if (e.code === 'Space' && run && !(e.target instanceof HTMLInputElement)){ e.preventDefault(); launchB(); } }, true);
+document.addEventListener('keydown', e => { if (e.code === 'Space' && run && !(e.target instanceof HTMLInputElement)){ e.preventDefault(); launchB(); } if (e.code === 'KeyE' && run && !e.repeat){ e.preventDefault(); toggleEcho(); } }, true);
+$('echoBtn').addEventListener('click', toggleEcho);
 window.addEventListener('resize', () => drawHighway(run ? beatNow() : START));
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { loadCol(); drawHighway(run ? beatNow() : START); });
 const firstUndone = LESSONS.findIndex((_, i) => !(stars[i] >= 2));
