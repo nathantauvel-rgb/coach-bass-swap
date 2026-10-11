@@ -191,6 +191,9 @@ button{cursor:pointer}
 .crit .st::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
 .crit .ok .st{color:var(--ok)}.crit .mid .st{color:var(--mid)}.crit .bad .st{color:var(--bad)}
 .crit p{margin:0;font-size:15px;color:var(--muted);line-height:1.45}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translate(-50%,20px);max-width:min(560px,calc(100% - 32px));background:var(--fg);color:var(--bg);padding:14px 18px;border-radius:14px;font-size:15px;font-weight:500;box-shadow:0 12px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:10;border-left:5px solid var(--b)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.ok{border-left-color:var(--ok)}.toast.bad{border-left-color:var(--bad)}
 /* Bibliothèque */
 .lib{display:flex;flex-direction:column;gap:16px}
 .lib-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
@@ -380,6 +383,8 @@ details.howxml ol{margin:10px 0 2px;padding-left:20px;color:var(--muted);display
     <p class="rules">Le match combine le tempo (moins de 6 % d'écart, sinon le pitch s'entend ; les demi et double tempos comptent), la tonalité sur la roue de Camelot en tenant compte du changement de hauteur dû au calage, le genre et l'énergie. Clique sur un BPM pour le corriger. L'énergie est estimée au premier chargement d'un morceau.</p>
     <div><button type="button" class="btn quiet" id="clearLib">Vider la bibliothèque</button></div>
   </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <section class="card report" id="report">
     <div class="rep-head">
@@ -788,11 +793,11 @@ const kvSet = (k, v) => dbReq('kv', 'readwrite', s => s.put(v, k)).catch(() => {
 /* ---------- Bibliothèque ---------- */
 const lib = [], byId = new Map();
 const handles = {}, files = {};
-let dirHandle = null, xmlCount = 0;
+let dirHandle = null, dirs = [], xmlCount = 0;
 const AUDIO = /\.(mp3|wav|m4a|aac|flac|ogg|aif|aiff)$/i;
-const fileKey = name => name.toLowerCase();
+const fileKey = name => String(name).normalize('NFC').toLowerCase().trim();
 function upsert(t){ const ex = byId.get(t.id); if (ex){ Object.assign(ex, t); return ex; } lib.push(t); byId.set(t.id, t); return t; }
-const isAvail = t => !!(t.demo || files[t.file] || handles[t.file]);
+const isAvail = t => !!(t.demo || files[fileKey(t.file || '')] || handles[fileKey(t.file || '')]);
 
 const DEMO_META = {
   house: [{ key: '8A', energy: 7 }, { key: '7A', energy: 6 }], techno: [{ key: '9A', energy: 9 }, { key: '5A', energy: 8 }],
@@ -813,6 +818,7 @@ function parseRekordbox(text){
   const out = [];
   for (const el of coll.querySelectorAll(':scope > TRACK')){
     const loc = el.getAttribute('Location') || '';
+    const streaming = !/^file:/i.test(loc);
     let name = ''; try { name = decodeURIComponent(loc.split('/').pop() || ''); } catch (e) { name = loc.split('/').pop() || ''; }
     if (!name) continue;
     const tempo = el.querySelector('TEMPO');
@@ -827,7 +833,8 @@ function parseRekordbox(text){
     const hot = marks.find(m => m.getAttribute('Num') === '0'), mem = marks.find(m => m.getAttribute('Num') === '-1');
     const pick = hot || mem; if (pick) cue = parseFloat(pick.getAttribute('Start'));
     const tonal = el.getAttribute('Tonality') || '';
-    out.push({ id: 'f:' + fileKey(name), file: fileKey(name), fileName: name,
+    if (streaming) name = 'streaming:' + (el.getAttribute('TrackID') || name);
+    out.push({ id: 'f:' + fileKey(name), file: fileKey(name), fileName: name, streaming,
       title: el.getAttribute('Name') || name.replace(/\.[^.]+$/, ''), artist: el.getAttribute('Artist') || '',
       genre: el.getAttribute('Genre') || '', bpm: bpm ? Math.round(bpm * 100) / 100 : null, key: parseKey(tonal), keyName: tonal,
       duration: parseFloat(el.getAttribute('TotalTime')) || null, downbeat, cue: isFinite(cue) ? cue : null, source: 'rekordbox' });
@@ -898,10 +905,53 @@ async function scanDir(dir){
     if (i % 50 === 0) setLibStatus(`Lecture des étiquettes… ${i + 1} sur ${found.length}`);
   }
   await dbPut(touched); $('reconnectBtn').hidden = true; refreshGenres(); renderLib(); setLibStatus();
+  const user = lib.filter(x => !x.demo && !x.streaming), linked = user.filter(isAvail).length;
+  toast(`${found.length} fichiers trouvés dans « ${dir.name} » · ${linked} morceaux sur ${user.length} sont maintenant jouables.`, linked ? 'ok' : 'bad');
+}
+function toast(msg, kind){
+  const el = $('toast'); el.textContent = msg; el.className = 'toast show ' + (kind || '');
+  clearTimeout(toast.t); toast.t = setTimeout(() => { el.className = 'toast'; }, kind === 'bad' ? 7000 : 3500);
+}
+function decodeAiff(ab){
+  const v = new DataView(ab), str = (o, n) => String.fromCharCode(...new Uint8Array(ab, o, n));
+  if (str(0, 4) !== 'FORM') throw new Error('aiff');
+  const form = str(8, 4); let p = 12, ch = 0, frames = 0, bits = 0, rate = 0, comp = 'NONE', dataOff = -1;
+  while (p + 8 <= ab.byteLength){
+    const id = str(p, 4), size = v.getUint32(p + 4); const b = p + 8;
+    if (id === 'COMM'){
+      ch = v.getUint16(b); frames = v.getUint32(b + 2); bits = v.getUint16(b + 6);
+      const ex = v.getUint16(b + 8) & 0x7FFF, hi = v.getUint32(b + 10), lo = v.getUint32(b + 14);
+      rate = (hi * Math.pow(2, 32) + lo) * Math.pow(2, ex - 16383 - 63);
+      if (form === 'AIFC') comp = str(b + 18, 4);
+    } else if (id === 'SSND'){ dataOff = b + 8 + v.getUint32(b); }
+    p = b + size + (size & 1);
+  }
+  if (dataOff < 0 || !ch || !frames) throw new Error('aiff');
+  const le = comp === 'sowt', fl = comp === 'fl32' || comp === 'FL32', bps = bits / 8;
+  if (!['NONE', 'twos', 'sowt', 'fl32', 'FL32'].includes(comp) || ![8, 16, 24, 32].includes(bits)) throw new Error('aiff-format');
+  frames = Math.min(frames, Math.floor((ab.byteLength - dataOff) / (bps * ch)));
+  const buf = ac.createBuffer(ch, frames, Math.round(rate)), outs = [...Array(ch)].map((_, c) => buf.getChannelData(c));
+  let o = dataOff;
+  for (let i = 0; i < frames; i++) for (let c = 0; c < ch; c++){
+    let x;
+    if (fl) x = v.getFloat32(o, le);
+    else if (bits === 16) x = v.getInt16(o, le) / 32768;
+    else if (bits === 24){ const b0 = v.getUint8(o), b1 = v.getUint8(o + 1), b2 = v.getUint8(o + 2); let n = le ? (b2 << 16 | b1 << 8 | b0) : (b0 << 16 | b1 << 8 | b2); if (n & 0x800000) n -= 0x1000000; x = n / 8388608; }
+    else if (bits === 32) x = v.getInt32(o, le) / 2147483648;
+    else x = v.getInt8(o) / 128;
+    outs[c][i] = x; o += bps;
+  }
+  return buf;
+}
+async function decodeFile(f){
+  const ab = await f.arrayBuffer();
+  try { return await new Promise((res, rej) => { const p = ac.decodeAudioData(ab.slice(0), res, rej); if (p && p.then) p.then(res, rej); }); }
+  catch (e){ if (/\.aiff?$/i.test(f.name)) return decodeAiff(ab); throw e; }
 }
 async function getFile(t){
-  if (files[t.file]) return files[t.file];
-  if (handles[t.file]){ try { return await handles[t.file].getFile(); } catch (e) { return null; } }
+  const k = fileKey(t.file || '');
+  if (files[k]) return files[k];
+  if (handles[k]){ try { return await handles[k].getFile(); } catch (e) { return null; } }
   return null;
 }
 function estimateEnergy(buf){
@@ -914,7 +964,7 @@ function estimateEnergy(buf){
 /* ---------- Interface de la bibliothèque ---------- */
 function setLibStatus(msg){
   if (msg){ $('libStatus').textContent = msg; return; }
-  const user = lib.filter(t => !t.demo), av = user.filter(isAvail).length;
+  const user = lib.filter(t => !t.demo && !t.streaming), av = user.filter(isAvail).length;
   let s = user.length ? `${user.length} morceau${user.length > 1 ? 'x' : ''} · ${av} fichier${av > 1 ? 's' : ''} disponible${av > 1 ? 's' : ''} pour jouer` : 'Seulement les démos pour l\'instant. Importe ta collection rekordbox pour retrouver tes morceaux.';
   if (user.length && av < user.length) s += ' · choisis ton dossier musique pour relier les autres';
   $('libStatus').textContent = s;
@@ -954,7 +1004,7 @@ function renderLib(){
     const c1 = td(); c1.className = 'tt';
     const nm = document.createElement('strong'); nm.textContent = t.title; c1.appendChild(nm);
     const sub = document.createElement('span'); sub.className = 'sub';
-    sub.textContent = (t.artist || '') + (isAvail(t) ? '' : (t.artist ? ' · ' : '') + 'fichier non relié');
+    sub.textContent = (t.artist || '') + (isAvail(t) ? '' : (t.artist ? ' · ' : '') + (t.streaming ? 'streaming, pas de fichier' : 'fichier non relié'));
     c1.appendChild(sub);
     if (m && m.reasons.length){ const r = document.createElement('span'); r.className = 'why'; r.textContent = m.reasons.join(' · '); c1.appendChild(r); }
     const c2 = td();
@@ -995,12 +1045,18 @@ async function loadTrackToDeck(d, t){
     Object.assign(d, { bpm: sp.bpm, offset: 0, cuePos: 0, loop: true, track: t });
     d.anchorPos = d.cuePos; renderDeck(d); renderLib(); updatePlayButtons(); return;
   }
+  if (t.streaming){ toast('« ' + t.title + ' » vient d\'un service de streaming dans rekordbox : il n\'y a pas de fichier à lire sur ton ordinateur.', 'bad'); return; }
   const f = await getFile(t);
-  if (!f){ $('src' + d.id).textContent = 'Fichier non relié : choisis ton dossier musique dans la bibliothèque.'; return; }
+  if (!f){
+    const user = lib.filter(x => !x.demo && !x.streaming), linked = user.filter(isAvail).length;
+    toast(linked ? 'Le fichier « ' + (t.fileName || t.title) + ' » n\'est pas dans le dossier choisi. Ajoute le dossier où il se trouve avec « Choisir mon dossier musique ».'
+                 : 'Tes morceaux ne sont pas encore reliés à leurs fichiers. Clique sur « Choisir mon dossier musique » et sélectionne le dossier où sont tes MP3.', 'bad');
+    return;
+  }
   $('src' + d.id).textContent = 'Chargement de « ' + t.title + ' »…';
+  toast('Chargement de « ' + t.title + ' » sur la platine ' + d.id + '…');
   try {
-    const ab = await f.arrayBuffer();
-    const buf = await new Promise((res, rej) => { const p = ac.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); });
+    const buf = await decodeFile(f);
     let bpm = t.bpm, off = t.downbeat;
     if (!bpm || off == null){
       $('src' + d.id).textContent = 'Analyse du tempo…'; await new Promise(r => setTimeout(r, 30));
@@ -1016,7 +1072,11 @@ async function loadTrackToDeck(d, t){
     d.buf = buf; d.data = null; d.bufFrom = null;
     Object.assign(d, { bpm, offset: off, cuePos: cue, loop: false, track: t });
     d.anchorPos = d.cuePos; renderDeck(d); renderLib(); updatePlayButtons();
-  } catch (e){ $('src' + d.id).textContent = 'Lecture impossible de ce fichier. Essaie un MP3, WAV ou M4A.'; }
+    toast('« ' + t.title + ' » est prêt sur la platine ' + d.id + '.', 'ok');
+  } catch (e){
+    const msg = 'Impossible de lire « ' + (t.fileName || t.title) + ' ». Le navigateur lit les MP3, WAV, AIFF, M4A et FLAC, mais pas les fichiers protégés.';
+    $('src' + d.id).textContent = msg; toast(msg, 'bad');
+  }
 }
 function renderDeck(d){
   const t = d.track; if (!t) return;
@@ -1039,12 +1099,11 @@ async function initLibrary(){
   addDemos();
   const saved = await dbAll();
   for (const t of saved) upsert(t);
-  try { dirHandle = await kvGet('dir'); } catch (e) { dirHandle = null; }
-  if (dirHandle && dirHandle.queryPermission){
-    let st = 'prompt'; try { st = await dirHandle.queryPermission({ mode: 'read' }); } catch (e) {}
-    if (st === 'granted') scanDir(dirHandle).catch(() => {});
-    else { const b = $('reconnectBtn'); b.textContent = 'Reconnecter « ' + dirHandle.name + ' »'; b.hidden = false; }
-  }
+  try { dirs = (await kvGet('dirs')) || []; const old = await kvGet('dir'); if (old && !dirs.length) dirs = [old]; } catch (e) { dirs = []; }
+  const pending = [];
+  for (const h of dirs){ if (!h || !h.queryPermission) continue; let st = 'prompt'; try { st = await h.queryPermission({ mode: 'read' }); } catch (e) {}
+    if (st === 'granted') scanDir(h).catch(() => {}); else pending.push(h); }
+  if (pending.length){ const b = $('reconnectBtn'); b.textContent = 'Reconnecter ' + (pending.length > 1 ? 'mes ' + pending.length + ' dossiers' : '« ' + pending[0].name + ' »'); b.hidden = false; }
   refreshGenres();
   await loadTrackToDeck(A, byId.get('demo:house0'));
   await loadTrackToDeck(B, byId.get('demo:house1'));
@@ -1063,16 +1122,17 @@ function bindLibrary(){
   });
   $('folderBtn').addEventListener('click', async () => {
     if (window.showDirectoryPicker){
-      try { const h = await window.showDirectoryPicker({ id: 'musique', mode: 'read' }); dirHandle = h; kvSet('dir', h); await scanDir(h); return; }
+      try { const h = await window.showDirectoryPicker({ id: 'musique', mode: 'read' }); dirHandle = h;
+        dirs = dirs.filter(x => x.name !== h.name).concat([h]); kvSet('dirs', dirs); await scanDir(h); return; }
       catch (e){ if (e && e.name === 'AbortError') return; }
     }
     $('dirInput').click();
   });
   $('dirInput').addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
   $('reconnectBtn').addEventListener('click', async () => {
-    if (!dirHandle) return; let st = 'denied';
-    try { st = await dirHandle.requestPermission({ mode: 'read' }); } catch (e) {}
-    if (st === 'granted') scanDir(dirHandle); else setLibStatus('Accès refusé. Choisis à nouveau ton dossier musique.');
+    let ok = 0;
+    for (const h of dirs){ let st = 'denied'; try { st = await h.requestPermission({ mode: 'read' }); } catch (e) {} if (st === 'granted'){ ok++; await scanDir(h); } }
+    if (!ok) toast('Accès refusé. Choisis à nouveau ton dossier musique.', 'bad');
   });
   let qt = null;
   $('q').addEventListener('input', () => { clearTimeout(qt); qt = setTimeout(renderLib, 120); });
@@ -1083,7 +1143,7 @@ function bindLibrary(){
     if (!armed){ clr.textContent = 'Confirmer : tout effacer ?'; armed = setTimeout(() => { armed = null; clr.textContent = 'Vider la bibliothèque'; }, 4000); return; }
     clearTimeout(armed); armed = null; clr.textContent = 'Vider la bibliothèque';
     for (let i = lib.length - 1; i >= 0; i--) if (!lib[i].demo){ byId.delete(lib[i].id); lib.splice(i, 1); }
-    await dbClear(); kvSet('dir', null); dirHandle = null; $('reconnectBtn').hidden = true; refreshGenres(); renderLib(); setLibStatus();
+    await dbClear(); kvSet('dir', null); kvSet('dirs', []); dirs = []; dirHandle = null; $('reconnectBtn').hidden = true; refreshGenres(); renderLib(); setLibStatus();
   });
 }
 
