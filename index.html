@@ -191,6 +191,50 @@ button{cursor:pointer}
 .crit .st::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
 .crit .ok .st{color:var(--ok)}.crit .mid .st{color:var(--mid)}.crit .bad .st{color:var(--bad)}
 .crit p{margin:0;font-size:15px;color:var(--muted);line-height:1.45}
+/* Bibliothèque */
+.lib{display:flex;flex-direction:column;gap:16px}
+.lib-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.lib-head h2{margin:0;font-size:24px;letter-spacing:-.02em}
+.lib-head p{margin:4px 0 0}
+.lib-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn.primary{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn.primary:hover{background:var(--fg);filter:brightness(1.15)}
+.btn.quiet{border-color:transparent;color:var(--muted)}
+details.howxml{background:var(--surface-2);border-radius:12px;padding:12px 16px;font-size:15px}
+details.howxml summary{cursor:pointer;font-weight:600}
+details.howxml ol{margin:10px 0 2px;padding-left:20px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.filters{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1.3fr);gap:10px}
+@media (max-width:700px){.filters{grid-template-columns:minmax(0,1fr)}}
+.filters input,.filters select{width:100%;border:1px solid var(--hair);background:var(--surface);border-radius:12px;padding:10px 12px;font-size:15px;color:var(--fg)}
+.recoref{font-size:14px;color:var(--muted);min-height:1.4em}
+.tbl{overflow-x:auto;border-radius:12px;border:1px solid var(--hair)}
+.tbl table{width:100%;min-width:820px;border-collapse:collapse;font-size:15px}
+.tbl th{text-align:left;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:10px 12px;background:var(--surface-2);position:sticky;top:0}
+.tbl td{padding:10px 12px;border-top:1px solid var(--hair);vertical-align:middle}
+.tbl tr:hover td{background:color-mix(in srgb,var(--surface-2) 55%,var(--surface))}
+.tbl td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl td.tt{min-width:0;max-width:360px}
+.tbl td.tt strong{display:block;font-weight:600;overflow-wrap:anywhere}
+.tbl .sub{display:block;font-size:13px;color:var(--muted);font-family:var(--sans)}
+.tbl .why{display:block;font-size:13px;color:var(--fg);opacity:.8;margin-top:2px}
+.tbl tr.on-a td:first-child{box-shadow:inset 4px 0 0 var(--a)}
+.tbl tr.on-b td:first-child{box-shadow:inset 4px 0 0 var(--b)}
+.tbl tr.missing td{opacity:.55}
+.score{display:inline-grid;place-items:center;min-width:44px;padding:3px 8px;border-radius:999px;font-family:var(--mono);font-weight:600;font-size:14px}
+.score.ok{background:color-mix(in srgb,var(--ok) 18%,var(--surface));color:var(--ok)}
+.score.mid{background:color-mix(in srgb,var(--mid) 18%,var(--surface));color:var(--mid)}
+.score.bad{background:color-mix(in srgb,var(--bad) 15%,var(--surface));color:var(--bad)}
+.score.ref{background:var(--a);color:var(--on-accent);font-family:var(--sans);font-size:12px}
+.cellbtn{border:0;background:transparent;font:inherit;padding:2px 6px;margin:-2px -6px;border-radius:6px;text-decoration:underline dotted var(--muted);text-underline-offset:3px}
+.cellbtn:hover:not(:disabled){background:var(--surface-2)}
+.cellbtn:disabled{text-decoration:none;cursor:default}
+.bpmin{width:5.5em;border:1px solid var(--b);border-radius:6px;padding:3px 6px;background:var(--surface);font-family:var(--mono)}
+.energy{display:inline-block;width:56px;height:8px;border-radius:4px;background:var(--surface-2);position:relative;overflow:hidden;vertical-align:middle}
+.energy::after{content:"";position:absolute;inset:0;width:calc(var(--e) * 100%);background:var(--fg);opacity:.7;border-radius:4px}
+.acts{white-space:nowrap;text-align:right}
+.load{width:34px;height:30px;border-radius:9px;border:0;font-weight:700;font-size:13px;color:var(--on-accent);margin-left:4px}
+.loadA{background:var(--a)}.loadB{background:var(--b)}
+.rules{font-size:14px;color:var(--muted);margin:0;max-width:90ch}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -203,11 +247,6 @@ button{cursor:pointer}
     </div>
     <div class="tools">
       <span class="status" id="midiPill"><i></i><span>Recherche du contrôleur…</span></span>
-      <div class="seg" id="styles" role="group" aria-label="Démos">
-        <button type="button" data-style="house" aria-pressed="true">House</button>
-        <button type="button" data-style="techno" aria-pressed="false">Techno</button>
-        <button type="button" data-style="afro" aria-pressed="false">Afro</button>
-      </div>
       <button type="button" class="btn" id="testBtn" title="Joue trois bips sur la sortie audio">Tester le son</button>
       <button type="button" class="btn" id="learnBtn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 4h10M3 8h10M3 12h10"/><circle cx="6" cy="4" r="1.6" fill="var(--surface)"/><circle cx="10" cy="8" r="1.6" fill="var(--surface)"/><circle cx="5" cy="12" r="1.6" fill="var(--surface)"/></svg>Configurer ma FLX4</button>
     </div>
@@ -247,11 +286,11 @@ button{cursor:pointer}
       <span class="src" id="srcA"></span>
       <div class="stats">
         <div class="stat"><span class="cap">Tempo</span><span class="v num" id="bpmA">—</span></div>
-        <div class="stat"><span class="cap">Temps joués</span><span class="v num" id="posA">—</span></div>
+        <div class="stat"><span class="cap">Tonalité</span><span class="v num" id="keyA">—</span></div>
       </div>
       <button type="button" class="play" id="playA"></button>
       <div class="import">
-        <label class="btn" for="fileA"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V2M4.5 5.5 8 2l3.5 3.5M2.5 11v2.5h11V11"/></svg>Importer un morceau</label>
+        <label class="btn" for="fileA"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V2M4.5 5.5 8 2l3.5 3.5M2.5 11v2.5h11V11"/></svg>Ajouter un morceau</label>
         <input type="file" id="fileA" accept="audio/*" hidden>
         <span class="hint">ou glisse un fichier ici</span>
       </div>
@@ -289,17 +328,58 @@ button{cursor:pointer}
       <span class="src" id="srcB"></span>
       <div class="stats">
         <div class="stat"><span class="cap">Tempo d'origine</span><span class="v num" id="bpmB">—</span></div>
-        <div class="stat"><span class="cap">Calé sur A</span><span class="v num" id="syncB">—</span></div>
+        <div class="stat"><span class="cap">Tonalité jouée</span><span class="v num" id="keyB">—</span><span class="cap" id="keyHintB" style="text-transform:none;letter-spacing:0;font-weight:500">après calage sur A</span></div>
       </div>
       <button type="button" class="play" id="playB"></button>
       <p class="hint">B prend automatiquement le tempo de A et démarre sur le temps le plus proche, comme Sync et Quantize dans rekordbox.</p>
       <div class="import">
-        <label class="btn" for="fileB"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V2M4.5 5.5 8 2l3.5 3.5M2.5 11v2.5h11V11"/></svg>Importer un morceau</label>
+        <label class="btn" for="fileB"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V2M4.5 5.5 8 2l3.5 3.5M2.5 11v2.5h11V11"/></svg>Ajouter un morceau</label>
         <input type="file" id="fileB" accept="audio/*" hidden>
         <span class="hint">ou glisse un fichier ici</span>
       </div>
     </article>
   </main>
+
+  <section class="card lib" id="library" aria-label="Bibliothèque">
+    <div class="lib-head">
+      <div><h2>Bibliothèque</h2><p class="hint" id="libStatus">Chargement…</p></div>
+      <div class="lib-actions">
+        <label class="btn primary" for="xmlInput">Importer ma collection rekordbox</label>
+        <input type="file" id="xmlInput" accept=".xml,text/xml" hidden>
+        <button type="button" class="btn" id="folderBtn">Choisir mon dossier musique</button>
+        <input type="file" id="dirInput" webkitdirectory multiple hidden>
+        <button type="button" class="btn" id="reconnectBtn" hidden></button>
+      </div>
+    </div>
+    <details class="howxml"><summary>Comment exporter ma collection depuis rekordbox ?</summary>
+      <ol>
+        <li>Dans rekordbox, ouvre le menu Fichier puis « Exporter la collection au format xml ».</li>
+        <li>Enregistre le fichier rekordbox.xml et importe-le ici avec le bouton noir.</li>
+        <li>Choisis ensuite le dossier où sont rangés tes morceaux : chaque fichier est relié à son BPM, sa tonalité, sa grille et son premier cue point.</li>
+      </ol>
+      <p class="hint" style="margin:8px 0 0">Tout reste dans ton navigateur : ni la collection ni les fichiers ne sont envoyés en ligne.</p>
+    </details>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Rechercher un titre, un artiste, un genre" aria-label="Rechercher">
+      <select id="genre" aria-label="Genre"></select>
+      <select id="sort" aria-label="Tri">
+        <option value="reco">Meilleurs enchaînements après A</option>
+        <option value="bpm">Tempo</option>
+        <option value="key">Tonalité (Camelot)</option>
+        <option value="energy">Énergie</option>
+        <option value="genre">Genre</option>
+        <option value="title">Titre</option>
+      </select>
+    </div>
+    <div class="recoref" id="recoRef"></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Morceau</th><th>Match</th><th>BPM</th><th>Ton.</th><th>Genre</th><th>Énergie</th><th>Durée</th><th style="text-align:right">Charger</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <p class="hint" id="libMore"></p>
+    <p class="rules">Le match combine le tempo (moins de 6 % d'écart, sinon le pitch s'entend ; les demi et double tempos comptent), la tonalité sur la roue de Camelot en tenant compte du changement de hauteur dû au calage, le genre et l'énergie. Clique sur un BPM pour le corriger. L'énergie est estimée au premier chargement d'un morceau.</p>
+    <div><button type="button" class="btn quiet" id="clearLib">Vider la bibliothèque</button></div>
+  </section>
 
   <section class="card report" id="report">
     <div class="rep-head">
@@ -478,7 +558,7 @@ function analyze(buf, forced){
 
 /* ---------- Audio ---------- */
 let ac = null, master = null, outChannels = 2;
-const mk = id => ({ id, data: null, buf: null, bufFrom: null, name: '', src: '', bpm: 120, offset: 0, loop: true, playing: false, node: null, anchorT: 0, anchorPos: 0, rate: 1 });
+const mk = id => ({ id, data: null, buf: null, bufFrom: null, name: '', src: '', bpm: 120, offset: 0, cuePos: 0, track: null, loop: true, playing: false, node: null, anchorT: 0, anchorPos: 0, rate: 1 });
 const A = mk('A'), B = mk('B');
 const ctrl = { trimA: .5, trimB: .5, lowA: .5, lowB: .5, faderA: 1, faderB: 0, xf: .5 };
 const DEF = { trimA: .5, trimB: .5, lowA: .5, lowB: .5, faderA: 1, faderB: 0, xf: .5 };
@@ -591,58 +671,420 @@ function renderControl(k){
   }
 }
 
-/* ---------- Pistes ---------- */
-const STYLE_LABEL = { house: 'House', techno: 'Techno', afro: 'Afro' };
-function loadDemos(){
-  stopAll();
-  [A, B].forEach((d, i) => { const sp = STYLES[style][i];
-    d.data = demoData(style, i); d.bufFrom = null; d.custom = false; d.bpm = sp.bpm; d.offset = 0; d.loop = true;
-    d.name = sp.name; d.src = 'Démo intégrée · ' + STYLE_LABEL[style]; if (ac) toBuffer(d); renderDeck(d); });
-}
-function renderDeck(d){ $('track' + d.id).textContent = d.name; $('src' + d.id).textContent = d.src; $('bpm' + d.id).textContent = d.bpm.toFixed(1); }
+/* ---------- Pistes ajoutées depuis une platine ---------- */
 async function loadFile(d, file){
-  if (!file) return; ensureAudio(); stopAll();
-  $('src' + d.id).textContent = 'Analyse du tempo…';
-  try {
-    const ab = await file.arrayBuffer();
-    const buf = await new Promise((res, rej) => { const p = ac.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); });
-    if (buf.duration < 20) throw new Error('court');
-    await new Promise(r => setTimeout(r, 30));
-    const r = analyze(buf), P = 60 / r.bpm;
-    Object.assign(d, { buf, bufFrom: null, data: null, custom: true, bpm: r.bpm, offset: ((r.offset % P) + P) % P, loop: false,
-      name: file.name.replace(/\.[^.]+$/, ''), src: 'Ton morceau · grille de phrase estimée à partir du premier temps' });
-    renderDeck(d);
-  } catch (e){ $('src' + d.id).textContent = "Lecture impossible. Essaie un MP3, WAV ou M4A d'au moins 20 secondes."; }
+  if (!file) return;
+  const t = (await addFiles([file]))[0];
+  if (t) loadTrackToDeck(d, t); else $('src' + d.id).textContent = 'Format non reconnu. Essaie un MP3, WAV ou M4A.';
 }
 
 /* ---------- Transport ---------- */
 const ICON_PLAY = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l10-6.2a.8.8 0 0 0 0-1.4l-10-6.2A.8.8 0 0 0 6 3.8Z"/></svg>';
 const ICON_STOP = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="2"/></svg>';
 let tr = null, lastReport = null, exRep = null;
-function stopAll(){ stopNode(A); stopNode(B); tr = null; A.anchorPos = A.offset; B.anchorPos = B.offset; updatePlayButtons(); }
+function stopAll(){ stopNode(A); stopNode(B); tr = null; A.anchorPos = A.cuePos; B.anchorPos = B.cuePos; updatePlayButtons(); }
 function updatePlayButtons(){
   $('playA').innerHTML = (A.playing ? ICON_STOP + 'Arrêter A' : ICON_PLAY + 'Lancer A');
   $('playB').innerHTML = (B.playing ? ICON_STOP + 'Arrêter B' : ICON_PLAY + 'Lancer B');
 }
 function togglePlay(d){
   ensureAudio(); if (ac.state === 'suspended') ac.resume(); toBuffer(A); toBuffer(B);
-  if (d.playing){ stopNode(d); d.anchorPos = d.offset; onStopped(d); updatePlayButtons(); return; }
-  if (d === A){ A.rate = 1; startNode(A, ac.currentTime + .05, A.offset); }
+  if (!d.buf) return;
+  if (d.playing){ stopNode(d); d.anchorPos = d.cuePos; onStopped(d); updatePlayButtons(); return; }
+  if (d === A){ A.rate = 1; startNode(A, ac.currentTime + .05, A.cuePos); }
   else {
-    B.rate = A.playing ? A.bpm / B.bpm : 1;
+    const bEff = A.playing ? effBpm(B.bpm, A.bpm) : B.bpm;
+    B.rate = A.playing ? A.bpm / bEff : 1;
     if (A.playing){
       const p = 60 / A.bpm, now = ac.currentTime, bA = beatsOf(A); const k = Math.round(bA); let t0, pos;
-      if (k >= bA){ t0 = now + (k - bA) * p; pos = B.offset; }
-      else { t0 = now + .02; pos = B.offset + (bA + .02 / p - k) * (60 / B.bpm); }
+      if (k >= bA){ t0 = now + (k - bA) * p; pos = B.cuePos; }
+      else { t0 = now + .02; pos = B.cuePos + (bA + .02 / p - k) * (60 / bEff); }
       startNode(B, t0, pos);
       tr = { startBeat: k, frames: [], lowBAtStart: ctrl.lowB, done: false, quietSince: null };
-    } else startNode(B, ac.currentTime + .05, B.offset);
+    } else startNode(B, ac.currentTime + .05, B.cuePos);
   }
   updatePlayButtons();
 }
 function onStopped(d){
   if (tr){ if (d === B && !tr.done) tr = null; else if (d === A && !tr.done) finishTransition(); }
   updatePlayButtons();
+}
+
+/* ---------- Tonalités (roue de Camelot) ---------- */
+const PC = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+function parseKey(s){
+  if (!s) return null;
+  s = String(s).trim().replace('♯', '#').replace('♭', 'b');
+  let m = s.match(/^0?(\d{1,2})\s*([AB])$/i);
+  if (m){ const n = +m[1]; return n >= 1 && n <= 12 ? n + m[2].toUpperCase() : null; }
+  m = s.match(/^([A-Ga-g])([#b]?)\s*(m|min|minor|maj|major)?$/);
+  if (!m) return null;
+  let pc = PC[m[1].toUpperCase()] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0); pc = ((pc % 12) + 12) % 12;
+  const minor = !!m[3] && /^m(in(or)?)?$/i.test(m[3]) && m[3] !== 'M';
+  const f = (pc * 7) % 12;
+  return minor ? ((f + 4) % 12 + 1) + 'A' : ((f + 7) % 12 + 1) + 'B';
+}
+function shiftKey(k, n){ if (!k || !n) return k; const num = parseInt(k, 10), l = k.slice(-1); return ((((num - 1 + 7 * n) % 12) + 12) % 12 + 1) + l; }
+function keyRel(a, b){
+  if (!a || !b) return null;
+  const na = parseInt(a, 10), nb = parseInt(b, 10), la = a.slice(-1), lb = b.slice(-1);
+  const d = (((nb - na) % 12) + 12) % 12;
+  if (na === nb && la === lb) return 'same';
+  if (la === lb && (d === 1 || d === 11)) return 'adj';
+  if (na === nb) return 'rel';
+  if (la === lb && d === 2) return 'boost';
+  return 'clash';
+}
+
+/* ---------- Compatibilité entre deux morceaux ---------- */
+function effBpm(bBpm, aBpm){
+  let best = bBpm;
+  for (const m of [2, .5]){ if (Math.abs(Math.log(aBpm / (bBpm * m))) < Math.abs(Math.log(aBpm / best))) best = bBpm * m; }
+  return best;
+}
+const sameGenre = (a, b) => { const x = a.toLowerCase().trim(), y = b.toLowerCase().trim(); return x === y || x.includes(y) || y.includes(x); };
+function match(a, b){
+  const R = []; let st = .5, sk = .5, sg = .5, se = .5, tempoBad = false, played = b.key;
+  if (a.bpm && b.bpm){
+    const be = effBpm(b.bpm, a.bpm), diff = (a.bpm / be - 1) * 100, ad = Math.abs(diff);
+    st = ad <= 1 ? 1 : ad <= 3 ? .85 : ad <= 6 ? .6 : ad <= 10 ? .25 : 0;
+    tempoBad = ad > 6;
+    const half = be !== b.bpm ? (be > b.bpm ? ' (double tempo)' : ' (demi-tempo)') : '';
+    R.push(ad <= .5 ? 'Même tempo' + half : `${fmtBpm(b.bpm)} → ${fmtBpm(a.bpm)} BPM, ${diff > 0 ? '+' : '−'}${ad.toFixed(1).replace('.', ',')} %${half}${tempoBad ? ' : le pitch va s\'entendre' : ''}`);
+    const semis = 12 * Math.log2(a.bpm / be); if (Math.abs(semis) >= .5) played = shiftKey(b.key, Math.round(semis));
+  }
+  const rel = keyRel(a.key, played);
+  if (rel){
+    sk = { same: 1, adj: .9, rel: .8, boost: .5, clash: .1 }[rel];
+    const label = { same: 'Même tonalité', adj: 'Tonalité voisine', rel: 'Relatif majeur/mineur', boost: 'Montée d\'énergie (+2)', clash: 'Tonalités qui frottent' }[rel];
+    R.push(label + (played !== b.key ? ` (${b.key} joué en ${played} après calage)` : ''));
+  }
+  if (a.genre && b.genre){ const s = sameGenre(a.genre, b.genre); sg = s ? 1 : .35; R.push(s ? 'Même genre' : 'Genre différent'); }
+  if (a.energy && b.energy){ const d = b.energy - a.energy; se = d >= 0 && d <= 2 ? 1 : d < 0 && d >= -2 ? .7 : .3; R.push(d > 0 ? 'Plus d\'énergie' : d < 0 ? 'Moins d\'énergie' : 'Même énergie'); }
+  return { score: Math.round((.4 * st + .35 * sk + .15 * sg + .1 * se) * 100), reasons: R, tempoBad, played };
+}
+const fmtBpm = v => (Math.round(v * 10) / 10).toString().replace('.', ',');
+const fmtDur = s => s ? Math.floor(s / 60) + ':' + String(Math.round(s % 60)).padStart(2, '0') : '—';
+
+/* ---------- Stockage local (IndexedDB) ---------- */
+let idb = null;
+function dbOpen(){
+  if (idb) return Promise.resolve(idb);
+  return new Promise((res, rej) => { try {
+    const r = indexedDB.open('coach-bibliotheque', 1);
+    r.onupgradeneeded = () => { const d = r.result; d.createObjectStore('tracks', { keyPath: 'id' }); d.createObjectStore('kv'); };
+    r.onsuccess = () => { idb = r.result; res(idb); }; r.onerror = () => rej(r.error);
+  } catch (e) { rej(e); } });
+}
+function dbReq(store, mode, fn){
+  return dbOpen().then(db => new Promise((res, rej) => { const t = db.transaction(store, mode), s = t.objectStore(store); const q = fn(s); t.oncomplete = () => res(q && 'result' in q ? q.result : undefined); t.onerror = () => rej(t.error); }));
+}
+const dbAll = () => dbReq('tracks', 'readonly', s => s.getAll()).catch(() => []);
+const dbPut = list => dbReq('tracks', 'readwrite', s => { list.forEach(t => { const { avail, ...rec } = t; s.put(rec); }); }).catch(() => {});
+const dbClear = () => dbReq('tracks', 'readwrite', s => s.clear()).catch(() => {});
+const kvGet = k => dbReq('kv', 'readonly', s => s.get(k)).catch(() => null);
+const kvSet = (k, v) => dbReq('kv', 'readwrite', s => s.put(v, k)).catch(() => {});
+
+/* ---------- Bibliothèque ---------- */
+const lib = [], byId = new Map();
+const handles = {}, files = {};
+let dirHandle = null, xmlCount = 0;
+const AUDIO = /\.(mp3|wav|m4a|aac|flac|ogg|aif|aiff)$/i;
+const fileKey = name => name.toLowerCase();
+function upsert(t){ const ex = byId.get(t.id); if (ex){ Object.assign(ex, t); return ex; } lib.push(t); byId.set(t.id, t); return t; }
+const isAvail = t => !!(t.demo || files[t.file] || handles[t.file]);
+
+const DEMO_META = {
+  house: [{ key: '8A', energy: 7 }, { key: '7A', energy: 6 }], techno: [{ key: '9A', energy: 9 }, { key: '5A', energy: 8 }],
+  afro: [{ key: '8A', energy: 6 }, { key: '7A', energy: 5 }], hiphop: [{ key: '7B', energy: 4 }, { key: '5A', energy: 4 }]
+};
+const DEMO_GENRE = { house: 'House', techno: 'Techno', afro: 'Afro House', hiphop: 'Hip-hop' };
+function addDemos(){
+  for (const st of Object.keys(STYLES)) STYLES[st].forEach((sp, i) => {
+    upsert({ id: 'demo:' + st + i, title: sp.name, artist: 'Démo intégrée', genre: DEMO_GENRE[st], bpm: sp.bpm, key: DEMO_META[st][i].key, keyName: '',
+      energy: DEMO_META[st][i].energy, duration: 32 * 60 / sp.bpm, source: 'demo', demo: { style: st, i }, downbeat: 0, cue: null });
+  });
+}
+
+function parseRekordbox(text){
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  if (doc.querySelector('parsererror')) throw new Error('xml');
+  const coll = doc.querySelector('COLLECTION'); if (!coll) throw new Error('collection');
+  const out = [];
+  for (const el of coll.querySelectorAll(':scope > TRACK')){
+    const loc = el.getAttribute('Location') || '';
+    let name = ''; try { name = decodeURIComponent(loc.split('/').pop() || ''); } catch (e) { name = loc.split('/').pop() || ''; }
+    if (!name) continue;
+    const tempo = el.querySelector('TEMPO');
+    let bpm = parseFloat(tempo ? tempo.getAttribute('Bpm') : el.getAttribute('AverageBpm')) || parseFloat(el.getAttribute('AverageBpm')) || null;
+    let downbeat = null;
+    if (tempo && bpm){
+      const P = 60 / bpm, start = parseFloat(tempo.getAttribute('Inizio')) || 0, beat = parseInt(tempo.getAttribute('Battito'), 10) || 1;
+      downbeat = start + ((5 - beat) % 4) * P; while (downbeat - 4 * P >= 0) downbeat -= 4 * P;
+    }
+    let cue = null;
+    const marks = [...el.querySelectorAll('POSITION_MARK')];
+    const hot = marks.find(m => m.getAttribute('Num') === '0'), mem = marks.find(m => m.getAttribute('Num') === '-1');
+    const pick = hot || mem; if (pick) cue = parseFloat(pick.getAttribute('Start'));
+    const tonal = el.getAttribute('Tonality') || '';
+    out.push({ id: 'f:' + fileKey(name), file: fileKey(name), fileName: name,
+      title: el.getAttribute('Name') || name.replace(/\.[^.]+$/, ''), artist: el.getAttribute('Artist') || '',
+      genre: el.getAttribute('Genre') || '', bpm: bpm ? Math.round(bpm * 100) / 100 : null, key: parseKey(tonal), keyName: tonal,
+      duration: parseFloat(el.getAttribute('TotalTime')) || null, downbeat, cue: isFinite(cue) ? cue : null, source: 'rekordbox' });
+  }
+  return out;
+}
+
+async function readTags(file){
+  const tags = {};
+  const base = file.name.replace(/\.[^.]+$/, ''), parts = base.split(' - ');
+  if (parts.length >= 2){ tags.artist = parts[0].trim(); tags.title = parts.slice(1).join(' - ').trim(); } else tags.title = base;
+  if (!/\.mp3$/i.test(file.name)) return tags;
+  try {
+    const h = new Uint8Array(await file.slice(0, 10).arrayBuffer());
+    if (h[0] !== 0x49 || h[1] !== 0x44 || h[2] !== 0x33) return tags;
+    const ver = h[3]; if (ver < 3) return tags;
+    const size = (h[6] & 127) << 21 | (h[7] & 127) << 14 | (h[8] & 127) << 7 | (h[9] & 127);
+    const b = new Uint8Array(await file.slice(10, 10 + Math.min(size, 1 << 20)).arrayBuffer());
+    let p = 0;
+    if (h[5] & 0x40) p = ver === 4 ? ((b[0] & 127) << 21 | (b[1] & 127) << 14 | (b[2] & 127) << 7 | (b[3] & 127)) : ((b[0] << 24 | b[1] << 16 | b[2] << 8 | b[3]) + 4);
+    const dec = d => { const e = d[0], x = d.subarray(1); let s;
+      if (e === 0) s = String.fromCharCode(...x.subarray(0, 300));
+      else if (e === 1) s = new TextDecoder(x[0] === 0xFE ? 'utf-16be' : 'utf-16le').decode(x.subarray(2));
+      else if (e === 2) s = new TextDecoder('utf-16be').decode(x); else s = new TextDecoder('utf-8').decode(x);
+      return s.replace(/\u0000+$/g, '').split('\u0000')[0].trim(); };
+    const want = { TIT2: 'title', TPE1: 'artist', TBPM: 'bpm', TKEY: 'key', TCON: 'genre' };
+    while (p + 10 <= b.length){
+      const id = String.fromCharCode(b[p], b[p + 1], b[p + 2], b[p + 3]);
+      if (!/^[A-Z0-9]{4}$/.test(id)) break;
+      const fs = ver === 4 ? ((b[p + 4] & 127) << 21 | (b[p + 5] & 127) << 14 | (b[p + 6] & 127) << 7 | (b[p + 7] & 127)) : (b[p + 4] << 24 | b[p + 5] << 16 | b[p + 6] << 8 | b[p + 7]);
+      if (fs <= 0 || p + 10 + fs > b.length) break;
+      if (want[id]){ const v = dec(b.subarray(p + 10, p + 10 + fs)); if (v) tags[want[id]] = v; }
+      p += 10 + fs;
+    }
+  } catch (e) {}
+  if (tags.genre) tags.genre = tags.genre.replace(/^\(\d+\)/, '').trim();
+  return tags;
+}
+async function trackFromFile(file){
+  const k = fileKey(file.name), ex = byId.get('f:' + k);
+  if (ex) return ex;
+  const t = await readTags(file);
+  const bpm = parseFloat(String(t.bpm || '').replace(',', '.'));
+  return upsert({ id: 'f:' + k, file: k, fileName: file.name, title: t.title || file.name, artist: t.artist || '', genre: t.genre || '',
+    bpm: bpm > 40 && bpm < 250 ? bpm : null, key: parseKey(t.key), keyName: t.key || '', duration: null, downbeat: null, cue: null, energy: null,
+    source: bpm || t.key ? 'tags' : 'fichier' });
+}
+async function addFiles(list){
+  const arr = [...list].filter(f => AUDIO.test(f.name)); const touched = [];
+  for (let i = 0; i < arr.length; i++){
+    files[fileKey(arr[i].name)] = arr[i];
+    touched.push(await trackFromFile(arr[i]));
+    if (i % 25 === 0) setLibStatus(`Lecture des fichiers… ${i + 1} sur ${arr.length}`);
+  }
+  await dbPut(touched); refreshGenres(); renderLib(); setLibStatus();
+  return touched;
+}
+async function scanDir(dir){
+  const found = [];
+  const walk = async (d, depth) => { if (depth > 8) return; for await (const [name, h] of d.entries()){
+    if (h.kind === 'directory') await walk(h, depth + 1); else if (AUDIO.test(name)){ handles[fileKey(name)] = h; found.push([name, h]); if (found.length % 200 === 0) setLibStatus(`Recherche des morceaux… ${found.length} fichiers`); } } };
+  setLibStatus('Recherche des morceaux…');
+  await walk(dir, 0);
+  const touched = [];
+  for (let i = 0; i < found.length; i++){
+    const [name, h] = found[i];
+    if (!byId.get('f:' + fileKey(name))){ try { touched.push(await trackFromFile(await h.getFile())); } catch (e) {} }
+    if (i % 50 === 0) setLibStatus(`Lecture des étiquettes… ${i + 1} sur ${found.length}`);
+  }
+  await dbPut(touched); $('reconnectBtn').hidden = true; refreshGenres(); renderLib(); setLibStatus();
+}
+async function getFile(t){
+  if (files[t.file]) return files[t.file];
+  if (handles[t.file]){ try { return await handles[t.file].getFile(); } catch (e) { return null; } }
+  return null;
+}
+function estimateEnergy(buf){
+  const c = buf.getChannelData(0); let s = 0, n = 0;
+  for (let i = 0; i < c.length; i += 97){ s += c[i] * c[i]; n++; }
+  const db = 10 * Math.log10(s / n + 1e-9);
+  return Math.max(1, Math.min(10, Math.round(1 + (db + 22) / 14 * 9)));
+}
+
+/* ---------- Interface de la bibliothèque ---------- */
+function setLibStatus(msg){
+  if (msg){ $('libStatus').textContent = msg; return; }
+  const user = lib.filter(t => !t.demo), av = user.filter(isAvail).length;
+  let s = user.length ? `${user.length} morceau${user.length > 1 ? 'x' : ''} · ${av} fichier${av > 1 ? 's' : ''} disponible${av > 1 ? 's' : ''} pour jouer` : 'Seulement les démos pour l\'instant. Importe ta collection rekordbox pour retrouver tes morceaux.';
+  if (user.length && av < user.length) s += ' · choisis ton dossier musique pour relier les autres';
+  $('libStatus').textContent = s;
+}
+function refreshGenres(){
+  const sel = $('genre'), cur = sel.value, gs = [...new Set(lib.map(t => t.genre).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+  sel.innerHTML = ''; const o = document.createElement('option'); o.value = ''; o.textContent = 'Tous les genres'; sel.appendChild(o);
+  for (const g of gs){ const x = document.createElement('option'); x.value = g; x.textContent = g; sel.appendChild(x); }
+  sel.value = gs.includes(cur) ? cur : '';
+}
+let editingId = null;
+function renderLib(){
+  const q = $('q').value.trim().toLowerCase(), g = $('genre').value, sort = $('sort').value, ref = A.track;
+  $('sort').querySelector('option[value="reco"]').disabled = !ref;
+  const mode = sort === 'reco' && ref ? 'reco' : sort === 'reco' ? 'bpm' : sort;
+  $('recoRef').innerHTML = '';
+  if (ref){
+    const s = document.createElement('span');
+    s.textContent = mode === 'reco' ? `Classement des enchaînements après « ${ref.title} » (A) : ${fmtBpm(ref.bpm || 0)} BPM${ref.key ? ' · ' + ref.key : ''}${ref.genre ? ' · ' + ref.genre : ''}` : `Compatibilité calculée avec « ${ref.title} », sur la platine A`;
+    $('recoRef').appendChild(s);
+  }
+  let rows = lib.filter(t => (!g || t.genre === g) && (!q || (t.title + ' ' + t.artist + ' ' + t.genre).toLowerCase().includes(q)))
+    .map(t => ({ t, m: ref && t !== ref ? match(ref, t) : null }));
+  const cmp = {
+    reco: (a, b) => (b.m ? b.m.score : -1) - (a.m ? a.m.score : -1) || (isAvail(b.t) - isAvail(a.t)),
+    bpm: (a, b) => (a.t.bpm || 999) - (b.t.bpm || 999), key: (a, b) => (parseInt(a.t.key, 10) || 99) - (parseInt(b.t.key, 10) || 99) || String(a.t.key).localeCompare(String(b.t.key)),
+    title: (a, b) => a.t.title.localeCompare(b.t.title, 'fr'), energy: (a, b) => (b.t.energy || 0) - (a.t.energy || 0), genre: (a, b) => (a.t.genre || '~').localeCompare(b.t.genre || '~', 'fr')
+  }[mode];
+  rows.sort(cmp);
+  if (mode === 'reco'){ const i = rows.findIndex(r => r.t === ref); if (i > 0) rows.unshift(rows.splice(i, 1)[0]); }
+  const LIMIT = 150, body = $('rows'), frag = document.createDocumentFragment();
+  for (const { t, m } of rows.slice(0, LIMIT)){
+    const tr = document.createElement('tr');
+    if (A.track === t) tr.classList.add('on-a'); if (B.track === t) tr.classList.add('on-b');
+    if (!isAvail(t)) tr.classList.add('missing');
+    const td = () => { const c = document.createElement('td'); tr.appendChild(c); return c; };
+    const c1 = td(); c1.className = 'tt';
+    const nm = document.createElement('strong'); nm.textContent = t.title; c1.appendChild(nm);
+    const sub = document.createElement('span'); sub.className = 'sub';
+    sub.textContent = (t.artist || '') + (isAvail(t) ? '' : (t.artist ? ' · ' : '') + 'fichier non relié');
+    c1.appendChild(sub);
+    if (m && m.reasons.length){ const r = document.createElement('span'); r.className = 'why'; r.textContent = m.reasons.join(' · '); c1.appendChild(r); }
+    const c2 = td();
+    if (m){ const p = document.createElement('span'); p.className = 'score ' + (m.score >= 75 ? 'ok' : m.score >= 50 ? 'mid' : 'bad'); p.textContent = m.score; c2.appendChild(p); }
+    else if (A.track === t){ const p = document.createElement('span'); p.className = 'score ref'; p.textContent = 'Sur A'; c2.appendChild(p); }
+    const c3 = td(); c3.className = 'n';
+    if (editingId === t.id){
+      const inp = document.createElement('input'); inp.type = 'number'; inp.step = '0.01'; inp.min = '40'; inp.max = '250'; inp.value = t.bpm || ''; inp.className = 'bpmin'; inp.setAttribute('aria-label', 'Tempo de ' + t.title);
+      const done = () => { const v = parseFloat(inp.value); if (v >= 40 && v <= 250 && v !== t.bpm){ t.bpm = Math.round(v * 100) / 100; t.downbeat = null; dbPut([t]); } editingId = null; renderLib(); };
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') done(); if (e.key === 'Escape'){ editingId = null; renderLib(); } });
+      inp.addEventListener('blur', done); c3.appendChild(inp); setTimeout(() => inp.focus(), 0);
+    } else {
+      const bb = document.createElement('button'); bb.type = 'button'; bb.className = 'cellbtn'; bb.title = 'Corriger le tempo'; bb.textContent = t.bpm ? fmtBpm(t.bpm) : '?';
+      if (t.demo) bb.disabled = true; bb.addEventListener('click', () => { editingId = t.id; renderLib(); }); c3.appendChild(bb);
+    }
+    const c4 = td(); c4.className = 'n'; c4.textContent = t.key || '—'; if (t.keyName) c4.title = t.keyName;
+    if (m && m.played && m.played !== t.key){ const s = document.createElement('span'); s.className = 'sub'; s.textContent = '→ ' + m.played; c4.appendChild(s); }
+    const c5 = td(); c5.textContent = t.genre || '—';
+    const c6 = td(); c6.className = 'n';
+    if (t.energy){ const e = document.createElement('span'); e.className = 'energy'; e.style.setProperty('--e', t.energy / 10); e.title = 'Énergie estimée ' + t.energy + '/10'; c6.appendChild(e); } else c6.textContent = '—';
+    const c7 = td(); c7.className = 'n'; c7.textContent = fmtDur(t.duration);
+    const c8 = td(); c8.className = 'acts';
+    for (const d of [A, B]){ const b = document.createElement('button'); b.type = 'button'; b.className = 'load load' + d.id; b.textContent = d.id;
+      b.title = 'Charger sur la platine ' + d.id; b.setAttribute('aria-label', 'Charger « ' + t.title + ' » sur la platine ' + d.id);
+      b.addEventListener('click', () => loadTrackToDeck(d, t)); c8.appendChild(b); }
+    frag.appendChild(tr);
+  }
+  body.innerHTML = ''; body.appendChild(frag);
+  $('libMore').textContent = rows.length > LIMIT ? `${rows.length - LIMIT} autres morceaux : affine la recherche pour les voir.` : rows.length ? '' : 'Aucun morceau ne correspond à ta recherche.';
+}
+
+async function loadTrackToDeck(d, t){
+  ensureAudio(); if (ac.state !== 'running') ac.resume();
+  if (d === A) stopAll(); else { stopNode(B); tr = null; }
+  if (t.demo){
+    const sp = STYLES[t.demo.style][t.demo.i];
+    d.data = demoData(t.demo.style, t.demo.i); d.bufFrom = null; toBuffer(d);
+    Object.assign(d, { bpm: sp.bpm, offset: 0, cuePos: 0, loop: true, track: t });
+    d.anchorPos = d.cuePos; renderDeck(d); renderLib(); updatePlayButtons(); return;
+  }
+  const f = await getFile(t);
+  if (!f){ $('src' + d.id).textContent = 'Fichier non relié : choisis ton dossier musique dans la bibliothèque.'; return; }
+  $('src' + d.id).textContent = 'Chargement de « ' + t.title + ' »…';
+  try {
+    const ab = await f.arrayBuffer();
+    const buf = await new Promise((res, rej) => { const p = ac.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); });
+    let bpm = t.bpm, off = t.downbeat;
+    if (!bpm || off == null){
+      $('src' + d.id).textContent = 'Analyse du tempo…'; await new Promise(r => setTimeout(r, 30));
+      const r = analyze(buf, bpm || undefined); if (!bpm) bpm = r.bpm; if (off == null){ const P = 60 / bpm; off = ((r.offset % P) + P) % P; }
+      if (!t.bpm) t.bpm = bpm;
+    }
+    const P = 60 / bpm;
+    let cue = off;
+    if (t.cue != null && t.cue >= 0) cue = Math.max(off, off + Math.round((t.cue - off) / P) * P);
+    if (!t.duration) t.duration = buf.duration;
+    if (!t.energy) t.energy = estimateEnergy(buf);
+    dbPut([t]);
+    d.buf = buf; d.data = null; d.bufFrom = null;
+    Object.assign(d, { bpm, offset: off, cuePos: cue, loop: false, track: t });
+    d.anchorPos = d.cuePos; renderDeck(d); renderLib(); updatePlayButtons();
+  } catch (e){ $('src' + d.id).textContent = 'Lecture impossible de ce fichier. Essaie un MP3, WAV ou M4A.'; }
+}
+function renderDeck(d){
+  const t = d.track; if (!t) return;
+  $('track' + d.id).textContent = t.title;
+  const srcLabel = { demo: 'Démo intégrée', rekordbox: 'Grille rekordbox', tags: 'Infos du fichier', fichier: 'Tempo détecté' }[t.source] || '';
+  $('src' + d.id).textContent = [t.artist && !t.demo ? t.artist : '', t.genre, srcLabel].filter(Boolean).join(' · ');
+  $('bpm' + d.id).textContent = fmtBpm(d.bpm);
+  renderKeys();
+}
+function renderKeys(){
+  $('keyA').textContent = A.track && A.track.key ? A.track.key : '—';
+  let kb = B.track && B.track.key ? B.track.key : null;
+  if (kb && A.track && A.track.bpm){ const be = effBpm(B.bpm, A.bpm), s = 12 * Math.log2(A.bpm / be); if (Math.abs(s) >= .5) kb = shiftKey(kb, Math.round(s)); }
+  $('keyB').textContent = kb || '—';
+  const rel = A.track && kb ? keyRel(A.track.key, kb) : null;
+  $('keyHintB').textContent = rel ? { same: 'même tonalité que A', adj: 'voisine de A', rel: 'relative de A', boost: 'montée d\'énergie', clash: 'frotte avec A' }[rel] : 'après calage sur A';
+}
+
+async function initLibrary(){
+  addDemos();
+  const saved = await dbAll();
+  for (const t of saved) upsert(t);
+  try { dirHandle = await kvGet('dir'); } catch (e) { dirHandle = null; }
+  if (dirHandle && dirHandle.queryPermission){
+    let st = 'prompt'; try { st = await dirHandle.queryPermission({ mode: 'read' }); } catch (e) {}
+    if (st === 'granted') scanDir(dirHandle).catch(() => {});
+    else { const b = $('reconnectBtn'); b.textContent = 'Reconnecter « ' + dirHandle.name + ' »'; b.hidden = false; }
+  }
+  refreshGenres();
+  await loadTrackToDeck(A, byId.get('demo:house0'));
+  await loadTrackToDeck(B, byId.get('demo:house1'));
+  setLibStatus();
+}
+function bindLibrary(){
+  $('xmlInput').addEventListener('change', async e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    setLibStatus('Lecture de la collection rekordbox…');
+    try {
+      const list = parseRekordbox(await f.text());
+      list.forEach(t => { const ex = byId.get(t.id); if (ex){ ['energy'].forEach(k => { if (ex[k] != null) t[k] = ex[k]; }); } upsert(t); });
+      xmlCount = list.length; await dbPut(list); refreshGenres(); renderLib(); setLibStatus();
+      setLibStatus(`${list.length} morceaux importés depuis rekordbox, avec leurs BPM, tonalités et grilles. Choisis maintenant ton dossier musique pour pouvoir les jouer.`);
+    } catch (err){ setLibStatus('Ce fichier n\'est pas une collection rekordbox. Dans rekordbox : Fichier, puis « Exporter la collection au format xml ».'); }
+  });
+  $('folderBtn').addEventListener('click', async () => {
+    if (window.showDirectoryPicker){
+      try { const h = await window.showDirectoryPicker({ id: 'musique', mode: 'read' }); dirHandle = h; kvSet('dir', h); await scanDir(h); return; }
+      catch (e){ if (e && e.name === 'AbortError') return; }
+    }
+    $('dirInput').click();
+  });
+  $('dirInput').addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+  $('reconnectBtn').addEventListener('click', async () => {
+    if (!dirHandle) return; let st = 'denied';
+    try { st = await dirHandle.requestPermission({ mode: 'read' }); } catch (e) {}
+    if (st === 'granted') scanDir(dirHandle); else setLibStatus('Accès refusé. Choisis à nouveau ton dossier musique.');
+  });
+  let qt = null;
+  $('q').addEventListener('input', () => { clearTimeout(qt); qt = setTimeout(renderLib, 120); });
+  $('genre').addEventListener('change', renderLib);
+  $('sort').addEventListener('change', renderLib);
+  const clr = $('clearLib'); let armed = null;
+  clr.addEventListener('click', async () => {
+    if (!armed){ clr.textContent = 'Confirmer : tout effacer ?'; armed = setTimeout(() => { armed = null; clr.textContent = 'Vider la bibliothèque'; }, 4000); return; }
+    clearTimeout(armed); armed = null; clr.textContent = 'Vider la bibliothèque';
+    for (let i = lib.length - 1; i >= 0; i--) if (!lib[i].demo){ byId.delete(lib[i].id); lib.splice(i, 1); }
+    await dbClear(); kvSet('dir', null); dirHandle = null; $('reconnectBtn').hidden = true; refreshGenres(); renderLib(); setLibStatus();
+  });
 }
 
 /* ---------- Analyse en direct ---------- */
@@ -675,12 +1117,10 @@ function frame(){
     $('phraseSub').textContent = 'Mesure ' + (Math.floor(inPh / 4) + 1) + ' sur 8 · temps ' + (inPh + 1) + ' sur 32';
     $('cdNum').textContent = left; $('cdLab').textContent = left === 1 ? 'temps avant la prochaine phrase' : 'temps avant la prochaine phrase';
     $('countBox').classList.toggle('soon', left <= 4);
-    $('posA').textContent = String(bi);
-    $('syncB').textContent = A.bpm.toFixed(1);
   } else {
     cells.forEach(c => c.classList.remove('now', 'past'));
     $('phraseTitle').textContent = 'Platine A à l\'arrêt'; $('phraseSub').textContent = 'Lance A pour suivre la phrase de 32 temps';
-    $('cdNum').textContent = '—'; $('countBox').classList.remove('soon'); $('posA').textContent = '—';
+    $('cdNum').textContent = '—'; $('countBox').classList.remove('soon');
   }
 
   if (tr && !tr.done && A.playing && B.playing){
@@ -916,8 +1356,7 @@ $('playB').addEventListener('click', () => togglePlay(B));
 $('learnBtn').addEventListener('click', startLearn);
 $('learnSkip').addEventListener('click', () => learning && nextLearn());
 $('learnStop').addEventListener('click', endLearn);
-document.querySelectorAll('#styles button').forEach(b => b.addEventListener('click', () => {
-  style = b.dataset.style; document.querySelectorAll('#styles button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); loadDemos(); }));
+bindLibrary();
 [A, B].forEach(d => {
   $('file' + d.id).addEventListener('change', e => { loadFile(d, e.target.files[0]); e.target.value = ''; });
   const el = $('deck' + d.id);
@@ -933,7 +1372,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
 
 applyCtrl();
 updatePlayButtons();
-loadDemos();
+initLibrary().then(() => renderLib());
 exRep = exampleReport();
 showReport(exRep, true);
 initMidi();
