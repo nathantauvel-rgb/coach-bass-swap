@@ -60,9 +60,9 @@ a.chip{color:var(--fg);text-decoration:none}
 a.chip:hover{border-color:var(--muted)}
 
 /* Carte des niveaux */
-.map{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding-top:4px}
-.map::before{content:"";position:absolute;left:7.14%;right:7.14%;top:31px;height:4px;border-radius:2px;background:var(--line)}
-.map .prog{position:absolute;left:7.14%;top:31px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--a),var(--xp));transition:width .6s}
+.map{position:relative;display:grid;grid-template-columns:repeat(var(--n,7),minmax(0,1fr));gap:6px;padding-top:4px}
+.map::before{content:"";position:absolute;left:calc(50% / var(--n,7));right:calc(50% / var(--n,7));top:31px;height:4px;border-radius:2px;background:var(--line)}
+.map .prog{position:absolute;left:calc(50% / var(--n,7));top:31px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--a),var(--xp));transition:width .6s}
 .node{position:relative;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;text-align:center;min-width:0}
 .node .dot{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:26px;background:var(--panel);border:3px solid var(--line);transition:transform .15s}
 .node:hover .dot{transform:translateY(-2px)}
@@ -305,6 +305,9 @@ a.chip:hover{border-color:var(--muted)}
         <div class="chan chanA" id="wCfxA"><div class="knob" data-k="cfxA" aria-label="Filtre de A"></div><span class="cl">A</span></div>
       </div></div>
       <div class="group" id="gEcho"><span class="gl">Effet</span><button type="button" class="echo" id="echoBtn" aria-pressed="false">ECHO</button></div>
+      <div class="group" id="gMid"><span class="gl">Voix · MID</span><div class="pair">
+        <div class="chan chanA" id="wMidA"><div class="knob" data-k="midA" aria-label="Médiums de A"></div><span class="cl">A</span></div>
+      </div></div>
       <div class="group" id="gLow"><span class="gl">Basses · LOW</span><div class="pair">
         <div class="chan chanA" id="wLowA"><div class="knob" data-k="lowA" aria-label="Basses de A"></div><span class="cl">A</span></div>
         <div class="chan chanB" id="wLowB"><div class="knob" data-k="lowB" aria-label="Basses de B"></div><span class="cl">B</span></div>
@@ -385,6 +388,13 @@ function makeTrack(beats, seed, play){
       for (let n = 0; n < len; n++){ const t = n / SR; ph += TAU * f * (1 + .6 * Math.exp(-t * 40)) / SR; put(s + n, Math.sin(ph) * Math.exp(-t * 14) * g, pan); } },
     log(b, m, g = .5){ const s = at(b), len = Math.round(.5 * SR), f = n2f(m); let ph = 0;
       for (let n = 0; n < len; n++){ const t = n / SR; ph += TAU * f * (1 + .25 * Math.exp(-t * 25)) / SR; put(s + n, Math.tanh(Math.sin(ph) * 2.5) * Math.exp(-t * 6) * Math.min(1, t / .003) * g, 0); } },
+    voice(b, m, dur, g = .5, vowel = 0){ const s = at(b), len = at(dur), f0 = n2f(m); let ph = 0;
+      const F = vowel ? [[450, 1], [800, .55], [2830, .2]] : [[730, 1], [1090, .6], [2440, .22]];
+      const st = F.map(([fc]) => { const w = TAU * fc / SR, r = Math.exp(-Math.PI * 110 / SR); return { a1: -2 * r * Math.cos(w), a2: r * r, k: (1 - r) * 2, y1: 0, y2: 0 }; });
+      for (let n = 0; n < len; n++){ const t = n / SR, vib = 1 + .013 * Math.sin(TAU * 5.4 * t) * Math.min(1, t / .3); ph += f0 * vib / SR; if (ph >= 1) ph -= 1;
+        const x = 2 * ph - 1; let y = 0;
+        for (let j = 0; j < F.length; j++){ const q = st[j], o = x - q.a1 * q.y1 - q.a2 * q.y2; q.y2 = q.y1; q.y1 = o; y += o * q.k * F[j][1]; }
+        put(s + n, y * Math.min(1, t / .05) * Math.min(1, (len - n) / (.09 * SR)) * g, 0); } },
     pluck(b, m, g = .1, pan = 0){ const s = at(b), len = Math.round(.3 * SR), f = n2f(m); let ph = 0, y = 0;
       for (let n = 0; n < len; n++){ const t = n / SR; ph += f / SR; if (ph >= 1) ph -= 1;
         const a = 1 - Math.exp(-TAU * (400 + 3000 * Math.exp(-t * 25)) / SR); y += a * ((2 * ph - 1) - y); put(s + n, y * Math.exp(-t * 11) * Math.min(1, t / .002) * g, pan); } }
@@ -445,11 +455,44 @@ const playBF = withBass => I => { const roots = [38, 36, 41, 40];
   I.crash(64, .22); };
 const STYLE_DEFS = { house: { label: 'House', bpm: 124, A: playA, B: playB, seed: 11 }, techno: { label: 'Techno', bpm: 130, A: playAT, B: playBT, seed: 31 }, afro: { label: 'Afro house', bpm: 120, A: playAF, B: playBF, seed: 47 } };
 const trackCache = {};
+function arrange(I, secs, roots, o = {}){
+  const has = (b, f) => secs.some(([x, y, fl]) => b >= x && b < y && fl.includes(f)), total = Math.max(...secs.map(x => x[1]));
+  for (let b = 0; b < total; b++){ const r = roots[Math.floor(b / 4) % 4];
+    if (has(b, 'k')) I.kick(b);
+    if (has(b, 'h')){ I.hat(b + .5, .18, 14); I.hat(b + .25, .05, 70, .3); I.hat(b + .75, .05, 70, -.3); }
+    if (has(b, 'b')) I.bass(b + .5, .35, n2f(r + (o.bassOct ?? 12)), .55, 420);
+    if (has(b, 'cl') && b % 2 === 1) I.clap(b, .26);
+    if (has(b, 'c') && b % 4 === 0){ const c = r + 24; I.stab(b + 1.5, [c, c + 3, c + 7], .1, -.2); I.stab(b + 3.75, [c, c + 3, c + 7], .08, .2); }
+    if (has(b, 'pad') && b % 4 === 0) I.pad(b, [r + 24, r + 27, r + 31], 4, .06);
+    if (has(b, 'v') && b % 8 === 0) [[0, 0, 1.4], [2, 3, .9], [3, 5, 1.4], [5, 3, 2.2]].forEach(([t, m, d], j) => I.voice(b + t, r + (o.voice ?? 36) + m, d, .19, j % 2));
+  }
+  if (o.end){ I.crash(o.end, .22); I.kick(o.end); }
+}
+const ch3Cache = {};
+let waveTk = null;
+function envOf(t){
+  const c = t.L, q = Math.round(P * SR / 4), n = Math.floor(c.length / q), full = new Float32Array(n), low = new Float32Array(n), a = 1 - Math.exp(-2 * Math.PI * 150 / SR);
+  let y = 0, mf = 1e-9, ml = 1e-9;
+  for (let i = 0; i < n; i++){ let s1 = 0, s2 = 0; for (let j = i * q; j < (i + 1) * q; j++){ const x = c[j]; y += a * (x - y); s1 += x * x; s2 += y * y; }
+    full[i] = Math.sqrt(s1 / q); low[i] = Math.sqrt(s2 / q); mf = Math.max(mf, full[i]); ml = Math.max(ml, low[i]); }
+  for (let i = 0; i < n; i++){ full[i] /= mf; low[i] /= ml; }
+  return { full, low };
+}
+function prepareCh3(l){
+  BPM = 124; P = 60 / BPM;
+  const key = JSON.stringify([l.A, l.B]);
+  if (!ch3Cache[key]){
+    const A = makeTrack(l.aEnd + 4, 11, I => arrange(I, l.A, [33, 33, 36, 31], { end: l.aEnd }));
+    const B = makeTrack(l.B[l.B.length - 1][1] + 2, 23, I => arrange(I, l.B, [40, 40, 43, 38], { bassOct: 0, voice: 24 }));
+    ch3Cache[key] = { A, B, envA: envOf(A), envB: envOf(B) };
+  }
+  return ch3Cache[key];
+}
 
 /* ---------- Audio ---------- */
 let ac = null, master = null, tracks = null, outChannels = 2;
 const deck = { A: { node: null, gain: null }, B: { node: null, gain: null } };
-const ctrl = { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5 };
+const ctrl = { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5, midA: .5, midB: .5 };
 const db2g = db => Math.pow(10, db / 20);
 const lowDb = v => v <= .5 ? -40 + 80 * v : (v - .5) * 12;
 const cfxText = v => Math.abs(v - .5) < .03 ? 'neutre' : v > .5 ? 'coupe-bas ' + Math.round((v - .5) * 200) + ' %' : 'coupe-haut ' + Math.round((.5 - v) * 200) + ' %';
@@ -469,15 +512,16 @@ function ensureAudio(){
   } catch (e){ try { lim.disconnect(); } catch (_) {} lim.connect(dest); }
   for (const k of ['A', 'B']){ const d = deck[k];
     d.eq = ac.createBiquadFilter(); d.eq.type = 'lowshelf'; d.eq.frequency.value = 220; d.gain = ac.createGain();
+    d.mid = ac.createBiquadFilter(); d.mid.type = 'peaking'; d.mid.frequency.value = 1000; d.mid.Q.value = .7;
     if (k === 'A'){
       // Filtre CFX (coupe-bas à droite, coupe-haut à gauche) et écho envoyé après le fader : l'écho résonne encore quand le fader est coupé
       d.hp = ac.createBiquadFilter(); d.hp.type = 'highpass'; d.hp.frequency.value = 10; d.hp.Q.value = 1.1;
       d.lp = ac.createBiquadFilter(); d.lp.type = 'lowpass'; d.lp.frequency.value = 22000; d.lp.Q.value = 1.1;
-      d.eq.connect(d.hp); d.hp.connect(d.lp); d.lp.connect(d.gain);
+      d.eq.connect(d.mid); d.mid.connect(d.hp); d.hp.connect(d.lp); d.lp.connect(d.gain);
       d.echoIn = ac.createGain(); d.echoIn.gain.value = 0; d.delay = ac.createDelay(4); d.delay.delayTime.value = P * .75;
       d.fb = ac.createGain(); d.fb.gain.value = .58; d.wet = ac.createGain(); d.wet.gain.value = .85;
       d.gain.connect(d.echoIn); d.echoIn.connect(d.delay); d.delay.connect(d.fb); d.fb.connect(d.delay); d.delay.connect(d.wet); d.wet.connect(master);
-    } else d.eq.connect(d.gain);
+    } else { d.eq.connect(d.mid); d.mid.connect(d.gain); }
     d.gain.connect(master); }
   applyCtrl();
 }
@@ -491,14 +535,15 @@ function applyCtrl(){
   Object.keys(ctrl).forEach(renderControl);
   if (!ac) return; const t = ac.currentTime;
   deck.A.eq.gain.setTargetAtTime(lowDb(ctrl.lowA), t, .01); deck.B.eq.gain.setTargetAtTime(lowDb(ctrl.lowB), t, .01);
+  deck.A.mid.gain.setTargetAtTime(lowDb(ctrl.midA), t, .01); deck.B.mid.gain.setTargetAtTime(lowDb(ctrl.midB), t, .01);
   deck.A.gain.gain.setTargetAtTime(ctrl.faderA * ctrl.faderA, t, .015); deck.B.gain.gain.setTargetAtTime(ctrl.faderB * ctrl.faderB, t, .015);
   const c = ctrl.cfxA, hpF = c > .52 ? 20 * Math.pow(400, (c - .5) * 2) : 10, lpF = c < .48 ? 20000 * Math.pow(1 / 150, (.5 - c) * 2) : 22000;
   deck.A.hp.frequency.setTargetAtTime(hpF, t, .02); deck.A.lp.frequency.setTargetAtTime(lpF, t, .02);
 }
-function play(k, buf, when, pos, loop){
+function play(k, buf, when, pos, loop, ls = 64, le = 128){
   const d = deck[k]; stop(k);
   const n = ac.createBufferSource(); n.buffer = buf;
-  if (loop){ n.loop = true; n.loopStart = 64 * P; n.loopEnd = 128 * P; }
+  if (loop){ n.loop = true; n.loopStart = ls * P; n.loopEnd = le * P; }
   n.connect(d.eq); n.start(when, pos); d.node = n;
 }
 function stop(k){ const d = deck[k]; if (d.node){ try { d.node.stop(); } catch (e) {} d.node.disconnect(); d.node = null; } }
@@ -540,7 +585,7 @@ function renderControl(k){
 
 
 /* ---------- Niveaux ---------- */
-const LESSONS = [
+const BASE_LESSONS = [
   { title: 'Le bon moment', goal: 'Lance B pile quand A entre dans son outro.',
     how: 'Le geste arrive sur la piste : appuie sur LANCE B (ou PLAY droite sur la FLX4) quand il touche la ligne. Tout le reste est automatique.',
     show: ['gPlay'], bBass: false, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: [] },
@@ -563,7 +608,37 @@ const LESSONS = [
     how: 'B est calé sur son drop. Quand les losanges touchent la ligne, lance B (PLAY droite ou espace) et baisse d\'un coup le fader de A, dans le même geste.',
     show: ['gPlay', 'gFad'], bBass: false, autoLaunch: false, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], start: 40, end: 96 }
 ];
-LESSONS.forEach(l => { l.kind = l.kind || 'swap'; l.init.cfxA = l.init.cfxA ?? .5; l.launchBeat = l.launchBeat || 32; l.bCue = l.bCue || 0; l.start = l.start || 16; l.end = l.end || 116; l.btn = l.btn || []; });
+BASE_LESSONS.forEach(l => { l.kind = l.kind || 'swap'; l.init.cfxA = l.init.cfxA ?? .5; l.launchBeat = l.launchBeat || 32; l.bCue = l.bCue || 0; l.start = l.start || 16; l.end = l.end || 116; l.btn = l.btn || []; });
+['moment', 'fader', 'swap', 'full'].forEach((k, i) => { BASE_LESSONS[i].kind = k; });
+const FULL = ['k', 'b', 'h', 'c', 'cl'], CH3_INIT = { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5, midA: .5, midB: .5 };
+const CH3_LESSONS = [
+  { kind: 'shortintro', wave: true, title: 'L\'intro courte', goal: 'Lance B pour que son drop tombe pile quand A s\'arrête.',
+    how: 'Ici, B n\'a que 16 temps d\'intro. Sur la piste, la forme d\'onde bleue pâle montre où tomberait B si tu le lançais maintenant : lance-le quand son drop (là où l\'onde grossit) s\'aligne sur la fin de A.',
+    show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 0, end: 72,
+    A: [[0, 16, FULL], [16, 48, ['k', 'b', 'h']]], aEnd: 48, B: [[0, 16, ['k', 'h']], [16, 80, FULL]], bIntro: 16, bLoop: [16, 80], launchBeat: 32,
+    targets: [[32, 'LANCE B', 'B']], caps: [[16, 'A entre dans son outro'], [32, 'B lancé : 16 temps avant la fin de A'], [48, 'Drop de B pile à la fin de A']] },
+  { kind: 'break', wave: true, title: 'Le piège du break', goal: 'Ne te fais pas avoir par le break : attends la vraie fin de A.',
+    how: 'A a un break au milieu : la musique se vide, puis repart de plus belle. Repère sur la forme d\'onde la vraie fin du morceau, puis lance B (32 temps d\'intro) pour que son drop tombe quand A s\'arrête.',
+    show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 0, end: 108,
+    A: [[0, 16, FULL], [16, 32, ['pad', 'h']], [32, 64, FULL], [64, 96, ['k', 'b', 'h']]], aEnd: 96, B: [[0, 32, ['k', 'h']], [32, 96, FULL]], bIntro: 32, bLoop: [32, 96], launchBeat: 64,
+    targets: [[64, 'LANCE B', 'B']], caps: [[16, 'Break : ce n\'est pas la fin !'], [32, 'A repart à fond'], [64, 'Vraie outro : B est lancé'], [96, 'Drop de B à la fin de A']] },
+  { kind: 'vocal', wave: true, title: 'Une seule voix à la fois', goal: 'Coupe le MID de A quand la voix de B arrive.',
+    how: 'A chante encore pendant son outro, et B a une voix dans son intro. Quand B commence à chanter, coupe le MID de A (le potard des voix) pour qu\'on n\'entende jamais deux voix ensemble. B arrive tout seul.',
+    show: ['gMid'], autoLaunch: true, init: CH3_INIT, user: ['midA'], start: 16, end: 108,
+    A: [[0, 32, FULL.concat('v')], [32, 80, ['k', 'b', 'h', 'v']], [80, 96, ['k', 'b', 'h']]], aEnd: 96, B: [[0, 16, ['k', 'h']], [16, 64, ['k', 'h', 'v']], [64, 128, FULL]], bIntro: 64, bLoop: [64, 128], launchBeat: 32,
+    targets: [[48, 'VOIX', 'A']], caps: [[32, 'B arrive, sans voix'], [48, 'B chante : MID de A coupé'], [96, 'Drop de B']] },
+  { kind: 'read', wave: true, random: true, title: 'Lecture express', goal: 'Structure inconnue : lis les formes d\'onde et lance B au bon moment.',
+    how: 'À chaque partie, l\'outro de A et l\'intro de B changent de longueur. Lis la forme d\'onde de A pour trouver sa fin, regarde l\'intro de B, et lance B pour que son drop tombe quand A s\'arrête.',
+    show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 0, end: 100, launchBeat: 32, targets: [], caps: [] }
+];
+CH3_LESSONS.forEach(l => { l.init = Object.assign({}, l.init); l.bCue = 0; l.btn = []; });
+function randomizeRead(l){
+  const aOut = [32, 48, 64][Math.floor(Math.random() * 3)], bi = [16, 32][Math.floor(Math.random() * 2)];
+  Object.assign(l, { A: [[0, aOut, FULL], [aOut, aOut + 32, ['k', 'b', 'h']]], aEnd: aOut + 32, B: [[0, bi, ['k', 'h']], [bi, bi + 64, FULL]], bIntro: bi, bLoop: [bi, bi + 64] });
+  l.launchBeat = l.aEnd - bi; l.start = Math.max(0, aOut - 20); l.end = l.aEnd + 20; l.targets = [[l.launchBeat, 'LANCE B', 'B']];
+  l.caps = [[aOut, 'A entre dans son outro'], [l.launchBeat, `B lancé : ${bi} temps avant la fin de A`], [l.aEnd, 'Drop de B pile à la fin de A']];
+}
+let LESSONS = BASE_LESSONS;
 const TARGETS = { 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A']], 6: [[64, 'LANCE B', 'B'], [64, 'COUPE A', 'A']], 0: [[32, 'LANCE B', 'B']], 1: [[64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'SWAP', 'AB']], 3: [[32, 'LANCE B', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
 const RING_LAB = { 'FILTRE': 'temps avant de tourner le filtre', 'À FOND': 'temps : filtre à fond avant le drop', 'ECHO': 'temps avant d\'activer l\'écho', 'COUPE A': 'temps avant de couper A', 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
 let li = 0, run = null, ear = false, styleChoice = 'house', chapter = 1, TOL = 1, placement = null;
@@ -577,14 +652,21 @@ const CH2_STYLE = ['techno', 'afro', 'house', 'techno', 'afro', 'house', 'techno
 const CHAPTERS = [
   { n: 1, title: 'Les bases', sub: 'Guidé, un geste à la fois' },
   { n: 2, title: 'La maîtrise', sub: 'À l\'oreille, précision ×2' },
-  { n: 3, title: 'Les vrais morceaux', sub: 'Intros courtes, breaks, voix', soon: true },
+  { n: 3, title: 'Les vrais morceaux', sub: 'Formes d\'onde, breaks, voix' },
   { n: 4, title: 'Sans filet', sub: 'Sans sync, mix harmonique', soon: true },
   { n: 5, title: 'La soirée', sub: 'Mini-sets enchaînés', soon: true }
 ];
-const bankOf = c => c === 2 ? ch2Stars : stars;
-const sumStars = b => LESSONS.reduce((s, _, i) => s + (b[i] || 0), 0);
+let ch3Stars = {}; try { ch3Stars = JSON.parse(localStorage.getItem('coach-ch3') || '{}') || {}; } catch (e) {}
+let ch3Open = false;
+if (/[?&]tout=1/.test(location.search)){ ch2Open = true; ch3Open = true; }
+const bankOf = c => c === 3 ? ch3Stars : c === 2 ? ch2Stars : stars;
+const BANK_KEY = { 1: 'coach-lecons', 2: 'coach-ch2', 3: 'coach-ch3' }, XP_PER = { 1: 10, 2: 15, 3: 20 };
+const sumStars = b => Object.values(b || {}).reduce((s, v) => s + (+v || 0), 0);
 const ch2Unlocked = () => ch2Open || sumStars(stars) >= 14;
+const ch3Unlocked = () => ch3Open || sumStars(ch2Stars) >= 10;
 if (chapter === 2 && !ch2Unlocked()) chapter = 1;
+if (chapter === 3 && !ch3Unlocked()) chapter = 1;
+if (chapter === 3) LESSONS = CH3_LESSONS;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 const isAuto = k => !!(run && run.demo) || !LESSONS[li].user.includes(k);
 const clamp01 = x => Math.max(0, Math.min(1, x));
@@ -593,9 +675,9 @@ function renderChapters(){
   const bar = $('chapters'); bar.innerHTML = '';
   for (const c of CHAPTERS){
     const b = document.createElement('button'); b.type = 'button'; b.className = 'chap'; b.setAttribute('aria-pressed', String(c.n === chapter));
-    const locked = c.soon || (c.n === 2 && !ch2Unlocked());
+    const locked = c.soon || (c.n === 2 && !ch2Unlocked()) || (c.n === 3 && !ch3Unlocked());
     b.disabled = locked && c.n !== chapter;
-    const sub = c.soon ? 'Bientôt' : c.n === 2 && !ch2Unlocked() ? `Verrouillé : ${sumStars(stars)}/14 ★ au chapitre 1` : c.sub;
+    const sub = c.soon ? 'Bientôt' : c.n === 2 && !ch2Unlocked() ? `Verrouillé : ${sumStars(stars)}/14 ★ au chapitre 1` : c.n === 3 && !ch3Unlocked() ? `Verrouillé : ${sumStars(ch2Stars)}/10 ★ au chapitre 2` : c.sub;
     b.innerHTML = `<span class="cn">Chapitre ${c.n}</span><strong></strong><span class="cs"></span>`; b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = sub;
     b.addEventListener('click', () => setChapter(c.n)); bar.appendChild(b);
   }
@@ -604,36 +686,38 @@ function renderChapters(){
     t.addEventListener('click', startPlacement); bar.appendChild(t); }
 }
 function setChapter(n){
-  if (run || n === chapter) return; if (n === 2 && !ch2Unlocked()) return;
+  if (run || n === chapter) return; if (n === 2 && !ch2Unlocked()) return; if (n === 3 && !ch3Unlocked()) return;
+  LESSONS = n === 3 ? CH3_LESSONS : BASE_LESSONS;
   chapter = n; try { localStorage.setItem('coach-chapitre', String(n)); } catch (e) {}
   const bank = bankOf(n), first = LESSONS.findIndex((_, i) => !(bank[i] >= 2)); selectLesson(first < 0 ? 0 : first);
 }
 function renderHud(){
-  const t1 = sumStars(stars), t2 = sumStars(ch2Stars), xp = t1 * 10 + t2 * 15;
+  const t1 = sumStars(stars), t2 = sumStars(ch2Stars), t3 = sumStars(ch3Stars), xp = t1 * 10 + t2 * 15 + t3 * 20;
   $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
-  $('starTot').textContent = (t1 + t2) + '/' + LESSONS.length * 6;
-  const bank = bankOf(chapter), map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove());
+  $('starTot').textContent = (t1 + t2 + t3) + '/' + (BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3);
+  const bank = bankOf(chapter), map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove()); map.style.setProperty('--n', LESSONS.length);
   let lastDone = -1;
   LESSONS.forEach((l, i) => { const st = bank[i] || 0; if (st) lastDone = i;
     const b = document.createElement('button'); b.type = 'button'; b.className = 'node' + (st ? ' done' : ''); b.setAttribute('aria-pressed', String(i === li));
     b.innerHTML = `<span class="dot">${st === 3 ? '★' : i + 1}</span><span class="t"></span><span class="s"><b>${'★'.repeat(st)}</b>${'★'.repeat(3 - st)}</span>`;
     b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${st} étoile(s) sur 3`);
     b.addEventListener('click', () => { if (!placement) selectLesson(i); }); map.appendChild(b); });
-  $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * 85.7) + '%';
+  $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * (100 - 100 / LESSONS.length)) + '%';
   renderChapters();
 }
-function styleLabel(){ if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
+function styleLabel(){ if (chapter === 3) return 'House · 124 BPM · vrais morceaux'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
   return styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM'; }
 function selectLesson(i){
-  stopRun(); li = i; const l = LESSONS[i]; START = l.start; END = l.end; TOL = chapter === 2 ? .5 : 1;
-  $('lnum').textContent = (chapter === 2 ? 'Chapitre 2 · ' : '') + `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
-  for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho']) $(g).hidden = !l.show.includes(g);
-  for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA']]) $(w).classList.toggle('auto', isAuto(k));
+  stopRun(); li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = chapter === 2 ? .5 : 1;
+  $('lnum').textContent = (chapter > 1 ? `Chapitre ${chapter} · ` : '') + `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
+  for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).hidden = !l.show.includes(g);
+  for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k));
   Object.assign(ctrl, l.init); applyCtrl();
   $('result').hidden = true; setStartBtn(false); $('launchB').disabled = true;
   $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
-  $('hint').textContent = chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
-  ear = chapter === 2; $('styleSeg').hidden = chapter === 2; $('styleTag').textContent = styleLabel();
+  $('hint').textContent = chapter === 3 ? 'Chapitre 3 : plus de compte à rebours. Lis les formes d\'onde, comme dans rekordbox. La démo montre le bon moment.' : chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
+  ear = chapter === 2; $('styleSeg').hidden = chapter > 1;
+  if (l.wave) setTimeout(() => { if (LESSONS[li] === l && !run){ waveTk = prepareCh3(l); drawHighway(START); } }, 20); else waveTk = null; $('styleTag').textContent = styleLabel();
   $('stage').classList.remove('ear');
   renderHud(); drawHighway(START); updateSetup();
 }
@@ -645,7 +729,8 @@ function startRun(demo = false){
   ensureAudio(); if (ac.state !== 'running') ac.resume();
   $('startBtn').textContent = 'Préparation…';
   setTimeout(() => {
-    const sty = chapter === 2 ? CH2_STYLE[li] : pickStyle(); prepareTracks(sty); $('styleTag').textContent = STYLE_DEFS[sty].label + ' · ' + BPM + ' BPM';
+    const lw = LESSONS[li]; if (lw.wave){ const tk = prepareCh3(lw); waveTk = tk; tk.bufA = tk.bufA || bufferOf(tk.A); tk.bufB = tk.bufB || bufferOf(tk.B); tracks = { A: tk.bufA, B0: tk.bufB, B1: tk.bufB }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; $('styleTag').textContent = styleLabel(); }
+    else { const sty = chapter === 2 ? CH2_STYLE[li] : pickStyle(); prepareTracks(sty); $('styleTag').textContent = STYLE_DEFS[sty].label + ' · ' + BPM + ' BPM'; }
     const l = LESSONS[li]; Object.assign(ctrl, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
@@ -656,13 +741,18 @@ function startRun(demo = false){
     $('stage').classList.toggle('demo', demo); $('demoTag').hidden = !demo; $('watchBtn').disabled = true;
     $('result').hidden = true; setStartBtn(true); $('setup').hidden = true; $('startBtn').disabled = false; $('startBtn').classList.remove('ready'); $('launchB').disabled = !!l.autoLaunch; $('startBtn').blur();
     $('hint').textContent = demo ? 'Démonstration : regarde les contrôles bouger et écoute le résultat.' : l.btn.includes('echo') ? 'Astuce : la touche E active aussi l\'écho.' : !l.autoLaunch ? 'Astuce : la barre d\'espace lance aussi B.' : '';
-    if (demo) for (const w of ['wLowA', 'wLowB', 'wFadA', 'wFadB', 'wCfxA']) $(w).classList.add('auto');
+    if (demo) for (const w of ['wLowA', 'wLowB', 'wFadA', 'wFadB', 'wCfxA', 'wMidA']) $(w).classList.add('auto');
     $('echoBtn').disabled = demo || !l.btn.includes('echo');
   }, 30);
 }
 const beatNow = () => run ? (ac.currentTime - run.t0) / P + START : null;
-function launchAt(k){ run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, run.t0 + (k - START) * P, LESSONS[li].bCue * P, true); $('launchB').disabled = true; }
+function launchAt(k){ run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, run.t0 + (k - START) * P, LESSONS[li].bCue * P, true, ...(LESSONS[li].bLoop || [64, 128])); $('launchB').disabled = true; }
 function judgeLaunch(k){
+  const LW = LESSONS[li];
+  if (LW.wave){ const d = k + LW.bIntro - LW.aEnd;
+    if (d === 0){ pop('PARFAIT !', 'ok'); run.status['LANCE B'] = 'ok'; chime(true); }
+    else { pop(d < 0 ? 'Trop tôt !' : 'Trop tard !', Math.abs(d) <= 2 ? 'mid' : 'bad'); run.status['LANCE B'] = Math.abs(d) <= 2 ? 'mid' : 'bad'; }
+    return; }
   const e = k - LESSONS[li].launchBeat;
   if (e === 0){ pop('PARFAIT !', 'ok'); run.status['LANCE B'] = 'ok'; chime(true); }
   else if (Math.abs(e) <= 2){ pop(`${Math.abs(e)} temps trop ${e > 0 ? 'tard' : 'tôt'}`, 'mid'); run.status['LANCE B'] = 'mid'; chime(false); }
@@ -673,12 +763,12 @@ function launchB(){
   if (!run || run.launch !== null || LESSONS[li].autoLaunch) return;
   const b = beatNow(), k = Math.round(b);
   if (k >= b) launchAt(k);
-  else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, LESSONS[li].bCue * P + (b - k) * P + .01, true); $('launchB').disabled = true; }
+  else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, LESSONS[li].bCue * P + (b - k) * P + .01, true, ...(LESSONS[li].bLoop || [64, 128])); $('launchB').disabled = true; }
   judgeLaunch(k);
 }
 function stopRun(){ const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; setStartBtn(false); $('launchB').disabled = true;
   $('stage').classList.remove('demo', 'ear'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
-  if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, LESSONS[li].init); applyCtrl(); }
+  if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, LESSONS[li].init); applyCtrl(); }
   updateSetup(); }
 let echoOn = false;
 function setEcho(on){ echoOn = !!on; if (ac && deck.A.echoIn) deck.A.echoIn.gain.setTargetAtTime(echoOn ? 1 : 0, ac.currentTime, .004); const b = $('echoBtn'); b.setAttribute('aria-pressed', String(echoOn)); }
@@ -690,7 +780,14 @@ function toggleEcho(){
     else { pop(e < 0 ? 'Écho trop tôt' : 'Écho trop tard', 'mid'); run.status.ECHO = 'mid'; } }
 }
 function ideal(k, b, i = li){
-  const kd = LESSONS[i].kind, r = (x, a, d) => clamp01((x - a) / d);
+  const kd = LESSONS[i].kind, r = (x, a, d) => clamp01((x - a) / d), L3 = LESSONS[i];
+  if (L3.wave){
+    if (k === 'faderB') return kd === 'vocal' ? r(b, 32, 16) : r(b, L3.launchBeat, kd === 'break' ? 16 : 8);
+    if (k === 'faderA') return kd === 'vocal' ? 1 - r(b, 80, 16) : 1;
+    if (k === 'midA') return kd === 'vocal' ? .5 - .5 * r(b, 47.75, .5) : .5;
+    return k === 'echo' ? 0 : .5;
+  }
+  if (k === 'midA' || k === 'midB') return .5;
   if (kd === 'filter'){ if (k === 'cfxA') return .5 + .5 * r(b, 64, 28); if (k === 'faderB') return r(b, 32, 16); if (k === 'faderA') return 1 - r(b, 96, 4); return k === 'echo' ? 0 : .5; }
   if (kd === 'echo' || kd === 'cut'){ if (k === 'faderA') return 1 - r(b, 63.75, .25); if (k === 'faderB') return 1; if (k === 'echo') return kd === 'echo' && b >= 63 && b < 72 ? 1 : 0; return .5; }
   if (k === 'cfxA') return .5; if (k === 'echo') return 0;
@@ -707,20 +804,24 @@ const DEMO_CAPS = { 0: [[32, 'B part sur le 1 de l\'outro'], [96, 'Le drop de B 
 Object.assign(DEMO_CAPS, { 4: [[32, 'B arrive'], [64, 'Le filtre commence : A perd ses basses'], [80, 'On continue lentement'], [92, 'Filtre à fond : A n\'est plus qu\'un souffle'], [96, 'Drop de B !']],
   5: [[60, 'Écoute la fin de phrase de A'], [63, 'Écho activé sur le dernier temps'], [64, 'Fader de A coupé : l\'écho résonne'], [66, 'B tombe sur son drop']],
   6: [[60, 'Prépare tes deux mains'], [64, 'A coupé et B lancé, au même instant'], [70, 'Transition nette, sans mélange']] });
-function demoCaptions(b){ const caps = DEMO_CAPS[li]; while (run.cap < caps.length && b >= caps[run.cap][0]){ pop(caps[run.cap][1], 'ok'); run.cap++; } }
+BASE_LESSONS.forEach((l, i) => { l.targets = TARGETS[i]; l.caps = DEMO_CAPS[i]; });
+function demoCaptions(b){ const caps = LESSONS[li].caps; while (run.cap < caps.length && b >= caps[run.cap][0]){ pop(caps[run.cap][1], 'ok'); run.cap++; } }
 function automate(b){
   const L = run.launch; let ch = false;
-  if (run.demo){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA']){ const v = ideal(k, b); if (Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } } if (ch) applyCtrl(); const ev = ideal('echo', b) > .5; if (ev !== echoOn) setEcho(ev); return; }
+  if (run.demo){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA', 'midA']){ const v = ideal(k, b); if (Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } } if (ch) applyCtrl(); const ev = ideal('echo', b) > .5; if (ev !== echoOn) setEcho(ev); return; }
   const set = (k, v) => { if (isAuto(k) && Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } };
-  if (li === 0 && L !== null){ set('faderB', clamp01((b - L) / 16)); set('faderA', 1 - clamp01((b - (L + 48)) / 16)); }
-  if (li === 2){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 80) / 16)); }
+  if (LESSONS[li].kind === 'moment' && L !== null){ set('faderB', clamp01((b - L) / 16)); set('faderA', 1 - clamp01((b - (L + 48)) / 16)); }
+  if (LESSONS[li].kind === 'swap'){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 80) / 16)); }
+  const KW = LESSONS[li];
+  if (KW.wave){ if (KW.kind === 'vocal'){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 80) / 16)); }
+    else if (L !== null) set('faderB', clamp01((b - L) / (KW.kind === 'break' ? 16 : 8))); }
   if (LESSONS[li].kind === 'filter'){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 96) / 4)); }
   if (LESSONS[li].kind === 'echo' && echoOn && b > 72) setEcho(false);
   if (ch) applyCtrl();
 }
 function liveJudge(b){
   const s = run.status, p = run.popped;
-  if (li === 2 || li === 3){
+  if (['swap', 'full'].includes(LESSONS[li].kind)){
     if (p.kill == null && b >= 40 && ctrl.lowA < .12) p.kill = b;
     if (p.open == null && b >= 40 && ctrl.lowB > .4) p.open = b;
     if (p.kill != null && p.open != null && !s.SWAP){
@@ -731,13 +832,17 @@ function liveJudge(b){
     }
     if (!s.SWAP && b > 70){ pop('Le swap, c\'était maintenant !', 'bad'); s.SWAP = 'bad'; }
   }
-  if (li === 1 || li === 3){
+  if (['fader', 'full'].includes(LESSONS[li].kind)){
     if (!s['B À FOND'] && b >= 32 && ctrl.faderB >= .9){ const ok = b <= 64 + 4 * TOL; pop(ok ? 'B est installé !' : 'B est à fond… un peu tard', ok ? 'ok' : 'mid'); s['B À FOND'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
     if (!s['A SORTI'] && b >= 40 && ctrl.faderA <= .05){ const ok = b >= 64 - 4 * TOL && b <= 96 + 2 * TOL; pop(ok ? 'A sorti à temps !' : 'A sorti trop tôt', ok ? 'ok' : 'mid'); s['A SORTI'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
     if (!s['A SORTI'] && b > 96 + 2 * TOL){ pop('Deux basses en même temps !', 'bad'); s['A SORTI'] = 'bad'; }
   }
   const L0 = LESSONS[li];
-  if (!L0.autoLaunch && run.launch === null && b > L0.launchBeat + 3 && !s['LANCE B']){ pop('Trop tard ! Lance B', 'bad'); s['LANCE B'] = 'late'; }
+  if (L0.kind === 'vocal'){
+    if (!s.VOIX && b >= 36 && ctrl.midA < .12){ const e = b - 48, ok = Math.abs(e) <= 1; pop(ok ? 'Voix coupée pile !' : e < 0 ? 'Coupé trop tôt' : 'Coupé en retard', ok ? 'ok' : 'mid'); s.VOIX = ok ? 'ok' : 'mid'; if (ok) chime(true); }
+    if (!s.VOIX && b > 50){ pop('Deux voix en même temps !', 'bad'); s.VOIX = 'bad'; }
+  }
+  if (!L0.wave && !L0.autoLaunch && run.launch === null && b > L0.launchBeat + 3 && !s['LANCE B']){ pop('Trop tard ! Lance B', 'bad'); s['LANCE B'] = 'late'; }
   if (L0.kind === 'filter'){
     if (!p.wrong && ctrl.cfxA < .4){ p.wrong = 1; pop('Mauvais côté ! Tourne vers la droite', 'bad'); }
     if (!s.FILTRE && b >= 40 && ctrl.cfxA > .56){ const ok = Math.abs(b - 64) <= 6 * TOL; pop(ok ? 'Filtre lancé !' : b < 58 ? 'Filtre trop tôt' : 'Filtre en retard', ok ? 'ok' : 'mid'); s.FILTRE = ok ? 'ok' : 'mid'; if (ok) chime(true); p.fStart = b; }
@@ -758,10 +863,11 @@ function frame(){
   if (!run){ return; }
   const b = beatNow(); if (b < START) return;
   automate(b); if (run.demo) demoCaptions(b); else liveJudge(b);
-  run.frames.push({ b, fa: ctrl.faderA, fb: ctrl.faderB, la: ctrl.lowA, lb: ctrl.lowB, ca: ctrl.cfxA, ec: echoOn ? 1 : 0 });
-  const tg = TARGETS[li].find(([x, lab]) => x > b - .5 && !(run.status[lab] && run.status[lab] !== 'late'));
+  run.frames.push({ b, ma: ctrl.midA, fa: ctrl.faderA, fb: ctrl.faderB, la: ctrl.lowA, lb: ctrl.lowB, ca: ctrl.cfxA, ec: echoOn ? 1 : 0 });
+  const tg = LESSONS[li].targets.find(([x, lab]) => x > b - .5 && !(run.status[lab] && run.status[lab] !== 'late'));
   const ring = $('ring');
-  if (run.ear){ $('cdNum').textContent = '?'; $('cdLab').textContent = 'Sens la phrase, sans repère'; ring.classList.remove('hot'); }
+  if (LESSONS[li].wave && !run.demo){ $('cdNum').textContent = '?'; $('cdLab').textContent = 'Lis la forme d\'onde'; ring.classList.remove('hot'); }
+  else if (run.ear){ $('cdNum').textContent = '?'; $('cdLab').textContent = 'Sens la phrase, sans repère'; ring.classList.remove('hot'); }
   else if (tg){ const n = Math.max(0, Math.ceil(tg[0] - b)); $('cdNum').textContent = n; $('cdLab').textContent = RING_LAB[tg[1]]; ring.classList.toggle('hot', n <= 4); }
   else { $('cdNum').textContent = '♪'; $('cdLab').textContent = 'Écoute le résultat'; ring.classList.remove('hot'); }
   if (!REDUCED){ const f = b - Math.floor(b), k = Math.exp(-f * 7); ring.style.transform = `scale(${1 + .07 * k})`; ring.style.setProperty('--o', k.toFixed(2)); }
@@ -825,31 +931,52 @@ function evalCut(fr, L){
   if (L != null){ const d = cut - L; out.push(Math.abs(d) <= .75 * TOL ? ['ok', 'Coupure et lancement en même temps : la transition est nette.', 1] : d > 0 ? ['mid', `A et B ont joué ensemble pendant ${fr1(d)} temps : coupe A dans le même geste.`, .5] : ['mid', `Il y a eu un blanc de ${fr1(-d)} temps entre la coupure et le lancement de B.`, .5]); }
   return out;
 }
+function evalWave(L, l){
+  if (L == null) return [['bad', 'Tu n\'as pas lancé B : repère la fin de A sur la forme d\'onde, puis lance B pour que son drop tombe dessus.', 0]];
+  const d = L + l.bIntro - l.aEnd, how = ` Le bon moment était le temps ${l.launchBeat} : fin de A (temps ${l.aEnd}) moins l'intro de B (${l.bIntro} temps).`, out = [];
+  if (d === 0) out.push(['ok', 'Le drop de B est tombé pile quand A s\'est arrêté.', 1]);
+  else if (d < 0) out.push([d >= -2 ? 'mid' : 'bad', `B lancé trop tôt : son drop est tombé ${-d} temps avant la fin de A, pendant que A jouait encore.` + how, d >= -2 ? .5 : 0]);
+  else out.push([d <= 2 ? 'mid' : 'bad', `B lancé trop tard : ${d} temps de vide entre la fin de A et le drop de B.` + how, d <= 2 ? .5 : 0]);
+  if (l.kind === 'break' && L >= 16 && L < 64) out.push(['bad', 'Tu t\'es fait piéger par le break de A : la musique s\'est vidée, mais ce n\'était pas la fin. Sur la forme d\'onde, on voyait qu\'elle repartait.', 0]);
+  return out;
+}
+function evalVocal(fr){
+  const t = firstAt(fr, 36, x => x.ma < .12);
+  if (t == null) return [['bad', 'Le MID de A n\'a jamais été coupé : les deux voix se sont superposées pendant toute l\'intro de B.', 0]];
+  const e = t - 48;
+  if (Math.abs(e) <= 1) return [['ok', 'MID de A coupé pile quand B commence à chanter : une seule voix à la fois.', 1]];
+  if (e < 0) return [[e >= -4 ? 'mid' : 'bad', `MID coupé ${fr1(-e)} temps trop tôt : A a perdu sa voix alors que B ne chantait pas encore.`, e >= -4 ? .5 : 0]];
+  return [[e <= 4 ? 'mid' : 'bad', `MID coupé ${fr1(e)} temps trop tard : on a entendu deux voix ensemble pendant ${fr1(e)} temps.`, e <= 4 ? .5 : 0]];
+}
 function finish(){
   if (!run) return; const r = run; stopRun();
   if (r.demo){ $('hint').textContent = 'À toi ! Appuie sur Jouer et refais exactement la même chose.'; $('startBtn').classList.add('ready'); $('cdNum').textContent = '—'; $('cdLab').textContent = 'À toi de jouer'; $('ring').classList.remove('hot'); return; }
   let items = [];
-  if (li === 0) items = [evalLaunch(r.launch)];
-  if (li === 1) items = evalFaders(r.frames);
-  if (li === 2) items = evalSwap(r.frames);
-  if (li === 3){ items = [evalLaunch(r.launch)];
+  const KD = LESSONS[li].kind;
+  if (KD === 'moment') items = [evalLaunch(r.launch)];
+  if (KD === 'fader') items = evalFaders(r.frames);
+  if (KD === 'swap') items = evalSwap(r.frames);
+  if (KD === 'full'){ items = [evalLaunch(r.launch)];
     if (r.launch !== null) items.push(r.lowBAtLaunch < .15 ? ['ok', 'Basses de B coupées avant de le lancer.', 1] : ['bad', 'B est parti avec ses basses ouvertes : coupe son LOW avant de le lancer.', 0]);
     items = items.concat(evalSwap(r.frames), evalFaders(r.frames).filter((_, i) => i !== 1)); }
+  if (['shortintro', 'break', 'read'].includes(KD)) items = evalWave(r.launch, LESSONS[li]);
+  if (KD === 'vocal') items = evalVocal(r.frames);
   if (LESSONS[li].kind === 'filter') items = evalFilter(r.frames);
   if (LESSONS[li].kind === 'echo') items = evalEcho(r.frames, r.echoAt);
   if (LESSONS[li].kind === 'cut') items = [evalLaunch(r.launch, 64)].concat(evalCut(r.frames, r.launch));
   const score = items.reduce((s, x) => s + x[2], 0) / items.length, st = score >= .9 ? 3 : score >= .55 ? 2 : 1;
-  const wasOpen = ch2Unlocked(), bank = r.ch === 2 ? ch2Stars : stars, before = bank[li] || 0; bank[li] = Math.max(before, st);
-  try { localStorage.setItem(r.ch === 2 ? 'coach-ch2' : 'coach-lecons', JSON.stringify(bank)); } catch (e) {}
+  const wasOpen = ch2Unlocked(), was3 = ch3Unlocked(), bank = bankOf(r.ch), before = bank[li] || 0; bank[li] = Math.max(before, st);
+  try { localStorage.setItem(BANK_KEY[r.ch], JSON.stringify(bank)); } catch (e) {}
   const rs = $('rStars'); rs.innerHTML = '';
   for (let i = 0; i < 3; i++){ const sp = document.createElement('span'); sp.textContent = '★'; if (i < st) sp.className = 'on'; sp.style.animationDelay = (i * .18) + 's'; rs.appendChild(sp); }
-  $('rTitle').textContent = (r.ch === 2 ? 'Chapitre 2 : ' : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
-  const gained = (bank[li] - before) * (r.ch === 2 ? 15 : 10); $('rGain').textContent = (gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`) + (!wasOpen && ch2Unlocked() ? ' · Chapitre 2 débloqué !' : '');
+  $('rTitle').textContent = (r.ch > 1 ? `Chapitre ${r.ch} : ` : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
+  const gained = (bank[li] - before) * XP_PER[r.ch]; $('rGain').textContent = (gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`) + (!wasOpen && ch2Unlocked() ? ' · Chapitre 2 débloqué !' : '') + (!was3 && ch3Unlocked() ? ' · Chapitre 3 débloqué !' : '');
   const ul = $('rDetails'); ul.innerHTML = ''; for (const [lvl, txt] of items){ const x = document.createElement('li'); x.className = lvl; x.textContent = txt; ul.appendChild(x); }
   $('next').hidden = li >= LESSONS.length - 1;
   $('result').hidden = false; $('retry').focus({ preventScroll: true });
   $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot');
   drawCompare(r.frames, li, r.launch);
+  if (LESSONS[li].random){ const l = LESSONS[li]; randomizeRead(l); START = l.start; END = l.end; setTimeout(() => { if (!run){ waveTk = prepareCh3(l); drawHighway(START); } }, 30); }
   if (placement) placementStep(st);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
 }
@@ -875,17 +1002,33 @@ function drawHighway(b){
   const block = (from, to, y, col, strong, label) => { const a = X(from), z = X(to); if (z < 0 || a > w) return;
     g.globalAlpha = strong ? .9 : .28; g.fillStyle = col; rr(g, a + 1, y, z - a - 2, H, 10); g.fill(); g.globalAlpha = 1;
     const lx = Math.max(a + 12, 8); if (Math.min(z, w) - lx > 80){ g.fillStyle = strong ? COL.ink : COL.fg; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText(label, lx, y + 28); } };
-  block(16, 32, yA, COL.a, true, 'A · corps'); block(32, 128, yA, COL.a, false, 'A · outro : la musique se dépouille');
   const l = LESSONS[li], L = run && run.launch !== null ? run.launch : (l.autoLaunch ? l.launchBeat : null);
+  if (l.wave){
+    const v0 = b - hitX / ppb - 1, v1 = b + 24;
+    const wave = (env, y, col, off, alpha) => { const bw = Math.max(1, ppb / 4 - 1);
+      for (let q = Math.max(0, Math.floor((v0 - off) * 4)); q < env.full.length; q++){ const v = q / 4 + off; if (v > v1) break; const x = X(v);
+        const hf = env.full[q] * (H + 8), hl = env.low[q] * (H + 8) * .6;
+        g.globalAlpha = alpha; g.fillStyle = col; g.fillRect(x, y + H / 2 - hf / 2, bw, hf);
+        g.globalAlpha = alpha * .7; g.fillStyle = COL.fg; g.fillRect(x, y + H / 2 - hl / 2, bw, hl); }
+      g.globalAlpha = 1; };
+    g.fillStyle = COL.muted; g.font = '600 12px ' + COL.font; g.textAlign = 'left';
+    if (waveTk){ wave(waveTk.envA, yA, COL.a, 0, .95);
+      if (L !== null) wave(waveTk.envB, yB, COL.b, L, .95);
+      else { wave(waveTk.envB, yB, COL.b, b, .32); g.fillStyle = COL.b; g.fillText('B si tu le lances maintenant', 8, yB + H + 18); } }
+    else { g.fillText('Préparation des formes d\'onde…', 12, yA + 28); }
+  } else {
+  block(16, 32, yA, COL.a, true, 'A · corps'); block(32, 128, yA, COL.a, false, 'A · outro : la musique se dépouille');
   if (L !== null){ if (l.bCue){ block(L, L + 160, yB, COL.b, true, 'B · DROP'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'B · intro avec basse' : 'B · intro sans basse'); block(L + 64, L + 160, yB, COL.b, true, 'B · DROP'); } }
   else { const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, 10); g.stroke(); g.setLineDash([]);
     if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 12, 8), yB + 28); } }
+  }
   // gestes à faire
   const fog = run && run.ear;
   if (fog){ g.save(); const gr = g.createLinearGradient(hitX, 0, hitX + 60, 0); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, COL.bg); g.fillStyle = gr; g.fillRect(hitX, 0, 60, h); g.fillStyle = COL.bg; g.fillRect(hitX + 60, 0, w, h);
     g.fillStyle = COL.muted; g.font = '700 14px ' + COL.font; g.textAlign = 'center'; g.fillText('À l\'oreille : écoute la phrase', (hitX + w) / 2 + 30, h / 2 + 5); g.restore(); }
-  for (const [v, lab, lane] of TARGETS[li]){
+  for (const [v, lab, lane] of LESSONS[li].targets){
     if (fog && !(run.status[lab])) continue;
+    if (l.wave && !(run && run.demo)) continue;
     const x = X(v); if (x < -80 || x > w + 80) continue;
     const st = run ? run.status[lab] : null, col = st === 'ok' ? COL.ok : st === 'mid' ? COL.mid : st === 'bad' || st === 'late' ? COL.bad : COL.xp;
     const y = lane === 'A' ? yA + H / 2 : lane === 'B' ? yB + H / 2 : (yA + yB + H) / 2;
@@ -899,8 +1042,8 @@ function drawHighway(b){
   g.beginPath(); g.moveTo(hitX, 28); g.lineTo(hitX, h - 8); g.stroke(); g.restore();
   g.fillStyle = COL.muted; g.font = '600 11px ' + COL.font; g.textAlign = 'center'; g.fillText('MAINTENANT', hitX, h - 0);
 }
-const SHORT = { faderA: 'Fader A', faderB: 'Fader B', lowA: 'LOW A', lowB: 'LOW B', cfxA: 'CFX A', echo: 'Écho' };
-const FK = { faderA: 'fa', faderB: 'fb', lowA: 'la', lowB: 'lb', cfxA: 'ca', echo: 'ec' };
+const SHORT = { midA: 'MID A', faderA: 'Fader A', faderB: 'Fader B', lowA: 'LOW A', lowB: 'LOW B', cfxA: 'CFX A', echo: 'Écho' };
+const FK = { midA: 'ma', faderA: 'fa', faderB: 'fb', lowA: 'la', lowB: 'lb', cfxA: 'ca', echo: 'ec' };
 function drawCompare(fr, i, launch){
   if (!COL.a) loadCol();
   const lanes = LESSONS[i].user.slice().concat(LESSONS[i].btn), showLaunch = !LESSONS[i].autoLaunch, cv = $('cmp');
@@ -950,14 +1093,14 @@ function confetti(n){
   step();
 }
 /* ---------- FLX4 (MIDI) ---------- */
-const DEFAULT_MAP = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 } };
+const DEFAULT_MAP = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, midA: { ch: 0, n: 11 }, midB: { ch: 1, n: 11 }, playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 } };
 let map = DEFAULT_MAP; try { const s = JSON.parse(localStorage.getItem('coach-midi-map') || 'null'); if (s) map = s; } catch (e) {}
 function onMidi(e){
   const [st, d1, d2] = e.data, type = st & 0xF0, ch = st & 0x0F;
   if (learnKey){ const want = learnKey === 'fxOn' ? (type === 0x90 && d2 > 0) : (type === 0xB0 && !(d1 >= 32 && d1 < 64));
     if (want){ map = Object.assign({}, map, { [learnKey]: { ch, n: d1 } }); try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); } catch (_) {}
       if (type === 0xB0) phys[learnKey] = d2 / 127; learnKey = null; updateSetup(); if (onb.active) renderOnb(); } return; }
-  if (type === 0xB0){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA']){ const m = map[k]; if (m && m.ch === ch && m.n === d1){ phys[k] = d2 / 127; if (onb.active){ ctrl[k] = d2 / 127; applyCtrl(); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = d2 / 127; applyCtrl(); } if (!run) updateSetup(); return; } } }
+  if (type === 0xB0){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA', 'midA', 'midB']){ const m = map[k]; if (m && m.ch === ch && m.n === d1){ phys[k] = d2 / 127; if (onb.active){ ctrl[k] = d2 / 127; applyCtrl(); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = d2 / 127; applyCtrl(); } if (!run) updateSetup(); return; } } }
   else if (type === 0x90 && d2 > 0){ const m = map.playB, f = map.fxOn; if (m && m.ch === ch && m.n === d1){ if (onb.active) onbMoved('playB'); else launchB(); } else if (f && f.ch === ch && f.n === d1) toggleEcho(); }
 }
 async function initMidi(){
@@ -972,8 +1115,8 @@ async function initMidi(){
 
 /* ---------- Mise en place de la table ---------- */
 const phys = {}; let midiCount = 0, mouseMode = false, learnKey = null;
-const LEARN_TXT = { cfxA: 'Tourne le potard CFX de A…', fxOn: 'Appuie sur ON de l\'effet…' };
-const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B', cfxA: 'Potard CFX de A' };
+const LEARN_TXT = { midA: 'Tourne le potard MID de A…', cfxA: 'Tourne le potard CFX de A…', fxOn: 'Appuie sur ON de l\'effet…' };
+const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B', cfxA: 'Potard CFX de A', midA: 'Potard MID de A' };
 function targetText(k, v){ if (k === 'cfxA') return 'au milieu (cran central, filtre neutre)'; return k.startsWith('fader') ? (v >= .5 ? 'tout en haut' : 'tout en bas') : (v < .1 ? 'tout à gauche (basses coupées)' : 'au milieu (cran central)'); }
 function inPlace(k, v, p){ if (p == null) return null; return k.startsWith('fader') ? (v >= .5 ? p >= .94 : p <= .06) : (v < .1 ? p <= .05 : Math.abs(p - .5) <= .07); }
 const needSetup = () => midiCount > 0 && !mouseMode && LESSONS[li].user.length > 0;
@@ -1140,6 +1283,7 @@ $('retry').addEventListener('click', () => { $('result').hidden = true; startRun
 $('next').addEventListener('click', () => {
   const go = $('next').dataset.go; delete $('next').dataset.go; $('retry').hidden = false; $('cmpBox').hidden = false;
   if (go === 'ch2'){ $('result').hidden = true; setChapter(2); return; }
+  if (go === 'ch1') LESSONS = BASE_LESSONS;
   if (go === 'ch1'){ $('result').hidden = true; chapter = 1; try { localStorage.setItem('coach-chapitre', '1'); } catch (e) {} selectLesson(0); return; }
   if (placement){ if (placement.i >= P_STEPS.length - 1){ placementVerdict(); return; } placement.i++; selectLesson(P_STEPS[placement.i]); updatePBanner(); return; }
   selectLesson(Math.min(LESSONS.length - 1, li + 1)); });
