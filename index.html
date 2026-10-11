@@ -6,142 +6,179 @@
 <title>Coach DJ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap">
 <style>
-/* Layout : 4 leçons en tête · une carte de leçon (but, frise, compte à rebours, seulement les contrôles utiles) · résultat. */
+/* Layout : jeu de rythme en club. Barre XP · carte des 4 niveaux · scène (piste qui défile vers la ligne de frappe, anneau qui pulse) · résultat en surimpression. Thème sombre assumé. */
 :root{
-  --bg:#f3f4f7;--surface:#ffffff;--surface-2:#eef0f4;--hair:#e1e4ea;--fg:#101217;--muted:#5f6576;
-  --a:#e5701c;--b:#2f6fe4;--ok:#24995f;--mid:#c98a00;--bad:#e0434b;--on-accent:#ffffff;
-  --shadow:0 1px 2px rgba(16,18,23,.05),0 8px 24px rgba(16,18,23,.06);
-  --sans:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'Geist Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --bg:#0b0a1a;
+  --glow-a:#3b1d5c;
+  --glow-b:#0f2f5a;
+  --panel:#16132e;
+  --panel-2:#211d44;
+  --line:#322c61;
+  --fg:#f6f4ff;
+  --muted:#a59fcc;
+  --a:#ff8a3d;
+  --b:#38d6ff;
+  --xp:#ff4fd8;
+  --ok:#5cf2a5;
+  --mid:#ffd166;
+  --bad:#ff5c7a;
+  --ink:#0b0a1a;
+  --display:'Syne','Arial Black',system-ui,sans-serif;
+  --sans:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0c0d10;--surface:#15171c;--surface-2:#1d2027;--hair:#272a33;--fg:#f3f4f6;--muted:#8d93a3;
-  --a:#ff9a4a;--b:#5ea2ff;--ok:#45c985;--mid:#f0b429;--bad:#ff5f66;--on-accent:#0c0d10;
-  --shadow:0 1px 0 rgba(255,255,255,.03) inset,0 10px 30px rgba(0,0,0,.35);color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0c0d10;--surface:#15171c;--surface-2:#1d2027;--hair:#272a33;--fg:#f3f4f6;--muted:#8d93a3;
-  --a:#ff9a4a;--b:#5ea2ff;--ok:#45c985;--mid:#f0b429;--bad:#ff5f66;--on-accent:#0c0d10;
-  --shadow:0 1px 0 rgba(255,255,255,.03) inset,0 10px 30px rgba(0,0,0,.35);color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1040px;margin:0 auto;padding-inline:24px;padding-block:24px 64px;display:flex;flex-direction:column;gap:20px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100%;
+  background-image:radial-gradient(900px 500px at 15% -10%,var(--glow-a),transparent 70%),radial-gradient(800px 500px at 100% 10%,var(--glow-b),transparent 70%)}
+.wrap{max-width:1060px;margin:0 auto;padding-inline:24px;padding-block:22px 64px;display:flex;flex-direction:column;gap:22px}
 @media (max-width:600px){.wrap{padding-inline:16px}}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:2px solid var(--b);outline-offset:3px}
-.num{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.cap{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.card{background:var(--surface);border-radius:20px;box-shadow:var(--shadow);padding:24px;min-width:0}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--hair);background:var(--surface);border-radius:12px;padding:10px 16px;font-weight:600;font-size:14px;text-decoration:none;color:var(--fg)}
-.btn:hover{background:var(--surface-2)}
+:focus-visible{outline:3px solid var(--b);outline-offset:3px}
+.num{font-variant-numeric:tabular-nums}
 
-.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+/* En-tête */
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
 .brand{display:flex;align-items:center;gap:12px}
-.logo-mark{width:34px;height:34px;border-radius:10px;background:var(--fg);display:grid;place-items:center}
-.logo-mark svg{width:20px;height:20px}
-.brand-name{font-weight:700;font-size:18px;letter-spacing:-.02em;line-height:1.1}
+.disc{width:40px;height:40px;border-radius:50%;background:repeating-radial-gradient(circle,var(--panel-2) 0 2px,var(--bg) 2px 4px);position:relative;box-shadow:0 0 0 2px var(--line)}
+.disc::after{content:"";position:absolute;inset:14px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--xp))}
+.brand-name{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.01em;line-height:1}
 .brand-sub{font-size:13px;color:var(--muted)}
-.tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.status{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:var(--muted);padding:8px 12px;border-radius:999px;background:var(--surface);box-shadow:var(--shadow)}
+.hud{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:14px;font-weight:600}
+.lvl{font-family:var(--display);font-weight:800;color:var(--xp)}
+.xpbar{width:90px;height:8px;border-radius:4px;background:var(--panel-2);overflow:hidden}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--xp),var(--a));border-radius:4px;transition:width .6s}
+.star{color:var(--mid)}
 .status i{width:8px;height:8px;border-radius:50%;background:var(--muted)}
-.status.on{color:var(--fg)}.status.on i{background:var(--ok)}
+.status.on i{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.status{color:var(--muted)}.status.on{color:var(--fg)}
+a.chip{color:var(--fg);text-decoration:none}
+a.chip:hover{border-color:var(--muted)}
 
-.lessons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-@media (max-width:820px){.lessons{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.lesson{border:0;text-align:left;background:var(--surface);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;min-width:0}
-.lesson .n{font-size:13px;font-weight:600;color:var(--muted)}
-.lesson strong{font-size:16px;letter-spacing:-.01em}
-.lesson .stars{font-size:15px;letter-spacing:.12em;color:var(--hair)}
-.lesson .stars b{color:var(--a);font-weight:400}
-.lesson[aria-pressed="true"]{box-shadow:var(--shadow),inset 0 0 0 2px var(--fg)}
+/* Carte des niveaux */
+.map{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding-top:4px}
+.map::before{content:"";position:absolute;left:12.5%;right:12.5%;top:36px;height:4px;border-radius:2px;background:var(--line)}
+.map .prog{position:absolute;left:12.5%;top:36px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--a),var(--xp));transition:width .6s}
+.node{position:relative;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;text-align:center;min-width:0}
+.node .dot{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:26px;background:var(--panel);border:3px solid var(--line);transition:transform .15s}
+.node:hover .dot{transform:translateY(-2px)}
+.node.done .dot{background:linear-gradient(135deg,var(--a),var(--xp));border-color:transparent;color:var(--ink)}
+.node[aria-pressed="true"] .dot{box-shadow:0 0 0 4px var(--bg),0 0 0 7px var(--fg)}
+.node .t{font-weight:600;font-size:15px;line-height:1.2}
+.node .s{font-size:14px;letter-spacing:.12em;color:var(--line)}
+.node .s b{color:var(--mid);font-weight:400}
+@media (max-width:560px){.node .dot{width:54px;height:54px;font-size:21px}.map::before,.map .prog{top:29px}.node .t{font-size:13px}}
 
-.stage{display:flex;flex-direction:column;gap:22px}
-.stage-head{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:flex-start}
-.stage-head h1{margin:0;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.03em;line-height:1.15;text-wrap:balance}
-.goal{margin:6px 0 0;font-size:18px;font-weight:500}
-.how{margin:6px 0 0;color:var(--muted);max-width:62ch}
-.count{display:flex;align-items:baseline;gap:12px;flex:none}
-.count .big{font-size:76px;font-weight:600;line-height:.9}
-.count .lab{font-size:15px;color:var(--muted);max-width:13ch;line-height:1.3}
-.count.now .big{color:var(--a)}
-.tl-box{border-radius:14px;overflow:hidden}
-#tl{width:100%;height:150px;display:block}
-.controls{display:flex;gap:28px;justify-content:center;align-items:flex-end;flex-wrap:wrap;min-height:60px}
+/* Scène */
+.stage{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:26px;padding:24px;display:flex;flex-direction:column;gap:20px;overflow:hidden}
+.stage-head{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+.lnum{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--xp)}
+.stage h1{margin:2px 0 0;font-family:var(--display);font-weight:800;font-size:clamp(28px,4.4vw,44px);line-height:1;letter-spacing:-.02em;text-wrap:balance}
+.goal{margin:8px 0 0;font-size:18px;font-weight:500;max-width:46ch}
+.how{margin:4px 0 0;color:var(--muted);max-width:60ch;font-size:15px}
+.ringwrap{flex:none;display:flex;flex-direction:column;align-items:center;gap:6px}
+.ring{width:118px;height:118px;border-radius:50%;display:grid;place-items:center;border:4px solid var(--line);position:relative;will-change:transform}
+.ring::before{content:"";position:absolute;inset:-4px;border-radius:50%;border:4px solid transparent;border-top-color:var(--b);border-right-color:var(--b);opacity:var(--o,0)}
+.ring .big{font-family:var(--display);font-weight:800;font-size:46px;line-height:1}
+.ring.hot{border-color:var(--a);box-shadow:0 0 30px color-mix(in srgb,var(--a) 50%,transparent)}
+.ring.hot .big{color:var(--a)}
+.ringlab{font-size:13px;color:var(--muted);text-align:center;max-width:16ch;line-height:1.3;min-height:2.6em}
+.hw{position:relative;border-radius:18px;overflow:hidden;background:var(--bg)}
+#hw{width:100%;height:210px;display:block}
+.pops{position:absolute;inset:0;pointer-events:none}
+.pop{position:absolute;left:22%;top:42%;transform:translate(-50%,-50%);font-family:var(--display);font-weight:800;font-size:clamp(22px,4vw,34px);white-space:nowrap;text-shadow:0 2px 18px rgba(0,0,0,.6);animation:pop 1.3s ease-out forwards}
+.pop.ok{color:var(--ok)}.pop.mid{color:var(--mid)}.pop.bad{color:var(--bad)}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}30%{transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-120%) scale(1)}}
+.bar{height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--b),var(--xp))}
+
+.controls{display:flex;gap:30px;justify-content:center;align-items:flex-end;flex-wrap:wrap;min-height:64px}
 .group{display:flex;flex-direction:column;align-items:center;gap:10px}
-.group .gl{font-size:13px;font-weight:700}
+.group .gl{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .pair{display:flex;gap:22px;align-items:flex-end}
 .chan{display:flex;flex-direction:column;align-items:center;gap:6px}
-.chan .cl{font-size:13px;font-weight:700}
+.chan .cl{font-family:var(--display);font-weight:800;font-size:16px}
 .chanA .cl{color:var(--a)}.chanB .cl{color:var(--b)}
-.auto{opacity:.45;pointer-events:none}
-.auto::after{content:"auto";font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.launch{border:0;border-radius:18px;padding:22px 40px;font-size:20px;font-weight:700;background:var(--b);color:var(--on-accent);display:flex;align-items:center;gap:12px}
-.launch:disabled{opacity:.4;cursor:default}
+.auto{opacity:.4;pointer-events:none}
+.auto::after{content:"auto";font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.launch{border:0;border-radius:20px;padding:22px 42px;font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:.01em;background:var(--b);color:var(--ink);display:flex;align-items:center;gap:12px;box-shadow:0 8px 0 color-mix(in srgb,var(--b) 45%,var(--bg)),0 0 40px color-mix(in srgb,var(--b) 35%,transparent);transition:transform .08s,box-shadow .08s}
+.launch:active:not(:disabled){transform:translateY(6px);box-shadow:0 2px 0 color-mix(in srgb,var(--b) 45%,var(--bg))}
+.launch:disabled{opacity:.35;cursor:default;box-shadow:none}
 .launch svg{width:22px;height:22px}
 .knob{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:ns-resize;touch-action:none;user-select:none;-webkit-user-select:none;border-radius:12px;padding:2px 4px}
-.knob svg{width:72px;height:72px;display:block}
-.knob .trk{fill:none;stroke:var(--surface-2);stroke-width:5;stroke-linecap:round}
-.knob .arc{fill:none;stroke-width:5;stroke-linecap:round}
+.knob svg{width:76px;height:76px;display:block}
+.knob .trk{fill:none;stroke:var(--panel-2);stroke-width:6;stroke-linecap:round}
+.knob .arc{fill:none;stroke-width:6;stroke-linecap:round}
 .chanA .arc{stroke:var(--a)}.chanB .arc{stroke:var(--b)}
-.knob .body{fill:var(--surface-2)}
+.knob .body{fill:var(--panel-2)}
 .knob .ptr{stroke:var(--fg);stroke-width:3;stroke-linecap:round}
-.knob .kv{font-size:12px;color:var(--muted);font-family:var(--mono)}
-.fader{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;--v:0;width:52px;height:170px;cursor:ns-resize}
-.fader .slot{position:absolute;left:50%;top:11px;bottom:11px;width:6px;margin-left:-3px;border-radius:3px;background:var(--surface-2)}
-.fader .fill{position:absolute;left:50%;bottom:11px;width:6px;margin-left:-3px;border-radius:3px;height:calc(var(--v) * (100% - 22px))}
-.chanA .fill{background:var(--a)}.chanB .fill{background:var(--b)}
-.fader .cap2{position:absolute;left:4px;right:4px;height:22px;border-radius:7px;background:var(--fg);bottom:calc(var(--v) * (100% - 22px));box-shadow:0 2px 6px rgba(0,0,0,.25)}
-.fader .cap2::after{content:"";position:absolute;left:9px;right:9px;top:10px;height:2px;border-radius:1px;background:var(--bg)}
-.start-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
-.start{border:0;border-radius:14px;padding:15px 28px;font-size:16px;font-weight:700;background:var(--fg);color:var(--bg)}
-.hint{margin:0;text-align:center;color:var(--muted);font-size:15px;min-height:1.5em}
+.knob .kv{font-size:12px;color:var(--muted)}
+.fader{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;--v:0;width:54px;height:172px;cursor:ns-resize}
+.fader .slot{position:absolute;left:50%;top:11px;bottom:11px;width:8px;margin-left:-4px;border-radius:4px;background:var(--panel-2)}
+.fader .fill{position:absolute;left:50%;bottom:11px;width:8px;margin-left:-4px;border-radius:4px;height:calc(var(--v) * (100% - 22px))}
+.chanA .fill{background:var(--a);box-shadow:0 0 12px var(--a)}.chanB .fill{background:var(--b);box-shadow:0 0 12px var(--b)}
+.fader .cap2{position:absolute;left:3px;right:3px;height:24px;border-radius:8px;background:var(--fg);bottom:calc(var(--v) * (100% - 22px) - 1px);box-shadow:0 3px 8px rgba(0,0,0,.5)}
+.fader .cap2::after{content:"";position:absolute;left:10px;right:10px;top:11px;height:2px;border-radius:1px;background:var(--ink)}
+.start-row{display:flex;justify-content:center;flex-direction:column;align-items:center;gap:8px}
+.start{border:0;border-radius:16px;padding:16px 34px;font-family:var(--display);font-weight:800;font-size:18px;background:linear-gradient(135deg,var(--a),var(--xp));color:var(--ink);box-shadow:0 0 30px color-mix(in srgb,var(--xp) 35%,transparent)}
+.start.stop{background:var(--panel-2);color:var(--fg);box-shadow:none}
+.hint{margin:0;color:var(--muted);font-size:14px;text-align:center;min-height:1.4em}
 
-.result{display:flex;flex-direction:column;gap:14px;border:2px solid var(--hair)}
-.result.s3{border-color:var(--ok)}.result.s2{border-color:var(--mid)}.result.s1{border-color:var(--bad)}
-.result-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.result .stars{font-size:34px;letter-spacing:.1em;color:var(--hair);line-height:1}
-.result .stars b{color:var(--a);font-weight:400}
-.result h2{margin:0;font-size:22px;letter-spacing:-.02em}
-.details{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.details li{display:flex;gap:10px;align-items:flex-start;font-size:15px}
-.details li::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;margin-top:7px;background:var(--ok)}
-.details li.bad::before{background:var(--bad)}.details li.mid::before{background:var(--mid)}
-.result .row{display:flex;gap:10px;flex-wrap:wrap}
-.after{color:var(--muted);font-size:15px;margin:0}
-.after b{color:var(--fg)}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* Résultat */
+.result{position:absolute;inset:0;overflow:auto;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;z-index:3}
+.rcard{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px;max-width:560px;width:100%;display:flex;flex-direction:column;gap:16px;text-align:center}
+.rstars{display:flex;justify-content:center;gap:10px}
+.rstars span{font-size:54px;line-height:1;color:var(--line);transform:scale(.4);opacity:0;animation:starIn .45s cubic-bezier(.3,1.6,.6,1) forwards}
+.rstars span.on{color:var(--mid);text-shadow:0 0 24px color-mix(in srgb,var(--mid) 60%,transparent)}
+@keyframes starIn{to{transform:scale(1);opacity:1}}
+.rcard h2{margin:0;font-family:var(--display);font-weight:800;font-size:28px;line-height:1.1}
+.gain{font-family:var(--display);font-weight:800;color:var(--xp);font-size:18px}
+.details{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;text-align:left}
+.details li{display:flex;gap:10px;align-items:flex-start;font-size:15px;background:var(--panel-2);border-radius:12px;padding:10px 12px}
+.details li::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;margin-top:7px;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.details li.bad::before{background:var(--bad);box-shadow:0 0 8px var(--bad)}.details li.mid::before{background:var(--mid);box-shadow:0 0 8px var(--mid)}
+.rrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.rbtn{border:1px solid var(--line);background:var(--panel-2);border-radius:14px;padding:12px 22px;font-weight:700}
+.rbtn.go{border:0;background:linear-gradient(135deg,var(--a),var(--xp));color:var(--ink)}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
+.after{color:var(--muted);font-size:15px;margin:0;text-align:center}
+.after b{color:var(--fg);font-weight:600}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
 </style>
 </head>
 <body>
+<canvas id="confetti" aria-hidden="true"></canvas>
 <div class="wrap">
   <header class="top">
-    <div class="brand">
-      <span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 20 20"><rect x="2" y="9" width="3" height="8" rx="1.5" fill="var(--a)"/><rect x="8.5" y="4" width="3" height="13" rx="1.5" fill="var(--bg)"/><rect x="15" y="7" width="3" height="10" rx="1.5" fill="var(--b)"/></svg></span>
-      <div><div class="brand-name">Coach DJ</div><div class="brand-sub">Apprendre les transitions, un geste à la fois</div></div>
-    </div>
-    <div class="tools">
-      <span class="status" id="midiPill"><i></i><span>Recherche de la FLX4…</span></span>
-      <a class="btn" href="coach.html">Mode libre</a>
+    <div class="brand"><span class="disc" aria-hidden="true"></span><div><div class="brand-name">Coach DJ</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></div>
+    <div class="hud">
+      <span class="chip" title="Niveau et expérience"><span class="lvl" id="lvl">Niv. 1</span><span class="xpbar"><i id="xpFill" style="width:0"></i></span><span class="num" id="xpTxt">0 XP</span></span>
+      <span class="chip"><span class="star">★</span><span class="num" id="starTot">0/12</span></span>
+      <span class="chip status" id="midiPill"><i></i><span>FLX4…</span></span>
+      <a class="chip" href="coach.html">Mode libre</a>
     </div>
   </header>
 
-  <nav class="lessons" id="lessons" aria-label="Leçons"></nav>
+  <nav class="map" id="map" aria-label="Niveaux"><span class="prog" id="mapProg" style="width:0"></span></nav>
 
-  <section class="card stage">
+  <section class="stage" id="stage">
     <div class="stage-head">
       <div>
-        <span class="cap" id="lnum">Leçon 1 sur 4</span>
+        <span class="lnum" id="lnum">Niveau 1</span>
         <h1 id="ltitle"></h1>
         <p class="goal" id="lgoal"></p>
         <p class="how" id="lhow"></p>
       </div>
-      <div class="count" id="countBox"><span class="big num" id="cdNum">—</span><span class="lab" id="cdLab">Appuie sur Commencer</span></div>
+      <div class="ringwrap"><div class="ring" id="ring"><span class="big num" id="cdNum">—</span></div><span class="ringlab" id="cdLab">Appuie sur Jouer</span></div>
     </div>
-    <div class="tl-box"><canvas id="tl" aria-label="Structure des deux morceaux"></canvas></div>
-    <div class="controls" id="controls">
-      <div class="group" id="gPlay"><button type="button" class="launch" id="launchB" disabled><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l10-6.2a.8.8 0 0 0 0-1.4l-10-6.2A.8.8 0 0 0 6 3.8Z"/></svg>Lancer B</button></div>
-      <div class="group" id="gLow"><span class="gl">Basses (LOW)</span><div class="pair">
+    <div class="hw"><canvas id="hw" aria-label="Piste : les gestes arrivent vers la ligne de frappe"></canvas><div class="pops" id="pops"></div></div>
+    <div class="bar" aria-hidden="true"><i id="progFill"></i></div>
+    <div class="controls">
+      <div class="group" id="gPlay"><button type="button" class="launch" id="launchB" disabled><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l10-6.2a.8.8 0 0 0 0-1.4l-10-6.2A.8.8 0 0 0 6 3.8Z"/></svg>LANCE B</button></div>
+      <div class="group" id="gLow"><span class="gl">Basses · LOW</span><div class="pair">
         <div class="chan chanA" id="wLowA"><div class="knob" data-k="lowA" aria-label="Basses de A"></div><span class="cl">A</span></div>
         <div class="chan chanB" id="wLowB"><div class="knob" data-k="lowB" aria-label="Basses de B"></div><span class="cl">B</span></div>
       </div></div>
@@ -150,17 +187,20 @@ button{cursor:pointer}
         <div class="chan chanB" id="wFadB"><div class="fader" data-k="faderB" aria-label="Volume de B"><div class="slot"></div><div class="fill"></div><div class="cap2"></div></div><span class="cl">B</span></div>
       </div></div>
     </div>
-    <p class="hint" id="hint"></p>
-    <div class="start-row"><button type="button" class="start" id="startBtn">Commencer la leçon</button></div>
+    <div class="start-row"><button type="button" class="start" id="startBtn">Jouer</button><p class="hint" id="hint"></p></div>
+
+    <div class="result" id="result" hidden>
+      <div class="rcard">
+        <div class="rstars" id="rStars"></div>
+        <h2 id="rTitle"></h2>
+        <span class="gain" id="rGain"></span>
+        <ul class="details" id="rDetails"></ul>
+        <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
+      </div>
+    </div>
   </section>
 
-  <section class="card result" id="result" hidden>
-    <div class="result-head"><span class="stars" id="rStars"></span><h2 id="rTitle"></h2></div>
-    <ul class="details" id="rDetails"></ul>
-    <div class="row"><button type="button" class="btn" id="retry">Recommencer</button><button type="button" class="btn" id="next">Leçon suivante</button></div>
-  </section>
-
-  <p class="after">Les deux morceaux sont faits pour s'enchaîner : même tempo, tonalités voisines, outro et intro de 32 temps. <b>Une fois une leçon réussie, refais exactement le même geste dans rekordbox avec tes morceaux.</b> Sur la FLX4 : PLAY droite pour lancer B, potards LOW et faders de volume.</p>
+  <p class="after">Deux morceaux faits pour s'enchaîner : même tempo, tonalités voisines, outro et intro de 32 temps. <b>Niveau réussi ? Refais le même geste dans rekordbox avec ta musique.</b> FLX4 : PLAY droite, potards LOW, faders. Clavier : espace pour lancer B.</p>
 </div>
 
 <script>
@@ -169,7 +209,6 @@ button{cursor:pointer}
 const SR = 44100, BPM = 124, P = 60 / BPM;
 const $ = id => document.getElementById(id);
 const n2f = m => 440 * Math.pow(2, (m - 69) / 12);
-
 /* ---------- Morceaux d'entraînement ---------- */
 function makeRng(seed){ let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296 * 2 - 1; }; }
 function makeTrack(beats, seed, play){
@@ -269,6 +308,7 @@ function play(k, buf, when, pos, loop){
 }
 function stop(k){ const d = deck[k]; if (d.node){ try { d.node.stop(); } catch (e) {} d.node.disconnect(); d.node = null; } }
 
+
 /* ---------- Potards et faders ---------- */
 const SWEEP = 2.356, controls = {};
 function arc(cx, cy, r, a0, a1){ const p = a => [cx + r * Math.sin(a), cy - r * Math.cos(a)]; if (Math.abs(a1 - a0) < .001) return '';
@@ -303,44 +343,54 @@ function renderControl(k){
   }
 }
 
-/* ---------- Leçons ---------- */
+
+/* ---------- Niveaux ---------- */
 const LESSONS = [
-  { title: 'Le bon moment', goal: 'Lance B pile au début de l\'outro de A.',
-    how: 'Tout le reste est automatique. Écoute A, suis le compte à rebours, et appuie sur Lancer B (ou PLAY droite sur la FLX4) quand il arrive à zéro.',
+  { title: 'Le bon moment', goal: 'Lance B pile quand A entre dans son outro.',
+    how: 'Le geste arrive sur la piste : appuie sur LANCE B (ou PLAY droite sur la FLX4) quand il touche la ligne. Tout le reste est automatique.',
     show: ['gPlay'], bBass: false, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: [] },
-  { title: 'Le fader', goal: 'Fais entrer B en douceur, puis fais sortir A avant le drop de B.',
-    how: 'B démarre tout seul au bon moment. Monte son fader sur 16 à 32 temps. Ensuite baisse celui de A pour qu\'il soit à zéro quand le compte à rebours arrive au drop de B.',
+  { title: 'Le fader', goal: 'Fais entrer B en douceur, puis fais sortir A avant le drop.',
+    how: 'B démarre tout seul. Monte son fader sur 16 à 32 temps, puis baisse celui de A : il doit être à zéro quand le drop de B arrive sur la ligne.',
     show: ['gFad'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: ['faderA', 'faderB'] },
-  { title: 'Le swap des basses', goal: 'Échange les basses de A et de B pile sur la phrase.',
-    how: 'B arrive tout seul, ses basses coupées. Quand le compte à rebours arrive à zéro, coupe le LOW de A et ouvre celui de B en même temps, une main sur chaque potard.',
+  { title: 'Le swap des basses', goal: 'Échange les basses de A et B pile sur la ligne.',
+    how: 'B arrive tout seul, basses coupées. Quand « Swap » touche la ligne, coupe le LOW de A et ouvre celui de B, une main sur chaque potard.',
     show: ['gLow'], bBass: true, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: 0 }, user: ['lowA', 'lowB'] },
-  { title: 'La transition complète', goal: 'Enchaîne tout toi-même, comme en soirée.',
-    how: 'Coupe le LOW de B, lance B au début de l\'outro de A, monte son fader, échange les basses à la phrase suivante, puis fais sortir A avant le drop de B.',
+  { title: 'La transition complète', goal: 'Tout toi-même, comme en soirée.',
+    how: 'Coupe le LOW de B, lance B sur la ligne, monte son fader, swap des basses à la phrase suivante, puis fais sortir A avant le drop.',
     show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: ['faderA', 'faderB', 'lowA', 'lowB'] }
 ];
+const TARGETS = { 0: [[32, 'LANCE B', 'B']], 1: [[64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'SWAP', 'AB']], 3: [[32, 'LANCE B', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
+const RING_LAB = { 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
 let li = 0, run = null;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 const isAuto = k => !LESSONS[li].user.includes(k);
 const clamp01 = x => Math.max(0, Math.min(1, x));
-const starStr = n => '<b>' + '★'.repeat(n) + '</b>' + '★'.repeat(3 - n);
 
-function renderLessons(){
-  const nav = $('lessons'); nav.innerHTML = '';
-  LESSONS.forEach((l, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'lesson'; b.setAttribute('aria-pressed', String(i === li));
-    b.innerHTML = `<span class="n">Leçon ${i + 1}</span><strong></strong><span class="stars">${starStr(stars[i] || 0)}</span>`;
-    b.querySelector('strong').textContent = l.title; b.addEventListener('click', () => selectLesson(i)); nav.appendChild(b); });
+function renderHud(){
+  const tot = LESSONS.reduce((s, _, i) => s + (stars[i] || 0), 0), xp = tot * 10;
+  $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
+  $('starTot').textContent = tot + '/' + LESSONS.length * 3;
+  const map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove());
+  let lastDone = -1;
+  LESSONS.forEach((l, i) => { if (stars[i]) lastDone = i;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'node' + (stars[i] ? ' done' : ''); b.setAttribute('aria-pressed', String(i === li));
+    b.innerHTML = `<span class="dot">${stars[i] === 3 ? '★' : i + 1}</span><span class="t"></span><span class="s"><b>${'★'.repeat(stars[i] || 0)}</b>${'★'.repeat(3 - (stars[i] || 0))}</span>`;
+    b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${stars[i] || 0} étoile(s) sur 3`);
+    b.addEventListener('click', () => selectLesson(i)); map.appendChild(b); });
+  $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * 75) + '%';
 }
 function selectLesson(i){
   stopRun(); li = i; const l = LESSONS[i];
-  $('lnum').textContent = `Leçon ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
+  $('lnum').textContent = `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
   for (const g of ['gPlay', 'gLow', 'gFad']) $(g).hidden = !l.show.includes(g);
   for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB']]) $(w).classList.toggle('auto', isAuto(k));
   Object.assign(ctrl, l.init); applyCtrl();
-  $('result').hidden = true; $('startBtn').textContent = 'Commencer la leçon'; $('launchB').disabled = true;
-  $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Commencer'; $('countBox').classList.remove('now');
-  $('hint').textContent = i === 0 ? '' : l.user.length ? 'Les contrôles grisés sont automatiques dans cette leçon.' : '';
-  renderLessons(); drawTimeline(null);
+  $('result').hidden = true; setStartBtn(false); $('launchB').disabled = true;
+  $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
+  $('hint').textContent = l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
+  renderHud(); drawHighway(START);
 }
+function setStartBtn(running){ const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
 
 const START = 16, END = 116;
 function startRun(){
@@ -351,46 +401,72 @@ function startRun(){
     const l = LESSONS[li]; Object.assign(ctrl, l.init); applyCtrl();
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
-    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0 };
+    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1 };
     if (l.autoLaunch) launchAt(32);
-    $('result').hidden = true; $('startBtn').textContent = 'Arrêter'; $('launchB').disabled = !!l.autoLaunch; $('startBtn').blur();
-    if (!l.autoLaunch && l.show.includes('gPlay')) $('hint').textContent = 'Astuce : la barre d\'espace lance aussi B.';
+    $('result').hidden = true; setStartBtn(true); $('launchB').disabled = !!l.autoLaunch; $('startBtn').blur();
+    if (!l.autoLaunch) $('hint').textContent = 'Astuce : la barre d\'espace lance aussi B.';
   }, 30);
 }
 const beatNow = () => run ? (ac.currentTime - run.t0) / P + START : null;
 function launchAt(k){ run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, run.t0 + (k - START) * P, 0, true); $('launchB').disabled = true; }
+function judgeLaunch(k){
+  const e = k - 32;
+  if (e === 0){ pop('PARFAIT !', 'ok'); run.status['LANCE B'] = 'ok'; chime(true); }
+  else if (Math.abs(e) <= 2){ pop(`${Math.abs(e)} temps trop ${e > 0 ? 'tard' : 'tôt'}`, 'mid'); run.status['LANCE B'] = 'mid'; chime(false); }
+  else if (e % 32 === 0){ pop('Bonne phrase… mais pas la bonne', 'mid'); run.status['LANCE B'] = 'mid'; }
+  else { pop('Raté : milieu de phrase', 'bad'); run.status['LANCE B'] = 'bad'; }
+}
 function launchB(){
   if (!run || run.launch !== null || LESSONS[li].autoLaunch) return;
   const b = beatNow(), k = Math.round(b);
   if (k >= b) launchAt(k);
   else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, (b - k) * P + .01, true); $('launchB').disabled = true; }
+  judgeLaunch(k);
 }
-function stopRun(){ if (!ac) { run = null; return; } stop('A'); stop('B'); run = null; $('startBtn').textContent = 'Commencer la leçon'; $('launchB').disabled = true; }
+function stopRun(){ if (ac){ stop('A'); stop('B'); } run = null; setStartBtn(false); $('launchB').disabled = true; }
 function automate(b){
-  const l = LESSONS[li], L = run.launch; let ch = false;
+  const L = run.launch; let ch = false;
   const set = (k, v) => { if (isAuto(k) && Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } };
-  if (li === 0){ if (L !== null){ set('faderB', clamp01((b - L) / 16)); set('faderA', 1 - clamp01((b - (L + 48)) / 16)); } }
+  if (li === 0 && L !== null){ set('faderB', clamp01((b - L) / 16)); set('faderA', 1 - clamp01((b - (L + 48)) / 16)); }
   if (li === 2){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 80) / 16)); }
   if (ch) applyCtrl();
 }
+function liveJudge(b){
+  const s = run.status, p = run.popped;
+  if (li === 2 || li === 3){
+    if (p.kill == null && b >= 40 && ctrl.lowA < .12) p.kill = b;
+    if (p.open == null && b >= 40 && ctrl.lowB > .4) p.open = b;
+    if (p.kill != null && p.open != null && !s.SWAP){
+      const e = (p.kill + p.open) / 2 - 64, ov = Math.abs(p.kill - p.open);
+      if (Math.abs(e) <= .75 && ov <= .6){ pop('SWAP PARFAIT !', 'ok'); s.SWAP = 'ok'; chime(true); }
+      else if (Math.abs(e) <= 2 && ov <= 2){ pop(Math.abs(e) > .75 ? `Swap ${e > 0 ? 'en retard' : 'en avance'}` : 'Swap pas tout à fait net', 'mid'); s.SWAP = 'mid'; chime(false); }
+      else { pop('Swap raté', 'bad'); s.SWAP = 'bad'; }
+    }
+    if (!s.SWAP && b > 70){ pop('Le swap, c\'était maintenant !', 'bad'); s.SWAP = 'bad'; }
+  }
+  if (li === 1 || li === 3){
+    if (!s['B À FOND'] && b >= 32 && ctrl.faderB >= .9){ const ok = b <= 68; pop(ok ? 'B est installé !' : 'B est à fond… un peu tard', ok ? 'ok' : 'mid'); s['B À FOND'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
+    if (!s['A SORTI'] && b >= 40 && ctrl.faderA <= .05){ const ok = b >= 60 && b <= 98; pop(ok ? 'A sorti à temps !' : 'A sorti trop tôt', ok ? 'ok' : 'mid'); s['A SORTI'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
+    if (!s['A SORTI'] && b > 98){ pop('Deux basses en même temps !', 'bad'); s['A SORTI'] = 'bad'; }
+  }
+  if ((li === 0 || li === 3) && run.launch === null && b > 35 && !s['LANCE B']){ pop('Trop tard ! Lance B', 'bad'); s['LANCE B'] = 'late'; }
+}
 function frame(){
   requestAnimationFrame(frame);
-  if (!run) return;
+  if (!run){ return; }
   const b = beatNow(); if (b < START) return;
-  automate(b);
+  automate(b); liveJudge(b);
   run.frames.push({ b, fa: ctrl.faderA, fb: ctrl.faderB, la: ctrl.lowA, lb: ctrl.lowB });
-  // compte à rebours vers la prochaine cible de la leçon
-  const targets = { 0: [[32, 'temps avant l\'outro de A : lance B à zéro']], 1: [[64, 'temps pour monter B'], [96, 'temps avant le drop de B : A doit être sorti']],
-    2: [[64, 'temps avant le swap des basses']], 3: [[32, 'temps avant l\'outro de A : lance B à zéro'], [64, 'temps avant le swap des basses'], [96, 'temps avant le drop de B : A doit être sorti']] }[li];
-  const tg = targets.find(([x]) => x > b - .5);
-  if (tg){ const n = Math.max(0, Math.ceil(tg[0] - b)); $('cdNum').textContent = n; $('cdLab').textContent = tg[1]; $('countBox').classList.toggle('now', n <= 4); }
-  else { $('cdNum').textContent = '✓'; $('cdLab').textContent = 'écoute le résultat'; $('countBox').classList.remove('now'); }
-  drawTimeline(b);
+  const tg = TARGETS[li].find(([x, lab]) => x > b - .5 && !(run.status[lab] && run.status[lab] !== 'late'));
+  const ring = $('ring');
+  if (tg){ const n = Math.max(0, Math.ceil(tg[0] - b)); $('cdNum').textContent = n; $('cdLab').textContent = RING_LAB[tg[1]]; ring.classList.toggle('hot', n <= 4); }
+  else { $('cdNum').textContent = '♪'; $('cdLab').textContent = 'Écoute le résultat'; ring.classList.remove('hot'); }
+  if (!REDUCED){ const f = b - Math.floor(b), k = Math.exp(-f * 7); ring.style.transform = `scale(${1 + .07 * k})`; ring.style.setProperty('--o', k.toFixed(2)); }
+  $('progFill').style.width = clamp01((b - START) / (END - START)) * 100 + '%';
+  drawHighway(b);
   if (b >= END) finish();
   if ((li === 0 || li === 3) && run && run.launch === null && b > 72) finish();
 }
-
-/* ---------- Notation ---------- */
 const fr1 = v => (Math.round(v * 10) / 10).toString().replace('.', ',');
 const firstAt = (fr, from, test) => { const f = fr.find(x => x.b >= from && test(x)); return f ? f.b : null; };
 function evalLaunch(L){
@@ -421,8 +497,9 @@ function evalSwap(fr){
     : gap > 2 ? ['bad', `Plus aucune basse pendant ${fr1(gap)} temps : l'énergie retombe.`, 0] : gap > .5 ? ['mid', `Petit trou dans les basses (${fr1(gap)} temps).`, .5] : ['ok', 'Les basses passent de A à B sans chevauchement ni trou.', 1]);
   return out;
 }
+
 function finish(){
-  if (!run) return; const r = run, l = LESSONS[li]; stopRun();
+  if (!run) return; const r = run; stopRun();
   let items = [];
   if (li === 0) items = [evalLaunch(r.launch)];
   if (li === 1) items = evalFaders(r.frames);
@@ -431,43 +508,76 @@ function finish(){
     if (r.launch !== null) items.push(r.lowBAtLaunch < .15 ? ['ok', 'Basses de B coupées avant de le lancer.', 1] : ['bad', 'B est parti avec ses basses ouvertes : coupe son LOW avant de le lancer.', 0]);
     items = items.concat(evalSwap(r.frames), evalFaders(r.frames).filter((_, i) => i !== 1)); }
   const score = items.reduce((s, x) => s + x[2], 0) / items.length, st = score >= .9 ? 3 : score >= .55 ? 2 : 1;
-  stars[li] = Math.max(stars[li] || 0, st); try { localStorage.setItem('coach-lecons', JSON.stringify(stars)); } catch (e) {}
-  $('rStars').innerHTML = starStr(st); $('rTitle').textContent = st === 3 ? 'Parfait, c\'est exactement ça.' : st === 2 ? 'Presque : un détail à ajuster.' : 'Pas encore : relis le conseil et recommence.';
+  const before = stars[li] || 0; stars[li] = Math.max(before, st); try { localStorage.setItem('coach-lecons', JSON.stringify(stars)); } catch (e) {}
+  const rs = $('rStars'); rs.innerHTML = '';
+  for (let i = 0; i < 3; i++){ const sp = document.createElement('span'); sp.textContent = '★'; if (i < st) sp.className = 'on'; sp.style.animationDelay = (i * .18) + 's'; rs.appendChild(sp); }
+  $('rTitle').textContent = st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.';
+  const gained = (stars[li] - before) * 10; $('rGain').textContent = gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(stars[li])}`;
   const ul = $('rDetails'); ul.innerHTML = ''; for (const [lvl, txt] of items){ const x = document.createElement('li'); x.className = lvl; x.textContent = txt; ul.appendChild(x); }
-  const box = $('result'); box.className = 'card result s' + st; box.hidden = false;
-  $('next').hidden = li >= LESSONS.length - 1; $('next').textContent = 'Leçon suivante';
-  $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Commencer'; $('countBox').classList.remove('now');
-  renderLessons(); box.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  $('next').hidden = li >= LESSONS.length - 1;
+  $('result').hidden = false; $('retry').focus({ preventScroll: true });
+  $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot');
+  renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
 }
 
-/* ---------- Frise ---------- */
+/* ---------- Piste qui défile ---------- */
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-function drawTimeline(b){
-  const cv = $('tl'), g = cv.getContext('2d'), dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+const COL = {}; const loadCol = () => { for (const k of ['a', 'b', 'fg', 'muted', 'line', 'panel-2', 'ok', 'mid', 'bad', 'xp', 'bg', 'ink']) COL[k] = tok('--' + k); COL.font = tok('--sans'); COL.disp = tok('--display'); };
+function rr(g, x, y, w, h, r){ g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
+function drawHighway(b){
+  if (!COL.a) loadCol();
+  const cv = $('hw'), g = cv.getContext('2d'), dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
   if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)){ cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
-  g.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const C = { a: tok('--a'), b: tok('--b'), fg: tok('--fg'), mut: tok('--muted'), s2: tok('--surface-2'), hair: tok('--hair'), sans: tok('--sans'), bg: tok('--surface') };
-  g.fillStyle = C.s2; g.fillRect(0, 0, w, h);
-  const x0 = START, x1 = END, X = v => 12 + (v - x0) / (x1 - x0) * (w - 24);
-  const yA = 34, yB = 92, H = 34;
-  const block = (from, to, y, col, alpha, label) => { const a = Math.max(from, x0), z = Math.min(to, x1); if (z <= a) return;
-    g.globalAlpha = alpha; g.fillStyle = col; g.beginPath(); g.roundRect ? g.roundRect(X(a), y, X(z) - X(a) - 2, H, 7) : g.rect(X(a), y, X(z) - X(a) - 2, H); g.fill(); g.globalAlpha = 1;
-    if (X(z) - X(a) > 70){ g.fillStyle = alpha > .6 ? tok('--on-accent') : C.fg; g.font = '600 12px ' + C.sans; g.textAlign = 'left'; g.fillText(label, X(a) + 10, y + 21); } };
-  g.fillStyle = C.mut; g.font = '600 11px ' + C.sans; g.textAlign = 'left';
-  g.fillText('A · Lumière', 12, yA - 8); g.fillText('B · Horizon', 12, yB - 8);
-  block(16, 32, yA, C.a, .95, 'Corps'); block(32, 128, yA, C.a, .35, 'Outro : la musique se dépouille');
-  const L = run && run.launch !== null ? run.launch : null, l = LESSONS[li];
-  const bs = L !== null ? L : (l.autoLaunch ? 32 : null);
-  if (bs !== null){ block(bs, bs + 64, yB, C.b, .35, l.bBass ? 'Intro avec basse' : 'Intro sans basse'); block(bs + 64, bs + 160, yB, C.b, .95, 'Drop'); }
-  else { g.setLineDash([5, 4]); g.strokeStyle = C.b; g.lineWidth = 1.5; g.strokeRect(X(32), yB, X(96) - X(32) - 2, H); g.setLineDash([]);
-    g.fillStyle = C.b; g.font = '600 12px ' + C.sans; g.fillText('B partira ici', X(32) + 10, yB + 21); }
-  const marks = { 0: [[32, 'Lancer B']], 1: [[64, 'B à fond'], [96, 'A sorti']], 2: [[64, 'Swap']], 3: [[32, 'Lancer B'], [64, 'Swap'], [96, 'A sorti']] }[li];
-  for (const [m, lab] of marks){ g.strokeStyle = C.fg; g.lineWidth = 1.5; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(X(m), 14); g.lineTo(X(m), yB + H + 6); g.stroke(); g.setLineDash([]);
-    g.fillStyle = C.fg; g.font = '700 11px ' + C.sans; g.textAlign = 'center'; g.fillText(lab, X(m), 11); }
-  for (let v = 32; v <= 128; v += 32){ g.fillStyle = C.mut; g.font = '500 10px ' + C.sans; g.textAlign = 'center'; g.fillText('temps ' + v, X(v), h - 6); }
-  if (b !== null){ g.strokeStyle = C.fg; g.lineWidth = 3; g.beginPath(); g.moveTo(X(b), 18); g.lineTo(X(b), yB + H + 4); g.stroke(); }
+  g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  const hitX = Math.max(90, w * .22), ppb = (w - hitX) / 22, X = v => hitX + (v - b) * ppb;
+  const yA = 54, yB = 136, H = 46;
+  // repères de temps
+  for (let v = Math.floor(b - hitX / ppb) - 1; v <= b + 24; v++){
+    if (v < START - 4 || v > END + 4) continue; const x = X(v), ph = v % 32 === 0, bar = v % 4 === 0;
+    g.strokeStyle = ph ? COL.muted : COL.line; g.globalAlpha = ph ? .9 : bar ? .55 : .22; g.lineWidth = ph ? 2 : 1;
+    g.beginPath(); g.moveTo(x, 26); g.lineTo(x, h - 8); g.stroke(); g.globalAlpha = 1;
+  }
+  const block = (from, to, y, col, strong, label) => { const a = X(from), z = X(to); if (z < 0 || a > w) return;
+    g.globalAlpha = strong ? .9 : .28; g.fillStyle = col; rr(g, a + 1, y, z - a - 2, H, 10); g.fill(); g.globalAlpha = 1;
+    const lx = Math.max(a + 12, 8); if (Math.min(z, w) - lx > 80){ g.fillStyle = strong ? COL.ink : COL.fg; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText(label, lx, y + 28); } };
+  block(16, 32, yA, COL.a, true, 'A · corps'); block(32, 128, yA, COL.a, false, 'A · outro : la musique se dépouille');
+  const l = LESSONS[li], L = run && run.launch !== null ? run.launch : (l.autoLaunch ? 32 : null);
+  if (L !== null){ block(L, L + 64, yB, COL.b, false, l.bBass ? 'B · intro avec basse' : 'B · intro sans basse'); block(L + 64, L + 160, yB, COL.b, true, 'B · DROP'); }
+  else { const a = X(32); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(96) - a - 2, H, 10); g.stroke(); g.setLineDash([]);
+    if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 12, 8), yB + 28); } }
+  // gestes à faire
+  for (const [v, lab, lane] of TARGETS[li]){
+    const x = X(v); if (x < -80 || x > w + 80) continue;
+    const st = run ? run.status[lab] : null, col = st === 'ok' ? COL.ok : st === 'mid' ? COL.mid : st === 'bad' || st === 'late' ? COL.bad : COL.xp;
+    const y = lane === 'A' ? yA + H / 2 : lane === 'B' ? yB + H / 2 : (yA + yB + H) / 2;
+    g.save(); g.shadowColor = col; g.shadowBlur = 18; g.fillStyle = col;
+    g.beginPath(); g.moveTo(x, y - 17); g.lineTo(x + 17, y); g.lineTo(x, y + 17); g.lineTo(x - 17, y); g.closePath(); g.fill(); g.restore();
+    g.fillStyle = COL.ink; g.font = '800 15px ' + COL.font; g.textAlign = 'center'; g.fillText(st === 'ok' ? '✓' : st ? '!' : '◆', x, y + 5);
+    g.fillStyle = col; g.font = '800 13px ' + COL.disp; g.fillText(lab, x, lane === 'B' ? yB + H + 18 : 18);
+  }
+  // ligne de frappe
+  g.save(); g.shadowColor = COL.fg; g.shadowBlur = 16; g.strokeStyle = COL.fg; g.lineWidth = 3;
+  g.beginPath(); g.moveTo(hitX, 28); g.lineTo(hitX, h - 8); g.stroke(); g.restore();
+  g.fillStyle = COL.muted; g.font = '600 11px ' + COL.font; g.textAlign = 'center'; g.fillText('MAINTENANT', hitX, h - 0);
 }
-
+function pop(text, kind){ const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text; $('pops').appendChild(d); setTimeout(() => d.remove(), 1400); }
+function chime(good){
+  if (!ac) return; const t = ac.currentTime;
+  (good ? [1046.5, 1568] : [784]).forEach((f, i) => { const o = ac.createOscillator(), gg = ac.createGain(); o.type = 'sine'; o.frequency.value = f;
+    gg.gain.setValueAtTime(0, t + i * .07); gg.gain.linearRampToValueAtTime(.08, t + i * .07 + .01); gg.gain.exponentialRampToValueAtTime(.0001, t + i * .07 + .35);
+    o.connect(gg); gg.connect(master); o.start(t + i * .07); o.stop(t + i * .07 + .4); });
+}
+function confetti(n){
+  if (REDUCED) return; if (!COL.a) loadCol();
+  const cv = $('confetti'), g = cv.getContext('2d'), dpr = window.devicePixelRatio || 1; cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const cols = [COL.a, COL.b, COL.xp, COL.mid, COL.ok];
+  const ps = [...Array(n)].map(() => ({ x: innerWidth / 2 + (Math.random() - .5) * 200, y: innerHeight * .45, vx: (Math.random() - .5) * 14, vy: -Math.random() * 14 - 4, r: Math.random() * 6 + 4, c: cols[Math.floor(Math.random() * cols.length)], a: Math.random() * 6, va: (Math.random() - .5) * .4 }));
+  let t = 0; const step = () => { t++; g.clearRect(0, 0, innerWidth, innerHeight);
+    for (const p of ps){ p.vy += .35; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.a += p.va; g.save(); g.translate(p.x, p.y); g.rotate(p.a); g.fillStyle = p.c; g.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); g.restore(); }
+    if (t < 150) requestAnimationFrame(step); else g.clearRect(0, 0, innerWidth, innerHeight); };
+  step();
+}
 /* ---------- FLX4 (MIDI) ---------- */
 const DEFAULT_MAP = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 } };
 let map = DEFAULT_MAP; try { const s = JSON.parse(localStorage.getItem('coach-midi-map') || 'null'); if (s) map = s; } catch (e) {}
@@ -480,21 +590,21 @@ async function initMidi(){
   const pill = $('midiPill'), txt = pill.lastElementChild;
   if (!navigator.requestMIDIAccess){ txt.textContent = 'Souris (MIDI indisponible)'; return; }
   try { const acc = await navigator.requestMIDIAccess({ sysex: false });
-    const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); pill.className = 'status' + (ins.length ? ' on' : ''); txt.textContent = ins.length ? ins.map(i => i.name).join(', ') : 'Souris (aucune table branchée)'; };
+    const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); pill.className = 'chip status' + (ins.length ? ' on' : ''); txt.textContent = ins.length ? ins.map(i => i.name).join(', ') : 'Souris (aucune table branchée)'; };
     acc.onstatechange = refresh; refresh();
   } catch (e){ txt.textContent = 'Souris (MIDI bloqué ici)'; }
 }
+
 
 /* ---------- Démarrage ---------- */
 buildControls();
 $('startBtn').addEventListener('click', () => run ? stopRun() : startRun());
 $('launchB').addEventListener('click', launchB);
 $('retry').addEventListener('click', () => { $('result').hidden = true; startRun(); });
-$('next').addEventListener('click', () => { selectLesson(Math.min(LESSONS.length - 1, li + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+$('next').addEventListener('click', () => { selectLesson(Math.min(LESSONS.length - 1, li + 1)); });
 document.addEventListener('keydown', e => { if (e.code === 'Space' && run && !(e.target instanceof HTMLInputElement)){ e.preventDefault(); launchB(); } }, true);
-window.addEventListener('resize', () => drawTimeline(run ? beatNow() : null));
-try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => drawTimeline(run ? beatNow() : null)); } catch (e) {}
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => drawTimeline(null));
+window.addEventListener('resize', () => drawHighway(run ? beatNow() : START));
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { loadCol(); drawHighway(run ? beatNow() : START); });
 const firstUndone = LESSONS.findIndex((_, i) => !(stars[i] >= 2));
 selectLesson(firstUndone < 0 ? 0 : firstUndone);
 initMidi();
