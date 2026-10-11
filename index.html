@@ -64,6 +64,9 @@ button{cursor:pointer}
 .seg button{border:0;background:transparent;border-radius:9px;padding:7px 14px;font-size:14px;font-weight:600;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 
+.sound{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--fg);color:var(--bg);border-radius:16px;padding:16px 20px}
+.sound b{font-size:17px}.sound span{opacity:.75;font-size:14px;display:block}
+.sound .btn{background:var(--bg);color:var(--fg);border-color:var(--bg)}
 .banner{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow);border-left:4px solid var(--mid)}
 .banner b{display:block}
 .banner span{color:var(--muted);font-size:15px}
@@ -205,9 +208,12 @@ button{cursor:pointer}
         <button type="button" data-style="techno" aria-pressed="false">Techno</button>
         <button type="button" data-style="afro" aria-pressed="false">Afro</button>
       </div>
+      <button type="button" class="btn" id="testBtn" title="Joue trois bips sur la sortie audio">Tester le son</button>
       <button type="button" class="btn" id="learnBtn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 4h10M3 8h10M3 12h10"/><circle cx="6" cy="4" r="1.6" fill="var(--surface)"/><circle cx="10" cy="8" r="1.6" fill="var(--surface)"/><circle cx="5" cy="12" r="1.6" fill="var(--surface)"/></svg>Configurer ma FLX4</button>
     </div>
   </header>
+
+  <div class="sound" id="soundBar"><div><b>Le son est coupé</b><span>Le navigateur attend un clic avant de jouer de l'audio. Si tu appuies d'abord sur PLAY de la FLX4, il reste muet.</span></div><button type="button" class="btn" id="soundOn">Activer le son</button></div>
 
   <div class="banner" id="midiNotice" hidden></div>
 
@@ -471,7 +477,7 @@ function analyze(buf, forced){
 
 
 /* ---------- Audio ---------- */
-let ac = null, master = null;
+let ac = null, master = null, outChannels = 2;
 const mk = id => ({ id, data: null, buf: null, bufFrom: null, name: '', src: '', bpm: 120, offset: 0, loop: true, playing: false, node: null, anchorT: 0, anchorPos: 0, rate: 1 });
 const A = mk('A'), B = mk('B');
 const ctrl = { trimA: .5, trimB: .5, lowA: .5, lowB: .5, faderA: 1, faderB: 0, xf: .5 };
@@ -481,7 +487,18 @@ let style = 'house';
 function ensureAudio(){
   if (ac) return ac;
   ac = new (window.AudioContext || window.webkitAudioContext)();
-  master = ac.createGain(); master.gain.value = .85; master.connect(ac.destination);
+  master = ac.createGain(); master.gain.value = .85;
+  const dest = ac.destination; outChannels = 2;
+  try {
+    if (dest.maxChannelCount >= 4){
+      // FLX4 en carte son : canaux 1-2 = sortie principale, 3-4 = casque. On envoie le mix sur les deux.
+      dest.channelCount = 4; dest.channelCountMode = 'explicit'; dest.channelInterpretation = 'discrete';
+      const split = ac.createChannelSplitter(2), merge = ac.createChannelMerger(4);
+      master.connect(split); split.connect(merge, 0, 0); split.connect(merge, 1, 1); split.connect(merge, 0, 2); split.connect(merge, 1, 3);
+      merge.connect(dest); outChannels = 4;
+    } else master.connect(dest);
+  } catch (e){ try { master.disconnect(); } catch (_) {} master.connect(dest); outChannels = 2; }
+  ac.onstatechange = updateSoundBar;
   for (const d of [A, B]){
     d.trim = ac.createGain();
     d.eq = ac.createBiquadFilter(); d.eq.type = 'lowshelf'; d.eq.frequency.value = 220;
@@ -876,6 +893,21 @@ function endLearn(){
   if (learning){ map = Object.assign({}, map, learning.newMap); mapIsDefault = false; try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); } catch (e) {} }
   learning = null; $('learnBox').hidden = true; notice('');
 }
+
+/* ---------- Son ---------- */
+function updateSoundBar(){ $('soundBar').hidden = !!(ac && ac.state === 'running'); }
+function unlockAudio(){ ensureAudio(); if (ac.state !== 'running') ac.resume().then(updateSoundBar, () => {}); updateSoundBar(); }
+function testSound(){
+  unlockAudio(); const t = ac.currentTime + .05;
+  for (let i = 0; i < 3; i++){ const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = i === 2 ? 880 : 660;
+    g.gain.setValueAtTime(0, t + i * .3); g.gain.linearRampToValueAtTime(.5, t + i * .3 + .01); g.gain.exponentialRampToValueAtTime(.001, t + i * .3 + .25);
+    o.connect(g); g.connect(master); o.start(t + i * .3); o.stop(t + i * .3 + .27); }
+  $('testBtn').textContent = outChannels === 4 ? 'Bips envoyés (enceintes + casque FLX4)' : 'Bips envoyés';
+  setTimeout(() => { $('testBtn').textContent = 'Tester le son'; }, 2500);
+}
+['pointerdown', 'keydown'].forEach(t => window.addEventListener(t, unlockAudio, { capture: true }));
+$('soundOn').addEventListener('click', unlockAudio);
+$('testBtn').addEventListener('click', testSound);
 
 /* ---------- Liaison ---------- */
 buildControls();
