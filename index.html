@@ -195,6 +195,11 @@ button{cursor:pointer}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .toast.ok{border-left-color:var(--ok)}.toast.bad{border-left-color:var(--bad)}
 /* Bibliothèque */
+.where{background:color-mix(in srgb,var(--b) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--b) 35%,var(--surface));border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;font-size:15px}
+.where h3{margin:0;font-size:16px}
+.where p{margin:0}
+.where ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.where code{font-family:var(--mono);font-size:13px;background:var(--surface);padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
 .lib{display:flex;flex-direction:column;gap:16px}
 .lib-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .lib-head h2{margin:0;font-size:24px;letter-spacing:-.02em}
@@ -362,6 +367,7 @@ details.howxml ol{margin:10px 0 2px;padding-left:20px;color:var(--muted);display
       </ol>
       <p class="hint" style="margin:8px 0 0">Tout reste dans ton navigateur : ni la collection ni les fichiers ne sont envoyés en ligne.</p>
     </details>
+    <div class="where" id="where" hidden></div>
     <div class="filters">
       <input type="search" id="q" placeholder="Rechercher un titre, un artiste, un genre" aria-label="Rechercher">
       <select id="genre" aria-label="Genre"></select>
@@ -819,6 +825,9 @@ function parseRekordbox(text){
   for (const el of coll.querySelectorAll(':scope > TRACK')){
     const loc = el.getAttribute('Location') || '';
     const streaming = !/^file:/i.test(loc);
+    let path = ''; try { path = decodeURIComponent(loc.replace(/^file:\/\/(localhost)?/i, '')); } catch (e) { path = loc; }
+    if (/^\/[A-Za-z]:\//.test(path)) path = path.slice(1);
+    const dir = streaming ? '' : path.slice(0, path.lastIndexOf('/'));
     let name = ''; try { name = decodeURIComponent(loc.split('/').pop() || ''); } catch (e) { name = loc.split('/').pop() || ''; }
     if (!name) continue;
     const tempo = el.querySelector('TEMPO');
@@ -834,7 +843,7 @@ function parseRekordbox(text){
     const pick = hot || mem; if (pick) cue = parseFloat(pick.getAttribute('Start'));
     const tonal = el.getAttribute('Tonality') || '';
     if (streaming) name = 'streaming:' + (el.getAttribute('TrackID') || name);
-    out.push({ id: 'f:' + fileKey(name), file: fileKey(name), fileName: name, streaming,
+    out.push({ id: 'f:' + fileKey(name), file: fileKey(name), fileName: name, streaming, dir,
       title: el.getAttribute('Name') || name.replace(/\.[^.]+$/, ''), artist: el.getAttribute('Artist') || '',
       genre: el.getAttribute('Genre') || '', bpm: bpm ? Math.round(bpm * 100) / 100 : null, key: parseKey(tonal), keyName: tonal,
       duration: parseFloat(el.getAttribute('TotalTime')) || null, downbeat, cue: isFinite(cue) ? cue : null, source: 'rekordbox' });
@@ -969,6 +978,34 @@ function setLibStatus(msg){
   if (user.length && av < user.length) s += ' · choisis ton dossier musique pour relier les autres';
   $('libStatus').textContent = s;
 }
+function renderWhere(){
+  const box = $('where'); box.innerHTML = '';
+  const miss = lib.filter(t => !t.demo && !t.streaming && !isAvail(t)), stream = lib.filter(t => t.streaming).length;
+  if (!miss.length && !stream){ box.hidden = true; return; }
+  box.hidden = false;
+  const show = p => /^[A-Za-z]:/.test(p) ? p.replace(/\//g, '\\') : p;
+  const add = (tag, text, cls) => { const e = document.createElement(tag); e.textContent = text; if (cls) e.className = cls; box.appendChild(e); return e; };
+  const withDir = miss.filter(t => t.dir);
+  if (miss.length){
+    add('h3', `Où sont tes ${miss.length} morceaux non reliés ?`);
+    if (withDir.length){
+      add('p', 'D\'après rekordbox, tes fichiers sont rangés dans ces dossiers de ton ordinateur. Clique sur « Choisir mon dossier musique » et sélectionne l\'un d\'eux :');
+      const cnt = new Map(); withDir.forEach(t => cnt.set(t.dir, (cnt.get(t.dir) || 0) + 1));
+      const ul = document.createElement('ul');
+      [...cnt].sort((a, b) => b[1] - a[1]).slice(0, 6).forEach(([d, n]) => { const li = document.createElement('li'); const c = document.createElement('code'); c.textContent = show(d); li.append(c, document.createTextNode(` · ${n} morceau${n > 1 ? 'x' : ''}`)); ul.appendChild(li); });
+      box.appendChild(ul);
+      if (cnt.size > 6) add('p', `et ${cnt.size - 6} autres dossiers.`, 'hint');
+      const segs = withDir.map(t => t.dir.split('/')); const common = [];
+      for (let i = 0; ; i++){ const x = segs[0][i]; if (x === undefined || !segs.every(s => s[i] === x)) break; common.push(x); }
+      if (cnt.size > 1 && common.filter(Boolean).length >= 3){ const p = add('p', 'Pour tout relier d\'un coup, choisis leur dossier commun : '); const c = document.createElement('code'); c.textContent = show(common.join('/')); p.appendChild(c); }
+      const drives = [...new Set(withDir.map(t => (t.dir.match(/^([A-Za-z]):/) || [])[1]).filter(x => x && x.toUpperCase() !== 'C'))];
+      if (drives.length) add('p', `Les chemins qui commencent par ${drives.map(x => x.toUpperCase() + ':').join(', ')} sont sur une clé USB ou un disque externe : branche-le avant de choisir le dossier.`, 'hint');
+      if (withDir.some(t => /\/Volumes\//.test(t.dir))) add('p', 'Les chemins qui commencent par /Volumes/ sont sur une clé USB ou un disque externe : branche-le avant de choisir le dossier.', 'hint');
+      add('p', 'Astuce : dans rekordbox, clic droit sur un morceau puis « Afficher dans l\'Explorateur » (ou le Finder sur Mac) ouvre son dossier.', 'hint');
+    } else add('p', 'Réimporte ton fichier rekordbox.xml : la nouvelle version du site t\'indiquera dans quels dossiers sont tes morceaux.');
+  }
+  if (stream) add('p', `${stream} morceau${stream > 1 ? 'x viennent' : ' vient'} d\'un service de streaming (SoundCloud, Beatport, TIDAL…) : il n\'y a pas de fichier sur ton ordinateur, ils ne peuvent pas être joués ici.`, 'hint');
+}
 function refreshGenres(){
   const sel = $('genre'), cur = sel.value, gs = [...new Set(lib.map(t => t.genre).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
   sel.innerHTML = ''; const o = document.createElement('option'); o.value = ''; o.textContent = 'Tous les genres'; sel.appendChild(o);
@@ -977,6 +1014,7 @@ function refreshGenres(){
 }
 let editingId = null;
 function renderLib(){
+  renderWhere();
   const q = $('q').value.trim().toLowerCase(), g = $('genre').value, sort = $('sort').value, ref = A.track;
   $('sort').querySelector('option[value="reco"]').disabled = !ref;
   const mode = sort === 'reco' && ref ? 'reco' : sort === 'reco' ? 'bpm' : sort;
