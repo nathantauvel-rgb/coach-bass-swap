@@ -578,17 +578,21 @@ let style = 'house';
 function ensureAudio(){
   if (ac) return ac;
   ac = new (window.AudioContext || window.webkitAudioContext)();
-  master = ac.createGain(); master.gain.value = .85;
+  master = ac.createGain(); master.gain.value = .7;
+  // Limiteur de sortie : deux morceaux masterisés fort ne doivent pas saturer en s'additionnant
+  const lim = ac.createDynamicsCompressor();
+  lim.threshold.value = -6; lim.knee.value = 0; lim.ratio.value = 20; lim.attack.value = .002; lim.release.value = .12;
+  master.connect(lim);
   const dest = ac.destination; outChannels = 2;
   try {
     if (dest.maxChannelCount >= 4){
       // FLX4 en carte son : canaux 1-2 = sortie principale, 3-4 = casque. On envoie le mix sur les deux.
       dest.channelCount = 4; dest.channelCountMode = 'explicit'; dest.channelInterpretation = 'discrete';
       const split = ac.createChannelSplitter(2), merge = ac.createChannelMerger(4);
-      master.connect(split); split.connect(merge, 0, 0); split.connect(merge, 1, 1); split.connect(merge, 0, 2); split.connect(merge, 1, 3);
+      lim.connect(split); split.connect(merge, 0, 0); split.connect(merge, 1, 1); split.connect(merge, 0, 2); split.connect(merge, 1, 3);
       merge.connect(dest); outChannels = 4;
-    } else master.connect(dest);
-  } catch (e){ try { master.disconnect(); } catch (_) {} master.connect(dest); outChannels = 2; }
+    } else lim.connect(dest);
+  } catch (e){ try { lim.disconnect(); } catch (_) {} lim.connect(dest); outChannels = 2; }
   ac.onstatechange = updateSoundBar;
   for (const d of [A, B]){
     d.trim = ac.createGain();
@@ -611,7 +615,7 @@ function applyCtrl(){
   Object.keys(ctrl).forEach(renderControl);
   if (!ac) return;
   const t = ac.currentTime;
-  A.trim.gain.setTargetAtTime(db2g((ctrl.trimA - .5) * 24), t, .01); B.trim.gain.setTargetAtTime(db2g((ctrl.trimB - .5) * 24), t, .01);
+  A.trim.gain.setTargetAtTime(db2g((ctrl.trimA - .5) * 24) * (A.autoGain || 1), t, .01); B.trim.gain.setTargetAtTime(db2g((ctrl.trimB - .5) * 24) * (B.autoGain || 1), t, .01);
   A.eq.gain.setTargetAtTime(lowDb(ctrl.lowA), t, .01); B.eq.gain.setTargetAtTime(lowDb(ctrl.lowB), t, .01);
   A.fader.gain.setTargetAtTime(ctrl.faderA * ctrl.faderA, t, .01); B.fader.gain.setTargetAtTime(ctrl.faderB * ctrl.faderB, t, .01);
   A.xfg.gain.setTargetAtTime(Math.min(1, 2 * (1 - ctrl.xf)), t, .01); B.xfg.gain.setTargetAtTime(Math.min(1, 2 * ctrl.xf), t, .01);
@@ -963,6 +967,9 @@ async function getFile(t){
   if (handles[k]){ try { return await handles[k].getFile(); } catch (e) { return null; } }
   return null;
 }
+// Auto-gain : ramène chaque morceau à un niveau moyen commun (comme l'auto-gain de rekordbox)
+function loudDb(ch){ let s = 0, n = 0; for (let i = 0; i < ch.length; i += 53){ s += ch[i] * ch[i]; n++; } return 10 * Math.log10(s / Math.max(1, n) + 1e-12); }
+function setAutoGain(d, ch){ const g = Math.max(-12, Math.min(6, -17 - loudDb(ch))); d.autoGain = db2g(g); d.autoGainDb = g; applyCtrl(); }
 function estimateEnergy(buf){
   const c = buf.getChannelData(0); let s = 0, n = 0;
   for (let i = 0; i < c.length; i += 97){ s += c[i] * c[i]; n++; }
@@ -1080,7 +1087,7 @@ async function loadTrackToDeck(d, t){
   if (t.demo){
     const sp = STYLES[t.demo.style][t.demo.i];
     d.data = demoData(t.demo.style, t.demo.i); d.bufFrom = null; toBuffer(d);
-    Object.assign(d, { bpm: sp.bpm, offset: 0, cuePos: 0, loop: true, track: t });
+    Object.assign(d, { bpm: sp.bpm, offset: 0, cuePos: 0, loop: true, track: t }); setAutoGain(d, d.data.L);
     d.anchorPos = d.cuePos; renderDeck(d); renderLib(); updatePlayButtons(); return;
   }
   if (t.streaming){ toast('« ' + t.title + ' » vient d\'un service de streaming dans rekordbox : il n\'y a pas de fichier à lire sur ton ordinateur.', 'bad'); return; }
@@ -1108,7 +1115,7 @@ async function loadTrackToDeck(d, t){
     if (!t.energy) t.energy = estimateEnergy(buf);
     dbPut([t]);
     d.buf = buf; d.data = null; d.bufFrom = null;
-    Object.assign(d, { bpm, offset: off, cuePos: cue, loop: false, track: t });
+    Object.assign(d, { bpm, offset: off, cuePos: cue, loop: false, track: t }); setAutoGain(d, buf.getChannelData(0));
     d.anchorPos = d.cuePos; renderDeck(d); renderLib(); updatePlayButtons();
     toast('« ' + t.title + ' » est prêt sur la platine ' + d.id + '.', 'ok');
   } catch (e){
