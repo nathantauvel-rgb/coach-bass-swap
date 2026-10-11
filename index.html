@@ -194,6 +194,8 @@ button{cursor:pointer}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translate(-50%,20px);max-width:min(560px,calc(100% - 32px));background:var(--fg);color:var(--bg);padding:14px 18px;border-radius:14px;font-size:15px;font-weight:500;box-shadow:0 12px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:10;border-left:5px solid var(--b)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .toast.ok{border-left-color:var(--ok)}.toast.bad{border-left-color:var(--bad)}
+.opt{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted);cursor:pointer}
+.opt input{margin-top:3px;accent-color:var(--a);width:16px;height:16px;flex:none}
 /* Bibliothèque */
 .where{background:color-mix(in srgb,var(--b) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--b) 35%,var(--surface));border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;font-size:15px}
 .where h3{margin:0;font-size:16px}
@@ -297,6 +299,7 @@ details.howxml ol{margin:10px 0 2px;padding-left:20px;color:var(--muted);display
         <div class="stat"><span class="cap">Tonalité</span><span class="v num" id="keyA">—</span></div>
       </div>
       <button type="button" class="play" id="playA"></button>
+      <label class="opt"><input type="checkbox" id="fromOutro" checked> Démarrer A deux phrases avant son outro, pour mixer B sur la fin de A comme en soirée</label>
       <div class="import">
         <label class="btn" for="fileA"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V2M4.5 5.5 8 2l3.5 3.5M2.5 11v2.5h11V11"/></svg>Ajouter un morceau</label>
         <input type="file" id="fileA" accept="audio/*" hidden>
@@ -697,7 +700,8 @@ async function loadFile(d, file){
 const ICON_PLAY = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l10-6.2a.8.8 0 0 0 0-1.4l-10-6.2A.8.8 0 0 0 6 3.8Z"/></svg>';
 const ICON_STOP = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="2"/></svg>';
 let tr = null, lastReport = null, exRep = null;
-function stopAll(){ stopNode(A); stopNode(B); tr = null; A.anchorPos = A.cuePos; B.anchorPos = B.cuePos; updatePlayButtons(); }
+const aStart = () => A.outroBeat != null && $('fromOutro').checked ? A.mixStart : A.cuePos;
+function stopAll(){ stopNode(A); stopNode(B); tr = null; A.anchorPos = aStart(); B.anchorPos = B.cuePos; updatePlayButtons(); }
 function updatePlayButtons(){
   $('playA').innerHTML = (A.playing ? ICON_STOP + 'Arrêter A' : ICON_PLAY + 'Lancer A');
   $('playB').innerHTML = (B.playing ? ICON_STOP + 'Arrêter B' : ICON_PLAY + 'Lancer B');
@@ -705,8 +709,8 @@ function updatePlayButtons(){
 function togglePlay(d){
   ensureAudio(); if (ac.state === 'suspended') ac.resume(); toBuffer(A); toBuffer(B);
   if (!d.buf) return;
-  if (d.playing){ stopNode(d); d.anchorPos = d.cuePos; onStopped(d); updatePlayButtons(); return; }
-  if (d === A){ A.rate = 1; startNode(A, ac.currentTime + .05, A.cuePos); }
+  if (d.playing){ stopNode(d); d.anchorPos = d === A ? aStart() : d.cuePos; onStopped(d); updatePlayButtons(); return; }
+  if (d === A){ A.rate = 1; startNode(A, ac.currentTime + .05, aStart()); }
   else {
     const bEff = A.playing ? effBpm(B.bpm, A.bpm) : B.bpm;
     B.rate = A.playing ? A.bpm / bEff : 1;
@@ -715,7 +719,7 @@ function togglePlay(d){
       if (k >= bA){ t0 = now + (k - bA) * p; pos = B.cuePos; }
       else { t0 = now + .02; pos = B.cuePos + (bA + .02 / p - k) * (60 / bEff); }
       startNode(B, t0, pos);
-      tr = { startBeat: k, frames: [], lowBAtStart: ctrl.lowB, done: false, quietSince: null };
+      tr = { startBeat: k, frames: [], lowBAtStart: ctrl.lowB, done: false, quietSince: null, outroBeat: A.outroBeat };
     } else startNode(B, ac.currentTime + .05, B.cuePos);
   }
   updatePlayButtons();
@@ -970,6 +974,19 @@ async function getFile(t){
 // Auto-gain : ramène chaque morceau à un niveau moyen commun (comme l'auto-gain de rekordbox)
 function loudDb(ch){ let s = 0, n = 0; for (let i = 0; i < ch.length; i += 53){ s += ch[i] * ch[i]; n++; } return 10 * Math.log10(s / Math.max(1, n) + 1e-12); }
 function setAutoGain(d, ch){ const g = Math.max(-12, Math.min(6, -17 - loudDb(ch))); d.autoGain = db2g(g); d.autoGainDb = g; applyCtrl(); }
+// Repère l'outro : la dernière phrase de 32 temps encore « pleine », la suite étant plus dépouillée
+function findOutro(buf, off, bpm){
+  const P = 60 / bpm, ph = 32 * P, c = buf.getChannelData(0), sr = buf.sampleRate, n = Math.floor((buf.duration - off) / ph);
+  if (n < 4) return { outroBeat: null, startPos: off };
+  const e = [];
+  for (let k = 0; k < n; k++){ const a = Math.floor((off + k * ph) * sr), b = Math.floor((off + (k + 1) * ph) * sr); let s = 0, m = 0;
+    for (let i = a; i < b; i += 61){ s += c[i] * c[i]; m++; } e.push(10 * Math.log10(s / Math.max(1, m) + 1e-12)); }
+  const med = [...e].sort((x, y) => x - y)[Math.floor(n / 2)];
+  let last = n - 1; while (last > 0 && e[last] < med - 2.5) last--;
+  let outro = last + 1; if (outro >= n) outro = n - 1;
+  const outroBeat = outro * 32, startPhrase = Math.max(0, outro - 2);
+  return { outroBeat, startPos: off + startPhrase * ph };
+}
 function estimateEnergy(buf){
   const c = buf.getChannelData(0); let s = 0, n = 0;
   for (let i = 0; i < c.length; i += 97){ s += c[i] * c[i]; n++; }
@@ -1087,8 +1104,8 @@ async function loadTrackToDeck(d, t){
   if (t.demo){
     const sp = STYLES[t.demo.style][t.demo.i];
     d.data = demoData(t.demo.style, t.demo.i); d.bufFrom = null; toBuffer(d);
-    Object.assign(d, { bpm: sp.bpm, offset: 0, cuePos: 0, loop: true, track: t }); setAutoGain(d, d.data.L);
-    d.anchorPos = d.cuePos; renderDeck(d); renderLib(); updatePlayButtons(); return;
+    Object.assign(d, { bpm: sp.bpm, offset: 0, cuePos: 0, loop: true, track: t, outroBeat: null, mixStart: 0 }); setAutoGain(d, d.data.L);
+    d.anchorPos = d === A ? aStart() : d.cuePos; renderDeck(d); renderLib(); updatePlayButtons(); return;
   }
   if (t.streaming){ toast('« ' + t.title + ' » vient d\'un service de streaming dans rekordbox : il n\'y a pas de fichier à lire sur ton ordinateur.', 'bad'); return; }
   const f = await getFile(t);
@@ -1115,8 +1132,9 @@ async function loadTrackToDeck(d, t){
     if (!t.energy) t.energy = estimateEnergy(buf);
     dbPut([t]);
     d.buf = buf; d.data = null; d.bufFrom = null;
-    Object.assign(d, { bpm, offset: off, cuePos: cue, loop: false, track: t }); setAutoGain(d, buf.getChannelData(0));
-    d.anchorPos = d.cuePos; renderDeck(d); renderLib(); updatePlayButtons();
+    const ou = findOutro(buf, off, bpm);
+    Object.assign(d, { bpm, offset: off, cuePos: cue, loop: false, track: t, outroBeat: ou.outroBeat, mixStart: ou.startPos }); setAutoGain(d, buf.getChannelData(0));
+    d.anchorPos = d === A ? aStart() : d.cuePos; renderDeck(d); renderLib(); updatePlayButtons();
     toast('« ' + t.title + ' » est prêt sur la platine ' + d.id + '.', 'ok');
   } catch (e){
     const msg = 'Impossible de lire « ' + (t.fileName || t.title) + ' ». Le navigateur lit les MP3, WAV, AIFF, M4A et FLAC, mais pas les fichiers protégés.';
@@ -1220,8 +1238,15 @@ function frame(){
     cells.forEach((c, i) => { c.classList.toggle('now', i === inPh); c.classList.toggle('past', i < inPh); });
     $('phraseTitle').textContent = 'Phrase ' + (Math.floor(bi / 32) + 1);
     $('phraseSub').textContent = 'Mesure ' + (Math.floor(inPh / 4) + 1) + ' sur 8 · temps ' + (inPh + 1) + ' sur 32';
-    $('cdNum').textContent = left; $('cdLab').textContent = left === 1 ? 'temps avant la prochaine phrase' : 'temps avant la prochaine phrase';
-    $('countBox').classList.toggle('soon', left <= 4);
+    const toOutro = A.outroBeat != null ? A.outroBeat - bA : null;
+    if (toOutro !== null && toOutro > 0 && toOutro <= 96){
+      const n = Math.ceil(toOutro); $('cdNum').textContent = n; $('cdLab').textContent = 'temps avant l\'outro de A : lance B à zéro';
+      $('countBox').classList.toggle('soon', n <= 8);
+    } else {
+      $('cdNum').textContent = left; $('cdLab').textContent = 'temps avant la prochaine phrase';
+      $('countBox').classList.toggle('soon', left <= 4);
+    }
+    if (toOutro !== null) $('phraseSub').textContent += toOutro > 0 ? ' · outro de A dans ' + Math.ceil(toOutro) + ' temps' : ' · A est dans son outro';
   } else {
     cells.forEach(c => c.classList.remove('now', 'past'));
     $('phraseTitle').textContent = 'Platine A à l\'arrêt'; $('phraseSub').textContent = 'Lance A pour suivre la phrase de 32 temps';
@@ -1259,10 +1284,10 @@ function finishTransition(){
   if (!tr || tr.done) return;
   tr.done = true;
   if (tr.frames.length < 30) return;
-  lastReport = buildReport(tr.frames, tr.startBeat, tr.lowBAtStart);
+  lastReport = buildReport(tr.frames, tr.startBeat, tr.lowBAtStart, tr.outroBeat);
   showReport(lastReport, false);
 }
-function buildReport(fr, startBeat, lowBAtStart){
+function buildReport(fr, startBeat, lowBAtStart, outroBeat){
   let overlap = 0, gapMax = 0, gapCur = 0, swap = null;
   for (let i = 1; i < fr.length; i++){
     const db = fr[i].b - fr[i - 1].b;
@@ -1277,6 +1302,12 @@ function buildReport(fr, startBeat, lowBAtStart){
   else if (inPh % 4 === 0) C.push(['mid', 'Départ de B', `B est parti au début d'une mesure (temps ${inPh + 1} sur 32), en plein milieu de la phrase.`]);
   else C.push(['bad', 'Départ de B', `B est parti au temps ${inPh + 1} sur 32, au milieu d'une mesure. Vise le 1 : le compte à rebours te le donne.`]);
 
+  if (outroBeat != null){
+    const dd = startBeat - outroBeat;
+    if (dd >= -1 && dd <= 33) C.push(['ok', 'Placement dans A', 'B est entré pendant l\'outro de A : les deux morceaux se laissent de la place.']);
+    else if (dd < -1) C.push([dd < -33 ? 'bad' : 'mid', 'Placement dans A', `B est entré ${Math.round(-dd)} temps avant l'outro de A, pendant que A jouait encore à fond. Attends que le compte à rebours arrive à zéro.`]);
+    else C.push(['mid', 'Placement dans A', 'B est entré tard : l\'outro de A était presque terminée. Lance B dès le début de l\'outro.']);
+  }
   if (lowBAtStart > .35 && overlap > 1) C.push(['bad', 'Basses doublées', `${fr1(overlap)} temps avec deux basses. B est parti avec ses basses ouvertes : coupe son LOW avant de le lancer.`]);
   else if (overlap <= .5) C.push(['ok', 'Basses doublées', `${fr1(overlap)} temps : le swap est propre, on n'entend jamais deux basses.`]);
   else if (overlap <= 2) C.push(['mid', 'Basses doublées', `${fr1(overlap)} temps avec deux basses : ça frotte un peu. Coupe A et ouvre B dans le même geste, une main sur chaque potard.`]);
@@ -1462,6 +1493,7 @@ $('learnBtn').addEventListener('click', startLearn);
 $('learnSkip').addEventListener('click', () => learning && nextLearn());
 $('learnStop').addEventListener('click', endLearn);
 bindLibrary();
+$('fromOutro').addEventListener('change', () => { if (!A.playing) A.anchorPos = aStart(); });
 [A, B].forEach(d => {
   $('file' + d.id).addEventListener('change', e => { loadFile(d, e.target.files[0]); e.target.value = ''; });
   const el = $('deck' + d.id);
