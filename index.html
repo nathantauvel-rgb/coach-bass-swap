@@ -147,6 +147,18 @@ a.chip:hover{border-color:var(--muted)}
 .seg button.earb[aria-pressed="true"]{background:var(--xp);color:var(--ink)}
 .styletag{display:inline-block;margin-top:10px;font-size:13px;font-weight:600;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
 .stage.ear .ring{border-color:var(--xp)}
+.chapters{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.chap{flex:none;min-width:170px;border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:10px 14px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.chap .cn{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.chap strong{font-family:var(--display);font-weight:800;font-size:16px;line-height:1.15}
+.chap .cs{font-size:13px;color:var(--muted)}
+.chap[aria-pressed="true"]{border-color:transparent;background:linear-gradient(135deg,color-mix(in srgb,var(--a) 25%,var(--panel)),color-mix(in srgb,var(--xp) 25%,var(--panel)));box-shadow:inset 0 0 0 2px var(--fg)}
+.chap:disabled{opacity:.5;cursor:default}
+.chap.test{border-style:dashed;border-color:var(--b)}
+.chap.test strong{color:var(--b)}
+.pbanner{background:color-mix(in srgb,var(--b) 14%,var(--panel));border:1px solid var(--b);border-radius:16px;padding:12px 16px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.pbanner b{font-family:var(--display);font-weight:800}
+.pbanner button{border:0;background:transparent;color:var(--muted);text-decoration:underline}
 .node .e{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--xp)}
 .btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 .watch{border:2px solid var(--b);background:transparent;color:var(--b);border-radius:16px;padding:14px 26px;font-family:var(--display);font-weight:800;font-size:18px}
@@ -252,7 +264,7 @@ a.chip:hover{border-color:var(--muted)}
     <p class="onb-note" id="onbNote"></p>
     <div class="onb-nav">
       <button type="button" class="skip" id="onbSkip">Passer le guide</button>
-      <div style="display:flex;gap:10px"><button type="button" class="back" id="onbBack">Retour</button><button type="button" class="go" id="onbNext">Suivant</button></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="back" id="onbTest" hidden>Je mixe déjà : test de placement</button><button type="button" class="back" id="onbBack">Retour</button><button type="button" class="go" id="onbNext">Suivant</button></div>
     </div>
   </div>
 </div>
@@ -268,7 +280,11 @@ a.chip:hover{border-color:var(--muted)}
     </div>
   </header>
 
+  <nav class="chapters" id="chapters" aria-label="Chapitres"></nav>
+
   <nav class="map" id="map" aria-label="Niveaux"><span class="prog" id="mapProg" style="width:0"></span></nav>
+
+  <div class="pbanner" id="pBanner" hidden><span><b id="pTitle">Test de placement</b> · <span id="pText"></span></span><button type="button" id="pQuit">Quitter le test</button></div>
 
   <section class="stage" id="stage">
     <div class="stage-head">
@@ -308,7 +324,7 @@ a.chip:hover{border-color:var(--muted)}
       <div class="opts">
         <div class="seg" id="styleSeg" role="group" aria-label="Style des morceaux"><span class="sl">Morceaux</span>
           <button type="button" data-style="house" aria-pressed="true">House</button><button type="button" data-style="techno" aria-pressed="false">Techno</button><button type="button" data-style="afro" aria-pressed="false">Afro</button><button type="button" data-style="random" aria-pressed="false">Surprise</button></div>
-        <div class="seg" id="modeSeg" role="group" aria-label="Mode"><span class="sl">Mode</span>
+        <div class="seg" id="modeSeg" hidden role="group" aria-label="Mode"><span class="sl">Mode</span>
           <button type="button" data-mode="guide" aria-pressed="true">Guidé</button><button type="button" class="earb" data-mode="ear" aria-pressed="false" id="earBtn">À l'oreille</button></div>
       </div>
       <div class="btnrow"><button type="button" class="watch" id="watchBtn">Regarde d'abord</button><button type="button" class="start" id="startBtn">Jouer</button></div><p class="hint" id="hint"></p>
@@ -550,41 +566,74 @@ const LESSONS = [
 LESSONS.forEach(l => { l.kind = l.kind || 'swap'; l.init.cfxA = l.init.cfxA ?? .5; l.launchBeat = l.launchBeat || 32; l.bCue = l.bCue || 0; l.start = l.start || 16; l.end = l.end || 116; l.btn = l.btn || []; });
 const TARGETS = { 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A']], 6: [[64, 'LANCE B', 'B'], [64, 'COUPE A', 'A']], 0: [[32, 'LANCE B', 'B']], 1: [[64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'SWAP', 'AB']], 3: [[32, 'LANCE B', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
 const RING_LAB = { 'FILTRE': 'temps avant de tourner le filtre', 'À FOND': 'temps : filtre à fond avant le drop', 'ECHO': 'temps avant d\'activer l\'écho', 'COUPE A': 'temps avant de couper A', 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
-let li = 0, run = null, ear = false, styleChoice = 'house';
+let li = 0, run = null, ear = false, styleChoice = 'house', chapter = 1, TOL = 1, placement = null;
 let earStars = {}; try { earStars = JSON.parse(localStorage.getItem('coach-lecons-oreille') || '{}') || {}; } catch (e) {}
 try { styleChoice = localStorage.getItem('coach-style') || 'house'; } catch (e) {}
 const pickStyle = () => styleChoice === 'random' ? ['house', 'techno', 'afro'][Math.floor(Math.random() * 3)] : styleChoice;
-const earUnlocked = i => (stars[i] || 0) >= 2;
+let ch2Stars = null; try { ch2Stars = JSON.parse(localStorage.getItem('coach-ch2') || 'null'); } catch (e) {}
+if (!ch2Stars) ch2Stars = Object.assign({}, earStars);
+let ch2Open = false; try { ch2Open = localStorage.getItem('coach-ch2-ouvert') === '1'; chapter = +(localStorage.getItem('coach-chapitre') || 1) || 1; } catch (e) {}
+const CH2_STYLE = ['techno', 'afro', 'house', 'techno', 'afro', 'house', 'techno'];
+const CHAPTERS = [
+  { n: 1, title: 'Les bases', sub: 'Guidé, un geste à la fois' },
+  { n: 2, title: 'La maîtrise', sub: 'À l\'oreille, précision ×2' },
+  { n: 3, title: 'Les vrais morceaux', sub: 'Intros courtes, breaks, voix', soon: true },
+  { n: 4, title: 'Sans filet', sub: 'Sans sync, mix harmonique', soon: true },
+  { n: 5, title: 'La soirée', sub: 'Mini-sets enchaînés', soon: true }
+];
+const bankOf = c => c === 2 ? ch2Stars : stars;
+const sumStars = b => LESSONS.reduce((s, _, i) => s + (b[i] || 0), 0);
+const ch2Unlocked = () => ch2Open || sumStars(stars) >= 14;
+if (chapter === 2 && !ch2Unlocked()) chapter = 1;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 const isAuto = k => !!(run && run.demo) || !LESSONS[li].user.includes(k);
 const clamp01 = x => Math.max(0, Math.min(1, x));
 
-function renderHud(){
-  const tN = LESSONS.reduce((s, _, i) => s + (stars[i] || 0), 0), tE = LESSONS.reduce((s, _, i) => s + (earStars[i] || 0), 0), tot = tN + tE, xp = tN * 10 + tE * 15;
-  $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
-  $('starTot').textContent = tot + '/' + LESSONS.length * 6;
-  const map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove());
-  let lastDone = -1;
-  LESSONS.forEach((l, i) => { if (stars[i]) lastDone = i;
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'node' + (stars[i] ? ' done' : ''); b.setAttribute('aria-pressed', String(i === li));
-    b.innerHTML = `<span class="dot">${stars[i] === 3 ? '★' : i + 1}</span><span class="t"></span><span class="s"><b>${'★'.repeat(stars[i] || 0)}</b>${'★'.repeat(3 - (stars[i] || 0))}</span>${earStars[i] ? `<span class="e">OREILLE ${'★'.repeat(earStars[i])}</span>` : ''}`;
-    b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${stars[i] || 0} étoile(s) sur 3`);
-    b.addEventListener('click', () => selectLesson(i)); map.appendChild(b); });
-  $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * 85.7) + '%';
+function renderChapters(){
+  const bar = $('chapters'); bar.innerHTML = '';
+  for (const c of CHAPTERS){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chap'; b.setAttribute('aria-pressed', String(c.n === chapter));
+    const locked = c.soon || (c.n === 2 && !ch2Unlocked());
+    b.disabled = locked && c.n !== chapter;
+    const sub = c.soon ? 'Bientôt' : c.n === 2 && !ch2Unlocked() ? `Verrouillé : ${sumStars(stars)}/14 ★ au chapitre 1` : c.sub;
+    b.innerHTML = `<span class="cn">Chapitre ${c.n}</span><strong></strong><span class="cs"></span>`; b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = sub;
+    b.addEventListener('click', () => setChapter(c.n)); bar.appendChild(b);
+  }
+  if (!ch2Unlocked()){ const t = document.createElement('button'); t.type = 'button'; t.className = 'chap test';
+    t.innerHTML = '<span class="cn">Tu mixes déjà ?</span><strong>Test de placement</strong><span class="cs">3 épreuves pour sauter les bases</span>';
+    t.addEventListener('click', startPlacement); bar.appendChild(t); }
 }
+function setChapter(n){
+  if (run || n === chapter) return; if (n === 2 && !ch2Unlocked()) return;
+  chapter = n; try { localStorage.setItem('coach-chapitre', String(n)); } catch (e) {}
+  const bank = bankOf(n), first = LESSONS.findIndex((_, i) => !(bank[i] >= 2)); selectLesson(first < 0 ? 0 : first);
+}
+function renderHud(){
+  const t1 = sumStars(stars), t2 = sumStars(ch2Stars), xp = t1 * 10 + t2 * 15;
+  $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
+  $('starTot').textContent = (t1 + t2) + '/' + LESSONS.length * 6;
+  const bank = bankOf(chapter), map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove());
+  let lastDone = -1;
+  LESSONS.forEach((l, i) => { const st = bank[i] || 0; if (st) lastDone = i;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'node' + (st ? ' done' : ''); b.setAttribute('aria-pressed', String(i === li));
+    b.innerHTML = `<span class="dot">${st === 3 ? '★' : i + 1}</span><span class="t"></span><span class="s"><b>${'★'.repeat(st)}</b>${'★'.repeat(3 - st)}</span>`;
+    b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${st} étoile(s) sur 3`);
+    b.addEventListener('click', () => { if (!placement) selectLesson(i); }); map.appendChild(b); });
+  $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * 85.7) + '%';
+  renderChapters();
+}
+function styleLabel(){ if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
+  return styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM'; }
 function selectLesson(i){
-  stopRun(); li = i; const l = LESSONS[i]; START = l.start; END = l.end;
-  $('lnum').textContent = `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
+  stopRun(); li = i; const l = LESSONS[i]; START = l.start; END = l.end; TOL = chapter === 2 ? .5 : 1;
+  $('lnum').textContent = (chapter === 2 ? 'Chapitre 2 · ' : '') + `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
   for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho']) $(g).hidden = !l.show.includes(g);
   for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA']]) $(w).classList.toggle('auto', isAuto(k));
   Object.assign(ctrl, l.init); applyCtrl();
   $('result').hidden = true; setStartBtn(false); $('launchB').disabled = true;
   $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
-  $('hint').textContent = l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
-  if (!earUnlocked(i)) ear = false;
-  const eb = $('earBtn'); eb.disabled = !earUnlocked(i); eb.title = earUnlocked(i) ? 'Sans compte à rebours ni repères' : 'Débloqué à 2 étoiles sur ce niveau';
-  eb.textContent = earUnlocked(i) ? 'À l\'oreille' : 'À l\'oreille (2★)';
-  document.querySelectorAll('#modeSeg button').forEach(x => x.setAttribute('aria-pressed', String((x.dataset.mode === 'ear') === ear)));
+  $('hint').textContent = chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
+  ear = chapter === 2; $('styleSeg').hidden = chapter === 2; $('styleTag').textContent = styleLabel();
   $('stage').classList.remove('ear');
   renderHud(); drawHighway(START); updateSetup();
 }
@@ -596,12 +645,12 @@ function startRun(demo = false){
   ensureAudio(); if (ac.state !== 'running') ac.resume();
   $('startBtn').textContent = 'Préparation…';
   setTimeout(() => {
-    const sty = pickStyle(); prepareTracks(sty); $('styleTag').textContent = STYLE_DEFS[sty].label + ' · ' + BPM + ' BPM';
+    const sty = chapter === 2 ? CH2_STYLE[li] : pickStyle(); prepareTracks(sty); $('styleTag').textContent = STYLE_DEFS[sty].label + ' · ' + BPM + ' BPM';
     const l = LESSONS[li]; Object.assign(ctrl, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
-    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: ear && !demo };
-    $('stage').classList.toggle('ear', ear && !demo);
+    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: chapter === 2 && !demo, ch: chapter };
+    $('stage').classList.toggle('ear', chapter === 2 && !demo);
     setEcho(false); run.echoAt = null;
     if (l.autoLaunch || demo) launchAt(l.launchBeat);
     $('stage').classList.toggle('demo', demo); $('demoTag').hidden = !demo; $('watchBtn').disabled = true;
@@ -637,7 +686,7 @@ function toggleEcho(){
   if (!run || run.demo || !LESSONS[li].btn.includes('echo')) return;
   setEcho(!echoOn);
   if (echoOn && run.echoAt == null){ const b = beatNow(); run.echoAt = b; const e = b - 63;
-    if (e >= -1.5 && e <= .6){ pop('Écho lancé !', 'ok'); run.status.ECHO = 'ok'; chime(true); }
+    if (e >= -1.5 * TOL && e <= .6 * TOL){ pop('Écho lancé !', 'ok'); run.status.ECHO = 'ok'; chime(true); }
     else { pop(e < 0 ? 'Écho trop tôt' : 'Écho trop tard', 'mid'); run.status.ECHO = 'mid'; } }
 }
 function ideal(k, b, i = li){
@@ -676,29 +725,29 @@ function liveJudge(b){
     if (p.open == null && b >= 40 && ctrl.lowB > .4) p.open = b;
     if (p.kill != null && p.open != null && !s.SWAP){
       const e = (p.kill + p.open) / 2 - 64, ov = Math.abs(p.kill - p.open);
-      if (Math.abs(e) <= .75 && ov <= .6){ pop('SWAP PARFAIT !', 'ok'); s.SWAP = 'ok'; chime(true); }
-      else if (Math.abs(e) <= 2 && ov <= 2){ pop(Math.abs(e) > .75 ? `Swap ${e > 0 ? 'en retard' : 'en avance'}` : 'Swap pas tout à fait net', 'mid'); s.SWAP = 'mid'; chime(false); }
+      if (Math.abs(e) <= .75 * TOL && ov <= .6 * TOL){ pop('SWAP PARFAIT !', 'ok'); s.SWAP = 'ok'; chime(true); }
+      else if (Math.abs(e) <= 2 * TOL && ov <= 2 * TOL){ pop(Math.abs(e) > .75 * TOL ? `Swap ${e > 0 ? 'en retard' : 'en avance'}` : 'Swap pas tout à fait net', 'mid'); s.SWAP = 'mid'; chime(false); }
       else { pop('Swap raté', 'bad'); s.SWAP = 'bad'; }
     }
     if (!s.SWAP && b > 70){ pop('Le swap, c\'était maintenant !', 'bad'); s.SWAP = 'bad'; }
   }
   if (li === 1 || li === 3){
-    if (!s['B À FOND'] && b >= 32 && ctrl.faderB >= .9){ const ok = b <= 68; pop(ok ? 'B est installé !' : 'B est à fond… un peu tard', ok ? 'ok' : 'mid'); s['B À FOND'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
-    if (!s['A SORTI'] && b >= 40 && ctrl.faderA <= .05){ const ok = b >= 60 && b <= 98; pop(ok ? 'A sorti à temps !' : 'A sorti trop tôt', ok ? 'ok' : 'mid'); s['A SORTI'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
-    if (!s['A SORTI'] && b > 98){ pop('Deux basses en même temps !', 'bad'); s['A SORTI'] = 'bad'; }
+    if (!s['B À FOND'] && b >= 32 && ctrl.faderB >= .9){ const ok = b <= 64 + 4 * TOL; pop(ok ? 'B est installé !' : 'B est à fond… un peu tard', ok ? 'ok' : 'mid'); s['B À FOND'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
+    if (!s['A SORTI'] && b >= 40 && ctrl.faderA <= .05){ const ok = b >= 64 - 4 * TOL && b <= 96 + 2 * TOL; pop(ok ? 'A sorti à temps !' : 'A sorti trop tôt', ok ? 'ok' : 'mid'); s['A SORTI'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
+    if (!s['A SORTI'] && b > 96 + 2 * TOL){ pop('Deux basses en même temps !', 'bad'); s['A SORTI'] = 'bad'; }
   }
   const L0 = LESSONS[li];
   if (!L0.autoLaunch && run.launch === null && b > L0.launchBeat + 3 && !s['LANCE B']){ pop('Trop tard ! Lance B', 'bad'); s['LANCE B'] = 'late'; }
   if (L0.kind === 'filter'){
     if (!p.wrong && ctrl.cfxA < .4){ p.wrong = 1; pop('Mauvais côté ! Tourne vers la droite', 'bad'); }
-    if (!s.FILTRE && b >= 40 && ctrl.cfxA > .56){ const ok = b >= 58 && b <= 70; pop(ok ? 'Filtre lancé !' : b < 58 ? 'Filtre trop tôt' : 'Filtre en retard', ok ? 'ok' : 'mid'); s.FILTRE = ok ? 'ok' : 'mid'; if (ok) chime(true); p.fStart = b; }
+    if (!s.FILTRE && b >= 40 && ctrl.cfxA > .56){ const ok = Math.abs(b - 64) <= 6 * TOL; pop(ok ? 'Filtre lancé !' : b < 58 ? 'Filtre trop tôt' : 'Filtre en retard', ok ? 'ok' : 'mid'); s.FILTRE = ok ? 'ok' : 'mid'; if (ok) chime(true); p.fStart = b; }
     if (!s.FILTRE && b > 80){ pop('Tourne le filtre !', 'bad'); s.FILTRE = 'bad'; }
-    if (!s['À FOND'] && b >= 40 && ctrl.cfxA >= .9){ const d = p.fStart != null ? b - p.fStart : 0, ok = b <= 98 && d >= 12; pop(ok ? 'A s\'efface en douceur !' : d < 12 ? 'Trop brusque !' : 'Un peu tard', ok ? 'ok' : 'mid'); s['À FOND'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
+    if (!s['À FOND'] && b >= 40 && ctrl.cfxA >= .9){ const d = p.fStart != null ? b - p.fStart : 0, ok = b <= 96 + 2 * TOL && d >= 12; pop(ok ? 'A s\'efface en douceur !' : d < 12 ? 'Trop brusque !' : 'Un peu tard', ok ? 'ok' : 'mid'); s['À FOND'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
     if (!s['À FOND'] && b > 99){ pop('A n\'est pas filtré au drop !', 'bad'); s['À FOND'] = 'bad'; }
   }
   if (L0.kind === 'echo' || L0.kind === 'cut'){
     if (L0.kind === 'echo' && !s.ECHO && b > 64.5){ pop('Pas d\'écho !', 'bad'); s.ECHO = 'bad'; }
-    if (!s['COUPE A'] && b >= 56 && ctrl.faderA < .1){ const e = b - 64, ok = Math.abs(e) <= .6, withEcho = L0.kind === 'cut' || run.echoAt != null;
+    if (!s['COUPE A'] && b >= 56 && ctrl.faderA < .1){ const e = b - 64, ok = Math.abs(e) <= .6 * TOL, withEcho = L0.kind === 'cut' || run.echoAt != null;
       pop(ok ? (L0.kind === 'echo' ? (withEcho ? 'ECHO OUT PARFAIT !' : 'Coupé… mais sans écho') : 'Coupure nette !') : `Coupé ${e > 0 ? 'en retard' : 'trop tôt'}`, ok && withEcho ? 'ok' : 'mid');
       s['COUPE A'] = ok && withEcho ? 'ok' : 'mid'; if (ok && withEcho) chime(true); }
     if (!s['COUPE A'] && b > 66){ pop('Coupe A !', 'bad'); s['COUPE A'] = 'bad'; }
@@ -735,10 +784,10 @@ function evalFaders(fr){
   const out = []; const bReach = firstAt(fr, 32, x => x.fb >= .9), aOut = firstAt(fr, 40, x => x.fa <= .05);
   let jump = 0; for (let i = 0; i < fr.length; i++){ const j = fr.findIndex(x => x.b >= fr[i].b + 2); if (j < 0) break; jump = Math.max(jump, fr[j].fb - fr[i].fb); }
   let dip = 1; for (const x of fr) if (x.b >= 40 && x.b <= 92) dip = Math.min(dip, Math.max(x.fa, x.fb));
-  out.push(bReach === null ? ['bad', 'B n\'est jamais arrivé à fond : monte son fader jusqu\'en haut.', 0] : bReach <= 68 ? ['ok', `B est arrivé à fond au temps ${Math.round(bReach)}, bien installé avant la suite.`, 1] : ['mid', `B est arrivé à fond tard (temps ${Math.round(bReach)}). Vise le temps 64.`, .5]);
+  out.push(bReach === null ? ['bad', 'B n\'est jamais arrivé à fond : monte son fader jusqu\'en haut.', 0] : bReach <= 64 + 4 * TOL ? ['ok', `B est arrivé à fond au temps ${Math.round(bReach)}, bien installé avant la suite.`, 1] : ['mid', `B est arrivé à fond tard (temps ${Math.round(bReach)}). Vise le temps 64.`, .5]);
   out.push(jump > .6 ? ['mid', 'Tu as monté B presque d\'un coup : étale le geste sur 16 temps au moins pour une entrée douce.', .5] : ['ok', 'Montée de B progressive : l\'entrée est douce.', 1]);
-  out.push(aOut === null || aOut > 98 ? ['bad', 'A jouait encore au drop de B : deux basses en même temps. Baisse A avant que le compte à rebours arrive à zéro.', 0]
-    : aOut < 60 ? ['mid', `A est sorti tôt (temps ${Math.round(aOut)}), avant que B soit vraiment installé.`, .5] : ['ok', `A est sorti au temps ${Math.round(aOut)}, avant le drop de B.`, 1]);
+  out.push(aOut === null || aOut > 96 + 2 * TOL ? ['bad', 'A jouait encore au drop de B : deux basses en même temps. Baisse A avant que le compte à rebours arrive à zéro.', 0]
+    : aOut < 64 - 4 * TOL ? ['mid', `A est sorti tôt (temps ${Math.round(aOut)}), avant que B soit vraiment installé.`, .5] : ['ok', `A est sorti au temps ${Math.round(aOut)}, avant le drop de B.`, 1]);
   out.push(dip < .45 ? ['mid', 'Il y a eu un creux de volume : les deux faders étaient bas en même temps.', .5] : ['ok', 'Pas de creux de volume pendant la transition.', 1]);
   return out;
 }
@@ -746,25 +795,25 @@ function evalSwap(fr){
   const tKill = firstAt(fr, 40, x => x.la < .12), tOpen = firstAt(fr, 40, x => x.lb > .4);
   if (tKill === null || tOpen === null) return [['bad', tKill === null ? 'Les basses de A n\'ont jamais été coupées : tourne son LOW à fond à gauche.' : 'Les basses de B n\'ont jamais été ouvertes : remonte son LOW au milieu.', 0]];
   const sw = (tKill + tOpen) / 2, e = sw - 64, ov = Math.max(0, tKill - tOpen), gap = Math.max(0, tOpen - tKill), out = [];
-  out.push(Math.abs(e) <= .75 ? ['ok', 'Swap pile sur le début de la phrase.', 1] : Math.abs(e) <= 2 ? ['mid', `Swap ${fr1(Math.abs(e))} temps ${e > 0 ? 'trop tard' : 'trop tôt'}.`, .5] : ['bad', `Swap à ${fr1(Math.abs(e))} temps de la phrase : vise le début de la phrase.`, 0]);
-  out.push(ov > 2 ? ['bad', `Deux basses ensemble pendant ${fr1(ov)} temps : ouvre B et coupe A dans le même geste.`, 0] : ov > .5 ? ['mid', `Deux basses ensemble pendant ${fr1(ov)} temps : ça frotte un peu.`, .5]
-    : gap > 2 ? ['bad', `Plus aucune basse pendant ${fr1(gap)} temps : l'énergie retombe.`, 0] : gap > .5 ? ['mid', `Petit trou dans les basses (${fr1(gap)} temps).`, .5] : ['ok', 'Les basses passent de A à B sans chevauchement ni trou.', 1]);
+  out.push(Math.abs(e) <= .75 * TOL ? ['ok', 'Swap pile sur le début de la phrase.', 1] : Math.abs(e) <= 2 * TOL ? ['mid', `Swap ${fr1(Math.abs(e))} temps ${e > 0 ? 'trop tard' : 'trop tôt'}.`, .5] : ['bad', `Swap à ${fr1(Math.abs(e))} temps de la phrase : vise le début de la phrase.`, 0]);
+  out.push(ov > 2 * TOL ? ['bad', `Deux basses ensemble pendant ${fr1(ov)} temps : ouvre B et coupe A dans le même geste.`, 0] : ov > .5 * TOL ? ['mid', `Deux basses ensemble pendant ${fr1(ov)} temps : ça frotte un peu.`, .5]
+    : gap > 2 * TOL ? ['bad', `Plus aucune basse pendant ${fr1(gap)} temps : l'énergie retombe.`, 0] : gap > .5 * TOL ? ['mid', `Petit trou dans les basses (${fr1(gap)} temps).`, .5] : ['ok', 'Les basses passent de A à B sans chevauchement ni trou.', 1]);
   return out;
 }
 
 function evalFilter(fr){
   const out = [], st = firstAt(fr, 40, x => x.ca > .56), full = firstAt(fr, 40, x => x.ca >= .9);
   if (fr.some(x => x.ca < .4)) out.push(['bad', 'Tu as tourné le filtre vers la gauche : de ce côté il enlève les aigus et garde les basses. Pour effacer A, tourne vers la droite.', 0]);
-  out.push(st == null ? ['bad', 'Le filtre n\'a jamais été tourné : tourne le CFX de A vers la droite.', 0] : st >= 58 && st <= 70 ? ['ok', `Filtre lancé au temps ${Math.round(st)}, au début de la phrase.`, 1] : ['mid', `Filtre lancé au temps ${Math.round(st)} : commence quand « FILTRE » touche la ligne (temps 64).`, .5]);
-  if (st != null) out.push(full == null || full > 99 ? ['bad', 'A n\'était pas complètement filtré au drop de B : va jusqu\'au bout du potard avant « À FOND ».', 0] : full - st < 12 ? ['mid', `Filtre monté trop vite (${Math.round(full - st)} temps) : étale le geste sur 16 à 32 temps.`, .5] : ['ok', `Filtre monté en ${Math.round(full - st)} temps : A s'efface en douceur.`, 1]);
+  out.push(st == null ? ['bad', 'Le filtre n\'a jamais été tourné : tourne le CFX de A vers la droite.', 0] : Math.abs(st - 64) <= 6 * TOL ? ['ok', `Filtre lancé au temps ${Math.round(st)}, au début de la phrase.`, 1] : ['mid', `Filtre lancé au temps ${Math.round(st)} : commence quand « FILTRE » touche la ligne (temps 64).`, .5]);
+  if (st != null) out.push(full == null || full > 96 + 3 * TOL ? ['bad', 'A n\'était pas complètement filtré au drop de B : va jusqu\'au bout du potard avant « À FOND ».', 0] : full - st < 12 ? ['mid', `Filtre monté trop vite (${Math.round(full - st)} temps) : étale le geste sur 16 à 32 temps.`, .5] : ['ok', `Filtre monté en ${Math.round(full - st)} temps : A s'efface en douceur.`, 1]);
   return out;
 }
 function evalEcho(fr, at){
   const out = [], cut = firstAt(fr, 56, x => x.fa < .1);
   if (at == null) out.push(['bad', 'Tu n\'as pas activé l\'écho : appuie sur ECHO juste avant de couper A.', 0]);
-  else { const e = at - 63; out.push(e >= -1.5 && e <= .6 ? ['ok', 'Écho activé sur le dernier temps de la phrase.', 1] : ['mid', `Écho activé ${fr1(Math.abs(e))} temps ${e > 0 ? 'trop tard' : 'trop tôt'} : vise le dernier temps avant la ligne.`, .5]); }
+  else { const e = at - 63; out.push(e >= -1.5 * TOL && e <= .6 * TOL ? ['ok', 'Écho activé sur le dernier temps de la phrase.', 1] : ['mid', `Écho activé ${fr1(Math.abs(e))} temps ${e > 0 ? 'trop tard' : 'trop tôt'} : vise le dernier temps avant la ligne.`, .5]); }
   if (cut == null) out.push(['bad', 'A n\'a jamais été coupé : baisse son fader d\'un coup sur la ligne.', 0]);
-  else { const e = cut - 64; out.push(Math.abs(e) <= .6 ? ['ok', 'A coupé pile au début de la phrase : B tombe dans l\'écho.', 1] : Math.abs(e) <= 1.5 ? ['mid', `A coupé ${fr1(Math.abs(e))} temps ${e > 0 ? 'en retard' : 'trop tôt'}.`, .5] : ['bad', `A coupé à ${fr1(Math.abs(e))} temps de la ligne.`, 0]); }
+  else { const e = cut - 64; out.push(Math.abs(e) <= .6 * TOL ? ['ok', 'A coupé pile au début de la phrase : B tombe dans l\'écho.', 1] : Math.abs(e) <= 1.5 * TOL ? ['mid', `A coupé ${fr1(Math.abs(e))} temps ${e > 0 ? 'en retard' : 'trop tôt'}.`, .5] : ['bad', `A coupé à ${fr1(Math.abs(e))} temps de la ligne.`, 0]); }
   if (at != null && cut != null) out.push(at < cut ? ['ok', 'L\'écho était lancé avant la coupure : A s\'éteint en douceur.', 1] : ['bad', 'Tu as coupé A avant de lancer l\'écho : il n\'y avait plus rien à faire résonner.', 0]);
   return out;
 }
@@ -772,8 +821,8 @@ function evalCut(fr, L){
   const cut = firstAt(fr, 56, x => x.fa < .1);
   if (cut == null) return [['bad', 'A n\'a jamais été coupé : baisse son fader d\'un coup au moment où B démarre.', 0]];
   const e = cut - 64, out = [];
-  out.push(Math.abs(e) <= .5 ? ['ok', 'A coupé pile sur la ligne.', 1] : Math.abs(e) <= 1.5 ? ['mid', `A coupé ${fr1(Math.abs(e))} temps ${e > 0 ? 'en retard' : 'trop tôt'}.`, .5] : ['bad', `A coupé à ${fr1(Math.abs(e))} temps de la ligne.`, 0]);
-  if (L != null){ const d = cut - L; out.push(Math.abs(d) <= .75 ? ['ok', 'Coupure et lancement en même temps : la transition est nette.', 1] : d > 0 ? ['mid', `A et B ont joué ensemble pendant ${fr1(d)} temps : coupe A dans le même geste.`, .5] : ['mid', `Il y a eu un blanc de ${fr1(-d)} temps entre la coupure et le lancement de B.`, .5]); }
+  out.push(Math.abs(e) <= .5 * TOL ? ['ok', 'A coupé pile sur la ligne.', 1] : Math.abs(e) <= 1.5 * TOL ? ['mid', `A coupé ${fr1(Math.abs(e))} temps ${e > 0 ? 'en retard' : 'trop tôt'}.`, .5] : ['bad', `A coupé à ${fr1(Math.abs(e))} temps de la ligne.`, 0]);
+  if (L != null){ const d = cut - L; out.push(Math.abs(d) <= .75 * TOL ? ['ok', 'Coupure et lancement en même temps : la transition est nette.', 1] : d > 0 ? ['mid', `A et B ont joué ensemble pendant ${fr1(d)} temps : coupe A dans le même geste.`, .5] : ['mid', `Il y a eu un blanc de ${fr1(-d)} temps entre la coupure et le lancement de B.`, .5]); }
   return out;
 }
 function finish(){
@@ -790,17 +839,18 @@ function finish(){
   if (LESSONS[li].kind === 'echo') items = evalEcho(r.frames, r.echoAt);
   if (LESSONS[li].kind === 'cut') items = [evalLaunch(r.launch, 64)].concat(evalCut(r.frames, r.launch));
   const score = items.reduce((s, x) => s + x[2], 0) / items.length, st = score >= .9 ? 3 : score >= .55 ? 2 : 1;
-  const bank = r.ear ? earStars : stars, before = bank[li] || 0; bank[li] = Math.max(before, st);
-  try { localStorage.setItem(r.ear ? 'coach-lecons-oreille' : 'coach-lecons', JSON.stringify(bank)); } catch (e) {}
+  const wasOpen = ch2Unlocked(), bank = r.ch === 2 ? ch2Stars : stars, before = bank[li] || 0; bank[li] = Math.max(before, st);
+  try { localStorage.setItem(r.ch === 2 ? 'coach-ch2' : 'coach-lecons', JSON.stringify(bank)); } catch (e) {}
   const rs = $('rStars'); rs.innerHTML = '';
   for (let i = 0; i < 3; i++){ const sp = document.createElement('span'); sp.textContent = '★'; if (i < st) sp.className = 'on'; sp.style.animationDelay = (i * .18) + 's'; rs.appendChild(sp); }
-  $('rTitle').textContent = (r.ear ? 'À l\'oreille : ' : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
-  const gained = (bank[li] - before) * (r.ear ? 15 : 10); $('rGain').textContent = gained > 0 ? `+${gained} XP` + (!r.ear && before < 2 && bank[li] >= 2 ? ' · Mode « À l\'oreille » débloqué !' : '') : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`;
+  $('rTitle').textContent = (r.ch === 2 ? 'Chapitre 2 : ' : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
+  const gained = (bank[li] - before) * (r.ch === 2 ? 15 : 10); $('rGain').textContent = (gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`) + (!wasOpen && ch2Unlocked() ? ' · Chapitre 2 débloqué !' : '');
   const ul = $('rDetails'); ul.innerHTML = ''; for (const [lvl, txt] of items){ const x = document.createElement('li'); x.className = lvl; x.textContent = txt; ul.appendChild(x); }
   $('next').hidden = li >= LESSONS.length - 1;
   $('result').hidden = false; $('retry').focus({ preventScroll: true });
   $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot');
   drawCompare(r.frames, li, r.launch);
+  if (placement) placementStep(st);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
 }
 
@@ -958,6 +1008,33 @@ function updateSetup(){
 }
 $('setupSkip').addEventListener('click', () => { mouseMode = true; const l = LESSONS[li]; Object.assign(ctrl, l.init); applyCtrl(); updateSetup(); });
 
+/* ---------- Test de placement ---------- */
+const P_STEPS = [0, 2, 3];
+function startPlacement(){
+  if (run) return; chapter = 1; placement = { i: 0, res: [] };
+  $('pBanner').hidden = false; selectLesson(P_STEPS[0]); updatePBanner();
+  $('stage').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+}
+function updatePBanner(){ $('pTitle').textContent = `Test de placement · épreuve ${placement.i + 1} sur ${P_STEPS.length}`; $('pText').textContent = 'Fais le niveau du mieux possible. Tu peux regarder la démo avant.'; }
+function quitPlacement(){ placement = null; $('pBanner').hidden = true; $('next').textContent = 'Niveau suivant'; renderHud(); }
+function placementStep(st){
+  placement.res[placement.i] = st;
+  const last = placement.i >= P_STEPS.length - 1;
+  $('next').hidden = false; $('next').textContent = last ? 'Voir mon résultat' : 'Épreuve suivante';
+}
+function placementVerdict(){
+  const res = placement.res.slice(), ok = res.length === P_STEPS.length && res.every(x => x >= 2);
+  if (ok){ ch2Open = true; try { localStorage.setItem('coach-ch2-ouvert', '1'); } catch (e) {} }
+  quitPlacement();
+  $('rStars').innerHTML = ''; $('rTitle').textContent = ok ? 'Tu maîtrises les bases : chapitre 2 débloqué !' : 'On commence par les bases';
+  $('rGain').textContent = ok ? 'Les niveaux du chapitre 1 restent jouables quand tu veux.' : 'Le chapitre 2 se débloque avec 14 étoiles au chapitre 1.';
+  $('rDetails').innerHTML = ''; $('cmpBox').hidden = true;
+  ['Le bon moment', 'Le swap des basses', 'La transition complète'].forEach((t, j) => { const x = document.createElement('li'); x.className = (res[j] || 0) >= 2 ? 'ok' : 'bad'; x.textContent = `${t} : ${'★'.repeat(res[j] || 0) || 'pas réussi'}`; $('rDetails').appendChild(x); });
+  $('next').hidden = false; $('next').textContent = ok ? 'Aller au chapitre 2' : 'Commencer le chapitre 1';
+  $('next').dataset.go = ok ? 'ch2' : 'ch1'; $('retry').hidden = true; $('result').hidden = false; renderHud();
+}
+$('pQuit').addEventListener('click', () => { quitPlacement(); });
+
 /* ---------- Guide de premier lancement ---------- */
 const ONB = [
   { title: 'Bienvenue dans Coach DJ', text: 'Une transition, c\'est passer d\'un morceau à l\'autre sans que la piste de danse s\'arrête. Ici, tu l\'apprends geste par geste, sur ta FLX4. Ce petit tour prend une minute, avec le son.', cta: 'C\'est parti' },
@@ -1022,7 +1099,7 @@ function renderOnb(){
   $('onbTitle').textContent = st.title; $('onbText').textContent = st.text;
   if (st.k && st.k !== 'playB') onb.base[st.k] = ctrl[st.k];
   $('onbSvg').style.display = st.hl || (onb.i > 0 && onb.i < 5) ? '' : 'none'; onbHighlight(st.hl);
-  $('onbBack').hidden = onb.i === 0; $('onbNext').textContent = st.cta || (onb.i === ONB.length - 1 ? 'Terminer' : 'Suivant');
+  $('onbBack').hidden = onb.i === 0; $('onbTest').hidden = onb.i !== ONB.length - 1 || ch2Unlocked(); $('onbNext').textContent = st.cta || (onb.i === ONB.length - 1 ? 'Terminer' : 'Suivant');
   $('onbNote').textContent = st.k && st.k !== 'playB' && !midiCount ? 'Pas de table détectée : le curseur ci-dessus fait la même chose.' : st.k === 'cfxA' && midiCount && !map.cfxA ? 'Ta table doit d\'abord reconnaître ce potard : clique sur le bouton, puis tourne-le.' : '';
   renderOnbTry();
   cancelAnimationFrame(onb.raf);
@@ -1039,6 +1116,7 @@ $('onbNext').addEventListener('click', () => {
 });
 $('onbBack').addEventListener('click', () => { if (onb.i > 0){ onb.i--; renderOnb(); } });
 $('onbSkip').addEventListener('click', closeOnb);
+$('onbTest').addEventListener('click', () => { closeOnb(); startPlacement(); });
 $('guideBtn').addEventListener('click', () => { if (!run) openOnb(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && onb.active) closeOnb(); });
 
@@ -1059,12 +1137,17 @@ $('rClose').addEventListener('click', () => { $('result').hidden = true; });
 $('result').addEventListener('click', e => { if (e.target === $('result')) $('result').hidden = true; });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') $('result').hidden = true; });
 $('retry').addEventListener('click', () => { $('result').hidden = true; startRun(); });
-$('next').addEventListener('click', () => { selectLesson(Math.min(LESSONS.length - 1, li + 1)); });
+$('next').addEventListener('click', () => {
+  const go = $('next').dataset.go; delete $('next').dataset.go; $('retry').hidden = false; $('cmpBox').hidden = false;
+  if (go === 'ch2'){ $('result').hidden = true; setChapter(2); return; }
+  if (go === 'ch1'){ $('result').hidden = true; chapter = 1; try { localStorage.setItem('coach-chapitre', '1'); } catch (e) {} selectLesson(0); return; }
+  if (placement){ if (placement.i >= P_STEPS.length - 1){ placementVerdict(); return; } placement.i++; selectLesson(P_STEPS[placement.i]); updatePBanner(); return; }
+  selectLesson(Math.min(LESSONS.length - 1, li + 1)); });
 document.addEventListener('keydown', e => { if (e.code === 'Space' && run && !(e.target instanceof HTMLInputElement)){ e.preventDefault(); launchB(); } if (e.code === 'KeyE' && run && !e.repeat){ e.preventDefault(); toggleEcho(); } }, true);
 $('echoBtn').addEventListener('click', toggleEcho);
 window.addEventListener('resize', () => drawHighway(run ? beatNow() : START));
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { loadCol(); drawHighway(run ? beatNow() : START); });
-const firstUndone = LESSONS.findIndex((_, i) => !(stars[i] >= 2));
+const firstUndone = LESSONS.findIndex((_, i) => !(bankOf(chapter)[i] >= 2));
 selectLesson(firstUndone < 0 ? 0 : firstUndone);
 initMidi();
 requestAnimationFrame(frame);
