@@ -5,6 +5,8 @@ Apprendre les transitions DJ, un geste à la fois.
 - **Leçons** (page d'accueil) : 4 leçons guidées sur des morceaux d'entraînement faits pour s'enchaîner : le bon moment, le fader, le swap des basses, la transition complète.
 - **Mode libre** (`coach.html`) : bibliothèque rekordbox, recommandations, replay détaillé.
 
+Les morceaux d'entraînement sont produits dans le navigateur (moteur de production maison : grosse caisse, charleys métalliques, réverb, sidechain, accords, mélodies, montées, plusieurs variantes par style), calculés en tâche de fond.
+
 ## Mode libre
 
 Entraînement aux transitions DJ dans le navigateur : swap des basses guidé par phrase de 32 temps, analyse et replay de chaque transition.
