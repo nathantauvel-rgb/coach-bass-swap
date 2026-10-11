@@ -1,4 +1,11 @@
-# Coach bass swap
+# Coach DJ
+
+Apprendre les transitions DJ, un geste à la fois.
+
+- **Leçons** (page d'accueil) : 4 leçons guidées sur des morceaux d'entraînement faits pour s'enchaîner : le bon moment, le fader, le swap des basses, la transition complète.
+- **Mode libre** (`coach.html`) : bibliothèque rekordbox, recommandations, replay détaillé.
+
+## Mode libre
 
 Entraînement aux transitions DJ dans le navigateur : swap des basses guidé par phrase de 32 temps, analyse et replay de chaque transition.
 
