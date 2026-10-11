@@ -30,6 +30,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100%;
   background-image:radial-gradient(900px 500px at 15% -10%,var(--glow-a),transparent 70%),radial-gradient(800px 500px at 100% 10%,var(--glow-b),transparent 70%)}
 .wrap{max-width:1060px;margin:0 auto;padding-inline:24px;padding-block:22px 64px;display:flex;flex-direction:column;gap:22px}
@@ -129,11 +130,13 @@ a.chip:hover{border-color:var(--muted)}
 
 /* Résultat */
 .result{position:absolute;inset:0;overflow:auto;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;z-index:3}
-.rcard{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px;max-width:560px;width:100%;display:flex;flex-direction:column;gap:16px;text-align:center}
+.rcard{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px;max-width:560px;width:100%;display:flex;flex-direction:column;gap:16px;text-align:center}
 .rstars{display:flex;justify-content:center;gap:10px}
 .rstars span{font-size:54px;line-height:1;color:var(--line);transform:scale(.4);opacity:0;animation:starIn .45s cubic-bezier(.3,1.6,.6,1) forwards}
 .rstars span.on{color:var(--mid);text-shadow:0 0 24px color-mix(in srgb,var(--mid) 60%,transparent)}
 @keyframes starIn{to{transform:scale(1);opacity:1}}
+.rclose{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel-2);font-size:22px;line-height:1;display:grid;place-items:center}
+.rclose:hover{border-color:var(--muted)}
 .rcard h2{margin:0;font-family:var(--display);font-weight:800;font-size:28px;line-height:1.1}
 .gain{font-family:var(--display);font-weight:800;color:var(--xp);font-size:18px}
 .details{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;text-align:left}
@@ -191,6 +194,7 @@ a.chip:hover{border-color:var(--muted)}
 
     <div class="result" id="result" hidden>
       <div class="rcard">
+        <button type="button" class="rclose" id="rClose" aria-label="Fermer">×</button>
         <div class="rstars" id="rStars"></div>
         <h2 id="rTitle"></h2>
         <span class="gain" id="rGain"></span>
@@ -600,6 +604,9 @@ async function initMidi(){
 buildControls();
 $('startBtn').addEventListener('click', () => run ? stopRun() : startRun());
 $('launchB').addEventListener('click', launchB);
+$('rClose').addEventListener('click', () => { $('result').hidden = true; });
+$('result').addEventListener('click', e => { if (e.target === $('result')) $('result').hidden = true; });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('result').hidden = true; });
 $('retry').addEventListener('click', () => { $('result').hidden = true; startRun(); });
 $('next').addEventListener('click', () => { selectLesson(Math.min(LESSONS.length - 1, li + 1)); });
 document.addEventListener('keydown', e => { if (e.code === 'Space' && run && !(e.target instanceof HTMLInputElement)){ e.preventDefault(); launchB(); } }, true);
