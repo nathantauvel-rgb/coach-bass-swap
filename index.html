@@ -138,6 +138,18 @@ a.chip:hover{border-color:var(--muted)}
 .setup li .what{font-size:14px;color:var(--muted);text-align:right}
 .setup li.ok .what{color:var(--ok)}
 .setup .skip{align-self:center;border:0;background:transparent;color:var(--muted);text-decoration:underline;font-size:13px;padding:4px}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.watch{border:2px solid var(--b);background:transparent;color:var(--b);border-radius:16px;padding:14px 26px;font-family:var(--display);font-weight:800;font-size:18px}
+.watch:hover:not(:disabled){background:color-mix(in srgb,var(--b) 12%,transparent)}
+.watch:disabled{opacity:.35;cursor:default}
+.stage.demo .hw{box-shadow:inset 0 0 0 2px var(--b)}
+.demo-tag{position:absolute;top:10px;right:12px;font-family:var(--display);font-weight:800;font-size:13px;letter-spacing:.06em;color:var(--ink);background:var(--b);border-radius:8px;padding:3px 9px}
+.cmp{display:flex;flex-direction:column;gap:8px;text-align:left}
+.cmp-t{font-family:var(--display);font-weight:800;font-size:16px}
+#cmp{width:100%;display:block;border-radius:12px;background:var(--bg)}
+.cmp-leg{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.cmp-leg i{display:inline-block;width:22px;height:0;border-top:2px dashed var(--fg);vertical-align:middle;margin-right:6px}
+.cmp-leg u{display:inline-block;width:22px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--a),var(--b));vertical-align:middle;margin-right:6px;text-decoration:none}
 .start:disabled{background:var(--panel-2);color:var(--muted);box-shadow:none;cursor:default}
 .start.ready{animation:readyPulse 1.2s ease-in-out infinite}
 @keyframes readyPulse{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--xp) 25%,transparent),0 0 40px color-mix(in srgb,var(--xp) 45%,transparent)}}
@@ -191,7 +203,7 @@ a.chip:hover{border-color:var(--muted)}
       </div>
       <div class="ringwrap"><div class="ring" id="ring"><span class="big num" id="cdNum">—</span></div><span class="ringlab" id="cdLab">Appuie sur Jouer</span></div>
     </div>
-    <div class="hw"><canvas id="hw" aria-label="Piste : les gestes arrivent vers la ligne de frappe"></canvas><div class="pops" id="pops"></div></div>
+    <div class="hw"><canvas id="hw" aria-label="Piste : les gestes arrivent vers la ligne de frappe"></canvas><div class="pops" id="pops"></div><span class="demo-tag" id="demoTag" hidden>DÉMO</span></div>
     <div class="bar" aria-hidden="true"><i id="progFill"></i></div>
     <div class="controls">
       <div class="group" id="gPlay"><button type="button" class="launch" id="launchB" disabled><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l10-6.2a.8.8 0 0 0 0-1.4l-10-6.2A.8.8 0 0 0 6 3.8Z"/></svg>LANCE B</button></div>
@@ -211,7 +223,7 @@ a.chip:hover{border-color:var(--muted)}
         <ul id="setupList"></ul>
         <button type="button" class="skip" id="setupSkip">Je joue à la souris cette fois</button>
       </div>
-      <button type="button" class="start" id="startBtn">Jouer</button><p class="hint" id="hint"></p>
+      <div class="btnrow"><button type="button" class="watch" id="watchBtn">Regarde d'abord</button><button type="button" class="start" id="startBtn">Jouer</button></div><p class="hint" id="hint"></p>
     </div>
 
     <div class="result" id="result" hidden>
@@ -221,6 +233,8 @@ a.chip:hover{border-color:var(--muted)}
         <h2 id="rTitle"></h2>
         <span class="gain" id="rGain"></span>
         <ul class="details" id="rDetails"></ul>
+        <div class="cmp" id="cmpBox"><span class="cmp-t">Ton geste et le geste idéal</span><canvas id="cmp" aria-label="Comparaison entre ton geste et le geste idéal"></canvas>
+          <div class="cmp-leg"><span><i></i>geste idéal</span><span><u></u>ton geste</span></div></div>
         <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
       </div>
     </div>
@@ -389,7 +403,7 @@ const TARGETS = { 0: [[32, 'LANCE B', 'B']], 1: [[64, 'B À FOND', 'B'], [96, 'A
 const RING_LAB = { 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
 let li = 0, run = null;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
-const isAuto = k => !LESSONS[li].user.includes(k);
+const isAuto = k => !!(run && run.demo) || !LESSONS[li].user.includes(k);
 const clamp01 = x => Math.max(0, Math.min(1, x));
 
 function renderHud(){
@@ -419,8 +433,8 @@ function selectLesson(i){
 function setStartBtn(running){ const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
 
 const START = 16, END = 116;
-function startRun(){
-  if (needSetup() && !setupReady()){ updateSetup(); return; }
+function startRun(demo = false){
+  if (!demo && needSetup() && !setupReady()){ updateSetup(); return; }
   ensureAudio(); if (ac.state !== 'running') ac.resume();
   $('startBtn').textContent = 'Préparation…';
   setTimeout(() => {
@@ -428,10 +442,12 @@ function startRun(){
     const l = LESSONS[li]; Object.assign(ctrl, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
-    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1 };
-    if (l.autoLaunch) launchAt(32);
+    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0 };
+    if (l.autoLaunch || demo) launchAt(32);
+    $('stage').classList.toggle('demo', demo); $('demoTag').hidden = !demo; $('watchBtn').disabled = true;
     $('result').hidden = true; setStartBtn(true); $('setup').hidden = true; $('startBtn').disabled = false; $('startBtn').classList.remove('ready'); $('launchB').disabled = !!l.autoLaunch; $('startBtn').blur();
-    if (!l.autoLaunch) $('hint').textContent = 'Astuce : la barre d\'espace lance aussi B.';
+    $('hint').textContent = demo ? 'Démonstration : regarde les contrôles bouger et écoute le résultat.' : !l.autoLaunch ? 'Astuce : la barre d\'espace lance aussi B.' : '';
+    if (demo) for (const w of ['wLowA', 'wLowB', 'wFadA', 'wFadB']) $(w).classList.add('auto');
   }, 30);
 }
 const beatNow = () => run ? (ac.currentTime - run.t0) / P + START : null;
@@ -450,9 +466,25 @@ function launchB(){
   else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, (b - k) * P + .01, true); $('launchB').disabled = true; }
   judgeLaunch(k);
 }
-function stopRun(){ if (ac){ stop('A'); stop('B'); } run = null; setStartBtn(false); $('launchB').disabled = true; updateSetup(); }
+function stopRun(){ const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); } run = null; setStartBtn(false); $('launchB').disabled = true;
+  $('stage').classList.remove('demo'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
+  if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, LESSONS[li].init); applyCtrl(); }
+  updateSetup(); }
+function ideal(k, b, i = li){
+  const bass = LESSONS[i].bBass, ramp = (x, a, d) => clamp01((x - a) / d);
+  if (k === 'faderB') return ramp(b, 32, 24);
+  if (k === 'faderA') return 1 - ramp(b, 72, 20);
+  if (k === 'lowA') return bass ? .5 - .5 * ramp(b, 63.75, .5) : .5;
+  return bass ? .5 * ramp(b, 63.75, .5) : .5;
+}
+const DEMO_CAPS = { 0: [[32, 'B part sur le 1 de l\'outro'], [96, 'Le drop de B tombe pile']],
+  1: [[32, 'B entre, fader en bas'], [56, 'B est à fond'], [92, 'A est sorti'], [96, 'Drop de B !']],
+  2: [[32, 'B arrive, basses coupées'], [64, 'Swap : A coupé, B ouvert'], [96, 'Drop de B !']],
+  3: [[30, 'LOW de B coupé avant de lancer'], [32, 'B part sur le 1'], [56, 'B est à fond'], [64, 'Swap des basses'], [92, 'A est sorti'], [96, 'Drop de B !']] };
+function demoCaptions(b){ const caps = DEMO_CAPS[li]; while (run.cap < caps.length && b >= caps[run.cap][0]){ pop(caps[run.cap][1], 'ok'); run.cap++; } }
 function automate(b){
   const L = run.launch; let ch = false;
+  if (run.demo){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB']){ const v = ideal(k, b); if (Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } } if (ch) applyCtrl(); return; }
   const set = (k, v) => { if (isAuto(k) && Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } };
   if (li === 0 && L !== null){ set('faderB', clamp01((b - L) / 16)); set('faderA', 1 - clamp01((b - (L + 48)) / 16)); }
   if (li === 2){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 80) / 16)); }
@@ -482,7 +514,7 @@ function frame(){
   requestAnimationFrame(frame);
   if (!run){ return; }
   const b = beatNow(); if (b < START) return;
-  automate(b); liveJudge(b);
+  automate(b); if (run.demo) demoCaptions(b); else liveJudge(b);
   run.frames.push({ b, fa: ctrl.faderA, fb: ctrl.faderB, la: ctrl.lowA, lb: ctrl.lowB });
   const tg = TARGETS[li].find(([x, lab]) => x > b - .5 && !(run.status[lab] && run.status[lab] !== 'late'));
   const ring = $('ring');
@@ -527,6 +559,7 @@ function evalSwap(fr){
 
 function finish(){
   if (!run) return; const r = run; stopRun();
+  if (r.demo){ $('hint').textContent = 'À toi ! Appuie sur Jouer et refais exactement la même chose.'; $('startBtn').classList.add('ready'); $('cdNum').textContent = '—'; $('cdLab').textContent = 'À toi de jouer'; $('ring').classList.remove('hot'); return; }
   let items = [];
   if (li === 0) items = [evalLaunch(r.launch)];
   if (li === 1) items = evalFaders(r.frames);
@@ -544,6 +577,7 @@ function finish(){
   $('next').hidden = li >= LESSONS.length - 1;
   $('result').hidden = false; $('retry').focus({ preventScroll: true });
   $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot');
+  drawCompare(r.frames, li, r.launch);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
 }
 
@@ -587,6 +621,38 @@ function drawHighway(b){
   g.save(); g.shadowColor = COL.fg; g.shadowBlur = 16; g.strokeStyle = COL.fg; g.lineWidth = 3;
   g.beginPath(); g.moveTo(hitX, 28); g.lineTo(hitX, h - 8); g.stroke(); g.restore();
   g.fillStyle = COL.muted; g.font = '600 11px ' + COL.font; g.textAlign = 'center'; g.fillText('MAINTENANT', hitX, h - 0);
+}
+const SHORT = { faderA: 'Fader A', faderB: 'Fader B', lowA: 'LOW A', lowB: 'LOW B' };
+function drawCompare(fr, i, launch){
+  if (!COL.a) loadCol();
+  const lanes = LESSONS[i].user.slice(), showLaunch = i === 0 || i === 3, cv = $('cmp');
+  const H = 10 + (showLaunch ? 46 : 0) + lanes.length * 58 + 18; cv.style.height = H + 'px';
+  const dpr = window.devicePixelRatio || 1, w = cv.clientWidth; cv.width = Math.round(w * dpr); cv.height = Math.round(H * dpr);
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, H);
+  const L0 = 66, X = v => L0 + (v - START) / (END - START) * (w - L0 - 10);
+  for (const v of [32, 64, 96]){ g.strokeStyle = COL.line; g.lineWidth = 1; g.beginPath(); g.moveTo(X(v), 6); g.lineTo(X(v), H - 16); g.stroke();
+    g.fillStyle = COL.muted; g.font = '500 11px ' + COL.font; g.textAlign = 'center'; g.fillText('temps ' + v, X(v), H - 3); }
+  let y = 10;
+  const label = (t, yy) => { g.fillStyle = COL.muted; g.font = '600 12px ' + COL.font; g.textAlign = 'left'; g.fillText(t, 6, yy); };
+  if (showLaunch){
+    label('Lancer B', y + 22);
+    const yy = y + 18, dia = (x, fill, col) => { g.beginPath(); g.moveTo(x, yy - 10); g.lineTo(x + 10, yy); g.lineTo(x, yy + 10); g.lineTo(x - 10, yy); g.closePath(); if (fill){ g.fillStyle = col; g.fill(); } else { g.strokeStyle = col; g.lineWidth = 2; g.setLineDash([3, 3]); g.stroke(); g.setLineDash([]); } };
+    dia(X(32), false, COL.fg);
+    if (launch !== null){ dia(X(launch), true, COL.b); if (launch !== 32){ g.fillStyle = COL.b; g.font = '600 12px ' + COL.font; g.textAlign = 'center'; g.fillText(`toi : temps ${launch}`, X(launch), yy + 26); } }
+    else { g.fillStyle = COL.bad; g.font = '600 12px ' + COL.font; g.textAlign = 'left'; g.fillText('pas lancé', X(32) + 16, yy + 4); }
+    y += 46;
+  }
+  for (const k of lanes){
+    const top = y, bot = y + 44, Y = v => bot - v * 40;
+    label(SHORT[k], top + 26);
+    g.fillStyle = COL['panel-2'] || '#211d44'; g.globalAlpha = .5; g.fillRect(L0, top, w - L0 - 10, 44); g.globalAlpha = 1;
+    g.strokeStyle = COL.fg; g.lineWidth = 2; g.setLineDash([5, 4]); g.beginPath();
+    for (let b = START; b <= END; b += .5){ const yv = Y(ideal(k, b, i)); b === START ? g.moveTo(X(b), yv) : g.lineTo(X(b), yv); } g.stroke(); g.setLineDash([]);
+    g.strokeStyle = k.endsWith('A') ? COL.a : COL.b; g.lineWidth = 3; g.lineJoin = 'round'; g.beginPath();
+    fr.forEach((f, j) => { const yv = Y(f[k === 'faderA' ? 'fa' : k === 'faderB' ? 'fb' : k === 'lowA' ? 'la' : 'lb']); j ? g.lineTo(X(f.b), yv) : g.moveTo(X(f.b), yv); }); g.stroke();
+    y += 58;
+  }
+  $('cmpBox').hidden = false;
 }
 function pop(text, kind){ const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text; $('pops').appendChild(d); setTimeout(() => d.remove(), 1400); }
 function chime(good){
@@ -654,6 +720,7 @@ $('setupSkip').addEventListener('click', () => { mouseMode = true; const l = LES
 /* ---------- Démarrage ---------- */
 buildControls();
 $('startBtn').addEventListener('click', () => run ? stopRun() : startRun());
+$('watchBtn').addEventListener('click', () => { if (!run) startRun(true); });
 $('launchB').addEventListener('click', launchB);
 $('rClose').addEventListener('click', () => { $('result').hidden = true; });
 $('result').addEventListener('click', e => { if (e.target === $('result')) $('result').hidden = true; });
