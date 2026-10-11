@@ -138,6 +138,16 @@ a.chip:hover{border-color:var(--muted)}
 .setup li .what{font-size:14px;color:var(--muted);text-align:right}
 .setup li.ok .what{color:var(--ok)}
 .setup .skip{align-self:center;border:0;background:transparent;color:var(--muted);text-decoration:underline;font-size:13px;padding:4px}
+.opts{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center}
+.seg{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:4px}
+.seg .sl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 8px}
+.seg button{border:0;background:transparent;border-radius:10px;padding:7px 12px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--panel-2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line)}
+.seg button:disabled{opacity:.4;cursor:default}
+.seg button.earb[aria-pressed="true"]{background:var(--xp);color:var(--ink)}
+.styletag{display:inline-block;margin-top:10px;font-size:13px;font-weight:600;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+.stage.ear .ring{border-color:var(--xp)}
+.node .e{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--xp)}
 .btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 .watch{border:2px solid var(--b);background:transparent;color:var(--b);border-radius:16px;padding:14px 26px;font-family:var(--display);font-weight:800;font-size:18px}
 .watch:hover:not(:disabled){background:color-mix(in srgb,var(--b) 12%,transparent)}
@@ -205,6 +215,7 @@ a.chip:hover{border-color:var(--muted)}
         <h1 id="ltitle"></h1>
         <p class="goal" id="lgoal"></p>
         <p class="how" id="lhow"></p>
+        <span class="styletag" id="styleTag">House · 124 BPM</span>
       </div>
       <div class="ringwrap"><div class="ring" id="ring"><span class="big num" id="cdNum">—</span></div><span class="ringlab" id="cdLab">Appuie sur Jouer</span></div>
     </div>
@@ -232,6 +243,12 @@ a.chip:hover{border-color:var(--muted)}
         <ul id="setupList"></ul>
         <button type="button" class="skip" id="setupSkip">Je joue à la souris cette fois</button>
       </div>
+      <div class="opts">
+        <div class="seg" id="styleSeg" role="group" aria-label="Style des morceaux"><span class="sl">Morceaux</span>
+          <button type="button" data-style="house" aria-pressed="true">House</button><button type="button" data-style="techno" aria-pressed="false">Techno</button><button type="button" data-style="afro" aria-pressed="false">Afro</button><button type="button" data-style="random" aria-pressed="false">Surprise</button></div>
+        <div class="seg" id="modeSeg" role="group" aria-label="Mode"><span class="sl">Mode</span>
+          <button type="button" data-mode="guide" aria-pressed="true">Guidé</button><button type="button" class="earb" data-mode="ear" aria-pressed="false" id="earBtn">À l'oreille</button></div>
+      </div>
       <div class="btnrow"><button type="button" class="watch" id="watchBtn">Regarde d'abord</button><button type="button" class="start" id="startBtn">Jouer</button></div><p class="hint" id="hint"></p>
     </div>
 
@@ -255,7 +272,7 @@ a.chip:hover{border-color:var(--muted)}
 <script>
 (() => {
 'use strict';
-const SR = 44100, BPM = 124, P = 60 / BPM;
+const SR = 44100; let BPM = 124, P = 60 / BPM;
 const $ = id => document.getElementById(id);
 const n2f = m => 440 * Math.pow(2, (m - 69) / 12);
 /* ---------- Morceaux d'entraînement ---------- */
@@ -286,6 +303,10 @@ function makeTrack(beats, seed, play){
     pad(b, notes, dur, g = .05){ const s = at(b), len = at(dur);
       for (let n = 0; n < len; n++){ const t = n / SR; let x = 0; for (const m of notes){ const f = n2f(m); x += Math.sin(TAU * f * t) + .3 * Math.sin(TAU * 2.003 * f * t); }
         put(s + n, x * Math.min(1, t / .25) * Math.min(1, (len - n) / (.3 * SR)) * g, 0); } },
+    tom(b, f, g = .25, pan = 0){ const s = at(b), len = Math.round(.25 * SR); let ph = 0;
+      for (let n = 0; n < len; n++){ const t = n / SR; ph += TAU * f * (1 + .6 * Math.exp(-t * 40)) / SR; put(s + n, Math.sin(ph) * Math.exp(-t * 14) * g, pan); } },
+    log(b, m, g = .5){ const s = at(b), len = Math.round(.5 * SR), f = n2f(m); let ph = 0;
+      for (let n = 0; n < len; n++){ const t = n / SR; ph += TAU * f * (1 + .25 * Math.exp(-t * 25)) / SR; put(s + n, Math.tanh(Math.sin(ph) * 2.5) * Math.exp(-t * 6) * Math.min(1, t / .003) * g, 0); } },
     pluck(b, m, g = .1, pan = 0){ const s = at(b), len = Math.round(.3 * SR), f = n2f(m); let ph = 0, y = 0;
       for (let n = 0; n < len; n++){ const t = n / SR; ph += f / SR; if (ph >= 1) ph -= 1;
         const a = 1 - Math.exp(-TAU * (400 + 3000 * Math.exp(-t * 25)) / SR); y += a * ((2 * ph - 1) - y); put(s + n, y * Math.exp(-t * 11) * Math.min(1, t / .002) * g, pan); } }
@@ -312,6 +333,40 @@ const playB = withBass => I => { const roots = [40, 40, 43, 38], mel = [[0, 0], 
     if (b >= 64){ if (b % 2 === 1) I.clap(b, .3); I.hat(b + .25, .05, 70, .3); I.hat(b + .75, .05, 70, -.3); } }
   for (let bar = 16; bar < 32; bar++){ const r = roots[bar % 4], s = bar * 4; I.pad(s, [r + 24, r + 27, r + 31], 4, .035); mel.forEach(([o, m]) => I.pluck(s + o, r + 36 + m, .09, .2)); }
   I.crash(64, .25); };
+// Techno 130 : A en mi mineur (9A), B en si mineur (10A)
+const playAT = I => { const roots = [40, 40, 43, 38];
+  for (let b = 0; b < 128; b++){ const r = roots[Math.floor(b / 4) % 4];
+    I.kick(b, 1.05); for (let q = 0; q < 4; q++) I.hat(b + q / 4, q === 2 ? .16 : .06, q === 2 ? 22 : 80, q % 2 ? .25 : -.25);
+    for (const o of [.25, .5, .75]) I.bass(b + o, .18, n2f(r), .5, 260);
+    if (b < 64 && b % 2 === 1) I.clap(b, .24); if (b < 32 && b % 2 === 0) I.tom(b + .75, 180, .18, .3); }
+  for (let bar = 0; bar < 8; bar++){ const r = roots[bar % 4] + 24; I.stab(bar * 4 + 2.5, [r, r + 3, r + 7, r + 10], .07, .2); }
+  I.crash(128, .22); I.kick(128); };
+const playBT = withBass => I => { const roots = [35, 35, 38, 33], seq = [0, 0, 12, 0, 3, 0, 7, 10, 0, 0, 12, 3, 0, 15, 7, 0];
+  for (let b = 0; b < 128; b++){ const r = roots[Math.floor(b / 4) % 4];
+    I.kick(b, 1.05); I.hat(b + .5, .14, 18, .2);
+    if (b >= 32) for (let q = 0; q < 4; q++) I.hat(b + q / 4, .05, 80, q % 2 ? .3 : -.3);
+    if (b >= 64 || withBass) for (let q = 0; q < 4; q++){ const st = (b * 4 + q) % 16; I.bass(b + q / 4, .2, n2f(r + seq[st]), .45, 300 + 900 * ((st * 5) % 7) / 7); }
+    if (b >= 64 && b % 2 === 1) I.clap(b, .26); }
+  I.crash(64, .25); };
+// Afro house 120 : A en la mineur (8A), B en ré mineur (7A)
+const playAF = I => { const roots = [33, 36, 31, 33];
+  for (let b = 0; b < 128; b++){ I.kick(b, .9); [0, .27, .5, .77].forEach((o, q) => I.shaker(b + o, [.11, .06, .09, .06][q], q % 2 ? .35 : -.35)); }
+  for (let bar = 0; bar < 32; bar++){ const s = bar * 4, r = roots[bar % 4];
+    for (const o of [0, .75, 1.5, 2.5, 3]) I.bass(s + o, .3, n2f(r + 12), .5, 380);
+    if (bar < 16) [[.75, 240], [1.5, 180], [2.25, 240], [2.5, 240], [3.5, 180]].forEach(([o, f]) => I.tom(s + o, f, .26, f > 200 ? .3 : -.3));
+    if (bar < 8) I.pad(s, [r + 36, r + 39, r + 43], 4, .03);
+    if (bar < 16 && bar % 2) I.clap(s + 3, .18); }
+  I.crash(128, .2); I.kick(128); };
+const playBF = withBass => I => { const roots = [38, 36, 41, 40];
+  for (let b = 0; b < 128; b++){ I.kick(b, .85); I.hat(b + .5, .1, 16);
+    if (b >= 32) for (let q = 0; q < 4; q++) I.shaker(b + q / 4, q % 2 ? .05 : .08, q % 2 ? -.3 : .3);
+    if (b >= 64 && b % 2 === 1) I.clap(b, .2); }
+  for (let bar = 0; bar < 32; bar++){ const s = bar * 4, r = roots[bar % 4];
+    if (bar >= 16 || withBass) [[.75, 0], [1.5, 0], [2.75, 3], [3.25, 0]].forEach(([o, m]) => I.log(s + o, r + m, .32));
+    if (bar >= 16){ [[.75, 260], [2.25, 200], [3.5, 260]].forEach(([o, f]) => I.tom(s + o, f, .22, .25)); I.pad(s + .5, [r + 24, r + 28, r + 31], 3, .03); } }
+  I.crash(64, .22); };
+const STYLE_DEFS = { house: { label: 'House', bpm: 124, A: playA, B: playB, seed: 11 }, techno: { label: 'Techno', bpm: 130, A: playAT, B: playBT, seed: 31 }, afro: { label: 'Afro house', bpm: 120, A: playAF, B: playBF, seed: 47 } };
+const trackCache = {};
 
 /* ---------- Audio ---------- */
 let ac = null, master = null, tracks = null, outChannels = 2;
@@ -349,9 +404,10 @@ function ensureAudio(){
   applyCtrl();
 }
 function bufferOf(t){ const b = ac.createBuffer(2, t.N, SR); b.getChannelData(0).set(t.L); b.getChannelData(1).set(t.R); return b; }
-function prepareTracks(){
-  if (tracks) return;
-  tracks = { A: bufferOf(makeTrack(130, 11, playA)), B0: bufferOf(makeTrack(128, 23, playB(false))), B1: bufferOf(makeTrack(128, 23, playB(true))) };
+function prepareTracks(sty){
+  const d = STYLE_DEFS[sty]; BPM = d.bpm; P = 60 / BPM;
+  if (!trackCache[sty]) trackCache[sty] = { A: bufferOf(makeTrack(130, d.seed, d.A)), B0: bufferOf(makeTrack(128, d.seed + 12, d.B(false))), B1: bufferOf(makeTrack(128, d.seed + 12, d.B(true))) };
+  tracks = trackCache[sty]; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75;
 }
 function applyCtrl(){
   Object.keys(ctrl).forEach(renderControl);
@@ -432,20 +488,24 @@ const LESSONS = [
 LESSONS.forEach(l => { l.kind = l.kind || 'swap'; l.init.cfxA = l.init.cfxA ?? .5; l.launchBeat = l.launchBeat || 32; l.bCue = l.bCue || 0; l.start = l.start || 16; l.end = l.end || 116; l.btn = l.btn || []; });
 const TARGETS = { 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A']], 6: [[64, 'LANCE B', 'B'], [64, 'COUPE A', 'A']], 0: [[32, 'LANCE B', 'B']], 1: [[64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'SWAP', 'AB']], 3: [[32, 'LANCE B', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
 const RING_LAB = { 'FILTRE': 'temps avant de tourner le filtre', 'À FOND': 'temps : filtre à fond avant le drop', 'ECHO': 'temps avant d\'activer l\'écho', 'COUPE A': 'temps avant de couper A', 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
-let li = 0, run = null;
+let li = 0, run = null, ear = false, styleChoice = 'house';
+let earStars = {}; try { earStars = JSON.parse(localStorage.getItem('coach-lecons-oreille') || '{}') || {}; } catch (e) {}
+try { styleChoice = localStorage.getItem('coach-style') || 'house'; } catch (e) {}
+const pickStyle = () => styleChoice === 'random' ? ['house', 'techno', 'afro'][Math.floor(Math.random() * 3)] : styleChoice;
+const earUnlocked = i => (stars[i] || 0) >= 2;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 const isAuto = k => !!(run && run.demo) || !LESSONS[li].user.includes(k);
 const clamp01 = x => Math.max(0, Math.min(1, x));
 
 function renderHud(){
-  const tot = LESSONS.reduce((s, _, i) => s + (stars[i] || 0), 0), xp = tot * 10;
+  const tN = LESSONS.reduce((s, _, i) => s + (stars[i] || 0), 0), tE = LESSONS.reduce((s, _, i) => s + (earStars[i] || 0), 0), tot = tN + tE, xp = tN * 10 + tE * 15;
   $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
-  $('starTot').textContent = tot + '/' + LESSONS.length * 3;
+  $('starTot').textContent = tot + '/' + LESSONS.length * 6;
   const map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove());
   let lastDone = -1;
   LESSONS.forEach((l, i) => { if (stars[i]) lastDone = i;
     const b = document.createElement('button'); b.type = 'button'; b.className = 'node' + (stars[i] ? ' done' : ''); b.setAttribute('aria-pressed', String(i === li));
-    b.innerHTML = `<span class="dot">${stars[i] === 3 ? '★' : i + 1}</span><span class="t"></span><span class="s"><b>${'★'.repeat(stars[i] || 0)}</b>${'★'.repeat(3 - (stars[i] || 0))}</span>`;
+    b.innerHTML = `<span class="dot">${stars[i] === 3 ? '★' : i + 1}</span><span class="t"></span><span class="s"><b>${'★'.repeat(stars[i] || 0)}</b>${'★'.repeat(3 - (stars[i] || 0))}</span>${earStars[i] ? `<span class="e">OREILLE ${'★'.repeat(earStars[i])}</span>` : ''}`;
     b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${stars[i] || 0} étoile(s) sur 3`);
     b.addEventListener('click', () => selectLesson(i)); map.appendChild(b); });
   $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * 85.7) + '%';
@@ -459,6 +519,11 @@ function selectLesson(i){
   $('result').hidden = true; setStartBtn(false); $('launchB').disabled = true;
   $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
   $('hint').textContent = l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
+  if (!earUnlocked(i)) ear = false;
+  const eb = $('earBtn'); eb.disabled = !earUnlocked(i); eb.title = earUnlocked(i) ? 'Sans compte à rebours ni repères' : 'Débloqué à 2 étoiles sur ce niveau';
+  eb.textContent = earUnlocked(i) ? 'À l\'oreille' : 'À l\'oreille (2★)';
+  document.querySelectorAll('#modeSeg button').forEach(x => x.setAttribute('aria-pressed', String((x.dataset.mode === 'ear') === ear)));
+  $('stage').classList.remove('ear');
   renderHud(); drawHighway(START); updateSetup();
 }
 function setStartBtn(running){ const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
@@ -469,11 +534,12 @@ function startRun(demo = false){
   ensureAudio(); if (ac.state !== 'running') ac.resume();
   $('startBtn').textContent = 'Préparation…';
   setTimeout(() => {
-    prepareTracks();
+    const sty = pickStyle(); prepareTracks(sty); $('styleTag').textContent = STYLE_DEFS[sty].label + ' · ' + BPM + ' BPM';
     const l = LESSONS[li]; Object.assign(ctrl, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
-    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0 };
+    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: ear && !demo };
+    $('stage').classList.toggle('ear', ear && !demo);
     setEcho(false); run.echoAt = null;
     if (l.autoLaunch || demo) launchAt(l.launchBeat);
     $('stage').classList.toggle('demo', demo); $('demoTag').hidden = !demo; $('watchBtn').disabled = true;
@@ -500,7 +566,7 @@ function launchB(){
   judgeLaunch(k);
 }
 function stopRun(){ const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; setStartBtn(false); $('launchB').disabled = true;
-  $('stage').classList.remove('demo'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
+  $('stage').classList.remove('demo', 'ear'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
   if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, LESSONS[li].init); applyCtrl(); }
   updateSetup(); }
 let echoOn = false;
@@ -584,7 +650,8 @@ function frame(){
   run.frames.push({ b, fa: ctrl.faderA, fb: ctrl.faderB, la: ctrl.lowA, lb: ctrl.lowB, ca: ctrl.cfxA, ec: echoOn ? 1 : 0 });
   const tg = TARGETS[li].find(([x, lab]) => x > b - .5 && !(run.status[lab] && run.status[lab] !== 'late'));
   const ring = $('ring');
-  if (tg){ const n = Math.max(0, Math.ceil(tg[0] - b)); $('cdNum').textContent = n; $('cdLab').textContent = RING_LAB[tg[1]]; ring.classList.toggle('hot', n <= 4); }
+  if (run.ear){ $('cdNum').textContent = '?'; $('cdLab').textContent = 'Sens la phrase, sans repère'; ring.classList.remove('hot'); }
+  else if (tg){ const n = Math.max(0, Math.ceil(tg[0] - b)); $('cdNum').textContent = n; $('cdLab').textContent = RING_LAB[tg[1]]; ring.classList.toggle('hot', n <= 4); }
   else { $('cdNum').textContent = '♪'; $('cdLab').textContent = 'Écoute le résultat'; ring.classList.remove('hot'); }
   if (!REDUCED){ const f = b - Math.floor(b), k = Math.exp(-f * 7); ring.style.transform = `scale(${1 + .07 * k})`; ring.style.setProperty('--o', k.toFixed(2)); }
   $('progFill').style.width = clamp01((b - START) / (END - START)) * 100 + '%';
@@ -600,7 +667,7 @@ function evalLaunch(L, target = 32){
   if (e === 0) return ['ok', target === 32 ? 'B est parti pile sur le 1 de l\'outro de A.' : 'B est parti pile sur le début de la phrase.', 1];
   if (Math.abs(e) <= 2) return ['mid', `B est parti ${Math.abs(e)} temps ${e > 0 ? 'trop tard' : 'trop tôt'} : son drop tombe ${Math.abs(e)} temps ${e > 0 ? 'après' : 'avant'} la fin de phrase de A, ça s'entend comme un décalage.`, .5];
   if (e % 32 === 0) return ['mid', `B est parti sur le début d'une autre phrase (${e > 0 ? 'une phrase trop tard' : 'une phrase trop tôt'}) : c'est en rythme, mais pas au bon moment du morceau.`, .5];
-  return ['bad', `B est parti au temps ${(((L % 32) + 32) % 32) + 1} de la phrase, en plein milieu : les deux morceaux ne changent plus en même temps. Attends le zéro du compte à rebours.`, 0];
+  return ['bad', `B est parti au temps ${(((L % 32) + 32) % 32) + 1} de la phrase, en plein milieu : les deux morceaux ne changent plus en même temps. Attends le début de la phrase.`, 0];
 }
 function evalFaders(fr){
   const out = []; const bReach = firstAt(fr, 32, x => x.fb >= .9), aOut = firstAt(fr, 40, x => x.fa <= .05);
@@ -617,7 +684,7 @@ function evalSwap(fr){
   const tKill = firstAt(fr, 40, x => x.la < .12), tOpen = firstAt(fr, 40, x => x.lb > .4);
   if (tKill === null || tOpen === null) return [['bad', tKill === null ? 'Les basses de A n\'ont jamais été coupées : tourne son LOW à fond à gauche.' : 'Les basses de B n\'ont jamais été ouvertes : remonte son LOW au milieu.', 0]];
   const sw = (tKill + tOpen) / 2, e = sw - 64, ov = Math.max(0, tKill - tOpen), gap = Math.max(0, tOpen - tKill), out = [];
-  out.push(Math.abs(e) <= .75 ? ['ok', 'Swap pile sur le début de la phrase.', 1] : Math.abs(e) <= 2 ? ['mid', `Swap ${fr1(Math.abs(e))} temps ${e > 0 ? 'trop tard' : 'trop tôt'}.`, .5] : ['bad', `Swap à ${fr1(Math.abs(e))} temps de la phrase : vise le zéro du compte à rebours.`, 0]);
+  out.push(Math.abs(e) <= .75 ? ['ok', 'Swap pile sur le début de la phrase.', 1] : Math.abs(e) <= 2 ? ['mid', `Swap ${fr1(Math.abs(e))} temps ${e > 0 ? 'trop tard' : 'trop tôt'}.`, .5] : ['bad', `Swap à ${fr1(Math.abs(e))} temps de la phrase : vise le début de la phrase.`, 0]);
   out.push(ov > 2 ? ['bad', `Deux basses ensemble pendant ${fr1(ov)} temps : ouvre B et coupe A dans le même geste.`, 0] : ov > .5 ? ['mid', `Deux basses ensemble pendant ${fr1(ov)} temps : ça frotte un peu.`, .5]
     : gap > 2 ? ['bad', `Plus aucune basse pendant ${fr1(gap)} temps : l'énergie retombe.`, 0] : gap > .5 ? ['mid', `Petit trou dans les basses (${fr1(gap)} temps).`, .5] : ['ok', 'Les basses passent de A à B sans chevauchement ni trou.', 1]);
   return out;
@@ -661,11 +728,12 @@ function finish(){
   if (LESSONS[li].kind === 'echo') items = evalEcho(r.frames, r.echoAt);
   if (LESSONS[li].kind === 'cut') items = [evalLaunch(r.launch, 64)].concat(evalCut(r.frames, r.launch));
   const score = items.reduce((s, x) => s + x[2], 0) / items.length, st = score >= .9 ? 3 : score >= .55 ? 2 : 1;
-  const before = stars[li] || 0; stars[li] = Math.max(before, st); try { localStorage.setItem('coach-lecons', JSON.stringify(stars)); } catch (e) {}
+  const bank = r.ear ? earStars : stars, before = bank[li] || 0; bank[li] = Math.max(before, st);
+  try { localStorage.setItem(r.ear ? 'coach-lecons-oreille' : 'coach-lecons', JSON.stringify(bank)); } catch (e) {}
   const rs = $('rStars'); rs.innerHTML = '';
   for (let i = 0; i < 3; i++){ const sp = document.createElement('span'); sp.textContent = '★'; if (i < st) sp.className = 'on'; sp.style.animationDelay = (i * .18) + 's'; rs.appendChild(sp); }
-  $('rTitle').textContent = st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.';
-  const gained = (stars[li] - before) * 10; $('rGain').textContent = gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(stars[li])}`;
+  $('rTitle').textContent = (r.ear ? 'À l\'oreille : ' : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
+  const gained = (bank[li] - before) * (r.ear ? 15 : 10); $('rGain').textContent = gained > 0 ? `+${gained} XP` + (!r.ear && before < 2 && bank[li] >= 2 ? ' · Mode « À l\'oreille » débloqué !' : '') : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`;
   const ul = $('rDetails'); ul.innerHTML = ''; for (const [lvl, txt] of items){ const x = document.createElement('li'); x.className = lvl; x.textContent = txt; ul.appendChild(x); }
   $('next').hidden = li >= LESSONS.length - 1;
   $('result').hidden = false; $('retry').focus({ preventScroll: true });
@@ -701,7 +769,11 @@ function drawHighway(b){
   else { const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, 10); g.stroke(); g.setLineDash([]);
     if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 12, 8), yB + 28); } }
   // gestes à faire
+  const fog = run && run.ear;
+  if (fog){ g.save(); const gr = g.createLinearGradient(hitX, 0, hitX + 60, 0); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, COL.bg); g.fillStyle = gr; g.fillRect(hitX, 0, 60, h); g.fillStyle = COL.bg; g.fillRect(hitX + 60, 0, w, h);
+    g.fillStyle = COL.muted; g.font = '700 14px ' + COL.font; g.textAlign = 'center'; g.fillText('À l\'oreille : écoute la phrase', (hitX + w) / 2 + 30, h / 2 + 5); g.restore(); }
   for (const [v, lab, lane] of TARGETS[li]){
+    if (fog && !(run.status[lab])) continue;
     const x = X(v); if (x < -80 || x > w + 80) continue;
     const st = run ? run.status[lab] : null, col = st === 'ok' ? COL.ok : st === 'mid' ? COL.mid : st === 'bad' || st === 'late' ? COL.bad : COL.xp;
     const y = lane === 'A' ? yA + H / 2 : lane === 'B' ? yB + H / 2 : (yA + yB + H) / 2;
@@ -828,6 +900,14 @@ $('setupSkip').addEventListener('click', () => { mouseMode = true; const l = LES
 buildControls();
 $('startBtn').addEventListener('click', () => run ? stopRun() : startRun());
 $('watchBtn').addEventListener('click', () => { if (!run) startRun(true); });
+document.querySelectorAll('#styleSeg button').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.style === styleChoice));
+  b.addEventListener('click', () => { if (run) return; styleChoice = b.dataset.style; try { localStorage.setItem('coach-style', styleChoice); } catch (e) {}
+    document.querySelectorAll('#styleSeg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    $('styleTag').textContent = styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM'; }); });
+$('styleTag').textContent = styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM';
+document.querySelectorAll('#modeSeg button').forEach(b => b.addEventListener('click', () => { if (run || b.disabled) return; ear = b.dataset.mode === 'ear';
+  document.querySelectorAll('#modeSeg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  $('hint').textContent = ear ? 'Mode à l\'oreille : pas de compte à rebours, la piste est dans le brouillard. Compte les mesures dans ta tête.' : ''; }));
 $('launchB').addEventListener('click', launchB);
 $('rClose').addEventListener('click', () => { $('result').hidden = true; });
 $('result').addEventListener('click', e => { if (e.target === $('result')) $('result').hidden = true; });
