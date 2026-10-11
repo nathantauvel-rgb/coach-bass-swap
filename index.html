@@ -127,6 +127,20 @@ a.chip:hover{border-color:var(--muted)}
 .start{border:0;border-radius:16px;padding:16px 34px;font-family:var(--display);font-weight:800;font-size:18px;background:linear-gradient(135deg,var(--a),var(--xp));color:var(--ink);box-shadow:0 0 30px color-mix(in srgb,var(--xp) 35%,transparent)}
 .start.stop{background:var(--panel-2);color:var(--fg);box-shadow:none}
 .hint{margin:0;color:var(--muted);font-size:14px;text-align:center;min-height:1.4em}
+.setup{background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;width:100%;max-width:560px}
+.setup h3{margin:0;font-family:var(--display);font-weight:800;font-size:18px}
+.setup p{margin:0;color:var(--muted);font-size:14px}
+.setup ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.setup li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--panel);border-radius:12px;padding:9px 12px;font-size:15px}
+.setup li .ic{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:800;background:var(--line);color:var(--fg)}
+.setup li.ok .ic{background:var(--ok);color:var(--ink);box-shadow:0 0 10px var(--ok)}
+.setup li.wrong .ic{background:var(--mid);color:var(--ink)}
+.setup li .what{font-size:14px;color:var(--muted);text-align:right}
+.setup li.ok .what{color:var(--ok)}
+.setup .skip{align-self:center;border:0;background:transparent;color:var(--muted);text-decoration:underline;font-size:13px;padding:4px}
+.start:disabled{background:var(--panel-2);color:var(--muted);box-shadow:none;cursor:default}
+.start.ready{animation:readyPulse 1.2s ease-in-out infinite}
+@keyframes readyPulse{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--xp) 25%,transparent),0 0 40px color-mix(in srgb,var(--xp) 45%,transparent)}}
 
 /* Résultat */
 .result{position:absolute;inset:0;overflow:auto;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;z-index:3}
@@ -190,7 +204,15 @@ a.chip:hover{border-color:var(--muted)}
         <div class="chan chanB" id="wFadB"><div class="fader" data-k="faderB" aria-label="Volume de B"><div class="slot"></div><div class="fill"></div><div class="cap2"></div></div><span class="cl">B</span></div>
       </div></div>
     </div>
-    <div class="start-row"><button type="button" class="start" id="startBtn">Jouer</button><p class="hint" id="hint"></p></div>
+    <div class="start-row">
+      <div class="setup" id="setup" hidden>
+        <h3>Mise en place de ta FLX4</h3>
+        <p>Place tes contrôles comme indiqué. Le niveau se débloque quand tout est vert.</p>
+        <ul id="setupList"></ul>
+        <button type="button" class="skip" id="setupSkip">Je joue à la souris cette fois</button>
+      </div>
+      <button type="button" class="start" id="startBtn">Jouer</button><p class="hint" id="hint"></p>
+    </div>
 
     <div class="result" id="result" hidden>
       <div class="rcard">
@@ -392,22 +414,23 @@ function selectLesson(i){
   $('result').hidden = true; setStartBtn(false); $('launchB').disabled = true;
   $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
   $('hint').textContent = l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
-  renderHud(); drawHighway(START);
+  renderHud(); drawHighway(START); updateSetup();
 }
 function setStartBtn(running){ const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
 
 const START = 16, END = 116;
 function startRun(){
+  if (needSetup() && !setupReady()){ updateSetup(); return; }
   ensureAudio(); if (ac.state !== 'running') ac.resume();
   $('startBtn').textContent = 'Préparation…';
   setTimeout(() => {
     prepareTracks();
-    const l = LESSONS[li]; Object.assign(ctrl, l.init); applyCtrl();
+    const l = LESSONS[li]; Object.assign(ctrl, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
     run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1 };
     if (l.autoLaunch) launchAt(32);
-    $('result').hidden = true; setStartBtn(true); $('launchB').disabled = !!l.autoLaunch; $('startBtn').blur();
+    $('result').hidden = true; setStartBtn(true); $('setup').hidden = true; $('startBtn').disabled = false; $('startBtn').classList.remove('ready'); $('launchB').disabled = !!l.autoLaunch; $('startBtn').blur();
     if (!l.autoLaunch) $('hint').textContent = 'Astuce : la barre d\'espace lance aussi B.';
   }, 30);
 }
@@ -427,7 +450,7 @@ function launchB(){
   else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, (b - k) * P + .01, true); $('launchB').disabled = true; }
   judgeLaunch(k);
 }
-function stopRun(){ if (ac){ stop('A'); stop('B'); } run = null; setStartBtn(false); $('launchB').disabled = true; }
+function stopRun(){ if (ac){ stop('A'); stop('B'); } run = null; setStartBtn(false); $('launchB').disabled = true; updateSetup(); }
 function automate(b){
   const L = run.launch; let ch = false;
   const set = (k, v) => { if (isAuto(k) && Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } };
@@ -587,18 +610,46 @@ const DEFAULT_MAP = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: 
 let map = DEFAULT_MAP; try { const s = JSON.parse(localStorage.getItem('coach-midi-map') || 'null'); if (s) map = s; } catch (e) {}
 function onMidi(e){
   const [st, d1, d2] = e.data, type = st & 0xF0, ch = st & 0x0F;
-  if (type === 0xB0){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB']){ const m = map[k]; if (m && m.ch === ch && m.n === d1){ if (!isAuto(k)){ ctrl[k] = d2 / 127; applyCtrl(); } return; } } }
+  if (type === 0xB0){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB']){ const m = map[k]; if (m && m.ch === ch && m.n === d1){ phys[k] = d2 / 127; if (!isAuto(k)){ ctrl[k] = d2 / 127; applyCtrl(); } if (!run) updateSetup(); return; } } }
   else if (type === 0x90 && d2 > 0){ const m = map.playB; if (m && m.ch === ch && m.n === d1) launchB(); }
 }
 async function initMidi(){
   const pill = $('midiPill'), txt = pill.lastElementChild;
   if (!navigator.requestMIDIAccess){ txt.textContent = 'Souris (MIDI indisponible)'; return; }
   try { const acc = await navigator.requestMIDIAccess({ sysex: false });
-    const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); pill.className = 'chip status' + (ins.length ? ' on' : ''); txt.textContent = ins.length ? ins.map(i => i.name).join(', ') : 'Souris (aucune table branchée)'; };
+    const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); pill.className = 'chip status' + (ins.length ? ' on' : ''); midiCount = ins.length; updateSetup(); txt.textContent = ins.length ? ins.map(i => i.name).join(', ') : 'Souris (aucune table branchée)'; };
     acc.onstatechange = refresh; refresh();
   } catch (e){ txt.textContent = 'Souris (MIDI bloqué ici)'; }
 }
 
+
+/* ---------- Mise en place de la table ---------- */
+const phys = {}; let midiCount = 0, mouseMode = false;
+const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B' };
+function targetText(k, v){ return k.startsWith('fader') ? (v >= .5 ? 'tout en haut' : 'tout en bas') : (v < .1 ? 'tout à gauche (basses coupées)' : 'au milieu (cran central)'); }
+function inPlace(k, v, p){ if (p == null) return null; return k.startsWith('fader') ? (v >= .5 ? p >= .94 : p <= .06) : (v < .1 ? p <= .05 : Math.abs(p - .5) <= .07); }
+const needSetup = () => midiCount > 0 && !mouseMode && LESSONS[li].user.length > 0;
+function setupReady(){ const l = LESSONS[li]; return l.user.every(k => inPlace(k, l.init[k], phys[k]) === true); }
+function updateSetup(){
+  const box = $('setup'), btn = $('startBtn');
+  if (run || !needSetup()){ box.hidden = true; if (!run){ btn.disabled = false; btn.classList.remove('ready'); if (btn.textContent !== 'Préparation…') btn.textContent = 'Jouer'; } return; }
+  const l = LESSONS[li], ul = $('setupList'); ul.innerHTML = '';
+  for (const k of l.user){
+    const v = l.init[k], p = phys[k], ok = inPlace(k, v, p);
+    const li2 = document.createElement('li'); li2.className = ok === true ? 'ok' : ok === false ? 'wrong' : '';
+    const ic = document.createElement('span'); ic.className = 'ic'; ic.textContent = ok === true ? '✓' : ok === false ? '!' : '?';
+    const nm = document.createElement('span'); nm.innerHTML = '<b></b> '; nm.querySelector('b').textContent = CTRL_LABEL[k]; nm.appendChild(document.createTextNode(': ' + targetText(k, v)));
+    const wh = document.createElement('span'); wh.className = 'what';
+    wh.textContent = ok === true ? 'en place' : ok === null ? 'bouge-le un peu' : k.startsWith('fader') ? (p < v ? 'monte-le' : 'descends-le') : (p < v ? 'tourne à droite' : 'tourne à gauche');
+    li2.append(ic, nm, wh); ul.appendChild(li2);
+    if (!isAuto(k) && p != null){ ctrl[k] = p; }
+  }
+  applyCtrl();
+  box.hidden = false;
+  const ready = setupReady();
+  btn.disabled = !ready; btn.classList.toggle('ready', ready); btn.textContent = ready ? 'Jouer' : 'Mets ta table en place';
+}
+$('setupSkip').addEventListener('click', () => { mouseMode = true; const l = LESSONS[li]; Object.assign(ctrl, l.init); applyCtrl(); updateSetup(); });
 
 /* ---------- Démarrage ---------- */
 buildControls();
