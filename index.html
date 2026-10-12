@@ -484,6 +484,36 @@ button.card:hover:not(:disabled){box-shadow:inset 0 0 0 3px var(--a)}
 button.card:disabled{opacity:.55;cursor:default}
 .card .soon.ok{background:#e3f6ea;color:var(--go-ink)}
 .view.prac .chapters,.view.prac .map,.view.prac .after{display:none}
+.sub{margin:26px 0 6px;font-family:var(--display);font-weight:700;font-size:22px;line-height:1.2}
+.subnote{margin:0 0 14px;font-size:15px;color:var(--muted)}
+.howlist{margin:0 0 18px;padding-left:22px;display:flex;flex-direction:column;gap:6px;max-width:60ch}
+.rbrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+button.cta{border:0}
+.ghost{border:2px solid #dcd7ff;background:var(--panel);color:var(--xp);border-radius:999px;padding:9px 18px;font-weight:700;font-size:15px}
+.ghost:hover{background:#f6f4ff}
+.rbhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel-2);border-radius:22px;padding:14px 18px}
+.rbsum{margin:0;font-weight:700}
+.rbfind{width:100%;max-width:420px;border:2px solid var(--line);border-radius:999px;padding:10px 18px;background:var(--panel);margin-bottom:14px}
+.duos{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.duo{border:0;text-align:left;background:var(--panel-2);border-radius:20px;padding:14px 18px;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:4px 14px;align-items:center}
+.duo:hover{box-shadow:inset 0 0 0 3px var(--line)}
+.duo[aria-pressed="true"]{background:#fff4d6;box-shadow:inset 0 0 0 3px var(--a)}
+.duo .pt{min-width:0;display:flex;flex-direction:column}
+.duo .pt b{font-family:var(--display);font-weight:600;font-size:17px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.duo .pt span{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.duo .ar{font-family:var(--display);font-weight:700;font-size:20px;color:var(--a)}
+.duo .why{grid-column:1/-1;font-size:14px;color:var(--muted)}
+.duo .why b{color:var(--go-ink);background:#e3f6ea;border-radius:999px;padding:2px 10px;font-size:13px;margin-right:8px}
+.missions{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.missions label{display:flex;gap:14px;align-items:flex-start;background:var(--panel-2);border-radius:20px;padding:14px 18px;cursor:pointer}
+.missions input{flex:none;width:24px;height:24px;margin:2px 0 0;accent-color:var(--ok)}
+.missions strong{display:block;font-family:var(--display);font-weight:600;font-size:17px}
+.missions span{font-size:15px;color:var(--muted)}
+.missions li.done label{background:#e3f6ea}
+.rbdone{margin:16px 0 0;font-weight:700;background:#fff4d6;border-radius:18px;padding:12px 16px}
+.rbmsg{margin:14px 0 0;font-weight:700;color:var(--bad)}
+.rbmsg:empty{display:none}
+@media (max-width:600px){.duo{grid-template-columns:1fr}.duo .ar{display:none}}
 .page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
 .page-note a{color:var(--xp);font-weight:700}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}
@@ -550,7 +580,7 @@ button.card:disabled{opacity:.55;cursor:default}
     <div class="steps">
       <a class="step" href="#apprendre"><span class="sn">Étape 1</span><strong>Apprendre</strong><span class="sd">Les leçons : le bon moment, le fader, le swap des basses, la transition complète.</span><span class="sp" id="homeP1">À commencer</span></a>
       <a class="step" href="#entrainer"><span class="sn">Étape 2</span><strong>S'entraîner</strong><span class="sd">Défi du jour, variations, à l'oreille, mini-sets.</span><span class="sp" id="homeP2">Défi du jour</span></a>
-      <a class="step" href="#vrai"><span class="sn">Étape 3</span><strong>Passer au vrai</strong><span class="sd">Ta musique rekordbox, les paires qui s'enchaînent bien, des missions à faire sur ta table.</span><span class="sp soon">Bientôt</span></a>
+      <a class="step" href="#vrai"><span class="sn">Étape 3</span><strong>Passer au vrai</strong><span class="sd">Ta musique rekordbox, les paires qui s'enchaînent bien, des missions à faire sur ta table.</span><span class="sp" id="homeP3">À commencer</span></a>
     </div>
   </div>
 
@@ -574,12 +604,31 @@ button.card:disabled{opacity:.55;cursor:default}
       <span class="lnum">Étape 3</span>
       <h1>Passer au vrai</h1>
       <p class="lead">Ta musique, ta table, rekordbox : le site te prépare, et tu mixes pour de vrai.</p>
-      <div class="cards">
-        <div class="card"><span class="soon">Bientôt</span><strong>Import rekordbox</strong><p>Tu charges ta collection : le site lit tes morceaux, leur tempo et leur tonalité.</p></div>
-        <div class="card"><span class="soon">Bientôt</span><strong>Paires recommandées</strong><p>Les morceaux de ta collection qui s'enchaînent bien ensemble.</p></div>
-        <div class="card"><span class="soon">Bientôt</span><strong>Missions rekordbox</strong><p>Des exercices précis à faire dans rekordbox, sur ta table, avec ta musique.</p></div>
+      <input type="file" id="rbFile" accept=".xml,text/xml,application/xml" hidden>
+      <div id="rbEmpty">
+        <h2 class="sub">1. Importe ta collection rekordbox</h2>
+        <ol class="howlist">
+          <li>Dans rekordbox, ouvre le menu <b>Fichier</b>, puis <b>Exporter la collection au format xml</b>.</li>
+          <li>Enregistre le fichier, puis choisis-le ici.</li>
+        </ol>
+        <div class="rbrow"><button type="button" class="cta" id="rbPick">Choisir mon fichier rekordbox</button><button type="button" class="ghost" id="rbDemo">Essayer avec une collection d'exemple</button></div>
+        <p class="page-note">Le site lit seulement le titre, l'artiste, le genre, le tempo et la tonalité de tes morceaux. Rien n'est envoyé : tout reste sur ton ordinateur.</p>
       </div>
-      <p class="page-note">Cette étape arrive bientôt. En attendant, <a href="#apprendre">continue les leçons</a>.</p>
+      <div id="rbFull" hidden>
+        <div class="rbhead"><p class="rbsum" id="rbSum"></p><div class="rbrow"><button type="button" class="ghost" id="rbChange">Changer de fichier</button><button type="button" class="ghost" id="rbClear">Retirer la collection</button></div></div>
+        <h2 class="sub">2. Choisis une paire de morceaux</h2>
+        <p class="subnote">Ces morceaux de ta collection s'enchaînent bien : tempos proches, tonalités qui vont ensemble.</p>
+        <input type="search" class="rbfind" id="rbFind" placeholder="Chercher un morceau ou un artiste" aria-label="Chercher un morceau ou un artiste">
+        <div class="duos" id="rbPairs"></div>
+        <button type="button" class="ghost" id="rbMore">Voir d'autres paires</button>
+        <div id="rbMisBox" hidden>
+          <h2 class="sub">3. Tes missions dans rekordbox</h2>
+          <p class="subnote" id="rbMisSub"></p>
+          <ol class="missions" id="rbMissions"></ol>
+          <p class="rbdone" id="rbDone" hidden></p>
+        </div>
+      </div>
+      <p class="rbmsg" id="rbMsg" role="status"></p>
     </section>
   </div>
 
@@ -1707,6 +1756,129 @@ function quitPrac(){
 $('prQuit').addEventListener('click', quitPrac);
 document.querySelectorAll('#vTrain [data-prac]').forEach(b => b.addEventListener('click', () => startPrac(b.dataset.prac)));
 
+/* ---------- Passer au vrai : collection rekordbox, paires recommandées, missions ----------
+   Un morceau = [titre, artiste, genre, bpm, tonalité Camelot]. Seules ces infos sont lues dans le XML,
+   et elles restent dans le navigateur. Une paire = [score, i, j] (indices dans rbLib, i = le plus lent). */
+const RB_KEY = 'coach-collection', RB_MIS = 'coach-missions', RB_MAX = 6000, RB_PER = 6, RB_PC = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+function rbKey(s){
+  if (!s) return '';
+  s = String(s).trim().replace('♯', '#').replace('♭', 'b');
+  let m = s.match(/^0?(\d{1,2})\s*([AB])$/i);
+  if (m){ const n = +m[1]; return n >= 1 && n <= 12 ? n + m[2].toUpperCase() : ''; }
+  m = s.match(/^([A-Ga-g])([#b]?)\s*(m|min|minor|maj|major)?$/);
+  if (!m) return '';
+  const pc = (((RB_PC[m[1].toUpperCase()] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0)) % 12) + 12) % 12, f = (pc * 7) % 12;
+  return m[3] && /^m(in(or)?)?$/.test(m[3]) ? ((f + 4) % 12 + 1) + 'A' : ((f + 7) % 12 + 1) + 'B';
+}
+function rbRel(a, b){
+  const na = parseInt(a, 10), nb = parseInt(b, 10), la = a.slice(-1), lb = b.slice(-1), d = (((nb - na) % 12) + 12) % 12;
+  if (na === nb && la === lb) return 'same'; if (la === lb && (d === 1 || d === 11)) return 'adj'; if (na === nb) return 'rel'; if (la === lb && (d === 2 || d === 10)) return 'boost'; return 'clash';
+}
+const rbBpm = v => (Math.round(v * 10) / 10).toString().replace('.', ',');
+const rbClean = t => Array.isArray(t) && typeof t[0] === 'string' && t[0].trim() ? [t[0].trim().slice(0, 120), String(t[1] || '').trim().slice(0, 80), String(t[2] || '').trim().slice(0, 40), +t[3] > 40 && +t[3] < 250 ? Math.round(+t[3] * 10) / 10 : 0, /^(1[0-2]|[1-9])[AB]$/.test(t[4]) ? t[4] : ''] : null;
+let rbLib = [], rbName = '', rbPairs = [], rbAll = null, rbStale = true, rbPage = 0, rbSel = null, rbMis = { pair: '', done: {}, total: 0 };
+try { const d = JSON.parse(localStorage.getItem(RB_KEY) || 'null'); if (d && Array.isArray(d.t)){ rbLib = d.t.slice(0, RB_MAX).map(rbClean).filter(Boolean); rbName = typeof d.n === 'string' ? d.n.slice(0, 80) : ''; } } catch (e) {}
+try { const d = JSON.parse(localStorage.getItem(RB_MIS) || 'null'); if (d && typeof d === 'object' && !Array.isArray(d)) rbMis = { pair: typeof d.pair === 'string' ? d.pair : '', done: d.done && typeof d.done === 'object' && !Array.isArray(d.done) ? d.done : {}, total: Math.max(0, Math.floor(+d.total) || 0) }; } catch (e) {}
+{ const m = rbMis.pair.match(/^(\d+)\|(\d+)$/); if (m && +m[1] < rbLib.length && +m[2] < rbLib.length && m[1] !== m[2]) rbSel = [+m[1], +m[2]]; else { rbMis.pair = ''; rbMis.done = {}; } }
+const rbSaveMis = () => { try { localStorage.setItem(RB_MIS, JSON.stringify(rbMis)); } catch (e) {} };
+function rbParse(text){
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  if (doc.querySelector('parsererror')) throw new Error('xml');
+  const coll = doc.querySelector('COLLECTION'); if (!coll) throw new Error('collection');
+  const out = [];
+  for (const el of coll.querySelectorAll(':scope > TRACK')){ const tempo = el.querySelector('TEMPO');
+    const t = rbClean([el.getAttribute('Name') || '', el.getAttribute('Artist') || '', el.getAttribute('Genre') || '', parseFloat(el.getAttribute('AverageBpm')) || parseFloat(tempo && tempo.getAttribute('Bpm')) || 0, rbKey(el.getAttribute('Tonality'))]);
+    if (t) out.push(t); }
+  return out;
+}
+const RB_DEMO = [['Matin clair', 'Exemple', 'House', 122, '8A'], ['Les quais', 'Exemple', 'House', 123, '9A'], ['Verre fumé', 'Exemple', 'House', 124, '8A'], ['Piscine vide', 'Exemple', 'House', 124, '8B'],
+  ['Après minuit', 'Exemple', 'Tech House', 126, '7A'], ['Néon rose', 'Exemple', 'Tech House', 126, '8A'], ['Tunnel', 'Exemple', 'Techno', 130, '5A'], ['Acier', 'Exemple', 'Techno', 131, '6A'],
+  ['Sable chaud', 'Exemple', 'Afro House', 120, '4A'], ['Tambours', 'Exemple', 'Afro House', 121, '4A'], ['Grand soleil', 'Exemple', 'Afro House', 122, '5A'], ['Vieux vinyle', 'Exemple', 'Disco', 118, '11B']];
+function rbScore(a, b, rel){
+  const ad = Math.abs(b[3] / a[3] - 1) * 100, st = ad <= 1 ? 1 : ad <= 3 ? .8 : .45, sk = { same: 1, adj: .9, rel: .8, boost: .45, clash: .05 }[rel];
+  const ga = a[2].toLowerCase(), gb = b[2].toLowerCase(), sg = ga && gb ? (ga === gb || ga.includes(gb) || gb.includes(ga) ? 1 : .3) : .5;
+  return Math.round((.45 * st + .4 * sk + .15 * sg) * 100);
+}
+function rbBuild(filter){
+  const idx = rbLib.map((_, i) => i).filter(i => rbLib[i][3] && rbLib[i][4]).sort((x, y) => rbLib[x][3] - rbLib[y][3] || x - y);
+  const f = (filter || '').toLowerCase().trim(), hit = idx.map(i => !f || (rbLib[i][0] + ' ' + rbLib[i][1]).toLowerCase().includes(f)), cand = [];
+  for (let x = 0; x < idx.length; x++){ const i = idx[x], a = rbLib[i], best = [];
+    for (let y = x + 1; y < idx.length; y++){ const j = idx[y], b = rbLib[j]; if (b[3] > a[3] * 1.06) break; if (!hit[x] && !hit[y]) continue;
+      if (a[0].toLowerCase() === b[0].toLowerCase()) continue;
+      const rel = rbRel(a[4], b[4]); if (rel === 'clash') continue;
+      const s = rbScore(a, b, rel); if (s >= 60) best.push([s, i, j]); }
+    best.sort((p, q) => q[0] - p[0]); for (const c of best.slice(0, f ? 12 : 4)) cand.push(c); }
+  cand.sort((p, q) => q[0] - p[0] || p[1] - q[1] || p[2] - q[2]);
+  const used = {}, out = [], lim = f ? 99 : 1;
+  for (const c of cand){ if ((used[c[1]] || 0) >= lim || (used[c[2]] || 0) >= lim) continue; used[c[1]] = (used[c[1]] || 0) + 1; used[c[2]] = (used[c[2]] || 0) + 1; out.push(c); if (out.length >= 60) break; }
+  return out;
+}
+function rbWhy(a, b){
+  const same = Math.abs(b[3] / a[3] - 1) * 100 <= .5, rel = rbRel(a[4], b[4]);
+  const key = { same: `même tonalité (${a[4]})`, adj: `tonalités voisines (${a[4]} et ${b[4]})`, rel: `tonalités cousines (${a[4]} et ${b[4]})`, boost: `montée d'énergie (${a[4]} vers ${b[4]})`, clash: `tonalités éloignées (${a[4]} et ${b[4]})` }[rel];
+  return (same ? `Même tempo (${rbBpm(a[3])} BPM)` : `${rbBpm(a[3])} et ${rbBpm(b[3])} BPM`) + ' · ' + key + (a[2] && b[2] && a[2].toLowerCase() === b[2].toLowerCase() ? ' · même genre' : '');
+}
+function rbMissionList(a, b){
+  const same = Math.abs(b[3] / a[3] - 1) * 100 <= .5;
+  return [
+    ['prep', 'Prépare tes deux morceaux', `Dans rekordbox, charge « ${a[0]} » sur la platine 1 et « ${b[0]} » sur la platine 2. ` + (same ? `Ils sont au même tempo (${rbBpm(a[3])} BPM).` : `Le premier est à ${rbBpm(a[3])} BPM, le second à ${rbBpm(b[3])} : appuie sur BEAT SYNC de la platine 2 pour qu'il se cale sur le premier.`)],
+    ['outro', 'Repère la fin du premier morceau', `Écoute « ${a[0]} » en comptant les phrases de 32 temps. Vers la fin, trouve le moment où le morceau se vide : c'est son outro. Pose un repère dessus avec un pad HOT CUE.`],
+    ['moment', 'Le bon moment', `Fader de la platine 2 en bas. Relance « ${a[0]} » un peu avant ton repère, et appuie sur PLAY de la platine 2 pile sur le premier temps de l'outro. Écoute au casque (bouton CUE du canal 2) : les deux grosses caisses doivent tomber ensemble.`],
+    ['fader', 'Le fader', `Refais la même chose, puis monte le fader de « ${b[0]} » sur une phrase, et baisse celui de « ${a[0]} » sur la phrase suivante.`],
+    ['swap', 'Le swap des basses', `Avant de lancer « ${b[0]} », coupe son LOW. Au début d'une phrase, coupe le LOW de « ${a[0]} » et remets celui de « ${b[0]} » au milieu, dans le même geste.`],
+    ['full', 'La transition complète', 'Tout d\'affilée, sans t\'arrêter : LOW coupé, PLAY sur la phrase, fader qui monte, swap des basses, puis le premier morceau qui sort. Recommence jusqu\'à ce que ça sonne propre trois fois de suite.']
+  ];
+}
+function rbSet(list, name){
+  rbLib = list.slice(0, RB_MAX); rbName = name || ''; rbSel = null; rbMis.pair = ''; rbMis.done = {}; rbSaveMis(); rbAll = null; rbStale = true; rbPage = 0; $('rbFind').value = ''; $('rbMsg').textContent = '';
+  try { if (rbLib.length) localStorage.setItem(RB_KEY, JSON.stringify({ n: rbName, t: rbLib })); else localStorage.removeItem(RB_KEY); }
+  catch (e) { $('rbMsg').textContent = 'Ta collection est trop grande pour être gardée en mémoire : il faudra la réimporter à ta prochaine visite.'; }
+  renderReal();
+}
+function renderMissions(){
+  const box = $('rbMisBox'); box.hidden = !rbSel; if (!rbSel) return;
+  const a = rbLib[rbSel[0]], b = rbLib[rbSel[1]], list = rbMissionList(a, b), ol = $('rbMissions'); ol.innerHTML = '';
+  $('rbMisSub').textContent = `Avec « ${a[0]} » puis « ${b[0]} ». Fais chaque mission sur ta table, et coche-la quand c'est propre. Les quatre dernières reprennent les niveaux 1 à 4 des leçons.`;
+  for (const [id, title, text] of list){ const liEl = document.createElement('li'), lab = document.createElement('label'), cb = document.createElement('input'), d = document.createElement('div'), st = document.createElement('strong'), sp = document.createElement('span');
+    cb.type = 'checkbox'; cb.checked = !!rbMis.done[id]; liEl.classList.toggle('done', cb.checked); st.textContent = title; sp.textContent = text; d.append(st, sp); lab.append(cb, d); liEl.appendChild(lab); ol.appendChild(liEl);
+    cb.addEventListener('change', () => { if (cb.checked) rbMis.done[id] = 1; else delete rbMis.done[id];
+      const all = list.every(m => rbMis.done[m[0]]); if (all && !rbMis.done.ok){ rbMis.done.ok = 1; rbMis.total++; confetti(120); }
+      rbSaveMis(); renderMissions(); }); }
+  const dn = $('rbDone'); dn.hidden = !rbMis.done.ok; dn.textContent = `Paire validée ! Tu as réussi ${plur(rbMis.total, 'vraie transition', 'vraies transitions')} avec ta musique. Choisis une autre paire pour continuer.`;
+}
+function renderReal(){
+  const has = rbLib.length > 0; $('rbEmpty').hidden = has; $('rbFull').hidden = !has; if (!has) return;
+  const usable = rbLib.filter(t => t[3] && t[4]).length;
+  $('rbSum').textContent = plur(rbLib.length, 'morceau', 'morceaux') + (rbName ? ' · ' + rbName : '') + (usable < rbLib.length ? ` · ${usable} avec tempo et tonalité` : '');
+  if (rbStale){ const f = $('rbFind').value.trim(); if (f) rbPairs = rbBuild(f); else rbPairs = rbAll = rbAll || rbBuild(''); rbStale = false; rbPage = 0; }
+  const pages = Math.max(1, Math.ceil(rbPairs.length / RB_PER)); if (rbPage >= pages) rbPage = 0;
+  const box = $('rbPairs'); box.innerHTML = '';
+  const shown = rbPairs.slice(rbPage * RB_PER, rbPage * RB_PER + RB_PER);
+  if (rbSel && !$('rbFind').value.trim() && !shown.some(c => c[1] === rbSel[0] && c[2] === rbSel[1])) shown.unshift([0, rbSel[0], rbSel[1]]);
+  for (const c of shown){ const a = rbLib[c[1]], b = rbLib[c[2]], btn = document.createElement('button'); btn.type = 'button'; btn.className = 'duo';
+    btn.setAttribute('aria-pressed', String(!!rbSel && rbSel[0] === c[1] && rbSel[1] === c[2]));
+    for (const t of [a, b]){ const pt = document.createElement('span'), nm = document.createElement('b'), ar = document.createElement('span'); pt.className = 'pt'; nm.textContent = t[0]; ar.textContent = t[1] || 'Artiste inconnu'; pt.append(nm, ar);
+      if (t === b){ const arrow = document.createElement('span'); arrow.className = 'ar'; arrow.textContent = '→'; arrow.setAttribute('aria-hidden', 'true'); btn.appendChild(arrow); } btn.appendChild(pt); }
+    const why = document.createElement('span'); why.className = 'why'; if (c[0] >= 85){ const easy = document.createElement('b'); easy.textContent = 'Facile'; why.appendChild(easy); } why.appendChild(document.createTextNode(rbWhy(a, b))); btn.appendChild(why);
+    btn.addEventListener('click', () => { const k = c[1] + '|' + c[2]; if (rbMis.pair !== k){ rbMis.pair = k; rbMis.done = {}; rbSaveMis(); } rbSel = [c[1], c[2]]; renderReal(); $('rbMisBox').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' }); });
+    box.appendChild(btn); }
+  if (!shown.length){ const p = document.createElement('p'); p.className = 'subnote'; p.textContent = $('rbFind').value.trim() ? 'Aucune paire trouvée pour cette recherche.' : 'Aucune paire trouvée. Vérifie que rekordbox a bien analysé tes morceaux (tempo et tonalité), puis réexporte ta collection.'; box.appendChild(p); }
+  $('rbMore').hidden = pages < 2;
+  renderMissions();
+}
+$('rbPick').addEventListener('click', () => $('rbFile').click());
+$('rbChange').addEventListener('click', () => $('rbFile').click());
+$('rbDemo').addEventListener('click', () => rbSet(RB_DEMO.map(rbClean), 'collection d\'exemple'));
+$('rbClear').addEventListener('click', () => rbSet([], ''));
+$('rbMore').addEventListener('click', () => { rbPage++; renderReal(); });
+$('rbFind').addEventListener('input', () => { rbStale = true; renderReal(); });
+$('rbFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return; $('rbMsg').textContent = '';
+  try { const list = rbParse(await f.text()); if (!list.length) throw new Error('vide'); const cut = list.length > RB_MAX; rbSet(list, f.name.replace(/\.xml$/i, ''));
+    if (cut) $('rbMsg').textContent = `Ta collection est très grande : seuls les ${RB_MAX} premiers morceaux sont utilisés.`; }
+  catch (err) { $('rbMsg').textContent = err && err.message === 'vide' ? 'Ce fichier ne contient aucun morceau.' : 'Ce fichier n\'est pas une collection rekordbox. Dans rekordbox : Fichier, puis Exporter la collection au format xml.'; }
+});
+
 /* ---------- Guide de premier lancement ---------- */
 const ONB = [
   { title: 'Bienvenue dans Coach DJ', text: 'Une transition, c\'est passer d\'un morceau à l\'autre sans que la piste de danse s\'arrête. Ici, tu l\'apprends geste par geste, sur ta FLX4. Ce petit tour prend une minute, avec le son.', cta: 'C\'est parti' },
@@ -1837,6 +2009,7 @@ function renderHome(){
   $('homeP1').textContent = tot ? `${tot} ★ sur ${max}` : 'À commencer';
   const sk = streakNow(), defiOk = pracStr('defiDate') === dayKey() && pracNum('defiStars') >= 2;
   $('homeP2').textContent = sk ? 'Série de ' + plur(sk, 'jour', 'jours') + (defiOk ? '' : ' · défi à faire') : 'Défi du jour à faire';
+  $('homeP3').textContent = rbMis.total ? plur(rbMis.total, 'paire validée', 'paires validées') : rbLib.length ? plur(rbLib.length, 'morceau importé', 'morceaux importés') : 'À commencer';
   $('homeTip').textContent = tot ? 'Content de te revoir ! On reprend où tu t\'étais arrêté.' : 'Un geste à la fois, et ça vient vite !';
 }
 function setView(v){
@@ -1850,6 +2023,7 @@ function setView(v){
   if (v === 'apprendre'){ renderHud(); drawHighway(START); updateSetup(); if (!guideSeen) openOnb(); }
   else if (v === 'accueil') renderHome();
   else if (v === 'entrainer') renderTrain();
+  else if (v === 'vrai') renderReal();
   window.scrollTo(0, 0);
 }
 document.querySelectorAll('#tabs a').forEach(a => a.addEventListener('click', () => { if (prac && a.dataset.view === view) quitPrac(); }));

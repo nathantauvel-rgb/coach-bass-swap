@@ -27,14 +27,19 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
   retiré, `coach.html` renvoie vers `index.html#vrai`.
 - **2. Remplir S'entraîner : fait le 12 oct. 2026.** Défi du jour (série de jours), variations,
-  à l'oreille, mini-set de 3 transitions. Passer au vrai n'affiche encore que des cartes « Bientôt ».
-- **Prochaine étape : 3. Remplir Passer au vrai** (repartir du code de `coach.html`).
+  à l'oreille, mini-set de 3 transitions.
+- **3. Remplir Passer au vrai : fait le 12 oct. 2026.** Import du XML rekordbox (ou collection d'exemple),
+  paires recommandées avec recherche, 6 missions à cocher par paire. Pas encore essayé avec un vrai
+  export rekordbox de l'utilisateur : seulement avec `tests/rekordbox-exemple.xml`.
+- **Prochaine étape : 4. Tester avec 3 à 5 débutants.** Sujet ouvert en parallèle : l'utilisateur trouve
+  les morceaux générés trop pauvres ; piste conseillée = de vrais morceaux en fichiers audio.
 
 ## Fichiers
 - `index.html` — tout le site des leçons (~1600 lignes, CSS + un seul `<script>`, aucune dépendance).
 - `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap), retiré du site : la page renvoie
   vers `index.html#vrai`. Son code sert de base à « Passer au vrai » ; `coach.html?ancien=1` l'affiche encore.
 - `tests/` — scripts Playwright (Python) : `tdz.py`, `robust.py`, `clar.py`, `play.py`, `play2.py`, `user.py`.
+- `tests/rekordbox-exemple.xml` — fausse collection rekordbox pour essayer l'import à la main.
 - `README.md` — description publique.
 
 ## Architecture de `index.html` (repères)
@@ -49,6 +54,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   le bouton « suivant » passe par `pracNext` ; `quitPrac` remet le chapitre et le niveau d'avant.
   Le défi du jour est tiré de la date (`dailyPick`). « À l'oreille » ici = sans compte à rebours mais
   précision normale (le chapitre 2 garde la précision ×2).
+- **Passer au vrai** (fonctions `rb…`) : `rbParse` lit le XML rekordbox et ne garde que
+  [titre, artiste, genre, bpm, tonalité Camelot] (`rbClean` valide chaque morceau, 6000 au plus).
+  `rbBuild(filtre)` cherche les paires (écart de tempo ≤ 6 %, tonalités qui frottent exclues, score
+  tempo/tonalité/genre) ; le résultat sans filtre est gardé dans `rbAll` car il coûte ~2 s sur 6000 morceaux.
+  `rbMissionList(a, b)` écrit les 6 missions avec les titres et tempos de la paire ; `renderReal` affiche tout.
+  Les titres viennent d'un fichier : toujours les écrire avec `textContent`, jamais `innerHTML`.
 - **Gestionnaire d'erreurs** en tête du script → bandeau `#errBanner`. Les rejets marqués `.silent` sont ignorés.
 - **État** : `let stars` est déclaré AVANT `earStars`, `ch2Stars`, `chapter`, etc. Puis validation de
   `styleChoice` (house/techno/afro/random) et `chapter` (1/2/3). Déblocage : `ch2Unlocked` (≥14 étoiles
@@ -71,7 +82,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 
 ### Clés localStorage
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-chapitre`,
-`coach-style`, `coach-guide-vu`, `coach-entrainement` (défi, série, compteurs, record du mini-set), `coach-midi-map` (partagée avec `coach.html`), `coach-bibliotheque` (`coach.html`).
+`coach-style`, `coach-guide-vu`, `coach-entrainement` (défi, série, compteurs, record du mini-set),
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester

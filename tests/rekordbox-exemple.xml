@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fausse collection rekordbox pour tester l'onglet « Passer au vrai » : tonalités écrites de plusieurs façons, un morceau sans tempo, un sans tonalité, un titre avec des caractères spéciaux. -->
+<DJ_PLAYLISTS Version="1.0.0">
+  <PRODUCT Name="rekordbox" Version="7.0.0" Company="AlphaTheta"/>
+  <COLLECTION Entries="9">
+    <TRACK TrackID="1" Name="Test Un" Artist="Artiste A" Genre="House" AverageBpm="124.00" Tonality="Am" Location="file://localhost/C:/Musique/un.mp3"><TEMPO Inizio="0.1" Bpm="124.00" Metro="4/4" Battito="1"/></TRACK>
+    <TRACK TrackID="2" Name="Test Deux" Artist="Artiste B" Genre="House" AverageBpm="124.00" Tonality="8A" Location="file://localhost/C:/Musique/deux.mp3"/>
+    <TRACK TrackID="3" Name="Test Trois" Artist="Artiste C" Genre="Tech House" AverageBpm="126.00" Tonality="Em" Location="file://localhost/C:/Musique/trois.mp3"/>
+    <TRACK TrackID="4" Name="Test Quatre" Artist="" Genre="Techno" AverageBpm="132.00" Tonality="F#m" Location="file://localhost/C:/Musique/quatre.mp3"/>
+    <TRACK TrackID="5" Name="Test Cinq" Artist="Artiste E" Genre="Techno" AverageBpm="133.00" Tonality="11A" Location="file://localhost/C:/Musique/cinq.mp3"/>
+    <TRACK TrackID="6" Name="Sans tempo" Artist="Artiste F" Genre="House" AverageBpm="0.00" Tonality="8A" Location="file://localhost/C:/Musique/six.mp3"/>
+    <TRACK TrackID="7" Name="Sans tonalité" Artist="Artiste G" Genre="House" AverageBpm="124.00" Tonality="" Location="file://localhost/C:/Musique/sept.mp3"/>
+    <TRACK TrackID="8" Name="&lt;b&gt;Balises&lt;/b&gt; &amp; &quot;guillemets&quot;" Artist="Artiste H" Genre="House" AverageBpm="125.00" Tonality="C" Location="file://localhost/C:/Musique/huit.mp3"/>
+    <TRACK TrackID="9" Name="Loin de tout" Artist="Artiste I" Genre="Drum &amp; Bass" AverageBpm="174.00" Tonality="2B" Location="file://localhost/C:/Musique/neuf.mp3"/>
+  </COLLECTION>
+</DJ_PLAYLISTS>
