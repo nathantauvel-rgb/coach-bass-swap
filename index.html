@@ -6,29 +6,32 @@
 <title>Coach DJ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
 <style>
 /* Layout : appli d'apprentissage ludique et lumineuse. Barre XP · chapitres · carte des niveaux · scène (piste qui défile vers la ligne de frappe) · barre d'action collante · résultat en surimpression.
    Une seule ambiance claire, assumée : surfaces blanches, couleurs franches sans néon, boutons en relief. */
 :root{
-  --bg:#eef1f8;
-  --glow-a:#e9e3ff;
-  --glow-b:#dcebff;
+  --bg:#e9f6ef;
+  --glow-a:#d7efe2;
+  --glow-b:#fde3d6;
   --panel:#ffffff;
-  --panel-2:#f3f5fb;
-  --line:#dde2ee;
-  --fg:#1b1f33;
-  --muted:#5f6680;
-  --a:#ff7a3d;
-  --b:#2f7fec;
-  --xp:#7a5cff;
-  --ok:#17a865;
-  --mid:#eda200;
+  --panel-2:#f3faf6;
+  --line:#d6e8de;
+  --fg:#23312b;
+  --muted:#56695f;
+  --a:#ff8a65;
+  --b:#8f80f5;
+  --xp:#6b5ce7;
+  --ok:#35a86d;
+  --mid:#e58a00;
   --bad:#e5484d;
   --ink:#ffffff;
-  --edge:rgba(27,31,51,.18);
-  --shadow:0 1px 0 var(--line),0 10px 28px rgba(27,31,51,.07);
-  --display:'Bricolage Grotesque','Nunito',system-ui,sans-serif;
+  --go:#6fcf97;
+  --go-edge:#45a873;
+  --go-ink:#13351f;
+  --edge:rgba(35,49,43,.16);
+  --shadow:0 18px 40px rgba(35,49,43,.08);
+  --display:'Fredoka','Nunito',system-ui,sans-serif;
   --sans:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
   color-scheme:light;
 }
@@ -365,6 +368,72 @@ a.chip:hover,button.chip:hover{border-color:var(--muted)}
 .onb-play{color:#fff}
 .demo-tag{color:#fff}
 .pbanner{background:color-mix(in srgb,var(--b) 8%,#fff)}
+/* ---------- Direction « Tout doux » : menthe, pastel, arrondi, mascotte ---------- */
+body{background-image:radial-gradient(circle at 104% -6%,var(--glow-a) 0 260px,transparent 261px),radial-gradient(circle at -6% 108%,var(--glow-b) 0 240px,transparent 241px);background-attachment:fixed}
+h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h2,.onb-card h2,.echo,.gain,.pop,.lvl{font-family:var(--display)}
+.stage h1{font-weight:700;letter-spacing:-.01em}
+.disc{border-radius:16px;background:var(--a);box-shadow:none}
+.disc::after{inset:13px;background:#fff4ee}
+.chip{border:0;border-radius:999px;box-shadow:none;background:var(--panel)}
+.lvl{color:var(--xp)}
+.xpbar i{background:var(--xp)}
+.chap{border:0;border-radius:22px;box-shadow:none}
+.chap[aria-pressed="true"]{background:var(--panel);box-shadow:inset 0 0 0 3px var(--a)}
+.chap.test{border:2px dashed var(--b);background:color-mix(in srgb,var(--b) 8%,#fff)}
+.chap.test strong{color:var(--xp)}
+.map::before{background:#cfe6d9;height:6px;border-radius:3px}
+.map .prog{background:var(--go);height:6px}
+.node .dot{border:0;background:#ffffffcc;box-shadow:none;color:var(--muted)}
+.node.done .dot{background:var(--go);color:#fff;box-shadow:0 4px 0 var(--go-edge)}
+.node[aria-pressed="true"] .dot{background:#fff;color:var(--fg);box-shadow:0 0 0 4px var(--a)}
+.node .s b{color:var(--mid)}
+.stage{border:0;border-radius:32px;box-shadow:var(--shadow)}
+.lnum{color:var(--a);letter-spacing:.02em;text-transform:none;font-size:14px}
+.styletag{border:0;background:var(--panel-2)}
+.ring{border:0;background:var(--panel-2);box-shadow:inset 0 -6px 0 var(--line)}
+.ring::before{border-top-color:var(--a);border-right-color:var(--a)}
+.ring.hot{background:#fff1ea;box-shadow:inset 0 -6px 0 #ffd9c8}
+.stage-head{flex-wrap:nowrap;align-items:flex-start}
+.stage-head>div:first-child{flex:1;min-width:0}
+.buddy{flex:none;display:flex;align-items:flex-end;gap:12px;margin-left:auto;align-self:center}
+.bubble{max-width:210px}
+.bubble{margin:0;max-width:230px;background:#fff4d6;border-radius:20px 20px 4px 20px;padding:12px 16px;font-weight:700;font-size:15px;line-height:1.35}
+.mascot{width:76px;height:76px;border-radius:50%;background:var(--fg);position:relative;flex:none;animation:bob 2.6s ease-in-out infinite}
+.mascot i{position:absolute;left:24px;top:24px;width:28px;height:28px;border-radius:50%;background:var(--a)}
+.mascot b{position:absolute;top:19px;width:10px;height:12px;border-radius:50%;background:#fff}
+.mascot b:first-of-type{left:20px}.mascot b:last-of-type{left:46px}
+@keyframes bob{50%{transform:translateY(-4px) rotate(-4deg)}}
+.stage.running .mascot{animation-duration:.48s}
+.hw{border-radius:22px;box-shadow:none;background:var(--panel-2)}
+.launch{border-radius:999px;background:var(--b);color:#fff;box-shadow:0 5px 0 color-mix(in srgb,var(--b) 65%,#000)}
+.launch:active:not(:disabled){box-shadow:0 1px 0 color-mix(in srgb,var(--b) 65%,#000)}
+.knob .body{fill:var(--panel-2)}
+.fader .slot{background:#e3efe8}
+.fader .cap2{border-radius:12px}
+.start{border-radius:999px;background:var(--go);color:var(--go-ink);box-shadow:0 5px 0 var(--go-edge)}
+.start:active:not(:disabled){box-shadow:0 1px 0 var(--go-edge)}
+@keyframes readyPulse{50%{box-shadow:0 5px 0 var(--go-edge),0 0 0 8px color-mix(in srgb,var(--go) 30%,transparent)}}
+.start.stop{border-radius:999px}
+.watch{border-radius:999px;border:2px solid #dcd7ff;color:var(--xp);box-shadow:none}
+.watch:hover:not(:disabled){background:#f6f4ff}
+.actionbar{border:0;border-radius:999px;padding:10px 14px;box-shadow:0 14px 34px rgba(35,49,43,.14)}
+.seg{border:0;border-radius:999px}
+.seg button{border-radius:999px}
+.echo{border-color:var(--xp);color:var(--xp)}
+.echo[aria-pressed="true"]{background:var(--xp)}
+.rcard{border:0;border-radius:32px}
+.details li{border-radius:16px}
+.rbtn{border-radius:999px;border-color:#dcd7ff;color:var(--xp);box-shadow:none}
+.rbtn.go{background:var(--go);color:var(--go-ink);box-shadow:0 4px 0 var(--go-edge)}
+.onb-card{border:0;border-radius:32px}
+.onb-nav .go{border-radius:999px;background:var(--go);color:var(--go-ink);box-shadow:0 4px 0 var(--go-edge)}
+.onb-nav .back{border-radius:999px}
+.onb-play{border-radius:999px}
+.setup{border:0;border-radius:22px}
+.setup li{border-radius:14px}
+.pbanner{border:0;border-radius:22px;background:#fff4d6}
+@media (max-width:760px){.buddy{display:none}.actionbar{border-radius:26px}}
+@media (min-width:761px){#hint{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
 </style>
 </head>
@@ -424,6 +493,7 @@ a.chip:hover,button.chip:hover{border-color:var(--muted)}
         <p class="how" id="lhow"></p>
         <span class="styletag" id="styleTag">House · 124 BPM</span>
       </div>
+      <div class="buddy" aria-live="polite"><p class="bubble" id="tip">Regarde la démo si tu hésites, puis à toi !</p><div class="mascot" aria-hidden="true"><i></i><b></b><b></b></div></div>
       <div class="ringwrap"><div class="ring" id="ring"><span class="big num" id="cdNum">—</span></div><span class="ringlab" id="cdLab">Appuie sur Jouer</span></div>
     </div>
     <div class="hw"><canvas id="hw" aria-label="Piste : les gestes arrivent vers la ligne de frappe"></canvas><div class="pops" id="pops"></div><span class="demo-tag" id="demoTag" hidden>DÉMO</span></div>
@@ -926,6 +996,7 @@ function selectLesson(i){
   ear = chapter === 2; $('styleSeg').hidden = chapter > 1;
   if (l.wave){ waveTk = null; prepareCh3(l).then(tk => { if (LESSONS[li] === l && !run){ waveTk = tk; drawHighway(START); } }); } else waveTk = null; $('styleTag').textContent = styleLabel();
   $('stage').classList.remove('ear');
+  say($('hint').textContent.trim() || 'Regarde la démo si tu hésites, puis à toi !');
   renderHud(); drawHighway(START); updateSetup();
 }
 function setStartBtn(running){ const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
@@ -1215,7 +1286,7 @@ function drawHighway(b){
   }
   const fit = (t, max) => { if (g.measureText(t).width <= max) return t; while (t.length > 1 && g.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; };
   const block = (from, to, y, col, strong, label) => { const a = X(from), z = X(to); if (z < 0 || a > w) return;
-    g.globalAlpha = strong ? .9 : .28; g.fillStyle = col; rr(g, a + 1, y, z - a - 2, H, 10); g.fill(); g.globalAlpha = 1;
+    g.globalAlpha = strong ? .9 : .28; g.fillStyle = col; rr(g, a + 1, y, z - a - 2, H, H / 2); g.fill(); g.globalAlpha = 1;
     const lx = Math.max(a + 12, 8), room = Math.min(z, w) - lx - 12; g.font = '600 13px ' + COL.font;
     if (room > 46){ g.fillStyle = strong ? COL.ink : COL.fg; g.textAlign = 'left'; g.fillText(fit(label, room), lx, y + 28); } };
   const l = LESSONS[li], L = run && run.launch !== null ? run.launch : (l.autoLaunch ? l.launchBeat : null);
@@ -1235,7 +1306,7 @@ function drawHighway(b){
   } else {
   block(16, 32, yA, COL.a, true, 'A · corps'); block(32, 128, yA, COL.a, false, 'A · outro : la musique se dépouille');
   if (L !== null){ if (l.bCue){ block(L, L + 160, yB, COL.b, true, 'B · DROP'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'B · intro avec basse' : 'B · intro sans basse'); block(L + 64, L + 160, yB, COL.b, true, 'B · DROP'); } }
-  else { const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, 10); g.stroke(); g.setLineDash([]);
+  else { const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, H / 2); g.stroke(); g.setLineDash([]);
     if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 30, 8), yB + 28); } }
   }
   // gestes à faire
@@ -1249,7 +1320,7 @@ function drawHighway(b){
     const st = run ? run.status[lab] : null, col = st === 'ok' ? COL.ok : st === 'mid' ? COL.mid : st === 'bad' || st === 'late' ? COL.bad : COL.xp;
     const y = lane === 'A' ? yA + H / 2 : lane === 'B' ? yB + H / 2 : (yA + yB + H) / 2;
     g.save(); g.shadowColor = 'rgba(27,31,51,.25)'; g.shadowBlur = 0; g.shadowOffsetY = 3; g.fillStyle = col;
-    g.beginPath(); g.moveTo(x, y - 17); g.lineTo(x + 17, y); g.lineTo(x, y + 17); g.lineTo(x - 17, y); g.closePath(); g.fill(); g.restore();
+    g.beginPath(); g.arc(x, y, 16, 0, Math.PI * 2); g.fill(); g.lineWidth = 4; g.strokeStyle = '#fff'; g.stroke(); g.restore();
     g.fillStyle = COL.ink; g.font = '800 15px ' + COL.font; g.textAlign = 'center'; g.fillText(st === 'ok' ? '✓' : st ? '!' : '◆', x, y + 5);
     g.fillStyle = col; g.font = '800 13px ' + COL.disp; g.fillText(lab, x, lane === 'A' ? 18 : yB + H + 18);
   }
@@ -1291,7 +1362,8 @@ function drawCompare(fr, i, launch){
   }
   $('cmpBox').hidden = false;
 }
-function pop(text, kind){ const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text; $('pops').appendChild(d); setTimeout(() => d.remove(), 1400); }
+function say(t){ const el = $('tip'); if (el && t) el.textContent = t; }
+function pop(text, kind){ say(text); const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text; $('pops').appendChild(d); setTimeout(() => d.remove(), 1400); }
 function chime(good){
   if (!ac) return; const t = ac.currentTime;
   (good ? [1046.5, 1568] : [784]).forEach((f, i) => { const o = ac.createOscillator(), gg = ac.createGain(); o.type = 'sine'; o.frequency.value = f;
@@ -1479,6 +1551,7 @@ $('onbTest').addEventListener('click', () => { closeOnb(); startPlacement(); });
 $('guideBtn').addEventListener('click', () => { if (!run) openOnb(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && onb.active) closeOnb(); });
 
+new MutationObserver(() => { const t = $('hint').textContent.trim(); if (t) say(t); }).observe($('hint'), { childList: true, characterData: true, subtree: true });
 /* ---------- Démarrage ---------- */
 buildControls();
 $('startBtn').addEventListener('click', () => run ? stopRun() : startRun());
