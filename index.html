@@ -432,6 +432,23 @@ h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h
 .setup{border:0;border-radius:22px}
 .setup li{border-radius:14px}
 .pbanner{border:0;border-radius:22px;background:#fff4d6}
+.howto{margin-top:6px}
+.howto summary{cursor:pointer;font-weight:700;color:var(--xp);font-size:14px;list-style:none;display:inline-flex;align-items:center;gap:6px}
+.howto summary::-webkit-details-marker{display:none}
+.howto summary::before{content:"+";display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#f1efff;font-size:15px}
+.howto[open] summary::before{content:"–"}
+.howto .how{margin-top:6px}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tags .styletag{margin-top:0}
+.modetag{font-size:13px;font-weight:700;color:#fff;background:var(--xp);border-radius:999px;padding:4px 12px}
+.stage-head .goal{font-size:19px;font-weight:700;color:var(--fg)}
+.bubble{font-size:16px;max-width:250px}
+.ringlab{min-height:0}
+.group{padding:10px 14px;border-radius:24px;transition:background .2s,box-shadow .2s}
+.group.focus{background:#fff4d6;box-shadow:0 0 0 3px var(--a)}
+.group.focus .gl{color:var(--fg)}
+.group .gl{font-size:13px}
+.knob .kv{font-size:12px}
 @media (max-width:760px){.buddy{display:none}.actionbar{border-radius:26px}}
 @media (min-width:761px){#hint{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
@@ -490,8 +507,8 @@ h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h
         <span class="lnum" id="lnum">Niveau 1</span>
         <h1 id="ltitle"></h1>
         <p class="goal" id="lgoal"></p>
-        <p class="how" id="lhow"></p>
-        <span class="styletag" id="styleTag">House · 124 BPM</span>
+        <details class="howto"><summary>Comment faire ?</summary><p class="how" id="lhow"></p></details>
+        <div class="tags"><span class="styletag" id="styleTag">House · 124 BPM</span><span class="modetag" id="modeTag" hidden>À l'oreille</span></div>
       </div>
       <div class="buddy" aria-live="polite"><p class="bubble" id="tip">Regarde la démo si tu hésites, puis à toi !</p><div class="mascot" aria-hidden="true"><i></i><b></b><b></b></div></div>
       <div class="ringwrap"><div class="ring" id="ring"><span class="big num" id="cdNum">—</span></div><span class="ringlab" id="cdLab">Appuie sur Jouer</span></div>
@@ -828,7 +845,7 @@ function chooseSongs(){
   sel = { sty: chapter === 2 ? CH2_STYLE[li] : pickStyle(), vr: firstSel ? 0 : Math.floor(Math.random() * VARIANTS) }; firstSel = false;
   const s0 = sel, go = () => { if (!hasWorkers()) return; getSong(s0.sty, s0.vr, 'A').catch(() => {}); getSong(s0.sty, s0.vr, l.bBass ? 'B1' : 'B0').catch(() => {}); };
   if (warm) warm.then(go); else go();
-  const d = STYLE_DEFS[sel.sty]; $('styleTag').textContent = d.label + ' · ' + d.bpm + ' BPM · morceaux n°' + (sel.vr + 1) + (chapter === 2 ? ' · à l\'oreille · précision serrée' : '');
+  const d = STYLE_DEFS[sel.sty]; $('styleTag').textContent = d.label + ' · ' + d.bpm + ' BPM';
 }
 function applyCtrl(){
   Object.keys(ctrl).forEach(renderControl);
@@ -939,6 +956,12 @@ function randomizeRead(l){
 }
 let LESSONS = BASE_LESSONS;
 const TARGETS = { 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A']], 6: [[64, 'LANCE B', 'B'], [64, 'COUPE A', 'A']], 0: [[32, 'LANCE B', 'B']], 1: [[64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'SWAP', 'AB']], 3: [[32, 'LANCE B', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
+const ACT = { 'LANCE B': 'lance B', 'B À FOND': 'monte le fader de B à fond', 'A SORTI': 'baisse le fader de A à zéro', 'SWAP': 'échange les basses : LOW de A à gauche, LOW de B au milieu',
+  'FILTRE': 'commence à tourner le FILTRE de A vers la droite', 'À FOND': 'FILTRE de A tourné à fond', 'ECHO': 'active l\'ÉCHO', 'COUPE A': 'coupe le fader de A d\'un coup', 'VOIX': 'coupe le MID de A' };
+const GROUP_OF = { 'LANCE B': 'gPlay', 'B À FOND': 'gFad', 'A SORTI': 'gFad', 'SWAP': 'gLow', 'FILTRE': 'gCfx', 'À FOND': 'gCfx', 'ECHO': 'gEcho', 'COUPE A': 'gFad', 'VOIX': 'gMid' };
+let lastPopAt = 0, lastAct = '';
+function setFocus(ids){ for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).classList.toggle('focus', ids.includes(g)); }
+function showAction(t){ if (t === lastAct) return; lastAct = t; if (performance.now() - lastPopAt > 1600) say(t); }
 const RING_LAB = { 'FILTRE': 'temps avant de tourner le filtre', 'À FOND': 'temps : filtre à fond avant le drop', 'ECHO': 'temps avant d\'activer l\'écho', 'COUPE A': 'temps avant de couper A', 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
 let preparing = false, li = 0, run = null, ear = false, styleChoice = 'house', chapter = 1, TOL = 1, placement = null;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
@@ -1007,7 +1030,7 @@ function renderHud(){
   renderChapters();
   const cur = map.querySelector('.node[aria-pressed="true"]'); if (cur && map.scrollWidth > map.clientWidth) map.scrollLeft = cur.offsetLeft - map.clientWidth / 2 + cur.offsetWidth / 2;
 }
-function styleLabel(){ if (chapter === 3) return 'House · 124 BPM · vrais morceaux'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
+function styleLabel(){ if (chapter === 3) return 'House · 124 BPM'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
   return styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM'; }
 function selectLesson(i){
   stopRun(); li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = chapter === 2 ? .5 : 1;
@@ -1016,13 +1039,16 @@ function selectLesson(i){
   for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k));
   Object.assign(ctrl, l.init); applyCtrl();
   $('result').hidden = true; setStartBtn(false); $('launchB').disabled = true;
-  $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
+  $('cdNum').textContent = '—'; $('cdLab').textContent = ''; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
   $('hint').textContent = chapter === 3 ? 'Chapitre 3 : plus de compte à rebours. Lis les formes d\'onde, comme dans rekordbox. La démo montre le bon moment.' : chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
   ear = chapter === 2; $('styleSeg').hidden = chapter > 1;
+  $('modeTag').hidden = !(chapter === 2 || l.wave); $('modeTag').textContent = l.wave ? 'Lis les formes d\'onde' : 'À l\'oreille · précision ×2';
   if (l.wave){ waveTk = null; if (hasWorkers()) prepareCh3(l).then(tk => { if (LESSONS[li] === l && !run){ waveTk = tk; drawHighway(START); } }).catch(() => {}); } else waveTk = null; $('styleTag').textContent = styleLabel();
   $('stage').classList.remove('ear');
   chooseSongs();
-  say($('hint').textContent.trim() || 'Regarde la démo si tu hésites, puis à toi !');
+  const firstT = (l.targets || []).find(t => GROUP_OF[t[1]] && (l.user.length || t[1] === 'LANCE B'));
+  const idle = firstT ? 'Ton geste : ' + ACT[firstT[1]] + '. Regarde la démo si tu hésites !' : 'Regarde la démo, puis à toi !';
+  $('hint').textContent = idle; say(idle);
   renderHud(); drawHighway(START); updateSetup();
 }
 function setStartBtn(running){ const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
@@ -1078,7 +1104,7 @@ function launchB(){
   else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, LESSONS[li].bCue * P + (b - k) * P + .01, true, ...(LESSONS[li].bLoop || [64, 128])); $('launchB').disabled = true; }
   judgeLaunch(k);
 }
-function stopRun(){ const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; setStartBtn(false); $('launchB').disabled = true;
+function stopRun(){ setFocus([]); lastAct = ''; const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; setStartBtn(false); $('launchB').disabled = true;
   $('stage').classList.remove('demo', 'ear', 'running'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
   if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, LESSONS[li].init); applyCtrl(); }
   updateSetup(); }
@@ -1178,10 +1204,16 @@ function frame(){
   run.frames.push({ b, ma: ctrl.midA, fa: ctrl.faderA, fb: ctrl.faderB, la: ctrl.lowA, lb: ctrl.lowB, ca: ctrl.cfxA, ec: echoOn ? 1 : 0 });
   const tg = LESSONS[li].targets.find(([x, lab]) => x > b - .5 && !(run.status[lab] && run.status[lab] !== 'late'));
   const ring = $('ring');
-  if (LESSONS[li].wave && !run.demo){ $('cdNum').textContent = '?'; $('cdLab').textContent = 'Lis la forme d\'onde'; ring.classList.remove('hot'); }
-  else if (run.ear){ $('cdNum').textContent = '?'; $('cdLab').textContent = 'Sens la phrase, sans repère'; ring.classList.remove('hot'); }
-  else if (tg){ const n = Math.max(0, Math.ceil(tg[0] - b)); $('cdNum').textContent = n; $('cdLab').textContent = RING_LAB[tg[1]]; ring.classList.toggle('hot', n <= 4); }
-  else { $('cdNum').textContent = '♪'; $('cdLab').textContent = 'Écoute le résultat'; ring.classList.remove('hot'); }
+  const LL = LESSONS[li], userGroups = LL.show.filter(g => g !== 'gPlay' || !LL.autoLaunch);
+  if (run.demo){ $('cdNum').textContent = tg ? Math.max(0, Math.ceil(tg[0] - b)) : '♪'; $('cdLab').textContent = tg ? 'temps' : ''; ring.classList.remove('hot'); setFocus(tg && tg[0] - b <= 6 ? LL.targets.filter(t => t[0] === tg[0]).map(t => GROUP_OF[t[1]]) : []); }
+  else if (LL.wave || run.ear){ $('cdNum').textContent = '?'; $('cdLab').textContent = ''; ring.classList.remove('hot'); setFocus(userGroups);
+    showAction(LL.wave ? 'Lis les formes d\'onde et agis au bon moment.' : 'Pas de compte à rebours : écoute et sens la phrase.'); }
+  else if (tg){ const n = Math.max(0, Math.ceil(tg[0] - b)), same = LL.targets.filter(t => t[0] === tg[0]);
+    $('cdNum').textContent = n; $('cdLab').textContent = 'temps'; ring.classList.toggle('hot', n <= 4);
+    setFocus(n <= 8 ? same.map(t => GROUP_OF[t[1]]) : []);
+    const what = same.map(t => ACT[t[1]]).join(' et ');
+    showAction(n <= 1 ? 'Maintenant : ' + what + ' !' : 'Dans ' + n + ' temps : ' + what + '.'); }
+  else { $('cdNum').textContent = '♪'; $('cdLab').textContent = ''; ring.classList.remove('hot'); setFocus([]); showAction('Écoute le résultat…'); }
   if (!REDUCED){ const f = b - Math.floor(b), k = Math.exp(-f * 7); ring.style.transform = `scale(${1 + .07 * k})`; ring.style.setProperty('--o', k.toFixed(2)); }
   $('progFill').style.width = clamp01((b - START) / (END - START)) * 100 + '%';
   drawHighway(b);
@@ -1314,7 +1346,7 @@ function drawHighway(b){
   const fit = (t, max) => { if (g.measureText(t).width <= max) return t; while (t.length > 1 && g.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; };
   const block = (from, to, y, col, strong, label) => { const a = X(from), z = X(to); if (z < 0 || a > w) return;
     g.globalAlpha = strong ? .9 : .28; g.fillStyle = col; rr(g, a + 1, y, z - a - 2, H, H / 2); g.fill(); g.globalAlpha = 1;
-    const lx = Math.max(a + 12, 8), room = Math.min(z, w) - lx - 12; g.font = '600 13px ' + COL.font;
+    const lx = Math.max(a + 12, 52), room = Math.min(z, w) - lx - 12; g.font = '600 13px ' + COL.font;
     if (room > 46){ g.fillStyle = strong ? COL.ink : COL.fg; g.textAlign = 'left'; g.fillText(fit(label, room), lx, y + 28); } };
   const l = LESSONS[li], L = run && run.launch !== null ? run.launch : (l.autoLaunch ? l.launchBeat : null);
   if (l.wave){
@@ -1331,15 +1363,15 @@ function drawHighway(b){
       else { wave(waveTk.envB, yB, COL.b, b, .32); g.fillStyle = COL.b; g.fillText('B si tu le lances maintenant', 8, yB + H + 18); } }
     else { g.fillText('Préparation des formes d\'onde…', 12, yA + 28); }
   } else {
-  block(16, 32, yA, COL.a, true, 'A · corps'); block(32, 128, yA, COL.a, false, 'A · outro : la musique se dépouille');
-  if (L !== null){ if (l.bCue){ block(L, L + 160, yB, COL.b, true, 'B · DROP'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'B · intro avec basse' : 'B · intro sans basse'); block(L + 64, L + 160, yB, COL.b, true, 'B · DROP'); } }
+  block(16, 32, yA, COL.a, true, 'Corps'); block(32, 128, yA, COL.a, false, 'Outro');
+  if (L !== null){ if (l.bCue){ block(L, L + 160, yB, COL.b, true, 'Drop'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'Intro (avec basse)' : 'Intro'); block(L + 64, L + 160, yB, COL.b, true, 'Drop'); } }
   else { const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, H / 2); g.stroke(); g.setLineDash([]);
     if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 30, 8), yB + 28); } }
   }
   // gestes à faire
   const fog = run && run.ear;
-  if (fog){ g.save(); const gr = g.createLinearGradient(hitX, 0, hitX + 60, 0); gr.addColorStop(0, 'rgba(238,241,248,0)'); gr.addColorStop(1, COL.bg); g.fillStyle = gr; g.fillRect(hitX, 0, 60, h); g.fillStyle = COL.bg; g.fillRect(hitX + 60, 0, w, h);
-    g.fillStyle = COL.muted; g.font = '700 14px ' + COL.font; g.textAlign = 'center'; g.fillText('À l\'oreille : écoute la phrase', (hitX + w) / 2 + 30, h / 2 + 5); g.restore(); }
+  if (fog){ g.save(); const gr = g.createLinearGradient(hitX + 6, 0, hitX + 90, 0); gr.addColorStop(0, 'rgba(243,250,246,0)'); gr.addColorStop(1, 'rgba(243,250,246,.93)'); g.fillStyle = gr; g.fillRect(hitX + 6, 0, w, h);
+    g.font = '700 13px ' + COL.font; const tx = 'Repères masqués : écoute', tw = g.measureText(tx).width + 24; g.fillStyle = COL.fg; rr(g, w - tw - 12, 12, tw, 26, 13); g.fill(); g.fillStyle = '#fff'; g.textAlign = 'left'; g.fillText(tx, w - tw, 30); g.restore(); }
   for (const [v, lab, lane] of LESSONS[li].targets){
     if (fog && !(run.status[lab])) continue;
     if (l.wave && !(run && run.demo)) continue;
@@ -1353,8 +1385,13 @@ function drawHighway(b){
   }
   // ligne de frappe
   g.save(); g.strokeStyle = COL.fg; g.lineWidth = 3;
-  g.beginPath(); g.moveTo(hitX, 28); g.lineTo(hitX, h - 8); g.stroke(); g.restore();
-  g.fillStyle = COL.muted; g.font = '600 11px ' + COL.font; g.textAlign = 'center'; g.fillText('MAINTENANT', hitX, h - 0);
+  g.beginPath(); g.moveTo(hitX, 8); g.lineTo(hitX, h - 26); g.stroke(); g.restore();
+  g.font = '800 11px ' + COL.font; const mw = g.measureText('MAINTENANT').width + 16; g.fillStyle = COL.fg; rr(g, hitX - mw / 2, h - 24, mw, 20, 10); g.fill();
+  g.fillStyle = '#fff'; g.textAlign = 'center'; g.fillText('MAINTENANT', hitX, h - 10);
+  // couloirs nommés (sur une marge qui masque ce qui défile dessous)
+  g.fillStyle = COL['panel-2'] || '#f3faf6'; g.fillRect(0, 0, 44, h - 28);
+  for (const [y, lab, col] of [[yA, 'A', COL.a], [yB, 'B', COL.b]]){ g.fillStyle = '#fff'; g.beginPath(); g.arc(22, y + H / 2, 15, 0, Math.PI * 2); g.fill();
+    g.fillStyle = col; g.beginPath(); g.arc(22, y + H / 2, 12, 0, Math.PI * 2); g.fill(); g.fillStyle = '#fff'; g.font = '800 14px ' + COL.disp; g.textAlign = 'center'; g.fillText(lab, 22, y + H / 2 + 5); }
 }
 const SHORT = { midA: 'MID A', faderA: 'Fader A', faderB: 'Fader B', lowA: 'LOW A', lowB: 'LOW B', cfxA: 'CFX A', echo: 'Écho' };
 const FK = { midA: 'ma', faderA: 'fa', faderB: 'fb', lowA: 'la', lowB: 'lb', cfxA: 'ca', echo: 'ec' };
@@ -1389,8 +1426,8 @@ function drawCompare(fr, i, launch){
   }
   $('cmpBox').hidden = false;
 }
-function say(t){ const el = $('tip'); if (el && t) el.textContent = t; }
-function pop(text, kind){ say(text); const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text; $('pops').appendChild(d); setTimeout(() => d.remove(), 1400); }
+function say(t){ const el = $('tip'); if (el && t) el.textContent = t; const h = $('hint'); if (h && t && run && h.textContent !== t) h.textContent = t; }
+function pop(text, kind){ lastPopAt = performance.now(); lastAct = ''; say(text); const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text; $('pops').appendChild(d); setTimeout(() => d.remove(), 1400); }
 function chime(good){
   if (!ac) return; const t = ac.currentTime;
   (good ? [1046.5, 1568] : [784]).forEach((f, i) => { const o = ac.createOscillator(), gg = ac.createGain(); o.type = 'sine'; o.frequency.value = f;
