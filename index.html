@@ -941,6 +941,7 @@ let LESSONS = BASE_LESSONS;
 const TARGETS = { 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A']], 6: [[64, 'LANCE B', 'B'], [64, 'COUPE A', 'A']], 0: [[32, 'LANCE B', 'B']], 1: [[64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'SWAP', 'AB']], 3: [[32, 'LANCE B', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
 const RING_LAB = { 'FILTRE': 'temps avant de tourner le filtre', 'À FOND': 'temps : filtre à fond avant le drop', 'ECHO': 'temps avant d\'activer l\'écho', 'COUPE A': 'temps avant de couper A', 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
 let preparing = false, li = 0, run = null, ear = false, styleChoice = 'house', chapter = 1, TOL = 1, placement = null;
+let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 let earStars = {}; try { earStars = JSON.parse(localStorage.getItem('coach-lecons-oreille') || '{}') || {}; } catch (e) {}
 try { styleChoice = localStorage.getItem('coach-style') || 'house'; } catch (e) {}
 const pickStyle = () => styleChoice === 'random' ? ['house', 'techno', 'afro'][Math.floor(Math.random() * 3)] : styleChoice;
@@ -963,10 +964,11 @@ const BANK_KEY = { 1: 'coach-lecons', 2: 'coach-ch2', 3: 'coach-ch3' }, XP_PER =
 const sumStars = b => Object.values(b || {}).reduce((s, v) => s + (+v || 0), 0);
 const ch2Unlocked = () => ch2Open || sumStars(stars) >= 14;
 const ch3Unlocked = () => ch3Open || sumStars(ch2Stars) >= 10;
+if (!['house', 'techno', 'afro', 'random'].includes(styleChoice)) styleChoice = 'house';
+if (![1, 2, 3].includes(chapter)) chapter = 1;
 if (chapter === 2 && !ch2Unlocked()) chapter = 1;
 if (chapter === 3 && !ch3Unlocked()) chapter = 1;
 if (chapter === 3) LESSONS = CH3_LESSONS;
-let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 const isAuto = k => !!(run && run.demo) || !LESSONS[li].user.includes(k);
 const clamp01 = x => Math.max(0, Math.min(1, x));
 
