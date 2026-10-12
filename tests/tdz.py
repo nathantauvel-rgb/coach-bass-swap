@@ -14,7 +14,7 @@ async def main():
             ctx = await b.new_context()
             await ctx.add_init_script("try{" + "".join(f"localStorage.setItem({json.dumps(k)},{json.dumps(v)});" for k,v in ls.items()) + "}catch(e){}")
             pg = await ctx.new_page(); errs = []; pg.on('pageerror', lambda e, errs=errs: errs.append(str(e)))
-            await pg.goto('http://localhost:8765/index.html'); await pg.wait_for_timeout(1500)
+            await pg.goto('http://localhost:8765/index.html#apprendre'); await pg.wait_for_timeout(1500)
             r = await pg.evaluate("({nodes: document.querySelectorAll('.node').length, lnum: document.getElementById('lnum').textContent, banner: !!document.getElementById('errBanner')})")
             print(f'== {name}: {r} erreurs={errs or "aucune"}')
             await ctx.close()

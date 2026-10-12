@@ -6,7 +6,7 @@ async def run(throttle):
         pg = await b.new_page(viewport={'width': 1366, 'height': 768})
         logs = []; pg.on('console', lambda m: logs.append(m.type + ': ' + m.text)); pg.on('pageerror', lambda e: logs.append('PAGEERROR ' + str(e)))
         cdp = await pg.context.new_cdp_session(pg)
-        await pg.goto('http://localhost:8765/index.html')
+        await pg.goto('http://localhost:8765/index.html#apprendre')
         await cdp.send('Emulation.setCPUThrottlingRate', {'rate': throttle})
         await pg.wait_for_timeout(800)
         guide = await pg.evaluate("!document.getElementById('onb').hidden")

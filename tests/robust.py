@@ -14,7 +14,7 @@ async def main():
             pg = await ctx.new_page(); errs = []
             pg.on('pageerror', lambda e, errs=errs: errs.append(str(e)))
             t = time.time()
-            await pg.goto('http://localhost:8765/index.html')
+            await pg.goto('http://localhost:8765/index.html#apprendre')
             # la page doit répondre vite : on mesure le temps jusqu'à ce que la carte des niveaux soit construite et peinte
             await pg.wait_for_function("document.querySelectorAll('.node').length === 7", timeout=60000)
             t_ready = time.time() - t

@@ -451,6 +451,38 @@ h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h
 .knob .kv{font-size:12px}
 @media (max-width:760px){.buddy{display:none}.actionbar{border-radius:26px}}
 @media (min-width:761px){#hint{display:none}}
+/* ---------- Onglets du parcours, accueil, étapes à venir ---------- */
+a.brand{color:inherit;text-decoration:none}
+.view{display:flex;flex-direction:column;gap:22px}
+.tabs{display:flex;gap:6px;background:var(--panel);border-radius:999px;padding:6px;align-self:center;max-width:100%}
+.tabs a{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:999px;color:var(--muted);text-decoration:none;font-family:var(--display);font-weight:600;font-size:16px;white-space:nowrap}
+.tabs a .tn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--panel-2);font-size:13px}
+.tabs a:hover{color:var(--fg)}
+.tabs a[aria-current="page"]{background:var(--fg);color:#fff}
+.tabs a[aria-current="page"] .tn{background:var(--a);color:#fff}
+.hero,.page{background:var(--panel);border-radius:32px;box-shadow:var(--shadow);padding:36px}
+.hero{display:flex;gap:28px;align-items:center;justify-content:space-between}
+.hero h1,.page h1{margin:0;font-weight:700;font-size:clamp(30px,4.6vw,48px);line-height:1.05;letter-spacing:-.01em;text-wrap:balance}
+.page h1{margin-top:2px;font-size:clamp(28px,3.4vw,38px)}
+.lead{margin:14px 0 22px;font-size:19px;font-weight:700;max-width:40ch}
+.need{margin:18px 0 0;font-size:14px;color:var(--muted);max-width:52ch}
+.cta{display:inline-block;text-decoration:none;font-family:var(--display);font-weight:700;font-size:18px;padding:14px 30px;border-radius:999px;background:var(--go);color:var(--go-ink);box-shadow:0 5px 0 var(--go-edge);transition:transform .08s,box-shadow .08s}
+.cta:active{transform:translateY(4px);box-shadow:0 1px 0 var(--go-edge)}
+.steps,.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.cards{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-top:8px}
+.step,.card{background:var(--panel);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;color:inherit;text-decoration:none}
+.card{background:var(--panel-2)}
+.step:hover{box-shadow:inset 0 0 0 3px var(--a)}
+.step .sn{font-size:14px;font-weight:700;color:var(--a)}
+.step strong,.card strong{font-family:var(--display);font-weight:700;font-size:20px;line-height:1.15}
+.step .sd,.card p{margin:0;font-size:15px;color:var(--muted)}
+.sp{margin-top:auto;font-size:13px;font-weight:700;border-radius:999px;padding:4px 12px;background:#e3f6ea;color:var(--go-ink)}
+.sp.soon,.card .soon{background:#f1efff;color:var(--xp)}
+.card .soon{font-size:13px;font-weight:700;border-radius:999px;padding:4px 12px}
+.page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
+.page-note a{color:var(--xp);font-weight:700}
+@media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}
+@media (max-width:600px){.tabs{align-self:stretch}.tabs a{flex:1;padding:9px 6px;font-size:14px}.tabs a .tn{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
 </style>
 </head>
@@ -485,16 +517,68 @@ h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h
 </div>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><span class="disc" aria-hidden="true"></span><div><div class="brand-name">Coach DJ</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></div>
+    <a class="brand" href="#accueil" aria-label="Coach DJ, retour à l'accueil"><span class="disc" aria-hidden="true"></span><div><div class="brand-name">Coach DJ</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
     <div class="hud">
       <span class="chip" title="Niveau et expérience"><span class="lvl" id="lvl">Niv. 1</span><span class="xpbar"><i id="xpFill" style="width:0"></i></span><span class="num" id="xpTxt">0 XP</span></span>
       <span class="chip"><span class="star">★</span><span class="num" id="starTot">0/12</span></span>
       <span class="chip status" id="midiPill"><i></i><span>FLX4…</span></span>
-      <button type="button" class="chip" id="guideBtn">Guide</button>
-      <a class="chip" href="coach.html">Mode libre</a>
+      <button type="button" class="chip" id="guideBtn" hidden>Guide</button>
     </div>
   </header>
 
+  <nav class="tabs" id="tabs" aria-label="Parcours">
+    <a href="#apprendre" data-view="apprendre"><span class="tn">1</span>Apprendre</a>
+    <a href="#entrainer" data-view="entrainer"><span class="tn">2</span>S'entraîner</a>
+    <a href="#vrai" data-view="vrai"><span class="tn">3</span>Passer au vrai</a>
+  </nav>
+
+  <div class="view" id="vHome">
+    <section class="hero">
+      <div>
+        <h1>Tu as une table et tu n'y connais rien ?</h1>
+        <p class="lead">En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.</p>
+        <a class="cta" id="homeCta" href="#apprendre">Commencer</a>
+        <p class="need">Il te faut une Pioneer DDJ-FLX4 branchée en USB, et Chrome ou Edge. Pas encore de table ? Tu peux essayer à la souris.</p>
+      </div>
+      <div class="buddy" aria-hidden="true"><p class="bubble" id="homeTip">Un geste à la fois, et ça vient vite !</p><div class="mascot"><i></i><b></b><b></b></div></div>
+    </section>
+    <div class="steps">
+      <a class="step" href="#apprendre"><span class="sn">Étape 1</span><strong>Apprendre</strong><span class="sd">Les leçons : le bon moment, le fader, le swap des basses, la transition complète.</span><span class="sp" id="homeP1">À commencer</span></a>
+      <a class="step" href="#entrainer"><span class="sn">Étape 2</span><strong>S'entraîner</strong><span class="sd">Défi du jour, variations, à l'oreille, mini-sets.</span><span class="sp soon">Bientôt</span></a>
+      <a class="step" href="#vrai"><span class="sn">Étape 3</span><strong>Passer au vrai</strong><span class="sd">Ta musique rekordbox, les paires qui s'enchaînent bien, des missions à faire sur ta table.</span><span class="sp soon">Bientôt</span></a>
+    </div>
+  </div>
+
+  <div class="view" id="vTrain" hidden>
+    <section class="page">
+      <span class="lnum">Étape 2</span>
+      <h1>S'entraîner</h1>
+      <p class="lead">Tu connais les gestes : ici, tu les répètes jusqu'à ce qu'ils deviennent naturels.</p>
+      <div class="cards">
+        <div class="card"><span class="soon">Bientôt</span><strong>Défi du jour</strong><p>Une transition différente chaque jour, à réussir en quelques minutes.</p></div>
+        <div class="card"><span class="soon">Bientôt</span><strong>Variations</strong><p>Les mêmes gestes sur d'autres styles et d'autres tempos.</p></div>
+        <div class="card"><span class="soon">Bientôt</span><strong>À l'oreille</strong><p>Sans compte à rebours : tu comptes les phrases dans ta tête.</p></div>
+        <div class="card"><span class="soon">Bientôt</span><strong>Mini-sets</strong><p>Plusieurs morceaux à enchaîner d'affilée, comme en soirée.</p></div>
+      </div>
+      <p class="page-note">Cette étape arrive bientôt. En attendant, <a href="#apprendre">continue les leçons</a>.</p>
+    </section>
+  </div>
+
+  <div class="view" id="vReal" hidden>
+    <section class="page">
+      <span class="lnum">Étape 3</span>
+      <h1>Passer au vrai</h1>
+      <p class="lead">Ta musique, ta table, rekordbox : le site te prépare, et tu mixes pour de vrai.</p>
+      <div class="cards">
+        <div class="card"><span class="soon">Bientôt</span><strong>Import rekordbox</strong><p>Tu charges ta collection : le site lit tes morceaux, leur tempo et leur tonalité.</p></div>
+        <div class="card"><span class="soon">Bientôt</span><strong>Paires recommandées</strong><p>Les morceaux de ta collection qui s'enchaînent bien ensemble.</p></div>
+        <div class="card"><span class="soon">Bientôt</span><strong>Missions rekordbox</strong><p>Des exercices précis à faire dans rekordbox, sur ta table, avec ta musique.</p></div>
+      </div>
+      <p class="page-note">Cette étape arrive bientôt. En attendant, <a href="#apprendre">continue les leçons</a>.</p>
+    </section>
+  </div>
+
+  <div class="view" id="vLearn" hidden>
   <nav class="chapters" id="chapters" aria-label="Chapitres"></nav>
 
   <nav class="map" id="map" aria-label="Niveaux"><span class="prog" id="mapProg" style="width:0"></span></nav>
@@ -568,6 +652,7 @@ h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h
   </section>
 
   <p class="after">Deux morceaux faits pour s'enchaîner : même tempo, tonalités voisines, outro et intro de 32 temps. <b>Niveau réussi ? Refais le même geste dans rekordbox avec ta musique.</b> FLX4 : PLAY droite, potards LOW et CFX, faders, ON de l'effet. Clavier : espace pour lancer B, E pour l'écho.</p>
+  </div>
 </div>
 
 <script>
@@ -1541,6 +1626,7 @@ const ONB = [
   { title: 'Tu es prêt', text: 'Commence par le niveau 1. Clique sur « Regarde d\'abord » pour voir le geste parfait, puis sur « Jouer ». Avant chaque niveau, le site te dit où placer tes faders et potards.', cta: 'Commencer le niveau 1' }
 ];
 const onb = { active: false, i: 0, done: {}, base: {}, t0: 0, playing: false, raf: 0 };
+let guideSeen = false; try { guideSeen = localStorage.getItem('coach-guide-vu') === '1'; } catch (e) {}
 const ONB_KNOBS = [['TRIM', 34], ['HI', 62], ['MID', 88], ['LOW', 114], ['CFX', 146]];
 (function drawOnbKnobs(){ const g = $('sv-knobs'); let h = '';
   for (const [lab, y] of ONB_KNOBS){ for (const [x, side] of [[266, 'A'], [334, 'B']]) h += `<circle class="part" id="sv-${lab.toLowerCase()}${side}" cx="${x}" cy="${y}" r="10"/>`; h += `<text x="300" y="${y + 4}" text-anchor="middle">${lab}</text>`; }
@@ -1563,7 +1649,7 @@ function onbStopMusic(){ if (ac) stop('A'); onb.playing = false; }
 function openOnb(){ onb.active = true; onb.i = 0; onb.done = {}; $('onb').hidden = false; renderOnb(); setTimeout(() => $('onbNext').focus(), 30); }
 function closeOnb(){
   onb.active = false; $('onb').hidden = true; onbStopMusic(); cancelAnimationFrame(onb.raf);
-  try { localStorage.setItem('coach-guide-vu', '1'); } catch (e) {}
+  guideSeen = true; try { localStorage.setItem('coach-guide-vu', '1'); } catch (e) {}
   Object.assign(ctrl, LESSONS[li].init); applyCtrl(); updateSetup();
 }
 function onbMoved(k){
@@ -1643,13 +1729,34 @@ document.addEventListener('keydown', e => { if (e.code === 'Space' && run && !(e
 $('echoBtn').addEventListener('click', toggleEcho);
 window.addEventListener('resize', () => drawHighway(run ? beatNow() : START));
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { loadCol(); drawHighway(run ? beatNow() : START); });
-let guideSeen = false; try { guideSeen = localStorage.getItem('coach-guide-vu') === '1'; } catch (e) {}
 if (!guideSeen && hasWorkers()) warm = getSong('house', 0, 'B1').catch(() => {});
 const firstUndone = LESSONS.findIndex((_, i) => !(bankOf(chapter)[i] >= 2));
 selectLesson(firstUndone < 0 ? 0 : firstUndone);
 initMidi();
 requestAnimationFrame(frame);
-if (!guideSeen) openOnb();
+
+/* ---------- Onglets : accueil, Apprendre, S'entraîner, Passer au vrai ---------- */
+const VIEWS = { accueil: 'vHome', apprendre: 'vLearn', entrainer: 'vTrain', vrai: 'vReal' };
+let view = '';
+function renderHome(){
+  const tot = sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars), max = BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3;
+  $('homeCta').textContent = tot || guideSeen ? 'Reprendre les leçons' : 'Commencer';
+  $('homeP1').textContent = tot ? `${tot} ★ sur ${max}` : 'À commencer';
+  $('homeTip').textContent = tot ? 'Content de te revoir ! On reprend où tu t\'étais arrêté.' : 'Un geste à la fois, et ça vient vite !';
+}
+function setView(v){
+  if (!VIEWS[v]) v = 'accueil'; if (v === view) return;
+  if (view === 'apprendre'){ if (onb.active) closeOnb(); if (placement) quitPlacement(); stopRun(); $('result').hidden = true; }
+  view = v;
+  for (const [k, id] of Object.entries(VIEWS)) $(id).hidden = k !== v;
+  document.querySelectorAll('#tabs a').forEach(a => { if (a.dataset.view === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  $('guideBtn').hidden = v !== 'apprendre';
+  if (v === 'apprendre'){ renderHud(); drawHighway(START); updateSetup(); if (!guideSeen) openOnb(); }
+  else if (v === 'accueil') renderHome();
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', () => setView(location.hash.slice(1)));
+setView(location.hash.slice(1));
 })();
 </script>
 </body>

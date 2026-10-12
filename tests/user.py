@@ -19,7 +19,7 @@ async def main():
             pg = await ctx.new_page(); errs = []
             pg.on('pageerror', lambda e, errs=errs: errs.append(str(e)))
             pg.on('console', lambda m, errs=errs: errs.append('console: ' + m.text) if m.type == 'error' and 'TUNNEL' not in m.text else None)
-            await pg.goto('http://localhost:8765/index.html'); await pg.wait_for_timeout(2500)
+            await pg.goto('http://localhost:8765/index.html#apprendre'); await pg.wait_for_timeout(2500)
             info = await pg.evaluate("""() => ({ start: document.getElementById('startBtn').textContent, disabled: document.getElementById('startBtn').disabled,
                setup: !document.getElementById('setup').hidden, onb: !document.getElementById('onb').hidden, titre: document.getElementById('ltitle').textContent })""")
             if not info['onb']:

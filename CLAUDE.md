@@ -24,15 +24,23 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 ## Où on en est
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
-- **Prochaine étape : 1. Restructurer.** (rien de commencé au 12 oct. 2026)
+- **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
+  retiré, `coach.html` renvoie vers `index.html#vrai`. Les onglets S'entraîner et Passer au vrai
+  n'affichent pour l'instant que des cartes « Bientôt ».
+- **Prochaine étape : 2. Remplir S'entraîner.**
 
 ## Fichiers
 - `index.html` — tout le site des leçons (~1600 lignes, CSS + un seul `<script>`, aucune dépendance).
-- `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap). À transformer en « Passer au vrai ».
+- `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap), retiré du site : la page renvoie
+  vers `index.html#vrai`. Son code sert de base à « Passer au vrai » ; `coach.html?ancien=1` l'affiche encore.
 - `tests/` — scripts Playwright (Python) : `tdz.py`, `robust.py`, `clar.py`, `play.py`, `play2.py`, `user.py`.
 - `README.md` — description publique.
 
 ## Architecture de `index.html` (repères)
+- **Onglets** : quatre blocs `.view` (`vHome`, `vLearn`, `vTrain`, `vReal`), un seul visible. `setView(v)`
+  (fin du script) suit l'adresse : `#accueil` (défaut), `#apprendre`, `#entrainer`, `#vrai`. Quitter
+  Apprendre arrête la partie en cours ; le guide de premier lancement s'ouvre à la première entrée dans
+  Apprendre, plus au chargement. Les tests ouvrent `index.html#apprendre`.
 - **Gestionnaire d'erreurs** en tête du script → bandeau `#errBanner`. Les rejets marqués `.silent` sont ignorés.
 - **État** : `let stars` est déclaré AVANT `earStars`, `ch2Stars`, `chapter`, etc. Puis validation de
   `styleChoice` (house/techno/afro/random) et `chapter` (1/2/3). Déblocage : `ch2Unlocked` (≥14 étoiles

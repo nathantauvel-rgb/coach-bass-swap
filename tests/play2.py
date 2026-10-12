@@ -7,7 +7,7 @@ async def run(throttle):
         logs = []; pg.on('pageerror', lambda e: logs.append('PAGEERROR ' + str(e)))
         cdp = await pg.context.new_cdp_session(pg)
         await cdp.send('Emulation.setCPUThrottlingRate', {'rate': throttle})
-        await pg.goto('http://localhost:8765/index.html')
+        await pg.goto('http://localhost:8765/index.html#apprendre')
         await pg.wait_for_timeout(4000)   # le temps de lire le guide
         t = time.time(); await pg.locator('#onbNext').click()
         for _ in range(240):

@@ -7,7 +7,7 @@ async def main():
             ctx = await b.new_context(viewport={'width':1366,'height':768})
             await ctx.add_init_script("try{" + "".join(f"localStorage.setItem({json.dumps(k)},{json.dumps(v)});" for k,v in ls.items()) + "}catch(e){}")
             pg = await ctx.new_page(); errs = []; pg.on('pageerror', lambda e, errs=errs: errs.append(str(e)))
-            await pg.goto('http://localhost:8765/index.html'); await pg.wait_for_timeout(1000)
+            await pg.goto('http://localhost:8765/index.html#apprendre'); await pg.wait_for_timeout(1000)
             await pg.locator('.node').nth(lvl).click(); await pg.wait_for_timeout(400)
             await pg.screenshot(path=f'{name}_avant.png')
             await pg.locator('#startBtn').click()
