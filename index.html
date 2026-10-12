@@ -236,6 +236,79 @@ a.chip:hover{border-color:var(--muted)}
 .onb-nav .go{border:0;border-radius:14px;padding:13px 26px;font-family:var(--display);font-weight:800;font-size:16px;background:linear-gradient(135deg,var(--a),var(--xp));color:var(--ink)}
 .onb-nav .back{border:1px solid var(--line);background:var(--panel-2);border-radius:14px;padding:12px 18px;font-weight:700}
 .onb-note{font-size:13px;color:var(--muted);margin:0}
+/* ---------- Mise en page compacte ---------- */
+.wrap{gap:16px;padding-block:18px 48px}
+.hud{gap:8px}
+.chip{padding:6px 12px}
+.status span{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chapters{gap:8px}
+.chap{min-width:150px;padding:8px 12px;border-radius:14px}
+.chap strong{font-size:15px}
+.chap .cs{font-size:12px}
+.map{padding-top:2px}
+.map::before,.map .prog{top:23px}
+.node{gap:4px}
+.node .dot{width:46px;height:46px;font-size:20px;border-width:2px}
+.node .t{font-size:13px}
+.node .s{font-size:12px}
+.stage{overflow:clip;padding:22px;gap:16px}
+.stage h1{font-size:clamp(26px,3.4vw,38px)}
+.goal{font-size:17px;margin-top:6px}
+.styletag{margin-top:8px}
+.ring{width:96px;height:96px}
+.ring .big{font-size:38px}
+.ringlab{max-width:14ch;font-size:12px}
+.start-row{display:flex;flex-direction:column;align-items:center;gap:10px}
+.actionbar{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom, 0px));z-index:2;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;
+  background:color-mix(in srgb,var(--panel-2) 88%,transparent);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:20px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.actionbar .opts{gap:8px}
+.actionbar .seg{background:var(--bg)}
+.start,.watch{padding:12px 24px;font-size:17px}
+.btnrow{gap:10px}
+.after{max-width:72ch;margin-inline:auto;font-size:14px}
+.brand-name{white-space:nowrap}
+.map{padding-top:8px}
+.stage.running .actionbar{position:static;box-shadow:none}
+.btnrow>button{white-space:nowrap}
+@media (max-width:760px){
+  .brand-sub{display:none}
+  .brand-name{font-size:19px}
+  .disc{width:34px;height:34px;flex:none}
+  .disc::after{inset:12px}
+  .xpbar{display:none}
+  .top{flex-wrap:nowrap;align-items:center}
+  .hud{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;min-width:0;padding-block:2px}
+  .hud::-webkit-scrollbar{display:none}
+  .chip{flex:none}
+  .status span{max-width:120px}
+  .map{display:flex;overflow-x:auto;gap:4px;scrollbar-width:none;padding-bottom:4px}
+  .map::-webkit-scrollbar{display:none}
+  .node{flex:none;width:84px}
+  .stage{padding:16px;border-radius:22px}
+  .stage-head{flex-wrap:nowrap;align-items:flex-start;gap:12px}
+  .stage-head>div:first-child{min-width:0}
+  .ring{width:70px;height:70px;border-width:3px}
+  .ring .big{font-size:28px}
+  .ringlab{font-size:11px;max-width:11ch}
+  .goal{font-size:16px}
+  .how{font-size:14px}
+  #hw{height:190px}
+  .seg{flex-wrap:wrap;justify-content:center}
+  .seg .sl{display:none}
+  .actionbar{width:100%;padding:8px;gap:8px}
+  .btnrow{width:100%;flex-wrap:nowrap}
+  .btnrow>button{flex:1;padding:11px 8px;font-size:15px}
+  .actionbar .seg button{padding:6px 9px;font-size:13px}
+  .controls{gap:14px 18px;align-items:flex-end}
+  .group{gap:6px}
+  .group .gl{font-size:11px}
+  .pair{gap:10px}
+  .knob svg{width:58px;height:58px}
+  .fader{width:44px;height:140px}
+  .launch{padding:14px 26px;font-size:18px;border-radius:16px}
+  .echo{width:84px;height:84px;font-size:17px}
+  .chan .cl{font-size:14px}
+}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
 </style>
 </head>
@@ -324,14 +397,18 @@ a.chip:hover{border-color:var(--muted)}
         <ul id="setupList"></ul>
         <button type="button" class="skip" id="setupSkip">Je joue à la souris cette fois</button>
       </div>
+      <p class="hint" id="hint"></p>
+    </div>
+    <div class="actionbar" id="actionbar">
       <div class="opts">
         <div class="seg" id="styleSeg" role="group" aria-label="Style des morceaux"><span class="sl">Morceaux</span>
           <button type="button" data-style="house" aria-pressed="true">House</button><button type="button" data-style="techno" aria-pressed="false">Techno</button><button type="button" data-style="afro" aria-pressed="false">Afro</button><button type="button" data-style="random" aria-pressed="false">Surprise</button></div>
         <div class="seg" id="modeSeg" hidden role="group" aria-label="Mode"><span class="sl">Mode</span>
           <button type="button" data-mode="guide" aria-pressed="true">Guidé</button><button type="button" class="earb" data-mode="ear" aria-pressed="false" id="earBtn">À l'oreille</button></div>
       </div>
-      <div class="btnrow"><button type="button" class="watch" id="watchBtn">Regarde d'abord</button><button type="button" class="start" id="startBtn">Jouer</button></div><p class="hint" id="hint"></p>
-    </div>
+      <div class="btnrow"><button type="button" class="watch" id="watchBtn">Regarde d'abord</button><button type="button" class="start" id="startBtn">Jouer</button></div>
+      </div>
+
 
     <div class="result" id="result" hidden>
       <div class="rcard">
@@ -777,6 +854,7 @@ function renderHud(){
     b.addEventListener('click', () => { if (!placement) selectLesson(i); }); map.appendChild(b); });
   $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * (100 - 100 / LESSONS.length)) + '%';
   renderChapters();
+  const cur = map.querySelector('.node[aria-pressed="true"]'); if (cur && map.scrollWidth > map.clientWidth) map.scrollLeft = cur.offsetLeft - map.clientWidth / 2 + cur.offsetWidth / 2;
 }
 function styleLabel(){ if (chapter === 3) return 'House · 124 BPM · vrais morceaux'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
   return styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM'; }
@@ -814,7 +892,8 @@ function startRun(demo = false){
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
     run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: chapter === 2 && !demo, ch: chapter };
-    $('stage').classList.toggle('ear', chapter === 2 && !demo);
+    $('stage').classList.toggle('ear', chapter === 2 && !demo); $('stage').classList.add('running');
+    const st0 = $('stage').getBoundingClientRect(); if (st0.top < -4 || st0.top > 40) window.scrollTo({ top: window.scrollY + st0.top - 8, behavior: REDUCED ? 'auto' : 'smooth' });
     setEcho(false); run.echoAt = null;
     if (l.autoLaunch || demo) launchAt(l.launchBeat);
     $('stage').classList.toggle('demo', demo); $('demoTag').hidden = !demo; $('watchBtn').disabled = true;
@@ -846,7 +925,7 @@ function launchB(){
   judgeLaunch(k);
 }
 function stopRun(){ const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; setStartBtn(false); $('launchB').disabled = true;
-  $('stage').classList.remove('demo', 'ear'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
+  $('stage').classList.remove('demo', 'ear', 'running'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
   if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, LESSONS[li].init); applyCtrl(); }
   updateSetup(); }
 let echoOn = false;
@@ -1078,9 +1157,11 @@ function drawHighway(b){
     g.strokeStyle = ph ? COL.muted : COL.line; g.globalAlpha = ph ? .9 : bar ? .55 : .22; g.lineWidth = ph ? 2 : 1;
     g.beginPath(); g.moveTo(x, 26); g.lineTo(x, h - 8); g.stroke(); g.globalAlpha = 1;
   }
+  const fit = (t, max) => { if (g.measureText(t).width <= max) return t; while (t.length > 1 && g.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; };
   const block = (from, to, y, col, strong, label) => { const a = X(from), z = X(to); if (z < 0 || a > w) return;
     g.globalAlpha = strong ? .9 : .28; g.fillStyle = col; rr(g, a + 1, y, z - a - 2, H, 10); g.fill(); g.globalAlpha = 1;
-    const lx = Math.max(a + 12, 8); if (Math.min(z, w) - lx > 80){ g.fillStyle = strong ? COL.ink : COL.fg; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText(label, lx, y + 28); } };
+    const lx = Math.max(a + 12, 8), room = Math.min(z, w) - lx - 12; g.font = '600 13px ' + COL.font;
+    if (room > 46){ g.fillStyle = strong ? COL.ink : COL.fg; g.textAlign = 'left'; g.fillText(fit(label, room), lx, y + 28); } };
   const l = LESSONS[li], L = run && run.launch !== null ? run.launch : (l.autoLaunch ? l.launchBeat : null);
   if (l.wave){
     const v0 = b - hitX / ppb - 1, v1 = b + 24;
@@ -1099,7 +1180,7 @@ function drawHighway(b){
   block(16, 32, yA, COL.a, true, 'A · corps'); block(32, 128, yA, COL.a, false, 'A · outro : la musique se dépouille');
   if (L !== null){ if (l.bCue){ block(L, L + 160, yB, COL.b, true, 'B · DROP'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'B · intro avec basse' : 'B · intro sans basse'); block(L + 64, L + 160, yB, COL.b, true, 'B · DROP'); } }
   else { const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, 10); g.stroke(); g.setLineDash([]);
-    if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 12, 8), yB + 28); } }
+    if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 30, 8), yB + 28); } }
   }
   // gestes à faire
   const fog = run && run.ear;
