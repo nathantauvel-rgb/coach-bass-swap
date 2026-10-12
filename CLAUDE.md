@@ -25,9 +25,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
-  retiré, `coach.html` renvoie vers `index.html#vrai`. Les onglets S'entraîner et Passer au vrai
-  n'affichent pour l'instant que des cartes « Bientôt ».
-- **Prochaine étape : 2. Remplir S'entraîner.**
+  retiré, `coach.html` renvoie vers `index.html#vrai`.
+- **2. Remplir S'entraîner : fait le 12 oct. 2026.** Défi du jour (série de jours), variations,
+  à l'oreille, mini-set de 3 transitions. Passer au vrai n'affiche encore que des cartes « Bientôt ».
+- **Prochaine étape : 3. Remplir Passer au vrai** (repartir du code de `coach.html`).
 
 ## Fichiers
 - `index.html` — tout le site des leçons (~1600 lignes, CSS + un seul `<script>`, aucune dépendance).
@@ -41,6 +42,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (fin du script) suit l'adresse : `#accueil` (défaut), `#apprendre`, `#entrainer`, `#vrai`. Quitter
   Apprendre arrête la partie en cours ; le guide de premier lancement s'ouvre à la première entrée dans
   Apprendre, plus au chargement. Les tests ouvrent `index.html#apprendre`.
+- **S'entraîner** : une séance `prac` (`startPrac(kind)` avec `defi`, `var`, `ear`, `set`) rejoue les niveaux
+  du chapitre 1 déjà joués (`pracPool`, tous avec `?tout=1`) sur la scène des leçons : `vLearn` reçoit la
+  classe `.prac` (chapitres et carte masqués) et le bandeau `#prBanner`. Style et variante imposés via
+  `chooseSongs`. `finish` n'enregistre pas d'étoiles de leçon pendant une séance et appelle `pracStep` ;
+  le bouton « suivant » passe par `pracNext` ; `quitPrac` remet le chapitre et le niveau d'avant.
+  Le défi du jour est tiré de la date (`dailyPick`). « À l'oreille » ici = sans compte à rebours mais
+  précision normale (le chapitre 2 garde la précision ×2).
 - **Gestionnaire d'erreurs** en tête du script → bandeau `#errBanner`. Les rejets marqués `.silent` sont ignorés.
 - **État** : `let stars` est déclaré AVANT `earStars`, `ch2Stars`, `chapter`, etc. Puis validation de
   `styleChoice` (house/techno/afro/random) et `chapter` (1/2/3). Déblocage : `ch2Unlocked` (≥14 étoiles
@@ -63,7 +71,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 
 ### Clés localStorage
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-chapitre`,
-`coach-style`, `coach-guide-vu`, `coach-midi-map` (partagée avec `coach.html`), `coach-bibliotheque` (`coach.html`).
+`coach-style`, `coach-guide-vu`, `coach-entrainement` (défi, série, compteurs, record du mini-set), `coach-midi-map` (partagée avec `coach.html`), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -84,6 +92,8 @@ puis regarder une capture d'écran.
   (bug « Cannot access 'stars' before initialization »). Déclarer l'état tout en haut.
 - **Noms en double** dans le gros script unique (ex. `rr` → `rrIdx`, `l` → `lw`) : chercher avant de nommer.
 - **Workers** : en cas d'échec, pas de calcul synchrone au chargement (la page gèlerait) ; repli via `songSafe`.
+- **Onglet en arrière-plan** : la partie avance avec `requestAnimationFrame`, donc elle ne se termine pas
+  si l'onglet n'est pas affiché. Pour tester une partie entière, garder l'onglet au premier plan.
 - `?tout=1` dans l'URL débloque tous les niveaux (pratique pour tester).
 
 ## Règles de travail

@@ -5,7 +5,7 @@ Tu as une table et tu n'y connais rien : en deux semaines, tu fais tes première
 Le site suit un parcours en trois étapes :
 
 - **Apprendre** : les leçons guidées, sur des morceaux d'entraînement faits pour s'enchaîner (le bon moment, le fader, le swap des basses, la transition complète, le filtre, l'écho, la coupe).
-- **S'entraîner** (bientôt) : défi du jour, variations, à l'oreille, mini-sets.
+- **S'entraîner** : défi du jour, variations, à l'oreille, mini-sets, sur les niveaux déjà joués dans Apprendre.
 - **Passer au vrai** (bientôt) : import de la collection rekordbox, paires recommandées, missions à faire dans rekordbox.
 
 Les morceaux d'entraînement sont produits dans le navigateur (moteur de production maison : grosse caisse, charleys métalliques, réverb, sidechain, accords, mélodies, montées, plusieurs variantes par style), calculés en tâche de fond.

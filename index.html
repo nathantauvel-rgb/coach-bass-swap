@@ -479,6 +479,11 @@ a.brand{color:inherit;text-decoration:none}
 .sp{margin-top:auto;font-size:13px;font-weight:700;border-radius:999px;padding:4px 12px;background:#e3f6ea;color:var(--go-ink)}
 .sp.soon,.card .soon{background:#f1efff;color:var(--xp)}
 .card .soon{font-size:13px;font-weight:700;border-radius:999px;padding:4px 12px}
+button.card{border:0;text-align:left;transition:box-shadow .15s}
+button.card:hover:not(:disabled){box-shadow:inset 0 0 0 3px var(--a)}
+button.card:disabled{opacity:.55;cursor:default}
+.card .soon.ok{background:#e3f6ea;color:var(--go-ink)}
+.view.prac .chapters,.view.prac .map,.view.prac .after{display:none}
 .page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
 .page-note a{color:var(--xp);font-weight:700}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}
@@ -544,7 +549,7 @@ a.brand{color:inherit;text-decoration:none}
     </section>
     <div class="steps">
       <a class="step" href="#apprendre"><span class="sn">Étape 1</span><strong>Apprendre</strong><span class="sd">Les leçons : le bon moment, le fader, le swap des basses, la transition complète.</span><span class="sp" id="homeP1">À commencer</span></a>
-      <a class="step" href="#entrainer"><span class="sn">Étape 2</span><strong>S'entraîner</strong><span class="sd">Défi du jour, variations, à l'oreille, mini-sets.</span><span class="sp soon">Bientôt</span></a>
+      <a class="step" href="#entrainer"><span class="sn">Étape 2</span><strong>S'entraîner</strong><span class="sd">Défi du jour, variations, à l'oreille, mini-sets.</span><span class="sp" id="homeP2">Défi du jour</span></a>
       <a class="step" href="#vrai"><span class="sn">Étape 3</span><strong>Passer au vrai</strong><span class="sd">Ta musique rekordbox, les paires qui s'enchaînent bien, des missions à faire sur ta table.</span><span class="sp soon">Bientôt</span></a>
     </div>
   </div>
@@ -555,12 +560,12 @@ a.brand{color:inherit;text-decoration:none}
       <h1>S'entraîner</h1>
       <p class="lead">Tu connais les gestes : ici, tu les répètes jusqu'à ce qu'ils deviennent naturels.</p>
       <div class="cards">
-        <div class="card"><span class="soon">Bientôt</span><strong>Défi du jour</strong><p>Une transition différente chaque jour, à réussir en quelques minutes.</p></div>
-        <div class="card"><span class="soon">Bientôt</span><strong>Variations</strong><p>Les mêmes gestes sur d'autres styles et d'autres tempos.</p></div>
-        <div class="card"><span class="soon">Bientôt</span><strong>À l'oreille</strong><p>Sans compte à rebours : tu comptes les phrases dans ta tête.</p></div>
-        <div class="card"><span class="soon">Bientôt</span><strong>Mini-sets</strong><p>Plusieurs morceaux à enchaîner d'affilée, comme en soirée.</p></div>
+        <button type="button" class="card" data-prac="defi"><span class="soon" id="tDefiS">À faire</span><strong>Défi du jour</strong><p id="tDefiP">Une transition différente chaque jour.</p></button>
+        <button type="button" class="card" data-prac="var"><span class="soon" id="tVarS">Nouveau</span><strong>Variations</strong><p>Un geste que tu connais, sur un autre morceau, un autre style, un autre tempo.</p></button>
+        <button type="button" class="card" data-prac="ear"><span class="soon" id="tEarS">Nouveau</span><strong>À l'oreille</strong><p>Sans compte à rebours : tu comptes les phrases dans ta tête.</p></button>
+        <button type="button" class="card" data-prac="set"><span class="soon" id="tSetS">Nouveau</span><strong>Mini-set</strong><p id="tSetP">Trois transitions d'affilée, sans pouvoir rejouer : comme en soirée.</p></button>
       </div>
-      <p class="page-note">Cette étape arrive bientôt. En attendant, <a href="#apprendre">continue les leçons</a>.</p>
+      <p class="page-note" id="trainNote"></p>
     </section>
   </div>
 
@@ -584,6 +589,7 @@ a.brand{color:inherit;text-decoration:none}
   <nav class="map" id="map" aria-label="Niveaux"><span class="prog" id="mapProg" style="width:0"></span></nav>
 
   <div class="pbanner" id="pBanner" hidden><span><b id="pTitle">Test de placement</b> · <span id="pText"></span></span><button type="button" id="pQuit">Quitter le test</button></div>
+  <div class="pbanner" id="prBanner" hidden><span><b id="prTitle"></b> · <span id="prText"></span></span><button type="button" id="prQuit">Quitter</button></div>
 
   <section class="stage" id="stage">
     <div class="stage-head">
@@ -927,7 +933,8 @@ const songSafe = (sty, vr, part) => getSong(sty, vr, part).catch(() => getSong(s
 let sel = { sty: 'house', vr: 0 }, firstSel = true, warm = null;
 function chooseSongs(){
   const l = LESSONS[li]; if (l.wave) return;
-  sel = { sty: chapter === 2 ? CH2_STYLE[li] : pickStyle(), vr: firstSel ? 0 : Math.floor(Math.random() * VARIANTS) }; firstSel = false;
+  if (prac) sel = { sty: prac.sty, vr: prac.vr };
+  else { sel = { sty: chapter === 2 ? CH2_STYLE[li] : pickStyle(), vr: firstSel ? 0 : Math.floor(Math.random() * VARIANTS) }; firstSel = false; }
   const s0 = sel, go = () => { if (!hasWorkers()) return; getSong(s0.sty, s0.vr, 'A').catch(() => {}); getSong(s0.sty, s0.vr, l.bBass ? 'B1' : 'B0').catch(() => {}); };
   if (warm) warm.then(go); else go();
   const d = STYLE_DEFS[sel.sty]; $('styleTag').textContent = d.label + ' · ' + d.bpm + ' BPM';
@@ -1048,7 +1055,7 @@ let lastPopAt = 0, lastAct = '';
 function setFocus(ids){ for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).classList.toggle('focus', ids.includes(g)); }
 function showAction(t){ if (t === lastAct) return; lastAct = t; if (performance.now() - lastPopAt > 1600) say(t); }
 const RING_LAB = { 'FILTRE': 'temps avant de tourner le filtre', 'À FOND': 'temps : filtre à fond avant le drop', 'ECHO': 'temps avant d\'activer l\'écho', 'COUPE A': 'temps avant de couper A', 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
-let preparing = false, li = 0, run = null, ear = false, styleChoice = 'house', chapter = 1, TOL = 1, placement = null;
+let preparing = false, li = 0, run = null, ear = false, styleChoice = 'house', chapter = 1, TOL = 1, placement = null, prac = null;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 let earStars = {}; try { earStars = JSON.parse(localStorage.getItem('coach-lecons-oreille') || '{}') || {}; } catch (e) {}
 try { styleChoice = localStorage.getItem('coach-style') || 'house'; } catch (e) {}
@@ -1156,8 +1163,9 @@ function startRun(demo = false){
     const l = LESSONS[li]; Object.assign(ctrl, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
-    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: chapter === 2 && !demo, ch: chapter };
-    $('stage').classList.toggle('ear', chapter === 2 && !demo); $('stage').classList.add('running');
+    const earRun = (chapter === 2 || !!(prac && prac.ear)) && !demo;
+    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: earRun, ch: chapter };
+    $('stage').classList.toggle('ear', earRun); $('stage').classList.add('running');
     const st0 = $('stage').getBoundingClientRect(); if (st0.top < -4 || st0.top > 40) window.scrollTo({ top: window.scrollY + st0.top - 8, behavior: REDUCED ? 'auto' : 'smooth' });
     setEcho(false); run.echoAt = null;
     if (l.autoLaunch || demo) launchAt(l.launchBeat);
@@ -1394,8 +1402,8 @@ function finish(){
   if (LESSONS[li].kind === 'echo') items = evalEcho(r.frames, r.echoAt);
   if (LESSONS[li].kind === 'cut') items = [evalLaunch(r.launch, 64)].concat(evalCut(r.frames, r.launch));
   const score = items.reduce((s, x) => s + x[2], 0) / items.length, st = score >= .9 ? 3 : score >= .55 ? 2 : 1;
-  const wasOpen = ch2Unlocked(), was3 = ch3Unlocked(), bank = bankOf(r.ch), before = bank[li] || 0; bank[li] = Math.max(before, st);
-  try { localStorage.setItem(BANK_KEY[r.ch], JSON.stringify(bank)); } catch (e) {}
+  const wasOpen = ch2Unlocked(), was3 = ch3Unlocked(), bank = bankOf(r.ch), before = bank[li] || 0;
+  if (!prac){ bank[li] = Math.max(before, st); try { localStorage.setItem(BANK_KEY[r.ch], JSON.stringify(bank)); } catch (e) {} }
   const rs = $('rStars'); rs.innerHTML = '';
   for (let i = 0; i < 3; i++){ const sp = document.createElement('span'); sp.textContent = '★'; if (i < st) sp.className = 'on'; sp.style.animationDelay = (i * .18) + 's'; rs.appendChild(sp); }
   $('rTitle').textContent = (r.ch > 1 ? `Chapitre ${r.ch} : ` : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
@@ -1407,6 +1415,7 @@ function finish(){
   drawCompare(r.frames, li, r.launch);
   if (LESSONS[li].random){ const l = LESSONS[li]; randomizeRead(l); START = l.start; END = l.end; if (hasWorkers()) prepareCh3(l).then(tk => { if (!run && LESSONS[li] === l){ waveTk = tk; drawHighway(START); } }).catch(() => {}); }
   if (placement) placementStep(st);
+  if (prac) pracStep(st);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
 }
 
@@ -1615,6 +1624,89 @@ function placementVerdict(){
 }
 $('pQuit').addEventListener('click', () => { quitPlacement(); });
 
+/* ---------- S'entraîner : défi du jour, variations, à l'oreille, mini-sets ----------
+   Une séance (`prac`) rejoue les niveaux du chapitre 1 déjà joués dans Apprendre, sur la même scène,
+   avec un style et une variante imposés. Elle ne touche pas aux étoiles des leçons. */
+const PRAC_KEY = 'coach-entrainement', PRAC_STYLES = ['house', 'techno', 'afro'], PRAC_ALL = /[?&]tout=1/.test(location.search);
+let pracData = {}; try { pracData = JSON.parse(localStorage.getItem(PRAC_KEY) || '{}'); } catch (e) {}
+if (!pracData || typeof pracData !== 'object' || Array.isArray(pracData)) pracData = {};
+const pracNum = k => Math.max(0, Math.floor(+pracData[k]) || 0);
+const pracStr = k => typeof pracData[k] === 'string' ? pracData[k] : '';
+const savePrac = () => { try { localStorage.setItem(PRAC_KEY, JSON.stringify(pracData)); } catch (e) {} };
+const pracRand = n => Math.floor(Math.random() * n);
+const plur = (n, one, many) => n + ' ' + (n > 1 ? many : one);
+const dayKey = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const yesterdayKey = () => { const d = new Date(); d.setDate(d.getDate() - 1); return dayKey(d); };
+const streakNow = () => [dayKey(), yesterdayKey()].includes(pracStr('lastOk')) ? pracNum('streak') : 0;
+const pracPool = () => BASE_LESSONS.map((_, i) => i).filter(i => PRAC_ALL || stars[i] >= 1);
+function dailyPick(pool){ let h = 7; for (const c of dayKey()) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return { li: pool[h % pool.length], sty: PRAC_STYLES[(h >>> 4) % 3], vr: (h >>> 8) % VARIANTS }; }
+function renderTrain(){
+  const pool = pracPool(), ok = pool.length > 0, doneToday = pracStr('defiDate') === dayKey(), ds = doneToday ? Math.min(3, pracNum('defiStars')) : 0, sk = streakNow();
+  document.querySelectorAll('#vTrain [data-prac]').forEach(b => { b.disabled = !ok || (b.dataset.prac === 'set' && pool.length < 3); });
+  const tag = (id, txt, good) => { const e = $(id); e.textContent = txt; e.classList.toggle('ok', !!good); };
+  tag('tDefiS', ds >= 2 ? 'Réussi ' + '★'.repeat(ds) : doneToday ? 'À retenter' : 'À faire', ds >= 2);
+  const p = ok ? dailyPick(pool) : null;
+  $('tDefiP').textContent = (p ? `Aujourd'hui : ${BASE_LESSONS[p.li].title}, en ${STYLE_DEFS[p.sty].label}.` : 'Une transition différente chaque jour.') + (sk ? ` Série en cours : ${plur(sk, 'jour', 'jours')}.` : '');
+  tag('tVarS', pracNum('vars') ? plur(pracNum('vars'), 'jouée', 'jouées') : 'Nouveau', pracNum('vars'));
+  tag('tEarS', pracNum('ears') ? plur(pracNum('ears'), 'réussie', 'réussies') : 'Nouveau', pracNum('ears'));
+  tag('tSetS', pool.length < 3 ? 'Verrouillé' : pracNum('setBest') ? `Record : ${pracNum('setBest')}/9 ★` : 'Nouveau', pool.length >= 3 && pracNum('setBest'));
+  $('tSetP').textContent = pool.length < 3 ? 'Joue 3 niveaux dans Apprendre pour débloquer les mini-sets.' : 'Trois transitions d\'affilée, sans pouvoir rejouer : comme en soirée.';
+  $('trainNote').innerHTML = ok ? `L'entraînement reprend les niveaux que tu as déjà joués dans Apprendre (${pool.length} sur ${BASE_LESSONS.length}), sur d'autres morceaux.` : 'Joue d\'abord un niveau dans <a href="#apprendre">Apprendre</a> : l\'entraînement reprend les gestes que tu connais déjà.';
+}
+function startPrac(kind){
+  const pool = pracPool(); if (run || prac || !pool.length || (kind === 'set' && pool.length < 3)) return;
+  prac = { kind, ear: kind === 'ear', back: { chapter, li }, i: 0, res: [], queue: [], done: false, sty: 'house', vr: 0, last: '' };
+  if (kind === 'set'){ const rest = pool.slice(); while (prac.queue.length < 3) prac.queue.push(rest.splice(pracRand(rest.length), 1)[0]); }
+  chapter = 1; LESSONS = BASE_LESSONS;
+  $('vTrain').hidden = true; $('vLearn').hidden = false; $('vLearn').classList.add('prac'); $('prBanner').hidden = false;
+  pracSelect(); window.scrollTo(0, 0);
+}
+function pracSelect(){
+  const pool = pracPool(); let pick = null;
+  if (prac.kind === 'defi') pick = dailyPick(pool);
+  else for (let tries = 0; tries < 6; tries++){ pick = { li: prac.kind === 'set' ? prac.queue[prac.i] : pool[pracRand(pool.length)], sty: PRAC_STYLES[pracRand(3)], vr: pracRand(VARIANTS) }; if (pick.li + pick.sty !== prac.last) break; }
+  prac.sty = pick.sty; prac.vr = pick.vr; prac.last = pick.li + pick.sty;
+  selectLesson(pick.li);
+  const name = { defi: 'Défi du jour', var: 'Variation', ear: 'À l\'oreille', set: `Mini-set · transition ${prac.i + 1} sur 3` }[prac.kind];
+  $('lnum').textContent = name; $('prTitle').textContent = name; $('prText').textContent = LESSONS[li].title + ', en ' + STYLE_DEFS[prac.sty].label;
+  $('styleSeg').hidden = true; $('retry').hidden = prac.kind === 'set'; $('cmpBox').hidden = false;
+  if (prac.ear){ $('modeTag').hidden = false; $('modeTag').textContent = 'À l\'oreille'; const t = 'À l\'oreille : pas de compte à rebours. Compte les phrases dans ta tête.'; $('hint').textContent = t; say(t); }
+}
+function pracStep(st){
+  prac.res[prac.i] = st; const k = prac.kind; let gain = '', nextTxt = '';
+  if (k === 'defi'){ const t = dayKey(); pracData.defiStars = pracStr('defiDate') === t ? Math.max(pracNum('defiStars'), st) : st; pracData.defiDate = t;
+    if (st >= 2 && pracStr('lastOk') !== t){ pracData.streak = pracStr('lastOk') === yesterdayKey() ? pracNum('streak') + 1 : 1; pracData.lastOk = t; }
+    gain = st >= 2 ? 'Défi réussi · série de ' + plur(streakNow(), 'jour', 'jours') : 'Il faut 2 étoiles pour valider le défi : rejoue !'; nextTxt = 'Retour à l\'entraînement'; }
+  if (k === 'var'){ pracData.vars = pracNum('vars') + 1; gain = plur(pracNum('vars'), 'variation jouée', 'variations jouées'); nextTxt = 'Une autre variation'; }
+  if (k === 'ear'){ if (st >= 2) pracData.ears = pracNum('ears') + 1; gain = st >= 2 ? plur(pracNum('ears'), 'réussie', 'réussies') + ' à l\'oreille' : 'Pas encore : suis la grosse caisse et compte 8 mesures.'; nextTxt = 'Une autre à l\'oreille'; }
+  if (k === 'set'){ if (st === 1) $('rTitle').textContent = 'Pas encore. Lis le conseil, puis enchaîne.'; gain = `Transition ${prac.i + 1} sur 3`; nextTxt = prac.i >= 2 ? 'Voir mon résultat' : 'Transition suivante'; }
+  savePrac(); $('rGain').textContent = gain; $('next').hidden = false; $('next').textContent = nextTxt; $('retry').hidden = k === 'set';
+}
+function pracNext(){
+  $('result').hidden = true;
+  if (prac.kind === 'defi' || prac.done){ quitPrac(); return; }
+  if (prac.kind === 'set'){ if (prac.i >= 2){ pracVerdict(); return; } prac.i++; }
+  pracSelect();
+}
+function pracVerdict(){
+  const tot = prac.res.reduce((s, x) => s + (x || 0), 0), old = pracNum('setBest'); pracData.setBest = Math.max(old, tot); savePrac(); prac.done = true;
+  $('rStars').innerHTML = ''; $('rTitle').textContent = tot >= 8 ? 'Mini-set de pro !' : tot >= 6 ? 'Beau mini-set !' : 'Mini-set terminé';
+  $('rGain').textContent = `${tot} ★ sur 9` + (tot > old ? ' · nouveau record !' : ` · record : ${old} ★`);
+  $('rDetails').innerHTML = ''; $('cmpBox').hidden = true; $('retry').hidden = true;
+  prac.queue.forEach((q, j) => { const x = document.createElement('li'); x.className = (prac.res[j] || 0) >= 2 ? 'ok' : 'bad'; x.textContent = `${BASE_LESSONS[q].title} : ${'★'.repeat(prac.res[j] || 0) || 'pas réussi'}`; $('rDetails').appendChild(x); });
+  $('next').hidden = false; $('next').textContent = 'Retour à l\'entraînement'; $('result').hidden = false; if (tot >= 6) confetti(tot >= 8 ? 160 : 60);
+}
+function quitPrac(){
+  if (!prac) return; const b = prac.back; prac = null;
+  chapter = b.chapter; LESSONS = chapter === 3 ? CH3_LESSONS : BASE_LESSONS; selectLesson(Math.min(b.li, LESSONS.length - 1));
+  $('retry').hidden = false; $('cmpBox').hidden = false; $('next').textContent = 'Niveau suivant';
+  $('prBanner').hidden = true; $('vLearn').classList.remove('prac');
+  if (view === 'entrainer'){ $('vLearn').hidden = true; $('vTrain').hidden = false; renderTrain(); window.scrollTo(0, 0); }
+}
+$('prQuit').addEventListener('click', quitPrac);
+document.querySelectorAll('#vTrain [data-prac]').forEach(b => b.addEventListener('click', () => startPrac(b.dataset.prac)));
+
 /* ---------- Guide de premier lancement ---------- */
 const ONB = [
   { title: 'Bienvenue dans Coach DJ', text: 'Une transition, c\'est passer d\'un morceau à l\'autre sans que la piste de danse s\'arrête. Ici, tu l\'apprends geste par geste, sur ta FLX4. Ce petit tour prend une minute, avec le son.', cta: 'C\'est parti' },
@@ -1719,7 +1811,8 @@ $('result').addEventListener('click', e => { if (e.target === $('result')) $('re
 document.addEventListener('keydown', e => { if (e.key === 'Escape') $('result').hidden = true; });
 $('retry').addEventListener('click', () => { $('result').hidden = true; startRun(); });
 $('next').addEventListener('click', () => {
-  const go = $('next').dataset.go; delete $('next').dataset.go; $('retry').hidden = false; $('cmpBox').hidden = false;
+  if (prac){ pracNext(); return; }
+  const go =$('next').dataset.go; delete $('next').dataset.go; $('retry').hidden = false; $('cmpBox').hidden = false;
   if (go === 'ch2'){ $('result').hidden = true; setChapter(2); return; }
   if (go === 'ch1') LESSONS = BASE_LESSONS;
   if (go === 'ch1'){ $('result').hidden = true; chapter = 1; try { localStorage.setItem('coach-chapitre', '1'); } catch (e) {} selectLesson(0); return; }
@@ -1742,10 +1835,13 @@ function renderHome(){
   const tot = sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars), max = BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3;
   $('homeCta').textContent = tot || guideSeen ? 'Reprendre les leçons' : 'Commencer';
   $('homeP1').textContent = tot ? `${tot} ★ sur ${max}` : 'À commencer';
+  const sk = streakNow(), defiOk = pracStr('defiDate') === dayKey() && pracNum('defiStars') >= 2;
+  $('homeP2').textContent = sk ? 'Série de ' + plur(sk, 'jour', 'jours') + (defiOk ? '' : ' · défi à faire') : 'Défi du jour à faire';
   $('homeTip').textContent = tot ? 'Content de te revoir ! On reprend où tu t\'étais arrêté.' : 'Un geste à la fois, et ça vient vite !';
 }
 function setView(v){
   if (!VIEWS[v]) v = 'accueil'; if (v === view) return;
+  if (prac) quitPrac();
   if (view === 'apprendre'){ if (onb.active) closeOnb(); if (placement) quitPlacement(); stopRun(); $('result').hidden = true; }
   view = v;
   for (const [k, id] of Object.entries(VIEWS)) $(id).hidden = k !== v;
@@ -1753,8 +1849,10 @@ function setView(v){
   $('guideBtn').hidden = v !== 'apprendre';
   if (v === 'apprendre'){ renderHud(); drawHighway(START); updateSetup(); if (!guideSeen) openOnb(); }
   else if (v === 'accueil') renderHome();
+  else if (v === 'entrainer') renderTrain();
   window.scrollTo(0, 0);
 }
+document.querySelectorAll('#tabs a').forEach(a => a.addEventListener('click', () => { if (prac && a.dataset.view === view) quitPrac(); }));
 window.addEventListener('hashchange', () => setView(location.hash.slice(1)));
 setView(location.hash.slice(1));
 })();
