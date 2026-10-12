@@ -554,6 +554,12 @@ h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h
 </div>
 
 <script>
+(function(){ const show = msg => { let b = document.getElementById('errBanner'); if (!b){ b = document.createElement('div'); b.id = 'errBanner';
+    b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#fff4f4;color:#7a1d1d;border:2px solid #e5484d;border-radius:16px;padding:12px 16px;font:600 14px system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.15)';
+    document.body.appendChild(b); } b.textContent = 'Un problème est survenu : ' + msg + ' (envoie une capture de ce message pour que je corrige).'; };
+  window.addEventListener('error', e => show((e.message || 'erreur') + (e.lineno ? ' · ligne ' + e.lineno : '')));
+  window.addEventListener('unhandledrejection', e => { const r = e.reason; if (r && r.silent) return; show(String((r && r.message) || r)); });
+})();
 (() => {
 'use strict';
 const SR = 44100; let BPM = 124, P = 60 / BPM;
@@ -730,7 +736,8 @@ function envOf(t){
   return { full, low };
 }
 // Calcul des morceaux dans des tâches de fond (Web Workers) pour que la page reste fluide
-let workers = null, jobId = 0; const jobs = {};
+let workers = null, jobId = 0, workerErr = ''; const jobs = {};
+const quiet = m => Object.assign(new Error(m), { silent: true });
 function workerPool(){
   if (workers !== null) return workers;
   try {
@@ -742,15 +749,19 @@ ${makeSong.toString()}
 onmessage = e => { const d = e.data; P = 60 / d.bpm; const r = makeSong(d.style, d.role, d.seed, d.secs, d.o); postMessage({ id: d.id, L: r.L, R: r.R, N: r.N }, [r.L.buffer, r.R.buffer]); };`;
     const url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
     workers = [0, 1, 2].map(() => { const w = new Worker(url); w.onmessage = e => { const j = jobs[e.data.id]; delete jobs[e.data.id]; if (j) j.res(e.data); };
-      w.onerror = () => { workers = []; for (const id of Object.keys(jobs)){ const j = jobs[id]; delete jobs[id]; const keep = P; P = 60 / j.a.bpm; j.res(makeSong(j.a.style, j.a.role, j.a.seed, j.a.secs, j.a.o)); P = keep; } }; return w; });
-  } catch (e) { workers = []; }
+      w.onerror = ev => { workers = []; workerErr = (ev && ev.message) || 'calcul en arrière-plan indisponible'; ev && ev.preventDefault && ev.preventDefault(); for (const id of Object.keys(jobs)){ const j = jobs[id]; delete jobs[id]; j.rej(quiet('worker')); } slowMode(); }; return w; });
+  } catch (e) { workers = []; workerErr = String((e && e.message) || e); slowMode(); }
   return workers;
 }
+const hasWorkers = () => workerPool().length > 0;
+let slowShown = false;
+function slowMode(){ if (slowShown) return; slowShown = true;
+  setTimeout(() => { try { say('Ton navigateur bloque le calcul en arrière-plan : chaque lancement prendra quelques secondes.'); } catch (e) {} }, 0); }
 let rrIdx = 0;
 function renderSong(style, role, seed, secs, o = {}, bpm = BPM){
   const pool = workerPool();
   if (!pool.length){ const keep = P; P = 60 / bpm; const r = makeSong(style, role, seed, secs, o); P = keep; return Promise.resolve(r); }
-  return new Promise(res => { const id = ++jobId, a = { id, style, role, seed, secs, o, bpm }; jobs[id] = { res, a }; pool[rrIdx++ % pool.length].postMessage(a); });
+  return new Promise((res, rej) => { const id = ++jobId, a = { id, style, role, seed, secs, o, bpm }; jobs[id] = { res, rej, a }; pool[rrIdx++ % pool.length].postMessage(a); });
 }
 async function prepareCh3(l){
   BPM = 124; P = 60 / BPM;
@@ -804,16 +815,18 @@ const songCache = {}, songOrder = [];
 function getSong(sty, vr, part){
   const k = sty + ':' + vr + ':' + part;
   if (!songCache[k]){ const d = STYLE_DEFS[sty], isA = part === 'A';
-    songCache[k] = renderSong(sty, isA ? 'A' : 'B', d.seed + (isA ? 0 : 12) + vr * 101, isA ? SEC_A : SEC_B(part === 'B1'), isA ? { end: 128, tail: 4 } : {}, d.bpm);
+    const p = renderSong(sty, isA ? 'A' : 'B', d.seed + (isA ? 0 : 12) + vr * 101, isA ? SEC_A : SEC_B(part === 'B1'), isA ? { end: 128, tail: 4 } : {}, d.bpm);
+    songCache[k] = p; p.catch(() => { if (songCache[k] === p) delete songCache[k]; });
     songOrder.push(k); while (songOrder.length > 10) delete songCache[songOrder.shift()]; }
   return songCache[k];
 }
 const bufOf = song => song.buf || (song.buf = bufferOf(song));
+const songSafe = (sty, vr, part) => getSong(sty, vr, part).catch(() => getSong(sty, vr, part));
 let sel = { sty: 'house', vr: 0 }, firstSel = true, warm = null;
 function chooseSongs(){
   const l = LESSONS[li]; if (l.wave) return;
   sel = { sty: chapter === 2 ? CH2_STYLE[li] : pickStyle(), vr: firstSel ? 0 : Math.floor(Math.random() * VARIANTS) }; firstSel = false;
-  const s0 = sel, go = () => { getSong(s0.sty, s0.vr, 'A'); getSong(s0.sty, s0.vr, l.bBass ? 'B1' : 'B0'); };
+  const s0 = sel, go = () => { if (!hasWorkers()) return; getSong(s0.sty, s0.vr, 'A').catch(() => {}); getSong(s0.sty, s0.vr, l.bBass ? 'B1' : 'B0').catch(() => {}); };
   if (warm) warm.then(go); else go();
   const d = STYLE_DEFS[sel.sty]; $('styleTag').textContent = d.label + ' · ' + d.bpm + ' BPM · morceaux n°' + (sel.vr + 1) + (chapter === 2 ? ' · à l\'oreille · précision serrée' : '');
 }
@@ -1004,7 +1017,7 @@ function selectLesson(i){
   $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
   $('hint').textContent = chapter === 3 ? 'Chapitre 3 : plus de compte à rebours. Lis les formes d\'onde, comme dans rekordbox. La démo montre le bon moment.' : chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
   ear = chapter === 2; $('styleSeg').hidden = chapter > 1;
-  if (l.wave){ waveTk = null; prepareCh3(l).then(tk => { if (LESSONS[li] === l && !run){ waveTk = tk; drawHighway(START); } }); } else waveTk = null; $('styleTag').textContent = styleLabel();
+  if (l.wave){ waveTk = null; if (hasWorkers()) prepareCh3(l).then(tk => { if (LESSONS[li] === l && !run){ waveTk = tk; drawHighway(START); } }).catch(() => {}); } else waveTk = null; $('styleTag').textContent = styleLabel();
   $('stage').classList.remove('ear');
   chooseSongs();
   say($('hint').textContent.trim() || 'Regarde la démo si tu hésites, puis à toi !');
@@ -1017,12 +1030,12 @@ function startRun(demo = false){
   if (!demo && needSetup() && !setupReady()){ updateSetup(); return; }
   ensureAudio(); if (ac.state !== 'running') ac.resume();
   if (preparing) return; preparing = true;
-  $('startBtn').textContent = 'Préparation…'; $('watchBtn').disabled = true;
+  $('startBtn').textContent = hasWorkers() ? 'Préparation…' : 'Préparation (quelques secondes)…'; $('watchBtn').disabled = true;
   const myLi = li, myCh = chapter;
   setTimeout(async () => {
     const lw = LESSONS[li]; let tkW = null, styW = null, vrW = 0;
     let songA = null, songB = null;
-    try { if (lw.wave) tkW = await prepareCh3(lw); else { styW = sel.sty; vrW = sel.vr; [songA, songB] = await Promise.all([getSong(styW, vrW, 'A'), getSong(styW, vrW, lw.bBass ? 'B1' : 'B0')]); } }
+    try { if (lw.wave) tkW = await prepareCh3(lw).catch(() => prepareCh3(lw)); else { styW = sel.sty; vrW = sel.vr; [songA, songB] = await Promise.all([songSafe(styW, vrW, 'A'), songSafe(styW, vrW, lw.bBass ? 'B1' : 'B0')]); } }
     finally { preparing = false; $('watchBtn').disabled = false; }
     if (li !== myLi || chapter !== myCh || run){ setStartBtn(false); return; }
     if (lw.wave){ const tk = tkW; waveTk = tk; tk.bufA = tk.bufA || bufferOf(tk.A); tk.bufB = tk.bufB || bufferOf(tk.B); tracks = { A: tk.bufA, B0: tk.bufB, B1: tk.bufB }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; $('styleTag').textContent = styleLabel(); }
@@ -1273,7 +1286,7 @@ function finish(){
   $('result').hidden = false; $('retry').focus({ preventScroll: true });
   $('cdNum').textContent = '—'; $('cdLab').textContent = 'Appuie sur Jouer'; $('ring').classList.remove('hot');
   drawCompare(r.frames, li, r.launch);
-  if (LESSONS[li].random){ const l = LESSONS[li]; randomizeRead(l); START = l.start; END = l.end; prepareCh3(l).then(tk => { if (!run && LESSONS[li] === l){ waveTk = tk; drawHighway(START); } }); }
+  if (LESSONS[li].random){ const l = LESSONS[li]; randomizeRead(l); START = l.start; END = l.end; if (hasWorkers()) prepareCh3(l).then(tk => { if (!run && LESSONS[li] === l){ waveTk = tk; drawHighway(START); } }).catch(() => {}); }
   if (placement) placementStep(st);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
 }
@@ -1553,7 +1566,7 @@ function renderOnb(){
       onb.raf = requestAnimationFrame(tick); }; tick(); }
 }
 $('onbNext').addEventListener('click', () => {
-  if (onb.i === 0){ $('onbNext').textContent = 'Préparation du son…'; ensureAudio(); if (ac.state !== 'running') ac.resume(); getSong('house', 0, 'B1').then(sg => { if (!onb.active) return; if (!run){ BPM = 124; P = 60 / BPM; } tracks = Object.assign({}, tracks, { B1: bufOf(sg) }); onbStartMusic(); onb.i = 1; renderOnb(); }); return; }
+  if (onb.i === 0){ $('onbNext').textContent = 'Préparation du son…'; ensureAudio(); if (ac.state !== 'running') ac.resume(); songSafe('house', 0, 'B1').then(sg => { if (!onb.active) return; if (!run){ BPM = 124; P = 60 / BPM; } tracks = Object.assign({}, tracks, { B1: bufOf(sg) }); onbStartMusic(); onb.i = 1; renderOnb(); }); return; }
   if (onb.i >= ONB.length - 1){ closeOnb(); selectLesson(0); return; }
   onb.i++; renderOnb();
 });
@@ -1592,7 +1605,7 @@ $('echoBtn').addEventListener('click', toggleEcho);
 window.addEventListener('resize', () => drawHighway(run ? beatNow() : START));
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { loadCol(); drawHighway(run ? beatNow() : START); });
 let guideSeen = false; try { guideSeen = localStorage.getItem('coach-guide-vu') === '1'; } catch (e) {}
-if (!guideSeen) warm = getSong('house', 0, 'B1');
+if (!guideSeen && hasWorkers()) warm = getSong('house', 0, 'B1').catch(() => {});
 const firstUndone = LESSONS.findIndex((_, i) => !(bankOf(chapter)[i] >= 2));
 selectLesson(firstUndone < 0 ? 0 : firstUndone);
 initMidi();
