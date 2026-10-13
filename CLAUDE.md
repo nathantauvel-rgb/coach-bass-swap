@@ -37,6 +37,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `Documents\coach-bass-swap` et sa sauvegarde datée restent intacts). Branche `lot-0-tests` : Playwright
   pour Node, fausse table MIDI, 63 tests. Branche `essai-vrais-morceaux` : essai local du bouton
   « Vrais morceaux » (fichiers de `audio-essai/`, ignorés par Git, droits non vérifiés). Rien de publié.
+- **Lot 1 (13 oct. 2026)** : branche `lot-1-midi`, non publiée. `cleanMap` valide `coach-midi-map` à la
+  lecture (entrée invalide, manquante ou en double → réglage d'origine), l'apprentissage refuse un contrôle
+  déjà attribué, les valeurs reçues sont bornées, les positions sont oubliées quand la table est débranchée.
+  65 tests verts. Pas encore vérifié sur la vraie FLX4.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -81,8 +85,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   au ch.1), `ch3Unlocked` (≥10 au ch.2).
 - **Audio** (Web Audio) : LOW = lowshelf, MID = peaking, CFX = passe-haut/passe-bas (deck A), écho après
   le fader, limiteur final, sortie 4 canaux pour le casque de la FLX4.
-- **MIDI** (Web MIDI) : correspondances FLX4, apprentissage des contrôles, `phys` (positions réelles),
-  vérification de la mise en place avant chaque niveau.
+- **MIDI** (Web MIDI) : `DEFAULT_MAP` (réglages d'origine de la FLX4, ne pas les changer), `cleanMap`
+  (validation de `coach-midi-map`), `MIDI_CC` / `MIDI_NOTE` (potards et faders / boutons : pas de doublon
+  dans un même groupe), `onMidi`, apprentissage (`learnKey`), `phys` (positions réelles, vidées au
+  débranchement), vérification de la mise en place avant chaque niveau (`updateSetup`).
+  PLAY A et MID B ont un réglage mais aucun code ne s'en sert.
 - **Morceaux** : `makeSong(style, role, seed, secs, o)` (synthèse procédurale, `STYLE_DEFS`, `VARIANTS = 4`),
   calculés dans des Web Workers (`workerPool`, `renderSong`). Cache `getSong(sty, vr, part)` + `songSafe`
   (relance une fois). `chooseSongs()` précharge dès le choix du niveau. `startRun(demo)` lance la partie.
@@ -115,8 +122,10 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
   inattendus, `coach-midi-map` abîmée. `tests/site.spec.js` : chargement, Workers, parties, progression,
   onglets, S'entraîner, Passer au vrai.
-- Les tests marqués `test.fail` décrivent un défaut connu : ils sont « réussis » tant que le défaut existe.
-  Quand on corrige le défaut, retirer `.fail`.
+- Pour consigner un défaut connu sans le corriger tout de suite : l'écrire en `test.fail` (réussi tant que
+  le défaut existe), puis retirer `.fail` au moment de la correction. Il n'y en a aucun aujourd'hui.
+- Pour essayer une branche avec la vraie table avant de publier : `node tests/serveur.js`, puis ouvrir
+  http://localhost:8766 dans Chrome (Web MIDI fonctionne sur localhost).
 - Les anciens scripts Python (`tests/*.py`) sont gardés mais remplacés par `site.spec.js`.
 - Git pour Windows convertit les fins de ligne par défaut : ce dépôt a `core.autocrlf=false` en local.
 - Après chaque modification de `index.html` : `npm test`, puis `tests/CHECKLIST-FLX4.md` sur la vraie

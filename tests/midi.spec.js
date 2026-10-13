@@ -142,6 +142,25 @@ test.describe('Apprentissage d\'un contrôle', () => {
     await envoyer(page, 0x94, 71, 127);
     await expect(page.locator('#echoBtn')).toHaveAttribute('aria-pressed', 'true');
   });
+  test('un contrôle déjà utilisé ailleurs est refusé pendant l\'apprentissage', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true } });
+    await niveau(page, 4);
+    await page.locator('#setupList .learn').click();
+    await envoyer(page, 0xB0, 19, 64);           // le fader A, déjà attribué : refusé, on attend toujours
+    expect(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).toBeNull();
+    await expect(page.locator('#setupList .learn')).toHaveText('Tourne le potard CFX de A…');
+    await envoyer(page, 0xB6, 23, 64);
+    expect(JSON.parse(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).cfxA).toEqual({ ch: 6, n: 23 });
+  });
+  test('un réglage appris valide est gardé quand une autre entrée est abîmée', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-midi-map': JSON.stringify({ faderA: 'x', cfxA: { ch: 6, n: 23 }, fxOn: { ch: 4, n: 71 } }) } });
+    await niveau(page, 4);
+    await envoyer(page, 0xB6, 23, 64);
+    expect((await miseEnPlace(page))[0]).toMatch(/^ok .*CFX de A/);
+    await niveau(page, 1);
+    await envoyer(page, 0xB0, 19, 127); await envoyer(page, 0xB1, 19, 0);
+    await expect(page.locator('#startBtn')).toBeEnabled();
+  });
 });
 
 test.describe('Débranchement et rebranchement', () => {
@@ -164,8 +183,8 @@ test.describe('Débranchement et rebranchement', () => {
     await page.evaluate(() => window.__midi.brancher('DDJ-FLX4'));
     await expect(page.locator('#midiPill')).toHaveText('DDJ-FLX4');
   });
-  // Défaut connu : la position d'avant le débranchement est gardée. Le site devrait redemander de bouger le contrôle.
-  test.fail('après rebranchement, une ancienne position n\'est plus considérée comme « en place »', async ({ page }) => {
+  // Une table débranchée a pu être manipulée entre-temps : ses anciennes positions sont oubliées.
+  test('après rebranchement, une ancienne position n\'est plus considérée comme « en place »', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true } });
     await niveau(page, 1);
     await envoyer(page, 0xB0, 19, 127); await envoyer(page, 0xB1, 19, 0);
@@ -183,8 +202,8 @@ test.describe('Messages inattendus', () => {
     await envoyer(page, 0xB0, 19, 127); await envoyer(page, 0xB1, 19, 0);
     await expect(page.locator('#startBtn')).toBeEnabled();
   });
-  // Défaut connu : une valeur hors de 0 à 127 est prise telle quelle (une vraie table ne peut pas en envoyer).
-  test.fail('une valeur hors limites est ramenée entre 0 et 127', async ({ page }) => {
+  // Une vraie table ne peut pas envoyer ces valeurs ; elles sont bornées par précaution.
+  test('une valeur hors limites est ramenée entre 0 et 127', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true } });
     await niveau(page, 1);
     await envoyer(page, 0xB0, 19, 200); await envoyer(page, 0xB1, 19, -5);
@@ -227,10 +246,9 @@ test.describe('Correspondance enregistrée (coach-midi-map)', () => {
       await expect(page.locator('#startBtn')).toBeEnabled();
     });
   }
-  // Comportement visé par la future validation : retour automatique aux réglages par défaut.
-  // Marqués « échec attendu » tant que la validation n'est pas écrite ; ils passeront au vert ensuite.
+  // Validation à la lecture (cleanMap) : toute entrée invalide, manquante ou en double reprend le réglage d'origine.
   for (const nom of ['un texte', 'un nombre', 'une liste', 'incomplète', 'entrée invalide', 'hors limites', 'en double']) {
-    test.fail(`abîmée (${nom}) : les contrôles par défaut fonctionnent quand même`, async ({ page }) => {
+    test(`abîmée (${nom}) : les contrôles par défaut fonctionnent quand même`, async ({ page }) => {
       await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-midi-map': ABIMEES[nom] } });
       await faders(page);
       await expect(page.locator('#startBtn')).toBeEnabled({ timeout: 2000 });
