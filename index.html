@@ -39,6 +39,17 @@
     </div>
   </div>
 </div>
+<div class="quiz" id="quiz" hidden role="dialog" aria-modal="true" aria-labelledby="qText">
+  <div class="qcard">
+    <button type="button" class="rclose" id="qClose" aria-label="Fermer">×</button>
+    <span class="lnum" id="qKick"></span>
+    <h2 id="qText"></h2>
+    <div class="qopts" id="qOpts"></div>
+    <p class="qwhy" id="qWhy" role="status" hidden></p>
+    <p class="newbadge" id="qBadge" role="status" hidden></p>
+    <button type="button" class="rbtn go" id="qNext" hidden>Continuer</button>
+  </div>
+</div>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="#accueil" aria-label="Coach DJ, retour à l'accueil"><span class="disc" aria-hidden="true"></span><div><div class="brand-name">Coach DJ</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
@@ -75,6 +86,8 @@
     <section class="page" id="homePath" hidden>
       <div class="path-head"><h2 class="sub" id="homePathName"></h2><button type="button" class="ghost" id="homeChange">Changer de parcours</button></div>
       <ol class="stages" id="homeStages"></ol>
+      <div class="path-head bhead"><h2 class="sub">Mes badges</h2><span class="sp soon" id="badgeCount"></span></div>
+      <ul class="badges" id="homeBadges"></ul>
     </section>
   </div>
 
@@ -88,6 +101,7 @@
         <button type="button" class="card" data-prac="var"><span class="soon" id="tVarS">Nouveau</span><strong>Variations</strong><p>Un geste que tu connais, sur un autre morceau, un autre style, un autre tempo.</p></button>
         <button type="button" class="card" data-prac="ear"><span class="soon" id="tEarS">Nouveau</span><strong>À l'oreille</strong><p>Sans compte à rebours : tu comptes les phrases dans ta tête.</p></button>
         <button type="button" class="card" data-prac="set"><span class="soon" id="tSetS">Nouveau</span><strong>Mini-set</strong><p id="tSetP">Trois transitions d'affilée, sans pouvoir rejouer : comme en soirée.</p></button>
+        <button type="button" class="card" id="quizCard"><span class="soon" id="tQuizS">Nouveau</span><strong>Quiz éclair</strong><p>Cinq questions sur les gestes que tu connais déjà.</p></button>
       </div>
       <p class="page-note" id="trainNote"></p>
     </section>
@@ -208,10 +222,11 @@
         <div class="rstars" id="rStars"></div>
         <h2 id="rTitle"></h2>
         <span class="gain" id="rGain"></span>
+        <p class="newbadge" id="rBadge" role="status" hidden></p>
         <ul class="details" id="rDetails"></ul>
         <div class="cmp" id="cmpBox"><span class="cmp-t">Ton geste et le geste idéal</span><canvas id="cmp" aria-label="Comparaison entre ton geste et le geste idéal"></canvas>
           <div class="cmp-leg"><span><i></i>geste idéal</span><span><u></u>ton geste</span></div></div>
-        <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
+        <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
       </div>
     </div>
   </section>
@@ -231,6 +246,7 @@
 <script src="js/entrainement.js"></script>
 <script src="js/rekordbox.js"></script>
 <script src="js/guide.js"></script>
+<script src="js/quiz.js"></script>
 <script src="js/parcours.js"></script>
 <script src="js/table.js"></script>
 <script src="js/demarrage.js"></script>

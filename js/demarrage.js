@@ -38,10 +38,10 @@ requestAnimationFrame(frame);
 /* ---------- Onglets : accueil, Apprendre, S'entraîner, Passer au vrai ---------- */
 const VIEWS = { accueil: 'vHome', apprendre: 'vLearn', entrainer: 'vTrain', vrai: 'vReal', table: 'vTable' };
 let view = '';
-// L'accueil (renderHome) est dans parcours.js
+// L'accueil (renderHome) est dans parcours.js, ses badges et le quiz dans quiz.js
 function setView(v){
   if (!VIEWS[v]) v = 'accueil'; if (v === view) return;
-  if (prac) quitPrac();
+  closeQuiz(); if (prac) quitPrac();
   if (view === 'apprendre'){ if (onb.active) closeOnb(); if (placement) quitPlacement(); stopRun(); $('result').hidden = true; }
   if (view === 'table') learnKey = null;   // un apprentissage commencé sur « Ma table » ne doit pas continuer ailleurs
   view = v;

@@ -82,6 +82,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   d'origine. 95 tests verts. **Le dessin et les noms des commandes sont faits de mémoire : l'utilisateur
   doit les relire avec sa table sous les yeux.** HI, TRIM, crossfader, CUE, pads, jog, tempo, BEAT SYNC et
   CFX B sont dessinés et expliqués mais sans réglage MIDI (numéros non vérifiés, à ne pas inventer).
+- **Lot 6 (13 oct. 2026)** : branche `lot-6-quiz-badges`, non publiée. Quiz (`js/quiz.js`) : 25 questions,
+  « Question bonus » sur la carte de résultat d'un niveau réussi, carte « Quiz éclair » (5 questions) dans
+  S'entraîner, 5 XP par question trouvée (une seule fois). 13 badges calculés depuis la progression,
+  section « Mes badges » sur l'accueil, annonce sur la carte de résultat. Ne touche ni au MIDI ni à
+  l'audio. 111 tests verts. **Les questions sont à relire par l'utilisateur.**
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -102,7 +107,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `controles` → `niveaux` (niveaux, progression, partie, notation) → `piste` → `midi` →
-  `placement` → `entrainement` → `rekordbox` → `guide` → `parcours` (accueil, les deux parcours) →
+  `placement` → `entrainement` → `rekordbox` → `guide` → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) →
   `table` (page « Ma table ») → `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
@@ -125,6 +130,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (`coach-test` : `ok` ou `ko:N`, N = premier niveau raté) sont enregistrés. Sans choix enregistré, un
   utilisateur qui a déjà une progression est rangé d'office dans un parcours, sans question. Dans le
   parcours `deja`, le guide ne s'ouvre pas tout seul (`setView`).
+- **Quiz et badges** (`js/quiz.js`) : `QUIZ` (une question = identifiant, niveau `b0`-`b6` / `c0`-`c3` / `g`,
+  question, 3 réponses dont la première est la bonne, explication ; ne jamais changer un identifiant),
+  `quizBonus()` (question du niveau affiché), `quizFlash()` (5 questions sur les niveaux joués),
+  `openQuiz` / `closeQuiz` (fenêtre `#quiz`), `quizOffer(st)` appelé par `finish`. `BADGES` (identifiant,
+  nom, condition lue dans la progression), `badgeSync()` (enregistre et renvoie les nouveaux),
+  `badgeNote(id)` (annonce), `renderBadges()` appelé par `renderHome`. L'XP du quiz s'ajoute dans `renderHud`.
 - **Ma table** (`js/table.js`) : `TKINDS` (nom et explication par type de commande), `TKEY` (commande du
   schéma → réglage MIDI, quand il existe), `usedIn(key)` (niveaux qui s'en servent, lus dans
   `BASE_LESSONS` / `CH3_LESSONS`), `tableSvg()` (le dessin), `renderTable()`. Quand cette page est
@@ -177,7 +188,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 
 ### Clés localStorage
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-chapitre`,
-`coach-style`, `coach-guide-vu`, `coach-parcours`, `coach-test`, `coach-entrainement` (défi, série, compteurs, record du mini-set),
+`coach-style`, `coach-guide-vu`, `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
+`coach-badges` (identifiants des badges gagnés), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
@@ -192,7 +204,8 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/parcours.spec.js` : choix du parcours, prochaine étape à
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus.
+  `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,
   onglets, S'entraîner, Passer au vrai.
 - Pour consigner un défaut connu sans le corriger tout de suite : l'écrire en `test.fail` (réussi tant que

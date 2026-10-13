@@ -87,9 +87,9 @@ function renderMissions(){
   for (const [id, title, text] of list){ const liEl = document.createElement('li'), lab = document.createElement('label'), cb = document.createElement('input'), d = document.createElement('div'), st = document.createElement('strong'), sp = document.createElement('span');
     cb.type = 'checkbox'; cb.checked = !!rbMis.done[id]; liEl.classList.toggle('done', cb.checked); st.textContent = title; sp.textContent = text; d.append(st, sp); lab.append(cb, d); liEl.appendChild(lab); ol.appendChild(liEl);
     cb.addEventListener('change', () => { if (cb.checked) rbMis.done[id] = 1; else delete rbMis.done[id];
-      const all = list.every(m => rbMis.done[m[0]]); if (all && !rbMis.done.ok){ rbMis.done.ok = 1; rbMis.total++; confetti(120); }
+      const all = list.every(m => rbMis.done[m[0]]); if (all && !rbMis.done.ok){ rbMis.done.ok = 1; rbMis.total++; confetti(120); badgeSync(); }
       rbSaveMis(); renderMissions(); }); }
-  const dn = $('rbDone'); dn.hidden = !rbMis.done.ok; dn.textContent = `Paire validée ! Tu as réussi ${plur(rbMis.total, 'vraie transition', 'vraies transitions')} avec ta musique. Choisis une autre paire pour continuer.`;
+  const dn = $('rbDone'); dn.hidden = !rbMis.done.ok; dn.textContent = `Paire validée ! Tu as réussi ${plur(rbMis.total, 'vraie transition', 'vraies transitions')} avec ta musique. Choisis une autre paire pour continuer.` + (rbMis.total === 1 ? ' Nouveau badge : Pour de vrai.' : '');
 }
 function renderReal(){
   const has = rbLib.length > 0; $('rbEmpty').hidden = has; $('rbFull').hidden = !has; if (!has) return;

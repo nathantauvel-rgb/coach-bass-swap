@@ -29,6 +29,7 @@ function renderTrain(){
   tag('tEarS', pracNum('ears') ? plur(pracNum('ears'), 'réussie', 'réussies') : 'Nouveau', pracNum('ears'));
   tag('tSetS', pool.length < 3 ? 'Verrouillé' : pracNum('setBest') ? `Record : ${pracNum('setBest')}/9 ★` : 'Nouveau', pool.length >= 3 && pracNum('setBest'));
   $('tSetP').textContent = pool.length < 3 ? 'Joue 3 niveaux dans Apprendre pour débloquer les mini-sets.' : 'Trois transitions d\'affilée, sans pouvoir rejouer : comme en soirée.';
+  renderQuizCard();
   $('trainNote').innerHTML = ok ? `L'entraînement reprend les niveaux que tu as déjà joués dans Apprendre (${pool.length} sur ${BASE_LESSONS.length}), sur d'autres morceaux.` : 'Joue d\'abord un niveau dans <a href="#apprendre">Apprendre</a> : l\'entraînement reprend les gestes que tu connais déjà.';
 }
 function startPrac(kind){
@@ -70,7 +71,7 @@ function pracVerdict(){
   const tot = prac.res.reduce((s, x) => s + (x || 0), 0), old = pracNum('setBest'); pracData.setBest = Math.max(old, tot); savePrac(); prac.done = true;
   $('rStars').innerHTML = ''; $('rTitle').textContent = tot >= 8 ? 'Mini-set de pro !' : tot >= 6 ? 'Beau mini-set !' : 'Mini-set terminé';
   $('rGain').textContent = `${tot} ★ sur 9` + (tot > old ? ' · nouveau record !' : ` · record : ${old} ★`);
-  $('rDetails').innerHTML = ''; $('cmpBox').hidden = true; $('retry').hidden = true;
+  $('rDetails').innerHTML = ''; $('cmpBox').hidden = true; $('retry').hidden = true; badgeNote('rBadge');
   prac.queue.forEach((q, j) => { const x = document.createElement('li'); x.className = (prac.res[j] || 0) >= 2 ? 'ok' : 'bad'; x.textContent = `${BASE_LESSONS[q].title} : ${'★'.repeat(prac.res[j] || 0) || 'pas réussi'}`; $('rDetails').appendChild(x); });
   $('next').hidden = false; $('next').textContent = 'Retour à l\'entraînement'; $('result').hidden = false; if (tot >= 6) confetti(tot >= 8 ? 160 : 60);
 }

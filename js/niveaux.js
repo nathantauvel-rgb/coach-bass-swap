@@ -117,7 +117,7 @@ function setChapter(n){
   const bank = bankOf(n), first = LESSONS.findIndex((_, i) => !(bank[i] >= 2)); selectLesson(first < 0 ? 0 : first);
 }
 function renderHud(){
-  const t1 = sumStars(stars), t2 = sumStars(ch2Stars), t3 = sumStars(ch3Stars), xp = t1 * 10 + t2 * 15 + t3 * 20;
+  const t1 = sumStars(stars), t2 = sumStars(ch2Stars), t3 = sumStars(ch3Stars), xp = t1 * 10 + t2 * 15 + t3 * 20 + quizXp();
   $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
   $('starTot').textContent = (t1 + t2 + t3) + '/' + (BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3);
   const bank = bankOf(chapter), map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove()); map.style.setProperty('--n', LESSONS.length);
@@ -425,5 +425,6 @@ function finish(){
   if (LESSONS[li].random){ const l = LESSONS[li]; randomizeRead(l); START = l.start; END = l.end; if (hasWorkers()) prepareCh3(l).then(tk => { if (!run && LESSONS[li] === l){ waveTk = tk; drawHighway(START); } }).catch(() => {}); }
   if (placement) placementStep(st);
   if (prac) pracStep(st);
+  quizOffer(st);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
 }

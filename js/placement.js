@@ -27,6 +27,6 @@ function placementVerdict(){
   $('rDetails').innerHTML = ''; $('cmpBox').hidden = true;
   ['Le bon moment', 'Le swap des basses', 'La transition complète'].forEach((t, j) => { const x = document.createElement('li'); x.className = (res[j] || 0) >= 2 ? 'ok' : 'bad'; x.textContent = `${t} : ${'★'.repeat(res[j] || 0) || 'pas réussi'}`; $('rDetails').appendChild(x); });
   $('next').hidden = false; $('next').textContent = ok ? 'Aller au chapitre 2' : firstFail ? 'Reprendre à : ' + BASE_LESSONS[firstFail].title : 'Commencer le chapitre 1';
-  $('next').dataset.go = ok ? 'ch2' : 'ch1'; $('next').dataset.li = String(firstFail); $('retry').hidden = true; $('result').hidden = false; renderHud();
+  $('next').dataset.go = ok ? 'ch2' : 'ch1'; $('next').dataset.li = String(firstFail); $('retry').hidden = true; $('quizBtn').hidden = true; badgeNote('rBadge'); $('result').hidden = false; renderHud();
 }
 $('pQuit').addEventListener('click', () => { quitPlacement(); });

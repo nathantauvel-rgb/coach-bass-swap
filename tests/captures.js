@@ -17,7 +17,8 @@ const ECRANS = [
 ];
 const LENTS = [
   ['08-partie-en-cours', VENU, 'apprendre', async p => { await p.locator('.node').nth(3).click(); await p.locator('#watchBtn').click(); await p.waitForFunction(() => document.getElementById('startBtn').textContent === 'Arrêter', null, { timeout: 60000 }); await p.waitForTimeout(9000); }],
-  ['09-resultat', VENU, 'apprendre', async p => { await p.locator('.node').nth(5).click(); await p.locator('#startBtn').click(); await p.locator('#result').waitFor({ state: 'visible', timeout: 120000 }); await p.waitForTimeout(1800); }]
+  ['09-resultat', VENU, 'apprendre', async p => { await p.locator('.node').nth(5).click(); await p.locator('#startBtn').click(); await p.locator('#result').waitFor({ state: 'visible', timeout: 120000 }); await p.waitForTimeout(1800); }],
+  ['11-quiz', VENU, 'entrainer', async p => { await p.locator('#quizCard').click(); await p.locator('#qOpts .qopt').first().click(); }]
 ];
 const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-FLX4', onmidimessage: null }]]); navigator.requestMIDIAccess = () => Promise.resolve({ inputs, outputs: new Map(), onstatechange: null });
   window.__midi = { envoyer: (...d) => { for (const i of inputs.values()) if (i.onmidimessage) i.onmidimessage({ data: d }); } }; };
