@@ -36,13 +36,14 @@ initMidi();
 requestAnimationFrame(frame);
 
 /* ---------- Onglets : accueil, Apprendre, S'entraîner, Passer au vrai ---------- */
-const VIEWS = { accueil: 'vHome', apprendre: 'vLearn', entrainer: 'vTrain', vrai: 'vReal' };
+const VIEWS = { accueil: 'vHome', apprendre: 'vLearn', entrainer: 'vTrain', vrai: 'vReal', table: 'vTable' };
 let view = '';
 // L'accueil (renderHome) est dans parcours.js
 function setView(v){
   if (!VIEWS[v]) v = 'accueil'; if (v === view) return;
   if (prac) quitPrac();
   if (view === 'apprendre'){ if (onb.active) closeOnb(); if (placement) quitPlacement(); stopRun(); $('result').hidden = true; }
+  if (view === 'table') learnKey = null;   // un apprentissage commencé sur « Ma table » ne doit pas continuer ailleurs
   view = v;
   for (const [k, id] of Object.entries(VIEWS)) $(id).hidden = k !== v;
   document.querySelectorAll('#tabs a').forEach(a => { if (a.dataset.view === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
@@ -51,6 +52,7 @@ function setView(v){
   else if (v === 'accueil') renderHome();
   else if (v === 'entrainer') renderTrain();
   else if (v === 'vrai') renderReal();
+  else if (v === 'table') renderTable();
   window.scrollTo(0, 0);
 }
 document.querySelectorAll('#tabs a').forEach(a => a.addEventListener('click', () => { if (prac && a.dataset.view === view) quitPrac(); }));

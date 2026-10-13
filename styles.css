@@ -531,6 +531,31 @@ button.cta{border:0}
 .stages div span{font-size:14px;color:var(--muted)}
 .stages .sp{margin-top:0;white-space:nowrap}
 @media (max-width:600px){.choices{grid-template-columns:1fr}.stages li{grid-template-columns:auto minmax(0,1fr)}.stages .sp{grid-column:2;justify-self:start}}
+a.chip.status{color:var(--muted)}a.chip.status.on{color:var(--fg)}
+.tgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.tscroll{overflow-x:auto;background:var(--panel-2);border-radius:22px;padding:10px}
+#tSvg{display:block;width:100%;min-width:620px;height:auto}
+#tSvg .body{fill:none;stroke:var(--line);stroke-width:2}
+#tSvg text{fill:var(--muted);font-family:var(--sans);font-size:11px;font-weight:700;pointer-events:none}
+#tSvg .tc{cursor:pointer;outline:none}
+#tSvg .tc>circle,#tSvg .tc>rect{fill:var(--panel);stroke:var(--line);stroke-width:2;transition:fill .15s}
+#tSvg .tc .in,#tSvg .tc .cap{fill:var(--slot)}
+#tSvg .tc .hit,#tSvg .tc:hover>.hit,#tSvg .tc.site>.hit{fill:transparent;stroke:none}
+#tSvg .mk{stroke:var(--muted);stroke-width:3;stroke-linecap:round}
+#tSvg .mkf{fill:var(--muted)}
+#tSvg .tc.site.ta>circle,#tSvg .tc.site.ta>rect{stroke:var(--a)}
+#tSvg .tc.site.tb>circle,#tSvg .tc.site.tb>rect{stroke:var(--b)}
+#tSvg .tc.site.tm>circle,#tSvg .tc.site.tm>rect{stroke:var(--xp)}
+#tSvg .tc:hover>circle,#tSvg .tc:hover>rect{fill:var(--line)}
+#tSvg .tc:focus-visible>circle,#tSvg .tc:focus-visible>rect{stroke:var(--fg);stroke-width:3}
+#tSvg .tc.sel>circle,#tSvg .tc.sel>rect{fill:var(--hi);stroke:var(--fg);stroke-width:3}
+#tSvg .tc.live>circle,#tSvg .tc.live>rect{fill:var(--go)}
+.tpanel{background:var(--panel-2);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-height:150px}
+.tpanel strong{font-family:var(--display);font-weight:700;font-size:19px;line-height:1.2}
+.tpanel p{margin:0;font-size:15px;color:var(--muted)}
+.tpanel .tlive{color:var(--fg);font-weight:700}
+.tnote{margin:14px 0;font-size:14px;color:var(--muted)}
+.tnote:empty{display:none}
 .page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
 .page-note a{color:var(--xp);font-weight:700}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}

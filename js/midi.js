@@ -21,11 +21,13 @@ let map = cleanMap(null); try { map = cleanMap(JSON.parse(localStorage.getItem('
 function onMidi(e){
   if (!e || !e.data || e.data.length < 3) return;
   const [st, d1, d2] = e.data, type = st & 0xF0, ch = st & 0x0F, val = clamp01(d2 / 127);
-  if (learnKey){ const want = learnKey === 'fxOn' ? (type === 0x90 && d2 > 0) : (type === 0xB0 && !(d1 >= 32 && d1 < 64));
+  if (learnKey){ const btn = MIDI_NOTE.includes(learnKey), want = btn ? (type === 0x90 && d2 > 0) : (type === 0xB0 && !(d1 >= 32 && d1 < 64));
     // un contrôle déjà utilisé par un autre réglage est refusé : on continue d'attendre le bon
-    const taken = (learnKey === 'fxOn' ? MIDI_NOTE : MIDI_CC).some(k => k !== learnKey && midiSame(map[k], ch, d1));
+    const taken = (btn ? MIDI_NOTE : MIDI_CC).some(k => k !== learnKey && midiSame(map[k], ch, d1));
     if (want && !taken){ map = Object.assign({}, map, { [learnKey]: { ch, n: d1 } }); try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); } catch (_) {}
-      if (type === 0xB0) phys[learnKey] = val; learnKey = null; updateSetup(); if (onb.active) renderOnb(); } return; }
+      if (type === 0xB0) phys[learnKey] = val; learnKey = null; updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); } return; }
+  // Page « Ma table » : on montre ce qui bouge, sans piloter les niveaux ni l'écho
+  if (view === 'table'){ tableMidi(type, ch, d1, d2, val); return; }
   if (type === 0xB0){ for (const k of MIDI_CC){ if (midiSame(map[k], ch, d1)){ phys[k] = val; if (onb.active){ ctrl[k] = val; applyCtrl(); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = val; applyCtrl(); } if (!run) updateSetup(); return; } } }
   else if (type === 0x90 && d2 > 0){ const m = map.playB, f = map.fxOn; if (m && m.ch === ch && m.n === d1){ if (onb.active) onbMoved('playB'); else launchB(); } else if (f && f.ch === ch && f.n === d1) toggleEcho(); }
 }
@@ -34,7 +36,7 @@ async function initMidi(){
   if (!navigator.requestMIDIAccess){ txt.textContent = 'Souris (MIDI indisponible)'; return; }
   try { const acc = await navigator.requestMIDIAccess({ sysex: false });
     // table débranchée : ses positions ne sont plus fiables, on les oublie jusqu'au prochain mouvement
-    const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; pill.className = 'chip status' + (ins.length ? ' on' : ''); midiCount = ins.length; updateSetup(); if (onb.active) renderOnb(); txt.textContent = ins.length ? ins.map(i => i.name).join(', ') : 'Souris (aucune table branchée)'; };
+    const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; pill.className = 'chip status' + (ins.length ? ' on' : ''); midiCount = ins.length; updateSetup(); if (onb.active) renderOnb(); txt.textContent = ins.length ? ins.map(i => i.name).join(', ') : 'Souris (aucune table branchée)'; if (view === 'table') renderTable(); };
     acc.onstatechange = refresh; refresh();
   } catch (e){ txt.textContent = 'Souris (MIDI bloqué ici)'; }
 }

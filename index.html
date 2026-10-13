@@ -45,7 +45,7 @@
     <div class="hud">
       <span class="chip" title="Niveau et expérience"><span class="lvl" id="lvl">Niv. 1</span><span class="xpbar"><i id="xpFill" style="width:0"></i></span><span class="num" id="xpTxt">0 XP</span></span>
       <span class="chip"><span class="star">★</span><span class="num" id="starTot">0/12</span></span>
-      <span class="chip status" id="midiPill"><i></i><span>FLX4…</span></span>
+      <a class="chip status" id="midiPill" href="#table" title="Ma table : le schéma et les réglages"><i></i><span>FLX4…</span></a>
       <button type="button" class="chip" id="guideBtn" hidden>Guide</button>
     </div>
   </header>
@@ -123,6 +123,22 @@
         </div>
       </div>
       <p class="rbmsg" id="rbMsg" role="status"></p>
+    </section>
+  </div>
+
+  <div class="view" id="vTable" hidden>
+    <section class="page">
+      <span class="lnum">Ta DDJ-FLX4</span>
+      <h1>Ma table</h1>
+      <p class="lead">À quoi sert chaque commande, et lesquelles tu utilises dans les niveaux.</p>
+      <p class="subnote" id="tState"></p>
+      <div class="tgrid">
+        <div class="tscroll"><svg id="tSvg" viewBox="0 0 920 440" role="group" aria-label="Schéma simplifié de la DDJ-FLX4"></svg></div>
+        <div class="tpanel" id="tPanel" aria-live="polite"></div>
+      </div>
+      <p class="tnote" id="tNote" role="status"></p>
+      <div class="rbrow"><button type="button" class="ghost" id="tReset">Revenir aux réglages d'origine</button></div>
+      <p class="page-note">Schéma simplifié : la disposition exacte peut différer un peu de ta table.</p>
     </section>
   </div>
 
@@ -216,6 +232,7 @@
 <script src="js/rekordbox.js"></script>
 <script src="js/guide.js"></script>
 <script src="js/parcours.js"></script>
+<script src="js/table.js"></script>
 <script src="js/demarrage.js"></script>
 </body>
 </html>

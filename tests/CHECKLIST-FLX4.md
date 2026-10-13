@@ -19,6 +19,10 @@ Préparation : Chrome ou Edge, rekordbox fermé, table branchée en USB.
 | 10 | Sans table : un niveau à la souris | Barre d'espace pour lancer B, touche E pour l'écho | |
 | 11 | S'entraîner : un défi du jour avec la table | La séance se joue comme une leçon | |
 | 12 | Son | Le son sort bien (enceintes et casque de la table) | |
+| 13 | Cliquer sur la pastille de la table, en haut à droite | La page « Ma table » s'ouvre et indique « Table branchée » | |
+| 14 | Sur « Ma table », bouger les faders, les LOW, le MID, appuyer sur PLAY | La bonne commande s'allume sur le schéma et affiche sa position | |
+| 15 | Comparer le schéma à la vraie table | Chaque commande est au bon endroit et porte le bon nom (sinon, noter laquelle) | |
+| 16 | Bouger une commande non utilisée (HI, crossfader, jog, pad) | Un message donne son canal et son numéro : les noter, ils serviront aux prochains exercices | |
 
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 

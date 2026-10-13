@@ -56,6 +56,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - **Lot 4 (13 oct. 2026)** : branche `lot-4-sombre`, non publiée. Étape 1 : couleurs en dur remplacées
   par des couleurs nommées, 10 captures identiques au pixel près. Étape 2 : thème sombre « Cabine »,
   police Inter, mascotte retirée, thème clair supprimé. 79 tests verts, contraste des textes contrôlé.
+- **Lot 4 publié le 13 oct. 2026.**
+- **Lot 5 (13 oct. 2026)** : branche `lot-5-table`, non publiée. Page « Ma table » (`#table`, ouverte par
+  la pastille de la table en haut à droite) : schéma simplifié de la FLX4, explication de chaque commande,
+  réaction en direct des 10 commandes qui ont un réglage MIDI, réapprentissage, retour aux réglages
+  d'origine. 95 tests verts. **Le dessin et les noms des commandes sont faits de mémoire : l'utilisateur
+  doit les relire avec sa table sous les yeux.** HI, TRIM, crossfader, CUE, pads, jog, tempo, BEAT SYNC et
+  CFX B sont dessinés et expliqués mais sans réglage MIDI (numéros non vérifiés, à ne pas inventer).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -77,7 +84,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `controles` → `niveaux` (niveaux, progression, partie, notation) → `piste` → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `parcours` (accueil, les deux parcours) →
-  `demarrage` (démarrage et onglets).
+  `table` (page « Ma table ») → `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
   dans un fichier chargé avant ; `function stop` remplace `window.stop` (sans effet connu).
@@ -99,6 +106,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (`coach-test` : `ok` ou `ko:N`, N = premier niveau raté) sont enregistrés. Sans choix enregistré, un
   utilisateur qui a déjà une progression est rangé d'office dans un parcours, sans question. Dans le
   parcours `deja`, le guide ne s'ouvre pas tout seul (`setView`).
+- **Ma table** (`js/table.js`) : `TKINDS` (nom et explication par type de commande), `TKEY` (commande du
+  schéma → réglage MIDI, quand il existe), `usedIn(key)` (niveaux qui s'en servent, lus dans
+  `BASE_LESSONS` / `CH3_LESSONS`), `tableSvg()` (le dessin), `renderTable()`. Quand cette page est
+  affichée, `onMidi` passe la main à `tableMidi` : la table n'y pilote ni les niveaux ni l'écho, mais
+  les positions (`phys`) restent retenues. L'apprentissage (`learnKey`) accepte maintenant aussi PLAY A
+  et PLAY B (boutons), et il est annulé quand on quitte la page.
 - **S'entraîner** : une séance `prac` (`startPrac(kind)` avec `defi`, `var`, `ear`, `set`) rejoue les niveaux
   du chapitre 1 déjà joués (`pracPool`, tous avec `?tout=1`) sur la scène des leçons : `vLearn` reçoit la
   classe `.prac` (chapitres et carte masqués) et le bandeau `#prBanner`. Style et variante imposés via
