@@ -54,6 +54,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   repérage des intros et outros. Aucun morceau ne finit par une outro sans basses. Il manque de la techno
   vers 125-130 BPM. Deep House Sunset = Alex Morgan, CC BY 4.0, généré par IA. Splashkabona : aucune
   licence libre trouvée, ne pas publier.
+- **Deuxième recherche (13 oct. 2026)**, licence lue sur chaque page, tempo mesuré en lisant le son sans
+  l'enregistrer : techno **CC0** de Keith Jars (Atlantide 125, Aquatic Kiss 127, Aquatic Vision 129,
+  Walkyra 120) ; house sans voix : Koi-discovery « Ultimate_Rainbow » 120 (CC0), HoliznaCC0 « Retro
+  Synths » et « Back In The 80s » 120 (CC0), 1000 Handz « Mother Soil » 125 (CC BY), Jason Shaw « The Big
+  House » 125 (CC BY), Tommaso Croce « Crawling Seeds » 124,5 (CC BY) ; Decktonic, album « Forgotten
+  Machines », 7 morceaux à 128 (CC BY). Pas téléchargés, pas écoutés. À la demande de l'utilisateur,
+  `croce-clade-industries.mp3` et `croce-dont-snooze.mp3` sont sortis de `audio-essai/fma/` (rangés dans
+  `audio-essai/retires/`).
 - **Sujets ouverts, aucun commencé** : vrais morceaux libres de droits (CC0 ou CC BY), nouveaux exercices
   (HI, crossfader, hot cues, loops, beatmatching), puis comptes et paiement. Les 25 questions du quiz
   (`js/quiz.js`) n'ont pas encore été relues par l'utilisateur.
