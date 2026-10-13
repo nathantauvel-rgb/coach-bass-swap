@@ -32,7 +32,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 13 oct. 2026, fin de session)
-- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 5. `main` = `origin/main`, à une
+- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 6 (quiz et badges). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
 - **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (16 points)
   sur la vraie FLX4. Aucun lot n'a été vérifié sur la table. À relire en particulier : le schéma de
@@ -45,7 +45,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `audio-essai/` (Splashkabona 117 BPM, Deep House Sunset 122,5 BPM, plus deux morceaux trop lents ;
   licences non vérifiées, il faut le lien et l'auteur de chacun). Piste Suno abandonnée.
 - **Sujets ouverts, aucun commencé** : vrais morceaux libres de droits (CC0 ou CC BY), nouveaux exercices
-  (HI, crossfader, hot cues, loops, beatmatching), quiz, badges, puis comptes et paiement.
+  (HI, crossfader, hot cues, loops, beatmatching), puis comptes et paiement. Les 25 questions du quiz
+  (`js/quiz.js`) n'ont pas encore été relues par l'utilisateur.
 - **Façon de travailler validée par l'utilisateur** : présenter un lot, attendre son accord, travailler
   sur une branche `lot-N-nom`, lancer `npm test`, montrer des captures si l'écran change, puis demander
   l'accord avant `git push`. Après un push : vérifier la production, mettre à jour Notion.
@@ -87,6 +88,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   S'entraîner, 5 XP par question trouvée (une seule fois). 13 badges calculés depuis la progression,
   section « Mes badges » sur l'accueil, annonce sur la carte de résultat. Ne touche ni au MIDI ni à
   l'audio. 111 tests verts. **Les questions sont à relire par l'utilisateur.**
+- **Lot 6 publié le 13 oct. 2026.**
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
