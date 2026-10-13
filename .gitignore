@@ -1,0 +1,5 @@
+# Morceaux d'essai : jamais en ligne tant que les droits ne sont pas vérifiés
+audio-essai/
+node_modules/
+test-results/
+playwright-report/

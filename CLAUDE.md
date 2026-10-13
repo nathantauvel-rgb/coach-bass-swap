@@ -21,7 +21,22 @@ Parcours visé en 3 onglets :
 
 Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour de vrai.
 
+## Décisions produit du 13 oct. 2026 (remplacent ce qui les contredit plus bas)
+- Objectif : faire de la V1 un MVP vendable, un « Duolingo du DJing », en améliorant l'existant sans réécriture.
+- Deux publics, deux parcours : débutants complets ; débutants qui savent lancer deux morceaux et veulent
+  de meilleures transitions.
+- Direction visuelle visée : **sombre, premium, inspirée des logiciels DJ**. Le thème « Tout doux » reste
+  en place tant que le lot « interface sombre » n'est pas lancé, mais ce n'est plus la cible.
+- La DDJ-FLX4 reste le contrôleur de référence. Comptes et paiement : pas prioritaires.
+- Lots prévus : 0. sécuriser (tests) · 1. valider `coach-midi-map` · 2. découper `index.html` en modules ·
+  3. deux parcours · 4. interface sombre · 5. schéma interactif de la FLX4.
+- L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
+
 ## Où on en est
+- **Lot 0 (13 oct. 2026)** : Git installé, dossier de travail `Documents\coach-dj` (l'ancien
+  `Documents\coach-bass-swap` et sa sauvegarde datée restent intacts). Branche `lot-0-tests` : Playwright
+  pour Node, fausse table MIDI, 63 tests. Branche `essai-vrais-morceaux` : essai local du bouton
+  « Vrais morceaux » (fichiers de `audio-essai/`, ignorés par Git, droits non vérifiés). Rien de publié.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -75,7 +90,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   et `CH3_LESSONS`.
 - **Lisibilité** : `ACT` (texte d'action par cible), `GROUP_OF`, `setFocus(ids)` (classe `.focus`),
   `showAction` (« Dans N temps : … » puis « Maintenant : … ! »), `<details class="howto">`.
-- **Thème « Tout doux »** (choisi par l'utilisateur, ne pas changer sans lui demander) : jetons CSS dans
+- **Thème « Tout doux »** (thème actuel ; la cible est désormais sombre et premium, voir les décisions
+  du 13 oct. 2026 ; ne pas le modifier hors du lot « interface sombre ») : jetons CSS dans
   `:root`, polices Fredoka + Nunito, menthe / corail / lavande / violet, bouton Jouer vert, mascotte
   `.buddy`. Ni « arcade », ni « ambiance club ». Maquette de référence :
   https://claude.ai/artifact/CGZeVmXKDoPi2GKaT9WYrW (planche n°2).
@@ -88,14 +104,23 @@ Toute valeur lue doit être validée : des données abîmées ne doivent jamais 
 
 ## Tester
 ```bash
-python3 -m http.server 8765 &        # depuis la racine du dépôt
-python3 tests/tdz.py                 # 5 états enregistrés, dont des données abîmées : aucune erreur attendue
-python3 tests/robust.py              # Worker normal / bloqué / qui plante : la page reste jouable
-python3 tests/clar.py                # écran de niveau (consigne, focus, piste)
+npm install                          # une seule fois (Playwright ; le site lui-même n'a aucune dépendance)
+npx playwright install chromium      # une seule fois
+npm test                             # toute la suite, environ 1 min 30
+npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
 ```
-Chromium est déjà installé pour Playwright (ne pas lancer `playwright install`).
-Après chaque modification de `index.html`, vérifier au minimum `tdz.py` et `robust.py`,
-puis regarder une capture d'écran.
+- `tests/outils.js` : `ouvrir(page, { stockage, midi, onglet })` et la fausse table. Elle remplace
+  `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
+  messages simulés suivent le même chemin que ceux de la vraie FLX4.
+- `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
+  inattendus, `coach-midi-map` abîmée. `tests/site.spec.js` : chargement, Workers, parties, progression,
+  onglets, S'entraîner, Passer au vrai.
+- Les tests marqués `test.fail` décrivent un défaut connu : ils sont « réussis » tant que le défaut existe.
+  Quand on corrige le défaut, retirer `.fail`.
+- Les anciens scripts Python (`tests/*.py`) sont gardés mais remplacés par `site.spec.js`.
+- Git pour Windows convertit les fins de ligne par défaut : ce dépôt a `core.autocrlf=false` en local.
+- Après chaque modification de `index.html` : `npm test`, puis `tests/CHECKLIST-FLX4.md` sur la vraie
+  table avant toute mise en ligne qui touche au MIDI, à l'audio ou aux niveaux.
 
 ## Pièges connus
 - **Liens Vercel figés** : chaque déploiement a un lien long qui ne bouge plus. Toujours donner
@@ -110,5 +135,6 @@ puis regarder une capture d'écran.
 
 ## Règles de travail
 - Dépôt : https://github.com/nathantauvel-rgb/coach-bass-swap, branche `main`, déployé automatiquement sur Vercel.
+  Travailler sur une branche par lot ; demander l'accord de l'utilisateur avant chaque `git push`.
 - Messages de commit en français, qui décrivent le changement pour l'utilisateur.
 - L'utilisateur juge sur ce qu'il voit : toujours lui dire de recharger la page de production après un push.

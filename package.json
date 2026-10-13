@@ -1,0 +1,11 @@
+{
+  "name": "coach-dj",
+  "private": true,
+  "description": "Outils de test de Coach DJ (le site lui-même n'a aucune dépendance)",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0"
+  }
+}
