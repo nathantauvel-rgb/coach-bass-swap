@@ -1,42 +1,43 @@
 /* Layout : appli d'apprentissage ludique et lumineuse. Barre XP · chapitres · carte des niveaux · scène (piste qui défile vers la ligne de frappe) · barre d'action collante · résultat en surimpression.
    Une seule ambiance claire, assumée : surfaces blanches, couleurs franches sans néon, boutons en relief. */
 :root{
-  --bg:#e9f6ef;
-  --glow-a:#d7efe2;
-  --glow-b:#fde3d6;
-  --panel:#ffffff;
-  --panel-2:#f3faf6;
-  --line:#d6e8de;
-  --fg:#23312b;
-  --muted:#56695f;
-  --a:#ff8a65;
-  --b:#8f80f5;
-  --xp:#6b5ce7;
-  --ok:#35a86d;
-  --mid:#e58a00;
-  --bad:#e5484d;
-  --ink:#ffffff;
-  --go:#6fcf97;
-  --go-edge:#45a873;
-  --go-ink:#13351f;
-  --edge:rgba(35,49,43,.16);
-  --shadow:0 18px 40px rgba(35,49,43,.08);
-  --display:'Fredoka','Nunito',system-ui,sans-serif;
-  --sans:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --on-fg:#ffffff;
-  --hi:#fff4d6;
-  --ok-bg:#e3f6ea;
-  --ok-ink:#13351f;
-  --xp-bg:#f1efff;
-  --xp-bg-2:#f6f4ff;
-  --xp-line:#dcd7ff;
-  --hot:#fff1ea;
-  --hot-edge:#ffd9c8;
-  --slot:#e3efe8;
-  --track:#cfe6d9;
-  --dot:#ffffffcc;
-  --disc-in:#fff4ee;
-  color-scheme:light;
+  /* Thème « Cabine » : noir neutre, platine A en orange, platine B en bleu. Toutes les couleurs du site passent par cette liste. */
+  --bg:#0e0f12;
+  --glow-a:#1c1613;
+  --glow-b:#111922;
+  --panel:#17191e;
+  --panel-2:#1f2229;
+  --line:#2c3039;
+  --fg:#f2f3f5;
+  --muted:#a6acb8;
+  --a:#ff7a45;
+  --b:#3ea6ff;
+  --xp:#a78bfa;
+  --ok:#35d07f;
+  --mid:#ffb020;
+  --bad:#ff6b6b;
+  --ink:#0e0f12;
+  --go:#35d07f;
+  --go-edge:#1f9d5c;
+  --go-ink:#06281a;
+  --edge:rgba(0,0,0,.45);
+  --shadow:0 18px 40px rgba(0,0,0,.35);
+  --display:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --on-fg:#0e0f12;
+  --hi:#2c2219;
+  --ok-bg:#12301f;
+  --ok-ink:#7ee2a8;
+  --xp-bg:#241f3d;
+  --xp-bg-2:#2c2649;
+  --xp-line:#3d3566;
+  --hot:#33201a;
+  --hot-edge:#4d2c20;
+  --slot:#2a2e37;
+  --track:#2c3039;
+  --dot:#1f2229;
+  --disc-in:#17191e;
+  color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -371,7 +372,7 @@ a.chip:hover,button.chip:hover{border-color:var(--muted)}
 .onb-play{color:var(--ink)}
 .demo-tag{color:var(--ink)}
 .pbanner{background:color-mix(in srgb,var(--b) 8%,var(--panel))}
-/* ---------- Direction « Tout doux » : menthe, pastel, arrondi, mascotte ---------- */
+/* ---------- Formes arrondies, boutons en pastille, bulle de conseil (couche héritée du thème « Tout doux ») ---------- */
 body{background-image:radial-gradient(circle at 104% -6%,var(--glow-a) 0 260px,transparent 261px),radial-gradient(circle at -6% 108%,var(--glow-b) 0 240px,transparent 241px);background-attachment:fixed}
 h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h2,.onb-card h2,.echo,.gain,.pop,.lvl{font-family:var(--display)}
 .stage h1{font-weight:700;letter-spacing:-.01em}
@@ -400,13 +401,7 @@ h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h
 .stage-head>div:first-child{flex:1;min-width:0}
 .buddy{flex:none;display:flex;align-items:flex-end;gap:12px;margin-left:auto;align-self:center}
 .bubble{max-width:210px}
-.bubble{margin:0;max-width:230px;background:var(--hi);border-radius:20px 20px 4px 20px;padding:12px 16px;font-weight:700;font-size:15px;line-height:1.35}
-.mascot{width:76px;height:76px;border-radius:50%;background:var(--fg);position:relative;flex:none;animation:bob 2.6s ease-in-out infinite}
-.mascot i{position:absolute;left:24px;top:24px;width:28px;height:28px;border-radius:50%;background:var(--a)}
-.mascot b{position:absolute;top:19px;width:10px;height:12px;border-radius:50%;background:#fff}
-.mascot b:first-of-type{left:20px}.mascot b:last-of-type{left:46px}
-@keyframes bob{50%{transform:translateY(-4px) rotate(-4deg)}}
-.stage.running .mascot{animation-duration:.48s}
+.bubble{margin:0;max-width:230px;background:var(--hi);border-radius:18px;padding:12px 16px;font-weight:700;font-size:15px;line-height:1.35}
 .hw{border-radius:22px;box-shadow:none;background:var(--panel-2)}
 .launch{border-radius:999px;background:var(--b);color:var(--ink);box-shadow:0 5px 0 color-mix(in srgb,var(--b) 65%,#000)}
 .launch:active:not(:disabled){box-shadow:0 1px 0 color-mix(in srgb,var(--b) 65%,#000)}

@@ -25,8 +25,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - Objectif : faire de la V1 un MVP vendable, un « Duolingo du DJing », en améliorant l'existant sans réécriture.
 - Deux publics, deux parcours : débutants complets ; débutants qui savent lancer deux morceaux et veulent
   de meilleures transitions.
-- Direction visuelle visée : **sombre, premium, inspirée des logiciels DJ**. Le thème « Tout doux » reste
-  en place tant que le lot « interface sombre » n'est pas lancé, mais ce n'est plus la cible.
+- Direction visuelle : **sombre, premium, inspirée des logiciels DJ** (thème « Cabine », lot 4).
 - La DDJ-FLX4 reste le contrôleur de référence. Comptes et paiement : pas prioritaires.
 - Lots prévus : 0. sécuriser (tests) · 1. valider `coach-midi-map` · 2. découper `index.html` en modules ·
   3. deux parcours · 4. interface sombre · 5. schéma interactif de la FLX4.
@@ -53,6 +52,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   Passer au vrai). Mêmes niveaux et mêmes règles de déblocage pour les deux (décision de l'utilisateur).
   L'accueil affiche la prochaine étape et la liste des étapes. Un test de placement raté renvoie au
   premier geste raté. 79 tests verts. Pas vérifié sur la vraie FLX4.
+- **Lot 3 publié le 13 oct. 2026.**
+- **Lot 4 (13 oct. 2026)** : branche `lot-4-sombre`, non publiée. Étape 1 : couleurs en dur remplacées
+  par des couleurs nommées, 10 captures identiques au pixel près. Étape 2 : thème sombre « Cabine »,
+  police Inter, mascotte retirée, thème clair supprimé. 79 tests verts, contraste des textes contrôlé.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -68,7 +71,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 ## Fichiers
 - `index.html` — la structure de la page seulement (~215 lignes). Elle charge `styles.css` puis les
   fichiers de `js/`. Aucune dépendance, aucune étape de construction.
-- `styles.css` — toute l'apparence (thème « Tout doux »).
+- `styles.css` — toute l'apparence (thème sombre « Cabine »).
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
@@ -127,11 +130,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   et `CH3_LESSONS`.
 - **Lisibilité** : `ACT` (texte d'action par cible), `GROUP_OF`, `setFocus(ids)` (classe `.focus`),
   `showAction` (« Dans N temps : … » puis « Maintenant : … ! »), `<details class="howto">`.
-- **Thème « Tout doux »** (thème actuel ; la cible est désormais sombre et premium, voir les décisions
-  du 13 oct. 2026 ; ne pas le modifier hors du lot « interface sombre ») : jetons CSS dans
-  `:root`, polices Fredoka + Nunito, menthe / corail / lavande / violet, bouton Jouer vert, mascotte
-  `.buddy`. Ni « arcade », ni « ambiance club ». Maquette de référence :
-  https://claude.ai/artifact/CGZeVmXKDoPi2GKaT9WYrW (planche n°2).
+- **Thème « Cabine »** (lot 4, choisi par l'utilisateur le 13 oct. 2026 ; il remplace « Tout doux », qui
+  est supprimé) : sombre, noir neutre, platine A en orange (`--a`), platine B en bleu (`--b`), violet
+  (`--xp`) pour l'XP et les gestes à faire, vert (`--go`) pour Jouer. Police Inter partout. Plus de
+  mascotte : seule la bulle de conseil `.bubble` reste. **Toutes les couleurs passent par la liste
+  `:root` en tête de `styles.css`** (et par `COL` dans `js/piste.js` pour le canvas) : ne jamais écrire
+  une couleur en dur ailleurs. Texte posé sur une couleur vive : `--ink` ; sur `--fg` : `--on-fg`.
+  `styles.css` garde des couches héritées qui se surchargent (mise en page compacte, « habillage »,
+  formes arrondies) : les fusionner serait un nettoyage à part.
+- **Captures et contraste** : `node tests/captures.js captures/nom` enregistre chaque écran (dossier
+  `captures/` ignoré par Git) et signale les textes au contraste trop faible. Avec `--vite`, seulement
+  les écrans fixes, comparables image par image entre deux versions. Seul signalement restant, voulu :
+  les étoiles non gagnées, volontairement estompées.
 
 ### Clés localStorage
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-chapitre`,
