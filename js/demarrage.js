@@ -19,10 +19,10 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') $('result').
 $('retry').addEventListener('click', () => { $('result').hidden = true; startRun(); });
 $('next').addEventListener('click', () => {
   if (prac){ pracNext(); return; }
-  const go =$('next').dataset.go; delete $('next').dataset.go; $('retry').hidden = false; $('cmpBox').hidden = false;
+  const go =$('next').dataset.go, goLi = +$('next').dataset.li || 0; delete $('next').dataset.go; delete $('next').dataset.li; $('retry').hidden = false; $('cmpBox').hidden = false;
   if (go === 'ch2'){ $('result').hidden = true; setChapter(2); return; }
   if (go === 'ch1') LESSONS = BASE_LESSONS;
-  if (go === 'ch1'){ $('result').hidden = true; chapter = 1; try { localStorage.setItem('coach-chapitre', '1'); } catch (e) {} selectLesson(0); return; }
+  if (go === 'ch1'){ $('result').hidden = true; chapter = 1; try { localStorage.setItem('coach-chapitre', '1'); } catch (e) {} selectLesson(goLi); return; }
   if (placement){ if (placement.i >= P_STEPS.length - 1){ placementVerdict(); return; } placement.i++; selectLesson(P_STEPS[placement.i]); updatePBanner(); return; }
   selectLesson(Math.min(LESSONS.length - 1, li + 1)); });
 document.addEventListener('keydown', e => { if (e.code === 'Space' && run && !(e.target instanceof HTMLInputElement)){ e.preventDefault(); launchB(); } if (e.code === 'KeyE' && run && !e.repeat){ e.preventDefault(); toggleEcho(); } }, true);
@@ -38,15 +38,7 @@ requestAnimationFrame(frame);
 /* ---------- Onglets : accueil, Apprendre, S'entraîner, Passer au vrai ---------- */
 const VIEWS = { accueil: 'vHome', apprendre: 'vLearn', entrainer: 'vTrain', vrai: 'vReal' };
 let view = '';
-function renderHome(){
-  const tot = sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars), max = BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3;
-  $('homeCta').textContent = tot || guideSeen ? 'Reprendre les leçons' : 'Commencer';
-  $('homeP1').textContent = tot ? `${tot} ★ sur ${max}` : 'À commencer';
-  const sk = streakNow(), defiOk = pracStr('defiDate') === dayKey() && pracNum('defiStars') >= 2;
-  $('homeP2').textContent = sk ? 'Série de ' + plur(sk, 'jour', 'jours') + (defiOk ? '' : ' · défi à faire') : 'Défi du jour à faire';
-  $('homeP3').textContent = rbMis.total ? plur(rbMis.total, 'paire validée', 'paires validées') : rbLib.length ? plur(rbLib.length, 'morceau importé', 'morceaux importés') : 'À commencer';
-  $('homeTip').textContent = tot ? 'Content de te revoir ! On reprend où tu t\'étais arrêté.' : 'Un geste à la fois, et ça vient vite !';
-}
+// L'accueil (renderHome) est dans parcours.js
 function setView(v){
   if (!VIEWS[v]) v = 'accueil'; if (v === view) return;
   if (prac) quitPrac();
@@ -55,7 +47,7 @@ function setView(v){
   for (const [k, id] of Object.entries(VIEWS)) $(id).hidden = k !== v;
   document.querySelectorAll('#tabs a').forEach(a => { if (a.dataset.view === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   $('guideBtn').hidden = v !== 'apprendre';
-  if (v === 'apprendre'){ renderHud(); drawHighway(START); updateSetup(); if (!guideSeen) openOnb(); }
+  if (v === 'apprendre'){ renderHud(); drawHighway(START); updateSetup(); if (!guideSeen && parcours !== 'deja') openOnb(); }   // parcours « deja » : le guide est proposé (bouton Guide), pas imposé
   else if (v === 'accueil') renderHome();
   else if (v === 'entrainer') renderTrain();
   else if (v === 'vrai') renderReal();

@@ -58,18 +58,23 @@
   <div class="view" id="vHome">
     <section class="hero">
       <div>
-        <h1>Tu as une table et tu n'y connais rien ?</h1>
-        <p class="lead">En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.</p>
-        <a class="cta" id="homeCta" href="#apprendre">Commencer</a>
-        <p class="need">Il te faut une Pioneer DDJ-FLX4 branchée en USB, et Chrome ou Edge. Pas encore de table ? Tu peux essayer à la souris.</p>
+        <span class="lnum" id="homeKicker" hidden>Ta prochaine étape</span>
+        <h1 id="homeTitle">Tu as une table et tu n'y connais rien ?</h1>
+        <p class="lead" id="homeLead">En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.</p>
+        <button type="button" class="cta" id="homeCta" hidden>Commencer</button>
+        <div class="choices" id="homeChoice">
+          <p class="ask">Tu en es où ?</p>
+          <button type="button" class="choice" data-parcours="debut" aria-pressed="false"><strong>Je débute complètement</strong><span>On part de zéro : la table, les phrases, puis tes premières transitions.</span></button>
+          <button type="button" class="choice" data-parcours="deja" aria-pressed="false"><strong>Je sais déjà lancer deux morceaux</strong><span>Un test rapide en 3 épreuves, puis on travaille tes transitions.</span></button>
+        </div>
+        <p class="need" id="homeNeed">Il te faut une Pioneer DDJ-FLX4 branchée en USB, et Chrome ou Edge. Pas encore de table ? Tu peux essayer à la souris.</p>
       </div>
       <div class="buddy" aria-hidden="true"><p class="bubble" id="homeTip">Un geste à la fois, et ça vient vite !</p><div class="mascot"><i></i><b></b><b></b></div></div>
     </section>
-    <div class="steps">
-      <a class="step" href="#apprendre"><span class="sn">Étape 1</span><strong>Apprendre</strong><span class="sd">Les leçons : le bon moment, le fader, le swap des basses, la transition complète.</span><span class="sp" id="homeP1">À commencer</span></a>
-      <a class="step" href="#entrainer"><span class="sn">Étape 2</span><strong>S'entraîner</strong><span class="sd">Défi du jour, variations, à l'oreille, mini-sets.</span><span class="sp" id="homeP2">Défi du jour</span></a>
-      <a class="step" href="#vrai"><span class="sn">Étape 3</span><strong>Passer au vrai</strong><span class="sd">Ta musique rekordbox, les paires qui s'enchaînent bien, des missions à faire sur ta table.</span><span class="sp" id="homeP3">À commencer</span></a>
-    </div>
+    <section class="page" id="homePath" hidden>
+      <div class="path-head"><h2 class="sub" id="homePathName"></h2><button type="button" class="ghost" id="homeChange">Changer de parcours</button></div>
+      <ol class="stages" id="homeStages"></ol>
+    </section>
   </div>
 
   <div class="view" id="vTrain" hidden>
@@ -209,6 +214,7 @@
 <script src="js/entrainement.js"></script>
 <script src="js/rekordbox.js"></script>
 <script src="js/guide.js"></script>
+<script src="js/parcours.js"></script>
 <script src="js/demarrage.js"></script>
 </body>
 </html>

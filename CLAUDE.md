@@ -46,6 +46,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   et 12 fichiers `js/`, code identique ligne pour ligne (vérifié par comparaison automatique). 66 tests verts.
   La branche `essai-vrais-morceaux` modifie l'ancien `index.html` : il faudra reporter son changement
   dans `js/audio.js` et `js/demarrage.js` si on la reprend.
+- **Lot 2 publié le 13 oct. 2026.**
+- **Lot 3 (13 oct. 2026)** : branche `lot-3-parcours`, non publiée. Deux parcours sur l'accueil
+  (`js/parcours.js`) : « Je débute » (guide → bases → entraînement → ch. 2 → ch. 3 → Passer au vrai) et
+  « Je sais déjà lancer deux morceaux » (test de placement → bases → ch. 2 → ch. 3 → entraînement →
+  Passer au vrai). Mêmes niveaux et mêmes règles de déblocage pour les deux (décision de l'utilisateur).
+  L'accueil affiche la prochaine étape et la liste des étapes. Un test de placement raté renvoie au
+  premier geste raté. 79 tests verts. Pas vérifié sur la vraie FLX4.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -66,7 +73,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `controles` → `niveaux` (niveaux, progression, partie, notation) → `piste` → `midi` →
-  `placement` → `entrainement` → `rekordbox` → `guide` → `demarrage` (démarrage et onglets).
+  `placement` → `entrainement` → `rekordbox` → `guide` → `parcours` (accueil, les deux parcours) →
+  `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
   dans un fichier chargé avant ; `function stop` remplace `window.stop` (sans effet connu).
@@ -82,6 +90,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (fin du script) suit l'adresse : `#accueil` (défaut), `#apprendre`, `#entrainer`, `#vrai`. Quitter
   Apprendre arrête la partie en cours ; le guide de premier lancement s'ouvre à la première entrée dans
   Apprendre, plus au chargement. Les tests ouvrent `index.html#apprendre`.
+- **Parcours** (`js/parcours.js`) : `PARCOURS` (ordre des étapes de chaque parcours), `STAGES` (pour
+  chaque étape : `done()` calculé depuis la progression existante, `cta()`, `go()`), `nextStage()`,
+  `renderHome()`. Seuls le choix (`coach-parcours` : `debut` ou `deja`) et le résultat du test
+  (`coach-test` : `ok` ou `ko:N`, N = premier niveau raté) sont enregistrés. Sans choix enregistré, un
+  utilisateur qui a déjà une progression est rangé d'office dans un parcours, sans question. Dans le
+  parcours `deja`, le guide ne s'ouvre pas tout seul (`setView`).
 - **S'entraîner** : une séance `prac` (`startPrac(kind)` avec `defi`, `var`, `ear`, `set`) rejoue les niveaux
   du chapitre 1 déjà joués (`pracPool`, tous avec `?tout=1`) sur la scène des leçons : `vLearn` reçoit la
   classe `.prac` (chapitres et carte masqués) et le bandeau `#prBanner`. Style et variante imposés via
@@ -121,7 +135,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 
 ### Clés localStorage
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-chapitre`,
-`coach-style`, `coach-guide-vu`, `coach-entrainement` (défi, série, compteurs, record du mini-set),
+`coach-style`, `coach-guide-vu`, `coach-parcours`, `coach-test`, `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
@@ -136,7 +150,8 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/site.spec.js` : chargement, Workers, parties, progression,
+  inattendus, `coach-midi-map` abîmée. `tests/parcours.spec.js` : choix du parcours, prochaine étape à
+  chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,
   onglets, S'entraîner, Passer au vrai.
 - Pour consigner un défaut connu sans le corriger tout de suite : l'écrire en `test.fail` (réussi tant que
   le défaut existe), puis retirer `.fail` au moment de la correction. Il n'y en a aucun aujourd'hui.
