@@ -4,7 +4,9 @@
 /* ---------- Piste qui défile ---------- */
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const COL = {}; const loadCol = () => { for (const k of ['a', 'b', 'fg', 'muted', 'line', 'panel-2', 'ok', 'mid', 'bad', 'xp', 'bg', 'ink']) COL[k] = tok('--' + k); COL.font = tok('--sans'); COL.disp = tok('--display'); };
+const COL = {}; const loadCol = () => { for (const k of ['a', 'b', 'fg', 'muted', 'line', 'panel', 'panel-2', 'ok', 'mid', 'bad', 'xp', 'bg', 'ink', 'on-fg']) COL[k] = tok('--' + k); COL.font = tok('--sans'); COL.disp = tok('--display'); };
+// Couleur nommée (#rrggbb) rendue transparente, pour les dégradés du canvas
+const hexA = (hex, a) => { const m = /^#([0-9a-f]{6})$/i.exec(hex); return m ? `rgba(${parseInt(m[1].slice(0, 2), 16)},${parseInt(m[1].slice(2, 4), 16)},${parseInt(m[1].slice(4, 6), 16)},${a})` : hex; };
 function rr(g, x, y, w, h, r){ g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
 function drawHighway(b){
   if (!COL.a) loadCol();
@@ -46,8 +48,8 @@ function drawHighway(b){
   }
   // gestes à faire
   const fog = run && run.ear;
-  if (fog){ g.save(); const gr = g.createLinearGradient(hitX + 6, 0, hitX + 90, 0); gr.addColorStop(0, 'rgba(243,250,246,0)'); gr.addColorStop(1, 'rgba(243,250,246,.93)'); g.fillStyle = gr; g.fillRect(hitX + 6, 0, w, h);
-    g.font = '700 13px ' + COL.font; const tx = 'Repères masqués : écoute', tw = g.measureText(tx).width + 24; g.fillStyle = COL.fg; rr(g, w - tw - 12, 12, tw, 26, 13); g.fill(); g.fillStyle = '#fff'; g.textAlign = 'left'; g.fillText(tx, w - tw, 30); g.restore(); }
+  if (fog){ g.save(); const gr = g.createLinearGradient(hitX + 6, 0, hitX + 90, 0); gr.addColorStop(0, hexA(COL['panel-2'], 0)); gr.addColorStop(1, hexA(COL['panel-2'], .93)); g.fillStyle = gr; g.fillRect(hitX + 6, 0, w, h);
+    g.font = '700 13px ' + COL.font; const tx = 'Repères masqués : écoute', tw = g.measureText(tx).width + 24; g.fillStyle = COL.fg; rr(g, w - tw - 12, 12, tw, 26, 13); g.fill(); g.fillStyle = COL['on-fg']; g.textAlign = 'left'; g.fillText(tx, w - tw, 30); g.restore(); }
   for (const [v, lab, lane] of LESSONS[li].targets){
     if (fog && !(run.status[lab])) continue;
     if (l.wave && !(run && run.demo)) continue;
@@ -55,7 +57,7 @@ function drawHighway(b){
     const st = run ? run.status[lab] : null, col = st === 'ok' ? COL.ok : st === 'mid' ? COL.mid : st === 'bad' || st === 'late' ? COL.bad : COL.xp;
     const y = lane === 'A' ? yA + H / 2 : lane === 'B' ? yB + H / 2 : (yA + yB + H) / 2;
     g.save(); g.shadowColor = 'rgba(27,31,51,.25)'; g.shadowBlur = 0; g.shadowOffsetY = 3; g.fillStyle = col;
-    g.beginPath(); g.arc(x, y, 16, 0, Math.PI * 2); g.fill(); g.lineWidth = 4; g.strokeStyle = '#fff'; g.stroke(); g.restore();
+    g.beginPath(); g.arc(x, y, 16, 0, Math.PI * 2); g.fill(); g.lineWidth = 4; g.strokeStyle = COL.panel; g.stroke(); g.restore();
     g.fillStyle = COL.ink; g.font = '800 15px ' + COL.font; g.textAlign = 'center'; g.fillText(st === 'ok' ? '✓' : st ? '!' : '◆', x, y + 5);
     g.fillStyle = col; g.font = '800 13px ' + COL.disp; g.fillText(lab, x, lane === 'A' ? 18 : yB + H + 18);
   }
@@ -63,11 +65,11 @@ function drawHighway(b){
   g.save(); g.strokeStyle = COL.fg; g.lineWidth = 3;
   g.beginPath(); g.moveTo(hitX, 8); g.lineTo(hitX, h - 26); g.stroke(); g.restore();
   g.font = '800 11px ' + COL.font; const mw = g.measureText('MAINTENANT').width + 16; g.fillStyle = COL.fg; rr(g, hitX - mw / 2, h - 24, mw, 20, 10); g.fill();
-  g.fillStyle = '#fff'; g.textAlign = 'center'; g.fillText('MAINTENANT', hitX, h - 10);
+  g.fillStyle = COL['on-fg']; g.textAlign = 'center'; g.fillText('MAINTENANT', hitX, h - 10);
   // couloirs nommés (sur une marge qui masque ce qui défile dessous)
-  g.fillStyle = COL['panel-2'] || '#f3faf6'; g.fillRect(0, 0, 44, h - 28);
-  for (const [y, lab, col] of [[yA, 'A', COL.a], [yB, 'B', COL.b]]){ g.fillStyle = '#fff'; g.beginPath(); g.arc(22, y + H / 2, 15, 0, Math.PI * 2); g.fill();
-    g.fillStyle = col; g.beginPath(); g.arc(22, y + H / 2, 12, 0, Math.PI * 2); g.fill(); g.fillStyle = '#fff'; g.font = '800 14px ' + COL.disp; g.textAlign = 'center'; g.fillText(lab, 22, y + H / 2 + 5); }
+  g.fillStyle = COL['panel-2']; g.fillRect(0, 0, 44, h - 28);
+  for (const [y, lab, col] of [[yA, 'A', COL.a], [yB, 'B', COL.b]]){ g.fillStyle = COL.panel; g.beginPath(); g.arc(22, y + H / 2, 15, 0, Math.PI * 2); g.fill();
+    g.fillStyle = col; g.beginPath(); g.arc(22, y + H / 2, 12, 0, Math.PI * 2); g.fill(); g.fillStyle = COL.ink; g.font = '800 14px ' + COL.disp; g.textAlign = 'center'; g.fillText(lab, 22, y + H / 2 + 5); }
 }
 const SHORT = { midA: 'MID A', faderA: 'Fader A', faderB: 'Fader B', lowA: 'LOW A', lowB: 'LOW B', cfxA: 'CFX A', echo: 'Écho' };
 const FK = { midA: 'ma', faderA: 'fa', faderB: 'fb', lowA: 'la', lowB: 'lb', cfxA: 'ca', echo: 'ec' };
@@ -93,7 +95,7 @@ function drawCompare(fr, i, launch){
   for (const k of lanes){
     const top = y, bot = y + 44, Y = v => bot - v * 40;
     label(SHORT[k], top + 26);
-    g.fillStyle = COL['panel-2'] || '#211d44'; g.globalAlpha = .5; g.fillRect(L0, top, w - L0 - 10, 44); g.globalAlpha = 1;
+    g.fillStyle = COL['panel-2']; g.globalAlpha = .5; g.fillRect(L0, top, w - L0 - 10, 44); g.globalAlpha = 1;
     g.strokeStyle = COL.fg; g.lineWidth = 2; g.setLineDash([5, 4]); g.beginPath();
     for (let b = START; b <= END; b += .5){ const yv = Y(ideal(k, b, i)); b === START ? g.moveTo(X(b), yv) : g.lineTo(X(b), yv); } g.stroke(); g.setLineDash([]);
     g.strokeStyle = k === 'echo' ? COL.xp : k.endsWith('A') ? COL.a : COL.b; g.lineWidth = 3; g.lineJoin = 'round'; g.beginPath();
