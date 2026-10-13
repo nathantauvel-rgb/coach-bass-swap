@@ -37,7 +37,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `Documents\coach-bass-swap` et sa sauvegarde datée restent intacts). Branche `lot-0-tests` : Playwright
   pour Node, fausse table MIDI, 63 tests. Branche `essai-vrais-morceaux` : essai local du bouton
   « Vrais morceaux » (fichiers de `audio-essai/`, ignorés par Git, droits non vérifiés). Rien de publié.
-- **Lot 1 (13 oct. 2026)** : branche `lot-1-midi`, non publiée. `cleanMap` valide `coach-midi-map` à la
+- **Lots 0 et 1 publiés le 13 oct. 2026** (accord de l'utilisateur), `main` = commit `38a3e27`.
+- **Lot 1 (13 oct. 2026)** : `cleanMap` valide `coach-midi-map` à la
   lecture (entrée invalide, manquante ou en double → réglage d'origine), l'apprentissage refuse un contrôle
   déjà attribué, les valeurs reçues sont bornées, les positions sont oubliées quand la table est débranchée.
   65 tests verts. Pas encore vérifié sur la vraie FLX4.
