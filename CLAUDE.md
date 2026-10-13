@@ -31,6 +31,25 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   3. deux parcours · 4. interface sombre · 5. schéma interactif de la FLX4.
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
+## Pour reprendre (état au 13 oct. 2026, fin de session)
+- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 5. `main` = `origin/main`, à une
+  note de documentation près (ce fichier), à envoyer avec le prochain lot.
+- **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (16 points)
+  sur la vraie FLX4. Aucun lot n'a été vérifié sur la table. À relire en particulier : le schéma de
+  « Ma table » et les consignes des missions de « Passer au vrai », écrits de mémoire ; un vrai export
+  rekordbox (l'import n'a vu qu'un faux fichier) ; la lisibilité du thème sombre pendant une partie.
+- **Le point 16 de la checklist** donne les numéros MIDI des commandes non branchées (HI, crossfader,
+  jog, pads) : il les faut avant de proposer de nouveaux exercices. Ne pas inventer ces numéros.
+- **Non publié, sur ce PC seulement** : branche `essai-vrais-morceaux` (bouton « Vrais morceaux », écrit
+  contre l'ancien `index.html`, à reporter dans `js/audio.js` et `js/demarrage.js`) et dossier
+  `audio-essai/` (Splashkabona 117 BPM, Deep House Sunset 122,5 BPM, plus deux morceaux trop lents ;
+  licences non vérifiées, il faut le lien et l'auteur de chacun). Piste Suno abandonnée.
+- **Sujets ouverts, aucun commencé** : vrais morceaux libres de droits (CC0 ou CC BY), nouveaux exercices
+  (HI, crossfader, hot cues, loops, beatmatching), quiz, badges, puis comptes et paiement.
+- **Façon de travailler validée par l'utilisateur** : présenter un lot, attendre son accord, travailler
+  sur une branche `lot-N-nom`, lancer `npm test`, montrer des captures si l'écran change, puis demander
+  l'accord avant `git push`. Après un push : vérifier la production, mettre à jour Notion.
+
 ## Où on en est
 - **Lot 0 (13 oct. 2026)** : Git installé, dossier de travail `Documents\coach-dj` (l'ancien
   `Documents\coach-bass-swap` et sa sauvegarde datée restent intacts). Branche `lot-0-tests` : Playwright
@@ -57,7 +76,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   par des couleurs nommées, 10 captures identiques au pixel près. Étape 2 : thème sombre « Cabine »,
   police Inter, mascotte retirée, thème clair supprimé. 79 tests verts, contraste des textes contrôlé.
 - **Lot 4 publié le 13 oct. 2026.**
-- **Lot 5 (13 oct. 2026)** : branche `lot-5-table`, non publiée. Page « Ma table » (`#table`, ouverte par
+- **Lot 5 (publié le 13 oct. 2026, à la demande de l'utilisateur, avant la checklist FLX4)** : Page « Ma table » (`#table`, ouverte par
   la pastille de la table en haut à droite) : schéma simplifié de la FLX4, explication de chaque commande,
   réaction en direct des 10 commandes qui ont un réglage MIDI, réapprentissage, retour aux réglages
   d'origine. 95 tests verts. **Le dessin et les noms des commandes sont faits de mémoire : l'utilisateur
