@@ -4,6 +4,18 @@ const { test, expect } = require('@playwright/test');
 const { ouvrir, envoyer, sansBandeau, jouer } = require('./outils');
 const niveau = (page, i) => page.locator('.node').nth(i).click();
 
+test.describe('Fichiers du site', () => {
+  test('la feuille de style et tous les fichiers js/ se chargent, dans l\'ordre prévu', async ({ page }) => {
+    const rates = [];
+    page.on('response', r => { if (r.url().startsWith('http://localhost') && r.status() >= 400) rates.push(r.url()); });
+    const erreurs = await ouvrir(page);
+    expect(await page.evaluate(() => [...document.scripts].map(s => s.getAttribute('src')))).toEqual(
+      ['erreurs', 'morceaux', 'audio', 'controles', 'niveaux', 'piste', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'demarrage'].map(n => `js/${n}.js`));
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
+    expect(rates).toEqual([]); expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+});
+
 test.describe('Chargement avec une progression enregistrée (ancien tdz.py)', () => {
   const ETATS = {
     'chapitre 2 mémorisé mais verrouillé': [{ 'coach-chapitre': '2' }, 7, /^Niveau 1 sur 7/],

@@ -42,6 +42,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   lecture (entrée invalide, manquante ou en double → réglage d'origine), l'apprentissage refuse un contrôle
   déjà attribué, les valeurs reçues sont bornées, les positions sont oubliées quand la table est débranchée.
   65 tests verts. Pas encore vérifié sur la vraie FLX4.
+- **Lot 2 (13 oct. 2026)** : branche `lot-2-modules`, non publiée. `index.html` découpé en `styles.css`
+  et 12 fichiers `js/`, code identique ligne pour ligne (vérifié par comparaison automatique). 66 tests verts.
+  La branche `essai-vrais-morceaux` modifie l'ancien `index.html` : il faudra reporter son changement
+  dans `js/audio.js` et `js/demarrage.js` si on la reprend.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -55,14 +59,25 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   les morceaux générés trop pauvres ; piste conseillée = de vrais morceaux en fichiers audio.
 
 ## Fichiers
-- `index.html` — tout le site des leçons (~1600 lignes, CSS + un seul `<script>`, aucune dépendance).
+- `index.html` — la structure de la page seulement (~215 lignes). Elle charge `styles.css` puis les
+  fichiers de `js/`. Aucune dépendance, aucune étape de construction.
+- `styles.css` — toute l'apparence (thème « Tout doux »).
+- `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
+  la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
+  `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
+  `audio` → `controles` → `niveaux` (niveaux, progression, partie, notation) → `piste` → `midi` →
+  `placement` → `entrainement` → `rekordbox` → `guide` → `demarrage` (démarrage et onglets).
+  Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
+  le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
+  dans un fichier chargé avant ; `function stop` remplace `window.stop` (sans effet connu).
+  Étape suivante possible, non commencée : de vrais modules avec import/export.
 - `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap), retiré du site : la page renvoie
   vers `index.html#vrai`. Son code sert de base à « Passer au vrai » ; `coach.html?ancien=1` l'affiche encore.
 - `tests/` — scripts Playwright (Python) : `tdz.py`, `robust.py`, `clar.py`, `play.py`, `play2.py`, `user.py`.
 - `tests/rekordbox-exemple.xml` — fausse collection rekordbox pour essayer l'import à la main.
 - `README.md` — description publique.
 
-## Architecture de `index.html` (repères)
+## Architecture du code (repères ; « fin du script » = `js/demarrage.js`)
 - **Onglets** : quatre blocs `.view` (`vHome`, `vLearn`, `vTrain`, `vReal`), un seul visible. `setView(v)`
   (fin du script) suit l'adresse : `#accueil` (défaut), `#apprendre`, `#entrainer`, `#vrai`. Quitter
   Apprendre arrête la partie en cours ; le guide de premier lancement s'ouvre à la première entrée dans
