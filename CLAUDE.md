@@ -44,6 +44,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   contre l'ancien `index.html`, à reporter dans `js/audio.js` et `js/demarrage.js`) et dossier
   `audio-essai/` (Splashkabona 117 BPM, Deep House Sunset 122,5 BPM, plus deux morceaux trop lents ;
   licences non vérifiées, il faut le lien et l'auteur de chacun). Piste Suno abandonnée.
+- **Vrais morceaux, recherche du 13 oct. 2026** : 10 MP3 de Free Music Archive dans `audio-essai/fma/` (hors Git),
+  licence lue sur la page de chaque morceau, tempo mesuré par analyse (stable sur tout le morceau).
+  Play House (Paris), **CC0** : Dj 125 BPM (sans voix), On My Mind 124, Like An Animal 124, The Power Of The
+  Beat 124, I'm Lost 120, Mezoued 120, Deep House Soul 122 (les six derniers avec voix). Pages :
+  `freemusicarchive.org/music/play-house/...`. Tommaso Croce, **CC BY 4.0** (crédit obligatoire) : Don't
+  Snooze 123 ; CLADE Industries 144 et Rombo Di Tuono 136 sont trop rapides. Pages :
+  `freemusicarchive.org/music/Dilating_Times/single/...`. Non fait : écoute par l'utilisateur, tonalités,
+  repérage des intros et outros. Aucun morceau ne finit par une outro sans basses. Il manque de la techno
+  vers 125-130 BPM. Deep House Sunset = Alex Morgan, CC BY 4.0, généré par IA. Splashkabona : aucune
+  licence libre trouvée, ne pas publier.
 - **Sujets ouverts, aucun commencé** : vrais morceaux libres de droits (CC0 ou CC BY), nouveaux exercices
   (HI, crossfader, hot cues, loops, beatmatching), puis comptes et paiement. Les 25 questions du quiz
   (`js/quiz.js`) n'ont pas encore été relues par l'utilisateur.
