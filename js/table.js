@@ -30,7 +30,7 @@ const tSide = id => id === 'cross' || id === 'fx' ? '' : id.slice(-1);
 const tName = id => TKINDS[tKind(id)][0] + (tSide(id) ? ' ' + tSide(id) : '');
 // Niveaux qui se servent d'une commande, lus dans les niveaux eux-mêmes
 function usedIn(key){ const out = []; if (!key) return out;
-  for (const [list, pre] of [[BASE_LESSONS, ''], [CH3_LESSONS, 'chapitre 3, ']]) list.forEach(l => { if (l.user.includes(key) || (key === 'playB' && !l.autoLaunch) || (key === 'fxOn' && l.btn.includes('echo'))) out.push(pre + l.title); });
+  for (const [list, pre] of [[BASE_LESSONS, ''], [CH3_LESSONS, 'chapitre 3, '], [CH4_LESSONS, 'chapitre 4, ']]) list.forEach(l => { if (l.user.includes(key) || (key === 'playB' && !l.autoLaunch) || (key === 'fxOn' && l.btn.includes('echo'))) out.push(pre + l.title); });
   return out; }
 let tableSel = '', tableLive = {}, tableNote = '', tableReset = false, tableTimer = {};
 function tableSvg(){

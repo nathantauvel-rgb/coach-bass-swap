@@ -11,7 +11,7 @@ test.describe('Écran d\'un niveau', () => {
     await expect(page.locator('#chapters')).toBeHidden();
     await page.locator('#chapBtn').click();
     await expect(page.locator('#chapters')).toBeVisible();
-    await expect(page.locator('.chap')).toHaveCount(3);
+    await expect(page.locator('.chap')).toHaveCount(4);
     await page.locator('.chap').nth(1).click();
     await expect(page.locator('#chapters')).toBeHidden();
     await expect(page.locator('#chapBtn')).toHaveText('Chapitre 2 · La maîtrise');
@@ -49,7 +49,7 @@ test.describe('Mes progrès', () => {
     const erreurs = await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2 }), 'coach-quiz': S(['b0a']) } });
     await page.locator('a.lvlchip').click();
     await expect(page.locator('#vProgres h1')).toHaveText('Mes progrès');
-    await expect(page.locator('.ptile')).toHaveCount(7);
+    await expect(page.locator('.ptile')).toHaveCount(8);
     await expect(page.locator('.ptile', { hasText: 'Chapitre 1' })).toContainText('5 ★ sur 21');
     await expect(page.locator('.ptile', { hasText: 'Quiz' })).toContainText('1 sur 25 trouvées');
     await expect(page.locator('#badgeCount')).toHaveText('2 sur 13');

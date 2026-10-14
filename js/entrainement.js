@@ -77,7 +77,7 @@ function pracVerdict(){
 }
 function quitPrac(){
   if (!prac) return; const b = prac.back; prac = null;
-  chapter = b.chapter; LESSONS = chapter === 3 ? CH3_LESSONS : BASE_LESSONS; selectLesson(Math.min(b.li, LESSONS.length - 1));
+  chapter = b.chapter; LESSONS = lessonsOf(chapter); selectLesson(Math.min(b.li, LESSONS.length - 1));
   $('retry').hidden = false; $('cmpBox').hidden = false; $('next').textContent = 'Niveau suivant';
   $('prBanner').hidden = true; $('vLearn').classList.remove('prac');
   if (view === 'entrainer'){ $('vLearn').hidden = true; $('vTrain').hidden = false; renderTrain(); window.scrollTo(0, 0); }

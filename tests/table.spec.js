@@ -22,7 +22,7 @@ test.describe('Schéma et explications', () => {
     await commande(page, 'lowA').click();
     await expect(commande(page, 'lowA')).toHaveClass(/\bsel\b/);
     await expect(page.locator('#tPanel strong')).toHaveText('Potard LOW A');
-    await expect(page.locator('#tPanel .tuse')).toHaveText('Utilisée dans : Le swap des basses · La transition complète.');
+    await expect(page.locator('#tPanel .tuse')).toHaveText('Utilisée dans : Le swap des basses · La transition complète · chapitre 4, Filtre et swap · chapitre 4, La transition éclair · chapitre 4, Le grand mix.');
     await expect(page.locator('#tPanel .tmap')).toHaveText('Réglage : canal 1, numéro 15 (d\'origine).');
     await expect(commande(page, 'lowA')).toHaveClass(/\bsite\b/);
   });
@@ -32,7 +32,7 @@ test.describe('Schéma et explications', () => {
     await expect(page.locator('#tPanel .tuse')).toContainText('Le bon moment');
     await expect(page.locator('#tPanel .tuse')).toContainText('chapitre 3, Lecture express');
     await commande(page, 'fx').click();
-    await expect(page.locator('#tPanel .tuse')).toHaveText('Utilisée dans : L\'écho out.');
+    await expect(page.locator('#tPanel .tuse')).toHaveText('Utilisée dans : L\'écho out · chapitre 4, Écho et drop, sans filet.');
     await expect(page.locator('#tPanel .tmap')).toContainText('Pas encore réglée');
   });
   test('une commande que le site ne connaît pas encore', async ({ page }) => {

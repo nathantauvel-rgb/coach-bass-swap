@@ -14,8 +14,8 @@ if (!jr || typeof jr !== 'object' || Array.isArray(jr)) jr = {};
     debut: typeof jr.debut === 'string' && JR_DAY.test(jr.debut) ? jr.debut : dayKey(),
     jours: arr(jr.jours, d => typeof d === 'string' && JR_DAY.test(d)),
     secs: Math.max(0, Math.floor(+jr.secs) || 0),
-    parties: arr(jr.parties, p => p && typeof p === 'object' && [1, 2, 3].includes(p.c) && Number.isInteger(p.n) && p.n >= 0 && p.n < (p.c === 3 ? CH3_LESSONS : BASE_LESSONS).length && [1, 2, 3].includes(p.e)),
-    clair: Object.fromEntries(Object.entries(cl).filter(([k, v]) => /^[123]-[0-6]$/.test(k) && JR_CLAIR.includes(v))),
+    parties: arr(jr.parties, p => p && typeof p === 'object' && [1, 2, 3, 4].includes(p.c) && Number.isInteger(p.n) && p.n >= 0 && p.n < lessonsOf(p.c).length && [1, 2, 3].includes(p.e)),
+    clair: Object.fromEntries(Object.entries(cl).filter(([k, v]) => /^[1234]-[0-6]$/.test(k) && JR_CLAIR.includes(v))),
     avis: arr(jr.avis, a => a && typeof a === 'object' && typeof a.d === 'string').map(a => ({ d: a.d.slice(0, 10), ecran: txt(a.ecran).slice(0, 80), bloque: txt(a.bloque), plu: txt(a.plu), note: [1, 2, 3, 4, 5].includes(a.note) ? a.note : 0 })),
     erreurs: arr(jr.erreurs, e => typeof e === 'string', 5)
   };
@@ -47,11 +47,11 @@ function navName(){
   return nav + (os ? ', ' + os : '');
 }
 function avisRapport(){
-  const L = [], lv = (c, n) => (c === 3 ? CH3_LESSONS : BASE_LESSONS)[n], max = BASE_LESSONS.length * 3;
+  const L = [], lv = (c, n) => lessonsOf(c)[n], max = BASE_LESSONS.length * 3;
   L.push(`Rapport Coach DJ du ${dayKey()}`);
   L.push(`Parcours : ${PARCOURS[parcours] ? PARCOURS[parcours].name : 'pas encore choisi'} · ${midiCount > 0 ? 'table branchée' : 'sans table (souris)'} · ${navName()}`);
   L.push(`Temps sur le site : ${Math.round(jr.secs / 60)} min, sur ${plur(jr.jours.length, 'jour', 'jours')} (première visite le ${jr.debut})`);
-  L.push(`Étoiles : chapitre 1 ${sumStars(stars)}/${max}, chapitre 2 ${sumStars(ch2Stars)}/${max}, chapitre 3 ${sumStars(ch3Stars)}/${CH3_LESSONS.length * 3} · ${$('xpTxt').textContent} · badges ${badgesWon.length}/${BADGES.length} · quiz ${quizOk.length}/${QUIZ.length}`);
+  L.push(`Étoiles : chapitre 1 ${sumStars(stars)}/${max}, chapitre 2 ${sumStars(ch2Stars)}/${max}, chapitre 3 ${sumStars(ch3Stars)}/${CH3_LESSONS.length * 3}, chapitre 4 ${sumStars(ch4Stars)}/${CH4_LESSONS.length * 3} · ${$('xpTxt').textContent} · badges ${badgesWon.length}/${BADGES.length} · quiz ${quizOk.length}/${QUIZ.length}`);
   const g = new Map();
   for (const p of jr.parties){ const k = p.c + '-' + p.n; if (!g.has(k)) g.set(k, { c: p.c, n: p.n, tries: 0, best: 0, last: 0 }); const x = g.get(k); x.tries++; x.best = Math.max(x.best, p.e); x.last = p.e; }
   for (const k of Object.keys(jr.clair)) if (!g.has(k)){ const [c, n] = k.split('-').map(Number); g.set(k, { c, n, tries: 0, best: 0, last: 0 }); }

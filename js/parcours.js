@@ -79,7 +79,7 @@ document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.addEvent
 function renderProgres(){
   const box = $('progTiles'); box.innerHTML = ''; const sk = goalStreak(), max = BASE_LESSONS.length * 3;
   const tiles = [[$('lvl').textContent, $('xpTxt').textContent], ['Chapitre 1', `${sumStars(stars)} ★ sur ${max}`], ['Chapitre 2', `${sumStars(ch2Stars)} ★ sur ${max}`],
-    ['Chapitre 3', `${sumStars(ch3Stars)} ★ sur ${CH3_LESSONS.length * 3}`], ['Série en cours', sk ? plur(sk, 'jour', 'jours') : 'aucune'], ['Meilleure série', goal.best ? plur(goal.best, 'jour', 'jours') : '—'], ['Quiz', `${quizOk.length} sur ${QUIZ.length} trouvées`]];
+    ['Chapitre 3', `${sumStars(ch3Stars)} ★ sur ${CH3_LESSONS.length * 3}`], ['Chapitre 4', `${sumStars(ch4Stars)} ★ sur ${CH4_LESSONS.length * 3}`], ['Série en cours', sk ? plur(sk, 'jour', 'jours') : 'aucune'], ['Meilleure série', goal.best ? plur(goal.best, 'jour', 'jours') : '—'], ['Quiz', `${quizOk.length} sur ${QUIZ.length} trouvées`]];
   for (const [k, v] of tiles){ const d = document.createElement('div'), a = document.createElement('span'), b = document.createElement('strong'); d.className = 'ptile'; a.textContent = k; b.textContent = v; d.append(a, b); box.appendChild(d); }
   $('progGoalTxt').textContent = `${Math.floor(goalSecs() / 60)} min sur ${goal.min} aujourd'hui. Les parties et le quiz le remplissent.`;
   renderGoal(); renderBadges();

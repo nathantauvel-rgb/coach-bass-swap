@@ -10,7 +10,7 @@ test.describe('Fichiers du site', () => {
     page.on('response', r => { if (r.url().startsWith('http://localhost') && r.status() >= 400) rates.push(r.url()); });
     const erreurs = await ouvrir(page);
     expect(await page.evaluate(() => [...document.scripts].map(s => s.getAttribute('src')))).toEqual(
-      ['erreurs', 'morceaux', 'audio', 'controles', 'niveaux', 'piste', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'table', 'avis', 'demarrage'].map(n => `js/${n}.js`));
+      ['erreurs', 'morceaux', 'audio', 'controles', 'combos', 'niveaux', 'piste', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'table', 'avis', 'demarrage'].map(n => `js/${n}.js`));
     expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
     expect(rates).toEqual([]); expect(erreurs).toEqual([]); await sansBandeau(page);
   });
@@ -135,7 +135,7 @@ test.describe('Progression et déblocages', () => {
     await expect(page.locator('.chap').nth(1)).toBeEnabled();
     await expect(page.locator('.chap').nth(2)).toBeDisabled();
     await expect(page.locator('#xpTxt')).toHaveText('140 XP');
-    await expect(page.locator('#starTot')).toHaveText('14/54');
+    await expect(page.locator('#starTot')).toHaveText('14/66');
   });
   test('13 étoiles ne suffisent pas', async ({ page }) => {
     await ouvrir(page, { stockage: { 'coach-lecons': JSON.stringify({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 1 }) } });

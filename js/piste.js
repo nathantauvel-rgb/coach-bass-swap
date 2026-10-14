@@ -42,7 +42,7 @@ function drawHighway(b){
     else { g.fillText('Préparation des formes d\'onde…', 12, yA + 28); }
   } else {
   block(16, 32, yA, COL.a, true, 'Corps'); block(32, 128, yA, COL.a, false, 'Outro');
-  if (L !== null){ if (l.bCue){ block(L, L + 160, yB, COL.b, true, 'Drop'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'Intro (avec basse)' : 'Intro'); block(L + 64, L + 160, yB, COL.b, true, 'Drop'); } }
+  if (L !== null){ if (l.bCue >= 64){ block(L, L + 160, yB, COL.b, true, 'Drop'); } else if (l.bCue){ block(L, L + 64 - l.bCue, yB, COL.b, false, 'Fin d\'intro'); block(L + 64 - l.bCue, L + 160, yB, COL.b, true, 'Drop'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'Intro (avec basse)' : 'Intro'); block(L + 64, L + 160, yB, COL.b, true, 'Drop'); } }
   else { const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, H / 2); g.stroke(); g.setLineDash([]);
     if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 30, 8), yB + 28); } }
   }

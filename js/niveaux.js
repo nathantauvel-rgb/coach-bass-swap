@@ -88,22 +88,27 @@ const CHAPTERS = [
   { n: 1, title: 'Les bases', sub: 'Guidé, un geste à la fois' },
   { n: 2, title: 'La maîtrise', sub: 'À l\'oreille, précision ×2' },
   { n: 3, title: 'Les vrais morceaux', sub: 'Formes d\'onde, breaks, voix' },
-  { n: 4, title: 'Sans filet', sub: 'Sans sync, mix harmonique', soon: true },
+  { n: 4, title: 'Les combos', sub: 'Plusieurs gestes, au demi-temps près' },
   { n: 5, title: 'La soirée', sub: 'Mini-sets enchaînés', soon: true }
 ];
 let ch3Stars = {}; try { ch3Stars = JSON.parse(localStorage.getItem('coach-ch3') || '{}') || {}; } catch (e) {}
+let ch4Stars = {}; try { ch4Stars = JSON.parse(localStorage.getItem('coach-ch4') || '{}') || {}; } catch (e) {}
+if (!ch4Stars || typeof ch4Stars !== 'object' || Array.isArray(ch4Stars)) ch4Stars = {};
 let ch3Open = false;
 if (/[?&]tout=1/.test(location.search)){ ch2Open = true; ch3Open = true; }
-const bankOf = c => c === 3 ? ch3Stars : c === 2 ? ch2Stars : stars;
-const BANK_KEY = { 1: 'coach-lecons', 2: 'coach-ch2', 3: 'coach-ch3' }, XP_PER = { 1: 10, 2: 15, 3: 20 };
+const bankOf = c => c === 4 ? ch4Stars : c === 3 ? ch3Stars : c === 2 ? ch2Stars : stars;
+const lessonsOf = n => n === 4 ? CH4_LESSONS : n === 3 ? CH3_LESSONS : BASE_LESSONS;
+const BANK_KEY = { 1: 'coach-lecons', 2: 'coach-ch2', 3: 'coach-ch3', 4: 'coach-ch4' }, XP_PER = { 1: 10, 2: 15, 3: 20, 4: 20 };
 const sumStars = b => Object.values(b || {}).reduce((s, v) => s + (+v || 0), 0);
 const ch2Unlocked = () => ch2Open || sumStars(stars) >= 14;
 const ch3Unlocked = () => ch3Open || sumStars(ch2Stars) >= 10;
+const ch4Unlocked = () => ch2Unlocked();   // les combos s'ouvrent en même temps que le chapitre 2
 if (!['house', 'techno', 'afro', 'random'].includes(styleChoice)) styleChoice = 'house';
-if (![1, 2, 3].includes(chapter)) chapter = 1;
+if (![1, 2, 3, 4].includes(chapter)) chapter = 1;
+if (chapter === 4 && !ch4Unlocked()) chapter = 1;
 if (chapter === 2 && !ch2Unlocked()) chapter = 1;
 if (chapter === 3 && !ch3Unlocked()) chapter = 1;
-if (chapter === 3) LESSONS = CH3_LESSONS;
+LESSONS = lessonsOf(chapter);
 const isAuto = k => !!(run && run.demo) || !LESSONS[li].user.includes(k);
 const clamp01 = x => Math.max(0, Math.min(1, x));
 
@@ -113,9 +118,9 @@ function renderChapters(){
   for (const c of CHAPTERS){
     if (c.soon) continue;   // les chapitres pas encore écrits ne prennent plus de place
     const b = document.createElement('button'); b.type = 'button'; b.className = 'chap'; b.setAttribute('aria-pressed', String(c.n === chapter));
-    const locked = c.soon || (c.n === 2 && !ch2Unlocked()) || (c.n === 3 && !ch3Unlocked());
+    const locked = c.soon || (c.n === 2 && !ch2Unlocked()) || (c.n === 3 && !ch3Unlocked()) || (c.n === 4 && !ch4Unlocked());
     b.disabled = locked && c.n !== chapter;
-    const sub = c.soon ? 'Bientôt' : c.n === 2 && !ch2Unlocked() ? `Verrouillé : ${sumStars(stars)}/14 ★ au chapitre 1` : c.n === 3 && !ch3Unlocked() ? `Verrouillé : ${sumStars(ch2Stars)}/10 ★ au chapitre 2` : c.sub;
+    const sub = c.soon ? 'Bientôt' : (c.n === 2 || c.n === 4) && !ch2Unlocked() ? `Verrouillé : ${sumStars(stars)}/14 ★ au chapitre 1` : c.n === 3 && !ch3Unlocked() ? `Verrouillé : ${sumStars(ch2Stars)}/10 ★ au chapitre 2` : c.sub;
     b.innerHTML = `<span class="cn">Chapitre ${c.n}</span><strong></strong><span class="cs"></span>`; b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = sub;
     b.addEventListener('click', () => { chapMenu(false); setChapter(c.n); }); bar.appendChild(b);
   }
@@ -127,15 +132,15 @@ function renderChapters(){
 function chapMenu(open){ $('chapters').hidden = !open; $('chapBtn').setAttribute('aria-expanded', String(open)); }
 $('chapBtn').addEventListener('click', () => chapMenu($('chapters').hidden));
 function setChapter(n){
-  if (run || n === chapter) return; if (n === 2 && !ch2Unlocked()) return; if (n === 3 && !ch3Unlocked()) return;
-  LESSONS = n === 3 ? CH3_LESSONS : BASE_LESSONS;
+  if (run || n === chapter) return; if (n === 2 && !ch2Unlocked()) return; if (n === 3 && !ch3Unlocked()) return; if (n === 4 && !ch4Unlocked()) return;
+  LESSONS = lessonsOf(n);
   chapter = n; try { localStorage.setItem('coach-chapitre', String(n)); } catch (e) {}
   const bank = bankOf(n), first = LESSONS.findIndex((_, i) => !(bank[i] >= 2)); selectLesson(first < 0 ? 0 : first);
 }
 function renderHud(){
-  const t1 = sumStars(stars), t2 = sumStars(ch2Stars), t3 = sumStars(ch3Stars), xp = t1 * 10 + t2 * 15 + t3 * 20 + quizXp();
+  const t1 = sumStars(stars), t2 = sumStars(ch2Stars), t3 = sumStars(ch3Stars), t4 = sumStars(ch4Stars), xp = t1 * 10 + t2 * 15 + t3 * 20 + t4 * 20 + quizXp();
   $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
-  $('starTot').textContent = (t1 + t2 + t3) + '/' + (BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3);
+  $('starTot').textContent = (t1 + t2 + t3 + t4) + '/' + (BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3 + CH4_LESSONS.length * 3);
   const bank = bankOf(chapter), map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove()); map.style.setProperty('--n', LESSONS.length);
   let lastDone = -1;
   LESSONS.forEach((l, i) => { const st = bank[i] || 0; if (st) lastDone = i;
@@ -150,7 +155,7 @@ function renderHud(){
 function styleLabel(){ if (chapter === 3) return 'House · 124 BPM'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
   return styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM'; }
 function selectLesson(i){
-  stopRun(); li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = chapter === 2 ? .5 : 1;
+  stopRun(); li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = chapter === 2 || chapter === 4 ? .5 : 1;
   $('lnum').textContent = (chapter > 1 ? `Chapitre ${chapter} · ` : '') + `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
   const lex = lexOf(l.title + ' ' + l.goal + ' ' + l.how); $('llex').hidden = !lex.length; $('llex').textContent = lex.map(([, n, d]) => n + ' : ' + d + '.').join('\n');
   for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).hidden = !l.show.includes(g);
@@ -158,9 +163,9 @@ function selectLesson(i){
   Object.assign(ctrl, l.init); applyCtrl();
   $('result').hidden = true; setStartBtn(false); $('launchB').disabled = true;
   $('cdNum').textContent = '—'; $('cdLab').textContent = ''; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
-  $('hint').textContent = chapter === 3 ? 'Chapitre 3 : plus de compte à rebours. Lis les formes d\'onde, comme dans rekordbox. La démo montre le bon moment.' : chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
-  ear = chapter === 2; $('styleSeg').hidden = chapter > 1;
-  $('modeTag').hidden = !(chapter === 2 || l.wave); $('modeTag').textContent = l.wave ? 'Lis les formes d\'onde' : 'À l\'oreille · précision ×2';
+  $('hint').textContent = chapter === 4 ? 'Chapitre 4 : plusieurs gestes d\'affilée, notés au demi-temps près. 3 étoiles seulement si tout est juste.' : chapter === 3 ? 'Chapitre 3 : plus de compte à rebours. Lis les formes d\'onde, comme dans rekordbox. La démo montre le bon moment.' : chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
+  ear = chapter === 2; $('styleSeg').hidden = chapter === 2 || chapter === 3;
+  $('modeTag').hidden = !(chapter === 2 || chapter === 4 || l.wave); $('modeTag').textContent = l.wave ? 'Lis les formes d\'onde' : chapter === 4 ? (l.noCount ? 'Sans compte à rebours · au demi-temps près' : 'Au demi-temps près') : 'À l\'oreille · précision ×2';
   if (l.wave){ waveTk = null; if (hasWorkers()) prepareCh3(l).then(tk => { if (LESSONS[li] === l && !run){ waveTk = tk; drawHighway(START); } }).catch(() => {}); } else waveTk = null; $('styleTag').textContent = styleLabel();
   $('stage').classList.remove('ear');
   chooseSongs();
@@ -192,7 +197,7 @@ function startRun(demo = false){
     const l = LESSONS[li]; Object.assign(ctrl, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
-    const earRun = (chapter === 2 || !!(prac && prac.ear)) && !demo;
+    const earRun = (chapter === 2 || !!(prac && prac.ear) || !!LESSONS[li].noCount) && !demo;
     run = { gT: performance.now(), t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: earRun, ch: chapter };
     $('stage').classList.toggle('ear', earRun); $('stage').classList.add('running');
     const st0 = $('stage').getBoundingClientRect(); if (st0.top < -4 || st0.top > 40) window.scrollTo({ top: window.scrollY + st0.top - 8, behavior: REDUCED ? 'auto' : 'smooth' });
@@ -240,6 +245,7 @@ function toggleEcho(){
     else { pop(e < 0 ? 'Écho trop tôt' : 'Écho trop tard', 'mid'); run.status.ECHO = 'mid'; } }
 }
 function ideal(k, b, i = li){
+  if (LESSONS[i].c) return ideal4(k, b, LESSONS[i]);   // chapitre 4 (combos.js)
   const kd = LESSONS[i].kind, r = (x, a, d) => clamp01((x - a) / d), L3 = LESSONS[i];
   if (L3.wave){
     if (k === 'faderB') return kd === 'vocal' ? r(b, 32, 16) : r(b, L3.launchBeat, kd === 'break' ? 16 : 8);
@@ -273,6 +279,7 @@ function automate(b){
   if (LESSONS[li].kind === 'moment' && L !== null){ set('faderB', clamp01((b - L) / 16)); set('faderA', 1 - clamp01((b - (L + 48)) / 16)); }
   if (LESSONS[li].kind === 'swap'){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 80) / 16)); }
   const KW = LESSONS[li];
+  if (KW.c){ for (const k of ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA']) set(k, ideal4(k, b, KW)); if (KW.c.echo && echoOn && b > 72) setEcho(false); }
   if (KW.wave){ if (KW.kind === 'vocal'){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 80) / 16)); }
     else if (L !== null) set('faderB', clamp01((b - L) / (KW.kind === 'break' ? 16 : 8))); }
   if (LESSONS[li].kind === 'filter'){ set('faderB', clamp01((b - 32) / 16)); set('faderA', 1 - clamp01((b - 96) / 4)); }
@@ -281,6 +288,7 @@ function automate(b){
 }
 function liveJudge(b){
   const s = run.status, p = run.popped;
+  if (LESSONS[li].c) judge4(b);   // chapitre 4 (combos.js)
   if (['swap', 'full'].includes(LESSONS[li].kind)){
     if (p.kill == null && b >= 40 && ctrl.lowA < .12) p.kill = b;
     if (p.open == null && b >= 40 && ctrl.lowB > .4) p.open = b;
@@ -430,13 +438,15 @@ function finish(){
   if (LESSONS[li].kind === 'filter') items = evalFilter(r.frames);
   if (LESSONS[li].kind === 'echo') items = evalEcho(r.frames, r.echoAt);
   if (LESSONS[li].kind === 'cut') items = [evalLaunch(r.launch, 64)].concat(evalCut(r.frames, r.launch));
-  const score = items.reduce((s, x) => s + x[2], 0) / items.length, st = score >= .9 ? 3 : score >= .55 ? 2 : 1;
+  if (LESSONS[li].c) items = eval4(r);
+  // Chapitre 4 : 3 étoiles seulement si tous les gestes sont justes
+  const score = items.reduce((s, x) => s + x[2], 0) / items.length, st = LESSONS[li].c ? (score >= .999 ? 3 : score >= .6 ? 2 : 1) : score >= .9 ? 3 : score >= .55 ? 2 : 1;
   const wasOpen = ch2Unlocked(), was3 = ch3Unlocked(), bank = bankOf(r.ch), before = bank[li] || 0;
   if (!prac){ bank[li] = Math.max(before, st); try { localStorage.setItem(BANK_KEY[r.ch], JSON.stringify(bank)); } catch (e) {} }
   const rs = $('rStars'); rs.innerHTML = '';
   for (let i = 0; i < 3; i++){ const sp = document.createElement('span'); sp.textContent = '★'; if (i < st) sp.className = 'on'; sp.style.animationDelay = (i * .18) + 's'; rs.appendChild(sp); }
   $('rTitle').textContent = (r.ch > 1 ? `Chapitre ${r.ch} : ` : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
-  const gained = (bank[li] - before) * XP_PER[r.ch]; $('rGain').textContent = (gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`) + (!wasOpen && ch2Unlocked() ? ' · Chapitre 2 débloqué !' : '') + (!was3 && ch3Unlocked() ? ' · Chapitre 3 débloqué !' : '');
+  const gained = (bank[li] - before) * XP_PER[r.ch]; $('rGain').textContent = (gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`) + (!wasOpen && ch2Unlocked() ? ' · Chapitres 2 et 4 débloqués !' : '') + (!was3 && ch3Unlocked() ? ' · Chapitre 3 débloqué !' : '');
   const ul = $('rDetails'); ul.innerHTML = ''; for (const [lvl, txt] of items){ const x = document.createElement('li'); x.className = lvl; x.textContent = txt; ul.appendChild(x); }
   $('next').hidden = li >= LESSONS.length - 1;
   $('result').hidden = false; $('retry').focus({ preventScroll: true });
