@@ -75,15 +75,38 @@ function rbMissionList(a, b){
   ];
 }
 function rbSet(list, name){
-  rbLib = list.slice(0, RB_MAX); rbName = name || ''; rbSel = null; rbChoosing = false; rbShowAll = false; rbMis.pair = ''; rbMis.done = {}; rbSaveMis(); rbAll = null; rbStale = true; rbPage = 0; $('rbFind').value = ''; $('rbMsg').textContent = '';
+  rbLib = list.slice(0, RB_MAX); rbName = name || ''; rbSel = null; rbChoosing = false; rbShowAll = false; rbSug = -1; rbMis.pair = ''; rbMis.done = {}; rbSaveMis(); rbAll = null; rbStale = true; rbPage = 0; $('rbFind').value = ''; $('rbMsg').textContent = '';
   try { if (rbLib.length) localStorage.setItem(RB_KEY, JSON.stringify({ n: rbName, t: rbLib })); else localStorage.removeItem(RB_KEY); }
   catch (e) { $('rbMsg').textContent = 'Ta collection est trop grande pour être gardée en mémoire : il faudra la réimporter à ta prochaine visite.'; }
   renderReal();
 }
-// Une étape à la fois : la liste des paires se replie une fois la paire choisie (rbChoosing la rouvre),
-// et une seule mission est affichée, sauf si on demande à les voir toutes (rbShowAll)
-let rbChoosing = false, rbShowAll = false;
-function rbChoose(){ rbChoosing = true; rbShowAll = false; renderReal(); $('rbPairTitle').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' }); }
+// Une étape à la fois. Sans paire choisie, une seule paire est proposée en grand (rbSug, « Ta paire du jour ») ;
+// la liste complète s'ouvre avec « Choisir une paire moi-même » (rbChoosing). Une fois la paire choisie, ses
+// missions s'affichent une par une, sauf si on demande à les voir toutes (rbShowAll).
+let rbChoosing = false, rbShowAll = false, rbSug = -1;
+const rbScroll = id => $(id).scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+function rbChoose(){ rbChoosing = true; rbShowAll = false; renderReal(); rbScroll('rbPairPick'); }
+// Choisit une paire : ses missions repartent de zéro si c'en est une nouvelle
+function rbPickPair(i, j){ const k = i + '|' + j; if (rbMis.pair !== k){ rbMis.pair = k; rbMis.done = {}; rbSaveMis(); } rbSel = [i, j]; rbChoosing = false; rbShowAll = false; renderReal(); rbScroll('rbMisBox'); }
+// Paire suivante proposée : on laisse la paire en cours et on revient à la proposition
+function rbNextSug(){ rbSel = null; rbMis.pair = ''; rbMis.done = {}; rbSaveMis(); rbChoosing = false; rbSug = rbPairs.length ? (rbSug + 1) % rbPairs.length : 0; renderReal(); rbScroll('rbHero'); }
+// Pourquoi la paire marche, en trois pastilles : ok (vert), mid (jaune)
+function rbChips(a, b){
+  const d = Math.abs(b[3] / a[3] - 1) * 100, rel = rbRel(a[4], b[4]), ga = (a[2] || '').toLowerCase(), gb = (b[2] || '').toLowerCase();
+  return [
+    ['Tempo', d <= .5 ? ['ok', 'même tempo'] : d <= 3 ? ['ok', 'tempos proches'] : ['mid', 'à ajuster'], `${rbBpm(a[3])} et ${rbBpm(b[3])} BPM`],
+    ['Tonalité', { same: ['ok', 'la même'], adj: ['ok', 'voisines'], rel: ['ok', 'cousines'], boost: ['mid', 'montée d’énergie'] }[rel] || ['mid', 'à écouter'], `${a[4]} et ${b[4]}`],
+    ['Style', ga && ga === gb ? ['ok', 'le même'] : ga && gb ? ['mid', 'différents'] : ['mid', 'inconnu'], ga && gb ? `${a[2]} et ${b[2]}` : 'Genre absent de rekordbox']
+  ];
+}
+function rbHero(i, j, chosen){
+  const a = rbLib[i], b = rbLib[j];
+  $('rbKick').textContent = chosen ? 'Ta paire' : 'Ta paire du jour';
+  for (const [t, p] of [[a, 'A'], [b, 'B']]){ $('rb' + p + 'T').textContent = t[0]; $('rb' + p + 'A').textContent = t[1] || 'Artiste inconnu'; $('rb' + p + 'M').textContent = `${rbBpm(t[3])} BPM · ${t[4]}`; }
+  const box = $('rbChips'); box.innerHTML = '';
+  for (const [name, [lvl, txt], tip] of rbChips(a, b)){ const c = document.createElement('span'), k = document.createElement('b'); c.className = 'rbchip ' + lvl; c.title = tip; k.textContent = (lvl === 'ok' ? '✓ ' : '~ ') + name; c.append(k, document.createTextNode(' · ' + txt)); box.appendChild(c); }
+  $('rbGo').hidden = chosen; $('rbNext').hidden = chosen; $('rbPairChange').hidden = !chosen; $('rbOwn').hidden = chosen;
+}
 function rbCheck(id, on, list){
   if (on) rbMis.done[id] = 1; else delete rbMis.done[id];
   if (list.every(m => rbMis.done[m[0]]) && !rbMis.done.ok){ rbMis.done.ok = 1; rbMis.total++; confetti(120); badgeSync(); }
@@ -93,7 +116,7 @@ function renderMissions(){
   const box = $('rbMisBox'); box.hidden = !rbSel || rbChoosing; if (box.hidden) return;
   const a = rbLib[rbSel[0]], b = rbLib[rbSel[1]], list = rbMissionList(a, b), ol = $('rbMissions'); ol.innerHTML = '';
   const cur = list.findIndex(m => !rbMis.done[m[0]]), fini = cur < 0;
-  $('rbMisSub').textContent = fini ? `Les ${list.length} missions sont faites avec « ${a[0]} » puis « ${b[0]} ».` : `Mission ${cur + 1} sur ${list.length}. Fais-la sur ta table avec « ${a[0]} » puis « ${b[0]} », et appuie sur « C'est fait » quand c'est propre.`;
+  $('rbMisSub').textContent = fini ? `Les ${list.length} missions sont faites avec « ${a[0]} » puis « ${b[0]} ».` : `Mission ${cur + 1} sur ${list.length}. Fais-la sur ta table, puis appuie sur « C'est fait » quand c'est propre.`;
   const dots = $('rbDots'); dots.innerHTML = '';
   list.forEach((m, i) => { const d = document.createElement('span'); d.className = rbMis.done[m[0]] ? 'done' : i === cur ? 'now' : ''; dots.appendChild(d); });
   list.forEach(([id, title, text], i) => { const liEl = document.createElement('li'), lab = document.createElement('label'), cb = document.createElement('input'), d = document.createElement('div'), st = document.createElement('strong'), sp = document.createElement('span');
@@ -107,11 +130,16 @@ function renderMissions(){
 }
 function renderReal(){
   const has = rbLib.length > 0; $('rbEmpty').hidden = has; $('rbFull').hidden = !has; if (!has) return;
-  const usable = rbLib.filter(t => t[3] && t[4]).length, pick = !rbSel || rbChoosing;
-  $('rbPairPick').hidden = !pick; $('rbPairSum').hidden = pick; $('rbPairTitle').textContent = pick ? '2. Choisis une paire de morceaux' : '2. Ta paire';
-  if (rbSel){ const a = rbLib[rbSel[0]], b = rbLib[rbSel[1]]; $('rbPairTxt').textContent = `« ${a[0]} » → « ${b[0]} » · ${rbWhy(a, b)}`; }
+  const usable = rbLib.filter(t => t[3] && t[4]).length;
   $('rbSum').textContent = plur(rbLib.length, 'morceau', 'morceaux') + (rbName ? ' · ' + rbName : '') + (usable < rbLib.length ? ` · ${usable} avec tempo et tonalité` : '');
   if (rbStale){ const f = $('rbFind').value.trim(); if (f) rbPairs = rbBuild(f); else rbPairs = rbAll = rbAll || rbBuild(''); rbStale = false; rbPage = 0; }
+  // La paire du jour : tirée de la date parmi les 10 meilleures, puis « Une autre paire » passe à la suivante
+  const top = rbAll || rbPairs;
+  if (rbSug < 0 && top.length){ let h = 7; for (const c of dayKey()) h = (h * 31 + c.charCodeAt(0)) >>> 0; rbSug = h % Math.min(10, top.length); }
+  const sug = top[rbSug % Math.max(1, top.length)];
+  $('rbHero').hidden = rbChoosing || (!rbSel && !sug); $('rbPairPick').hidden = !rbChoosing && (!!rbSel || !!sug);
+  if (rbSel) rbHero(rbSel[0], rbSel[1], true); else if (sug) rbHero(sug[1], sug[2], false);
+  $('rbBack').hidden = !!rbSel || !sug;
   const pages = Math.max(1, Math.ceil(rbPairs.length / RB_PER)); if (rbPage >= pages) rbPage = 0;
   const box = $('rbPairs'); box.innerHTML = '';
   const shown = rbPairs.slice(rbPage * RB_PER, rbPage * RB_PER + RB_PER);
@@ -121,7 +149,7 @@ function renderReal(){
     for (const t of [a, b]){ const pt = document.createElement('span'), nm = document.createElement('b'), ar = document.createElement('span'); pt.className = 'pt'; nm.textContent = t[0]; ar.textContent = t[1] || 'Artiste inconnu'; pt.append(nm, ar);
       if (t === b){ const arrow = document.createElement('span'); arrow.className = 'ar'; arrow.textContent = '→'; arrow.setAttribute('aria-hidden', 'true'); btn.appendChild(arrow); } btn.appendChild(pt); }
     const why = document.createElement('span'); why.className = 'why'; if (c[0] >= 85){ const easy = document.createElement('b'); easy.textContent = 'Facile'; why.appendChild(easy); } why.appendChild(document.createTextNode(rbWhy(a, b))); btn.appendChild(why);
-    btn.addEventListener('click', () => { const k = c[1] + '|' + c[2]; if (rbMis.pair !== k){ rbMis.pair = k; rbMis.done = {}; rbSaveMis(); } rbSel = [c[1], c[2]]; rbChoosing = false; rbShowAll = false; renderReal(); $('rbMisBox').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' }); });
+    btn.addEventListener('click', () => rbPickPair(c[1], c[2]));
     box.appendChild(btn); }
   if (!shown.length){ const p = document.createElement('p'); p.className = 'subnote'; p.textContent = $('rbFind').value.trim() ? 'Aucune paire trouvée pour cette recherche.' : 'Aucune paire trouvée. Vérifie que rekordbox a bien analysé tes morceaux (tempo et tonalité), puis réexporte ta collection.'; box.appendChild(p); }
   $('rbMore').hidden = pages < 2;
@@ -132,8 +160,12 @@ $('rbChange').addEventListener('click', () => $('rbFile').click());
 $('rbDemo').addEventListener('click', () => rbSet(RB_DEMO.map(rbClean), 'collection d\'exemple'));
 $('rbClear').addEventListener('click', () => rbSet([], ''));
 $('rbMore').addEventListener('click', () => { rbPage++; renderReal(); });
+$('rbGo').addEventListener('click', () => { const top = rbAll || rbPairs, sug = top[rbSug % Math.max(1, top.length)]; if (sug) rbPickPair(sug[1], sug[2]); });
+$('rbNext').addEventListener('click', rbNextSug);
+$('rbOwn').addEventListener('click', rbChoose);
+$('rbBack').addEventListener('click', () => { rbChoosing = false; renderReal(); rbScroll('rbHero'); });
 $('rbPairChange').addEventListener('click', rbChoose);
-$('rbAgain').addEventListener('click', rbChoose);
+$('rbAgain').addEventListener('click', rbNextSug);
 $('rbMisAll').addEventListener('click', () => { rbShowAll = !rbShowAll; renderMissions(); });
 $('rbFind').addEventListener('input', () => { rbStale = true; renderReal(); });
 $('rbFile').addEventListener('change', async e => {

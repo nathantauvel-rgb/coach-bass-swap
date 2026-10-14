@@ -11,7 +11,7 @@ const ECRANS = [
   ['03-niveau', VENU, 'apprendre', async p => { await p.locator('.node').nth(2).click(); }],
   ['04-guide', {}, 'apprendre', null],
   ['05-entrainer', VENU, 'entrainer', null],
-  ['06-vrai', VENU, 'vrai', async p => { await p.locator('#rbDemo').click(); await p.locator('#rbPairs .duo').first().click(); await p.locator('#rbMissions input').first().check(); }],
+  ['06-vrai', VENU, 'vrai', async p => { await p.locator('#rbDemo').click(); await p.locator('#rbGo').click(); await p.locator('#rbMissions .rbok').click(); }],
   ['07-table-branchee', VENU, 'apprendre', async p => { await p.locator('.node').nth(3).click(); await p.evaluate(() => { window.__midi.envoyer(0xB0, 19, 127); window.__midi.envoyer(0xB1, 19, 64); window.__midi.envoyer(0xB0, 15, 64); }); }, true],
   ['15-progres', VENU, 'progres', null],
   ['17-ralenti', { 'coach-guide-vu': '1', 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 }), 'coach-chapitre': '4' }, 'apprendre', async p => { await p.locator('.node').nth(1).click(); await p.evaluate(() => { $('rStars').innerHTML = '<span class="on">★</span><span>★</span><span>★</span>'; $('rTitle').textContent = 'Pas encore. Lis le conseil et rejoue.'; $('rDetails').innerHTML = '<li class="bad">Swap à 2,5 temps de la phrase.</li>'; $('result').hidden = false; slowOffer(1); slowOffer(1); }); }],

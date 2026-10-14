@@ -677,6 +677,36 @@ details.cmp[open] summary{margin-bottom:8px}
 .missions li.now span{font-size:16px;color:var(--fg)}
 .rbok{margin-left:52px;font-size:16px;padding:10px 24px}
 .rbmis-row{margin-top:14px}
+/* Lot 17 : « Passer au vrai » visuel (paire du jour, deux platines, trois pastilles) */
+.linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;font-size:14px;padding:6px 4px}
+.linkbtn:hover{color:var(--fg)}
+.rbempty .lead{max-width:46ch}
+.rbsteps{list-style:none;margin:6px 0 24px;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.rbsteps li{background:var(--panel-2);border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.rbsteps strong{font-family:var(--display);font-weight:700;font-size:17px}
+.rbsteps li>span:last-child{font-size:14px;color:var(--muted)}
+.rbn{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--ink);font-weight:800;margin-bottom:6px}
+.rbtop{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;margin-bottom:14px}
+.rbtop .rbsum{margin:0 auto 0 0;color:var(--muted);font-weight:600}
+.rbhero{background:var(--panel-2);border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
+.rbdecks{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:center;width:100%}
+.rbdeck{display:flex;gap:14px;align-items:center;background:var(--panel);border-radius:22px;padding:16px;min-width:0}
+.rbdeck>div{display:flex;flex-direction:column;min-width:0}
+.rbdeck strong{font-family:var(--display);font-weight:700;font-size:20px;line-height:1.2;overflow-wrap:anywhere}
+.rbside{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.rba .rbside{color:var(--a)}.rbb .rbside{color:var(--b)}
+.rbart{color:var(--muted);font-size:14px}
+.rbmeta{margin-top:6px;font-size:13px;font-weight:600;color:var(--fg)}
+.rbdisc{flex:none;width:56px;height:56px;border-radius:50%;background:repeating-radial-gradient(circle,var(--panel-2) 0 2px,var(--bg) 2px 4px);position:relative;box-shadow:inset 0 0 0 3px var(--c)}
+.rbdisc::after{content:"";position:absolute;inset:20px;border-radius:50%;background:var(--c)}
+.rba .rbdisc{--c:var(--a)}.rbb .rbdisc{--c:var(--b)}
+.rbto{font-size:26px;color:var(--muted)}
+.rbchips{display:flex;gap:8px;flex-wrap:wrap}
+.rbchip{border-radius:999px;padding:6px 12px;font-size:14px;background:var(--panel);color:var(--muted)}
+.rbchip b{font-weight:700}
+.rbchip.ok b{color:var(--ok)}
+.rbchip.mid b{color:var(--mid)}
+@media (max-width:760px){.rbsteps{grid-template-columns:1fr}.rbdecks{grid-template-columns:1fr}.rbto{justify-self:center;transform:rotate(90deg)}}
 .page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
 .page-note a{color:var(--xp);font-weight:700}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}

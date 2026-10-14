@@ -131,36 +131,44 @@
 
   <div class="view" id="vReal" hidden>
     <section class="page">
-      <span class="lnum">Étape 3</span>
-      <h1>Passer au vrai</h1>
-      <p class="lead">Ta musique, ta table, rekordbox : le site te prépare, et tu mixes pour de vrai.</p>
       <input type="file" id="rbFile" accept=".xml,text/xml,application/xml" hidden>
-      <div id="rbEmpty">
-        <h2 class="sub">1. Importe ta collection rekordbox</h2>
-        <ol class="howlist">
-          <li>Dans rekordbox, ouvre le menu <b>Fichier</b>, puis <b>Exporter la collection au format xml</b>.</li>
-          <li>Enregistre le fichier, puis choisis-le ici.</li>
+      <div id="rbEmpty" class="rbempty">
+        <span class="lnum">Passer au vrai</span>
+        <h1>Mixe ta propre musique</h1>
+        <p class="lead">Le site lit ta collection rekordbox et te trouve deux morceaux qui s'enchaînent bien. Toi, tu fais la transition sur ta table.</p>
+        <ol class="rbsteps">
+          <li><span class="rbn">1</span><strong>Exporte ta collection</strong><span>Dans rekordbox : menu Fichier, puis « Exporter la collection au format xml ».</span></li>
+          <li><span class="rbn">2</span><strong>Choisis le fichier ici</strong><span>Rien n'est envoyé : tout reste sur ton ordinateur.</span></li>
+          <li><span class="rbn">3</span><strong>Reçois ta paire</strong><span>Deux de tes morceaux qui vont ensemble, et des missions à faire dans rekordbox.</span></li>
         </ol>
-        <div class="rbrow"><button type="button" class="cta" id="rbPick">Choisir mon fichier rekordbox</button><button type="button" class="ghost" id="rbDemo">Essayer avec une collection d'exemple</button></div>
-        <p class="page-note">Le site lit seulement le titre, l'artiste, le genre, le tempo et la tonalité de tes morceaux. Rien n'est envoyé : tout reste sur ton ordinateur.</p>
+        <div class="rbrow"><button type="button" class="cta" id="rbPick">Choisir mon fichier rekordbox</button><button type="button" class="linkbtn" id="rbDemo">Essayer avec des morceaux d'exemple</button></div>
       </div>
       <div id="rbFull" hidden>
-        <div class="rbhead"><p class="rbsum" id="rbSum"></p><div class="rbrow"><button type="button" class="ghost" id="rbChange">Changer de fichier</button><button type="button" class="ghost" id="rbClear">Retirer la collection</button></div></div>
-        <h2 class="sub" id="rbPairTitle">2. Choisis une paire de morceaux</h2>
-        <div id="rbPairPick">
-          <p class="subnote">Ces morceaux de ta collection s'enchaînent bien : tempos proches, tonalités qui vont ensemble.</p>
+        <div class="rbtop"><p class="rbsum" id="rbSum"></p><button type="button" class="linkbtn" id="rbChange">Changer de fichier</button><button type="button" class="linkbtn" id="rbClear">Retirer</button></div>
+        <div class="rbhero" id="rbHero">
+          <span class="lnum" id="rbKick">Ta paire du jour</span>
+          <div class="rbdecks">
+            <div class="rbdeck rba"><span class="rbdisc" aria-hidden="true"></span><div><span class="rbside">Platine A</span><strong id="rbAT"></strong><span class="rbart" id="rbAA"></span><span class="rbmeta" id="rbAM"></span></div></div>
+            <span class="rbto" aria-hidden="true">→</span>
+            <div class="rbdeck rbb"><span class="rbdisc" aria-hidden="true"></span><div><span class="rbside">Platine B</span><strong id="rbBT"></strong><span class="rbart" id="rbBA"></span><span class="rbmeta" id="rbBM"></span></div></div>
+          </div>
+          <div class="rbchips" id="rbChips"></div>
+          <div class="rbrow"><button type="button" class="cta" id="rbGo">C'est parti</button><button type="button" class="ghost" id="rbNext">Une autre paire</button><button type="button" class="ghost" id="rbPairChange" hidden>Changer de paire</button></div>
+          <button type="button" class="linkbtn" id="rbOwn">Choisir une paire moi-même</button>
+        </div>
+        <div id="rbPairPick" hidden>
+          <div class="path-head"><h2 class="sub">Choisis ta paire</h2><button type="button" class="linkbtn" id="rbBack">Revenir à la paire proposée</button></div>
           <input type="search" class="rbfind" id="rbFind" placeholder="Chercher un morceau ou un artiste" aria-label="Chercher un morceau ou un artiste">
           <div class="duos" id="rbPairs"></div>
           <button type="button" class="ghost" id="rbMore">Voir d'autres paires</button>
         </div>
-        <div class="rbhead" id="rbPairSum" hidden><p class="rbsum" id="rbPairTxt"></p><div class="rbrow"><button type="button" class="ghost" id="rbPairChange">Changer de paire</button></div></div>
         <div id="rbMisBox" hidden>
-          <h2 class="sub">3. Tes missions dans rekordbox</h2>
+          <h2 class="sub">Tes missions dans rekordbox</h2>
           <p class="subnote" id="rbMisSub"></p>
           <div class="rbdots" id="rbDots" aria-hidden="true"></div>
           <ol class="missions" id="rbMissions"></ol>
           <p class="rbdone" id="rbDone" hidden></p>
-          <div class="rbrow rbmis-row"><button type="button" class="cta" id="rbAgain" hidden>Choisir une autre paire</button><button type="button" class="ghost" id="rbMisAll">Voir toutes les missions</button></div>
+          <div class="rbrow rbmis-row"><button type="button" class="cta" id="rbAgain" hidden>Une autre paire</button><button type="button" class="ghost" id="rbMisAll">Voir toutes les missions</button></div>
         </div>
       </div>
       <p class="rbmsg" id="rbMsg" role="status"></p>

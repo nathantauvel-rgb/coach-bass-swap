@@ -32,7 +32,7 @@ const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-
   // 2. L'accueil : la prochaine étape et l'objectif du jour
   p = await page('accueil'); await shot(p, 'accueil.jpg', '.hero'); await p.context().close();
   // 3. Passer au vrai : une paire de la collection d'exemple et ses missions
-  p = await page('vrai'); await p.locator('#rbDemo').click(); await p.locator('#rbPairs .duo').first().click(); await p.locator('#rbMissions input').first().check(); await p.waitForTimeout(400);
+  p = await page('vrai'); await p.locator('#rbDemo').click(); await p.locator('#rbGo').click(); await p.locator('#rbMissions .rbok').click(); await p.waitForTimeout(400);
   await shot(p, 'vrai.jpg', '#rbFull', 640); await p.context().close();
   await b.close(); if (srv) srv.kill();
 })();

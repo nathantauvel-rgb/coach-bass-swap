@@ -198,6 +198,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   jaune : étoiles. Images de la présentation refaites. Contraste contrôlé, 174 tests verts.
 - **Lot 16 publié le 15 oct. 2026.** Bande « Les parties d'un morceau » du guide laissée orange (couleurs du
   morceau A) : à changer si l'utilisateur le demande.
+- **Lot 17 (15 oct. 2026)** : branche `lot-17-vrai-visuel`, non publiée. Demande de l'utilisateur : « Passer au vrai »
+  mal organisé, pas visuel, a l'air compliqué. Avant l'import : « Mixe ta propre musique », 3 étapes
+  (`.rbsteps`), un gros bouton, l'exemple en petit lien. Après : **une seule paire en grand** (`#rbHero`,
+  « Ta paire du jour », tirée de la date parmi les 10 meilleures, `rbSug`), deux platines dessinées A/B,
+  trois pastilles Tempo / Tonalité / Style (`rbChips`), boutons « C'est parti » (`rbPickPair`) et « Une autre
+  paire » (`rbNextSug`) ; la liste complète et la recherche sont derrière « Choisir une paire moi-même »
+  (`#rbPairPick`, `rbChoosing`). Missions inchangées (une à la fois). Calcul des paires et textes des
+  missions inchangés. Prévu ensuite : bouton « Jouer cette paire ici » avec les fichiers de l'utilisateur
+  (essai « Ta musique » : import MP3 + grille rekordbox). 179 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
