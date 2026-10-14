@@ -68,7 +68,7 @@ function avisRapport(){
 
 /* ---------- La fenêtre « Mon avis » ---------- */
 let avis = null;   // fenêtre ouverte : { back, note }
-const SCREEN_NAME = { accueil: 'Accueil', apprendre: 'Apprendre', entrainer: 'S\'entraîner', vrai: 'Passer au vrai', table: 'Ma table' };
+const SCREEN_NAME = { accueil: 'Accueil', apprendre: 'Apprendre', entrainer: 'S\'entraîner', vrai: 'Passer au vrai', table: 'Ma table', progres: 'Mes progrès' };
 const avisScreen = () => (SCREEN_NAME[view] || 'Accueil') + (view === 'apprendre' ? ' · ' + (prac ? 'entraînement, ' : '') + LESSONS[li].title : '');
 function avisSum(){ $('avSum').textContent = `Il contient ${plur(jr.avis.length, 'avis', 'avis')}, ${plur(jr.parties.length, 'partie jouée', 'parties jouées')} et le temps passé sur le site. Rien n'est envoyé sans toi.`; }
 function avisMsg(t){ const m = $('avMsg'); m.textContent = t; m.hidden = !t; }

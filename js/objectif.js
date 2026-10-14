@@ -42,7 +42,7 @@ function renderGoal(){
   $('goalFill').style.strokeDashoffset = String(169.6 * (1 - p)); $('homeGoal').classList.toggle('done', done);
   $('goalTitle').textContent = done ? 'Objectif du jour atteint !' : `${mins} min sur ${goal.min} aujourd'hui`;
   $('goalSub').textContent = sk ? `Série de ${plur(sk, 'jour', 'jours')}` + (done ? '. Reviens demain pour la continuer.' : ' : atteins ton objectif aujourd\'hui pour la garder.') : 'Atteins ton objectif chaque jour pour lancer une série.';
-  document.querySelectorAll('#homeGoal [data-goal]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.goal === goal.min)));
+  document.querySelectorAll('#progGoalSet [data-goal]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.goal === goal.min)));
 }
 // Ligne de la carte de résultat (appelée par finish)
 function goalNote(){
@@ -51,4 +51,4 @@ function goalNote(){
   e.textContent = goalFresh ? `Objectif du jour atteint ! Série de ${plur(goalStreak(), 'jour', 'jours')}.` : goalDone() ? `Objectif du jour fait · série de ${plur(goalStreak(), 'jour', 'jours')}` : `Encore ${left} min pour ton objectif du jour`;
   goalFresh = false;
 }
-document.querySelectorAll('#homeGoal [data-goal]').forEach(b => b.addEventListener('click', () => goalSet(+b.dataset.goal)));
+document.querySelectorAll('#progGoalSet [data-goal]').forEach(b => b.addEventListener('click', () => { goalSet(+b.dataset.goal); renderProgres(); }));

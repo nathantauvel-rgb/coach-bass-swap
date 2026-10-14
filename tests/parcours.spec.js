@@ -107,6 +107,7 @@ test.describe('Prochaine étape', () => {
 test.describe('Changer de parcours', () => {
   test('le lien remontre la question, le parcours actuel est marqué, la progression est gardée', async ({ page }) => {
     await accueil(page, { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2 }) });
+    await page.locator('#pathSum').click();
     await page.locator('#homeChange').click();
     await expect(page.locator('#homeChoice')).toBeVisible();
     await expect(page.locator('[data-parcours=debut]')).toHaveAttribute('aria-pressed', 'true');

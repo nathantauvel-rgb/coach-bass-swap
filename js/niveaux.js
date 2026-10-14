@@ -107,18 +107,23 @@ const clamp01 = x => Math.max(0, Math.min(1, x));
 
 function renderChapters(){
   const bar = $('chapters'); bar.innerHTML = '';
+  const cur = CHAPTERS.find(c => c.n === chapter); $('chapBtn').textContent = `Chapitre ${chapter} · ${cur.title}`;
   for (const c of CHAPTERS){
+    if (c.soon) continue;   // les chapitres pas encore écrits ne prennent plus de place
     const b = document.createElement('button'); b.type = 'button'; b.className = 'chap'; b.setAttribute('aria-pressed', String(c.n === chapter));
     const locked = c.soon || (c.n === 2 && !ch2Unlocked()) || (c.n === 3 && !ch3Unlocked());
     b.disabled = locked && c.n !== chapter;
     const sub = c.soon ? 'Bientôt' : c.n === 2 && !ch2Unlocked() ? `Verrouillé : ${sumStars(stars)}/14 ★ au chapitre 1` : c.n === 3 && !ch3Unlocked() ? `Verrouillé : ${sumStars(ch2Stars)}/10 ★ au chapitre 2` : c.sub;
     b.innerHTML = `<span class="cn">Chapitre ${c.n}</span><strong></strong><span class="cs"></span>`; b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = sub;
-    b.addEventListener('click', () => setChapter(c.n)); bar.appendChild(b);
+    b.addEventListener('click', () => { chapMenu(false); setChapter(c.n); }); bar.appendChild(b);
   }
   if (!ch2Unlocked() && parcours !== 'debut'){ const t = document.createElement('button'); t.type = 'button'; t.className = 'chap test';
     t.innerHTML = '<span class="cn">Tu mixes déjà ?</span><strong>Test de placement</strong><span class="cs">3 épreuves pour sauter les bases</span>';
-    t.addEventListener('click', startPlacement); bar.appendChild(t); }
+    t.addEventListener('click', () => { chapMenu(false); startPlacement(); }); bar.appendChild(t); }
 }
+// La liste des chapitres s'ouvre sous le bouton « Chapitre N · titre »
+function chapMenu(open){ $('chapters').hidden = !open; $('chapBtn').setAttribute('aria-expanded', String(open)); }
+$('chapBtn').addEventListener('click', () => chapMenu($('chapters').hidden));
 function setChapter(n){
   if (run || n === chapter) return; if (n === 2 && !ch2Unlocked()) return; if (n === 3 && !ch3Unlocked()) return;
   LESSONS = n === 3 ? CH3_LESSONS : BASE_LESSONS;

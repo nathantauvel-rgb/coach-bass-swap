@@ -62,6 +62,7 @@ function renderHome(){
   $('homeLead').textContent = st ? st.text : 'Garde la main : un défi par jour, et de nouvelles paires de morceaux dans rekordbox.';
   $('homeCta').textContent = st ? st.cta() : 'Faire le défi du jour';
   renderGoal();
+  const n = PARCOURS[parcours].stages.indexOf(cur); $('pathSum').textContent = cur ? `Voir tout mon parcours · étape ${n + 1} sur ${PARCOURS[parcours].stages.length}` : 'Voir tout mon parcours · terminé';
   $('homePathName').textContent = PARCOURS[parcours].name;
   const ol = $('homeStages'); ol.innerHTML = '';
   PARCOURS[parcours].stages.forEach((id, n) => { const s = STAGES[id], done = s.done(), now = id === cur;
@@ -70,8 +71,16 @@ function renderHome(){
     num.className = 'num'; num.textContent = done ? '✓' : String(n + 1); t.textContent = s.title; d.textContent = s.text;
     tag.className = 'sp' + (done || now ? '' : ' soon'); tag.textContent = done ? 'Fait' : now ? (s.prog ? s.prog() : 'En cours') : 'À venir';
     box.append(t, d); liEl.append(num, box, tag); ol.appendChild(liEl); });
-  renderBadges();
 }
 $('homeCta').addEventListener('click', () => { const st = STAGES[nextStage()]; if (st) st.go(); else location.hash = '#entrainer'; });
 $('homeChange').addEventListener('click', () => { parcoursPick = true; renderHome(); });
 document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.addEventListener('click', () => setParcours(b.dataset.parcours)));
+/* ---------- Mes progrès : niveau, étoiles, série, objectif, badges ---------- */
+function renderProgres(){
+  const box = $('progTiles'); box.innerHTML = ''; const sk = goalStreak(), max = BASE_LESSONS.length * 3;
+  const tiles = [[$('lvl').textContent, $('xpTxt').textContent], ['Chapitre 1', `${sumStars(stars)} ★ sur ${max}`], ['Chapitre 2', `${sumStars(ch2Stars)} ★ sur ${max}`],
+    ['Chapitre 3', `${sumStars(ch3Stars)} ★ sur ${CH3_LESSONS.length * 3}`], ['Série en cours', sk ? plur(sk, 'jour', 'jours') : 'aucune'], ['Meilleure série', goal.best ? plur(goal.best, 'jour', 'jours') : '—'], ['Quiz', `${quizOk.length} sur ${QUIZ.length} trouvées`]];
+  for (const [k, v] of tiles){ const d = document.createElement('div'), a = document.createElement('span'), b = document.createElement('strong'); d.className = 'ptile'; a.textContent = k; b.textContent = v; d.append(a, b); box.appendChild(d); }
+  $('progGoalTxt').textContent = `${Math.floor(goalSecs() / 60)} min sur ${goal.min} aujourd'hui. Les parties et le quiz le remplissent.`;
+  renderGoal(); renderBadges();
+}

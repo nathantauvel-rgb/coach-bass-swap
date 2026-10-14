@@ -144,6 +144,17 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - **Lots 9 et 10 publiés le 14 oct. 2026**, avec les agents `.claude/agents/` (accord de l'utilisateur, avant la
   checklist FLX4). Restent à décider : garder « Gratuit pendant la phase de test », et faire ou non de
   `presentation.html` la page d'arrivée.
+- **Lot 11 (14 oct. 2026)** : branche `lot-11-rangement`, non publiée. Demande de l'utilisateur : « beaucoup
+  trop d'informations sur une page ». Principe : un écran = une chose à faire. Accueil : prochaine étape +
+  anneau de l'objectif ; le parcours est replié (`#pathDetails`, résumé `#pathSum`). Nouvelle page
+  **« Mes progrès »** (`#progres`, `vProgres`, `renderProgres` dans `js/parcours.js`) ouverte par la
+  pastille du niveau (`a.lvlchip`, qui contient aussi les étoiles) : tuiles, réglage de l'objectif
+  (`#progGoalSet`), tous les badges (`#homeBadges`, bouton « voir tous » supprimé). Niveau : chapitres
+  repliés derrière `#chapBtn` (`chapMenu`), chapitres « Bientôt » retirés, style replié derrière
+  `#styleBtn` (`#styleOpts`), paragraphe `.after` supprimé (clavier dans « Comment faire ? »). Carte de
+  résultat : étoiles, titre, conseils, boutons, puis une ligne `.rmeta` (XP, badge, objectif), le schéma
+  dans `<details id="cmpBox">` (redessiné à l'ouverture, `cmpLast`), « C'était clair ? » en bas.
+  149 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -178,7 +189,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 
 ## Architecture du code (repères ; « fin du script » = `js/demarrage.js`)
 - **Onglets** : quatre blocs `.view` (`vHome`, `vLearn`, `vTrain`, `vReal`), un seul visible. `setView(v)`
-  (fin du script) suit l'adresse : `#accueil` (défaut), `#apprendre`, `#entrainer`, `#vrai`. Quitter
+  (fin du script) suit l'adresse : `#accueil` (défaut), `#apprendre`, `#entrainer`, `#vrai`, et aussi `#table` (« Ma table ») et `#progres` (« Mes progrès »). Quitter
   Apprendre arrête la partie en cours ; le guide de premier lancement s'ouvre à la première entrée dans
   Apprendre, plus au chargement. Les tests ouvrent `index.html#apprendre`.
 - **Parcours** (`js/parcours.js`) : `PARCOURS` (ordre des étapes de chaque parcours), `STAGES` (pour
@@ -261,7 +272,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

@@ -35,7 +35,7 @@ test.describe('Contenu du quiz', () => {
 
 test.describe('Badges sur l\'accueil', () => {
   test('quelqu\'un qui a déjà joué retrouve ses badges, sans rien faire', async ({ page }) => {
-    const erreurs = await ouvrir(page, { onglet: '', stockage: JOUE });
+    const erreurs = await ouvrir(page, { onglet: 'progres', stockage: JOUE });
     await expect(page.locator('#homeBadges li')).toHaveCount(13);
     expect(await badges(page)).toEqual(['Premier pas', 'Bon timing', 'Swap propre']);
     await expect(page.locator('#badgeCount')).toHaveText('3 sur 13');
@@ -43,30 +43,30 @@ test.describe('Badges sur l\'accueil', () => {
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('sans progression, aucun badge', async ({ page }) => {
-    await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut' } });
+    await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut' } });
     await expect(page.locator('#homeBadges li')).toHaveCount(13);
     await expect(page.locator('#homeBadges li.won')).toHaveCount(0);
     await expect(page.locator('#badgeCount')).toHaveText('0 sur 13');
   });
   test('toute la progression donne les 13 badges', async ({ page }) => {
     const trois = S({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 3 });
-    await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut', 'coach-lecons': trois, 'coach-ch2': trois, 'coach-ch3': S({ 0: 2, 1: 2, 2: 2, 3: 2 }),
+    await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-lecons': trois, 'coach-ch2': trois, 'coach-ch3': S({ 0: 2, 1: 2, 2: 2, 3: 2 }),
       'coach-entrainement': S({ streak: 7, setBest: 8 }), 'coach-missions': S({ pair: '', done: {}, total: 1 }), 'coach-quiz': S(['b0a', 'b0b', 'b1a', 'b1b', 'b2a', 'b2b', 'b3a', 'b3b', 'b4a', 'b4b']) } });
     await expect(page.locator('#homeBadges li.won')).toHaveCount(13);
     await expect(page.locator('#badgeCount')).toHaveText('13 sur 13');
   });
   test('un badge gagné reste gagné, même si la série de jours est perdue', async ({ page }) => {
-    await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut', 'coach-badges': S(['regulier']), 'coach-entrainement': S({ streak: 1 }) } });
+    await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-badges': S(['regulier']), 'coach-entrainement': S({ streak: 1 }) } });
     expect(await badges(page)).toEqual(['Régulier']);
   });
   test('des données abîmées ne bloquent pas la page et ne donnent rien', async ({ page }) => {
-    const erreurs = await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut', 'coach-badges': '{oops', 'coach-quiz': '"x"' } });
+    const erreurs = await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-badges': '{oops', 'coach-quiz': '"x"' } });
     await expect(page.locator('#homeBadges li.won')).toHaveCount(0);
     await expect(page.locator('#xpTxt')).toHaveText('0 XP');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('les identifiants inconnus sont ignorés', async ({ page }) => {
-    await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut', 'coach-badges': S(['pas', 'licorne']), 'coach-quiz': S(['b0a', 'zzz', 'b0a']) } });
+    await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-badges': S(['pas', 'licorne']), 'coach-quiz': S(['b0a', 'zzz', 'b0a']) } });
     expect(await badges(page)).toEqual(['Premier pas']);
     await expect(page.locator('#xpTxt')).toHaveText('5 XP');
   });

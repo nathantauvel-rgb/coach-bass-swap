@@ -13,6 +13,7 @@ const ECRANS = [
   ['05-entrainer', VENU, 'entrainer', null],
   ['06-vrai', VENU, 'vrai', async p => { await p.locator('#rbDemo').click(); await p.locator('#rbPairs .duo').first().click(); await p.locator('#rbMissions input').first().check(); }],
   ['07-table-branchee', VENU, 'apprendre', async p => { await p.locator('.node').nth(3).click(); await p.evaluate(() => { window.__midi.envoyer(0xB0, 19, 127); window.__midi.envoyer(0xB1, 19, 64); window.__midi.envoyer(0xB0, 15, 64); }); }, true],
+  ['15-progres', VENU, 'progres', null],
   ['10-ma-table', VENU, 'table', async p => { await p.evaluate(() => window.__midi.envoyer(0xB0, 15, 90)); }, true],
   ['12-avis', VENU, 'apprendre', async p => { await p.locator('#avisBtn').click(); await p.locator('#avBloque').fill('Je ne sais pas quand lancer B.'); await p.locator('#avNote [data-note="3"]').click(); }],
   ['13-testeurs', {}, '', async p => { await p.goto(BASE + '/testeurs.html'); await p.evaluate(() => document.fonts.ready); }],

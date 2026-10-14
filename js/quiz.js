@@ -163,7 +163,6 @@ const BADGES = [
   ['tete', 'Tête bien faite', '10 bonnes réponses au quiz', '?', 'xp', () => quizOk.length >= 10],
   ['vrai', 'Pour de vrai', 'Une première paire validée dans rekordbox', '✓', 'b', () => rbMis.total > 0]
 ];
-let badgesAll = false;   // « Voir tous les badges » sur l'accueil
 let badgesWon = []; try { badgesWon = JSON.parse(localStorage.getItem('coach-badges') || '[]'); } catch (e) {}
 badgesWon = Array.isArray(badgesWon) ? BADGES.map(b => b[0]).filter(id => badgesWon.includes(id)) : [];
 // Enregistre les badges dont la condition vient d'être remplie, et les renvoie
@@ -184,10 +183,5 @@ function renderBadges(){
     box.append(t, h); liEl.append(d, box);
     if (won){ const tag = document.createElement('span'); tag.className = 'sp'; tag.textContent = 'Gagné'; liEl.appendChild(tag); }
     ul.appendChild(liEl); }
-  // Sans « Voir tous les badges » : ceux déjà gagnés et les 3 suivants à gagner
-  const rest = [...ul.children].filter(e => !e.classList.contains('won')).slice(3);
-  rest.forEach(e => { e.hidden = !badgesAll; });
-  const b = $('badgeMore'); b.hidden = !rest.length; b.textContent = badgesAll ? 'Masquer les badges suivants' : `Voir tous les badges (${rest.length} de plus)`; b.setAttribute('aria-expanded', String(badgesAll));
 }
-$('badgeMore').addEventListener('click', () => { badgesAll = !badgesAll; renderBadges(); });
 badgeSync();   // au chargement, sans annonce : quelqu'un qui a déjà joué retrouve ses badges sur l'accueil

@@ -5,9 +5,12 @@
 buildControls();
 $('startBtn').addEventListener('click', () => run ? stopRun() : startRun());
 $('watchBtn').addEventListener('click', () => { if (!run) startRun(true); });
-document.querySelectorAll('#styleSeg button').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.style === styleChoice));
+const styleShow = () => { const b = document.querySelector(`#styleOpts [data-style="${styleChoice}"]`); $('styleBtn').textContent = 'Morceaux : ' + (b ? b.textContent : 'House'); };
+const styleMenu = open => { $('styleOpts').hidden = !open; $('styleBtn').setAttribute('aria-expanded', String(open)); };
+$('styleBtn').addEventListener('click', () => styleMenu($('styleOpts').hidden)); styleShow();
+document.querySelectorAll('#styleOpts [data-style]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.style === styleChoice));
   b.addEventListener('click', () => { if (run) return; styleChoice = b.dataset.style; try { localStorage.setItem('coach-style', styleChoice); } catch (e) {}
-    document.querySelectorAll('#styleSeg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelectorAll('#styleOpts [data-style]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); styleShow(); styleMenu(false);
     chooseSongs(); }); });
 document.querySelectorAll('#modeSeg button').forEach(b => b.addEventListener('click', () => { if (run || b.disabled) return; ear = b.dataset.mode === 'ear';
   document.querySelectorAll('#modeSeg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
@@ -36,7 +39,7 @@ initMidi();
 requestAnimationFrame(frame);
 
 /* ---------- Onglets : accueil, Apprendre, S'entraîner, Passer au vrai ---------- */
-const VIEWS = { accueil: 'vHome', apprendre: 'vLearn', entrainer: 'vTrain', vrai: 'vReal', table: 'vTable' };
+const VIEWS = { accueil: 'vHome', apprendre: 'vLearn', entrainer: 'vTrain', vrai: 'vReal', table: 'vTable', progres: 'vProgres' };
 let view = '';
 // L'accueil (renderHome) est dans parcours.js, ses badges et le quiz dans quiz.js
 function setView(v){
@@ -53,6 +56,7 @@ function setView(v){
   else if (v === 'entrainer') renderTrain();
   else if (v === 'vrai') renderReal();
   else if (v === 'table') renderTable();
+  else if (v === 'progres') renderProgres();
   window.scrollTo(0, 0);
 }
 document.querySelectorAll('#tabs a').forEach(a => a.addEventListener('click', () => { if (prac && a.dataset.view === view) quitPrac(); }));

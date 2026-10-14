@@ -57,17 +57,17 @@ test.describe('Moins de bruit pour un débutant', () => {
     await ouvrir(page, { stockage: { 'coach-parcours': 'deja' } });
     await expect(page.locator('.chap.test')).toHaveCount(1);
   });
-  test('l\'accueil montre les badges gagnés et les 3 suivants, le reste sur demande', async ({ page }) => {
+  test('l\'accueil ne montre que la prochaine étape et l\'objectif ; le parcours est replié, les badges sont ailleurs', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 3 }) } });
-    await expect(page.locator('#homeBadges li:visible')).toHaveCount(6);
-    await expect(page.locator('#badgeMore')).toHaveText('Voir tous les badges (7 de plus)');
-    await page.locator('#badgeMore').click();
-    await expect(page.locator('#homeBadges li:visible')).toHaveCount(13);
-    await expect(page.locator('#badgeMore')).toHaveText('Masquer les badges suivants');
-  });
-  test('avec tous les badges, pas de bouton', async ({ page }) => {
-    await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut', 'coach-badges': S(['pas', 'timing', 'swap', 'soiree', 'bases', 'oreille', 'ondes', 'sansfaute', 'regulier', 'accro', 'miniset', 'tete', 'vrai']) } });
-    await expect(page.locator('#homeBadges li:visible')).toHaveCount(13);
-    await expect(page.locator('#badgeMore')).toBeHidden();
+    await expect(page.locator('#homeCta')).toBeVisible();
+    await expect(page.locator('#homeGoal')).toBeVisible();
+    await expect(page.locator('#homeStages')).toBeHidden();
+    await expect(page.locator('#pathSum')).toHaveText('Voir tout mon parcours · étape 2 sur 6');
+    await expect(page.locator('#homeBadges')).toBeHidden();
+    await page.locator('#pathSum').click();
+    await expect(page.locator('#homeStages li')).toHaveCount(6);
+    await page.locator('#homePath a[href="#progres"]').click();
+    await expect(page.locator('#homeBadges li')).toHaveCount(13);
+    await expect(page.locator('#homeBadges li.won')).toHaveCount(3);
   });
 });

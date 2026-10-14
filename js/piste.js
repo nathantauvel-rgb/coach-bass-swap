@@ -73,7 +73,9 @@ function drawHighway(b){
 }
 const SHORT = { midA: 'MID A', faderA: 'Fader A', faderB: 'Fader B', lowA: 'LOW A', lowB: 'LOW B', cfxA: 'CFX A', echo: 'Écho' };
 const FK = { midA: 'ma', faderA: 'fa', faderB: 'fb', lowA: 'la', lowB: 'lb', cfxA: 'ca', echo: 'ec' };
+let cmpLast = null;   // dernier schéma demandé, redessiné quand on ouvre « Voir mon geste »
 function drawCompare(fr, i, launch){
+  cmpLast = [fr, i, launch];
   if (!COL.a) loadCol();
   const lanes = LESSONS[i].user.slice().concat(LESSONS[i].btn), showLaunch = !LESSONS[i].autoLaunch, cv = $('cmp');
   const H = 10 + (showLaunch ? 46 : 0) + lanes.length * 58 + 18; cv.style.height = H + 'px';
@@ -122,3 +124,4 @@ function confetti(n){
     if (t < 150) requestAnimationFrame(step); else g.clearRect(0, 0, innerWidth, innerHeight); };
   step();
 }
+$('cmpBox').addEventListener('toggle', () => { if ($('cmpBox').open && cmpLast) drawCompare(...cmpLast); });
