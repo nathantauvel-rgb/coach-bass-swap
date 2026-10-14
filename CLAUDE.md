@@ -161,7 +161,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   « Changer de paire », `rbChoosing`), une seule mission affichée avec « C'est fait » (`.rbok`, `rbCheck`)
   et 6 pastilles (`#rbDots`), « Voir toutes les missions » (`rbShowAll`), « Choisir une autre paire »
   (`#rbAgain`) quand la paire est validée. Calcul des paires et textes des missions inchangés. Image
-  `img/vrai.jpg` refaite. 153 tests verts.
+  `img/accueil.jpg`, `img/apprendre.jpg` et `img/vrai.jpg` refaites. 153 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
