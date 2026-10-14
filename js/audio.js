@@ -40,16 +40,16 @@ function ensureAudio(){
 function bufferOf(t){ const b = ac.createBuffer(2, t.N, SR); b.getChannelData(0).set(t.L); b.getChannelData(1).set(t.R); return b; }
 // Morceaux préparés à l'avance : calculés dès le choix du niveau, réutilisés pour rejouer
 const songCache = {}, songOrder = [];
-function getSong(sty, vr, part){
-  const k = sty + ':' + vr + ':' + part;
+function getSong(sty, vr, part, spd = 1){
+  const k = sty + ':' + vr + ':' + part + (spd !== 1 ? ':' + spd : '');
   if (!songCache[k]){ const d = STYLE_DEFS[sty], isA = part === 'A';
-    const p = renderSong(sty, isA ? 'A' : 'B', d.seed + (isA ? 0 : 12) + vr * 101, isA ? SEC_A : SEC_B(part === 'B1'), isA ? { end: 128, tail: 4 } : {}, d.bpm);
+    const p = renderSong(sty, isA ? 'A' : 'B', d.seed + (isA ? 0 : 12) + vr * 101, isA ? SEC_A : SEC_B(part === 'B1'), isA ? { end: 128, tail: 4 } : {}, d.bpm * spd);
     songCache[k] = p; p.catch(() => { if (songCache[k] === p) delete songCache[k]; });
     songOrder.push(k); while (songOrder.length > 10) delete songCache[songOrder.shift()]; }
   return songCache[k];
 }
 const bufOf = song => song.buf || (song.buf = bufferOf(song));
-const songSafe = (sty, vr, part) => getSong(sty, vr, part).catch(() => getSong(sty, vr, part));
+const songSafe = (sty, vr, part, spd = 1) => getSong(sty, vr, part, spd).catch(() => getSong(sty, vr, part, spd));
 let sel = { sty: 'house', vr: 0 }, firstSel = true, warm = null;
 function chooseSongs(){
   const l = LESSONS[li]; if (l.wave) return;

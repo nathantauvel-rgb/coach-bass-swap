@@ -181,6 +181,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   que des notes de 1 à 3 dans toutes les clés d'étoiles (une note abîmée faisait planter la carte). 168 tests verts.
 - **Lots 13 et 14 publiés le 14 oct. 2026** (accord de l'utilisateur, avant la checklist FLX4 : le chapitre 4 n'a
   été joué que par le test « robot », pas encore à la main sur la vraie table).
+- **Lot 15 (14 oct. 2026)** : branche `lot-15-ralenti`, non publiée. Ralenti, **seulement au chapitre 4** et
+  **seulement après deux échecs de suite** sur un même combo (consigne de l'utilisateur : garder les niveaux
+  dynamiques). `speed` (1, 0,9 ou 0,8, remis à 1 à chaque changement de niveau), `slowFails`, `slowOffer(st)`
+  appelé par `finish`, bouton `#slowBtn` sur la carte de résultat (« Réessayer au ralenti (90 %) », puis
+  80 %, puis « Rejouer à 100 % » après une réussite). Le morceau est refabriqué au tempo réduit
+  (`getSong`/`songSafe` prennent une vitesse) ; au ralenti, 2 étoiles au plus. 173 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -298,7 +304,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

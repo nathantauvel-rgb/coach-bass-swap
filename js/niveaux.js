@@ -75,6 +75,8 @@ let lastPopAt = 0, lastAct = '';
 function setFocus(ids){ for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).classList.toggle('focus', ids.includes(g)); }
 function showAction(t){ if (t === lastAct) return; lastAct = t; if (performance.now() - lastPopAt > 1600) say(t); }
 const RING_LAB = { 'MONTE B': 'temps avant de monter B', 'FILTRE': 'temps avant de tourner le filtre', 'À FOND': 'temps : filtre à fond avant le drop', 'ECHO': 'temps avant d\'activer l\'écho', 'COUPE A': 'temps avant de couper A', 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
+// speed : vitesse de la partie (1 = normale, 0,9 ou 0,8 = ralenti, proposé seulement au chapitre 4 après deux échecs de suite)
+let speed = 1, slowFails = {};
 let preparing = false, li = 0, run = null, ear = false, styleChoice = 'house', chapter = 1, TOL = 1, placement = null, prac = null;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 let earStars = {}; try { earStars = JSON.parse(localStorage.getItem('coach-lecons-oreille') || '{}') || {}; } catch (e) {}
@@ -157,7 +159,7 @@ function renderHud(){
 function styleLabel(){ if (chapter === 3) return 'House · 124 BPM'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
   return styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM'; }
 function selectLesson(i){
-  stopRun(); li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = chapter === 2 || chapter === 4 ? .5 : 1;
+  stopRun(); speed = 1; li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = chapter === 2 || chapter === 4 ? .5 : 1;
   $('lnum').textContent = (chapter > 1 ? `Chapitre ${chapter} · ` : '') + `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
   const lex = lexOf(l.title + ' ' + l.goal + ' ' + l.how); $('llex').hidden = !lex.length; $('llex').textContent = lex.map(([, n, d]) => n + ' : ' + d + '.').join('\n');
   for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).hidden = !l.show.includes(g);
@@ -191,11 +193,11 @@ function startRun(demo = false){
   setTimeout(async () => {
     const lw = LESSONS[li]; let tkW = null, styW = null, vrW = 0;
     let songA = null, songB = null;
-    try { if (lw.wave) tkW = await prepareCh3(lw).catch(() => prepareCh3(lw)); else { styW = sel.sty; vrW = sel.vr; [songA, songB] = await Promise.all([songSafe(styW, vrW, 'A'), songSafe(styW, vrW, lw.bBass ? 'B1' : 'B0')]); } }
+    try { if (lw.wave) tkW = await prepareCh3(lw).catch(() => prepareCh3(lw)); else { styW = sel.sty; vrW = sel.vr; [songA, songB] = await Promise.all([songSafe(styW, vrW, 'A', speed), songSafe(styW, vrW, lw.bBass ? 'B1' : 'B0', speed)]); } }
     finally { preparing = false; $('watchBtn').disabled = false; }
     if (li !== myLi || chapter !== myCh || run){ setStartBtn(false); return; }
     if (lw.wave){ const tk = tkW; waveTk = tk; tk.bufA = tk.bufA || bufferOf(tk.A); tk.bufB = tk.bufB || bufferOf(tk.B); tracks = { A: tk.bufA, B0: tk.bufB, B1: tk.bufB }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; $('styleTag').textContent = styleLabel(); }
-    else { const d = STYLE_DEFS[styW]; BPM = d.bpm; P = 60 / BPM; tracks = { A: bufOf(songA), B0: bufOf(songB), B1: bufOf(songB) }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; }
+    else { const d = STYLE_DEFS[styW]; BPM = d.bpm * speed; P = 60 / BPM; if (chapter === 4) $('styleTag').textContent = `${d.label} · ${Math.round(BPM)} BPM` + (speed !== 1 ? ` · ralenti ${Math.round(speed * 100)} %` : ''); tracks = { A: bufOf(songA), B0: bufOf(songB), B1: bufOf(songB) }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; }
     const l = LESSONS[li]; Object.assign(ctrl, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
@@ -442,7 +444,8 @@ function finish(){
   if (LESSONS[li].kind === 'cut') items = [evalLaunch(r.launch, 64)].concat(evalCut(r.frames, r.launch));
   if (LESSONS[li].c) items = eval4(r);
   // Chapitre 4 : 3 étoiles seulement si tous les gestes sont justes
-  const score = items.reduce((s, x) => s + x[2], 0) / items.length, st = LESSONS[li].c ? (score >= .999 ? 3 : score >= .6 ? 2 : 1) : score >= .9 ? 3 : score >= .55 ? 2 : 1;
+  const score = items.reduce((s, x) => s + x[2], 0) / items.length, st0 = LESSONS[li].c ? (score >= .999 ? 3 : score >= .6 ? 2 : 1) : score >= .9 ? 3 : score >= .55 ? 2 : 1;
+  const st = speed < 1 ? Math.min(2, st0) : st0;
   const wasOpen = ch2Unlocked(), was3 = ch3Unlocked(), bank = bankOf(r.ch), before = bank[li] || 0;
   if (!prac){ bank[li] = Math.max(before, st); try { localStorage.setItem(BANK_KEY[r.ch], JSON.stringify(bank)); } catch (e) {} }
   const rs = $('rStars'); rs.innerHTML = '';
@@ -457,6 +460,21 @@ function finish(){
   if (LESSONS[li].random){ const l = LESSONS[li]; randomizeRead(l); START = l.start; END = l.end; if (hasWorkers()) prepareCh3(l).then(tk => { if (!run && LESSONS[li] === l){ waveTk = tk; drawHighway(START); } }).catch(() => {}); }
   if (placement) placementStep(st);
   if (prac) pracStep(st);
-  quizOffer(st); avisPartie(r.ch, st); goalNote();
+  quizOffer(st); avisPartie(r.ch, st); goalNote(); slowOffer(st);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
 }
+/* ---------- Ralenti (chapitre 4) ----------
+   Proposé seulement après deux échecs de suite sur un combo, pour garder les niveaux dynamiques. Le morceau est
+   refabriqué au nouveau tempo ; la note se fait en temps, donc la précision demandée reste la même. */
+function slowOffer(st){
+  const b = $('slowBtn'); b.hidden = true;
+  if (chapter !== 4 || prac || placement) return;
+  if (speed < 1){
+    if (st >= 2){ $('rTitle').textContent = `Réussi au ralenti (${Math.round(speed * 100)} %) ! Repasse à 100 % pour les 3 étoiles.`; b.dataset.speed = '1'; b.textContent = 'Rejouer à 100 %'; b.hidden = false; }
+    else if (speed > .8){ b.dataset.speed = '0.8'; b.textContent = 'Réessayer à 80 %'; b.hidden = false; }
+    return;
+  }
+  slowFails[li] = st <= 1 ? (slowFails[li] || 0) + 1 : 0;
+  if (slowFails[li] >= 2){ b.dataset.speed = '0.9'; b.textContent = 'Réessayer au ralenti (90 %)'; b.hidden = false; }
+}
+$('slowBtn').addEventListener('click', () => { speed = +$('slowBtn').dataset.speed || 1; if (speed === 1) slowFails[li] = 0; $('result').hidden = true; startRun(); });
