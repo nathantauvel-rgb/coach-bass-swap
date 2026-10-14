@@ -425,6 +425,6 @@ function finish(){
   if (LESSONS[li].random){ const l = LESSONS[li]; randomizeRead(l); START = l.start; END = l.end; if (hasWorkers()) prepareCh3(l).then(tk => { if (!run && LESSONS[li] === l){ waveTk = tk; drawHighway(START); } }).catch(() => {}); }
   if (placement) placementStep(st);
   if (prac) pracStep(st);
-  quizOffer(st);
+  quizOffer(st); avisPartie(r.ch, st);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
 }

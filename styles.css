@@ -579,6 +579,24 @@ a.chip.status{color:var(--muted)}a.chip.status.on{color:var(--fg)}
 .bdg.won .bd{background:var(--c);color:var(--ink);box-shadow:none}
 .bdg.c-a{--c:var(--a)}.bdg.c-b{--c:var(--b)}.bdg.c-xp{--c:var(--xp)}.bdg.c-go{--c:var(--go)}.bdg.c-mid{--c:var(--mid)}
 .bdg .sp{margin-top:0}
+/* Tests avec des débutants : « Mon avis », « C'était clair ? » */
+.avq{display:flex;flex-direction:column;gap:6px;font-weight:600}
+.avq textarea,.avtext{width:100%;border:2px solid var(--line);border-radius:14px;background:var(--panel-2);padding:10px 12px;font:inherit;font-weight:400;color:inherit;resize:vertical}
+.avq textarea:focus,.avtext:focus{outline:none;border-color:var(--xp)}
+.avnote,.clair{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.avnote span{font-weight:600;margin-right:4px}
+.avnote button,.clair button{border:2px solid var(--line);background:var(--panel-2);border-radius:999px;min-width:42px;padding:6px 12px;font-weight:700}
+.avnote button[aria-pressed="true"],.clair button[aria-pressed="true"]{background:var(--xp);border-color:var(--xp);color:var(--ink)}
+.clair{justify-content:center;font-size:15px}
+.clair .merci{color:var(--ok);font-weight:700}
+.avh{margin:8px 0 0;font-family:var(--display);font-weight:700;font-size:18px}
+.avsmall{margin:0;font-size:14px;color:var(--muted)}
+.avreset summary{cursor:pointer;color:var(--muted);font-size:14px;text-decoration:underline}
+.avreset[open]{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.avreset .rbtn{border-color:var(--bad);color:var(--bad)}
+.avbtn{color:var(--xp)}
+.howlist a{color:var(--xp);font-weight:700}
+@media (max-width:600px){.avnote span{flex-basis:100%}}
 .page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
 .page-note a{color:var(--xp);font-weight:700}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}

@@ -41,7 +41,7 @@ let view = '';
 // L'accueil (renderHome) est dans parcours.js, ses badges et le quiz dans quiz.js
 function setView(v){
   if (!VIEWS[v]) v = 'accueil'; if (v === view) return;
-  closeQuiz(); if (prac) quitPrac();
+  closeQuiz(); closeAvis(); if (prac) quitPrac();
   if (view === 'apprendre'){ if (onb.active) closeOnb(); if (placement) quitPlacement(); stopRun(); $('result').hidden = true; }
   if (view === 'table') learnKey = null;   // un apprentissage commencé sur « Ma table » ne doit pas continuer ailleurs
   view = v;

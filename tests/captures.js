@@ -13,7 +13,9 @@ const ECRANS = [
   ['05-entrainer', VENU, 'entrainer', null],
   ['06-vrai', VENU, 'vrai', async p => { await p.locator('#rbDemo').click(); await p.locator('#rbPairs .duo').first().click(); await p.locator('#rbMissions input').first().check(); }],
   ['07-table-branchee', VENU, 'apprendre', async p => { await p.locator('.node').nth(3).click(); await p.evaluate(() => { window.__midi.envoyer(0xB0, 19, 127); window.__midi.envoyer(0xB1, 19, 64); window.__midi.envoyer(0xB0, 15, 64); }); }, true],
-  ['10-ma-table', VENU, 'table', async p => { await p.evaluate(() => window.__midi.envoyer(0xB0, 15, 90)); }, true]
+  ['10-ma-table', VENU, 'table', async p => { await p.evaluate(() => window.__midi.envoyer(0xB0, 15, 90)); }, true],
+  ['12-avis', VENU, 'apprendre', async p => { await p.locator('#avisBtn').click(); await p.locator('#avBloque').fill('Je ne sais pas quand lancer B.'); await p.locator('#avNote [data-note="3"]').click(); }],
+  ['13-testeurs', {}, '', async p => { await p.goto(BASE + '/testeurs.html'); await p.evaluate(() => document.fonts.ready); }]
 ];
 const LENTS = [
   ['08-partie-en-cours', VENU, 'apprendre', async p => { await p.locator('.node').nth(3).click(); await p.locator('#watchBtn').click(); await p.waitForFunction(() => document.getElementById('startBtn').textContent === 'Arrêter', null, { timeout: 60000 }); await p.waitForTimeout(9000); }],
@@ -57,7 +59,7 @@ const contraste = () => { const lum = c => { const [r, g, b] = c.map(v => { v /=
     console.log(path.basename(file).padEnd(36), crypto.createHash('sha1').update(fs.readFileSync(file)).digest('hex').slice(0, 10), errs.length ? 'ERREURS ' + errs.join(' / ') : '', faibles.length ? '\n    contraste faible : ' + faibles.join('\n    contraste faible : ') : '');
     await ctx.close();
   };
-  for (const e of ECRANS) { await shot(e, { width: 1366, height: 800 }); if (['01-accueil-nouveau', '02-accueil-parcours', '03-niveau'].includes(e[0])) await shot(e, { width: 390, height: 800 }); }
+  for (const e of ECRANS) { await shot(e, { width: 1366, height: 800 }); if (['01-accueil-nouveau', '02-accueil-parcours', '03-niveau', '12-avis', '13-testeurs'].includes(e[0])) await shot(e, { width: 390, height: 800 }); }
   if (!vite) for (const e of LENTS) await shot(e, { width: 1366, height: 800 });
   await b.close(); if (srv) srv.kill();
 })();

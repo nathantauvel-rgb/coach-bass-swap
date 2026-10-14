@@ -107,6 +107,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   section « Mes badges » sur l'accueil, annonce sur la carte de résultat. Ne touche ni au MIDI ni à
   l'audio. 111 tests verts. **Les questions sont à relire par l'utilisateur.**
 - **Lot 6 publié le 13 oct. 2026.**
+- **Lot 7 (14 oct. 2026)** : branche `lot-7-testeurs`, non publiée. Préparation de l'étape 4 (tests avec des
+  débutants), dans `js/avis.js` : bouton « Mon avis » en haut (3 questions, gardées avec l'écran où on
+  était), « C'était clair ? » sur la carte de résultat, journal local `coach-journal` (temps passé,
+  jours, parties, réponses, avis, 5 dernières erreurs), « Copier mon rapport » (texte à coller dans un
+  message), « Tout recommencer à zéro » (efface tout `coach-*` sauf `coach-midi-map`). Page
+  `testeurs.html` : la fiche à envoyer aux testeurs. Bouton e-mail prêt mais masqué tant que `AVIS_MAIL`
+  est vide (adresse à demander à l'utilisateur, ne pas la deviner). Sur téléphone, « Mon avis » est au
+  bout de la barre du haut, qui défile. 124 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -128,7 +136,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `controles` → `niveaux` (niveaux, progression, partie, notation) → `piste` → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) →
-  `table` (page « Ma table ») → `demarrage` (démarrage et onglets).
+  `table` (page « Ma table ») → `avis` (avis des testeurs, rapport) → `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
   dans un fichier chargé avant ; `function stop` remplace `window.stop` (sans effet connu).
@@ -209,7 +217,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 ### Clés localStorage
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-chapitre`,
 `coach-style`, `coach-guide-vu`, `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
-`coach-badges` (identifiants des badges gagnés), `coach-entrainement` (défi, série, compteurs, record du mini-set),
+`coach-badges` (identifiants des badges gagnés), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
@@ -224,7 +232,8 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus.
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/avis.spec.js` : « Mon avis »,
+  « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,
   onglets, S'entraîner, Passer au vrai.

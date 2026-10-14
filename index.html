@@ -50,6 +50,23 @@
     <button type="button" class="rbtn go" id="qNext" hidden>Continuer</button>
   </div>
 </div>
+<div class="quiz" id="avis" hidden role="dialog" aria-modal="true" aria-labelledby="avTitle">
+  <div class="qcard">
+    <button type="button" class="rclose" id="avClose" aria-label="Fermer">×</button>
+    <span class="lnum">Coach DJ est en test</span>
+    <h2 id="avTitle">Ton avis</h2>
+    <label class="avq">Qu'est-ce qui t'a bloqué ou gêné ?<textarea id="avBloque" rows="3" maxlength="1000"></textarea></label>
+    <label class="avq">Qu'est-ce qui t'a plu ?<textarea id="avPlu" rows="3" maxlength="1000"></textarea></label>
+    <div class="avnote" id="avNote" role="group" aria-label="Ta note sur 5"><span>Ta note</span><button type="button" data-note="1" aria-pressed="false">1</button><button type="button" data-note="2" aria-pressed="false">2</button><button type="button" data-note="3" aria-pressed="false">3</button><button type="button" data-note="4" aria-pressed="false">4</button><button type="button" data-note="5" aria-pressed="false">5</button></div>
+    <button type="button" class="rbtn go" id="avSave">Enregistrer mon avis</button>
+    <p class="qwhy" id="avMsg" role="status" hidden></p>
+    <h3 class="avh">Ton rapport</h3>
+    <p class="avsmall" id="avSum"></p>
+    <div class="rbrow"><button type="button" class="ghost" id="avCopy">Copier mon rapport</button><button type="button" class="ghost" id="avMail" hidden>Envoyer par e-mail</button></div>
+    <textarea class="avtext" id="avText" rows="8" readonly hidden aria-label="Ton rapport"></textarea>
+    <details class="avreset"><summary>Tout recommencer à zéro</summary><p class="avsmall">Efface ta progression, tes étoiles, tes badges, tes réponses au quiz et tes avis sur cet ordinateur. Les réglages de ta table sont gardés.</p><button type="button" class="rbtn" id="avReset">Oui, tout effacer</button></details>
+  </div>
+</div>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="#accueil" aria-label="Coach DJ, retour à l'accueil"><span class="disc" aria-hidden="true"></span><div><div class="brand-name">Coach DJ</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
@@ -58,6 +75,7 @@
       <span class="chip"><span class="star">★</span><span class="num" id="starTot">0/12</span></span>
       <a class="chip status" id="midiPill" href="#table" title="Ma table : le schéma et les réglages"><i></i><span>FLX4…</span></a>
       <button type="button" class="chip" id="guideBtn" hidden>Guide</button>
+      <button type="button" class="chip avbtn" id="avisBtn">Mon avis</button>
     </div>
   </header>
 
@@ -226,6 +244,7 @@
         <ul class="details" id="rDetails"></ul>
         <div class="cmp" id="cmpBox"><span class="cmp-t">Ton geste et le geste idéal</span><canvas id="cmp" aria-label="Comparaison entre ton geste et le geste idéal"></canvas>
           <div class="cmp-leg"><span><i></i>geste idéal</span><span><u></u>ton geste</span></div></div>
+        <div class="clair" id="clairRow" role="group" aria-label="C'était clair ?" hidden><span>C'était clair ?</span><button type="button" data-clair="oui" aria-pressed="false">Oui</button><button type="button" data-clair="bof" aria-pressed="false">Bof</button><button type="button" data-clair="non" aria-pressed="false">Non</button><span class="merci" id="clairMerci" hidden>Merci !</span></div>
         <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
       </div>
     </div>
@@ -249,6 +268,7 @@
 <script src="js/quiz.js"></script>
 <script src="js/parcours.js"></script>
 <script src="js/table.js"></script>
+<script src="js/avis.js"></script>
 <script src="js/demarrage.js"></script>
 </body>
 </html>
