@@ -32,7 +32,7 @@ test.describe('Schéma et explications', () => {
     await expect(page.locator('#tPanel .tuse')).toContainText('Le bon moment');
     await expect(page.locator('#tPanel .tuse')).toContainText('chapitre 3, Lecture express');
     await commande(page, 'fx').click();
-    await expect(page.locator('#tPanel .tuse')).toHaveText('Utilisée dans : L\'echo out.');
+    await expect(page.locator('#tPanel .tuse')).toHaveText('Utilisée dans : L\'écho out.');
     await expect(page.locator('#tPanel .tmap')).toContainText('Pas encore réglée');
   });
   test('une commande que le site ne connaît pas encore', async ({ page }) => {

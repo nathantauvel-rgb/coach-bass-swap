@@ -9,6 +9,7 @@ const ONB = [
   { title: 'Le filtre CFX', text: 'Le dernier potard de chaque voie est un filtre. Vers la droite, le son s\'affine ; vers la gauche, il s\'étouffe. Au milieu, il ne fait rien.', hl: 'cfxA', k: 'cfxA', act: 'Tourne le CFX de gauche' },
   { title: 'Le bouton PLAY', text: 'En bas de chaque platine, PLAY lance ou arrête un morceau. Dans les niveaux, tu lances B avec le PLAY de droite. Appuie dessus : la musique s\'arrête, appuie encore : elle repart.', hl: 'playB', k: 'playB', act: 'Appuie sur PLAY à droite' },
   { title: 'Compter en phrases', text: 'Chaque coup de grosse caisse est un temps. 4 temps font une mesure, 8 mesures font une phrase de 32 temps. La musique change toujours au début d\'une phrase : c\'est là qu\'on fait les transitions. Suis la grille avec la musique.', phrase: true },
+  { title: "Les parties d'un morceau", text: 'Un morceau se découpe en parties de quelques phrases. Dans les niveaux, elles portent ces noms et ont ces couleurs sur la piste.', parts: true },
   { title: 'Tu es prêt', text: 'Commence par le niveau 1. Clique sur « Regarde d\'abord » pour voir le geste parfait, puis sur « Jouer ». Avant chaque niveau, le site te dit où placer tes faders et potards.', cta: 'Commencer le niveau 1' }
 ];
 const onb = { active: false, i: 0, done: {}, base: {}, t0: 0, playing: false, raf: 0 };
@@ -45,7 +46,14 @@ function onbMoved(k){
   if (!onb.done[onb.i]){ onb.done[onb.i] = true; chime(true); renderOnbTry(); const at = onb.i; setTimeout(() => { if (onb.active && onb.i === at && at < ONB.length - 1){ onb.i++; renderOnb(); } }, 1400); }
 }
 function renderOnbTry(){
-  const st = ONB[onb.i], box = $('onbTry'); box.innerHTML = ''; box.hidden = !(st.k || st.phrase);
+  const st = ONB[onb.i], box = $('onbTry'); box.innerHTML = ''; box.hidden = !(st.k || st.phrase || st.parts);
+  if (st.parts){
+    const strip = document.createElement('div'); strip.className = 'onb-parts';
+    for (const [name, full, w] of [['Intro', false, 2], ['Corps', true, 4], ['Break', false, 1], ['Corps', true, 3], ['Outro', false, 2]]){ const s = document.createElement('span'); s.className = full ? 'full' : ''; s.style.flexGrow = w; s.textContent = name; strip.appendChild(s); }
+    const dl = document.createElement('dl'); dl.className = 'onb-lex';
+    for (const w of ['intro', 'drop', 'break', 'outro']){ const x = LEX.find(e => e[0] === w), dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = x[1]; dd.textContent = x[2].charAt(0).toUpperCase() + x[2].slice(1) + '.'; dl.append(dt, dd); }
+    box.append(strip, dl); return;
+  }
   if (st.phrase){
     const g = document.createElement('div'); g.className = 'onb-grid'; g.id = 'onbGrid';
     for (let b = 0; b < 8; b++){ const bar = document.createElement('div'); bar.className = 'bar'; for (let j = 0; j < 4; j++) bar.appendChild(document.createElement('span')); g.appendChild(bar); }

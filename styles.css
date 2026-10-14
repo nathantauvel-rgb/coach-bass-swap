@@ -597,6 +597,15 @@ a.chip.status{color:var(--muted)}a.chip.status.on{color:var(--fg)}
 .avbtn{color:var(--xp)}
 .howlist a{color:var(--xp);font-weight:700}
 @media (max-width:600px){.avnote span{flex-basis:100%}}
+/* Lot 8 : guide « Les parties d'un morceau », lexique, plus de badges */
+.onb-parts{display:flex;gap:4px;width:100%}
+.onb-parts span{flex-basis:0;min-width:0;border-radius:8px;padding:8px 6px;font-size:13px;font-weight:700;text-align:center;background:color-mix(in srgb,var(--a) 30%,var(--panel));color:var(--fg)}
+.onb-parts span.full{background:var(--a);color:var(--ink)}
+.onb-lex{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 12px;width:100%;font-size:15px}
+.onb-lex dt{font-weight:700}
+.onb-lex dd{margin:0;color:var(--muted)}
+.lex{white-space:pre-line;border-left:3px solid var(--xp-line);padding-left:10px}
+.bmore{margin-top:12px}
 .page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
 .page-note a{color:var(--xp);font-weight:700}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}

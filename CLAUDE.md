@@ -116,6 +116,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   est vide (adresse à demander à l'utilisateur, ne pas la deviner). Sur téléphone, « Mon avis » est au
   bout de la barre du haut, qui défile. 124 tests verts.
 - **Lot 7 publié le 14 oct. 2026**, sans bouton e-mail (décision de l'utilisateur : `AVIS_MAIL` reste vide).
+- **Lot 8 (14 oct. 2026)** : branche `lot-8-clarte`, non publiée. Issu d'un audit du parcours débutant sans
+  table. Étape « Les parties d'un morceau » dans le guide (`ONB`, `parts`) ; `LEX` + `lexOf` dans
+  `js/niveaux.js` : mots du DJ expliqués dans « Comment faire ? » (`#llex`) ; échec de lancement donné en
+  écart (« 8 temps trop tôt »), même chiffre sur le schéma ; `stageIntoView()` amène la scène en haut
+  de l'écran au choix d'un niveau (la barre collée en bas recouvrait la piste) ; « Test de placement »
+  masqué des chapitres dans le parcours `debut` ; accueil : badges gagnés + 3 suivants, bouton
+  « Voir tous les badges » ; « L'écho out » avec accent. Non fait, à voir avec les testeurs : 23 s
+  d'attente avant le premier geste du niveau 2. 132 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -233,7 +241,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

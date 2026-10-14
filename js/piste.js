@@ -88,7 +88,7 @@ function drawCompare(fr, i, launch){
     label('Lancer B', y + 22);
     const yy = y + 18, dia = (x, fill, col) => { g.beginPath(); g.moveTo(x, yy - 10); g.lineTo(x + 10, yy); g.lineTo(x, yy + 10); g.lineTo(x - 10, yy); g.closePath(); if (fill){ g.fillStyle = col; g.fill(); } else { g.strokeStyle = col; g.lineWidth = 2; g.setLineDash([3, 3]); g.stroke(); g.setLineDash([]); } };
     dia(X(LESSONS[i].launchBeat), false, COL.fg);
-    if (launch !== null){ dia(X(launch), true, COL.b); if (launch !== LESSONS[i].launchBeat){ g.fillStyle = COL.b; g.font = '600 12px ' + COL.font; g.textAlign = 'center'; g.fillText(`toi : temps ${launch}`, X(launch), yy + 26); } }
+    if (launch !== null){ dia(X(launch), true, COL.b); if (launch !== LESSONS[i].launchBeat){ g.fillStyle = COL.b; g.font = '600 12px ' + COL.font; g.textAlign = 'center'; const e = launch - LESSONS[i].launchBeat; g.fillText(`toi : ${Math.abs(e)} temps trop ${e > 0 ? 'tard' : 'tôt'}`, X(launch), yy + 26); } }
     else { g.fillStyle = COL.bad; g.font = '600 12px ' + COL.font; g.textAlign = 'left'; g.fillText('pas lancé', X(LESSONS[i].launchBeat) + 16, yy + 4); }
     y += 46;
   }

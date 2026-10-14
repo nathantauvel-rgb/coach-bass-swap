@@ -18,7 +18,7 @@ const BASE_LESSONS = [
   { kind: 'filter', title: 'Le filtre', goal: 'Efface A en douceur avec le filtre pendant que B monte.',
     how: 'B arrive tout seul. Quand « FILTRE » touche la ligne, tourne le potard CFX de A vers la droite, lentement : il doit être à fond quand « À FOND » arrive, juste avant le drop de B.',
     show: ['gCfx'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5 }, user: ['cfxA'], start: 24, end: 112 },
-  { kind: 'echo', title: 'L\'echo out', goal: 'Fais disparaître A dans un écho, puis B tombe sur son drop.',
+  { kind: 'echo', title: 'L\'écho out', goal: 'Fais disparaître A dans un écho, puis B tombe sur son drop.',
     how: 'Sur le dernier temps avant la ligne, active l\'écho (bouton ECHO, ON de l\'effet sur la FLX4, ou touche E), puis baisse d\'un coup le fader de A sur la ligne. B démarre tout seul sur son drop.',
     show: ['gEcho', 'gFad'], bBass: false, autoLaunch: true, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], btn: ['echo'], start: 40, end: 96 },
   { kind: 'cut', title: 'La coupure sèche', goal: 'Coupe A et lance B sur son drop, au même instant.',
@@ -60,6 +60,15 @@ const TARGETS = { 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[63, 'ECHO
 const ACT = { 'LANCE B': 'lance B', 'B À FOND': 'monte le fader de B à fond', 'A SORTI': 'baisse le fader de A à zéro', 'SWAP': 'échange les basses : LOW de A à gauche, LOW de B au milieu',
   'FILTRE': 'commence à tourner le FILTRE de A vers la droite', 'À FOND': 'FILTRE de A tourné à fond', 'ECHO': 'active l\'ÉCHO', 'COUPE A': 'coupe le fader de A d\'un coup', 'VOIX': 'coupe le MID de A' };
 const GROUP_OF = { 'LANCE B': 'gPlay', 'B À FOND': 'gFad', 'A SORTI': 'gFad', 'SWAP': 'gLow', 'FILTRE': 'gCfx', 'À FOND': 'gCfx', 'ECHO': 'gEcho', 'COUPE A': 'gFad', 'VOIX': 'gMid' };
+// Mots du DJ expliqués dans « Comment faire ? » quand le niveau les emploie (aussi utilisés par le guide)
+const LEX = [["intro", "Intro", "le début d'un morceau, plus léger, fait pour le mélanger au morceau d'avant"],
+  ["outro", "Outro", "la fin d'un morceau, qui se vide peu à peu : c'est là qu'on fait entrer le suivant"],
+  ["drop", "Drop", "le moment où tout le morceau arrive d'un coup, basses comprises, après l'intro ou un break"],
+  ["break", "Break", "une pause au milieu du morceau : la musique se vide, puis repart de plus belle"],
+  ["phrase", "Phrase", "32 temps, soit 8 mesures de 4 temps : la musique change au début de chaque phrase"],
+  ["swap", "Swap", "l'échange des basses entre les deux morceaux"],
+  ["écho", "Écho", "un effet qui répète le son en le laissant s'éteindre"]];
+const lexOf = t => LEX.filter(([w]) => new RegExp('(^|[^\\p{L}])' + w, 'iu').test(t));
 let lastPopAt = 0, lastAct = '';
 function setFocus(ids){ for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).classList.toggle('focus', ids.includes(g)); }
 function showAction(t){ if (t === lastAct) return; lastAct = t; if (performance.now() - lastPopAt > 1600) say(t); }
@@ -106,7 +115,7 @@ function renderChapters(){
     b.innerHTML = `<span class="cn">Chapitre ${c.n}</span><strong></strong><span class="cs"></span>`; b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = sub;
     b.addEventListener('click', () => setChapter(c.n)); bar.appendChild(b);
   }
-  if (!ch2Unlocked()){ const t = document.createElement('button'); t.type = 'button'; t.className = 'chap test';
+  if (!ch2Unlocked() && parcours !== 'debut'){ const t = document.createElement('button'); t.type = 'button'; t.className = 'chap test';
     t.innerHTML = '<span class="cn">Tu mixes déjà ?</span><strong>Test de placement</strong><span class="cs">3 épreuves pour sauter les bases</span>';
     t.addEventListener('click', startPlacement); bar.appendChild(t); }
 }
@@ -136,6 +145,7 @@ function styleLabel(){ if (chapter === 3) return 'House · 124 BPM'; if (chapter
 function selectLesson(i){
   stopRun(); li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = chapter === 2 ? .5 : 1;
   $('lnum').textContent = (chapter > 1 ? `Chapitre ${chapter} · ` : '') + `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
+  const lex = lexOf(l.title + ' ' + l.goal + ' ' + l.how); $('llex').hidden = !lex.length; $('llex').textContent = lex.map(([, n, d]) => n + ' : ' + d + '.').join('\n');
   for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).hidden = !l.show.includes(g);
   for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k));
   Object.assign(ctrl, l.init); applyCtrl();
@@ -151,7 +161,10 @@ function selectLesson(i){
   const idle = firstT ? 'Ton geste : ' + ACT[firstT[1]] + '. Regarde la démo si tu hésites !' : 'Regarde la démo, puis à toi !';
   $('hint').textContent = idle; say(idle);
   renderHud(); drawHighway(START); updateSetup();
+  if (!$('vLearn').hidden) stageIntoView();
 }
+// Sur un écran peu haut, la barre des boutons (collée en bas) recouvrait la piste : on amène la scène en haut de l'écran
+function stageIntoView(){ const r = $('stage').getBoundingClientRect(); if (r.bottom > innerHeight && r.top > 8) window.scrollTo({ top: scrollY + r.top - 8, behavior: REDUCED ? 'auto' : 'smooth' }); }
 function setStartBtn(running){ const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
 
 let START = 16, END = 116;
@@ -330,7 +343,7 @@ function evalLaunch(L, target = 32){
   if (e === 0) return ['ok', target === 32 ? 'B est parti pile sur le 1 de l\'outro de A.' : 'B est parti pile sur le début de la phrase.', 1];
   if (Math.abs(e) <= 2) return ['mid', `B est parti ${Math.abs(e)} temps ${e > 0 ? 'trop tard' : 'trop tôt'} : son drop tombe ${Math.abs(e)} temps ${e > 0 ? 'après' : 'avant'} la fin de phrase de A, ça s'entend comme un décalage.`, .5];
   if (e % 32 === 0) return ['mid', `B est parti sur le début d'une autre phrase (${e > 0 ? 'une phrase trop tard' : 'une phrase trop tôt'}) : c'est en rythme, mais pas au bon moment du morceau.`, .5];
-  return ['bad', `B est parti au temps ${(((L % 32) + 32) % 32) + 1} de la phrase, en plein milieu : les deux morceaux ne changent plus en même temps. Attends le début de la phrase.`, 0];
+  return ['bad', `B est parti ${Math.abs(e)} temps trop ${e > 0 ? 'tard' : 'tôt'}, en plein milieu d'une phrase : les deux morceaux ne changent plus en même temps. Attends le début de la phrase.`, 0];
 }
 function evalFaders(fr){
   const out = []; const bReach = firstAt(fr, 32, x => x.fb >= .9), aOut = firstAt(fr, 40, x => x.fa <= .05);
