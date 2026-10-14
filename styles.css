@@ -622,6 +622,23 @@ a.chip.status{color:var(--muted)}a.chip.status.on{color:var(--fg)}
 .gset button[aria-pressed="true"]{background:var(--xp);border-color:var(--xp);color:var(--ink)}
 .goalline{margin:0;font-weight:700;color:var(--muted)}
 .goalline.done{color:var(--ok)}
+/* Lot 10 : page de présentation (presentation.html) */
+.pres .top{flex-wrap:nowrap}
+.pres a.ghost{text-decoration:none;display:inline-block}
+.pres-hero h1{max-width:18ch}
+.pres-h2{margin:4px 0 18px;font-family:var(--display);font-weight:700;font-size:clamp(24px,3vw,32px);line-height:1.15;text-wrap:balance}
+.pres-step{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:28px;align-items:center;padding:22px 0;border-top:1px solid var(--line)}
+.pres-step img{width:100%;height:auto;border-radius:18px;border:1px solid var(--line);display:block}
+.pres-txt h3{margin:8px 0 6px;font-family:var(--display);font-weight:700;font-size:22px}
+.pres-txt p{margin:0 0 10px;color:var(--muted)}
+.pres-n{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--a);color:var(--ink);font-weight:800}
+.pres-faq{display:flex;flex-direction:column;gap:8px}
+.pres-faq details{background:var(--panel-2);border-radius:16px;padding:14px 16px}
+.pres-faq summary{cursor:pointer;font-weight:700}
+.pres-faq p{margin:8px 0 0;color:var(--muted)}
+.pres-end{justify-content:center;text-align:center}
+.pres-end .rbrow{justify-content:center}
+@media (max-width:760px){.pres-step{grid-template-columns:1fr;gap:14px}.pres .top .ghost{padding:7px 12px;font-size:14px}}
 .page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
 .page-note a{color:var(--xp);font-weight:700}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}
