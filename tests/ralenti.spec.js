@@ -28,6 +28,15 @@ test.describe('Quand le ralenti est proposé', () => {
     await resultat(page, 1); await resultat(page, 2); await resultat(page, 1);
     await expect(page.locator('#slowBtn')).toBeHidden();
   });
+  test('aller sur un autre niveau remet le compteur à zéro', async ({ page }) => {
+    await ouvrir(page, { stockage: { 'coach-lecons': CH1_OK, 'coach-chapitre': '4' } });
+    await page.locator('.node').nth(1).click();
+    await resultat(page, 1);
+    await page.evaluate(() => { $('result').hidden = true; });
+    await page.locator('.node').nth(2).click(); await page.locator('.node').nth(1).click();
+    await resultat(page, 1);
+    await expect(page.locator('#slowBtn')).toBeHidden();
+  });
   test('jamais aux chapitres 1, 2 et 3', async ({ page }) => {
     await ouvrir(page);
     await resultat(page, 1); await resultat(page, 1); await resultat(page, 1);
