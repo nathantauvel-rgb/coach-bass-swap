@@ -50,7 +50,7 @@ test.describe('La paire du jour', () => {
     await expect(page.locator('#rbMisBox')).toBeVisible();
   });
   test('« Choisir une paire moi-même » ouvre la liste, et on peut revenir', async ({ page }) => {
-    await ouvrir(page, { onglet: 'vrai' });
+    const erreurs = await ouvrir(page, { onglet: 'vrai' });
     await page.locator('#rbDemo').click();
     await page.locator('#rbOwn').click();
     await expect(page.locator('#rbPairPick')).toBeVisible();
@@ -59,12 +59,16 @@ test.describe('La paire du jour', () => {
     await page.locator('#rbBack').click();
     await expect(page.locator('#rbHero')).toBeVisible();
     await page.locator('#rbOwn').click();
-    await page.locator('#rbPairs .duo').nth(1).click();
+    await page.locator('#rbPairs .duo').first().click();
     await expect(page.locator('#rbKick')).toHaveText('Ta paire');
+    await expect(page.locator('#rbAT')).toHaveText('Sable chaud'); await expect(page.locator('#rbBT')).toHaveText('Tambours');
+    await expect(page.locator('#rbAM')).toHaveText('120 BPM · 4A'); await expect(page.locator('#rbBM')).toHaveText('121 BPM · 4A');
+    await expect(page.locator('.rbchip')).toHaveText(['✓ Tempo · tempos proches', '✓ Tonalité · la même', '✓ Style · le même']);
     await expect(page.locator('#rbMisBox')).toBeVisible();
     await page.locator('#rbPairChange').click();
     await expect(page.locator('#rbPairPick')).toBeVisible();
     await expect(page.locator('#rbMisBox')).toBeHidden();
+    expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('des titres piégés restent du texte', async ({ page }) => {
     await ouvrir(page, { onglet: 'vrai', stockage: { 'coach-collection': JSON.stringify({ n: 'x', t: [['<img src=x onerror=alert(1)>', 'A', 'House', 124, '8A'], ['Deux', 'B', 'House', 124, '8A']] }) } });
@@ -84,6 +88,7 @@ test.describe('Les missions', () => {
     await page.locator('#rbMissions .rbok').click();
     await expect(page.locator('#rbMisSub')).toHaveText(/^Mission 2 sur 6\./);
     await expect(page.locator('#rbDots span.done')).toHaveCount(1);
+    await expect(visibles(page).locator('strong')).toHaveText('Repère la fin du premier morceau');
   });
   test('« Voir toutes les missions » montre les 6, et on peut décocher', async ({ page }) => {
     await ouvrir(page, { onglet: 'vrai' });
@@ -91,6 +96,7 @@ test.describe('Les missions', () => {
     await page.locator('#rbMissions .rbok').click();
     await page.locator('#rbMisAll').click();
     await expect(visibles(page)).toHaveCount(6);
+    await expect(page.locator('#rbMisAll')).toHaveText('Ne voir que la mission en cours');
     await page.locator('#rbMissions input').first().uncheck();
     await expect(page.locator('#rbMisSub')).toHaveText(/^Mission 1 sur 6\./);
   });
@@ -103,9 +109,28 @@ test.describe('Les missions', () => {
     const avant = await page.locator('#rbAT').textContent() + await page.locator('#rbBT').textContent();
     for (let i = 0; i < 4; i++) await page.locator('#rbMissions .rbok').click();
     await expect(page.locator('#rbDone')).toContainText('Paire validée');
+    await expect(visibles(page)).toHaveCount(0);
+    await expect(page.locator('#rbMisAll')).toHaveText('Revoir les missions');
     await page.locator('#rbAgain').click();
-    await expect(page.locator('#rbKick')).toHaveText('Ta paire du jour');
+    await expect(page.locator('#rbKick')).toHaveText('Une paire pour toi');
     await expect(page.locator('#rbMisBox')).toBeHidden();
     expect(await page.locator('#rbAT').textContent() + await page.locator('#rbBT').textContent()).not.toBe(avant);
+  });
+});
+
+test.describe('Collections sans paire', () => {
+  for (const [nom, t] of [['un seul morceau', [['Seul', 'X', 'House', 124, '8A']]], ['deux morceaux qui ne vont pas ensemble', [['Lent', 'X', 'House', 90, '8A'], ['Rapide', 'Y', 'Techno', 140, '2B']]]]) {
+    test(`${nom} : pas de carte, un message, pas d'erreur`, async ({ page }) => {
+      const erreurs = await ouvrir(page, { onglet: 'vrai', stockage: { 'coach-collection': JSON.stringify({ n: 'x', t }) } });
+      await expect(page.locator('#rbHero')).toBeHidden();
+      await expect(page.locator('#rbPairs')).toContainText('Aucune paire trouvée');
+      await expect(page.locator('#rbBack')).toBeHidden();
+      expect(erreurs).toEqual([]); await sansBandeau(page);
+    });
+  }
+  test('une seule paire possible : pas de bouton « Une autre paire »', async ({ page }) => {
+    await ouvrir(page, { onglet: 'vrai', stockage: { 'coach-collection': JSON.stringify({ n: 'x', t: [['Un', 'X', 'House', 124, '8A'], ['Deux', 'Y', 'House', 124, '8A']] }) } });
+    await expect(page.locator('#rbHero')).toBeVisible();
+    await expect(page.locator('#rbNext')).toBeHidden();
   });
 });

@@ -75,7 +75,7 @@ function rbMissionList(a, b){
   ];
 }
 function rbSet(list, name){
-  rbLib = list.slice(0, RB_MAX); rbName = name || ''; rbSel = null; rbChoosing = false; rbShowAll = false; rbSug = -1; rbMis.pair = ''; rbMis.done = {}; rbSaveMis(); rbAll = null; rbStale = true; rbPage = 0; $('rbFind').value = ''; $('rbMsg').textContent = '';
+  rbLib = list.slice(0, RB_MAX); rbName = name || ''; rbSel = null; rbChoosing = false; rbShowAll = false; rbSug = -1; rbMoved = false; rbMis.pair = ''; rbMis.done = {}; rbSaveMis(); rbAll = null; rbStale = true; rbPage = 0; $('rbFind').value = ''; $('rbMsg').textContent = '';
   try { if (rbLib.length) localStorage.setItem(RB_KEY, JSON.stringify({ n: rbName, t: rbLib })); else localStorage.removeItem(RB_KEY); }
   catch (e) { $('rbMsg').textContent = 'Ta collection est trop grande pour être gardée en mémoire : il faudra la réimporter à ta prochaine visite.'; }
   renderReal();
@@ -83,13 +83,13 @@ function rbSet(list, name){
 // Une étape à la fois. Sans paire choisie, une seule paire est proposée en grand (rbSug, « Ta paire du jour ») ;
 // la liste complète s'ouvre avec « Choisir une paire moi-même » (rbChoosing). Une fois la paire choisie, ses
 // missions s'affichent une par une, sauf si on demande à les voir toutes (rbShowAll).
-let rbChoosing = false, rbShowAll = false, rbSug = -1;
+let rbChoosing = false, rbShowAll = false, rbSug = -1, rbMoved = false;   // rbMoved : on a demandé une autre paire que celle du jour
 const rbScroll = id => $(id).scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
 function rbChoose(){ rbChoosing = true; rbShowAll = false; renderReal(); rbScroll('rbPairPick'); }
 // Choisit une paire : ses missions repartent de zéro si c'en est une nouvelle
 function rbPickPair(i, j){ const k = i + '|' + j; if (rbMis.pair !== k){ rbMis.pair = k; rbMis.done = {}; rbSaveMis(); } rbSel = [i, j]; rbChoosing = false; rbShowAll = false; renderReal(); rbScroll('rbMisBox'); }
 // Paire suivante proposée : on laisse la paire en cours et on revient à la proposition
-function rbNextSug(){ rbSel = null; rbMis.pair = ''; rbMis.done = {}; rbSaveMis(); rbChoosing = false; rbSug = rbPairs.length ? (rbSug + 1) % rbPairs.length : 0; renderReal(); rbScroll('rbHero'); }
+function rbNextSug(){ const top = rbAll || rbPairs; rbSel = null; rbMis.pair = ''; rbMis.done = {}; rbSaveMis(); rbChoosing = false; rbMoved = true; rbSug = top.length ? (rbSug + 1) % top.length : 0; renderReal(); rbScroll('rbHero'); }
 // Pourquoi la paire marche, en trois pastilles : ok (vert), mid (jaune)
 function rbChips(a, b){
   const d = Math.abs(b[3] / a[3] - 1) * 100, rel = rbRel(a[4], b[4]), ga = (a[2] || '').toLowerCase(), gb = (b[2] || '').toLowerCase();
@@ -101,11 +101,11 @@ function rbChips(a, b){
 }
 function rbHero(i, j, chosen){
   const a = rbLib[i], b = rbLib[j];
-  $('rbKick').textContent = chosen ? 'Ta paire' : 'Ta paire du jour';
+  $('rbKick').textContent = chosen ? 'Ta paire' : rbMoved ? 'Une paire pour toi' : 'Ta paire du jour';
   for (const [t, p] of [[a, 'A'], [b, 'B']]){ $('rb' + p + 'T').textContent = t[0]; $('rb' + p + 'A').textContent = t[1] || 'Artiste inconnu'; $('rb' + p + 'M').textContent = `${rbBpm(t[3])} BPM · ${t[4]}`; }
   const box = $('rbChips'); box.innerHTML = '';
   for (const [name, [lvl, txt], tip] of rbChips(a, b)){ const c = document.createElement('span'), k = document.createElement('b'); c.className = 'rbchip ' + lvl; c.title = tip; k.textContent = (lvl === 'ok' ? '✓ ' : '~ ') + name; c.append(k, document.createTextNode(' · ' + txt)); box.appendChild(c); }
-  $('rbGo').hidden = chosen; $('rbNext').hidden = chosen; $('rbPairChange').hidden = !chosen; $('rbOwn').hidden = chosen;
+  $('rbGo').hidden = chosen; $('rbNext').hidden = chosen || (rbAll || rbPairs).length < 2; $('rbPairChange').hidden = !chosen; $('rbOwn').hidden = chosen;
 }
 function rbCheck(id, on, list){
   if (on) rbMis.done[id] = 1; else delete rbMis.done[id];

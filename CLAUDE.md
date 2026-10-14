@@ -206,7 +206,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   paire » (`rbNextSug`) ; la liste complète et la recherche sont derrière « Choisir une paire moi-même »
   (`#rbPairPick`, `rbChoosing`). Missions inchangées (une à la fois). Calcul des paires et textes des
   missions inchangés. Prévu ensuite : bouton « Jouer cette paire ici » avec les fichiers de l'utilisateur
-  (essai « Ta musique » : import MP3 + grille rekordbox). 179 tests verts.
+  (essai « Ta musique » : import MP3 + grille rekordbox). « Une autre paire » parcourt `rbAll` (titre « Une
+  paire pour toi », `rbMoved`), caché s'il n'y a qu'une paire. 182 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

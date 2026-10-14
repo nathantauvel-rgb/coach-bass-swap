@@ -488,7 +488,6 @@ button.card:disabled{opacity:.55;cursor:default}
 button.cta{border:0}
 .ghost{border:2px solid var(--xp-line);background:var(--panel);color:var(--xp);border-radius:999px;padding:9px 18px;font-weight:700;font-size:15px}
 .ghost:hover{background:var(--xp-bg-2)}
-.rbhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel-2);border-radius:22px;padding:14px 18px}
 .rbsum{margin:0;font-weight:700}
 .rbfind{width:100%;max-width:420px;border:2px solid var(--line);border-radius:999px;padding:10px 18px;background:var(--panel);margin-bottom:14px}
 .duos{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
@@ -666,7 +665,6 @@ details.cmp[open] summary{margin-bottom:8px}
 .clair{font-size:14px;color:var(--muted)}
 .clair button{padding:4px 10px;min-width:0;font-size:13px}
 /* Lot 12 : Passer au vrai, une étape à la fois */
-#rbPairSum{margin-bottom:6px}
 .rbdots{display:flex;gap:8px;margin:0 0 14px}
 .rbdots span{width:14px;height:14px;border-radius:50%;background:var(--track)}
 .rbdots span.done{background:var(--ok)}
