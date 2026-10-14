@@ -32,8 +32,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 13 oct. 2026, fin de session)
-- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 10 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
-  page de présentation). `main` = `origin/main`, à une
+- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 11 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
+  page de présentation, rangement des écrans). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
 - **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (16 points)
   sur la vraie FLX4. Aucun lot n'a été vérifié sur la table. À relire en particulier : le schéma de
@@ -155,6 +155,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   résultat : étoiles, titre, conseils, boutons, puis une ligne `.rmeta` (XP, badge, objectif), le schéma
   dans `<details id="cmpBox">` (redessiné à l'ouverture, `cmpLast`), « C'était clair ? » en bas.
   149 tests verts.
+- **Lot 11 publié le 14 oct. 2026** (accord de l'utilisateur, avant la checklist FLX4).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
