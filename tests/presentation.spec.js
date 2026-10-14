@@ -25,6 +25,6 @@ test.describe('Page de présentation', () => {
   test('les questions fréquentes s\'ouvrent', async ({ page }) => {
     await page.goto('/presentation.html');
     await page.locator('.pres-faq summary', { hasText: 'Faut-il créer un compte ?' }).click();
-    await expect(page.locator('.pres-faq details[open] p')).toContainText('Rien n\'est envoyé');
+    await expect(page.locator('.pres-faq details[open] p')).toContainText('elle n\'est envoyée nulle part');
   });
 });
