@@ -456,7 +456,7 @@ a.brand{color:inherit;text-decoration:none}
 .tabs a .tn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--panel-2);font-size:13px}
 .tabs a:hover{color:var(--fg)}
 .tabs a[aria-current="page"]{background:var(--fg);color:var(--on-fg)}
-.tabs a[aria-current="page"] .tn{background:var(--accent);color:var(--ink)}
+.tabs a[aria-current="page"] .tn{background:var(--on-fg);color:var(--fg)}
 .hero,.page{background:var(--panel);border-radius:32px;box-shadow:var(--shadow);padding:36px}
 .hero{display:flex;gap:28px;align-items:center;justify-content:space-between}
 .hero h1,.page h1{margin:0;font-weight:700;font-size:clamp(30px,4.6vw,48px);line-height:1.05;letter-spacing:-.01em;text-wrap:balance}
@@ -524,7 +524,7 @@ button.cta{border:0}
 .stages li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--panel-2);border-radius:20px;padding:12px 16px}
 .stages li.now{background:var(--hi);box-shadow:inset 0 0 0 3px var(--accent)}
 .stages .num{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--panel);font-family:var(--display);font-weight:700;color:var(--muted)}
-.stages li.done .num{background:var(--go);color:var(--ink)}
+.stages li.done .num{background:var(--ok);color:var(--ink)}
 .stages li.now .num{background:var(--accent);color:var(--ink)}
 .stages strong{display:block;font-family:var(--display);font-weight:600;font-size:17px;line-height:1.2}
 .stages div span{font-size:14px;color:var(--muted)}
@@ -669,7 +669,7 @@ details.cmp[open] summary{margin-bottom:8px}
 #rbPairSum{margin-bottom:6px}
 .rbdots{display:flex;gap:8px;margin:0 0 14px}
 .rbdots span{width:14px;height:14px;border-radius:50%;background:var(--track)}
-.rbdots span.done{background:var(--go)}
+.rbdots span.done{background:var(--ok)}
 .rbdots span.now{background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent)}
 .missions li.now{display:flex;flex-direction:column;gap:12px;align-items:flex-start;background:var(--panel-2);border-radius:22px;padding:6px 6px 16px}
 .missions li.now label{background:none;padding:12px 14px 0}
