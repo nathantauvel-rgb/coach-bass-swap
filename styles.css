@@ -210,8 +210,6 @@ a.chip:hover{border-color:var(--muted)}
 .rbtn{border:1px solid var(--line);background:var(--panel-2);border-radius:14px;padding:12px 22px;font-weight:700}
 .rbtn.go{border:0;background:linear-gradient(135deg,var(--a),var(--xp));color:var(--ink)}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
-.after{color:var(--muted);font-size:15px;margin:0;text-align:center}
-.after b{color:var(--fg);font-weight:600}
 /* Guide de premier lancement */
 .onb{position:fixed;inset:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);display:grid;place-items:center;padding:16px;overflow:auto}
 .onb-card{background:var(--panel);border:1px solid var(--line);border-radius:26px;padding:26px;max-width:720px;width:100%;display:flex;flex-direction:column;gap:16px;position:relative}
@@ -275,7 +273,6 @@ a.chip:hover{border-color:var(--muted)}
 .actionbar .seg{background:var(--bg)}
 .start,.watch{padding:12px 24px;font-size:17px}
 .btnrow{gap:10px}
-.after{max-width:72ch;margin-inline:auto;font-size:14px}
 .brand-name{white-space:nowrap}
 .map{padding-top:8px}
 .stage.running .actionbar{position:static;box-shadow:none}
@@ -481,7 +478,7 @@ button.card{border:0;text-align:left;transition:box-shadow .15s}
 button.card:hover:not(:disabled){box-shadow:inset 0 0 0 3px var(--a)}
 button.card:disabled{opacity:.55;cursor:default}
 .card .soon.ok{background:var(--ok-bg);color:var(--ok-ink)}
-.view.prac .chapters,.view.prac .map,.view.prac .after{display:none}
+.view.prac .chapters,.view.prac .map{display:none}
 .sub{margin:26px 0 6px;font-family:var(--display);font-weight:700;font-size:22px;line-height:1.2}
 .subnote{margin:0 0 14px;font-size:15px;color:var(--muted)}
 .howlist{margin:0 0 18px;padding-left:22px;display:flex;flex-direction:column;gap:6px;max-width:60ch}
@@ -605,7 +602,6 @@ a.chip.status{color:var(--muted)}a.chip.status.on{color:var(--fg)}
 .onb-lex dt{font-weight:700}
 .onb-lex dd{margin:0;color:var(--muted)}
 .lex{white-space:pre-line;border-left:3px solid var(--xp-line);padding-left:10px}
-.bmore{margin-top:12px}
 /* Lot 9 : objectif du jour */
 .goalbox{display:flex;align-items:center;gap:16px;margin-top:22px;background:var(--panel-2);border-radius:22px;padding:14px 18px;max-width:520px}
 .gring{flex:none;width:64px;height:64px;transform:rotate(-90deg)}

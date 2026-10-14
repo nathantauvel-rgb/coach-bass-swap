@@ -188,7 +188,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `README.md` — description publique.
 
 ## Architecture du code (repères ; « fin du script » = `js/demarrage.js`)
-- **Onglets** : quatre blocs `.view` (`vHome`, `vLearn`, `vTrain`, `vReal`), un seul visible. `setView(v)`
+- **Onglets** : des blocs `.view` (`vHome`, `vLearn`, `vTrain`, `vReal`, `vTable`, `vProgres`), un seul visible. `setView(v)`
   (fin du script) suit l'adresse : `#accueil` (défaut), `#apprendre`, `#entrainer`, `#vrai`, et aussi `#table` (« Ma table ») et `#progres` (« Mes progrès »). Quitter
   Apprendre arrête la partie en cours ; le guide de premier lancement s'ouvre à la première entrée dans
   Apprendre, plus au chargement. Les tests ouvrent `index.html#apprendre`.
@@ -203,7 +203,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `quizBonus()` (question du niveau affiché), `quizFlash()` (5 questions sur les niveaux joués),
   `openQuiz` / `closeQuiz` (fenêtre `#quiz`), `quizOffer(st)` appelé par `finish`. `BADGES` (identifiant,
   nom, condition lue dans la progression), `badgeSync()` (enregistre et renvoie les nouveaux),
-  `badgeNote(id)` (annonce), `renderBadges()` appelé par `renderHome`. L'XP du quiz s'ajoute dans `renderHud`.
+  `badgeNote(id)` (annonce), `renderBadges()` appelé par `renderProgres`. L'XP du quiz s'ajoute dans `renderHud`.
 - **Ma table** (`js/table.js`) : `TKINDS` (nom et explication par type de commande), `TKEY` (commande du
   schéma → réglage MIDI, quand il existe), `usedIn(key)` (niveaux qui s'en servent, lus dans
   `BASE_LESSONS` / `CH3_LESSONS`), `tableSvg()` (le dessin), `renderTable()`. Quand cette page est
