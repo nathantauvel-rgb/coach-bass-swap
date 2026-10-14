@@ -156,6 +156,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   dans `<details id="cmpBox">` (redessiné à l'ouverture, `cmpLast`), « C'était clair ? » en bas.
   149 tests verts.
 - **Lot 11 publié le 14 oct. 2026** (accord de l'utilisateur, avant la checklist FLX4).
+- **Lot 12 (14 oct. 2026)** : branche `lot-12-vrai`, non publiée. « Passer au vrai », une étape à la fois
+  (`js/rekordbox.js`) : 3 paires par page (`RB_PER`), la liste se replie sur la paire choisie (`#rbPairSum`,
+  « Changer de paire », `rbChoosing`), une seule mission affichée avec « C'est fait » (`.rbok`, `rbCheck`)
+  et 6 pastilles (`#rbDots`), « Voir toutes les missions » (`rbShowAll`), « Choisir une autre paire »
+  (`#rbAgain`) quand la paire est validée. Calcul des paires et textes des missions inchangés. Image
+  `img/vrai.jpg` refaite. 153 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -273,7 +279,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

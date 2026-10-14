@@ -195,10 +195,10 @@ test.describe('Passer au vrai', () => {
     const erreurs = await ouvrir(page, { onglet: 'vrai' });
     await page.locator('#rbDemo').click();
     await expect(page.locator('#rbSum')).toContainText('12 morceaux');
-    await expect(page.locator('#rbPairs .duo')).toHaveCount(5);
+    await expect(page.locator('#rbPairs .duo')).toHaveCount(3);
     await page.locator('#rbPairs .duo').first().click();
     await expect(page.locator('#rbMissions li')).toHaveCount(6);
-    for (let i = 0; i < 6; i++) await page.locator('#rbMissions input').nth(i).check();
+    for (let i = 0; i < 6; i++) await page.locator('#rbMissions .rbok').click();
     await expect(page.locator('#rbDone')).toContainText('Paire validée');
     expect(erreurs).toEqual([]);
   });

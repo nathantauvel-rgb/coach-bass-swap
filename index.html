@@ -146,16 +146,21 @@
       </div>
       <div id="rbFull" hidden>
         <div class="rbhead"><p class="rbsum" id="rbSum"></p><div class="rbrow"><button type="button" class="ghost" id="rbChange">Changer de fichier</button><button type="button" class="ghost" id="rbClear">Retirer la collection</button></div></div>
-        <h2 class="sub">2. Choisis une paire de morceaux</h2>
-        <p class="subnote">Ces morceaux de ta collection s'enchaînent bien : tempos proches, tonalités qui vont ensemble.</p>
-        <input type="search" class="rbfind" id="rbFind" placeholder="Chercher un morceau ou un artiste" aria-label="Chercher un morceau ou un artiste">
-        <div class="duos" id="rbPairs"></div>
-        <button type="button" class="ghost" id="rbMore">Voir d'autres paires</button>
+        <h2 class="sub" id="rbPairTitle">2. Choisis une paire de morceaux</h2>
+        <div id="rbPairPick">
+          <p class="subnote">Ces morceaux de ta collection s'enchaînent bien : tempos proches, tonalités qui vont ensemble.</p>
+          <input type="search" class="rbfind" id="rbFind" placeholder="Chercher un morceau ou un artiste" aria-label="Chercher un morceau ou un artiste">
+          <div class="duos" id="rbPairs"></div>
+          <button type="button" class="ghost" id="rbMore">Voir d'autres paires</button>
+        </div>
+        <div class="rbhead" id="rbPairSum" hidden><p class="rbsum" id="rbPairTxt"></p><div class="rbrow"><button type="button" class="ghost" id="rbPairChange">Changer de paire</button></div></div>
         <div id="rbMisBox" hidden>
           <h2 class="sub">3. Tes missions dans rekordbox</h2>
           <p class="subnote" id="rbMisSub"></p>
+          <div class="rbdots" id="rbDots" aria-hidden="true"></div>
           <ol class="missions" id="rbMissions"></ol>
           <p class="rbdone" id="rbDone" hidden></p>
+          <div class="rbrow rbmis-row"><button type="button" class="cta" id="rbAgain" hidden>Choisir une autre paire</button><button type="button" class="ghost" id="rbMisAll">Voir toutes les missions</button></div>
         </div>
       </div>
       <p class="rbmsg" id="rbMsg" role="status"></p>

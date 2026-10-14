@@ -4,7 +4,7 @@
 /* ---------- Passer au vrai : collection rekordbox, paires recommandées, missions ----------
    Un morceau = [titre, artiste, genre, bpm, tonalité Camelot]. Seules ces infos sont lues dans le XML,
    et elles restent dans le navigateur. Une paire = [score, i, j] (indices dans rbLib, i = le plus lent). */
-const RB_KEY = 'coach-collection', RB_MIS = 'coach-missions', RB_MAX = 6000, RB_PER = 6, RB_PC = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+const RB_KEY = 'coach-collection', RB_MIS = 'coach-missions', RB_MAX = 6000, RB_PER = 3, RB_PC = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
 function rbKey(s){
   if (!s) return '';
   s = String(s).trim().replace('♯', '#').replace('♭', 'b');
@@ -75,25 +75,41 @@ function rbMissionList(a, b){
   ];
 }
 function rbSet(list, name){
-  rbLib = list.slice(0, RB_MAX); rbName = name || ''; rbSel = null; rbMis.pair = ''; rbMis.done = {}; rbSaveMis(); rbAll = null; rbStale = true; rbPage = 0; $('rbFind').value = ''; $('rbMsg').textContent = '';
+  rbLib = list.slice(0, RB_MAX); rbName = name || ''; rbSel = null; rbChoosing = false; rbShowAll = false; rbMis.pair = ''; rbMis.done = {}; rbSaveMis(); rbAll = null; rbStale = true; rbPage = 0; $('rbFind').value = ''; $('rbMsg').textContent = '';
   try { if (rbLib.length) localStorage.setItem(RB_KEY, JSON.stringify({ n: rbName, t: rbLib })); else localStorage.removeItem(RB_KEY); }
   catch (e) { $('rbMsg').textContent = 'Ta collection est trop grande pour être gardée en mémoire : il faudra la réimporter à ta prochaine visite.'; }
   renderReal();
 }
+// Une étape à la fois : la liste des paires se replie une fois la paire choisie (rbChoosing la rouvre),
+// et une seule mission est affichée, sauf si on demande à les voir toutes (rbShowAll)
+let rbChoosing = false, rbShowAll = false;
+function rbChoose(){ rbChoosing = true; rbShowAll = false; renderReal(); $('rbPairTitle').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' }); }
+function rbCheck(id, on, list){
+  if (on) rbMis.done[id] = 1; else delete rbMis.done[id];
+  if (list.every(m => rbMis.done[m[0]]) && !rbMis.done.ok){ rbMis.done.ok = 1; rbMis.total++; confetti(120); badgeSync(); }
+  rbSaveMis(); renderMissions();
+}
 function renderMissions(){
-  const box = $('rbMisBox'); box.hidden = !rbSel; if (!rbSel) return;
+  const box = $('rbMisBox'); box.hidden = !rbSel || rbChoosing; if (box.hidden) return;
   const a = rbLib[rbSel[0]], b = rbLib[rbSel[1]], list = rbMissionList(a, b), ol = $('rbMissions'); ol.innerHTML = '';
-  $('rbMisSub').textContent = `Avec « ${a[0]} » puis « ${b[0]} ». Fais chaque mission sur ta table, et coche-la quand c'est propre. Les quatre dernières reprennent les niveaux 1 à 4 des leçons.`;
-  for (const [id, title, text] of list){ const liEl = document.createElement('li'), lab = document.createElement('label'), cb = document.createElement('input'), d = document.createElement('div'), st = document.createElement('strong'), sp = document.createElement('span');
-    cb.type = 'checkbox'; cb.checked = !!rbMis.done[id]; liEl.classList.toggle('done', cb.checked); st.textContent = title; sp.textContent = text; d.append(st, sp); lab.append(cb, d); liEl.appendChild(lab); ol.appendChild(liEl);
-    cb.addEventListener('change', () => { if (cb.checked) rbMis.done[id] = 1; else delete rbMis.done[id];
-      const all = list.every(m => rbMis.done[m[0]]); if (all && !rbMis.done.ok){ rbMis.done.ok = 1; rbMis.total++; confetti(120); badgeSync(); }
-      rbSaveMis(); renderMissions(); }); }
-  const dn = $('rbDone'); dn.hidden = !rbMis.done.ok; dn.textContent = `Paire validée ! Tu as réussi ${plur(rbMis.total, 'vraie transition', 'vraies transitions')} avec ta musique. Choisis une autre paire pour continuer.` + (rbMis.total === 1 ? ' Nouveau badge : Pour de vrai.' : '');
+  const cur = list.findIndex(m => !rbMis.done[m[0]]), fini = cur < 0;
+  $('rbMisSub').textContent = fini ? `Les ${list.length} missions sont faites avec « ${a[0]} » puis « ${b[0]} ».` : `Mission ${cur + 1} sur ${list.length}. Fais-la sur ta table avec « ${a[0]} » puis « ${b[0]} », et appuie sur « C'est fait » quand c'est propre.`;
+  const dots = $('rbDots'); dots.innerHTML = '';
+  list.forEach((m, i) => { const d = document.createElement('span'); d.className = rbMis.done[m[0]] ? 'done' : i === cur ? 'now' : ''; dots.appendChild(d); });
+  list.forEach(([id, title, text], i) => { const liEl = document.createElement('li'), lab = document.createElement('label'), cb = document.createElement('input'), d = document.createElement('div'), st = document.createElement('strong'), sp = document.createElement('span');
+    cb.type = 'checkbox'; cb.checked = !!rbMis.done[id]; liEl.classList.toggle('done', cb.checked); liEl.classList.toggle('now', i === cur); liEl.hidden = !rbShowAll && i !== cur;
+    st.textContent = title; sp.textContent = text; d.append(st, sp); lab.append(cb, d); liEl.appendChild(lab);
+    if (i === cur){ const ok = document.createElement('button'); ok.type = 'button'; ok.className = 'cta rbok'; ok.textContent = 'C\u2019est fait'; ok.addEventListener('click', () => rbCheck(id, true, list)); liEl.appendChild(ok); }
+    cb.addEventListener('change', () => rbCheck(id, cb.checked, list)); ol.appendChild(liEl); });
+  const dn = $('rbDone'); dn.hidden = !rbMis.done.ok; dn.textContent = `Paire validée ! Tu as réussi ${plur(rbMis.total, 'vraie transition', 'vraies transitions')} avec ta musique.` + (rbMis.total === 1 ? ' Nouveau badge : Pour de vrai.' : '');
+  $('rbAgain').hidden = !rbMis.done.ok;
+  $('rbMisAll').textContent = rbShowAll ? (fini ? 'Masquer les missions' : 'Ne voir que la mission en cours') : fini ? 'Revoir les missions' : 'Voir toutes les missions';
 }
 function renderReal(){
   const has = rbLib.length > 0; $('rbEmpty').hidden = has; $('rbFull').hidden = !has; if (!has) return;
-  const usable = rbLib.filter(t => t[3] && t[4]).length;
+  const usable = rbLib.filter(t => t[3] && t[4]).length, pick = !rbSel || rbChoosing;
+  $('rbPairPick').hidden = !pick; $('rbPairSum').hidden = pick; $('rbPairTitle').textContent = pick ? '2. Choisis une paire de morceaux' : '2. Ta paire';
+  if (rbSel){ const a = rbLib[rbSel[0]], b = rbLib[rbSel[1]]; $('rbPairTxt').textContent = `« ${a[0]} » → « ${b[0]} » · ${rbWhy(a, b)}`; }
   $('rbSum').textContent = plur(rbLib.length, 'morceau', 'morceaux') + (rbName ? ' · ' + rbName : '') + (usable < rbLib.length ? ` · ${usable} avec tempo et tonalité` : '');
   if (rbStale){ const f = $('rbFind').value.trim(); if (f) rbPairs = rbBuild(f); else rbPairs = rbAll = rbAll || rbBuild(''); rbStale = false; rbPage = 0; }
   const pages = Math.max(1, Math.ceil(rbPairs.length / RB_PER)); if (rbPage >= pages) rbPage = 0;
@@ -105,7 +121,7 @@ function renderReal(){
     for (const t of [a, b]){ const pt = document.createElement('span'), nm = document.createElement('b'), ar = document.createElement('span'); pt.className = 'pt'; nm.textContent = t[0]; ar.textContent = t[1] || 'Artiste inconnu'; pt.append(nm, ar);
       if (t === b){ const arrow = document.createElement('span'); arrow.className = 'ar'; arrow.textContent = '→'; arrow.setAttribute('aria-hidden', 'true'); btn.appendChild(arrow); } btn.appendChild(pt); }
     const why = document.createElement('span'); why.className = 'why'; if (c[0] >= 85){ const easy = document.createElement('b'); easy.textContent = 'Facile'; why.appendChild(easy); } why.appendChild(document.createTextNode(rbWhy(a, b))); btn.appendChild(why);
-    btn.addEventListener('click', () => { const k = c[1] + '|' + c[2]; if (rbMis.pair !== k){ rbMis.pair = k; rbMis.done = {}; rbSaveMis(); } rbSel = [c[1], c[2]]; renderReal(); $('rbMisBox').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' }); });
+    btn.addEventListener('click', () => { const k = c[1] + '|' + c[2]; if (rbMis.pair !== k){ rbMis.pair = k; rbMis.done = {}; rbSaveMis(); } rbSel = [c[1], c[2]]; rbChoosing = false; rbShowAll = false; renderReal(); $('rbMisBox').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' }); });
     box.appendChild(btn); }
   if (!shown.length){ const p = document.createElement('p'); p.className = 'subnote'; p.textContent = $('rbFind').value.trim() ? 'Aucune paire trouvée pour cette recherche.' : 'Aucune paire trouvée. Vérifie que rekordbox a bien analysé tes morceaux (tempo et tonalité), puis réexporte ta collection.'; box.appendChild(p); }
   $('rbMore').hidden = pages < 2;
@@ -116,6 +132,9 @@ $('rbChange').addEventListener('click', () => $('rbFile').click());
 $('rbDemo').addEventListener('click', () => rbSet(RB_DEMO.map(rbClean), 'collection d\'exemple'));
 $('rbClear').addEventListener('click', () => rbSet([], ''));
 $('rbMore').addEventListener('click', () => { rbPage++; renderReal(); });
+$('rbPairChange').addEventListener('click', rbChoose);
+$('rbAgain').addEventListener('click', rbChoose);
+$('rbMisAll').addEventListener('click', () => { rbShowAll = !rbShowAll; renderMissions(); });
 $('rbFind').addEventListener('input', () => { rbStale = true; renderReal(); });
 $('rbFile').addEventListener('change', async e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return; $('rbMsg').textContent = '';

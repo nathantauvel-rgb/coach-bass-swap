@@ -187,7 +187,7 @@ test.describe('Badge « Pour de vrai »', () => {
     await ouvrir(page, { onglet: 'vrai' });
     await page.locator('#rbDemo').click();
     await page.locator('#rbPairs .duo').first().click();
-    for (let i = 0; i < 6; i++) await page.locator('#rbMissions input').nth(i).check();
+    for (let i = 0; i < 6; i++) await page.locator('#rbMissions .rbok').click();
     await expect(page.locator('#rbDone')).toContainText('Nouveau badge : Pour de vrai.');
     expect(await stocke(page, 'coach-badges')).toEqual(['vrai']);
   });

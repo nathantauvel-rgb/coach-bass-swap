@@ -663,6 +663,18 @@ details.cmp summary{cursor:pointer;font-weight:700;color:var(--xp);font-size:14p
 details.cmp[open] summary{margin-bottom:8px}
 .clair{font-size:14px;color:var(--muted)}
 .clair button{padding:4px 10px;min-width:0;font-size:13px}
+/* Lot 12 : Passer au vrai, une étape à la fois */
+#rbPairSum{margin-bottom:6px}
+.rbdots{display:flex;gap:8px;margin:0 0 14px}
+.rbdots span{width:14px;height:14px;border-radius:50%;background:var(--track)}
+.rbdots span.done{background:var(--go)}
+.rbdots span.now{background:var(--a);box-shadow:0 0 0 3px color-mix(in srgb,var(--a) 35%,transparent)}
+.missions li.now{display:flex;flex-direction:column;gap:12px;align-items:flex-start;background:var(--panel-2);border-radius:22px;padding:6px 6px 16px}
+.missions li.now label{background:none;padding:12px 14px 0}
+.missions li.now strong{font-size:20px}
+.missions li.now span{font-size:16px;color:var(--fg)}
+.rbok{margin-left:52px;font-size:16px;padding:10px 24px}
+.rbmis-row{margin-top:14px}
 .page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
 .page-note a{color:var(--xp);font-weight:700}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}
