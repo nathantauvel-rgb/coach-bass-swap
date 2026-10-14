@@ -186,7 +186,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   dynamiques). `speed` (1, 0,9 ou 0,8, remis à 1 à chaque changement de niveau), `slowFails`, `slowOffer(st)`
   appelé par `finish`, bouton `#slowBtn` sur la carte de résultat (« Réessayer au ralenti (90 %) », puis
   80 %, puis « Rejouer à 100 % » après une réussite). Le morceau est refabriqué au tempo réduit
-  (`getSong`/`songSafe` prennent une vitesse) ; au ralenti, 2 étoiles au plus. 173 tests verts.
+  (`getSong`/`songSafe` prennent une vitesse) ; au ralenti, 2 étoiles au plus. Changer de niveau remet
+  `slowFails` à zéro. 174 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
