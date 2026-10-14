@@ -606,6 +606,22 @@ a.chip.status{color:var(--muted)}a.chip.status.on{color:var(--fg)}
 .onb-lex dd{margin:0;color:var(--muted)}
 .lex{white-space:pre-line;border-left:3px solid var(--xp-line);padding-left:10px}
 .bmore{margin-top:12px}
+/* Lot 9 : objectif du jour */
+.goalbox{display:flex;align-items:center;gap:16px;margin-top:22px;background:var(--panel-2);border-radius:22px;padding:14px 18px;max-width:520px}
+.gring{flex:none;width:64px;height:64px;transform:rotate(-90deg)}
+.gring circle{fill:none;stroke-width:7}
+.gtrack{stroke:var(--track)}
+.gfill{stroke:var(--xp);stroke-linecap:round;stroke-dasharray:169.6;stroke-dashoffset:169.6;transition:stroke-dashoffset .6s}
+.goalbox.done .gfill{stroke:var(--go)}
+.gtxt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.gtxt strong{font-family:var(--display);font-weight:700;font-size:17px}
+.gtxt>span{font-size:14px;color:var(--muted)}
+.gset{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:13px}
+.gset span{color:var(--muted);margin-right:2px}
+.gset button{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 10px;font-weight:700;font-size:13px}
+.gset button[aria-pressed="true"]{background:var(--xp);border-color:var(--xp);color:var(--ink)}
+.goalline{margin:0;font-weight:700;color:var(--muted)}
+.goalline.done{color:var(--ok)}
 .page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
 .page-note a{color:var(--xp);font-weight:700}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}

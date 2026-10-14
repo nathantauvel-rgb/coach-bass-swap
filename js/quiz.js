@@ -95,7 +95,7 @@ const quizBonus = () => { const lv = (chapter === 3 ? 'c' : 'b') + li, todo = q 
 const quizFlash = () => { const pool = quizMix(QUIZ.filter(q => quizPlayed(q[1]))); return pool.filter(q => !quizOk.includes(q[0])).concat(pool.filter(q => quizOk.includes(q[0]))).slice(0, 5); };
 function openQuiz(list, flash){
   if (quiz || run || !list.length) return;
-  quiz = { list, flash, i: 0, good: 0, xp: 0, answered: false, end: false, back: document.activeElement };
+  quiz = { gT: performance.now(), list, flash, i: 0, good: 0, xp: 0, answered: false, end: false, back: document.activeElement };
   $('quiz').hidden = false; quizShow();
 }
 function quizShow(){
@@ -123,7 +123,7 @@ function quizStep(){
   $('qNext').textContent = 'Retour à l\'entraînement'; if (quiz.good >= 4) confetti(quiz.good === 5 ? 160 : 60);
 }
 function closeQuiz(){
-  if (!quiz) return; const q = quiz; quiz = null; $('quiz').hidden = true;
+  if (!quiz) return; const q = quiz; quiz = null; $('quiz').hidden = true; goalAdd(Math.min(300, (performance.now() - q.gT) / 1000));
   if (!q.flash) $('quizBtn').hidden = true;   // une seule question bonus par partie
   if (view === 'entrainer' && !prac) renderTrain();
   if (q.back && q.back.isConnected && !q.back.hidden) q.back.focus({ preventScroll: true });
@@ -157,8 +157,8 @@ const BADGES = [
   ['oreille', 'Oreille fine', 'Chapitre 3 débloqué', 'II', 'b', () => sumStars(ch2Stars) >= 10],
   ['ondes', 'Lecteur d\'ondes', 'Chapitre 3 terminé', 'III', 'xp', () => CH3_LESSONS.every((_, i) => ch3Stars[i] >= 2)],
   ['sansfaute', 'Sans faute', '3 étoiles partout au chapitre 1', '★', 'mid', () => BASE_LESSONS.every((_, i) => stars[i] >= 3)],
-  ['regulier', 'Régulier', 'Défi du jour réussi 3 jours de suite', '3', 'go', () => pracNum('streak') >= 3],
-  ['accro', 'Accro', 'Défi du jour réussi 7 jours de suite', '7', 'go', () => pracNum('streak') >= 7],
+  ['regulier', 'Régulier', 'Objectif du jour atteint 3 jours de suite', '3', 'go', () => goal.best >= 3 || pracNum('streak') >= 3],
+  ['accro', 'Accro', 'Objectif du jour atteint 7 jours de suite', '7', 'go', () => goal.best >= 7 || pracNum('streak') >= 7],
   ['miniset', 'Mini-set de pro', '8 étoiles sur 9 dans un mini-set', '×3', 'mid', () => pracNum('setBest') >= 8],
   ['tete', 'Tête bien faite', '10 bonnes réponses au quiz', '?', 'xp', () => quizOk.length >= 10],
   ['vrai', 'Pour de vrai', 'Une première paire validée dans rekordbox', '✓', 'b', () => rbMis.total > 0]

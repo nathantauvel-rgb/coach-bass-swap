@@ -24,7 +24,7 @@ function renderTrain(){
   const tag = (id, txt, good) => { const e = $(id); e.textContent = txt; e.classList.toggle('ok', !!good); };
   tag('tDefiS', ds >= 2 ? 'Réussi ' + '★'.repeat(ds) : doneToday ? 'À retenter' : 'À faire', ds >= 2);
   const p = ok ? dailyPick(pool) : null;
-  $('tDefiP').textContent = (p ? `Aujourd'hui : ${BASE_LESSONS[p.li].title}, en ${STYLE_DEFS[p.sty].label}.` : 'Une transition différente chaque jour.') + (sk ? ` Série en cours : ${plur(sk, 'jour', 'jours')}.` : '');
+  $('tDefiP').textContent = (p ? `Aujourd'hui : ${BASE_LESSONS[p.li].title}, en ${STYLE_DEFS[p.sty].label}.` : 'Une transition différente chaque jour.') + (sk ? ` Réussi ${plur(sk, 'jour', 'jours')} d’affilée.` : '');
   tag('tVarS', pracNum('vars') ? plur(pracNum('vars'), 'jouée', 'jouées') : 'Nouveau', pracNum('vars'));
   tag('tEarS', pracNum('ears') ? plur(pracNum('ears'), 'réussie', 'réussies') : 'Nouveau', pracNum('ears'));
   tag('tSetS', pool.length < 3 ? 'Verrouillé' : pracNum('setBest') ? `Record : ${pracNum('setBest')}/9 ★` : 'Nouveau', pool.length >= 3 && pracNum('setBest'));
@@ -55,7 +55,7 @@ function pracStep(st){
   prac.res[prac.i] = st; const k = prac.kind; let gain = '', nextTxt = '';
   if (k === 'defi'){ const t = dayKey(); pracData.defiStars = pracStr('defiDate') === t ? Math.max(pracNum('defiStars'), st) : st; pracData.defiDate = t;
     if (st >= 2 && pracStr('lastOk') !== t){ pracData.streak = pracStr('lastOk') === yesterdayKey() ? pracNum('streak') + 1 : 1; pracData.lastOk = t; }
-    gain = st >= 2 ? 'Défi réussi · série de ' + plur(streakNow(), 'jour', 'jours') : 'Il faut 2 étoiles pour valider le défi : rejoue !'; nextTxt = 'Retour à l\'entraînement'; }
+    gain = st >= 2 ? 'Défi réussi · ' + plur(streakNow(), 'jour', 'jours') + ' d’affilée' : 'Il faut 2 étoiles pour valider le défi : rejoue !'; nextTxt = 'Retour à l\'entraînement'; }
   if (k === 'var'){ pracData.vars = pracNum('vars') + 1; gain = plur(pracNum('vars'), 'variation jouée', 'variations jouées'); nextTxt = 'Une autre variation'; }
   if (k === 'ear'){ if (st >= 2) pracData.ears = pracNum('ears') + 1; gain = st >= 2 ? plur(pracNum('ears'), 'réussie', 'réussies') + ' à l\'oreille' : 'Pas encore : suis la grosse caisse et compte 8 mesures.'; nextTxt = 'Une autre à l\'oreille'; }
   if (k === 'set'){ if (st === 1) $('rTitle').textContent = 'Pas encore. Lis le conseil, puis enchaîne.'; gain = `Transition ${prac.i + 1} sur 3`; nextTxt = prac.i >= 2 ? 'Voir mon résultat' : 'Transition suivante'; }

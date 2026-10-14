@@ -52,7 +52,7 @@ const nextStage = () => parcours ? PARCOURS[parcours].stages.find(id => !STAGES[
 function setParcours(p){ if (!PARCOURS[p]) return; parcours = p; parcoursPick = false; try { localStorage.setItem('coach-parcours', p); } catch (e) {} renderHome(); }
 function renderHome(){
   const choosing = !parcours || parcoursPick, cur = nextStage(), st = STAGES[cur];
-  $('homeChoice').hidden = !choosing; $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing;
+  $('homeChoice').hidden = !choosing; $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing; $('homeGoal').hidden = choosing; $('homeTip').parentElement.hidden = !choosing;
   document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.parcours === parcours)));
   if (choosing){
     $('homeTitle').textContent = 'Tu as une table et tu n\'y connais rien ?'; $('homeLead').textContent = 'En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.';
@@ -61,8 +61,7 @@ function renderHome(){
   $('homeTitle').textContent = st ? st.title : 'Bravo, tu as tout fait !';
   $('homeLead').textContent = st ? st.text : 'Garde la main : un défi par jour, et de nouvelles paires de morceaux dans rekordbox.';
   $('homeCta').textContent = st ? st.cta() : 'Faire le défi du jour';
-  const sk = streakNow();
-  $('homeTip').textContent = sk ? `Série de ${plur(sk, 'jour', 'jours')} : continue !` : sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars) > 0 ? 'Content de te revoir ! On reprend où tu t\'étais arrêté.' : 'Un geste à la fois, et ça vient vite !';
+  renderGoal();
   $('homePathName').textContent = PARCOURS[parcours].name;
   const ol = $('homeStages'); ol.innerHTML = '';
   PARCOURS[parcours].stages.forEach((id, n) => { const s = STAGES[id], done = s.done(), now = id === cur;

@@ -92,6 +92,11 @@
         <h1 id="homeTitle">Tu as une table et tu n'y connais rien ?</h1>
         <p class="lead" id="homeLead">En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.</p>
         <button type="button" class="cta" id="homeCta" hidden>Commencer</button>
+        <div class="goalbox" id="homeGoal" hidden>
+          <svg class="gring" viewBox="0 0 64 64" aria-hidden="true"><circle class="gtrack" cx="32" cy="32" r="27"/><circle class="gfill" id="goalFill" cx="32" cy="32" r="27"/></svg>
+          <div class="gtxt"><strong id="goalTitle"></strong><span id="goalSub"></span>
+            <div class="gset" role="group" aria-label="Objectif du jour, en minutes"><span>Objectif</span><button type="button" data-goal="5" aria-pressed="false">5 min</button><button type="button" data-goal="10" aria-pressed="false">10 min</button><button type="button" data-goal="15" aria-pressed="false">15 min</button></div></div>
+        </div>
         <div class="choices" id="homeChoice">
           <p class="ask">Tu en es où ?</p>
           <button type="button" class="choice" data-parcours="debut" aria-pressed="false"><strong>Je débute complètement</strong><span>On part de zéro : la table, les phrases, puis tes premières transitions.</span></button>
@@ -242,6 +247,7 @@
         <h2 id="rTitle"></h2>
         <span class="gain" id="rGain"></span>
         <p class="newbadge" id="rBadge" role="status" hidden></p>
+        <p class="goalline" id="rGoal"></p>
         <ul class="details" id="rDetails"></ul>
         <div class="cmp" id="cmpBox"><span class="cmp-t">Ton geste et le geste idéal</span><canvas id="cmp" aria-label="Comparaison entre ton geste et le geste idéal"></canvas>
           <div class="cmp-leg"><span><i></i>geste idéal</span><span><u></u>ton geste</span></div></div>
@@ -266,6 +272,7 @@
 <script src="js/entrainement.js"></script>
 <script src="js/rekordbox.js"></script>
 <script src="js/guide.js"></script>
+<script src="js/objectif.js"></script>
 <script src="js/quiz.js"></script>
 <script src="js/parcours.js"></script>
 <script src="js/table.js"></script>

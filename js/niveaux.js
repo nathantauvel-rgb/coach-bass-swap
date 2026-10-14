@@ -186,7 +186,7 @@ function startRun(demo = false){
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
     const earRun = (chapter === 2 || !!(prac && prac.ear)) && !demo;
-    run = { t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: earRun, ch: chapter };
+    run = { gT: performance.now(), t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: earRun, ch: chapter };
     $('stage').classList.toggle('ear', earRun); $('stage').classList.add('running');
     const st0 = $('stage').getBoundingClientRect(); if (st0.top < -4 || st0.top > 40) window.scrollTo({ top: window.scrollY + st0.top - 8, behavior: REDUCED ? 'auto' : 'smooth' });
     setEcho(false); run.echoAt = null;
@@ -219,7 +219,7 @@ function launchB(){
   else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, LESSONS[li].bCue * P + (b - k) * P + .01, true, ...(LESSONS[li].bLoop || [64, 128])); $('launchB').disabled = true; }
   judgeLaunch(k);
 }
-function stopRun(){ setFocus([]); lastAct = ''; const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; setStartBtn(false); $('launchB').disabled = true;
+function stopRun(){ if (run) goalAdd((performance.now() - run.gT) / 1000); setFocus([]); lastAct = ''; const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; setStartBtn(false); $('launchB').disabled = true;
   $('stage').classList.remove('demo', 'ear', 'running'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
   if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, LESSONS[li].init); applyCtrl(); }
   updateSetup(); }
@@ -438,6 +438,6 @@ function finish(){
   if (LESSONS[li].random){ const l = LESSONS[li]; randomizeRead(l); START = l.start; END = l.end; if (hasWorkers()) prepareCh3(l).then(tk => { if (!run && LESSONS[li] === l){ waveTk = tk; drawHighway(START); } }).catch(() => {}); }
   if (placement) placementStep(st);
   if (prac) pracStep(st);
-  quizOffer(st); avisPartie(r.ch, st);
+  quizOffer(st); avisPartie(r.ch, st); goalNote();
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
 }

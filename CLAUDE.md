@@ -125,6 +125,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   « Voir tous les badges » ; « L'écho out » avec accent. Non fait, à voir avec les testeurs : 23 s
   d'attente avant le premier geste du niveau 2. 132 tests verts.
 - **Lot 8 publié le 14 oct. 2026.**
+- **Lot 9 (14 oct. 2026)** : branche `lot-9-objectif`, non publiée. `js/objectif.js` (chargé entre `guide` et
+  `quiz`) : objectif du jour de 5, 10 ou 15 min (10 par défaut), rempli par le temps des parties (démos
+  comprises, `run.gT` → `goalAdd` dans `stopRun`) et du quiz (300 s au plus par ouverture). Clé
+  `coach-objectif` : `min`, `jours` (secondes par jour, 60 derniers), `faits` (jours atteints), `best`
+  (meilleure série). Encart avec anneau sur l'accueil (`#homeGoal`, remplace la bulle quand un parcours
+  est choisi) ; ligne `#rGoal` sur la carte de résultat (`goalNote`). Badges « Régulier » et « Accro »
+  : série d'objectifs (ou ancienne série de défis). La série du défi du jour s'affiche « d'affilée ».
+  142 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -145,7 +153,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `controles` → `niveaux` (niveaux, progression, partie, notation) → `piste` → `midi` →
-  `placement` → `entrainement` → `rekordbox` → `guide` → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) →
+  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) →
   `table` (page « Ma table ») → `avis` (avis des testeurs, rapport) → `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
@@ -227,7 +235,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 ### Clés localStorage
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-chapitre`,
 `coach-style`, `coach-guide-vu`, `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
-`coach-badges` (identifiants des badges gagnés), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
+`coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
@@ -242,7 +250,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,
@@ -272,3 +280,6 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   Travailler sur une branche par lot ; demander l'accord de l'utilisateur avant chaque `git push`.
 - Messages de commit en français, qui décrivent le changement pour l'utilisateur.
 - L'utilisateur juge sur ce qu'il voit : toujours lui dire de recharger la page de production après un push.
+- **Agents du projet** (`.claude/agents/`, créés le 14 oct. 2026) : `gardien` (tests et pièges connus,
+  feu vert/orange/rouge, ne modifie rien) à lancer avant chaque demande de `git push` ; `chercheur-morceaux`
+  (morceaux CC0 / CC BY entre 118 et 130 BPM, licence lue sur la page du morceau, ne télécharge rien).
