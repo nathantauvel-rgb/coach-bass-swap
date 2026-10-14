@@ -189,6 +189,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (`getSong`/`songSafe` prennent une vitesse) ; au ralenti, 2 étoiles au plus. Changer de niveau remet
   `slowFails` à zéro. 174 tests verts.
 - **Lot 15 publié le 14 oct. 2026** (accord de l'utilisateur, avant la checklist FLX4).
+- **Lot 16 (14 oct. 2026)** : branche `lot-16-cabine-pure`, non publiée. Demande de l'utilisateur : « trop de
+  couleurs ». Thème « Cabine pure » choisi par l'utilisateur sur captures comparées : le violet, le vert de
+  « Jouer », le surlignage brun et les taches décoratives deviennent neutres (blanc et gris) ; nouvelle couleur
+  `--accent` (blanc) pour tout ce qui n'est pas une platine. **L'orange (`--a`) et le bleu (`--b`) sont
+  réservés à ce qui touche aux platines A et B** (piste, potards, faders, LANCE B, schéma de la table, logo).
+  Petits titres `.lnum` en gris, badges gagnés d'une seule couleur. Vert et rouge : messages réussi / raté ;
+  jaune : étoiles. Images de la présentation refaites. Contraste contrôlé, 174 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -275,9 +282,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   et `CH3_LESSONS`.
 - **Lisibilité** : `ACT` (texte d'action par cible), `GROUP_OF`, `setFocus(ids)` (classe `.focus`),
   `showAction` (« Dans N temps : … » puis « Maintenant : … ! »), `<details class="howto">`.
-- **Thème « Cabine »** (lot 4, choisi par l'utilisateur le 13 oct. 2026 ; il remplace « Tout doux », qui
-  est supprimé) : sombre, noir neutre, platine A en orange (`--a`), platine B en bleu (`--b`), violet
-  (`--xp`) pour l'XP et les gestes à faire, vert (`--go`) pour Jouer. Police Inter partout. Plus de
+- **Thème « Cabine pure »** (lot 16, 14 oct. 2026, après « Cabine » du lot 4) : sombre, noir neutre et blanc.
+  Platine A en orange (`--a`) et platine B en bleu (`--b`) **seulement pour ce qui touche aux platines** ;
+  partout ailleurs `--accent` (blanc). `--xp` et `--go` sont devenus neutres (gris clair, blanc). Ne pas
+  réintroduire de couleur décorative : l'utilisateur trouvait le site trop coloré. Police Inter partout. Plus de
   mascotte : seule la bulle de conseil `.bubble` reste. **Toutes les couleurs passent par la liste
   `:root` en tête de `styles.css`** (et par `COL` dans `js/piste.js` pour le canvas) : ne jamais écrire
   une couleur en dur ailleurs. Texte posé sur une couleur vive : `--ink` ; sur `--fg` : `--on-fg`.
