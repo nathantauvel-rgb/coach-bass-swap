@@ -76,3 +76,13 @@ test.describe('Sans rien faire', () => {
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
 });
+
+test.describe('Étoiles abîmées', () => {
+  for (const [nom, valeur] of [['note trop grande', '{"0":4}'], ['note négative', '{"0":-1}'], ['texte', '{"0":"x","9":3,"12":2}']]) {
+    test(`${nom} : la carte des niveaux s'affiche quand même`, async ({ page }) => {
+      const erreurs = await ouvrir(page, { stockage: { 'coach-lecons': S({ 0: 2, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 }), 'coach-chapitre': '4', 'coach-ch4': valeur, 'coach-ch3': valeur, 'coach-ch2': valeur } });
+      await expect(page.locator('.node')).toHaveCount(4);
+      expect(erreurs).toEqual([]); await sansBandeau(page);
+    });
+  }
+});

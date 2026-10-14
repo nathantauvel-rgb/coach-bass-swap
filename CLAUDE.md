@@ -176,7 +176,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   seulement si tous les gestes sont justes. S'ouvre avec le chapitre 2 (`ch4Unlocked`). Clé `coach-ch4`.
   `lessonsOf(n)` donne les niveaux d'un chapitre. Pas d'étape dans les parcours, pas de question de quiz
   propre (question générale). `noCount` : niveau sans compte à rebours. Un test « robot » joue chaque
-  combo parfaitement et vérifie les 3 étoiles. Chapitre 5 « La soirée » reste caché (`soon`). 165 tests verts.
+  combo parfaitement et vérifie les 3 étoiles. Chapitre 5 « La soirée » reste caché (`soon`). `cleanBank` ne garde
+  que des notes de 1 à 3 dans toutes les clés d'étoiles (une note abîmée faisait planter la carte). 168 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

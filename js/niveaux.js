@@ -93,7 +93,9 @@ const CHAPTERS = [
 ];
 let ch3Stars = {}; try { ch3Stars = JSON.parse(localStorage.getItem('coach-ch3') || '{}') || {}; } catch (e) {}
 let ch4Stars = {}; try { ch4Stars = JSON.parse(localStorage.getItem('coach-ch4') || '{}') || {}; } catch (e) {}
-if (!ch4Stars || typeof ch4Stars !== 'object' || Array.isArray(ch4Stars)) ch4Stars = {};
+// Étoiles enregistrées : on ne garde que des numéros de niveau et des notes de 1 à 3 (une valeur abîmée faisait planter la carte des niveaux)
+const cleanBank = o => { const r = {}; if (o && typeof o === 'object' && !Array.isArray(o)) for (const [k, v] of Object.entries(o)) if (/^\d$/.test(k) && [1, 2, 3].includes(v)) r[k] = v; return r; };
+stars = cleanBank(stars); earStars = cleanBank(earStars); ch2Stars = cleanBank(ch2Stars); ch3Stars = cleanBank(ch3Stars); ch4Stars = cleanBank(ch4Stars);
 let ch3Open = false;
 if (/[?&]tout=1/.test(location.search)){ ch2Open = true; ch3Open = true; }
 const bankOf = c => c === 4 ? ch4Stars : c === 3 ? ch3Stars : c === 2 ? ch2Stars : stars;
