@@ -3,7 +3,7 @@
 À lire en premier dans toute nouvelle session. L'utilisateur (Nathan, francophone, débutant en code)
 parle en français : répondre en français, sans jargon technique inutile.
 
-**Plan et avancement côté utilisateur :** page Notion « Coach DJ — Plan et suivi »
+**Plan et avancement côté utilisateur :** page Notion « DJingo — Plan et suivi » (ancien titre : Coach DJ)
 https://app.notion.com/p/3f7c35cc3054816ab64cf22e8dfd49c1
 → Après chaque étape terminée : cocher la case dans Notion, ajouter une ligne au « Journal »,
 et mettre à jour la section « Où on en est » ci-dessous.
@@ -32,10 +32,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 13 oct. 2026, fin de session)
-- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 19 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
+- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
-  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant). `main` = `origin/main`, à une
+  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
 - **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (16 points)
   sur la vraie FLX4. Aucun lot n'a été vérifié sur la table. À relire en particulier : le schéma de
@@ -265,7 +265,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   carte son, `getOutputTimestamp`, sinon `outputLatency`) et chaque geste de la table ou de la souris est noté à l'instant où
   il arrive (`gestureMark` → `snapFrame`). Notes continues en millisecondes (`evalLaunchX`, et `xv` / `dur` dans les
   évaluations du swap, de l'écho et de la coupure quand `xRun`), score sur 100 = moyenne des gestes, étoiles : 90 → 3,
-  60 → 2 ; `expertResult` garde le record. Le mode normal ne change pas. 228 tests verts.
+  60 → 2 ; `expertResult` garde le record. Le mode normal ne change pas. Le test de placement met le Mode Expert de côté ;
+  `quitPlacement` le rétablit (`tolOf`). 229 tests verts.
 - **Lot 21 (15 oct. 2026)** : branche `lot-21-djingo` (partie de `lot-20-expert`), non publiée. **Nouveau nom : DJingo**
   (décision de l'utilisateur) dans les pages, le guide (« Bienvenue sur DJingo »), le rapport des testeurs, la présentation,
   la fiche des testeurs, le README, les agents. Les noms internes ne changent pas : clés `coach-*`, dépôt, adresse
@@ -276,6 +277,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (accroche, silence avant le drop, logo sur le drop, jeu de rythme, table qui bouge, Mode Expert, progression, appel),
   musique « Dj » de Play House (CC0) à partir de 1 min 54,968 s, drop au temps 16 de la vidéo. `node marketing/video/rendu.js
   djingo` → `marketing/video/sortie/djingo-tiktok.mp4` et `-sans-son.mp4` (27 s). « Gratuit pendant la bêta » écrit à la fin.
+- **Lots 20 et 21 publiés le 15 oct. 2026** (accord de l'utilisateur, avant la checklist FLX4 ; points 17 et 18 ajoutés à
+  la checklist : FLX4 reconnue sans « à régler », et score du Mode Expert avec le casque de la table).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
