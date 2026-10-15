@@ -9,7 +9,9 @@ function startPlacement(){
   $('stage').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
 }
 function updatePBanner(){ $('pTitle').textContent = `Test de placement · épreuve ${placement.i + 1} sur ${P_STEPS.length}`; $('pText').textContent = 'Fais le niveau du mieux possible. Tu peux regarder la démo avant.'; }
-function quitPlacement(){ placement = null; $('pBanner').hidden = true; $('next').textContent = 'Niveau suivant'; renderHud(); }
+function quitPlacement(){ placement = null; $('pBanner').hidden = true; $('next').textContent = 'Niveau suivant'; renderHud();
+  // le Mode Expert, mis de côté pendant le test, revient (précision, bouton, consignes)
+  if (!run){ TOL = tolOf(); renderExpert(); renderPlan(); } }
 function placementStep(st){
   placement.res[placement.i] = st;
   const last = placement.i >= P_STEPS.length - 1;

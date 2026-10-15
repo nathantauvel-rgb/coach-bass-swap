@@ -111,3 +111,14 @@ test('Mode Expert : un geste sur la table est noté à l\'instant où il arrive'
   expect(n).toBe(1);
   expect(await page.evaluate(() => run.frames[run.frames.length - 1].la)).toBeCloseTo(30 / 127, 3);
 });
+
+test('Mode Expert : mis de côté pendant le test de placement, il revient quand on le quitte', async ({ page }) => {
+  await ouvrir(page, { stockage: Object.assign({ 'coach-parcours': 'deja' }, EXPERT) });
+  await page.evaluate(() => startPlacement());
+  await expect(page.locator('#expertBtn')).toBeHidden();
+  expect(await page.evaluate(() => TOL)).toBe(1);
+  await page.locator('#pQuit').click();
+  await expect(page.locator('#expertBtn')).toBeVisible();
+  expect(await page.evaluate(() => TOL)).toBe(.25);
+  await expect(page.locator('#planNote')).toContainText('Mode Expert');
+});
