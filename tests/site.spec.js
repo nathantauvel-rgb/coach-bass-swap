@@ -73,7 +73,7 @@ test.describe('Première visite et parties (anciens play.py et play2.py)', () =>
   test('le guide s\'ouvre, donne du son, puis laisse jouer et rejouer', async ({ page }) => {
     const erreurs = await ouvrir(page, { stockage: { 'coach-guide-vu': null } });
     await expect(page.locator('#onb')).toBeVisible();
-    await expect(page.locator('#onbTitle')).toHaveText('Bienvenue dans Coach DJ');
+    await expect(page.locator('#onbTitle')).toHaveText('Bienvenue sur DJingo');
     await page.locator('#onbNext').click();
     await expect(page.locator('#onbTitle')).toHaveText('Compter en phrases', { timeout: 60000 });
     await page.locator('#onbSkip').click();

@@ -1,4 +1,4 @@
-// Tests de non-régression de Coach DJ. Lancer avec : npm test
+// Tests de non-régression de DJingo. Lancer avec : npm test
 const { defineConfig } = require('@playwright/test');
 module.exports = defineConfig({
   testDir: 'tests',

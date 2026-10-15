@@ -471,7 +471,7 @@ function finish(){
   for (let i = 0; i < 3; i++){ const sp = document.createElement('span'); sp.textContent = '★'; if (i < st) sp.className = 'on'; sp.style.animationDelay = (i * .18) + 's'; rs.appendChild(sp); }
   $('rTitle').textContent = xr ? (st === 3 ? 'Expert : niveau pro !' : st === 2 ? 'Expert : bien, encore un peu de précision.' : 'Expert : pas encore. Écoute, compte, anticipe.')
     : (r.ch > 1 ? `Chapitre ${r.ch} : ` : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
-  const gained = (bank[li] - before) * XP_PER[r.ch]; $('rGain').textContent = (xr ? xr.txt + ' · ' : '') + (gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`) + (!wasOpen && ch2Unlocked() ? ' · Chapitres 2 et 4 débloqués !' : '') + (!was3 && ch3Unlocked() ? ' · Chapitre 3 débloqué !' : '');
+  const gained = (bank[li] - before) * XP_PER[r.ch]; $('rGain').textContent = (xr ? xr.txt + (gained > 0 ? ` · +${gained} XP` : '') : gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`) + (!wasOpen && ch2Unlocked() ? ' · Chapitres 2 et 4 débloqués !' : '') + (!was3 && ch3Unlocked() ? ' · Chapitre 3 débloqué !' : '');
   const ul = $('rDetails'); ul.innerHTML = ''; for (const [lvl, txt] of items){ const x = document.createElement('li'); x.className = lvl; x.textContent = txt; ul.appendChild(x); }
   $('next').hidden = li >= LESSONS.length - 1;
   $('result').hidden = false; $('retry').focus({ preventScroll: true });

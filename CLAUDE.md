@@ -1,4 +1,4 @@
-# Coach DJ — mémoire du projet pour Claude
+# DJingo (anciennement Coach DJ) — mémoire du projet pour Claude
 
 À lire en premier dans toute nouvelle session. L'utilisateur (Nathan, francophone, débutant en code)
 parle en français : répondre en français, sans jargon technique inutile.
@@ -254,6 +254,28 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   s'annonce autrement, elle passe pour une autre table (bandeau « Nouvelle table », elle ne pilote rien avant réglage).
 - **Lot 19 publié le 15 oct. 2026** (accord de l'utilisateur, avant la checklist FLX4). À vérifier sur la FLX4 : pastille
   sans « · à régler », pas de bandeau « Nouvelle table », fader et potards dessinés qui bougent dans le bon sens.
+- **Lot 20 (15 oct. 2026)** : branche `lot-20-expert`, non publiée. Demande de l'utilisateur : niveaux « beaucoup trop faciles »,
+  il faut que quelqu'un d'un peu expérimenté progresse. Constat : B était toujours calé sur le temps le plus proche
+  (`launchB` arrondit), tolérance de 1 temps au chapitre 1, compte à rebours et repères. **Mode Expert** (`js/expert.js`,
+  chargé après `piste`) sur les 7 niveaux du chapitre 1 seulement, hors entraînement et test de placement (`expertOn()`) :
+  bouton `#expertBtn` dans les étiquettes du niveau (« Mode Expert · record N/100 »), préférence et records dans
+  `coach-expert` (`{ on, best: { numéro de niveau: score } }`, validé à la lecture). En Expert : `TOL` = 0,25 ; pas de compte
+  à rebours, de repère ni de « B partira ici » (même avant de jouer) ; départ 0, 4 ou 8 temps plus tôt au hasard ; B part
+  à l'instant de l'appui (`launchExpert`), sans calage. Tout est mesuré **au temps entendu** (`heardTime` : sortie de la
+  carte son, `getOutputTimestamp`, sinon `outputLatency`) et chaque geste de la table ou de la souris est noté à l'instant où
+  il arrive (`gestureMark` → `snapFrame`). Notes continues en millisecondes (`evalLaunchX`, et `xv` / `dur` dans les
+  évaluations du swap, de l'écho et de la coupure quand `xRun`), score sur 100 = moyenne des gestes, étoiles : 90 → 3,
+  60 → 2 ; `expertResult` garde le record. Le mode normal ne change pas. 228 tests verts.
+- **Lot 21 (15 oct. 2026)** : branche `lot-21-djingo` (partie de `lot-20-expert`), non publiée. **Nouveau nom : DJingo**
+  (décision de l'utilisateur) dans les pages, le guide (« Bienvenue sur DJingo »), le rapport des testeurs, la présentation,
+  la fiche des testeurs, le README, les agents. Les noms internes ne changent pas : clés `coach-*`, dépôt, adresse
+  https://coach-bass-swap.vercel.app (changer d'adresse ou de nom de projet Vercel est une décision à part). Recherche
+  rapide : aucune appli « DJingo » trouvée ; avant d'acheter un domaine ou un logo, vérifier les marques (INPI, EUIPO) et la
+  proximité avec « Duolingo ». Images de la présentation refaites.
+- **Vidéo DJingo (15 oct. 2026)**, dans `marketing/` (hors Git) : `marketing/video/djingo.html`, animation sans capture du site
+  (accroche, silence avant le drop, logo sur le drop, jeu de rythme, table qui bouge, Mode Expert, progression, appel),
+  musique « Dj » de Play House (CC0) à partir de 1 min 54,968 s, drop au temps 16 de la vidéo. `node marketing/video/rendu.js
+  djingo` → `marketing/video/sortie/djingo-tiktok.mp4` et `-sans-son.mp4` (27 s). « Gratuit pendant la bêta » écrit à la fin.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -273,7 +295,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
-  `audio` → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `midi` →
+  `audio` → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `avis` (avis des testeurs, rapport) →
   `demarrage` (démarrage et onglets).
@@ -361,7 +383,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
 `coach-style`, `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-bibliotheque` (`coach.html`).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-expert` (Mode Expert choisi, records sur 100), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -375,7 +397,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,
