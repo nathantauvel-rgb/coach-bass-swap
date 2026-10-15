@@ -188,7 +188,8 @@ function setStartBtn(running){ const b = $('startBtn'); b.textContent = running 
 
 let START = 16, END = 116;
 function startRun(demo = false){
-  if (!demo && needSetup() && !setupReady()){ updateSetup(); return; }
+  // Table pas en place (par exemple après une fiche où l'on a tourné un potard) : on montre l'encadré et on le dit
+  if (!demo && needSetup() && !setupReady()){ updateSetup(); say('Remets ta table en position de départ : « Jouer » se débloquera tout seul.'); $('setup').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' }); return; }
   ensureAudio(); if (ac.state !== 'running') ac.resume();
   if (preparing) return; preparing = true;
   $('startBtn').textContent = hasWorkers() ? 'Préparation…' : 'Préparation (quelques secondes)…'; $('watchBtn').disabled = true;

@@ -51,7 +51,7 @@ function targetText(k, v){ if (k.startsWith('fader')) return v >= .5 ? 'en haut'
 // Petit dessin de la position : un potard avec son aiguille, ou un fader avec son curseur (couleur de la platine)
 function pictoOf(k, v){ const s = document.createElement('span'); s.className = 'pic ' + (k.endsWith('A') ? 'pa' : 'pb'); s.setAttribute('aria-hidden', 'true');
   if (k.startsWith('fader')) s.innerHTML = `<svg viewBox="0 0 16 28"><rect x="6" y="2" width="4" height="24" rx="2" class="track"/><rect x="2" y="${v >= .5 ? 2 : 20}" width="12" height="6" rx="2" class="cap"/></svg>`;
-  else { const a = (-135 + 270 * v) * Math.PI / 180; s.innerHTML = `<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="11" class="ring"/><line x1="14" y1="14" x2="${(14 + 9 * Math.sin(a)).toFixed(1)}" y2="${(14 - 9 * Math.cos(a)).toFixed(1)}" class="cap"/></svg>`; }
+  else { const a = (-135 + 270 * v) * Math.PI / 180; s.innerHTML = `<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="11" class="dial"/><line x1="14" y1="14" x2="${(14 + 9 * Math.sin(a)).toFixed(1)}" y2="${(14 - 9 * Math.cos(a)).toFixed(1)}" class="cap"/></svg>`; }
   return s; }
 // « Pendant le niveau » : les gestes, dans l'ordre, écrits départ → arrivée
 function planSteps(l){

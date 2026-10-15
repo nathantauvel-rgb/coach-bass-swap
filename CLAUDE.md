@@ -223,7 +223,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   commande (PLAY, faders, LOW, filtre, écho, MID), avec le schéma allumé et un essai à l'écoute ; « Je connais,
   passer » ; jamais dans le parcours « deja », l'entraînement ou le test de placement ; « Revoir la fiche »
   dans « Comment faire ? ». Clé `coach-fiches`. Le bouton ON de l'effet compte dans la fiche de l'écho.
-  194 tests verts (tests/outils.js marque les fiches comme vues par défaut).
+  Si la table n'est plus en place après une fiche, la bulle le dit et l'encadré « Position de départ »
+  s'affiche. 195 tests verts (tests/outils.js marque les fiches comme vues par défaut).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

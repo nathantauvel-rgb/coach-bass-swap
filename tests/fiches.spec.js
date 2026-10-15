@@ -130,3 +130,19 @@ test.describe('Avant de jouer : position de départ et gestes, bien séparés', 
     await expect(page.locator('#tip')).toHaveText('Place ta table en position de départ, puis appuie sur Jouer.');
   });
 });
+
+test.describe('Après une fiche, table pas en place', () => {
+  test('« Compris, on joue » montre la position de départ et dit quoi faire', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-fiches': null, 'coach-parcours': 'debut' } });
+    await page.locator('.node').nth(2).click();
+    await envoyer(page, 0xB0, 15, 64); await envoyer(page, 0xB1, 15, 0);
+    await page.locator('#startBtn').click();
+    await expect(page.locator('#onbTitle')).toHaveText('Le potard LOW : les basses');
+    await envoyer(page, 0xB0, 15, 0);
+    await page.locator('#onbNext').click();
+    await expect(page.locator('#onb')).toBeHidden();
+    await expect(page.locator('#startBtn')).toHaveText('Mets ta table en place');
+    await expect(page.locator('#tip')).toHaveText('Remets ta table en position de départ : « Jouer » se débloquera tout seul.');
+    await expect(page.locator('#setup')).toBeInViewport();
+  });
+});

@@ -708,7 +708,7 @@ details.cmp[open] summary{margin-bottom:8px}
 /* Lot 18 : position de départ dessinée, encadré « Pendant le niveau », fiches */
 .pic{display:inline-block;width:22px;height:22px;vertical-align:-6px;margin-right:8px}
 .pic svg{width:100%;height:100%;display:block}
-.pic .ring{fill:none;stroke:var(--line);stroke-width:2.5}
+.pic .dial{fill:none;stroke:var(--line);stroke-width:2.5}
 .pic .track{fill:var(--line)}
 .pic .cap{fill:var(--c);stroke:var(--c);stroke-width:3;stroke-linecap:round}
 .pic.pa{--c:var(--a)}.pic.pb{--c:var(--b)}
