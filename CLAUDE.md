@@ -245,7 +245,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   identifiant inchangé), l'accueil, Ma table, la présentation (matériel, question « Et si j'ai une autre table ? »)
   et la fiche des testeurs. « Tout recommencer à zéro » garde `coach-table` ; le rapport des testeurs donne le nom de
   la table. Une table dont Windows préfixe le nom (« 2- ») reste reconnue (`baseName`). Dans « Ma table », pas
-  d'apprentissage commande par commande tant que la table n'est pas réglée. 215 tests verts. **Aucune autre table essayée en vrai** : les numéros MIDI des tests sont inventés.
+  d'apprentissage commande par commande tant que la table n'est pas réglée. **Schéma vivant** (demande de l'utilisateur) :
+  dans les fiches, « Régler ma table » et « Ma table », le fader dessiné monte et descend, l'aiguille du potard tourne et le
+  bouton s'allume avec la vraie table (`onbSchemaSet`, `onbSchemaPress`, `onbSchemaSync` dans `js/guide.js`, aiguilles `.ndl` ;
+  `tableSchemaSet` dans `js/table.js`) ; dans les fiches, aussi avec le curseur. 218 tests verts. **Aucune autre table essayée en vrai** : les numéros MIDI des tests sont inventés.
   Le casque à 4 canaux dépend de la carte son de la table, pas de son nom : à vérifier sur une autre table.
   **Risque à vérifier sur la vraie FLX4** : elle est reconnue au mot « FLX4 » dans son nom (`isFlx4`). Si elle
   s'annonce autrement, elle passe pour une autre table (bandeau « Nouvelle table », elle ne pilote rien avant réglage).

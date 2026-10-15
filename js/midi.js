@@ -54,7 +54,7 @@ function onMidi(e){
   if (type === 0xB0){
     const kb = MIDI_NOTE.find(k => map[k] && map[k].cc && midiSame(map[k], ch, d1));
     if (kb){ if (d2 >= 64 && !ccDown[kb]) pressKey(kb); ccDown[kb] = d2 >= 64; return; }
-    for (const k of MIDI_CC){ if (midiSame(map[k], ch, d1)){ phys[k] = val; if (onb.active){ ctrl[k] = val; applyCtrl(); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = val; applyCtrl(); } if (!run) updateSetup(); return; } } }
+    for (const k of MIDI_CC){ if (midiSame(map[k], ch, d1)){ phys[k] = val; if (onb.active){ ctrl[k] = val; applyCtrl(); onbSchemaSet($('onbSvg'), 'sv-', k, val); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = val; applyCtrl(); } if (!run) updateSetup(); return; } } }
   else if (type === 0x90 && d2 > 0){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1)); if (k) pressKey(k); }
 }
 async function initMidi(){

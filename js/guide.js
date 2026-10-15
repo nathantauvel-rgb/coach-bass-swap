@@ -40,8 +40,22 @@ const onb = { active: false, i: 0, done: {}, base: {}, t0: 0, playing: false, ra
 let guideSeen = false; try { guideSeen = localStorage.getItem('coach-guide-vu') === '1'; } catch (e) {}
 const ONB_KNOBS = [['TRIM', 34], ['HI', 62], ['MID', 88], ['LOW', 114], ['CFX', 146]];
 (function drawOnbKnobs(){ const g = $('sv-knobs'); let h = '';
-  for (const [lab, y] of ONB_KNOBS){ for (const [x, side] of [[266, 'A'], [334, 'B']]) h += `<circle class="part" id="sv-${lab.toLowerCase()}${side}" cx="${x}" cy="${y}" r="10"/>`; h += `<text x="300" y="${y + 4}" text-anchor="middle">${lab}</text>`; }
+  for (const [lab, y] of ONB_KNOBS){ for (const [x, side] of [[266, 'A'], [334, 'B']]){ const id = `sv-${lab.toLowerCase()}${side}`;
+      h += `<circle class="part" id="${id}" cx="${x}" cy="${y}" r="10"/><line class="ndl" id="${id}-n" data-cx="${x}" data-cy="${y}" x1="${x}" y1="${y}" x2="${x}" y2="${y - 8}"/>`; }
+    h += `<text x="300" y="${y + 4}" text-anchor="middle">${lab}</text>`; }
   g.innerHTML = h; })();
+// Le schéma suit la table (lot 19) : le fader dessiné monte ou descend, l'aiguille du potard tourne, le bouton s'allume.
+// v de 0 (en bas, tout à gauche) à 1 (en haut, tout à droite). Sert aux fiches (préfixe sv-) et à « Régler ma table » (rg-).
+function onbSchemaSet(svg, pre, k, v){
+  if (v == null || !isFinite(v)) return; const el = svg.querySelector('#' + pre + k); if (!el) return;
+  if (k.startsWith('fader')) el.lastElementChild.setAttribute('y', (176 + (1 - v) * 50).toFixed(1));
+  else { const nd = svg.querySelector('#' + pre + k + '-n'); if (nd) nd.setAttribute('transform', `rotate(${(-135 + 270 * v).toFixed(1)} ${nd.dataset.cx} ${nd.dataset.cy})`); }
+}
+function onbSchemaPress(svg, pre, k){
+  const el = svg.querySelector('#' + pre + k); if (!el) return; const t = el.tagName === 'g' ? el.firstElementChild : el;
+  t.classList.add('press'); clearTimeout(t._press); t._press = setTimeout(() => t.classList.remove('press'), 250);
+}
+const onbSchemaSync = () => { for (const k of MIDI_CC) onbSchemaSet($('onbSvg'), 'sv-', k, ctrl[k]); };
 // Allume une commande du schéma (celui des fiches, ou sa copie dans « Régler ma table », préfixe rg-)
 function onbHighlight(id, svg = $('onbSvg'), pre = 'sv-'){
   svg.querySelectorAll('.hl').forEach(e => e.classList.remove('hl')); svg.querySelectorAll('.hl-ring').forEach(e => e.remove());
@@ -54,7 +68,7 @@ function onbHighlight(id, svg = $('onbSvg'), pre = 'sv-'){
 function onbStartMusic(){
   ensureAudio(); if (ac.state !== 'running') ac.resume();
   if (!tracks || !tracks.B1) return;
-  Object.assign(ctrl, { faderA: 1, lowA: .5, cfxA: .5, midA: .5 }); applyCtrl();
+  Object.assign(ctrl, { faderA: 1, lowA: .5, cfxA: .5, midA: .5 }); applyCtrl(); onbSchemaSync();
   onb.t0 = ac.currentTime + .1; play('A', tracks.B1, onb.t0, 64 * P, true); onb.playing = true;
 }
 function onbStopMusic(){ if (ac){ stop('A'); setEcho(false); } onb.playing = false; }
@@ -76,6 +90,7 @@ function closeOnb(){
 function closeFiche(go){ const after = onb.after; closeOnb(); if (go && after) after(); }
 function onbMoved(k){
   const st = onb.steps[onb.i]; if (!onb.active || !st || st.k !== k) return;
+  if (k === 'playB' || k === 'fxOn') onbSchemaPress($('onbSvg'), 'sv-', k);
   if (k === 'playB'){ onb.playing ? onbStopMusic() : onbStartMusic(); }
   else if (k === 'fxOn'){ if (!onb.playing) onbStartMusic(); setEcho(!echoOn); }
   else { const v = ctrl[k]; if (onb.base[k] == null) onb.base[k] = v; if (Math.abs(v - onb.base[k]) < .2) return; }
@@ -100,7 +115,7 @@ function renderOnbTry(){
   const act = document.createElement('span'); act.className = 'act'; act.textContent = st.act + (tableOn() && map[st.k] ? '' : st.k === 'playB' ? ' (ou clique sur PLAY)' : st.k === 'fxOn' ? ' (ou clique sur ECHO)' : ' (ou utilise le curseur)'); box.appendChild(act);
   if (btnKey){ const b = document.createElement('button'); b.type = 'button'; b.className = 'onb-play'; b.textContent = st.k === 'playB' ? 'PLAY' : 'ECHO'; b.addEventListener('click', () => onbMoved(st.k)); box.appendChild(b); }
   else { const r = document.createElement('input'); r.type = 'range'; r.min = '0'; r.max = '1'; r.step = '.01'; r.value = ctrl[st.k]; r.setAttribute('aria-label', st.act);
-    r.addEventListener('input', () => { ctrl[st.k] = +r.value; applyCtrl(); onbMoved(st.k); }); box.appendChild(r); }
+    r.addEventListener('input', () => { ctrl[st.k] = +r.value; applyCtrl(); onbSchemaSet($('onbSvg'), 'sv-', st.k, ctrl[st.k]); onbMoved(st.k); }); box.appendChild(r); }
   if (st.k === 'cfxA' && tableOn() && !map.cfxA && !tableCfg){ const b = document.createElement('button'); b.type = 'button'; b.className = 'onb-learn'; b.textContent = learnKey === 'cfxA' ? 'Tourne le potard CFX…' : 'Faire reconnaître ce potard';
     b.addEventListener('click', () => { learnKey = 'cfxA'; renderOnbTry(); }); box.appendChild(b); }
   if (onb.done[onb.i]){ const ok = document.createElement('span'); ok.className = 'ok'; ok.textContent = 'Bien joué !'; box.appendChild(ok); }
@@ -110,7 +125,7 @@ function renderOnb(){
   $('onbDots').innerHTML = steps.length > 1 ? steps.map((_, j) => `<i class="${j <= onb.i ? 'on' : ''}"></i>`).join('') : '';
   $('onbTitle').textContent = st.title; $('onbText').textContent = st.text;
   if (st.k && st.k !== 'playB' && st.k !== 'fxOn') onb.base[st.k] = ctrl[st.k];
-  $('onbSvg').style.display = st.hl ? '' : 'none'; onbHighlight(st.hl);
+  $('onbSvg').style.display = st.hl ? '' : 'none'; onbHighlight(st.hl); onbSchemaSync();
   $('onbBack').hidden = onb.i === 0; $('onbTest').hidden = onb.fiche || !last || ch2Unlocked();
   $('onbSkip').textContent = onb.fiche ? 'Je connais, passer' : 'Passer le guide';
   $('onbNext').textContent = st.cta || (!last ? 'Suivant' : onb.fiche ? (onb.after ? 'Compris, on joue' : 'Compris') : 'Terminer');

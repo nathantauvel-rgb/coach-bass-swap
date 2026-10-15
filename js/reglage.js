@@ -38,8 +38,13 @@ function closeReg(){ reg.active = false; clearTimeout(reg.timer); $('reg').hidde
 function regGo(i){ clearTimeout(reg.timer); Object.assign(reg, { i, seen: {}, last: {}, msg: '', wait: false }); renderReg(); }
 
 function regMidi(type, ch, d1, d2){
-  const st = REG_STEPS[reg.i]; if (!st || reg.wait) return;
-  const btn = MIDI_NOTE.includes(st.k), id = ch + ':' + d1; let got = null;
+  const st = REG_STEPS[reg.i]; if (!st) return;
+  const btn = MIDI_NOTE.includes(st.k), id = ch + ':' + d1, svg = $('regSvg'); let got = null;
+  // Le schéma suit la table : une commande déjà reconnue bouge à sa place, sinon c'est celle qu'on attend qui bouge
+  const own = type === 0xB0 || type === 0x90 ? REG_STEPS.find(s => reg.got[s.k] && regKind(s.k, reg.got[s.k]) === (type === 0xB0) && midiSame(reg.got[s.k], ch, d1)) : null;
+  if (own){ if (MIDI_CC.includes(own.k)) onbSchemaSet(svg, 'rg-', own.k, d2 / 127); else if (d2 >= 64) onbSchemaPress(svg, 'rg-', own.k); }
+  else if (type === 0xB0 && !btn && !(d1 >= 32 && d1 < 64 && reg.seen[ch + ':' + (d1 - 32)])) onbSchemaSet(svg, 'rg-', st.k, d2 / 127);
+  if (reg.wait) return;
   if (btn){
     if (type === 0x90 && d2 > 0) got = { ch, n: d1 };
     else if (type === 0xB0){ if (d2 === 0 && reg.last[id] === 127) got = { ch, n: d1, cc: true }; reg.last[id] = d2; }
@@ -50,7 +55,7 @@ function regMidi(type, ch, d1, d2){
   if (!got) return;
   const other = regOwner(st.k, got);
   if (other){ reg.msg = `Ça, c’est ${other.name}, déjà reconnu. ${btn ? 'Appuie plutôt sur' : 'Bouge plutôt'} ${st.name}.`; reg.seen = {}; reg.last = {}; renderRegState(); return; }
-  reg.got[st.k] = got; reg.wait = true; reg.msg = ''; chime(true); renderRegState();
+  reg.got[st.k] = got; reg.wait = true; reg.msg = ''; chime(true); if (btn) onbSchemaPress(svg, 'rg-', st.k); renderRegState();
   const at = reg.i; reg.timer = setTimeout(() => { if (reg.active && reg.i === at) regGo(at + 1); }, 700);
 }
 

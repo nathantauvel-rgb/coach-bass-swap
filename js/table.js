@@ -58,9 +58,16 @@ function tableSvg(){
   s += g('fx', '<rect x="546" y="31" width="38" height="28" rx="8"/><text x="565" y="50" text-anchor="middle">ON</text>');
   return s;
 }
+// Le schéma suit la table : fader à sa vraie hauteur, repère du potard tourné (v de 0 à 1)
+function tableSchemaSet(key, v){
+  const id = Object.keys(TKEY).find(x => TKEY[x] === key), el = id && $('tSvg').querySelector(`[data-c="${id}"]`); if (!el || v == null) return;
+  if (key.startsWith('fader')) el.querySelector('.cap').setAttribute('y', (318 + (1 - v) * 66).toFixed(1));
+  else { const c = el.querySelector('circle'), mk = el.querySelector('.mk'); mk.setAttribute('transform', `rotate(${(-135 + 270 * v).toFixed(1)} ${c.getAttribute('cx')} ${c.getAttribute('cy')})`); }
+}
 const tablePos = k => MIDI_CC.includes(k) ? (phys[k] != null ? `Position : ${Math.round(phys[k] * 100)} %` : '') : '';
 function renderTable(){
   const svg = $('tSvg'); if (!svg.firstChild) svg.innerHTML = tableSvg();
+  for (const k of MIDI_CC) tableSchemaSet(k, phys[k]);
   const et = tableEtat(), nom = midiNames.join(', ');
   $('tState').textContent = !midiCount ? 'Aucune table branchée : tu peux lire les explications, et brancher ta table pour voir les commandes réagir.'
     : et === 'nouvelle' ? `Table branchée : ${nom}. Elle n'est pas encore réglée : clique sur « Régler ma table pas à pas », puis bouge chaque commande quand le site te le demande.`

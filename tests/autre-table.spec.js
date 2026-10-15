@@ -223,3 +223,41 @@ test.describe('Une autre table déjà réglée', () => {
     expect(await stocke(page, 'coach-midi-map')).toEqual(REGLEE);
   });
 });
+
+test.describe('Le schéma suit la table', () => {
+  test('fiche : l\'aiguille du potard LOW dessiné tourne avec le vrai, et avec le curseur', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-fiches': null, 'coach-parcours': 'debut' } });
+    await page.locator('.node').nth(2).click();
+    await envoyer(page, 0xB0, 15, 64); await envoyer(page, 0xB1, 15, 0);
+    await page.locator('#startBtn').click();
+    await expect(page.locator('#onbTitle')).toHaveText('Le potard LOW : les basses');
+    await envoyer(page, 0xB0, 15, 0);
+    await expect(page.locator('#sv-lowA-n')).toHaveAttribute('transform', 'rotate(-135.0 266 114)');
+    await envoyer(page, 0xB0, 15, 127);
+    await expect(page.locator('#sv-lowA-n')).toHaveAttribute('transform', 'rotate(135.0 266 114)');
+    await page.locator('#onbTry input').fill('0.5');
+    await expect(page.locator('#sv-lowA-n')).toHaveAttribute('transform', 'rotate(0.0 266 114)');
+  });
+  test('« Régler ma table » : le fader dessiné suit le vrai, même déjà reconnu', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: AUTRE } });
+    await page.locator('#tbGo').click();
+    const capA = page.locator('#rg-faderA rect').last(), capB = page.locator('#rg-faderB rect').last();
+    await envoyer(page, 0xB0, 8, 0);
+    await expect(capA).toHaveAttribute('y', '226.0');
+    await envoyer(page, 0xB0, 8, 127);
+    await expect(capA).toHaveAttribute('y', '176.0');
+    await envoyer(page, 0xB0, 8, 50);
+    await expect(page.locator('#regTitle')).toHaveText('Le fader de volume de droite');
+    const avant = await capB.getAttribute('y');
+    await envoyer(page, 0xB0, 8, 0);   // le fader A, déjà reconnu, bouge à sa place
+    await expect(capA).toHaveAttribute('y', '226.0');
+    expect(await capB.getAttribute('y')).toBe(avant);
+  });
+  test('« Ma table » : fader à sa vraie hauteur, repère du potard tourné', async ({ page }) => {
+    await ouvrir(page, { onglet: 'table', midi: { branchee: true } });
+    await envoyer(page, 0xB0, 19, 0);
+    await expect(page.locator('#tSvg [data-c="faderA"] .cap')).toHaveAttribute('y', '384.0');
+    await envoyer(page, 0xB0, 15, 127);
+    await expect(page.locator('#tSvg [data-c="lowA"] .mk')).toHaveAttribute('transform', 'rotate(135.0 400 195)');
+  });
+});
