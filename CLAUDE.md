@@ -244,8 +244,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   « Ma table ». Textes neutres (« ta table ») dans le guide, les fiches, les niveaux, une question du quiz (`b4a`,
   identifiant inchangé), l'accueil, Ma table, la présentation (matériel, question « Et si j'ai une autre table ? »)
   et la fiche des testeurs. « Tout recommencer à zéro » garde `coach-table` ; le rapport des testeurs donne le nom de
-  la table. 214 tests verts. **Aucune autre table essayée en vrai** : les numéros MIDI des tests sont inventés.
+  la table. Une table dont Windows préfixe le nom (« 2- ») reste reconnue (`baseName`). Dans « Ma table », pas
+  d'apprentissage commande par commande tant que la table n'est pas réglée. 215 tests verts. **Aucune autre table essayée en vrai** : les numéros MIDI des tests sont inventés.
   Le casque à 4 canaux dépend de la carte son de la table, pas de son nom : à vérifier sur une autre table.
+  **Risque à vérifier sur la vraie FLX4** : elle est reconnue au mot « FLX4 » dans son nom (`isFlx4`). Si elle
+  s'annonce autrement, elle passe pour une autre table (bandeau « Nouvelle table », elle ne pilote rien avant réglage).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

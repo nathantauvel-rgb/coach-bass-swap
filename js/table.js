@@ -76,7 +76,9 @@ function renderTable(){
   else { const key = TKEY[tableSel], used = usedIn(key), m = key ? map[key] : null;
     add('strong', '', tName(tableSel)); add('p', '', TKINDS[tKind(tableSel)][1]);
     add('p', 'tuse', used.length ? 'Utilisée dans : ' + used.join(' · ') + '.' : key ? 'Reconnue par le site, mais aucun niveau ne s\'en sert pour l\'instant.' : 'Pas encore utilisée par le site.');
-    if (key){
+    // Table branchée mais pas encore réglée (ou FLX4 avec les réglages d'une autre table) : on règle d'abord tout, pas à pas
+    if (key && midiCount && !tableOn()) add('p', 'tmap', tableEtat() === 'flx4' ? 'Reprends d\'abord les réglages de la DDJ-FLX4 (bouton en bas de la page).' : 'Règle d\'abord ta table : clique sur « Régler ma table pas à pas », en bas de la page.');
+    else if (key){
       const live = tableLive[tableSel] || tablePos(key); if (live || midiCount) add('p', 'tlive', live || 'Bouge-la sur ta table pour la voir réagir.');
       const def = DEFAULT_MAP[key], same = m && def && m.ch === def.ch && m.n === def.n;
       add('p', 'tmap', m ? `Réglage : canal ${m.ch + 1}, numéro ${m.n}${same && !tableCfg ? ' (d\'origine)' : def || tableCfg ? ' (appris)' : ''}.` : tableCfg ? 'Pas sur ta table : tu la fais à l\'écran. Si ta table l\'a, clique sur « Apprendre », puis bouge-la.' : 'Pas encore réglée : clique sur « Apprendre », puis bouge-la sur ta table.');

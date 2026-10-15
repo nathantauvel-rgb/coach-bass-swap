@@ -9,6 +9,8 @@ const DEFAULT_MAP = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: 
 const MIDI_CC = ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA', 'midA', 'midB'], MIDI_NOTE = ['playA', 'playB', 'fxOn'];
 const midiSame = (m, ch, n) => !!m && m.ch === ch && m.n === n;
 const isFlx4 = name => /FLX4/i.test(String(name));
+// Windows ajoute parfois « 2- » devant le nom d'une table (deux appareils pareils, ou rebranchée ailleurs) : on n'en tient pas compte
+const baseName = name => String(name).replace(/^\d+-\s*/, '');
 // Autre table réglée pas à pas : son nom, tel que le navigateur le donne (clé coach-table). Ses réglages ne reprennent rien de la FLX4.
 let tableCfg = null; try { const t = JSON.parse(localStorage.getItem('coach-table') || 'null'); if (t && typeof t.nom === 'string' && t.nom.trim() && t.nom.length <= 200) tableCfg = { nom: t.nom }; } catch (e) {}
 // Correspondance enregistrée. FLX4 : chaque entrée invalide ou manquante reprend le réglage d'origine, et les doublons y reviennent aussi.
@@ -28,7 +30,7 @@ let map = cleanMap(null, !!tableCfg); try { map = cleanMap(JSON.parse(localStora
 // 'nouvelle' (une autre table, pas encore réglée) ; 'flx4' (une FLX4, alors que les réglages sont ceux d'une autre table).
 function tableEtat(){
   if (!midiNames.length) return 'aucune';
-  if (tableCfg && midiNames.includes(tableCfg.nom)) return 'ok';
+  if (tableCfg && midiNames.some(n => baseName(n) === baseName(tableCfg.nom))) return 'ok';
   if (midiNames.some(isFlx4)) return tableCfg ? 'flx4' : 'ok';
   return 'nouvelle';
 }

@@ -136,8 +136,17 @@ test.describe('Régler ma table pas à pas', () => {
     await ouvrir(page, { onglet: 'table', midi: { branchee: AUTRE } });
     await expect(page.locator('#tKick')).toHaveText('Ta table');
     await expect(page.locator('#tState')).toContainText('Elle n\'est pas encore réglée');
+    // pas de commande à apprendre une par une tant que la table n'est pas réglée
+    await page.locator('#tSvg [data-c="faderA"]').click();
+    await expect(page.locator('#tPanel .tmap')).toHaveText('Règle d\'abord ta table : clique sur « Régler ma table pas à pas », en bas de la page.');
+    await expect(page.locator('#tLearn')).toHaveCount(0);
     await page.locator('#tReg').click();
     await expect(page.locator('#reg')).toBeVisible();
+  });
+  test('Windows ajoute « 2- » devant le nom : c\'est toujours la même table', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: '2- ' + AUTRE }, stockage: DEJA_REGLEE });
+    await expect(page.locator('#tableBar')).toBeHidden();
+    await expect(page.locator('#midiPill')).toHaveClass(/\bon\b/);
   });
 });
 
