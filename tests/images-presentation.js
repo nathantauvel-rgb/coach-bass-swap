@@ -4,7 +4,7 @@
 const { chromium } = require('@playwright/test'), path = require('path'), fs = require('fs'), { spawn } = require('child_process');
 const OUT = path.join(__dirname, '..', 'img'), BASE = 'http://localhost:8766', S = o => JSON.stringify(o);
 const jour = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
-const VENU = { 'coach-guide-vu': '1', 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 3, 2: 2 }), 'coach-badges': S(['pas', 'timing']),
+const VENU = { 'coach-guide-vu': '1', 'coach-fiches': S(['play', 'fader', 'low', 'cfx', 'echo', 'mid']), 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 3, 2: 2 }), 'coach-badges': S(['pas', 'timing']),
   'coach-objectif': S({ min: 10, jours: { [jour()]: 420 }, faits: [], best: 0 }) };
 const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-FLX4', onmidimessage: null }]]); navigator.requestMIDIAccess = () => Promise.resolve({ inputs, outputs: new Map(), onstatechange: null });
   window.__midi = { envoyer: (...d) => { for (const i of inputs.values()) if (i.onmidimessage) i.onmidimessage({ data: d }); } }; };

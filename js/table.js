@@ -17,7 +17,7 @@ const TKINDS = {
   hi: ['Potard HI', 'Les aigus : charleys, cymbales, tout ce qui brille dans le morceau.'],
   mid: ['Potard MID', 'Les médiums : les voix et les mélodies. À couper sur un morceau quand l\'autre chante.'],
   low: ['Potard LOW', 'Les basses : grosse caisse et ligne de basse. Deux basses en même temps, ça fait de la bouillie : c\'est le potard clé des transitions.'],
-  cfx: ['Potard CFX, le filtre', 'Un filtre : vers la droite le son s\'affine, vers la gauche il s\'étouffe, au milieu il ne fait rien.'],
+  cfx: ['Potard CFX, le filtre', 'Un filtre : vers la droite le son s\'affine, vers la gauche il s\'étouffe, à midi (neutre) il ne fait rien.'],
   casque: ['Bouton CUE du casque', 'Envoie ce morceau dans ton casque, pour le préparer sans que le public l\'entende.'],
   fader: ['Fader de volume', 'Le volume du morceau dans les enceintes. Tout en bas, on ne l\'entend plus.'],
   cross: ['Crossfader', 'Glisse d\'un morceau à l\'autre en un seul geste : à gauche la platine A, à droite la platine B.'],

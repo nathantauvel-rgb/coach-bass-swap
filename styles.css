@@ -705,6 +705,19 @@ details.cmp[open] summary{margin-bottom:8px}
 .rbchip.ok b{color:var(--ok)}
 .rbchip.mid b{color:var(--mid)}
 @media (max-width:760px){.rbsteps{grid-template-columns:1fr}.rbdecks{grid-template-columns:1fr}.rbto{justify-self:center;transform:rotate(90deg)}}
+/* Lot 18 : position de départ dessinée, encadré « Pendant le niveau », fiches */
+.pic{display:inline-block;width:22px;height:22px;vertical-align:-6px;margin-right:8px}
+.pic svg{width:100%;height:100%;display:block}
+.pic .ring{fill:none;stroke:var(--line);stroke-width:2.5}
+.pic .track{fill:var(--line)}
+.pic .cap{fill:var(--c);stroke:var(--c);stroke-width:3;stroke-linecap:round}
+.pic.pa{--c:var(--a)}.pic.pb{--c:var(--b)}
+.plan{background:var(--panel-2);border-radius:18px;padding:12px 16px;display:flex;flex-direction:column;gap:6px;max-width:560px;margin-top:12px}
+.plan h3{margin:0;font-family:var(--display);font-weight:700;font-size:15px;color:var(--muted)}
+.plan ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:2px;font-weight:600;font-size:15px}
+.plan p{margin:0;color:var(--muted);font-size:13px}
+.start-row{flex-wrap:wrap}
+.lfiches{display:flex;flex-wrap:wrap;gap:0 14px;margin-top:6px}
 .page-note{margin:20px 0 0;font-size:15px;color:var(--muted)}
 .page-note a{color:var(--xp);font-weight:700}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}

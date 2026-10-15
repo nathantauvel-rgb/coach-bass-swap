@@ -4,7 +4,7 @@
 const { chromium } = require('@playwright/test'), path = require('path'), fs = require('fs'), { spawn } = require('child_process'), crypto = require('crypto');
 const out = path.resolve(process.argv[2] || 'captures'), vite = process.argv.includes('--vite');
 const S = o => JSON.stringify(o), BASE = 'http://localhost:8766';
-const VENU = { 'coach-guide-vu': '1', 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 1 }) };
+const VENU = { 'coach-guide-vu': '1', 'coach-fiches': S(['play', 'fader', 'low', 'cfx', 'echo', 'mid']), 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 1 }) };
 const ECRANS = [
   ['01-accueil-nouveau', {}, '', null],
   ['02-accueil-parcours', VENU, '', null],
@@ -14,8 +14,8 @@ const ECRANS = [
   ['06-vrai', VENU, 'vrai', async p => { await p.locator('#rbDemo').click(); await p.locator('#rbGo').click(); await p.locator('#rbMissions .rbok').click(); }],
   ['07-table-branchee', VENU, 'apprendre', async p => { await p.locator('.node').nth(3).click(); await p.evaluate(() => { window.__midi.envoyer(0xB0, 19, 127); window.__midi.envoyer(0xB1, 19, 64); window.__midi.envoyer(0xB0, 15, 64); }); }, true],
   ['15-progres', VENU, 'progres', null],
-  ['17-ralenti', { 'coach-guide-vu': '1', 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 }), 'coach-chapitre': '4' }, 'apprendre', async p => { await p.locator('.node').nth(1).click(); await p.evaluate(() => { $('rStars').innerHTML = '<span class="on">★</span><span>★</span><span>★</span>'; $('rTitle').textContent = 'Pas encore. Lis le conseil et rejoue.'; $('rDetails').innerHTML = '<li class="bad">Swap à 2,5 temps de la phrase.</li>'; $('result').hidden = false; slowOffer(1); slowOffer(1); }); }],
-  ['16-combos', { 'coach-guide-vu': '1', 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 }), 'coach-chapitre': '4' }, 'apprendre', async p => { await p.locator('.node').nth(3).click(); }],
+  ['17-ralenti', { 'coach-guide-vu': '1', 'coach-fiches': S(['play', 'fader', 'low', 'cfx', 'echo', 'mid']), 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 }), 'coach-chapitre': '4' }, 'apprendre', async p => { await p.locator('.node').nth(1).click(); await p.evaluate(() => { $('rStars').innerHTML = '<span class="on">★</span><span>★</span><span>★</span>'; $('rTitle').textContent = 'Pas encore. Lis le conseil et rejoue.'; $('rDetails').innerHTML = '<li class="bad">Swap à 2,5 temps de la phrase.</li>'; $('result').hidden = false; slowOffer(1); slowOffer(1); }); }],
+  ['16-combos', { 'coach-guide-vu': '1', 'coach-fiches': S(['play', 'fader', 'low', 'cfx', 'echo', 'mid']), 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 }), 'coach-chapitre': '4' }, 'apprendre', async p => { await p.locator('.node').nth(3).click(); }],
   ['10-ma-table', VENU, 'table', async p => { await p.evaluate(() => window.__midi.envoyer(0xB0, 15, 90)); }, true],
   ['12-avis', VENU, 'apprendre', async p => { await p.locator('#avisBtn').click(); await p.locator('#avBloque').fill('Je ne sais pas quand lancer B.'); await p.locator('#avNote [data-note="3"]').click(); }],
   ['13-testeurs', {}, '', async p => { await p.goto(BASE + '/testeurs.html'); await p.evaluate(() => document.fonts.ready); }],

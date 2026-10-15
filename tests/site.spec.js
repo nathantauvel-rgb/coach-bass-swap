@@ -75,7 +75,7 @@ test.describe('Première visite et parties (anciens play.py et play2.py)', () =>
     await expect(page.locator('#onb')).toBeVisible();
     await expect(page.locator('#onbTitle')).toHaveText('Bienvenue dans Coach DJ');
     await page.locator('#onbNext').click();
-    await expect(page.locator('#onbTitle')).toHaveText('Les faders de volume', { timeout: 60000 });
+    await expect(page.locator('#onbTitle')).toHaveText('Compter en phrases', { timeout: 60000 });
     await page.locator('#onbSkip').click();
     await expect(page.locator('#onb')).toBeHidden();
     expect(await page.evaluate(() => localStorage.getItem('coach-guide-vu'))).toBe('1');

@@ -27,7 +27,7 @@ function goLesson(ch, idx){
   if (chapter === ch && idx != null) selectLesson(idx);
 }
 const STAGES = {
-  guide: { title: 'Découvre ta table', text: 'Un petit tour d\'une minute, avec le son : les faders, les basses, le filtre, PLAY, et comment compter les phrases.',
+  guide: { title: 'Découvre ta table', text: 'Un petit tour d\'une minute, avec le son : compter les phrases et reconnaître les parties d\'un morceau. Chaque bouton de ta table te sera présenté juste avant de t\'en servir.',
     done: () => guideSeen, cta: () => 'Commencer le guide', go: () => { location.hash = '#apprendre'; setView('apprendre'); } },
   test: { title: 'Le test de placement', text: 'Trois épreuves courtes pour voir où tu en es : le bon moment, le swap des basses, la transition complète.',
     done: () => !!testDone || ch2Unlocked(), cta: () => 'Passer le test', go: () => { goLesson(1, null); startPlacement(); } },

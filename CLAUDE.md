@@ -210,6 +210,20 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   paire pour toi », `rbMoved`), caché s'il n'y a qu'une paire. 182 tests verts.
 - **Lot 17 publié le 15 oct. 2026.** Prochaine idée proposée : l'essai « Ta musique » (jouer les exercices avec
   les MP3 de l'utilisateur et la grille de son export rekordbox) ; il faut son export XML et 2 ou 3 morceaux.
+- **Lot 18 (15 oct. 2026)** : branche `lot-18-clarte-debutant`, non publiée. Demande de l'utilisateur : pas clair pour
+  un débutant ; au swap, l'encadré disait « LOW de B tout à gauche » et la bulle « LOW de B au milieu » en même
+  temps. **Vocabulaire unique** : potard « normal » (à midi) / « coupé » (tout à gauche), filtre « neutre » /
+  « tout à droite », fader « en haut » / « en bas » (`targetText`, `ACT`, consignes, messages). Avant de jouer :
+  encadré **« Pendant le niveau »** sous le titre (`#plan`, `planSteps`, `renderPlan` dans `js/midi.js`), gestes
+  dans l'ordre écrits départ → arrivée ; « Position de départ » (ancien « Mise en place », table branchée) avec
+  un petit dessin par commande (`pictoOf`) ; la bulle ne donne plus le geste avant la partie. Niveau 4 : repère
+  « B À FOND » au temps 56. **Guide** réduit à la musique (Bienvenue, phrases, parties d'un morceau, Tu es
+  prêt). **Fiches « Découvre ce bouton »** (`FICHES`, `fichesOf`, `withFiches` dans `js/guide.js`, même
+  fenêtre que le guide : `openOnb(étapes, { fiche, keys, after })`) : avant la première partie qui se sert d'une
+  commande (PLAY, faders, LOW, filtre, écho, MID), avec le schéma allumé et un essai à l'écoute ; « Je connais,
+  passer » ; jamais dans le parcours « deja », l'entraînement ou le test de placement ; « Revoir la fiche »
+  dans « Comment faire ? ». Clé `coach-fiches`. Le bouton ON de l'effet compte dans la fiche de l'écho.
+  194 tests verts (tests/outils.js marque les fiches comme vues par défaut).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -312,7 +326,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 
 ### Clés localStorage
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
-`coach-style`, `coach-guide-vu`, `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
+`coach-style`, `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
@@ -328,7 +342,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

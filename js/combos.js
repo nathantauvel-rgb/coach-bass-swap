@@ -12,7 +12,7 @@
 const CH4_INIT = { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5, midA: .5, midB: .5 };
 const CH4_LESSONS = [
   { kind: 'c-filtswap', title: 'Filtre et swap', goal: 'Efface A au filtre, puis échange les basses pile sur la phrase.',
-    how: 'B arrive tout seul, basses coupées. Quand « FILTRE » touche la ligne, tourne le CFX de A vers la droite, lentement : il doit être à fond au moment du swap. Au swap, coupe le LOW de A et ouvre celui de B, dans le même geste.',
+    how: 'B arrive tout seul, basses coupées. Quand « FILTRE » touche la ligne, tourne le CFX de A vers la droite, lentement : il doit être à fond au moment du swap. Au swap, dans le même geste : LOW de A normal → coupé, LOW de B coupé → normal.',
     show: ['gCfx', 'gLow'], bBass: true, autoLaunch: true, launchBeat: 32, bCue: 0, init: Object.assign({}, CH4_INIT, { lowB: 0 }), user: ['cfxA', 'lowA', 'lowB'], start: 24, end: 76,
     c: { filt: [48, 64], swap: 64 },
     targets: [[48, 'FILTRE', 'A'], [64, 'SWAP', 'AB']],
@@ -106,7 +106,7 @@ function eval4(r){
 // Comme evalSwap (niveaux.js), mais autour du temps du swap de ce niveau
 function evalSwap4(fr, at){
   const tKill = firstAt(fr, at - 8, x => x.la < .12), tOpen = firstAt(fr, at - 8, x => x.lb > .4);
-  if (tKill === null || tOpen === null) return [['bad', tKill === null ? 'Les basses de A n’ont jamais été coupées : tourne son LOW à fond à gauche.' : 'Les basses de B n’ont jamais été ouvertes : remonte son LOW au milieu.', 0]];
+  if (tKill === null || tOpen === null) return [['bad', tKill === null ? 'Les basses de A n’ont jamais été coupées : passe son LOW de normal à coupé (tout à gauche).' : 'Les basses de B n’ont jamais été remises : passe son LOW de coupé à normal (à midi).', 0]];
   const e = (tKill + tOpen) / 2 - at, ov = Math.max(0, tKill - tOpen), gap = Math.max(0, tOpen - tKill), out = [];
   out.push(Math.abs(e) <= .75 * TOL ? ['ok', 'Swap pile sur le début de la phrase.', 1] : Math.abs(e) <= 2 * TOL ? ['mid', `Swap ${fr1(Math.abs(e))} temps ${e > 0 ? 'trop tard' : 'trop tôt'}.`, .5] : ['bad', `Swap à ${fr1(Math.abs(e))} temps de la phrase.`, 0]);
   out.push(ov > 2 * TOL ? ['bad', `Deux basses ensemble pendant ${fr1(ov)} temps : ouvre B et coupe A dans le même geste.`, 0] : ov > .5 * TOL ? ['mid', `Deux basses ensemble pendant ${fr1(ov)} temps.`, .5]

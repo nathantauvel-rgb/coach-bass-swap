@@ -3,8 +3,8 @@
 'use strict';
 /* ---------- Démarrage ---------- */
 buildControls();
-$('startBtn').addEventListener('click', () => run ? stopRun() : startRun());
-$('watchBtn').addEventListener('click', () => { if (!run) startRun(true); });
+$('startBtn').addEventListener('click', () => run ? stopRun() : withFiches(() => startRun()));
+$('watchBtn').addEventListener('click', () => { if (!run) withFiches(() => startRun(true)); });
 const styleShow = () => { const b = document.querySelector(`#styleOpts [data-style="${styleChoice}"]`); $('styleBtn').textContent = 'Morceaux : ' + (b ? b.textContent : 'House'); };
 const styleMenu = open => { $('styleOpts').hidden = !open; $('styleBtn').setAttribute('aria-expanded', String(open)); };
 $('styleBtn').addEventListener('click', () => styleMenu($('styleOpts').hidden)); styleShow();

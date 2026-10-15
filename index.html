@@ -29,6 +29,7 @@
       <g id="sv-faderA"><rect class="part" x="258" y="176" width="16" height="62" rx="4"/><rect x="252" y="196" width="28" height="12" rx="3" fill="var(--fg)"/></g>
       <g id="sv-faderB"><rect class="part" x="326" y="176" width="16" height="62" rx="4"/><rect x="320" y="196" width="28" height="12" rx="3" fill="var(--fg)"/></g>
       <rect class="part" x="270" y="248" width="60" height="7" rx="3"/>
+      <g id="sv-fxOn"><rect class="part" x="352" y="25" width="30" height="17" rx="5"/></g><text x="367" y="37" text-anchor="middle">ON</text>
       <text x="300" y="214" text-anchor="middle">VOL</text>
     </svg>
     <div class="onb-try" id="onbTry"></div>
@@ -218,8 +219,9 @@
         <span class="lnum" id="lnum">Niveau 1</span>
         <h1 id="ltitle"></h1>
         <p class="goal" id="lgoal"></p>
-        <details class="howto"><summary>Comment faire ?</summary><p class="how" id="lhow"></p><p class="how lex" id="llex" hidden></p><p class="how">Clavier : espace pour lancer B, E pour l'écho. Niveau réussi ? Refais le même geste dans rekordbox, avec ta musique.</p></details>
+        <details class="howto"><summary>Comment faire ?</summary><p class="how" id="lhow"></p><p class="how lex" id="llex" hidden></p><span class="lfiches" id="lfiches" hidden></span><p class="how">Clavier : espace pour lancer B, E pour l'écho. Niveau réussi ? Refais le même geste dans rekordbox, avec ta musique.</p></details>
         <div class="tags"><span class="styletag" id="styleTag">House · 124 BPM</span><span class="modetag" id="modeTag" hidden>À l'oreille</span></div>
+        <div class="plan" id="plan" hidden><h3>Pendant le niveau</h3><ol id="planList"></ol><p id="planNote"></p></div>
       </div>
       <div class="buddy" aria-live="polite"><p class="bubble" id="tip">Regarde la démo si tu hésites, puis à toi !</p></div>
       <div class="ringwrap"><div class="ring" id="ring"><span class="big num" id="cdNum">—</span></div><span class="ringlab" id="cdLab">Appuie sur Jouer</span></div>
@@ -246,8 +248,8 @@
     </div>
     <div class="start-row">
       <div class="setup" id="setup" hidden>
-        <h3>Mise en place de ta FLX4</h3>
-        <p>Place tes contrôles comme indiqué. Le niveau se débloque quand tout est vert.</p>
+        <h3>Position de départ</h3>
+        <p>Place ta FLX4 comme ci-dessous. « Jouer » se débloque quand tout est vert.</p>
         <ul id="setupList"></ul>
         <button type="button" class="skip" id="setupSkip">Je joue à la souris cette fois</button>
       </div>

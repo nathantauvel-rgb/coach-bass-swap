@@ -70,7 +70,7 @@ function rbMissionList(a, b){
     ['outro', 'Repère la fin du premier morceau', `Écoute « ${a[0]} » en comptant les phrases de 32 temps. Vers la fin, trouve le moment où le morceau se vide : c'est son outro. Pose un repère dessus avec un pad HOT CUE.`],
     ['moment', 'Le bon moment', `Fader de la platine 2 en bas. Relance « ${a[0]} » un peu avant ton repère, et appuie sur PLAY de la platine 2 pile sur le premier temps de l'outro. Écoute au casque (bouton CUE du canal 2) : les deux grosses caisses doivent tomber ensemble.`],
     ['fader', 'Le fader', `Refais la même chose, puis monte le fader de « ${b[0]} » sur une phrase, et baisse celui de « ${a[0]} » sur la phrase suivante.`],
-    ['swap', 'Le swap des basses', `Avant de lancer « ${b[0]} », coupe son LOW. Au début d'une phrase, coupe le LOW de « ${a[0]} » et remets celui de « ${b[0]} » au milieu, dans le même geste.`],
+    ['swap', 'Le swap des basses', `Avant de lancer « ${b[0]} », coupe son LOW. Au début d'une phrase, coupe le LOW de « ${a[0]} » (tout à gauche) et remets celui de « ${b[0]} » à normal (à midi), dans le même geste.`],
     ['full', 'La transition complète', 'Tout d\'affilée, sans t\'arrêter : LOW coupé, PLAY sur la phrase, fader qui monte, swap des basses, puis le premier morceau qui sort. Recommence jusqu\'à ce que ça sonne propre trois fois de suite.']
   ];
 }

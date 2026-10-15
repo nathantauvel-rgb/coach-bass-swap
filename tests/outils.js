@@ -21,7 +21,7 @@ function fausseTable(cfg) {
 async function ouvrir(page, { stockage = {}, midi = null, onglet = 'apprendre', avant = '' } = {}) {
   const erreurs = [];
   page.on('pageerror', e => erreurs.push(String(e)));
-  const donnees = Object.assign({ 'coach-guide-vu': '1' }, stockage);
+  const donnees = Object.assign({ 'coach-guide-vu': '1', 'coach-fiches': '[\"play\", \"fader\", \"low\", \"cfx\", \"echo\", \"mid\"]' }, stockage);
   await page.addInitScript(d => { try { if (!sessionStorage.getItem('__pret')) { for (const [k, v] of Object.entries(d)) if (v !== null) localStorage.setItem(k, v); sessionStorage.setItem('__pret', '1'); } } catch (e) {} }, donnees);
   if (midi) await page.addInitScript(fausseTable, midi);
   if (avant) await page.addInitScript(avant);

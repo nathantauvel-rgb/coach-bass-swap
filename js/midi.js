@@ -29,7 +29,7 @@ function onMidi(e){
   // Page « Ma table » : on montre ce qui bouge, sans piloter les niveaux ni l'écho
   if (view === 'table'){ tableMidi(type, ch, d1, d2, val); return; }
   if (type === 0xB0){ for (const k of MIDI_CC){ if (midiSame(map[k], ch, d1)){ phys[k] = val; if (onb.active){ ctrl[k] = val; applyCtrl(); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = val; applyCtrl(); } if (!run) updateSetup(); return; } } }
-  else if (type === 0x90 && d2 > 0){ const m = map.playB, f = map.fxOn; if (m && m.ch === ch && m.n === d1){ if (onb.active) onbMoved('playB'); else launchB(); } else if (f && f.ch === ch && f.n === d1) toggleEcho(); }
+  else if (type === 0x90 && d2 > 0){ const m = map.playB, f = map.fxOn; if (m && m.ch === ch && m.n === d1){ if (onb.active) onbMoved('playB'); else launchB(); } else if (f && f.ch === ch && f.n === d1){ if (onb.active) onbMoved('fxOn'); else toggleEcho(); } }
 }
 async function initMidi(){
   const pill = $('midiPill'), txt = pill.lastElementChild;
@@ -46,11 +46,30 @@ async function initMidi(){
 const phys = {}; let midiCount = 0, mouseMode = false, learnKey = null;
 const LEARN_TXT = { midA: 'Tourne le potard MID de A…', cfxA: 'Tourne le potard CFX de A…', fxOn: 'Appuie sur ON de l\'effet…' };
 const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B', cfxA: 'Potard CFX de A', midA: 'Potard MID de A' };
-function targetText(k, v){ if (k === 'cfxA') return 'au milieu (cran central, filtre neutre)'; return k.startsWith('fader') ? (v >= .5 ? 'tout en haut' : 'tout en bas') : (v < .1 ? 'tout à gauche (basses coupées)' : 'au milieu (cran central)'); }
+// Vocabulaire du site (lot 18) : potard « normal » (à midi) ou « coupé » (tout à gauche), fader « en haut » ou « en bas »
+function targetText(k, v){ if (k.startsWith('fader')) return v >= .5 ? 'en haut' : 'en bas'; if (k === 'cfxA') return v > .9 ? 'tout à droite' : 'neutre (à midi)'; return v < .1 ? 'coupé (tout à gauche)' : 'normal (à midi)'; }
+// Petit dessin de la position : un potard avec son aiguille, ou un fader avec son curseur (couleur de la platine)
+function pictoOf(k, v){ const s = document.createElement('span'); s.className = 'pic ' + (k.endsWith('A') ? 'pa' : 'pb'); s.setAttribute('aria-hidden', 'true');
+  if (k.startsWith('fader')) s.innerHTML = `<svg viewBox="0 0 16 28"><rect x="6" y="2" width="4" height="24" rx="2" class="track"/><rect x="2" y="${v >= .5 ? 2 : 20}" width="12" height="6" rx="2" class="cap"/></svg>`;
+  else { const a = (-135 + 270 * v) * Math.PI / 180; s.innerHTML = `<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="11" class="ring"/><line x1="14" y1="14" x2="${(14 + 9 * Math.sin(a)).toFixed(1)}" y2="${(14 - 9 * Math.cos(a)).toFixed(1)}" class="cap"/></svg>`; }
+  return s; }
+// « Pendant le niveau » : les gestes, dans l'ordre, écrits départ → arrivée
+function planSteps(l){
+  const out = [], seen = new Set();
+  if (!l.autoLaunch && l.user.includes('lowB') && l.init.lowB >= .4) out.push('Avant de lancer B : LOW de B normal → coupé');
+  for (const [, lab] of (l.targets || []).slice().sort((x, y) => x[0] - y[0])){ if (seen.has(lab) || !ACT[lab]) continue; seen.add(lab); out.push(ACT[lab].charAt(0).toUpperCase() + ACT[lab].slice(1)); }
+  return out;
+}
+function renderPlan(){
+  const l = LESSONS[li], steps = planSteps(l), box = $('plan'); box.hidden = !!run || !steps.length; if (box.hidden) return;
+  const ol = $('planList'); ol.innerHTML = ''; for (const t of steps){ const x = document.createElement('li'); x.textContent = t; ol.appendChild(x); }
+  $('planNote').textContent = l.wave || chapter === 2 || l.noCount ? 'Ici, pas de compte à rebours : écoute la musique (ou lis la forme d’onde) et fais chaque geste au bon moment.' : 'Chaque geste arrive sur la piste avec un repère ◆ et un compte à rebours : fais-le quand il touche la ligne.';
+}
 function inPlace(k, v, p){ if (p == null) return null; return k.startsWith('fader') ? (v >= .5 ? p >= .94 : p <= .06) : (v < .1 ? p <= .05 : Math.abs(p - .5) <= .07); }
 const needSetup = () => midiCount > 0 && !mouseMode && LESSONS[li].user.length > 0;
 function setupReady(){ const l = LESSONS[li]; return l.user.every(k => map[k] && inPlace(k, l.init[k], phys[k]) === true); }
 function updateSetup(){
+  renderPlan();
   const box = $('setup'), btn = $('startBtn');
   if (run || !needSetup()){ box.hidden = true; if (!run){ btn.disabled = false; btn.classList.remove('ready'); if (btn.textContent !== 'Préparation…') btn.textContent = 'Jouer'; } return; }
   const l = LESSONS[li], ul = $('setupList'); ul.innerHTML = '';
@@ -58,7 +77,7 @@ function updateSetup(){
     const v = l.init[k], p = map[k] ? phys[k] : null, ok = map[k] ? inPlace(k, v, p) : null;
     const li2 = document.createElement('li'); li2.className = ok === true ? 'ok' : ok === false ? 'wrong' : '';
     const ic = document.createElement('span'); ic.className = 'ic'; ic.textContent = ok === true ? '✓' : ok === false ? '!' : '?';
-    const nm = document.createElement('span'); nm.innerHTML = '<b></b> '; nm.querySelector('b').textContent = CTRL_LABEL[k]; nm.appendChild(document.createTextNode(': ' + targetText(k, v)));
+    const nm = document.createElement('span'); nm.innerHTML = '<b></b> '; nm.querySelector('b').textContent = CTRL_LABEL[k]; nm.appendChild(document.createTextNode(': ' + targetText(k, v))); nm.prepend(pictoOf(k, v));
     const wh = document.createElement('span'); wh.className = 'what';
     wh.textContent = ok === true ? 'en place' : ok === null ? 'bouge-le un peu' : k.startsWith('fader') ? (p < v ? 'monte-le' : 'descends-le') : (p < v ? 'tourne à droite' : 'tourne à gauche');
     if (!map[k]){ wh.textContent = ''; const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'learn' + (learnKey === k ? ' on' : '');
