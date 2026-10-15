@@ -83,6 +83,9 @@ test.describe('Mes progrès', () => {
     await expect(page.locator('#homeBadges li', { hasText: 'Swap propre' }).locator('button')).toHaveAttribute('aria-pressed', 'true');
     await page.locator('#homeBadges li', { hasText: 'Bon timing' }).locator('button').click();
     await expect(page.locator('#pgMedalInfo')).toHaveText('Bon timing : 3 étoiles sur « Le bon moment ». Gagné !');
+    await expect(page.locator('#homeBadges li', { hasText: 'Bon timing' }).locator('button')).toBeFocused();   // au clavier, on ne perd pas sa place
+    await page.locator('#homeBadges li', { hasText: 'Mini-set de pro' }).locator('button').click();
+    await expect(page.locator('#pgMedalInfo')).toHaveText('Mini-set de pro : 8 étoiles sur 9 dans un mini-set. Tu en es à 0 sur 8 étoiles (ton meilleur mini-set).');
   });
   test('le prochain badge : le plus proche, et « Y aller » ouvre le bon niveau', async ({ page }) => {
     await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 2 }) } });

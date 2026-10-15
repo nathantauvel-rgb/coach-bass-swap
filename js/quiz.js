@@ -207,7 +207,7 @@ const BADGE_PROG = {
   sansfaute: () => [BASE_LESSONS.filter((_, i) => stars[i] >= 3).length, BASE_LESSONS.length, 'niveaux à 3 étoiles', () => goLesson(1, ch1First3())],
   regulier: () => [Math.min(3, Math.max(goalStreak(), pracNum('streak'))), 3, 'jours de suite', () => goLesson(1, firstTodo(stars, BASE_LESSONS.length))],
   accro: () => [Math.min(7, Math.max(goalStreak(), pracNum('streak'))), 7, 'jours de suite', () => goLesson(1, firstTodo(stars, BASE_LESSONS.length))],
-  miniset: () => [Math.min(8, pracNum('setBest')), 8, 'étoiles sur 9', () => { location.hash = '#entrainer'; }],
+  miniset: () => [Math.min(8, pracNum('setBest')), 8, 'étoiles (ton meilleur mini-set)', () => { location.hash = '#entrainer'; }],
   tete: () => [Math.min(10, quizOk.length), 10, 'bonnes réponses', () => { location.hash = '#entrainer'; }],
   vrai: () => [rbMis.total > 0 ? 1 : 0, 1, '', () => { location.hash = '#vrai'; }]
 };
@@ -226,8 +226,9 @@ function renderBadges(){
   const order = BADGES.filter(b => badgesWon.includes(b[0])).concat(BADGES.filter(b => !badgesWon.includes(b[0])));
   for (const b of order){ const [id, name] = b, won = badgesWon.includes(id), liEl = document.createElement('li'), bt = document.createElement('button'), d = document.createElement('span'), t = document.createElement('strong');
     liEl.className = 'medal' + (won ? ' won' : ' off'); bt.type = 'button'; bt.setAttribute('aria-pressed', String(medalSel === id)); bt.setAttribute('aria-label', name + (won ? ', gagné' : ', pas encore gagné'));
-    d.className = 'mdisc'; d.innerHTML = iconSvg(won ? BADGE_ICON[id] : LOCK_ICON); t.textContent = name;
-    bt.append(d, t); bt.addEventListener('click', () => { medalSel = medalSel === id ? '' : id; $('pgMedalInfo').textContent = medalSel ? medalInfo(b) : 'Touche une médaille pour savoir comment la gagner.'; renderBadges(); });
+    d.className = 'mdisc'; d.innerHTML = iconSvg(won ? BADGE_ICON[id] : LOCK_ICON); t.textContent = name; bt.dataset.b = id;
+    bt.append(d, t); bt.addEventListener('click', () => { medalSel = medalSel === id ? '' : id; $('pgMedalInfo').textContent = medalSel ? medalInfo(b) : 'Touche une médaille pour savoir comment la gagner.';
+      renderBadges(); const f = ul.querySelector(`[data-b="${id}"]`); if (f) f.focus(); });   // la liste est redessinée : on garde la médaille sélectionnée au clavier
     liEl.appendChild(bt); ul.appendChild(liEl); }
 }
 badgeSync();   // au chargement, sans annonce : quelqu'un qui a déjà joué retrouve ses badges sur l'accueil
