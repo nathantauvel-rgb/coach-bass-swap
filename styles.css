@@ -17,6 +17,7 @@
   --xp:#c4c9d2;
   --ok:#35d07f;
   --mid:#ffb020;
+  --medal-bg:#2a2112;   /* fond d'une médaille gagnée (lot 23), sous le doré des étoiles */
   --bad:#ff6b6b;
   --ink:#0e0f12;
   --go:#f2f3f5;
@@ -586,16 +587,6 @@ a.chip.status{color:var(--muted)}a.chip.status.on{color:var(--fg)}
 .qwhy{margin:0;font-size:15px;background:var(--panel-2);border-radius:16px;padding:12px 14px}
 .qcard .rbtn{align-self:center}
 .newbadge{margin:0;font-weight:700;color:var(--mid)}
-.bhead{margin-top:30px}
-.badges{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
-.bdg{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--panel-2);border-radius:20px;padding:12px 14px}
-.bdg .bd{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--panel);box-shadow:inset 0 0 0 2px var(--line);font-family:var(--display);font-weight:800;font-size:16px;color:var(--muted)}
-.bdg strong{display:block;font-family:var(--display);font-weight:600;font-size:16px;line-height:1.2;color:var(--muted)}
-.bdg div span{font-size:13px;color:var(--muted)}
-.bdg.won strong{color:var(--fg)}
-.bdg.won .bd{background:var(--c);color:var(--ink);box-shadow:none}
-.bdg.won .bd{--c:var(--fg)}   /* badges gagnés : une seule couleur */
-.bdg .sp{margin-top:0}
 /* Tests avec des débutants : « Mon avis », « C'était clair ? » */
 .avq{display:flex;flex-direction:column;gap:6px;font-weight:600}
 .avq textarea,.avtext{width:100%;border:2px solid var(--line);border-radius:14px;background:var(--panel-2);padding:10px 12px;font:inherit;font-weight:400;color:inherit;resize:vertical}
@@ -663,10 +654,6 @@ a.lvlchip:hover{border-color:var(--muted)}
 .pathbox details{width:100%}
 .pathbox summary{cursor:pointer;font-family:var(--display);font-weight:700;font-size:17px}
 .pathbox details[open] summary{margin-bottom:14px}
-.ptiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-top:8px}
-.ptile{background:var(--panel-2);border-radius:18px;padding:12px 16px;display:flex;flex-direction:column;gap:2px}
-.ptile span{font-size:13px;color:var(--muted)}
-.ptile strong{font-family:var(--display);font-weight:700;font-size:18px}
 #progGoalSet{margin-top:0}
 .chapsel{position:relative;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .chapbtn{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:8px 16px;font-family:var(--display);font-weight:700;font-size:15px}
@@ -742,3 +729,41 @@ details.cmp[open] summary{margin-bottom:8px}
 @media (max-width:760px){.hero,.page{padding:24px;border-radius:26px}.steps{grid-template-columns:1fr}}
 @media (max-width:600px){.tabs{align-self:stretch}.tabs a{flex:1;padding:9px 6px;font-size:14px}.tabs a .tn{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+/* Lot 23 : « Mes progrès » rangée en cartes, badges en médailles */
+.pg{display:flex;flex-direction:column;gap:14px;margin-top:8px}
+.pgcard{background:var(--panel-2);border-radius:22px;padding:18px 20px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.pgrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pgcard.pgrow{flex-direction:row}
+.pgleft{justify-content:flex-start;gap:16px}
+.pgcard .pgbig{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-.02em}
+.pgsub{font-size:14px;color:var(--muted)}
+.pgcard strong{display:block;font-family:var(--display);font-weight:700;font-size:17px}
+.pgcard .sub{margin:0}
+.pgbar{height:10px;border-radius:5px;background:var(--track);overflow:hidden}
+.pgbar i{display:block;height:100%;width:0;border-radius:5px;background:var(--accent)}
+.pgduo{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.pgring{flex:none;width:58px;height:58px;transform:rotate(-90deg)}
+.pgring circle{fill:none;stroke-width:7}
+.pgflame{flex:none;width:44px;height:44px;fill:none;stroke:var(--mid);stroke-width:2;stroke-linejoin:round}
+.pgday .linkbtn{align-self:flex-start;padding:0}
+.pgnext{flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap}
+.pgnextt{flex:1 1 220px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.pgnextt .pgbar{margin-top:6px}
+.medals{list-style:none;margin:4px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:14px 8px}
+.medal button{width:100%;background:none;border:0;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--fg);border-radius:16px}
+.medal button[aria-pressed="true"]{background:var(--panel)}
+.mdisc{display:grid;place-items:center;width:72px;height:72px;border-radius:50%}
+.mdisc svg{width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.medal.won .mdisc{background:var(--medal-bg);color:var(--mid);box-shadow:inset 0 0 0 3px var(--mid)}
+.medal.off .mdisc{background:var(--panel);color:var(--muted);box-shadow:inset 0 0 0 2px var(--line)}
+.medal strong{font-family:var(--sans);font-size:13px;font-weight:600;text-align:center;line-height:1.25}
+.medal.off strong{color:var(--muted)}
+.pgnext .mdisc{width:64px;height:64px;color:var(--fg);box-shadow:none;border:2px dashed var(--line)}
+.pginfo{margin:6px 0 0}
+.pgchaps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.pgch{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;background:none;border:0;padding:8px 6px;border-radius:12px;color:var(--fg);text-align:left;font-size:15px;font-weight:600}
+button.pgch:hover{background:var(--panel)}
+.pgch .pgbar{grid-column:1/-1}
+.locked .pgch{color:var(--muted);font-weight:500}
+@media (max-width:520px){.medals{grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:12px 4px}.mdisc{width:60px;height:60px}.mdisc svg{width:26px;height:26px}
+  .pgch{grid-template-columns:minmax(0,1fr);gap:4px}.pgcard{padding:16px}}

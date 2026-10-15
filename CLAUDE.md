@@ -279,6 +279,27 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   djingo` → `marketing/video/sortie/djingo-tiktok.mp4` et `-sans-son.mp4` (27 s). « Gratuit pendant la bêta » écrit à la fin.
 - **Lots 20 et 21 publiés le 15 oct. 2026** (accord de l'utilisateur, avant la checklist FLX4 ; points 17 et 18 ajoutés à
   la checklist : FLX4 reconnue sans « à régler », et score du Mode Expert avec le casque de la table).
+- **Vrai export rekordbox essayé le 16 oct. 2026** : `audio-essai/rekordbpx.xml` (hors Git), 1061 morceaux (rekordbox 6.8.6),
+  1009 avec tempo et tonalité, importé en 0,2 s sans erreur ; paire du jour correcte. Les fichiers audio qu'il cite ne sont
+  **pas sur ce PC** (autre ordinateur de l'utilisateur) : pour l'essai « Ta musique », il doit copier 2 ou 3 MP3 dans
+  `audio-essai/`. Sa collection : surtout afro house, deep house, tech house, 118-130 BPM.
+- **Lot 22 abandonné (16 oct. 2026)** : branche `lot-22-trouver` gardée, **jamais publiée**. Liens « Trouver des morceaux qui
+  vont avec » vers DigDeeper et Beatport ; l'utilisateur ne voulait pas de redirection mais la même chose sur le site
+  (comme digdeeper.fm). Bloqué par les droits : Deezer réserve son API à un usage non commercial, Spotify ne donne plus
+  recommandations, tempo ni tonalité aux nouvelles applis (nov. 2024). Possible plus tard : même outil limité à la
+  collection de l'utilisateur, ou partenariat (DigDeeper, Beatport). L'utilisateur a dit « tant pis, on passe à autre chose ».
+- **Lot 23 (16 oct. 2026)** : branche `lot-23-progres`, non publiée. Demande de l'utilisateur : « Mes progrès » ne ressemble
+  à rien, trop d'informations, badges pas beaux. Page refaite en cartes (`renderProgres` dans `js/parcours.js`, `#vProgres`
+  dans `index.html`) : niveau en grand avec barre et « Encore N XP pour le niveau N+1 » (`xpTotal` dans `js/niveaux.js`,
+  aussi utilisé par `renderHud`) ; « Aujourd'hui » (anneau `#pgRing`, choix 5/10/15 min replié derrière « Changer mon
+  objectif », `#pgGoalBox`) et la série (`#pgStreak`, record `#pgBest`) ; **ton prochain badge** (`badgeNext` : celui dont la
+  barre est la plus remplie, `BADGE_PROG` dans `js/quiz.js` donne [actuel, but, unité, où aller], bouton « Y aller ») ;
+  **médailles** (`renderBadges` : `BADGE_ICON`, dessins en traits, dorées `--mid` sur `--medal-bg` quand gagnées, grises
+  avec cadenas sinon, gagnées d'abord ; toucher une médaille l'explique dans `#pgMedalInfo`) ; « Mes chapitres » (barre
+  d'étoiles par chapitre ouvert, clic pour l'ouvrir ; chapitres fermés : ce qu'il manque). Les anciennes cases `.ptile` et
+  le nombre de réponses au quiz ont disparu. **Défaut ancien corrigé** (déjà en ligne) : depuis les niveaux 5 à 7 du
+  chapitre 1, ouvrir le chapitre 4 (4 niveaux) faisait planter la page ; `selectLesson` remet `li` à 0 s'il n'existe pas.
+  234 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

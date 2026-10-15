@@ -76,11 +76,35 @@ $('homeCta').addEventListener('click', () => { const st = STAGES[nextStage()]; i
 $('homeChange').addEventListener('click', () => { parcoursPick = true; renderHome(); });
 document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.addEventListener('click', () => setParcours(b.dataset.parcours)));
 /* ---------- Mes progrès : niveau, étoiles, série, objectif, badges ---------- */
+// « Mes progrès » (lot 23) : le niveau, aujourd'hui et la série, le prochain badge, les médailles, les chapitres
 function renderProgres(){
-  const box = $('progTiles'); box.innerHTML = ''; const sk = goalStreak(), max = BASE_LESSONS.length * 3;
-  const tiles = [[$('lvl').textContent, $('xpTxt').textContent], ['Chapitre 1', `${sumStars(stars)} ★ sur ${max}`], ['Chapitre 2', `${sumStars(ch2Stars)} ★ sur ${max}`],
-    ['Chapitre 3', `${sumStars(ch3Stars)} ★ sur ${CH3_LESSONS.length * 3}`], ['Chapitre 4', `${sumStars(ch4Stars)} ★ sur ${CH4_LESSONS.length * 3}`], ['Série en cours', sk ? plur(sk, 'jour', 'jours') : 'aucune'], ['Meilleure série', goal.best ? plur(goal.best, 'jour', 'jours') : '—'], ['Quiz', `${quizOk.length} sur ${QUIZ.length} trouvées`]];
-  for (const [k, v] of tiles){ const d = document.createElement('div'), a = document.createElement('span'), b = document.createElement('strong'); d.className = 'ptile'; a.textContent = k; b.textContent = v; d.append(a, b); box.appendChild(d); }
-  $('progGoalTxt').textContent = `${Math.floor(goalSecs() / 60)} min sur ${goal.min} aujourd'hui. Les parties et le quiz le remplissent.`;
+  const xp = xpTotal(), lv = 1 + Math.floor(xp / 30), sk = goalStreak(), mins = Math.floor(goalSecs() / 60);
+  $('pgLvl').textContent = `Niveau ${lv}`; $('pgXp').textContent = `${xp} XP`; $('pgXpFill').style.width = (xp % 30) / 30 * 100 + '%';
+  $('pgXpNext').textContent = `Encore ${30 - xp % 30} XP pour le niveau ${lv + 1}`;
+  $('pgRing').style.strokeDashoffset = String(169.6 * (1 - Math.min(1, goalSecs() / (goal.min * 60))));
+  $('pgToday').textContent = goalDone() ? 'Objectif du jour atteint' : 'Aujourd\'hui'; $('pgTodaySub').textContent = `${mins} min sur ${goal.min}`;
+  $('pgStreak').textContent = sk ? `Série : ${plur(sk, 'jour', 'jours')}` : 'Pas encore de série';
+  $('pgBest').textContent = goal.best ? `Record : ${plur(goal.best, 'jour', 'jours')}` : 'Atteins ton objectif pour en lancer une';
   renderGoal(); renderBadges();
+  // le prochain badge
+  const nb = badgeNext(); $('pgNext').hidden = false;
+  if (nb){ const [cur, max, unit, go] = BADGE_PROG[nb[0]](); $('pgNextIcon').innerHTML = iconSvg(BADGE_ICON[nb[0]]); $('pgNextName').textContent = nb[1];
+    $('pgNextHow').textContent = nb[2] + (max > 1 ? ` · ${Math.min(cur, max)} sur ${max} ${unit}` : ''); $('pgNextBarBox').hidden = max <= 1; $('pgNextBar').style.width = Math.min(cur, max) / max * 100 + '%';
+    $('pgNextGo').hidden = false; $('pgNextGo').onclick = go; }
+  else { $('pgNextIcon').innerHTML = iconSvg(BADGE_ICON.sansfaute); $('pgNextName').textContent = 'Tous les badges sont à toi !'; $('pgNextHow').textContent = 'Bravo. Continue l\'objectif du jour pour garder ta série.'; $('pgNextBarBox').hidden = true; $('pgNextGo').hidden = true; }
+  // les chapitres : une barre d'étoiles pour ceux qui sont ouverts, ce qu'il manque pour les autres
+  const ul = $('pgChaps'); ul.innerHTML = '';
+  const row = (txt, right, frac, go) => { const liEl = document.createElement('li'), top = document.createElement(go ? 'button' : 'div'), a = document.createElement('span'), b = document.createElement('span');
+    top.className = 'pgch'; if (go){ top.type = 'button'; top.addEventListener('click', go); } else liEl.className = 'locked';
+    a.textContent = txt; b.className = 'pgsub'; b.textContent = right; top.append(a, b); liEl.appendChild(top);
+    if (frac != null){ const bar = document.createElement('div'), f = document.createElement('i'); bar.className = 'pgbar'; f.style.width = frac * 100 + '%'; bar.appendChild(f); top.appendChild(bar); }
+    ul.appendChild(liEl); };
+  const ch = n => CHAPTERS.find(c => c.n === n).title, max1 = BASE_LESSONS.length * 3;
+  const open = (n, bank, len) => row(`${n} · ${ch(n)}`, `${sumStars(bank)} ★ sur ${len * 3}`, sumStars(bank) / (len * 3), () => goLesson(n, firstTodo(bank, len)));
+  open(1, stars, BASE_LESSONS.length);
+  if (ch2Unlocked()){ open(2, ch2Stars, BASE_LESSONS.length); open(4, ch4Stars, CH4_LESSONS.length); }
+  else row(`2 · ${ch(2)} et 4 · ${ch(4)}`, `encore ${plur(14 - sumStars(stars), 'étoile', 'étoiles')} au chapitre 1`, null, null);
+  if (ch3Unlocked()) open(3, ch3Stars, CH3_LESSONS.length);
+  else row(`3 · ${ch(3)}`, ch2Unlocked() ? `encore ${plur(10 - sumStars(ch2Stars), 'étoile', 'étoiles')} au chapitre 2` : 'après le chapitre 2', null, null);
 }
+$('pgGoalBtn').addEventListener('click', () => { const box = $('pgGoalBox'); box.hidden = !box.hidden; $('pgGoalBtn').setAttribute('aria-expanded', String(!box.hidden)); });

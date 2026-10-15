@@ -22,9 +22,13 @@ test.describe('L\'encart de l\'accueil', () => {
     await expect(page.locator('#goalTitle')).toHaveText('6 min sur 10 aujourd\'hui');
     await page.locator('a.lvlchip').click();
     await expect(page.locator('#vProgres')).toBeVisible();
+    await expect(page.locator('#progGoalSet')).toBeHidden();   // derrière « Changer mon objectif »
+    await page.locator('#pgGoalBtn').click();
+    await expect(page.locator('#pgGoalBtn')).toHaveAttribute('aria-expanded', 'true');
     await page.locator('#progGoalSet [data-goal="5"]').click();
     await expect(page.locator('#progGoalSet [data-goal="5"]')).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('#progGoalTxt')).toHaveText("6 min sur 5 aujourd’hui. Les parties et le quiz le remplissent.".replace('’', "'"));
+    await expect(page.locator('#pgToday')).toHaveText('Objectif du jour atteint');
+    await expect(page.locator('#pgTodaySub')).toHaveText('6 min sur 5');
     await page.evaluate(() => { location.hash = '#accueil'; });
     await expect(page.locator('#goalTitle')).toHaveText('Objectif du jour atteint !');
     await expect(page.locator('#homeGoal')).toHaveClass(/done/);
@@ -82,7 +86,8 @@ test.describe('Ce qui remplit l\'objectif', () => {
 test.describe('Badges de série', () => {
   test('3 jours d\'objectif d\'affilée donnent « Régulier »', async ({ page }) => {
     await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-objectif': S({ min: 5, faits: [jour(-2), jour(-1), jour()], best: 3 }) } });
-    await expect(page.locator('.ptile', { hasText: 'Série en cours' })).toContainText('3 jours');
+    await expect(page.locator('#pgStreak')).toHaveText('Série : 3 jours');
+    await expect(page.locator('#pgBest')).toHaveText('Record : 3 jours');
     await expect(page.locator('#homeBadges li.won strong')).toHaveText(['Régulier']);
   });
 });

@@ -143,8 +143,10 @@ function setChapter(n){
   chapter = n; try { localStorage.setItem('coach-chapitre', String(n)); } catch (e) {}
   const bank = bankOf(n), first = LESSONS.findIndex((_, i) => !(bank[i] >= 2)); selectLesson(first < 0 ? 0 : first);
 }
+// XP : 10 par étoile au chapitre 1, 15 au chapitre 2, 20 aux chapitres 3 et 4, plus le quiz (un niveau tous les 30 XP)
+const xpTotal = () => sumStars(stars) * 10 + sumStars(ch2Stars) * 15 + sumStars(ch3Stars) * 20 + sumStars(ch4Stars) * 20 + quizXp();
 function renderHud(){
-  const t1 = sumStars(stars), t2 = sumStars(ch2Stars), t3 = sumStars(ch3Stars), t4 = sumStars(ch4Stars), xp = t1 * 10 + t2 * 15 + t3 * 20 + t4 * 20 + quizXp();
+  const t1 = sumStars(stars), t2 = sumStars(ch2Stars), t3 = sumStars(ch3Stars), t4 = sumStars(ch4Stars), xp = xpTotal();
   $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
   $('starTot').textContent = (t1 + t2 + t3 + t4) + '/' + (BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3 + CH4_LESSONS.length * 3);
   const bank = bankOf(chapter), map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove()); map.style.setProperty('--n', LESSONS.length);
@@ -163,6 +165,8 @@ function styleLabel(){ if (chapter === 3) return 'House · 124 BPM'; if (chapter
 // Précision demandée, en temps : 1 au chapitre 1, 0,5 aux chapitres 2 et 4, 0,25 en Mode Expert
 const tolOf = () => expertOn() ? .25 : chapter === 2 || chapter === 4 ? .5 : 1;
 function selectLesson(i){
+  // Changement de chapitre : l'ancien numéro de niveau peut ne pas exister dans le nouveau (le chapitre 4 n'a que 4 niveaux)
+  if (!LESSONS[li]) li = 0;
   stopRun(); speed = 1; if (i !== li) slowFails = {}; li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = tolOf();
   $('lnum').textContent = (chapter > 1 ? `Chapitre ${chapter} · ` : '') + `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
   const lex = lexOf(l.title + ' ' + l.goal + ' ' + l.how); $('llex').hidden = !lex.length; $('llex').textContent = lex.map(([, n, d]) => n + ' : ' + d + '.').join('\n');

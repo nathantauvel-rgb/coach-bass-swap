@@ -175,13 +175,59 @@ function badgeNote(id){
   const nb = badgeSync(), e = $(id); e.hidden = !nb.length;
   e.textContent = nb.length ? (nb.length > 1 ? 'Nouveaux badges : ' : 'Nouveau badge : ') + nb.map(b => b[1]).join(', ') : '';
 }
-// Section « Mes badges » de l'accueil (appelée par renderHome)
+/* ---------- Les médailles de « Mes progrès » (lot 23) ----------
+   Un dessin par badge (traits seuls, 24 × 24), doré quand il est gagné, gris avec un cadenas sinon. Toucher une médaille
+   dit comment la gagner. BADGE_PROG : où en est le joueur ([actuel, but, unité]) et où aller pour progresser. */
+const BADGE_ICON = {
+  pas: '<path d="M8 5v14l11-7z"/>',
+  timing: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  swap: '<path d="M4 8h14l-4-4M20 16H6l4 4"/>',
+  soiree: '<circle cx="7" cy="17" r="3"/><circle cx="17" cy="15" r="3"/><path d="M10 17V5l10-2v12"/>',
+  bases: '<circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l3 3"/>',
+  oreille: '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="5" height="7" rx="2"/><rect x="16" y="14" width="5" height="7" rx="2"/>',
+  ondes: '<path d="M2 12h3l2-6 3 12 3-9 2 6 2-3h5"/>',
+  sansfaute: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  regulier: '<path d="M12 3c1 4 6 5.5 6 11a6 6 0 0 1-12 0c0-3 2-5 3.5-6.5.5 2.5 1.5 3.5 2.5 3.5 0-3-1-5 0-8z"/>',
+  accro: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 15l2 2 4-4"/>',
+  miniset: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 6a6 6 0 0 1 6 6"/>',
+  tete: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+  vrai: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>'
+};
+const LOCK_ICON = '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>';
+const iconSvg = paths => `<svg viewBox="0 0 24 24" aria-hidden="true">${paths}</svg>`;
+const ch1First3 = () => { const i = BASE_LESSONS.findIndex((_, k) => !(stars[k] >= 3)); return i < 0 ? 0 : i; };
+const BADGE_PROG = {
+  pas: () => [[stars, ch2Stars, ch3Stars].some(b => Object.values(b || {}).some(v => v >= 2)) ? 1 : 0, 1, '', () => goLesson(1, firstTodo(stars, BASE_LESSONS.length))],
+  timing: () => [bdBest(0), 3, 'étoiles', () => goLesson(1, 0)],
+  swap: () => [bdBest(2), 3, 'étoiles', () => goLesson(1, 2)],
+  soiree: () => [Math.min(2, bdBest(3)), 2, 'étoiles', () => goLesson(1, 3)],
+  bases: () => [Math.min(14, sumStars(stars)), 14, 'étoiles au chapitre 1', () => goLesson(1, firstTodo(stars, BASE_LESSONS.length))],
+  oreille: () => [Math.min(10, sumStars(ch2Stars)), 10, 'étoiles au chapitre 2', () => ch2Unlocked() ? goLesson(2, firstTodo(ch2Stars, BASE_LESSONS.length)) : goLesson(1, firstTodo(stars, BASE_LESSONS.length))],
+  ondes: () => [ch3Done(), CH3_LESSONS.length, 'niveaux du chapitre 3', () => ch3Unlocked() ? goLesson(3, firstTodo(ch3Stars, CH3_LESSONS.length)) : ch2Unlocked() ? goLesson(2, firstTodo(ch2Stars, BASE_LESSONS.length)) : goLesson(1, firstTodo(stars, BASE_LESSONS.length))],
+  sansfaute: () => [BASE_LESSONS.filter((_, i) => stars[i] >= 3).length, BASE_LESSONS.length, 'niveaux à 3 étoiles', () => goLesson(1, ch1First3())],
+  regulier: () => [Math.min(3, Math.max(goalStreak(), pracNum('streak'))), 3, 'jours de suite', () => goLesson(1, firstTodo(stars, BASE_LESSONS.length))],
+  accro: () => [Math.min(7, Math.max(goalStreak(), pracNum('streak'))), 7, 'jours de suite', () => goLesson(1, firstTodo(stars, BASE_LESSONS.length))],
+  miniset: () => [Math.min(8, pracNum('setBest')), 8, 'étoiles sur 9', () => { location.hash = '#entrainer'; }],
+  tete: () => [Math.min(10, quizOk.length), 10, 'bonnes réponses', () => { location.hash = '#entrainer'; }],
+  vrai: () => [rbMis.total > 0 ? 1 : 0, 1, '', () => { location.hash = '#vrai'; }]
+};
+// Le badge le plus proche : parmi ceux qu'il reste à gagner, celui dont la barre est la plus remplie
+function badgeNext(){
+  let best = null;
+  for (const b of BADGES){ if (badgesWon.includes(b[0])) continue; const [cur, max] = BADGE_PROG[b[0]](), r = Math.min(cur, max) / max; if (!best || r > best.r) best = { b, r }; }
+  return best && best.b;
+}
+let medalSel = '';
+const medalInfo = b => { const won = badgesWon.includes(b[0]), [cur, max, unit] = BADGE_PROG[b[0]]();
+  return `${b[1]} : ${b[2].charAt(0).toLowerCase() + b[2].slice(1)}. ` + (won ? 'Gagné !' : max > 1 ? `Tu en es à ${Math.min(cur, max)} sur ${max} ${unit}.` : 'Pas encore gagné.'); };
+// Section « Mes badges » de « Mes progrès » (appelée par renderProgres)
 function renderBadges(){
   badgeSync(); const ul = $('homeBadges'); ul.innerHTML = ''; $('badgeCount').textContent = `${badgesWon.length} sur ${BADGES.length}`;
-  for (const [id, name, how, sign, col] of BADGES){ const won = badgesWon.includes(id), liEl = document.createElement('li'), d = document.createElement('span'), box = document.createElement('div'), t = document.createElement('strong'), h = document.createElement('span');
-    liEl.className = 'bdg' + (won ? ' won c-' + col : ''); d.className = 'bd'; d.setAttribute('aria-hidden', 'true'); d.textContent = sign; t.textContent = name; h.textContent = how;
-    box.append(t, h); liEl.append(d, box);
-    if (won){ const tag = document.createElement('span'); tag.className = 'sp'; tag.textContent = 'Gagné'; liEl.appendChild(tag); }
-    ul.appendChild(liEl); }
+  const order = BADGES.filter(b => badgesWon.includes(b[0])).concat(BADGES.filter(b => !badgesWon.includes(b[0])));
+  for (const b of order){ const [id, name] = b, won = badgesWon.includes(id), liEl = document.createElement('li'), bt = document.createElement('button'), d = document.createElement('span'), t = document.createElement('strong');
+    liEl.className = 'medal' + (won ? ' won' : ' off'); bt.type = 'button'; bt.setAttribute('aria-pressed', String(medalSel === id)); bt.setAttribute('aria-label', name + (won ? ', gagné' : ', pas encore gagné'));
+    d.className = 'mdisc'; d.innerHTML = iconSvg(won ? BADGE_ICON[id] : LOCK_ICON); t.textContent = name;
+    bt.append(d, t); bt.addEventListener('click', () => { medalSel = medalSel === id ? '' : id; $('pgMedalInfo').textContent = medalSel ? medalInfo(b) : 'Touche une médaille pour savoir comment la gagner.'; renderBadges(); });
+    liEl.appendChild(bt); ul.appendChild(liEl); }
 }
 badgeSync();   // au chargement, sans annonce : quelqu'un qui a déjà joué retrouve ses badges sur l'accueil

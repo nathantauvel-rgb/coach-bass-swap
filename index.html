@@ -212,12 +212,31 @@
     <section class="page">
       <span class="lnum">Ta progression</span>
       <h1>Mes progrès</h1>
-      <div class="ptiles" id="progTiles"></div>
-      <h2 class="sub">Objectif du jour</h2>
-      <p class="subnote" id="progGoalTxt"></p>
-      <div class="gset" id="progGoalSet" role="group" aria-label="Objectif du jour, en minutes"><span>Objectif</span><button type="button" data-goal="5" aria-pressed="false">5 min</button><button type="button" data-goal="10" aria-pressed="false">10 min</button><button type="button" data-goal="15" aria-pressed="false">15 min</button></div>
-      <div class="path-head bhead"><h2 class="sub">Mes badges</h2><span class="sp soon" id="badgeCount"></span></div>
-      <ul class="badges" id="homeBadges"></ul>
+      <div class="pg">
+        <div class="pgcard"><div class="pgrow"><strong class="pgbig" id="pgLvl">Niveau 1</strong><span class="pgsub" id="pgXp">0 XP</span></div>
+          <div class="pgbar"><i id="pgXpFill"></i></div><span class="pgsub" id="pgXpNext"></span></div>
+        <div class="pgduo">
+          <div class="pgcard pgday">
+            <div class="pgrow pgleft"><svg class="pgring" viewBox="0 0 64 64" aria-hidden="true"><circle class="gtrack" cx="32" cy="32" r="27"/><circle class="gfill" id="pgRing" cx="32" cy="32" r="27"/></svg>
+              <div><strong id="pgToday">Aujourd'hui</strong><span class="pgsub" id="pgTodaySub"></span></div></div>
+            <button type="button" class="linkbtn" id="pgGoalBtn" aria-expanded="false" aria-controls="pgGoalBox">Changer mon objectif</button>
+            <div id="pgGoalBox" hidden><div class="gset" id="progGoalSet" role="group" aria-label="Objectif du jour, en minutes"><span>Objectif</span><button type="button" data-goal="5" aria-pressed="false">5 min</button><button type="button" data-goal="10" aria-pressed="false">10 min</button><button type="button" data-goal="15" aria-pressed="false">15 min</button></div>
+              <p class="pgsub" id="progGoalTxt">Les parties et le quiz remplissent ton objectif.</p></div>
+          </div>
+          <div class="pgcard pgrow pgleft"><svg class="pgflame" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 4 6 5.5 6 11a6 6 0 0 1-12 0c0-3 2-5 3.5-6.5.5 2.5 1.5 3.5 2.5 3.5 0-3-1-5 0-8z"/></svg>
+            <div><strong id="pgStreak"></strong><span class="pgsub" id="pgBest"></span></div></div>
+        </div>
+        <div class="pgcard pgnext" id="pgNext">
+          <span class="medal off" aria-hidden="true"><span class="mdisc" id="pgNextIcon"></span></span>
+          <div class="pgnextt"><span class="pgsub">Ton prochain badge</span><strong id="pgNextName"></strong><span class="pgsub" id="pgNextHow"></span>
+            <div class="pgbar" id="pgNextBarBox"><i id="pgNextBar"></i></div></div>
+          <button type="button" class="ghost" id="pgNextGo">Y aller</button>
+        </div>
+        <div class="pgcard"><div class="pgrow"><h2 class="sub">Mes badges</h2><span class="pgsub" id="badgeCount"></span></div>
+          <ul class="medals" id="homeBadges"></ul>
+          <p class="pgsub pginfo" id="pgMedalInfo" role="status">Touche une médaille pour savoir comment la gagner.</p></div>
+        <div class="pgcard"><h2 class="sub">Mes chapitres</h2><ul class="pgchaps" id="pgChaps"></ul></div>
+      </div>
     </section>
   </div>
 
