@@ -438,6 +438,10 @@ h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h
 .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .tags .styletag{margin-top:0}
 .modetag{font-size:13px;font-weight:700;color:var(--ink);background:var(--xp);border-radius:999px;padding:4px 12px}
+/* Lot 20 : bouton du Mode Expert, allumé quand il est choisi */
+.xtoggle{font-size:13px;font-weight:700;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer}
+.xtoggle:hover{color:var(--fg);border-color:var(--muted)}
+.xtoggle[aria-pressed="true"]{color:var(--on-fg);background:var(--accent);border-color:var(--accent)}
 .stage-head .goal{font-size:19px;font-weight:700;color:var(--fg)}
 .bubble{font-size:16px;max-width:250px}
 .ringlab{min-height:0}

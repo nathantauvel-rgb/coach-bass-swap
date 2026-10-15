@@ -43,15 +43,16 @@ function drawHighway(b){
   } else {
   block(16, 32, yA, COL.a, true, 'Corps'); block(32, 128, yA, COL.a, false, 'Outro');
   if (L !== null){ if (l.bCue >= 64){ block(L, L + 160, yB, COL.b, true, 'Drop'); } else if (l.bCue){ block(L, L + 64 - l.bCue, yB, COL.b, false, 'Fin d\'intro'); block(L + 64 - l.bCue, L + 160, yB, COL.b, true, 'Drop'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'Intro (avec basse)' : 'Intro'); block(L + 64, L + 160, yB, COL.b, true, 'Drop'); } }
-  else { const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, H / 2); g.stroke(); g.setLineDash([]);
+  else if (!(run && run.expert)){ const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, H / 2); g.stroke(); g.setLineDash([]);
     if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 30, 8), yB + 28); } }
   }
   // gestes à faire
-  const fog = run && run.ear;
+  // Brouillard « à l'oreille » ; en Expert, pas de brouillard mais aucun repère ni « B partira ici »
+  const fog = run && run.ear, hide = fog || !!(run && run.expert);
   if (fog){ g.save(); const gr = g.createLinearGradient(hitX + 6, 0, hitX + 90, 0); gr.addColorStop(0, hexA(COL['panel-2'], 0)); gr.addColorStop(1, hexA(COL['panel-2'], .93)); g.fillStyle = gr; g.fillRect(hitX + 6, 0, w, h);
     g.font = '700 13px ' + COL.font; const tx = 'Repères masqués : écoute', tw = g.measureText(tx).width + 24; g.fillStyle = COL.fg; rr(g, w - tw - 12, 12, tw, 26, 13); g.fill(); g.fillStyle = COL['on-fg']; g.textAlign = 'left'; g.fillText(tx, w - tw, 30); g.restore(); }
   for (const [v, lab, lane] of LESSONS[li].targets){
-    if (fog && !(run.status[lab])) continue;
+    if (hide && !(run.status[lab])) continue;
     if (l.wave && !(run && run.demo)) continue;
     const x = X(v); if (x < -80 || x > w + 80) continue;
     const st = run ? run.status[lab] : null, col = st === 'ok' ? COL.ok : st === 'mid' ? COL.mid : st === 'bad' || st === 'late' ? COL.bad : COL.xp;
@@ -90,7 +91,7 @@ function drawCompare(fr, i, launch){
     label('Lancer B', y + 22);
     const yy = y + 18, dia = (x, fill, col) => { g.beginPath(); g.moveTo(x, yy - 10); g.lineTo(x + 10, yy); g.lineTo(x, yy + 10); g.lineTo(x - 10, yy); g.closePath(); if (fill){ g.fillStyle = col; g.fill(); } else { g.strokeStyle = col; g.lineWidth = 2; g.setLineDash([3, 3]); g.stroke(); g.setLineDash([]); } };
     dia(X(LESSONS[i].launchBeat), false, COL.fg);
-    if (launch !== null){ dia(X(launch), true, COL.b); if (launch !== LESSONS[i].launchBeat){ g.fillStyle = COL.b; g.font = '600 12px ' + COL.font; g.textAlign = 'center'; const e = launch - LESSONS[i].launchBeat; g.fillText(`toi : ${Math.abs(e)} temps trop ${e > 0 ? 'tard' : 'tôt'}`, X(launch), yy + 26); } }
+    if (launch !== null){ dia(X(launch), true, COL.b); if (launch !== LESSONS[i].launchBeat){ g.fillStyle = COL.b; g.font = '600 12px ' + COL.font; g.textAlign = 'center'; const e = launch - LESSONS[i].launchBeat; g.fillText(Number.isInteger(launch) ? `toi : ${Math.abs(e)} temps trop ${e > 0 ? 'tard' : 'tôt'}` : `toi : ${Math.abs(msOf(e))} ms trop ${e > 0 ? 'tard' : 'tôt'}`, X(launch), yy + 26); } }
     else { g.fillStyle = COL.bad; g.font = '600 12px ' + COL.font; g.textAlign = 'left'; g.fillText('pas lancé', X(LESSONS[i].launchBeat) + 16, yy + 4); }
     y += 46;
   }

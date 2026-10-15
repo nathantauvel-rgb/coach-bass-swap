@@ -78,6 +78,8 @@ const RING_LAB = { 'MONTE B': 'temps avant de monter B', 'FILTRE': 'temps avant 
 // speed : vitesse de la partie (1 = normale, 0,9 ou 0,8 = ralenti, proposé seulement au chapitre 4 après deux échecs de suite)
 let speed = 1, slowFails = {};
 let preparing = false, li = 0, run = null, ear = false, styleChoice = 'house', chapter = 1, TOL = 1, placement = null, prac = null;
+// Mode Expert (expert.js) : choisi par le joueur ; xRun vaut true pendant la notation d'une partie jouée en Expert
+let expert = false, xRun = false;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 let earStars = {}; try { earStars = JSON.parse(localStorage.getItem('coach-lecons-oreille') || '{}') || {}; } catch (e) {}
 try { styleChoice = localStorage.getItem('coach-style') || 'house'; } catch (e) {}
@@ -159,7 +161,7 @@ function renderHud(){
 function styleLabel(){ if (chapter === 3) return 'House · 124 BPM'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
   return styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM'; }
 function selectLesson(i){
-  stopRun(); speed = 1; if (i !== li) slowFails = {}; li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = chapter === 2 || chapter === 4 ? .5 : 1;
+  stopRun(); speed = 1; if (i !== li) slowFails = {}; li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = expertOn() ? .25 : chapter === 2 || chapter === 4 ? .5 : 1;
   $('lnum').textContent = (chapter > 1 ? `Chapitre ${chapter} · ` : '') + `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
   const lex = lexOf(l.title + ' ' + l.goal + ' ' + l.how); $('llex').hidden = !lex.length; $('llex').textContent = lex.map(([, n, d]) => n + ' : ' + d + '.').join('\n');
   for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).hidden = !l.show.includes(g);
@@ -174,12 +176,12 @@ function selectLesson(i){
   $('stage').classList.remove('ear');
   chooseSongs();
   // Avant de jouer, la bulle ne donne jamais le geste (il est dans « Pendant le niveau ») : seulement quoi faire maintenant
-  const idle = needSetup() ? 'Place ta table en position de départ, puis appuie sur Jouer.' : 'Lis les gestes à faire, ou regarde d\'abord la démo. Puis à toi !';
+  const idle = needSetup() ? 'Place ta table en position de départ, puis appuie sur Jouer.' : expertOn() ? 'Mode Expert : ni compte à rebours, ni repère, ni calage automatique. Chaque geste est noté en millisecondes.' : 'Lis les gestes à faire, ou regarde d\'abord la démo. Puis à toi !';
   const fb = $('lfiches'); fb.innerHTML = '';
   for (const k of fichesOf(l)){ const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'linkbtn'; bt.textContent = 'Revoir la fiche : ' + FICHE_NAMES[k]; bt.addEventListener('click', () => { if (!run) openOnb([FICHES[k]], { fiche: true, keys: [k] }); }); fb.appendChild(bt); }
   fb.hidden = !fb.children.length;
   $('hint').textContent = idle; say(idle);
-  renderHud(); drawHighway(START); updateSetup();
+  renderHud(); renderExpert(); drawHighway(START); updateSetup();
   if (!$('vLearn').hidden) stageIntoView();
 }
 // Sur un écran peu haut, la barre des boutons (collée en bas) recouvrait la piste : on amène la scène en haut de l'écran
@@ -203,10 +205,12 @@ function startRun(demo = false){
     if (lw.wave){ const tk = tkW; waveTk = tk; tk.bufA = tk.bufA || bufferOf(tk.A); tk.bufB = tk.bufB || bufferOf(tk.B); tracks = { A: tk.bufA, B0: tk.bufB, B1: tk.bufB }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; $('styleTag').textContent = styleLabel(); }
     else { const d = STYLE_DEFS[styW]; BPM = d.bpm * speed; P = 60 / BPM; if (chapter === 4) $('styleTag').textContent = `${d.label} · ${Math.round(BPM)} BPM` + (speed !== 1 ? ` · ralenti ${Math.round(speed * 100)} %` : ''); tracks = { A: bufOf(songA), B0: bufOf(songB), B1: bufOf(songB) }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; }
     const l = LESSONS[li]; Object.assign(ctrl, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
+    // En Expert, le départ change d'une partie à l'autre (0, 4 ou 8 temps plus tôt) : on ne peut pas jouer de mémoire
+    const xp = expertOn() && !demo; START = Math.max(0, l.start - (xp ? 4 * Math.floor(Math.random() * 3) : 0));
     const t0 = ac.currentTime + .15;
     play('A', tracks.A, t0, START * P, false);
     const earRun = (chapter === 2 || !!(prac && prac.ear) || !!LESSONS[li].noCount) && !demo;
-    run = { gT: performance.now(), t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: earRun, ch: chapter };
+    run = { gT: performance.now(), t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: earRun, ch: chapter, expert: xp };
     $('stage').classList.toggle('ear', earRun); $('stage').classList.add('running');
     const st0 = $('stage').getBoundingClientRect(); if (st0.top < -4 || st0.top > 40) window.scrollTo({ top: window.scrollY + st0.top - 8, behavior: REDUCED ? 'auto' : 'smooth' });
     setEcho(false); run.echoAt = null;
@@ -234,6 +238,7 @@ function judgeLaunch(k){
 }
 function launchB(){
   if (!run || run.launch !== null || LESSONS[li].autoLaunch) return;
+  if (run.expert){ launchExpert(); return; }
   const b = beatNow(), k = Math.round(b);
   if (k >= b) launchAt(k);
   else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, LESSONS[li].bCue * P + (b - k) * P + .01, true, ...(LESSONS[li].bLoop || [64, 128])); $('launchB').disabled = true; }
@@ -248,7 +253,7 @@ function setEcho(on){ echoOn = !!on; if (ac && deck.A.echoIn) deck.A.echoIn.gain
 function toggleEcho(){
   if (!run || run.demo || !LESSONS[li].btn.includes('echo')) return;
   setEcho(!echoOn);
-  if (echoOn && run.echoAt == null){ const b = beatNow(); run.echoAt = b; const e = b - 63;
+  if (echoOn && run.echoAt == null){ const b = run.expert ? heardBeat() : beatNow(); run.echoAt = b; const e = b - 63;
     if (e >= -1.5 * TOL && e <= .6 * TOL){ pop('Écho lancé !', 'ok'); run.status.ECHO = 'ok'; chime(true); }
     else { pop(e < 0 ? 'Écho trop tôt' : 'Écho trop tard', 'mid'); run.status.ECHO = 'mid'; } }
 }
@@ -334,18 +339,22 @@ function liveJudge(b){
     if (!s['COUPE A'] && b > 66){ pop('Coupe A !', 'bad'); s['COUPE A'] = 'bad'; }
   }
 }
+// Une image de la partie : les positions de toutes les commandes au temps b
+const snapFrame = b => ({ b, ma: ctrl.midA, fa: ctrl.faderA, fb: ctrl.faderB, la: ctrl.lowA, lb: ctrl.lowB, ca: ctrl.cfxA, ec: echoOn ? 1 : 0 });
 function frame(){
   requestAnimationFrame(frame);
   if (!run){ return; }
   const b = beatNow(); if (b < START) return;
-  automate(b); if (run.demo) demoCaptions(b); else liveJudge(b);
-  run.frames.push({ b, ma: ctrl.midA, fa: ctrl.faderA, fb: ctrl.faderB, la: ctrl.lowA, lb: ctrl.lowB, ca: ctrl.cfxA, ec: echoOn ? 1 : 0 });
+  // En Expert, les gestes sont mesurés au temps entendu (le son sort un peu après son calcul)
+  const hb = run.expert ? heardBeat() : b;
+  automate(b); if (run.demo) demoCaptions(b); else liveJudge(hb);
+  run.frames.push(snapFrame(hb));
   const tg = LESSONS[li].targets.find(([x, lab]) => x > b - .5 && !(run.status[lab] && run.status[lab] !== 'late'));
   const ring = $('ring');
   const LL = LESSONS[li], userGroups = LL.show.filter(g => g !== 'gPlay' || !LL.autoLaunch);
   if (run.demo){ $('cdNum').textContent = tg ? Math.max(0, Math.ceil(tg[0] - b)) : '♪'; $('cdLab').textContent = tg ? 'temps' : ''; ring.classList.remove('hot'); setFocus(tg && tg[0] - b <= 6 ? LL.targets.filter(t => t[0] === tg[0]).map(t => GROUP_OF[t[1]]) : []); }
-  else if (LL.wave || run.ear){ $('cdNum').textContent = '?'; $('cdLab').textContent = ''; ring.classList.remove('hot'); setFocus(userGroups);
-    showAction(LL.wave ? 'Lis les formes d\'onde et agis au bon moment.' : 'Pas de compte à rebours : écoute et sens la phrase.'); }
+  else if (LL.wave || run.ear || run.expert){ $('cdNum').textContent = '?'; $('cdLab').textContent = ''; ring.classList.remove('hot'); setFocus(userGroups);
+    showAction(LL.wave ? 'Lis les formes d\'onde et agis au bon moment.' : run.expert ? 'Mode Expert : aucun repère, à toi de sentir le moment.' : 'Pas de compte à rebours : écoute et sens la phrase.'); }
   else if (tg){ const n = Math.max(0, Math.ceil(tg[0] - b)), same = LL.targets.filter(t => t[0] === tg[0]);
     $('cdNum').textContent = n; $('cdLab').textContent = 'temps'; ring.classList.toggle('hot', n <= 4);
     setFocus(n <= 8 ? same.map(t => GROUP_OF[t[1]]) : []);
@@ -359,6 +368,11 @@ function frame(){
   if (run && !LESSONS[li].autoLaunch && run.launch === null && b > LESSONS[li].launchBeat + 40) finish();
 }
 const fr1 = v => (Math.round(v * 10) / 10).toString().replace('.', ',');
+// Mode Expert : les écarts s'écrivent en millisecondes, et la note d'un geste minuté devient continue
+// (1 jusqu'à okMs d'écart, 0 à partir de zeroMs) au lieu de 1, 0,5 ou 0
+const msOf = beats => Math.round(beats * P * 1000);
+const dur = x => xRun ? `${Math.abs(msOf(x))} ms` : `${fr1(Math.abs(x))} temps`;
+const xv = (v, err, okMs, zeroMs) => xRun ? clamp01(1 - (Math.abs(msOf(err)) - okMs) / (zeroMs - okMs)) : v;
 const firstAt = (fr, from, test) => { const f = fr.find(x => x.b >= from && test(x)); return f ? f.b : null; };
 function evalLaunch(L, target = 32){
   if (L === null) return ['bad', 'Tu n\'as pas lancé B : écoute le compte à rebours et appuie quand il arrive à zéro.', 0];
@@ -383,9 +397,10 @@ function evalSwap(fr){
   const tKill = firstAt(fr, 40, x => x.la < .12), tOpen = firstAt(fr, 40, x => x.lb > .4);
   if (tKill === null || tOpen === null) return [['bad', tKill === null ? 'Les basses de A n\'ont jamais été coupées : passe son LOW de normal à coupé (tout à gauche).' : 'Les basses de B n\'ont jamais été remises : passe son LOW de coupé à normal (à midi).', 0]];
   const sw = (tKill + tOpen) / 2, e = sw - 64, ov = Math.max(0, tKill - tOpen), gap = Math.max(0, tOpen - tKill), out = [];
-  out.push(Math.abs(e) <= .75 * TOL ? ['ok', 'Swap pile sur le début de la phrase.', 1] : Math.abs(e) <= 2 * TOL ? ['mid', `Swap ${fr1(Math.abs(e))} temps ${e > 0 ? 'trop tard' : 'trop tôt'}.`, .5] : ['bad', `Swap à ${fr1(Math.abs(e))} temps de la phrase : vise le début de la phrase.`, 0]);
-  out.push(ov > 2 * TOL ? ['bad', `Deux basses ensemble pendant ${fr1(ov)} temps : ouvre B et coupe A dans le même geste.`, 0] : ov > .5 * TOL ? ['mid', `Deux basses ensemble pendant ${fr1(ov)} temps : ça frotte un peu.`, .5]
-    : gap > 2 * TOL ? ['bad', `Plus aucune basse pendant ${fr1(gap)} temps : l'énergie retombe.`, 0] : gap > .5 * TOL ? ['mid', `Petit trou dans les basses (${fr1(gap)} temps).`, .5] : ['ok', 'Les basses passent de A à B sans chevauchement ni trou.', 1]);
+  out.push(Math.abs(e) <= .75 * TOL ? ['ok', xRun ? `Swap à ${dur(e)} du début de la phrase.` : 'Swap pile sur le début de la phrase.', xv(1, e, 30, 250)] : Math.abs(e) <= 2 * TOL ? ['mid', `Swap ${dur(e)} ${e > 0 ? 'trop tard' : 'trop tôt'}.`, xv(.5, e, 30, 250)] : ['bad', `Swap à ${dur(e)} de la phrase : vise le début de la phrase.`, xv(0, e, 30, 250)]);
+  const og = Math.max(ov, gap);
+  out.push(ov > 2 * TOL ? ['bad', `Deux basses ensemble pendant ${dur(ov)} : ouvre B et coupe A dans le même geste.`, xv(0, og, 40, 300)] : ov > .5 * TOL ? ['mid', `Deux basses ensemble pendant ${dur(ov)} : ça frotte un peu.`, xv(.5, og, 40, 300)]
+    : gap > 2 * TOL ? ['bad', `Plus aucune basse pendant ${dur(gap)} : l'énergie retombe.`, xv(0, og, 40, 300)] : gap > .5 * TOL ? ['mid', `Petit trou dans les basses (${dur(gap)}).`, xv(.5, og, 40, 300)] : ['ok', 'Les basses passent de A à B sans chevauchement ni trou.', xv(1, og, 40, 300)]);
   return out;
 }
 
@@ -399,9 +414,9 @@ function evalFilter(fr){
 function evalEcho(fr, at){
   const out = [], cut = firstAt(fr, 56, x => x.fa < .1);
   if (at == null) out.push(['bad', 'Tu n\'as pas activé l\'écho : appuie sur ECHO juste avant de couper A.', 0]);
-  else { const e = at - 63; out.push(e >= -1.5 * TOL && e <= .6 * TOL ? ['ok', 'Écho activé sur le dernier temps de la phrase.', 1] : ['mid', `Écho activé ${fr1(Math.abs(e))} temps ${e > 0 ? 'trop tard' : 'trop tôt'} : vise le dernier temps avant la ligne.`, .5]); }
+  else { const e = at - 63; out.push(e >= -1.5 * TOL && e <= .6 * TOL ? ['ok', 'Écho activé sur le dernier temps de la phrase.', xv(1, e, 60, 500)] : ['mid', `Écho activé ${dur(e)} ${e > 0 ? 'trop tard' : 'trop tôt'} : vise le dernier temps avant la ligne.`, xv(.5, e, 60, 500)]); }
   if (cut == null) out.push(['bad', 'A n\'a jamais été coupé : baisse son fader d\'un coup sur la ligne.', 0]);
-  else { const e = cut - 64; out.push(Math.abs(e) <= .6 * TOL ? ['ok', 'A coupé pile au début de la phrase : B tombe dans l\'écho.', 1] : Math.abs(e) <= 1.5 * TOL ? ['mid', `A coupé ${fr1(Math.abs(e))} temps ${e > 0 ? 'en retard' : 'trop tôt'}.`, .5] : ['bad', `A coupé à ${fr1(Math.abs(e))} temps de la ligne.`, 0]); }
+  else { const e = cut - 64; out.push(Math.abs(e) <= .6 * TOL ? ['ok', xRun ? `A coupé à ${dur(e)} du début de la phrase : B tombe dans l'écho.` : 'A coupé pile au début de la phrase : B tombe dans l\'écho.', xv(1, e, 30, 250)] : Math.abs(e) <= 1.5 * TOL ? ['mid', `A coupé ${dur(e)} ${e > 0 ? 'en retard' : 'trop tôt'}.`, xv(.5, e, 30, 250)] : ['bad', `A coupé à ${dur(e)} de la ligne.`, xv(0, e, 30, 250)]); }
   if (at != null && cut != null) out.push(at < cut ? ['ok', 'L\'écho était lancé avant la coupure : A s\'éteint en douceur.', 1] : ['bad', 'Tu as coupé A avant de lancer l\'écho : il n\'y avait plus rien à faire résonner.', 0]);
   return out;
 }
@@ -409,8 +424,8 @@ function evalCut(fr, L){
   const cut = firstAt(fr, 56, x => x.fa < .1);
   if (cut == null) return [['bad', 'A n\'a jamais été coupé : baisse son fader d\'un coup au moment où B démarre.', 0]];
   const e = cut - 64, out = [];
-  out.push(Math.abs(e) <= .5 * TOL ? ['ok', 'A coupé pile sur la ligne.', 1] : Math.abs(e) <= 1.5 * TOL ? ['mid', `A coupé ${fr1(Math.abs(e))} temps ${e > 0 ? 'en retard' : 'trop tôt'}.`, .5] : ['bad', `A coupé à ${fr1(Math.abs(e))} temps de la ligne.`, 0]);
-  if (L != null){ const d = cut - L; out.push(Math.abs(d) <= .75 * TOL ? ['ok', 'Coupure et lancement en même temps : la transition est nette.', 1] : d > 0 ? ['mid', `A et B ont joué ensemble pendant ${fr1(d)} temps : coupe A dans le même geste.`, .5] : ['mid', `Il y a eu un blanc de ${fr1(-d)} temps entre la coupure et le lancement de B.`, .5]); }
+  out.push(Math.abs(e) <= .5 * TOL ? ['ok', xRun ? `A coupé à ${dur(e)} de la ligne.` : 'A coupé pile sur la ligne.', xv(1, e, 30, 250)] : Math.abs(e) <= 1.5 * TOL ? ['mid', `A coupé ${dur(e)} ${e > 0 ? 'en retard' : 'trop tôt'}.`, xv(.5, e, 30, 250)] : ['bad', `A coupé à ${dur(e)} de la ligne.`, xv(0, e, 30, 250)]);
+  if (L != null){ const d = cut - L; out.push(Math.abs(d) <= .75 * TOL ? ['ok', 'Coupure et lancement en même temps : la transition est nette.', xv(1, d, 30, 250)] : d > 0 ? ['mid', `A et B ont joué ensemble pendant ${dur(d)} : coupe A dans le même geste.`, xv(.5, d, 30, 250)] : ['mid', `Il y a eu un blanc de ${dur(d)} entre la coupure et le lancement de B.`, xv(.5, d, 30, 250)]); }
   return out;
 }
 function evalWave(L, l){
@@ -433,29 +448,30 @@ function evalVocal(fr){
 function finish(){
   if (!run) return; const r = run; stopRun();
   if (r.demo){ $('hint').textContent = 'À toi ! Appuie sur Jouer et refais exactement la même chose.'; $('startBtn').classList.add('ready'); $('cdNum').textContent = '—'; $('cdLab').textContent = 'À toi de jouer'; $('ring').classList.remove('hot'); return; }
-  let items = [];
-  const KD = LESSONS[li].kind;
-  if (KD === 'moment') items = [evalLaunch(r.launch)];
+  let items = []; xRun = !!r.expert;
+  const KD = LESSONS[li].kind, evL = (L, t) => r.expert ? evalLaunchX(L, t) : evalLaunch(L, t);
+  if (KD === 'moment') items = [evL(r.launch)];
   if (KD === 'fader') items = evalFaders(r.frames);
   if (KD === 'swap') items = evalSwap(r.frames);
-  if (KD === 'full'){ items = [evalLaunch(r.launch)];
+  if (KD === 'full'){ items = [evL(r.launch)];
     if (r.launch !== null) items.push(r.lowBAtLaunch < .15 ? ['ok', 'Basses de B coupées avant de le lancer.', 1] : ['bad', 'B est parti avec ses basses ouvertes : coupe son LOW avant de le lancer.', 0]);
     items = items.concat(evalSwap(r.frames), evalFaders(r.frames).filter((_, i) => i !== 1)); }
   if (['shortintro', 'break', 'read'].includes(KD)) items = evalWave(r.launch, LESSONS[li]);
   if (KD === 'vocal') items = evalVocal(r.frames);
   if (LESSONS[li].kind === 'filter') items = evalFilter(r.frames);
   if (LESSONS[li].kind === 'echo') items = evalEcho(r.frames, r.echoAt);
-  if (LESSONS[li].kind === 'cut') items = [evalLaunch(r.launch, 64)].concat(evalCut(r.frames, r.launch));
+  if (LESSONS[li].kind === 'cut') items = [evL(r.launch, 64)].concat(evalCut(r.frames, r.launch));
   if (LESSONS[li].c) items = eval4(r);
   // Chapitre 4 : 3 étoiles seulement si tous les gestes sont justes
   const score = items.reduce((s, x) => s + x[2], 0) / items.length, st0 = LESSONS[li].c ? (score >= .999 ? 3 : score >= .6 ? 2 : 1) : score >= .9 ? 3 : score >= .55 ? 2 : 1;
-  const st = speed < 1 ? Math.min(2, st0) : st0;
+  const xr = r.expert ? expertResult(score) : null, st = xr ? xr.st : speed < 1 ? Math.min(2, st0) : st0;
   const wasOpen = ch2Unlocked(), was3 = ch3Unlocked(), bank = bankOf(r.ch), before = bank[li] || 0;
   if (!prac){ bank[li] = Math.max(before, st); try { localStorage.setItem(BANK_KEY[r.ch], JSON.stringify(bank)); } catch (e) {} }
   const rs = $('rStars'); rs.innerHTML = '';
   for (let i = 0; i < 3; i++){ const sp = document.createElement('span'); sp.textContent = '★'; if (i < st) sp.className = 'on'; sp.style.animationDelay = (i * .18) + 's'; rs.appendChild(sp); }
-  $('rTitle').textContent = (r.ch > 1 ? `Chapitre ${r.ch} : ` : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
-  const gained = (bank[li] - before) * XP_PER[r.ch]; $('rGain').textContent = (gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`) + (!wasOpen && ch2Unlocked() ? ' · Chapitres 2 et 4 débloqués !' : '') + (!was3 && ch3Unlocked() ? ' · Chapitre 3 débloqué !' : '');
+  $('rTitle').textContent = xr ? (st === 3 ? 'Expert : niveau pro !' : st === 2 ? 'Expert : bien, encore un peu de précision.' : 'Expert : pas encore. Écoute, compte, anticipe.')
+    : (r.ch > 1 ? `Chapitre ${r.ch} : ` : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
+  const gained = (bank[li] - before) * XP_PER[r.ch]; $('rGain').textContent = (xr ? xr.txt + ' · ' : '') + (gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`) + (!wasOpen && ch2Unlocked() ? ' · Chapitres 2 et 4 débloqués !' : '') + (!was3 && ch3Unlocked() ? ' · Chapitre 3 débloqué !' : '');
   const ul = $('rDetails'); ul.innerHTML = ''; for (const [lvl, txt] of items){ const x = document.createElement('li'); x.className = lvl; x.textContent = txt; ul.appendChild(x); }
   $('next').hidden = li >= LESSONS.length - 1;
   $('result').hidden = false; $('retry').focus({ preventScroll: true });

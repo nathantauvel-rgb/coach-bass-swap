@@ -15,7 +15,7 @@ function buildControls(){
     const el = controls[k], knob = el.classList.contains('knob');
     el.setAttribute('role', 'slider'); el.tabIndex = 0; el.setAttribute('aria-valuemin', '0'); el.setAttribute('aria-valuemax', '100');
     let sy = 0, sv = 0;
-    const set = v => { if (isAuto(k)) return; ctrl[k] = Math.max(0, Math.min(1, v)); applyCtrl(); };
+    const set = v => { if (isAuto(k)) return; ctrl[k] = Math.max(0, Math.min(1, v)); applyCtrl(); gestureMark(); };
     const fromPos = e => { const r = el.getBoundingClientRect(); return 1 - (e.clientY - r.top - 22) / (r.height - 44); };
     el.addEventListener('pointerdown', e => { e.preventDefault(); el.focus(); try { el.setPointerCapture(e.pointerId); } catch (_) {} sy = e.clientY; sv = ctrl[k]; if (!knob) set(fromPos(e)); el._d = true; });
     el.addEventListener('pointermove', e => { if (!el._d) return; knob ? set(sv + (sy - e.clientY) / 150) : set(fromPos(e)); });

@@ -54,7 +54,7 @@ function onMidi(e){
   if (type === 0xB0){
     const kb = MIDI_NOTE.find(k => map[k] && map[k].cc && midiSame(map[k], ch, d1));
     if (kb){ if (d2 >= 64 && !ccDown[kb]) pressKey(kb); ccDown[kb] = d2 >= 64; return; }
-    for (const k of MIDI_CC){ if (midiSame(map[k], ch, d1)){ phys[k] = val; if (onb.active){ ctrl[k] = val; applyCtrl(); onbSchemaSet($('onbSvg'), 'sv-', k, val); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = val; applyCtrl(); } if (!run) updateSetup(); return; } } }
+    for (const k of MIDI_CC){ if (midiSame(map[k], ch, d1)){ phys[k] = val; if (onb.active){ ctrl[k] = val; applyCtrl(); onbSchemaSet($('onbSvg'), 'sv-', k, val); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = val; applyCtrl(); gestureMark(); } if (!run) updateSetup(); return; } } }
   else if (type === 0x90 && d2 > 0){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1)); if (k) pressKey(k); }
 }
 async function initMidi(){
@@ -94,7 +94,7 @@ function planSteps(l){
 function renderPlan(){
   const l = LESSONS[li], steps = planSteps(l), box = $('plan'); box.hidden = !!run || !steps.length; if (box.hidden) return;
   const ol = $('planList'); ol.innerHTML = ''; for (const t of steps){ const x = document.createElement('li'); x.textContent = t; ol.appendChild(x); }
-  $('planNote').textContent = l.wave || chapter === 2 || l.noCount ? 'Ici, pas de compte à rebours : écoute la musique (ou lis la forme d’onde) et fais chaque geste au bon moment.' : 'Chaque geste arrive sur la piste avec un repère ◆ et un compte à rebours : fais-le quand il touche la ligne.';
+  $('planNote').textContent = expertOn() ? 'Mode Expert : pas de compte à rebours ni de repère, et B part exactement quand tu appuies. Chaque geste est noté en millisecondes, score sur 100.' : l.wave || chapter === 2 || l.noCount ? 'Ici, pas de compte à rebours : écoute la musique (ou lis la forme d’onde) et fais chaque geste au bon moment.' : 'Chaque geste arrive sur la piste avec un repère ◆ et un compte à rebours : fais-le quand il touche la ligne.';
 }
 function inPlace(k, v, p){ if (p == null) return null; return k.startsWith('fader') ? (v >= .5 ? p >= .94 : p <= .06) : (v < .1 ? p <= .05 : Math.abs(p - .5) <= .07); }
 const needSetup = () => midiCount > 0 && tableOn() && !mouseMode && LESSONS[li].user.length > 0;
