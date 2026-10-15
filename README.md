@@ -12,4 +12,4 @@ Les morceaux d'entraînement sont produits dans le navigateur (moteur de product
 
 ## Utilisation
 
-Ouvre le site dans Chrome ou Edge, branche la Pioneer DDJ-FLX4 en USB (rekordbox fermé), puis va dans « Apprendre ». Sans table, tout se joue aussi à la souris.
+Ouvre le site dans Chrome ou Edge, branche ta table en USB (logiciel DJ fermé), puis va dans « Apprendre ». Le site est pensé pour la Pioneer DDJ-FLX4 ; une autre table se règle pas à pas au premier branchement. Sans table, tout se joue aussi à la souris.

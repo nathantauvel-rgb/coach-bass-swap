@@ -1,4 +1,5 @@
-// Page « Ma table » : schéma de la DDJ-FLX4, explication de chaque commande, réaction en direct, réglages.
+// Page « Ma table » : schéma simplifié d'une table (sur le modèle de la DDJ-FLX4), explication de chaque commande,
+// réaction en direct, réglages, et préparation pas à pas d'une autre table (reglage.js).
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* ---------- Ma table ----------
@@ -60,7 +61,13 @@ function tableSvg(){
 const tablePos = k => MIDI_CC.includes(k) ? (phys[k] != null ? `Position : ${Math.round(phys[k] * 100)} %` : '') : '';
 function renderTable(){
   const svg = $('tSvg'); if (!svg.firstChild) svg.innerHTML = tableSvg();
-  $('tState').textContent = midiCount ? `Table branchée : ${$('midiPill').lastElementChild.textContent}. Bouge une commande pour la voir réagir.` : 'Aucune table branchée : tu peux lire les explications, et brancher ta FLX4 pour voir les commandes réagir.';
+  const et = tableEtat(), nom = midiNames.join(', ');
+  $('tState').textContent = !midiCount ? 'Aucune table branchée : tu peux lire les explications, et brancher ta table pour voir les commandes réagir.'
+    : et === 'nouvelle' ? `Table branchée : ${nom}. Elle n'est pas encore réglée : clique sur « Régler ma table pas à pas », puis bouge chaque commande quand le site te le demande.`
+    : et === 'flx4' ? `Table branchée : ${nom}. Les réglages sont encore ceux de ton autre table : clique sur « Revenir aux réglages de la DDJ-FLX4 ».`
+    : `Table branchée : ${nom}${tableCfg ? ' (réglée pas à pas)' : ''}. Bouge une commande pour la voir réagir.`;
+  $('tKick').textContent = tableCfg || (midiCount && !midiNames.some(isFlx4)) ? 'Ta table' : 'Ta DDJ-FLX4';
+  $('tReg').hidden = !midiCount;
   svg.querySelectorAll('.tc').forEach(el => { el.classList.toggle('sel', el.dataset.c === tableSel); el.setAttribute('aria-pressed', String(el.dataset.c === tableSel)); });
   $('tNote').textContent = tableNote;
   const box = $('tPanel'); box.innerHTML = '';
@@ -72,11 +79,11 @@ function renderTable(){
     if (key){
       const live = tableLive[tableSel] || tablePos(key); if (live || midiCount) add('p', 'tlive', live || 'Bouge-la sur ta table pour la voir réagir.');
       const def = DEFAULT_MAP[key], same = m && def && m.ch === def.ch && m.n === def.n;
-      add('p', 'tmap', m ? `Réglage : canal ${m.ch + 1}, numéro ${m.n}${same ? ' (d\'origine)' : def ? ' (appris)' : ''}.` : 'Pas encore réglée : clique sur « Apprendre », puis bouge-la sur ta table.');
+      add('p', 'tmap', m ? `Réglage : canal ${m.ch + 1}, numéro ${m.n}${same && !tableCfg ? ' (d\'origine)' : def || tableCfg ? ' (appris)' : ''}.` : tableCfg ? 'Pas sur ta table : tu la fais à l\'écran. Si ta table l\'a, clique sur « Apprendre », puis bouge-la.' : 'Pas encore réglée : clique sur « Apprendre », puis bouge-la sur ta table.');
       const b = add('button', 'ghost', learnKey === key ? (MIDI_NOTE.includes(key) ? 'Appuie dessus sur ta table… (annuler)' : 'Bouge-la sur ta table… (annuler)') : m ? 'Réapprendre cette commande' : 'Apprendre cette commande'); b.type = 'button'; b.id = 'tLearn';
       b.addEventListener('click', () => { learnKey = learnKey === key ? null : key; tableNote = ''; renderTable(); });
     } }
-  const r = $('tReset'); r.textContent = tableReset ? 'Confirmer : effacer mes réglages appris' : 'Revenir aux réglages d\'origine';
+  const r = $('tReset'); r.textContent = tableReset ? 'Confirmer : effacer mes réglages appris' : tableCfg ? 'Revenir aux réglages de la DDJ-FLX4' : 'Revenir aux réglages d\'origine';
 }
 function tableSelect(id){ if (!TKINDS[tKind(id)]) return; if (learnKey) learnKey = null; tableSel = id; tableReset = false; renderTable(); }
 // Une commande connue vient de bouger sur la table : on la montre et on l'allume un instant
@@ -86,16 +93,21 @@ function tableSeen(key, txt){
   const el = $('tSvg').querySelector(`[data-c="${id}"]`); if (el){ el.classList.add('live'); clearTimeout(tableTimer[id]); tableTimer[id] = setTimeout(() => el.classList.remove('live'), 700); }
 }
 function tableMidi(type, ch, d1, d2, val){
-  if (type === 0xB0){ if (d1 >= 32 && d1 < 64) return;
-    const k = MIDI_CC.find(x => midiSame(map[x], ch, d1));
+  if (type === 0xB0){ const kb = MIDI_NOTE.find(x => map[x] && map[x].cc && midiSame(map[x], ch, d1)); if (kb){ if (d2 >= 64) tableSeen(kb, 'Appuyée !'); return; }
+    const k = MIDI_CC.find(x => midiSame(map[x], ch, d1)); if (!k && d1 >= 32 && d1 < 64) return;
     if (k){ phys[k] = val; tableSeen(k, `Position : ${Math.round(val * 100)} %`); } else { tableNote = `Commande reçue mais pas encore utilisée par le site (potard ou fader, canal ${ch + 1}, numéro ${d1}).`; $('tNote').textContent = tableNote; } }
-  else if (type === 0x90 && d2 > 0){ const k = MIDI_NOTE.find(x => midiSame(map[x], ch, d1));
+  else if (type === 0x90 && d2 > 0){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1));
     if (k) tableSeen(k, 'Appuyée !'); else { tableNote = `Commande reçue mais pas encore utilisée par le site (bouton, canal ${ch + 1}, numéro ${d1}).`; $('tNote').textContent = tableNote; } }
 }
+// Retour aux réglages de la DDJ-FLX4 : on oublie aussi l'autre table réglée pas à pas
+function flx4Map(){ map = cleanMap(null); tableCfg = null; for (const k of Object.keys(phys)) delete phys[k];
+  try { localStorage.removeItem('coach-midi-map'); localStorage.removeItem('coach-table'); } catch (e) {}
+  renderPill(); updateSetup(); renderTableBar(); }
+$('tReg').addEventListener('click', () => openReg());
 $('tSvg').addEventListener('click', e => { const el = e.target.closest('.tc'); if (el) tableSelect(el.dataset.c); });
 $('tSvg').addEventListener('keydown', e => { const el = e.target.closest('.tc'); if (el && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); tableSelect(el.dataset.c); } });
 $('tReset').addEventListener('click', () => {
   if (!tableReset){ tableReset = true; renderTable(); return; }
-  tableReset = false; learnKey = null; map = cleanMap(null); try { localStorage.removeItem('coach-midi-map'); } catch (e) {}
-  tableNote = 'Réglages d\'origine rétablis. Le filtre CFX et le bouton d\'effet seront à réapprendre.'; updateSetup(); renderTable();
+  const autre = !!tableCfg; tableReset = false; learnKey = null; flx4Map();
+  tableNote = (autre ? 'Réglages de la DDJ-FLX4 rétablis.' : 'Réglages d\'origine rétablis.') + ' Le filtre CFX et le bouton d\'effet seront à réapprendre.'; renderTable();
 });

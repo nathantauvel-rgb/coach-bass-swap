@@ -12,12 +12,13 @@ function fausseTable(cfg) {
     debrancher() { inputs.delete('1'); if (acc.onstatechange) acc.onstatechange({}); },
     envoyer(...octets) { for (const i of inputs.values()) if (i.onmidimessage) i.onmidimessage({ data: octets }); }
   };
-  if (cfg.branchee) api.brancher();
+  if (cfg.branchee) api.brancher(typeof cfg.branchee === 'string' ? cfg.branchee : undefined);
   window.__midi = api;
 }
 
 // Ouvre le site. `stockage` = contenu du localStorage (le guide est marqué comme vu sauf indication contraire),
-// `midi` = { branchee, refuse } pour la fausse table, ou null pour laisser le navigateur tel quel.
+// `midi` = { branchee, refuse } pour la fausse table (branchee : true pour une DDJ-FLX4, ou le nom d'une autre table),
+// ou null pour laisser le navigateur tel quel.
 async function ouvrir(page, { stockage = {}, midi = null, onglet = 'apprendre', avant = '' } = {}) {
   const erreurs = [];
   page.on('pageerror', e => erreurs.push(String(e)));

@@ -30,7 +30,7 @@ const QUIZ = [
   ['b3b', 'b3', 'Dans quel ordre se fait une transition complète ?',
     ['Lancer B, monter son fader, échanger les basses, sortir A', 'Sortir A, lancer B, échanger les basses, monter le fader de B', 'Échanger les basses, lancer B, sortir A, monter le fader de B'],
     'B entre d\'abord discrètement, puis il prend les basses, et A sort avant le drop.'],
-  ['b4a', 'b4', 'Dans les niveaux, quel potard de la FLX4 sert de filtre ?',
+  ['b4a', 'b4', 'Dans les niveaux, quel potard sert de filtre ?',
     ['CFX', 'LOW', 'MID'],
     'Le potard CFX est sous les trois potards d\'égalisation. Tourné vers la droite, il retire peu à peu les graves du morceau.'],
   ['b4b', 'b4', 'Quand le filtre de A doit-il être à fond ?',

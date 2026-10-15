@@ -4,7 +4,7 @@
 /* ---------- Niveaux ---------- */
 const BASE_LESSONS = [
   { title: 'Le bon moment', goal: 'Lance B pile quand A entre dans son outro.',
-    how: 'Le geste arrive sur la piste : appuie sur LANCE B (ou PLAY droite sur la FLX4) quand il touche la ligne. Tout le reste est automatique.',
+    how: 'Le geste arrive sur la piste : appuie sur LANCE B (ou PLAY de droite sur ta table) quand il touche la ligne. Tout le reste est automatique.',
     show: ['gPlay'], bBass: false, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: [] },
   { title: 'Le fader', goal: 'Fais entrer B en douceur, puis fais sortir A avant le drop.',
     how: 'B démarre tout seul, fader en bas. Monte son fader jusqu\'en haut, doucement, sur 16 à 32 temps. Puis baisse celui de A jusqu\'en bas : il doit y être quand le drop de B arrive sur la ligne.',
@@ -19,7 +19,7 @@ const BASE_LESSONS = [
     how: 'B arrive tout seul. Quand « FILTRE » touche la ligne, tourne le potard CFX de A vers la droite, lentement : il doit être tout à droite quand « À FOND » arrive, juste avant le drop de B.',
     show: ['gCfx'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5 }, user: ['cfxA'], start: 24, end: 112 },
   { kind: 'echo', title: 'L\'écho out', goal: 'Fais disparaître A dans un écho, puis B tombe sur son drop.',
-    how: 'Sur le dernier temps avant la ligne, active l\'écho (bouton ECHO, ON de l\'effet sur la FLX4, ou touche E), puis baisse d\'un coup le fader de A sur la ligne. B démarre tout seul sur son drop.',
+    how: 'Sur le dernier temps avant la ligne, active l\'écho (bouton ECHO, ON de l\'effet sur ta table, ou touche E), puis baisse d\'un coup le fader de A sur la ligne. B démarre tout seul sur son drop.',
     show: ['gEcho', 'gFad'], bBass: false, autoLaunch: true, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], btn: ['echo'], start: 40, end: 96 },
   { kind: 'cut', title: 'La coupure sèche', goal: 'Coupe A et lance B sur son drop, au même instant.',
     how: 'B est calé sur son drop. Quand les losanges touchent la ligne, lance B (PLAY droite ou espace) et baisse d\'un coup le fader de A, dans le même geste.',

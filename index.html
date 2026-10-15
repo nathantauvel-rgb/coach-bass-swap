@@ -17,7 +17,7 @@
     <div class="onb-dots" id="onbDots"></div>
     <h2 id="onbTitle"></h2>
     <p class="tx" id="onbText"></p>
-    <svg class="onb-svg" id="onbSvg" viewBox="0 0 600 270" aria-label="Schéma simplifié de la DDJ-FLX4">
+    <svg class="onb-svg" id="onbSvg" viewBox="0 0 600 270" aria-label="Schéma simplifié d'une table DJ">
       <rect class="body" x="8" y="8" width="584" height="254" rx="22"/>
       <circle class="jog" cx="122" cy="118" r="82"/><circle class="part" cx="122" cy="118" r="20"/>
       <circle class="jog" cx="478" cy="118" r="82"/><circle class="part" cx="478" cy="118" r="20"/>
@@ -68,16 +68,32 @@
     <details class="avreset"><summary>Tout recommencer à zéro</summary><p class="avsmall">Efface ta progression, tes étoiles, tes badges, tes réponses au quiz et tes avis sur cet ordinateur. Les réglages de ta table sont gardés.</p><button type="button" class="rbtn" id="avReset">Oui, tout effacer</button></details>
   </div>
 </div>
+<div class="quiz" id="reg" hidden role="dialog" aria-modal="true" aria-labelledby="regTitle">
+  <div class="qcard">
+    <button type="button" class="rclose" id="regClose" aria-label="Fermer">×</button>
+    <span class="lnum" id="regKick">Régler ma table</span>
+    <h2 id="regTitle"></h2>
+    <p class="regtext" id="regText"></p>
+    <svg class="onb-svg" id="regSvg" viewBox="0 0 600 270" aria-hidden="true"></svg>
+    <p class="regstate" id="regState" role="status"></p>
+    <ul class="reglist" id="regList" hidden></ul>
+    <div class="rbrow"><button type="button" class="ghost" id="regBack">Retour</button><button type="button" class="ghost" id="regSkip">Je n'ai pas cette commande</button><button type="button" class="rbtn go" id="regSave" hidden>Enregistrer</button></div>
+  </div>
+</div>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="#accueil" aria-label="Coach DJ, retour à l'accueil"><span class="disc" aria-hidden="true"></span><div><div class="brand-name">Coach DJ</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
     <div class="hud">
       <a class="chip lvlchip" href="#progres" title="Mes progrès : niveau, étoiles, badges"><span class="lvl" id="lvl">Niv. 1</span><span class="xpbar"><i id="xpFill" style="width:0"></i></span><span class="num" id="xpTxt">0 XP</span><span class="star" aria-hidden="true">★</span><span class="num" id="starTot">0/12</span></a>
-      <a class="chip status" id="midiPill" href="#table" title="Ma table : le schéma et les réglages"><i></i><span>FLX4…</span></a>
+      <a class="chip status" id="midiPill" href="#table" title="Ma table : le schéma et les réglages"><i></i><span>Table…</span></a>
       <button type="button" class="chip" id="guideBtn" hidden>Guide</button>
       <button type="button" class="chip avbtn" id="avisBtn">Mon avis</button>
     </div>
   </header>
+  <div class="tablebar" id="tableBar" hidden role="status">
+    <p id="tbText"></p>
+    <div class="rbrow"><button type="button" class="rbtn go" id="tbGo">Régler ma table</button><button type="button" class="ghost" id="tbLater">Plus tard</button></div>
+  </div>
 
   <nav class="tabs" id="tabs" aria-label="Parcours">
     <a href="#apprendre" data-view="apprendre"><span class="tn">1</span>Apprendre</a>
@@ -101,7 +117,7 @@
           <button type="button" class="choice" data-parcours="debut" aria-pressed="false"><strong>Je débute complètement</strong><span>On part de zéro : la table, les phrases, puis tes premières transitions.</span></button>
           <button type="button" class="choice" data-parcours="deja" aria-pressed="false"><strong>Je sais déjà lancer deux morceaux</strong><span>Un test rapide en 3 épreuves, puis on travaille tes transitions.</span></button>
         </div>
-        <p class="need" id="homeNeed">Il te faut une Pioneer DDJ-FLX4 branchée en USB, et Chrome ou Edge. Pas encore de table ? Tu peux essayer à la souris.</p>
+        <p class="need" id="homeNeed">Il te faut une table DJ branchée en USB (le site est pensé pour la Pioneer DDJ-FLX4, les autres se règlent en une minute), et Chrome ou Edge. Pas encore de table ? Tu peux essayer à la souris.</p>
       </div>
       <div class="buddy" aria-hidden="true"><p class="bubble" id="homeTip">Un geste à la fois, et ça vient vite !</p></div>
     </section>
@@ -178,17 +194,17 @@
 
   <div class="view" id="vTable" hidden>
     <section class="page">
-      <span class="lnum">Ta DDJ-FLX4</span>
+      <span class="lnum" id="tKick">Ta DDJ-FLX4</span>
       <h1>Ma table</h1>
       <p class="lead">À quoi sert chaque commande, et lesquelles tu utilises dans les niveaux.</p>
       <p class="subnote" id="tState"></p>
       <div class="tgrid">
-        <div class="tscroll"><svg id="tSvg" viewBox="0 0 920 440" role="group" aria-label="Schéma simplifié de la DDJ-FLX4"></svg></div>
+        <div class="tscroll"><svg id="tSvg" viewBox="0 0 920 440" role="group" aria-label="Schéma simplifié d'une table DJ"></svg></div>
         <div class="tpanel" id="tPanel" aria-live="polite"></div>
       </div>
       <p class="tnote" id="tNote" role="status"></p>
-      <div class="rbrow"><button type="button" class="ghost" id="tReset">Revenir aux réglages d'origine</button></div>
-      <p class="page-note">Schéma simplifié : la disposition exacte peut différer un peu de ta table.</p>
+      <div class="rbrow"><button type="button" class="ghost" id="tReg" hidden>Régler ma table pas à pas</button><button type="button" class="ghost" id="tReset">Revenir aux réglages d'origine</button></div>
+      <p class="page-note">Schéma simplifié, sur le modèle de la DDJ-FLX4 : la disposition exacte peut différer de ta table.</p>
     </section>
   </div>
 
@@ -249,7 +265,7 @@
     <div class="start-row">
       <div class="setup" id="setup" hidden>
         <h3>Position de départ</h3>
-        <p>Place ta FLX4 comme ci-dessous. « Jouer » se débloque quand tout est vert.</p>
+        <p>Place ta table comme ci-dessous. « Jouer » se débloque quand tout est vert.</p>
         <ul id="setupList"></ul>
         <button type="button" class="skip" id="setupSkip">Je joue à la souris cette fois</button>
       </div>
@@ -300,6 +316,7 @@
 <script src="js/quiz.js"></script>
 <script src="js/parcours.js"></script>
 <script src="js/table.js"></script>
+<script src="js/reglage.js"></script>
 <script src="js/avis.js"></script>
 <script src="js/demarrage.js"></script>
 </body>

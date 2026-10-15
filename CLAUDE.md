@@ -228,6 +228,24 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   s'affiche. 195 tests verts (tests/outils.js marque les fiches comme vues par défaut).
 - **Lot 18 publié le 15 oct. 2026** (accord de l'utilisateur, avant la checklist FLX4). À vérifier sur la table : la
   place du bouton ON dessiné dans les fiches, et ON de l'effet pendant la fiche de l'écho.
+- **Lot 19 (15 oct. 2026)** : branche `lot-19-autre-table`, non publiée. Demande de l'utilisateur : rendre le site
+  utilisable avec d'autres tables que la FLX4. **« Régler ma table »** pas à pas (`js/reglage.js`, chargé après `table`) :
+  fenêtre `#reg`, 8 étapes `REG_STEPS` (faders A et B, LOW A et B, MID A, filtre A, PLAY B, bouton d'effet), schéma des
+  fiches recopié avec le préfixe `rg-`. Un potard ou un fader est reconnu après 3 valeurs différentes ; le second
+  message d'un potard « fin » (numéro + 32) est ignoré ; un bouton = une note, ou un message de potard 127 puis 0
+  (marqué `cc` dans le réglage) ; une commande déjà reconnue est refusée (« Ça, c'est … ») ; « Je n'ai pas cette
+  commande » ; Retour ; Échap annule sans rien enregistrer. Bandeau `#tableBar` sous l'en-tête quand une table qui
+  n'est pas une FLX4 est branchée sans réglage (`tableEtat()` dans `js/midi.js` : `aucune`, `ok`, `nouvelle`, `flx4`).
+  **Tant qu'elle n'est pas réglée, elle ne pilote rien** (`tableOn()`) : pas de position de départ, pastille
+  « · à régler », curseurs à l'écran dans les fiches. Clé `coach-table` (`{ nom }`) ; avec elle, `cleanMap(s, true)` ne
+  reprend aucun réglage de la FLX4 : une commande absente se fait à l'écran et ne bloque pas « Jouer » (`onScreen`).
+  Une FLX4 branchée après une autre table : le bandeau propose de reprendre ses réglages (`flx4Map` dans
+  `js/table.js`, aussi derrière « Revenir aux réglages de la DDJ-FLX4 »). Bouton « Régler ma table pas à pas » dans
+  « Ma table ». Textes neutres (« ta table ») dans le guide, les fiches, les niveaux, une question du quiz (`b4a`,
+  identifiant inchangé), l'accueil, Ma table, la présentation (matériel, question « Et si j'ai une autre table ? »)
+  et la fiche des testeurs. « Tout recommencer à zéro » garde `coach-table` ; le rapport des testeurs donne le nom de
+  la table. 214 tests verts. **Aucune autre table essayée en vrai** : les numéros MIDI des tests sont inventés.
+  Le casque à 4 canaux dépend de la carte son de la table, pas de son nom : à vérifier sur une autre table.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -249,7 +267,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) →
-  `table` (page « Ma table ») → `avis` (avis des testeurs, rapport) → `demarrage` (démarrage et onglets).
+  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `avis` (avis des testeurs, rapport) →
+  `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
   dans un fichier chargé avant ; `function stop` remplace `window.stop` (sans effet connu).
@@ -306,7 +325,9 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (validation de `coach-midi-map`), `MIDI_CC` / `MIDI_NOTE` (potards et faders / boutons : pas de doublon
   dans un même groupe), `onMidi`, apprentissage (`learnKey`), `phys` (positions réelles, vidées au
   débranchement), vérification de la mise en place avant chaque niveau (`updateSetup`).
-  PLAY A et MID B ont un réglage mais aucun code ne s'en sert.
+  PLAY A et MID B ont un réglage mais aucun code ne s'en sert. Autre table (lot 19) : `tableCfg` (clé `coach-table`),
+  `tableEtat()` / `tableOn()`, `cleanMap(s, perso)`, boutons `cc`, `pressKey` ; la préparation pas à pas est dans `js/reglage.js`
+  (`onMidi` lui passe la main tant que `reg.active`).
 - **Morceaux** : `makeSong(style, role, seed, secs, o)` (synthèse procédurale, `STYLE_DEFS`, `VARIANTS = 4`),
   calculés dans des Web Workers (`workerPool`, `renderSong`). Cache `getSong(sty, vr, part)` + `songSafe`
   (relance une fois). `chooseSongs()` précharge dès le choix du niveau. `startRun(demo)` lance la partie.
@@ -332,7 +353,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
 `coach-style`, `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-bibliotheque` (`coach.html`).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -346,7 +367,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

@@ -5,7 +5,7 @@
    Le guide ne parle que de la musique (compter, parties d'un morceau). Chaque bouton de la table est présenté par
    une fiche, au moment où un niveau s'en sert pour la première fois (lot 18). */
 const ONB = [
-  { title: 'Bienvenue dans Coach DJ', text: 'Une transition, c\'est passer d\'un morceau à l\'autre sans que la piste de danse s\'arrête. Ici, tu l\'apprends geste par geste, sur ta FLX4. D\'abord deux choses sur la musique : comment la compter, et comment un morceau est construit. Les boutons de ta table te seront présentés au moment de t\'en servir.', cta: 'C\'est parti' },
+  { title: 'Bienvenue dans Coach DJ', text: 'Une transition, c\'est passer d\'un morceau à l\'autre sans que la piste de danse s\'arrête. Ici, tu l\'apprends geste par geste, sur ta table. D\'abord deux choses sur la musique : comment la compter, et comment un morceau est construit. Les boutons de ta table te seront présentés au moment de t\'en servir.', cta: 'C\'est parti' },
   { title: 'Compter en phrases', text: 'Chaque coup de grosse caisse est un temps. 4 temps font une mesure, 8 mesures font une phrase de 32 temps. La musique change toujours au début d\'une phrase : c\'est là qu\'on fait les transitions. Suis la grille avec la musique.', phrase: true },
   { title: "Les parties d'un morceau", text: 'Un morceau se découpe en parties de quelques phrases. Dans les niveaux, elles portent ces noms et ont ces couleurs sur la piste.', parts: true },
   { title: 'Tu es prêt', text: 'Commence par le niveau 1. Avant chaque niveau, le site te montre la position de départ de ta table et les gestes à faire. Si tu hésites, « Regarde d\'abord » te montre le geste parfait.', cta: 'Commencer le niveau 1' }
@@ -18,7 +18,7 @@ const FICHES = {
   fader: { title: 'Les faders de volume', text: 'Les deux curseurs verticaux, au centre. Celui de gauche règle le volume du morceau A, celui de droite le morceau B. En haut : on l\'entend. En bas : on ne l\'entend plus.', hl: 'faderA', k: 'faderA', act: 'Baisse puis remonte le fader de gauche' },
   low: { title: 'Le potard LOW : les basses', text: 'Il gère la grosse caisse et la ligne de basse. Normal (à midi, le cran du milieu) : on entend les basses. Coupé (tout à gauche) : elles disparaissent. On n\'en laisse jamais deux ensemble : c\'est le potard clé des transitions.', hl: 'lowA', k: 'lowA', act: 'Coupe puis remets les basses de gauche' },
   cfx: { title: 'Le filtre CFX', text: 'Le dernier potard de chaque voie. Neutre (à midi) : il ne fait rien. Tourné vers la droite, le morceau perd ses basses et s\'efface en douceur.', hl: 'cfxA', k: 'cfxA', act: 'Tourne le filtre de gauche vers la droite' },
-  echo: { title: 'L\'écho', text: 'Un effet qui répète le son en le laissant s\'éteindre. Sur la FLX4, c\'est le bouton ON de l\'effet ; ici, aussi le bouton ECHO ou la touche E. On l\'allume juste avant de couper un morceau, pour qu\'il parte en résonnant.', hl: 'fxOn', k: 'fxOn', act: 'Allume l\'écho et écoute' },
+  echo: { title: 'L\'écho', text: 'Un effet qui répète le son en le laissant s\'éteindre. Sur ta table, c\'est le bouton qui allume l\'effet (ON sur la FLX4) ; ici, aussi le bouton ECHO ou la touche E. On l\'allume juste avant de couper un morceau, pour qu\'il parte en résonnant.', hl: 'fxOn', k: 'fxOn', act: 'Allume l\'écho et écoute' },
   mid: { title: 'Le potard MID : les voix', text: 'Juste au-dessus du LOW. Il gère les médiums, là où sont les voix. Normal (à midi) : on entend tout. Coupé (tout à gauche) : les voix reculent.', hl: 'midA', k: 'midA', act: 'Coupe puis remets le MID de gauche' }
 };
 const FICHE_NAMES = { play: 'le bouton PLAY', fader: 'les faders', low: 'le potard LOW', cfx: 'le filtre CFX', echo: 'l\'écho', mid: 'le potard MID' };
@@ -42,13 +42,14 @@ const ONB_KNOBS = [['TRIM', 34], ['HI', 62], ['MID', 88], ['LOW', 114], ['CFX', 
 (function drawOnbKnobs(){ const g = $('sv-knobs'); let h = '';
   for (const [lab, y] of ONB_KNOBS){ for (const [x, side] of [[266, 'A'], [334, 'B']]) h += `<circle class="part" id="sv-${lab.toLowerCase()}${side}" cx="${x}" cy="${y}" r="10"/>`; h += `<text x="300" y="${y + 4}" text-anchor="middle">${lab}</text>`; }
   g.innerHTML = h; })();
-function onbHighlight(id){
-  document.querySelectorAll('#onbSvg .hl').forEach(e => e.classList.remove('hl')); document.querySelectorAll('#onbSvg .hl-ring').forEach(e => e.remove());
-  if (!id) return; const el = $('sv-' + id); if (!el) return;
+// Allume une commande du schéma (celui des fiches, ou sa copie dans « Régler ma table », préfixe rg-)
+function onbHighlight(id, svg = $('onbSvg'), pre = 'sv-'){
+  svg.querySelectorAll('.hl').forEach(e => e.classList.remove('hl')); svg.querySelectorAll('.hl-ring').forEach(e => e.remove());
+  if (!id) return; const el = svg.querySelector('#' + pre + id); if (!el) return;
   const t = el.tagName === 'g' ? el.firstElementChild : el; t.classList.add('hl');
   const bb = t.getBBox ? t.getBBox() : null; if (!bb) return;
   const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect'); r.setAttribute('class', 'hl-ring');
-  r.setAttribute('x', bb.x - 8); r.setAttribute('y', bb.y - 8); r.setAttribute('width', bb.width + 16); r.setAttribute('height', bb.height + 16); r.setAttribute('rx', 10); $('onbSvg').appendChild(r);
+  r.setAttribute('x', bb.x - 8); r.setAttribute('y', bb.y - 8); r.setAttribute('width', bb.width + 16); r.setAttribute('height', bb.height + 16); r.setAttribute('rx', 10); svg.appendChild(r);
 }
 function onbStartMusic(){
   ensureAudio(); if (ac.state !== 'running') ac.resume();
@@ -96,11 +97,11 @@ function renderOnbTry(){
   }
   if (!st.k) return;
   const btnKey = st.k === 'playB' || st.k === 'fxOn';
-  const act = document.createElement('span'); act.className = 'act'; act.textContent = st.act + (midiCount ? '' : st.k === 'playB' ? ' (ou clique sur PLAY)' : st.k === 'fxOn' ? ' (ou clique sur ECHO)' : ' (ou utilise le curseur)'); box.appendChild(act);
+  const act = document.createElement('span'); act.className = 'act'; act.textContent = st.act + (tableOn() && map[st.k] ? '' : st.k === 'playB' ? ' (ou clique sur PLAY)' : st.k === 'fxOn' ? ' (ou clique sur ECHO)' : ' (ou utilise le curseur)'); box.appendChild(act);
   if (btnKey){ const b = document.createElement('button'); b.type = 'button'; b.className = 'onb-play'; b.textContent = st.k === 'playB' ? 'PLAY' : 'ECHO'; b.addEventListener('click', () => onbMoved(st.k)); box.appendChild(b); }
   else { const r = document.createElement('input'); r.type = 'range'; r.min = '0'; r.max = '1'; r.step = '.01'; r.value = ctrl[st.k]; r.setAttribute('aria-label', st.act);
     r.addEventListener('input', () => { ctrl[st.k] = +r.value; applyCtrl(); onbMoved(st.k); }); box.appendChild(r); }
-  if (st.k === 'cfxA' && midiCount && !map.cfxA){ const b = document.createElement('button'); b.type = 'button'; b.className = 'onb-learn'; b.textContent = learnKey === 'cfxA' ? 'Tourne le potard CFX…' : 'Faire reconnaître ce potard';
+  if (st.k === 'cfxA' && tableOn() && !map.cfxA && !tableCfg){ const b = document.createElement('button'); b.type = 'button'; b.className = 'onb-learn'; b.textContent = learnKey === 'cfxA' ? 'Tourne le potard CFX…' : 'Faire reconnaître ce potard';
     b.addEventListener('click', () => { learnKey = 'cfxA'; renderOnbTry(); }); box.appendChild(b); }
   if (onb.done[onb.i]){ const ok = document.createElement('span'); ok.className = 'ok'; ok.textContent = 'Bien joué !'; box.appendChild(ok); }
 }
@@ -113,7 +114,9 @@ function renderOnb(){
   $('onbBack').hidden = onb.i === 0; $('onbTest').hidden = onb.fiche || !last || ch2Unlocked();
   $('onbSkip').textContent = onb.fiche ? 'Je connais, passer' : 'Passer le guide';
   $('onbNext').textContent = st.cta || (!last ? 'Suivant' : onb.fiche ? (onb.after ? 'Compris, on joue' : 'Compris') : 'Terminer');
-  $('onbNote').textContent = st.k && st.k !== 'playB' && st.k !== 'fxOn' && !midiCount ? 'Pas de table détectée : le curseur ci-dessus fait la même chose.' : st.k === 'cfxA' && midiCount && !map.cfxA ? 'Ta table doit d\'abord reconnaître ce potard : clique sur le bouton, puis tourne-le.' : '';
+  const pot = st.k && st.k !== 'playB' && st.k !== 'fxOn';
+  $('onbNote').textContent = !pot ? '' : !midiCount ? 'Pas de table détectée : le curseur ci-dessus fait la même chose.' : !tableOn() ? 'Ta table n\'est pas encore réglée : le curseur ci-dessus fait la même chose.'
+    : map[st.k] ? '' : tableCfg ? 'Ta table n\'a pas cette commande : le curseur ci-dessus fait la même chose.' : st.k === 'cfxA' ? 'Ta table doit d\'abord reconnaître ce potard : clique sur le bouton, puis tourne-le.' : '';
   renderOnbTry();
   cancelAnimationFrame(onb.raf);
   if (st.phrase){ if (!onb.playing) onbStartMusic(); const tick = () => { if (!onb.active || !onb.steps[onb.i].phrase) return;
