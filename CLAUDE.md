@@ -32,10 +32,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 13 oct. 2026, fin de session)
-- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 18 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
+- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 19 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
-  débutant et fiches « Découvre ce bouton »). `main` = `origin/main`, à une
+  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
 - **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (16 points)
   sur la vraie FLX4. Aucun lot n'a été vérifié sur la table. À relire en particulier : le schéma de
@@ -252,6 +252,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   Le casque à 4 canaux dépend de la carte son de la table, pas de son nom : à vérifier sur une autre table.
   **Risque à vérifier sur la vraie FLX4** : elle est reconnue au mot « FLX4 » dans son nom (`isFlx4`). Si elle
   s'annonce autrement, elle passe pour une autre table (bandeau « Nouvelle table », elle ne pilote rien avant réglage).
+- **Lot 19 publié le 15 oct. 2026** (accord de l'utilisateur, avant la checklist FLX4). À vérifier sur la FLX4 : pastille
+  sans « · à régler », pas de bandeau « Nouvelle table », fader et potards dessinés qui bougent dans le bon sens.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
