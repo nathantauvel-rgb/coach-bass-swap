@@ -941,7 +941,6 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .qt-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px 10px;background:var(--brand-soft);border-bottom:2px solid var(--brand-line)}
 .qt-head h2{margin:0;font-size:24px;font-weight:900}
 .qt-head p{margin:2px 0 0;color:var(--brand-light);font-weight:700;font-size:15px}
-.qt-head .vini{width:76px;height:82px;margin:-6px 0 -10px}
 .qt-list{list-style:none;margin:0;padding:6px 22px 14px;display:flex;flex-direction:column}
 .qt{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
 .qt:last-child{border-bottom:0}
@@ -974,5 +973,18 @@ html.pp-open,html.pp-open body{overflow:hidden}
 @keyframes qt-attend{0%,100%{transform:rotate(0) scale(1)}10%{transform:rotate(-7deg) scale(1.06)}20%{transform:rotate(6deg) scale(1.06)}30%{transform:rotate(0) scale(1)}}
 @keyframes qt-secoue{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg) scale(1.1)}75%{transform:rotate(10deg) scale(1.1)}}
 @keyframes qt-eclat{from{opacity:1;transform:scale(.4)}to{opacity:0;transform:scale(1.6)}}
-@media (max-width:520px){.qt-head{padding:14px 16px 8px}.qt-list{padding:4px 16px 10px}.qt-head .vini{width:60px;height:65px}.qt-mid strong{font-size:16px}.qt-coffre{width:50px;height:50px}}
+@media (max-width:520px){.qt-head{padding:14px 16px 8px}.qt-list{padding:4px 16px 10px}.qt-mid strong{font-size:16px}.qt-coffre{width:50px;height:50px}}
 @media (prefers-reduced-motion: reduce){.qt-coffre,.qt-couvercle,.qt-bar i{animation:none!important;transition:none!important}}
+
+/* ---------- Vini sur l'accueil et bouton des sons (lot 31) ---------- */
+.hero .hbuddy{display:flex;align-items:center;gap:14px;align-self:center;margin-left:auto}
+.hvini{width:150px;height:163px;flex-shrink:0;border:0;background:none;padding:0;cursor:pointer;border-radius:22px}
+.hvini .vini{width:100%;height:100%}
+.hvini:focus-visible{outline:3px solid var(--brand-light);outline-offset:4px}
+.hbuddy .bubble{position:relative;max-width:230px}
+.hbuddy .bubble::after{content:"";position:absolute;right:-6px;top:50%;margin-top:-7px;width:14px;height:14px;background:var(--hi);transform:rotate(45deg);border-radius:2px}
+.sonsbtn{display:grid;place-items:center;width:40px;padding:0}
+.sonsbtn svg{width:20px;height:20px}
+.sonsbtn[aria-pressed="false"]{color:var(--muted)}
+@media (max-width:760px){.hero{flex-wrap:wrap}.hero .hbuddy{display:flex;margin:0;width:100%;flex-direction:row-reverse;justify-content:flex-end}
+  .hvini{width:92px;height:100px}.hbuddy .bubble::after{right:auto;left:-6px}}

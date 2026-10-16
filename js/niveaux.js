@@ -515,7 +515,9 @@ function finish(){
   const fresh = goalFresh;
   quizOffer(st); avisPartie(r.ch, st); goalNote(); slowOffer(st);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
-  if (fresh) openSerie();   // objectif du jour atteint avec cette partie : l'écran de la série passe devant
+  if (fresh) openSerie();   // objectif du jour atteint avec cette partie : l'écran de la série passe devant (avec son propre son)
+  else if (st >= 2){ for (let i = 0; i < st; i++) setTimeout(() => son('etoile', i), 120 + i * 180); setTimeout(() => son('fin'), 160 + st * 180); }
+  else son('finRatee');
 }
 /* ---------- Carte de résultat façon Duolingo (lot 29) ----------
    Vini (joie ou déception), le titre en doré si c'est réussi, et trois cartes qui se remplissent : XP gagnés, précision

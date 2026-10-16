@@ -66,7 +66,7 @@ function openSerie(){
     if (fait) rond.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12.5l4 4 8-8.5"/></svg>';
     li.setAttribute('aria-label', d.toLocaleDateString('fr-FR', { weekday: 'long' }) + (fait ? ' : objectif atteint' : '')); li.append(l, rond); ol.appendChild(li); }
   if (!$('serieVini').firstChild) viniMettre($('serieVini'), 'danse'); else viniHumeur($('serieVini'), 'danse');
-  $('serie').hidden = false; $('serieGo').focus({ preventScroll: true });
+  $('serie').hidden = false; $('serieGo').focus({ preventScroll: true }); son('serie');
 }
 function closeSerie(){ $('serie').hidden = true; const r = $('retry'); if (!$('result').hidden && r && !r.hidden) r.focus({ preventScroll: true }); }
 $('serieGo').addEventListener('click', closeSerie);

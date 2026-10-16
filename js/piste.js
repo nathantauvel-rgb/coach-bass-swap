@@ -111,13 +111,10 @@ function drawCompare(fr, i, launch){
   $('cmpBox').hidden = false;
 }
 function say(t){ const el = $('tip'); if (el && t) el.textContent = t; const h = $('hint'); if (h && t && run && h.textContent !== t) h.textContent = t; }
-function pop(text, kind){ lastPopAt = performance.now(); lastAct = ''; say(text); const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text; $('pops').appendChild(d); setTimeout(() => d.remove(), 1400); viniReagit(kind); }
-function chime(good){
-  if (!ac) return; const t = ac.currentTime;
-  (good ? [1046.5, 1568] : [784]).forEach((f, i) => { const o = ac.createOscillator(), gg = ac.createGain(); o.type = 'sine'; o.frequency.value = f;
-    gg.gain.setValueAtTime(0, t + i * .07); gg.gain.linearRampToValueAtTime(.08, t + i * .07 + .01); gg.gain.exponentialRampToValueAtTime(.0001, t + i * .07 + .35);
-    o.connect(gg); gg.connect(master); o.start(t + i * .07); o.stop(t + i * .07 + .4); });
-}
+function pop(text, kind){ lastPopAt = performance.now(); lastAct = ''; say(text); const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text; $('pops').appendChild(d); setTimeout(() => d.remove(), 1400); viniReagit(kind);
+  if (!(run && run.demo)) son(kind === 'ok' ? 'reussi' : kind === 'bad' ? 'rate' : 'presque'); }
+// Petit carillon (guide, réglage de la table…) ; juste après un message de partie, celui-ci a déjà sonné (js/sons.js)
+function chime(good){ if (performance.now() - lastPopAt < 150) return; son(good ? 'reussi' : 'presque'); }
 function confetti(n){
   if (REDUCED) return; if (!COL.a) loadCol();
   const cv = $('confetti'), g = cv.getContext('2d'), dpr = window.devicePixelRatio || 1; cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);

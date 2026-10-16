@@ -14,7 +14,7 @@ test.describe('Quêtes du jour sur l\'accueil', () => {
     const erreurs = await ouvrir(page, { onglet: 'accueil', stockage: Object.assign({ 'coach-lecons': S({ 0: 3, 1: 2 }) }, BASE) });
     await expect(page.locator('#homeQuetes')).toBeVisible();
     await expect(page.locator('#qtList .qt')).toHaveCount(3);
-    await expect(page.locator('#qtVini svg')).toBeVisible();
+    await expect(page.locator('#homeVini svg')).toBeVisible();
     await expect(page.locator('#qtSub')).toHaveText(/^0 sur 3 · nouvelles quêtes dans \d+ h$/);
     const q = await stocke(page, 'coach-quetes');
     expect(q.jour).toBe(jour()); expect(q.ids).toHaveLength(3);

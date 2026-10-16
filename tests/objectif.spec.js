@@ -15,7 +15,8 @@ test.describe('L\'encart de l\'accueil', () => {
     await expect(page.locator('#homeGoal')).toBeVisible();
     await expect(page.locator('#goalTitle')).toHaveText('0 min sur 10 aujourd\'hui');
     await expect(page.locator('#goalSub')).toHaveText('Atteins ton objectif chaque jour pour lancer une série.');
-    await expect(page.locator('#homeTip')).toBeHidden();
+    // la bulle de l'accueil est maintenant celle de Vini (lot 31) : elle reste, avec un message du jour
+    await expect(page.locator('#homeTip')).toHaveText(/Prêt pour ta prochaine transition\s\?$/);
   });
   test('on choisit son objectif', async ({ page }) => {
     await accueil(page, { min: 10, jours: { [jour()]: 400 } });

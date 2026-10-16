@@ -52,16 +52,16 @@ const nextStage = () => parcours ? PARCOURS[parcours].stages.find(id => !STAGES[
 function setParcours(p){ if (!PARCOURS[p]) return; parcours = p; parcoursPick = false; try { localStorage.setItem('coach-parcours', p); } catch (e) {} renderHome(); }
 function renderHome(){
   const choosing = !parcours || parcoursPick, cur = nextStage(), st = STAGES[cur];
-  $('homeChoice').hidden = !choosing; $('homeQuetes').hidden = choosing; if (!choosing) renderQuetes(); $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing; $('homeGoal').hidden = choosing; $('homeTip').parentElement.hidden = !choosing;
+  $('homeChoice').hidden = !choosing; $('homeQuetes').hidden = choosing; if (!choosing) renderQuetes(); $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing; $('homeGoal').hidden = choosing;
   document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.parcours === parcours)));
   if (choosing){
     $('homeTitle').textContent = 'Tu as une table et tu n\'y connais rien ?'; $('homeLead').textContent = 'En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.';
-    $('homeTip').textContent = 'Un geste à la fois, et ça vient vite !'; return; }
+    $('homeTip').textContent = 'Un geste à la fois, et ça vient vite !'; homeVini(); return; }
   $('homeKicker').textContent = cur ? 'Ta prochaine étape' : 'Parcours terminé';
   $('homeTitle').textContent = st ? st.title : 'Bravo, tu as tout fait !';
   $('homeLead').textContent = st ? st.text : 'Garde la main : un défi par jour, et de nouvelles paires de morceaux dans rekordbox.';
   $('homeCta').textContent = st ? st.cta() : 'Faire le défi du jour';
-  renderGoal();
+  renderGoal(); homeVini();
   const n = PARCOURS[parcours].stages.indexOf(cur); $('pathSum').textContent = cur ? `Voir tout mon parcours · étape ${n + 1} sur ${PARCOURS[parcours].stages.length}` : 'Voir tout mon parcours · terminé';
   $('homePathName').textContent = PARCOURS[parcours].name;
   const ol = $('homeStages'); ol.innerHTML = '';
@@ -72,6 +72,19 @@ function renderHome(){
     tag.className = 'sp' + (done || now ? '' : ' soon'); tag.textContent = done ? 'Fait' : now ? (s.prog ? s.prog() : 'En cours') : 'À venir';
     box.append(t, d); liEl.append(num, box, tag); ol.appendChild(liEl); });
 }
+// Vini sur l'accueil (lot 31) : un coffre à ouvrir, l'objectif atteint, la série à garder, ou un simple bonjour selon l'heure
+function homeVini(){
+  const el = $('homeVini'); if (!el.firstChild) viniMettre(el, 'calme');
+  if (!parcours || parcoursPick){ viniHumeur(el, 'danse'); return; }
+  const coffres = questCoffres(), fait = goalDone(), sk = goalStreak(), h = new Date().getHours();
+  const salut = h < 5 ? 'Encore debout\u00a0?' : h < 12 ? 'Bonjour\u00a0!' : h < 18 ? 'Salut\u00a0!' : 'Bonsoir\u00a0!';
+  $('homeTip').textContent = coffres ? (coffres > 1 ? `${coffres} coffres t’attendent dans tes quêtes\u00a0!` : 'Un coffre t’attend dans tes quêtes\u00a0!')
+    : fait ? 'Objectif du jour atteint, bravo\u00a0! Reviens demain pour ta série.'
+    : sk ? `${salut} Ta série de ${plur(sk, 'jour', 'jours')} t’attend\u00a0: quelques minutes suffisent.`
+    : `${salut} Prêt pour ta prochaine transition\u00a0?`;
+  viniHumeur(el, coffres || fait ? 'danse' : 'calme');
+}
+$('homeViniBtn').addEventListener('click', () => { const el = $('homeVini'); viniJoie(el, 1100); son('clic'); clearTimeout(el._vh); el._vh = setTimeout(homeVini, 1150); });
 $('homeCta').addEventListener('click', () => { const st = STAGES[nextStage()]; if (st) st.go(); else location.hash = '#entrainer'; });
 $('homeChange').addEventListener('click', () => { parcoursPick = true; renderHome(); });
 document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.addEventListener('click', () => setParcours(b.dataset.parcours)));

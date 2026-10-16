@@ -24,7 +24,7 @@ function placementVerdict(){
   const firstFail = ok ? 0 : P_STEPS[Math.max(0, P_STEPS.findIndex((_, j) => !(res[j] >= 2)))];
   testDone = ok ? 'ok' : 'ko:' + firstFail; try { localStorage.setItem('coach-test', testDone); } catch (e) {}
   quitPlacement();
-  $('rStars').innerHTML = ''; $('rStats').hidden = true; resultatVini(ok ? 'parfait' : 'rate'); $('rTitle').classList.toggle('win', ok); $('rTitle').textContent = ok ? 'Tu maîtrises les bases : chapitres 2 et 4 débloqués !' : 'On commence par les bases';
+  son(ok ? 'fin' : 'finRatee'); $('rStars').innerHTML = ''; $('rStats').hidden = true; resultatVini(ok ? 'parfait' : 'rate'); $('rTitle').classList.toggle('win', ok); $('rTitle').textContent = ok ? 'Tu maîtrises les bases : chapitres 2 et 4 débloqués !' : 'On commence par les bases';
   $('rGain').textContent = ok ? 'Les niveaux du chapitre 1 restent jouables quand tu veux.' : 'Le chapitre 2 se débloque avec 14 étoiles au chapitre 1.';
   $('rDetails').innerHTML = ''; $('cmpBox').hidden = true;
   ['Le bon moment', 'Le swap des basses', 'La transition complète'].forEach((t, j) => { const x = document.createElement('li'); x.className = (res[j] || 0) >= 2 ? 'ok' : 'bad'; x.textContent = `${t} : ${'★'.repeat(res[j] || 0) || 'pas réussi'}`; $('rDetails').appendChild(x); });

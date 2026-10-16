@@ -77,12 +77,13 @@ function questOuvrir(id){
   const q = qtDef(id); if (!q || !qt.ids.includes(id) || qt.ouverts.includes(id) || !qtFaite(q)) return;
   const gain = QT_GAIN[q.niv]; qt.ouverts.push(id); qt.xp += gain; qtSave();
   const li = $('qtList').querySelector(`[data-q="${id}"]`); if (li) li.classList.add('ouvre');
-  viniJoie($('qtVini'), 1200); renderHud();
-  setTimeout(renderQuetes, REDUCED ? 0 : 900);
+  const v = $('homeVini'); viniJoie(v, 1200); clearTimeout(v._vh); son('coffre'); renderHud();
+  setTimeout(renderQuetes, REDUCED ? 0 : 900); setTimeout(homeVini, REDUCED ? 0 : 1250);   // Vini finit de sauter avant de changer de message
 }
+// Coffres prêts à ouvrir (Vini le dit sur l'accueil)
+const questCoffres = () => { qtJour(); return qt.ids.map(qtDef).filter(q => qtFaite(q) && !qt.ouverts.includes(q.id)).length; };
 function renderQuetes(){
   qtJour(); const box = $('qtList'); box.innerHTML = '';
-  if (!$('qtVini').firstChild) viniMettre($('qtVini'), 'calme');
   const fin = new Date(); fin.setHours(24, 0, 0, 0); const h = Math.max(1, Math.ceil((fin - new Date()) / 3600000));
   const faites = qt.ids.map(qtDef).filter(qtFaite).length;
   $('qtSub').textContent = `${faites} sur ${qt.ids.length} · nouvelles quêtes dans ${h} h`;

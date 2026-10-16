@@ -109,7 +109,7 @@ function quizShow(){
 function quizAnswer(btn, ok){
   if (!quiz || quiz.answered) return; quiz.answered = true; const q = quiz.list[quiz.i]; let gain = 0;
   $('qOpts').classList.add('done'); $('qOpts').querySelectorAll('button').forEach(b => { if (b.textContent === q[3][0]) b.classList.add('ok'); }); if (!ok) btn.classList.add('bad');
-  if (ok){ quiz.good++; questQuiz(); if (!quizOk.includes(q[0])){ quizOk.push(q[0]); gain = QUIZ_XP; quiz.xp += gain; try { localStorage.setItem('coach-quiz', JSON.stringify(quizOk)); } catch (e) {} renderHud(); } }
+  son(ok ? 'reussi' : 'rate'); if (ok){ quiz.good++; questQuiz(); if (!quizOk.includes(q[0])){ quizOk.push(q[0]); gain = QUIZ_XP; quiz.xp += gain; try { localStorage.setItem('coach-quiz', JSON.stringify(quizOk)); } catch (e) {} renderHud(); } }
   const w = $('qWhy'); w.textContent = (ok ? 'Bonne réponse' + (gain ? ` · +${gain} XP` : '') + '. ' : 'Pas tout à fait. ') + q[4]; w.className = 'qwhy ' + (ok ? 'ok' : 'bad'); w.hidden = false;
   badgeNote('qBadge');
   const n = $('qNext'); n.textContent = !quiz.flash ? 'Continuer' : quiz.i >= quiz.list.length - 1 ? 'Voir mon résultat' : 'Question suivante'; n.hidden = false; n.focus({ preventScroll: true });

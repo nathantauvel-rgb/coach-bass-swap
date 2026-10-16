@@ -72,7 +72,7 @@ function ppOption(o){
   b.appendChild(t);
   if (o.tag){ const s = document.createElement('span'); s.className = 'pp-tag'; s.textContent = o.tag; b.appendChild(s); }
   if (o.coche){ const c = document.createElement('span'); c.className = 'pp-check'; c.setAttribute('aria-hidden', 'true'); c.innerHTML = PP_IC.coche; b.appendChild(c); }
-  b.addEventListener('click', () => { o.pick(); ppMaj(); viniJoie($('ppVini')); });
+  b.addEventListener('click', () => { o.pick(); ppMaj(); viniJoie($('ppVini')); son('clic'); });
   return b;
 }
 // Un écran : la question de Vini, les réponses, le bouton du bas. `sens` : 1 en avançant, -1 en revenant, 0 sans animation

@@ -69,7 +69,7 @@ function pracNext(){
 }
 function pracVerdict(){
   const tot = prac.res.reduce((s, x) => s + (x || 0), 0), old = pracNum('setBest'); pracData.setBest = Math.max(old, tot); savePrac(); prac.done = true;
-  $('rStars').innerHTML = ''; $('rStats').hidden = true; resultatVini(tot >= 6 ? 'parfait' : 'rate'); $('rTitle').classList.toggle('win', tot >= 6); $('rTitle').textContent = tot >= 8 ? 'Mini-set de pro !' : tot >= 6 ? 'Beau mini-set !' : 'Mini-set terminé';
+  son(tot >= 6 ? 'fin' : 'finRatee'); $('rStars').innerHTML = ''; $('rStats').hidden = true; resultatVini(tot >= 6 ? 'parfait' : 'rate'); $('rTitle').classList.toggle('win', tot >= 6); $('rTitle').textContent = tot >= 8 ? 'Mini-set de pro !' : tot >= 6 ? 'Beau mini-set !' : 'Mini-set terminé';
   $('rGain').textContent = `${tot} ★ sur 9` + (tot > old ? ' · nouveau record !' : ` · record : ${old} ★`);
   $('rDetails').innerHTML = ''; $('cmpBox').hidden = true; $('retry').hidden = true; badgeNote('rBadge'); $('clairRow').hidden = true;
   prac.queue.forEach((q, j) => { const x = document.createElement('li'); x.className = (prac.res[j] || 0) >= 2 ? 'ok' : 'bad'; x.textContent = `${BASE_LESSONS[q].title} : ${'★'.repeat(prac.res[j] || 0) || 'pas réussi'}`; $('rDetails').appendChild(x); });
