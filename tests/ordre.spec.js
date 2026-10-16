@@ -70,6 +70,6 @@ test.describe('La progression d\'avant suit son niveau', () => {
   });
   test('un nouveau venu : rien à déplacer', async ({ page }) => {
     await ouvrir(page, { stockage: { 'coach-ordre': null } });
-    expect(await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('coach-')).sort())).toEqual(['coach-fiches', 'coach-guide-vu', 'coach-journal', 'coach-ordre', 'coach-style']);
+    expect(await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('coach-')).sort())).toEqual(['coach-accueil', 'coach-fiches', 'coach-guide-vu', 'coach-journal', 'coach-ordre', 'coach-style']);
   });
 });

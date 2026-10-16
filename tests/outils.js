@@ -24,7 +24,9 @@ async function ouvrir(page, { stockage = {}, midi = null, onglet = 'apprendre', 
   page.on('pageerror', e => erreurs.push(String(e)));
   // Les tests jouent la house du site sauf indication contraire (la vraie musique, choisie par défaut, a ses propres tests).
   // Les numéros de niveau des tests suivent l'ordre actuel du chapitre 1 (coach-ordre : rien à déplacer, voir ordre.spec.js).
-  const donnees = Object.assign({ 'coach-guide-vu': '1', 'coach-fiches': '[\"play\", \"fader\", \"low\", \"cfx\", \"echo\", \"mid\"]', 'coach-style': 'house', 'coach-ordre': '2' }, stockage);
+  // Les « Premiers pas » (questions de Vini à la première visite) sont marqués comme passés, sauf dans premiers.spec.js.
+  const donnees = Object.assign({ 'coach-guide-vu': '1', 'coach-fiches': '[\"play\", \"fader\", \"low\", \"cfx\", \"echo\", \"mid\"]', 'coach-style': 'house', 'coach-ordre': '2',
+    'coach-accueil': '{\"passe\": true, \"fini\": \"2026-10-16\"}' }, stockage);
   await page.addInitScript(d => { try { if (!sessionStorage.getItem('__pret')) { for (const [k, v] of Object.entries(d)) if (v !== null) localStorage.setItem(k, v); sessionStorage.setItem('__pret', '1'); } } catch (e) {} }, donnees);
   if (midi) await page.addInitScript(fausseTable, midi);
   if (avant) await page.addInitScript(avant);

@@ -50,6 +50,7 @@ function avisRapport(){
   const L = [], lv = (c, n) => lessonsOf(c)[n], max = BASE_LESSONS.length * 3;
   L.push(`Rapport DJingo du ${dayKey()}`);
   L.push(`Parcours : ${PARCOURS[parcours] ? PARCOURS[parcours].name : 'pas encore choisi'} · ${midiCount > 0 ? 'table branchée : ' + midiNames.join(', ') + (tableCfg ? ' (réglée pas à pas)' : tableOn() ? '' : ' (pas encore réglée)') : 'sans table (souris)'} · ${navName()}`);
+  L.push(`Premiers pas : ${ppResume()}`);
   L.push(`Temps sur le site : ${Math.round(jr.secs / 60)} min, sur ${plur(jr.jours.length, 'jour', 'jours')} (première visite le ${jr.debut})`);
   L.push(`Étoiles : chapitre 1 ${sumStars(stars)}/${max}, chapitre 2 ${sumStars(ch2Stars)}/${max}, chapitre 3 ${sumStars(ch3Stars)}/${CH3_LESSONS.length * 3}, chapitre 4 ${sumStars(ch4Stars)}/${CH4_LESSONS.length * 3} · ${$('xpTxt').textContent} · badges ${badgesWon.length}/${BADGES.length} · quiz ${quizOk.length}/${QUIZ.length}`);
   const g = new Map();

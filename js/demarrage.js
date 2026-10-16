@@ -51,7 +51,7 @@ function setView(v){
   for (const [k, id] of Object.entries(VIEWS)) $(id).hidden = k !== v;
   document.querySelectorAll('#tabs a').forEach(a => { if (a.dataset.view === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   $('guideBtn').hidden = v !== 'apprendre';
-  if (v === 'apprendre'){ renderHud(); drawHighway(START); updateSetup(); warmSongs(); if (!guideSeen && parcours !== 'deja') openOnb(); }   // parcours « deja » : le guide est proposé (bouton Guide), pas imposé
+  if (v === 'apprendre'){ renderHud(); drawHighway(START); updateSetup(); warmSongs(); if (!guideSeen && parcours !== 'deja' && !ppAOuvrir()) openOnb(); }   // parcours « deja » : le guide est proposé (bouton Guide), pas imposé
   else if (v === 'accueil') renderHome();
   else if (v === 'entrainer') renderTrain();
   else if (v === 'vrai') renderReal();
@@ -62,3 +62,5 @@ function setView(v){
 document.querySelectorAll('#tabs a').forEach(a => a.addEventListener('click', () => { if (prac && a.dataset.view === view) quitPrac(); }));
 window.addEventListener('hashchange', () => setView(location.hash.slice(1)));
 setView(location.hash.slice(1));
+// Premiers pas (lot 28) : un nouveau venu répond d'abord aux questions de Vini
+if (ppAOuvrir()) openPremiers();

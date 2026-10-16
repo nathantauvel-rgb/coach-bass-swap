@@ -25,8 +25,8 @@
   --go-ink:#0e0f12;
   --edge:rgba(0,0,0,.45);
   --shadow:0 18px 40px rgba(0,0,0,.35);
-  --display:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --display:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;   /* police Nunito partout (lot 28, choix de l'utilisateur) */
+  --sans:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
   --on-fg:#0e0f12;
   --hi:#24272e;
   --ok-bg:#12301f;
@@ -40,6 +40,32 @@
   --track:#2c3039;
   --dot:#1f2229;
   --disc-in:#17191e;
+  /* Couleur de DJingo (lots 27 et 28) : le violet, seulement pour Vini et le bouton principal des « Premiers pas » */
+  --brand:#8C5CFF;
+  --brand-edge:#5229C4;
+  --brand-light:#C8B2FF;
+  --brand-soft:#1c1630;
+  --brand-line:#3d2d7a;
+  --on-brand:#0e0f12;
+  --off:#262a33;   /* bouton grisé (rien de choisi) */
+  --off-edge:#1d2027;
+  --off-ink:#6b7182;
+  /* Vini, la mascotte (js/vini.js) */
+  --vini-300:#C8B2FF;
+  --vini-500:#8C5CFF;
+  --vini-600:#6F3FEA;
+  --vini-700:#5229C4;
+  --vini-cream:#FFF2E2;
+  --vini-ring:#F0DCC4;
+  --vini-ink:#16181F;
+  --vini-dk:#2F3340;
+  --vini-dk2:#404554;
+  --vini-dk3:#5C6377;
+  --vini-spark:#FFD54A;
+  --vini-drop:#79C6FF;
+  --vini-tongue:#FF7FA8;
+  --vini-shadow:rgba(0,0,0,.35);
+  --vini-beat:.4839s;   /* un temps à 124 BPM : Vini danse sur le tempo des morceaux */
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -767,3 +793,103 @@ button.pgch:hover{background:var(--panel)}
 .locked .pgch{color:var(--muted);font-weight:500}
 @media (max-width:520px){.medals{grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:12px 4px}.mdisc{width:60px;height:60px}.mdisc svg{width:26px;height:26px}
   .pgch{grid-template-columns:minmax(0,1fr);gap:4px}.pgcard{padding:16px}}
+/* ---------- Vini, la mascotte (lot 28) : dessin dans js/vini.js ---------- */
+.vini{display:block;flex-shrink:0}
+.vini svg{display:block;width:100%;height:100%;overflow:visible}
+.vn-m3{fill:var(--vini-300)} .vn-m5{fill:var(--vini-500)} .vn-m6{fill:var(--vini-600)} .vn-m7{fill:var(--vini-700)}
+.vn-cr{fill:var(--vini-cream)} .vn-ink{fill:var(--vini-ink)} .vn-dk{fill:var(--vini-dk)} .vn-dk2{fill:var(--vini-dk2)} .vn-dk3{fill:var(--vini-dk3)}
+.vn-sp{fill:var(--vini-spark)} .vn-dr{fill:var(--vini-drop)} .vn-tg{fill:var(--vini-tongue)} .vn-sh{fill:var(--vini-shadow)}
+.vn-st{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.vn-s-ink{stroke:var(--vini-ink)} .vn-s-m6{stroke:var(--vini-600)} .vn-s-dk{stroke:var(--vini-dk)} .vn-s-dk3{stroke:var(--vini-dk3)}
+.vn-bras{stroke-width:15} .vn-sillon{stroke-width:2;opacity:.5} .vn-r1{opacity:.55} .vn-r2{opacity:.3}
+.vn-anneau{stroke:var(--vini-ring);stroke-width:2.5} .vn-fossette{stroke-width:3} .vn-sourcil{stroke-width:3.5}
+.vn-arceau{stroke-width:14} .vn-arceau2{stroke-width:3.5;opacity:.9}
+.vn-f{display:none}
+.vn-danse .vn-fd,.vn-danse .vn-fb,.vn-rate .vn-fr,.vn-rate .vn-fb,.vn-parfait .vn-fp{display:inline}
+.vn-corps{transform-box:view-box;transform-origin:120px 240px}
+.vn-danse .vn-corps{animation:vn-bob var(--vini-beat) infinite cubic-bezier(.3,.7,.4,1)}
+.vn-parfait .vn-corps{animation:vn-joie calc(var(--vini-beat)*2) infinite cubic-bezier(.3,.7,.4,1)}
+.vn-rate .vn-corps{animation:vn-triste 2.4s infinite ease-in-out}
+.vn-ombre{transform-box:view-box;transform-origin:120px 246px}
+.vn-danse .vn-ombre{animation:vn-ombre var(--vini-beat) infinite cubic-bezier(.3,.7,.4,1)}
+.vn-parfait .vn-ombre{animation:vn-ombre-joie calc(var(--vini-beat)*2) infinite cubic-bezier(.3,.7,.4,1)}
+.vn-yeux{transform-box:fill-box;transform-origin:50% 50%;animation:vn-cligne 4.2s infinite}
+.vn-reflet{transform-box:view-box;transform-origin:120px 132px;animation:vn-tourne 1.9s linear infinite}
+.vn-etoile{transform-box:fill-box;transform-origin:50% 50%;animation:vn-scintille calc(var(--vini-beat)*2) infinite ease-in-out}
+.vn-etoile.vn-t2{animation-delay:calc(var(--vini-beat)*-.6)} .vn-etoile.vn-t3{animation-delay:calc(var(--vini-beat)*-1.2)}
+.vn-note{transform-box:fill-box;transform-origin:50% 50%;animation:vn-note calc(var(--vini-beat)*4) infinite ease-out;opacity:0}
+.vn-note.vn-n2{animation-delay:calc(var(--vini-beat)*-2)}
+.vn-goutte{transform-box:fill-box;transform-origin:50% 0%;animation:vn-goutte 2.4s infinite ease-in}
+@keyframes vn-bob{0%{transform:translateY(0) scale(1.07,.93)}35%{transform:translateY(-9px) scale(.97,1.04)}70%{transform:translateY(-2px) scale(1,1)}100%{transform:translateY(0) scale(1.07,.93)}}
+@keyframes vn-ombre{0%,100%{transform:scale(1.05,1);opacity:.4}35%{transform:scale(.82,.8);opacity:.25}}
+@keyframes vn-joie{0%{transform:translateY(0) scale(1.1,.9)}25%{transform:translateY(-30px) scale(.94,1.07) rotate(-4deg)}50%{transform:translateY(-34px) scale(.98,1.02) rotate(3deg)}80%{transform:translateY(0) scale(1.08,.92)}100%{transform:translateY(0) scale(1.1,.9)}}
+@keyframes vn-ombre-joie{0%,80%,100%{transform:scale(1.06,1);opacity:.4}25%,50%{transform:scale(.62,.7);opacity:.18}}
+@keyframes vn-triste{0%,100%{transform:rotate(-2.5deg) translateY(3px)}50%{transform:rotate(2.5deg) translateY(3px)}}
+@keyframes vn-cligne{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.12)}}
+@keyframes vn-tourne{to{transform:rotate(360deg)}}
+@keyframes vn-scintille{0%,100%{transform:scale(0) rotate(0);opacity:0}30%{transform:scale(1.15) rotate(25deg);opacity:1}60%{transform:scale(.9) rotate(45deg);opacity:1}}
+@keyframes vn-note{0%{transform:translate(0,10px) scale(.6);opacity:0}20%{opacity:1}100%{transform:translate(14px,-46px) scale(1) rotate(12deg);opacity:0}}
+@keyframes vn-goutte{0%,40%{transform:translateY(-4px) scale(.6);opacity:0}55%{opacity:1}100%{transform:translateY(14px) scale(1);opacity:0}}
+
+/* ---------- Premiers pas (lot 28) : une question par écran, Vini qui parle, un gros bouton en bas ---------- */
+html.pp-open,html.pp-open body{overflow:hidden}
+.pp{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;justify-content:center;overflow:auto}
+.pp-col{width:100%;max-width:600px;min-height:100%;display:flex;flex-direction:column;gap:22px;padding:18px 18px calc(22px + env(safe-area-inset-bottom, 0px))}
+.pp-col:focus{outline:none}
+.pp-top{display:flex;align-items:center;gap:12px}
+.pp-back{width:44px;height:44px;flex-shrink:0;border:0;background:none;padding:0;display:grid;place-items:center;color:var(--muted);cursor:pointer;border-radius:12px}
+.pp-back svg{width:26px;height:26px}
+.pp-back[hidden]{display:grid!important;visibility:hidden}
+.pp-bar{flex:1;height:16px;border-radius:8px;background:var(--track);position:relative;overflow:hidden}
+.pp-bar i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:8px;background:var(--brand);transition:width .45s cubic-bezier(.3,1.3,.5,1)}
+.pp-bar i::after{content:"";position:absolute;left:8px;right:8px;top:3.5px;height:4px;border-radius:2px;background:var(--brand-light);opacity:.8}
+.pp-skip{flex-shrink:0;min-height:44px;padding:0 6px;border:0;background:none;color:var(--muted);font:inherit;font-weight:800;cursor:pointer}
+.pp-skip:hover,.pp-back:hover{color:var(--fg)}
+.pp-body{display:flex;flex-direction:column;gap:20px;flex:1}
+.pp-in{animation:pp-in .32s cubic-bezier(.2,.8,.3,1)}
+.pp-in-back{animation:pp-in-back .32s cubic-bezier(.2,.8,.3,1)}
+@keyframes pp-in{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes pp-in-back{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.pp-head{display:flex;align-items:center;gap:12px}
+.pp-head .vini{width:118px;height:128px}
+.pp-bubble{position:relative;flex:1;margin:0;background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.3}
+.pp-bubble::before{content:"";position:absolute;left:-10px;top:26px;width:16px;height:16px;background:var(--panel);border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg)}
+.pp-hero .pp-head{flex-direction:column-reverse;gap:18px;margin-top:4vh}
+.pp-hero .pp-head .vini{width:220px;height:238px}
+.pp-hero .pp-bubble{flex:none;text-align:center;font-size:22px;max-width:440px}
+.pp-hero .pp-bubble::before{left:50%;top:auto;bottom:-10px;margin-left:-8px;border-left:0;border-right:2px solid var(--line)}
+.pp-opts{display:flex;flex-direction:column;gap:12px}
+.pp-opt{display:flex;align-items:center;gap:16px;width:100%;text-align:left;min-height:70px;padding:12px 18px;font:inherit;font-size:18px;font-weight:800;line-height:1.25;color:var(--fg);
+  background:var(--bg);border:2px solid var(--line);border-bottom-width:5px;border-radius:18px;cursor:pointer;transition:transform .08s ease,background .15s ease,border-color .15s ease}
+.pp-opt:hover{background:var(--panel)}
+.pp-opt:active{transform:translateY(3px)}
+.pp-opt[aria-pressed="true"]{background:var(--brand-soft);border-color:var(--brand);border-bottom-color:var(--brand-edge);animation:pp-pop .28s ease-out}
+@keyframes pp-pop{0%{transform:scale(1)}40%{transform:scale(1.03)}100%{transform:scale(1)}}
+.pp-opt .pp-ic{width:34px;height:34px;flex-shrink:0;display:grid;place-items:center;color:var(--brand-light)}
+.pp-opt .pp-ic svg{width:100%;height:100%}
+.pp-b-on{fill:var(--brand)} .pp-b-off{fill:var(--line)}
+.pp-opt .pp-txt{flex:1;display:flex;flex-direction:column;gap:2px}
+.pp-opt .pp-sub{font-size:15px;font-weight:600;color:var(--muted)}
+.pp-opt[aria-pressed="true"] .pp-sub{color:var(--brand-light)}
+.pp-opt .pp-tag{font-size:16px;font-weight:700;color:var(--muted)}
+.pp-opt[aria-pressed="true"] .pp-tag{color:var(--brand-light)}
+.pp-opt .pp-check{width:28px;height:28px;flex-shrink:0;border:2px solid var(--line);border-radius:8px;display:grid;place-items:center;color:var(--on-brand)}
+.pp-opt .pp-check svg{width:18px;height:18px;opacity:0}
+.pp-opt[aria-pressed="true"] .pp-check{background:var(--brand);border-color:var(--brand)}
+.pp-opt[aria-pressed="true"] .pp-check svg{opacity:1}
+.pp-opt.pp-big{min-height:104px;padding:16px 18px}
+.pp-opt.pp-big .pp-ic{width:56px;height:56px}
+.pp-opt{position:relative}
+.pp-badge{position:absolute;top:-13px;right:16px;background:var(--brand);color:var(--on-brand);font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:9px}
+.pp-opts.pp-espace{gap:22px;padding-top:8px}
+.pp-note{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:18px;background:var(--brand-soft);border:2px solid var(--brand-line);font-size:17px;font-weight:700;line-height:1.4;animation:pp-monte .35s ease-out}
+.pp-note b{color:var(--brand-light);font-weight:900}
+.pp-note svg{width:34px;height:34px;flex-shrink:0}
+@keyframes pp-monte{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+.pp-foot{position:sticky;bottom:0;padding-top:8px;background:linear-gradient(transparent,var(--bg) 30%)}
+.pp-go{width:100%;min-height:56px;border:0;border-bottom:5px solid var(--brand-edge);border-radius:16px;background:var(--brand);color:var(--on-brand);font:inherit;font-size:18px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:transform .08s ease}
+.pp-go:active{transform:translateY(3px)}
+.pp-go:disabled{background:var(--off);border-bottom-color:var(--off-edge);color:var(--off-ink);cursor:default;transform:none}
+.pp-go:focus-visible,.pp-opt:focus-visible,.pp-back:focus-visible,.pp-skip:focus-visible{outline:3px solid var(--brand-light);outline-offset:3px}
+@media (max-width:420px){.pp-head .vini{width:96px;height:104px}.pp-bubble{font-size:18px}.pp-opt{font-size:17px}}
+@media (prefers-reduced-motion: reduce){.vini *,.pp-in,.pp-in-back,.pp-opt,.pp-note,.pp-bar i{animation:none!important;transition:none!important}}

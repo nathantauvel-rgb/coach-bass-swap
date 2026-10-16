@@ -349,8 +349,22 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   **Choix de l'utilisateur : Vini, en violet.** Il garde le corps (vinyle, bras, jambes, casque) mais trouve le visage trop
   « kawaii » : planche « Vini · six visages » ajoutée (Cool, Lunettes, Rétro, Grands yeux, Minimal, LED ; atelier
   `captures/visages.html`, planche fabriquée par un script à partir de l'atelier). **Visage choisi : « Rétro »** (yeux noirs de dessin animé des années 30 avec
-  une encoche, grand sourire, ni joues roses ni nez), appliqué à toutes les planches. Reste à valider : la police Nunito. Suite prévue : lot 28 « Premiers pas » (accueil façon
+  une encoche, grand sourire, ni joues roses ni nez), appliqué à toutes les planches. Police Nunito validée. Suite prévue : lot 28 « Premiers pas » (accueil façon
   Duolingo), lot 29 « Ça bouge » (mascotte dans les niveaux, écran de fin, série).
+- **Lot 28 « Premiers pas » (16 oct. 2026)** : branche `lot-28-premiers-pas` (partie de `lot-26-ordre`), non publiée. **Vini sur le
+  site** : `js/vini.js` (`VINI_SVG`, `viniMettre(el, humeur)`, `viniHumeur`, `viniJoie` ; humeurs `danse`, `parfait`, `rate`), couleurs
+  et mouvements dans `styles.css` (section « Vini », classes `vn-…`, tokens `--vini-…`, danse au tempo `--vini-beat`). **Premiers pas**
+  (`js/premiers.js`, fenêtre `#pp` plein écran) : à la toute première visite (`ppAOuvrir` : ni parcours choisi ou déduit, ni
+  `coach-accueil`), 6 écrans façon Duolingo, une question par écran, barre de progression, Retour, « Passer », bouton du bas grisé
+  tant qu'on n'a rien choisi : bonjour de Vini → « Tu as déjà mixé ? » (4 niveaux ; 0 = parcours `debut`, sinon `deja`) → « Tu as
+  quelle table ? » (FLX4, autre, souris ; Vini répond) → « Pourquoi tu veux mixer ? » (plusieurs choix) → objectif 5/10/15 min
+  (`goalSet`, avec le délai annoncé) → « Par où tu commences ? » (bases ou test de placement, « Recommandé » selon le niveau). La fin
+  choisit le parcours et mène au niveau 1 (le guide s'ouvre pour `debut`) ou lance le test de placement. « Passer » n'impose rien :
+  l'accueil propose les deux parcours comme avant. Clé `coach-accueil` (`{ niveau, table, pourquoi, min, depart, fini }` ou
+  `{ passe, fini }`), résumée dans le rapport des testeurs (`ppResume`). Le guide ne s'ouvre pas tant que les questions sont à
+  l'écran. **Police Nunito partout** (site, présentation, fiche des testeurs). **Couleur de marque** violet (`--brand…`) : Vini et le
+  bouton principal des Premiers pas seulement, pour l'instant. Tests : `tests/outils.js` marque les Premiers pas comme passés
+  (`coach-accueil`), nouveau `tests/premiers.spec.js`. Images de la présentation refaites. 265 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -371,7 +385,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `vrais` (vraie musique) → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `midi` →
-  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) →
+  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `avis` (avis des testeurs, rapport) →
   `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
@@ -444,8 +458,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - **Thème « Cabine pure »** (lot 16, 14 oct. 2026, après « Cabine » du lot 4) : sombre, noir neutre et blanc.
   Platine A en orange (`--a`) et platine B en bleu (`--b`) **seulement pour ce qui touche aux platines** ;
   partout ailleurs `--accent` (blanc). `--xp` et `--go` sont devenus neutres (gris clair, blanc). Ne pas
-  réintroduire de couleur décorative : l'utilisateur trouvait le site trop coloré. Police Inter partout. Plus de
-  mascotte : seule la bulle de conseil `.bubble` reste. **Toutes les couleurs passent par la liste
+  réintroduire de couleur décorative : l'utilisateur trouvait le site trop coloré. **Depuis les lots 27-28 (décision de l'utilisateur) :
+  une seule couleur de marque, le violet `--brand` (Vini et bouton principal), police Nunito partout, mascotte Vini (`js/vini.js`).** **Toutes les couleurs passent par la liste
   `:root` en tête de `styles.css`** (et par `COL` dans `js/piste.js` pour le canvas) : ne jamais écrire
   une couleur en dur ailleurs. Texte posé sur une couleur vive : `--ink` ; sur `--fg` : `--on-fg`.
   `styles.css` garde des couches héritées qui se surchargent (mise en page compacte, « habillage »,
@@ -459,7 +473,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-bibliotheque` (`coach.html`).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -473,7 +487,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,
