@@ -160,7 +160,8 @@ function makeSong(style, role, seed, secs, o = {}){
   for (let n = 0; n < N; n++){ ML[n] = Math.tanh(ML[n] * kk) / dn * .82; MR[n] = Math.tanh(MR[n] * kk) / dn * .82; }
   return { L: ML, R: MR, N };
 }
-const STYLE_DEFS = { house: { label: 'House', bpm: 124, seed: 11 }, techno: { label: 'Techno', bpm: 130, seed: 31 }, afro: { label: 'Afro house', bpm: 120, seed: 47 } };
+// « vrai » : de vrais morceaux en fichiers audio (js/vrais.js), pas fabriqués par le site
+const STYLE_DEFS = { house: { label: 'House', bpm: 124, seed: 11 }, techno: { label: 'Techno', bpm: 130, seed: 31 }, afro: { label: 'Afro house', bpm: 120, seed: 47 }, vrai: { label: 'Vraie musique', bpm: 124, seed: 0 } };
 const VARIANTS = 4, trackCache = {}, cacheOrder = [];
 const SEC_A = [[0, 32, ['k', 'b', 'h', 'cl', 'c', 'lead', 'p']], [32, 64, ['k', 'b', 'h', 'cl', 'p']], [64, 128, ['k', 'b', 'h', 'p']]];
 const SEC_B = wb => [[0, 32, wb ? ['k', 'h', 'b'] : ['k', 'h']], [32, 64, wb ? ['k', 'h', 'p', 'b'] : ['k', 'h', 'p']], [64, 128, ['k', 'b', 'h', 'cl', 'c', 'lead', 'p', 'pad']]];

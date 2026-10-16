@@ -311,6 +311,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - **Vidéo « le rêve » (16 oct. 2026)**, dans `marketing/` (hors Git) : `marketing/video/djingo-reve.html` (chambre, plongée dans
   le vinyle, « …c'était TOI », drop avec foule, lasers et mur de LED, trois rêves, le site en trois mots, « Deviens DJ »),
   même musique et même drop que `djingo.html`. `node marketing/video/rendu.js djingo-reve` → `sortie/djingo-reve-tiktok.mp4`.
+- **Lot 25 (16 oct. 2026)** : branche `lot-25-vrais-morceaux`, non publiée. Choix **« Vraie musique »** dans « Morceaux » (style
+  `vrai`, nom choisi parce que « Les vrais morceaux » est déjà le titre du chapitre 3) : chapitres 1 et 4 joués sur de vrais
+  morceaux de Play House (**CC0**). `js/vrais.js` (chargé après `audio`) : `VRAIS` (2 paires : A « Dj » ou « Like An Animal »,
+  B0 l'autre, B1 « The Power Of The Beat », dont l'intro a des basses), `vraiSong` (charge `musique/*.mp3`, décode dans un
+  contexte hors ligne, ralenti du chapitre 4 par `vraiSlow` = comme un disque, plus grave), repli sur la house du site si le
+  fichier ne se charge pas (étiquette « la vraie musique n'a pas pu se charger »). `getSong` passe la main à `vraiSong` pour
+  `vrai`. Étiquette du niveau : « « Dj » puis « Like An Animal » · Play House ». Les extraits (`musique/`, 5 fichiers de
+  65,8 s, 1,05 Mo chacun, publiés) sont faits par `node tests/vrais-morceaux.js` depuis `audio-essai/fma/` (hors Git) : coupés
+  pile sur un temps, ramenés à 124 BPM (« Dj » est à 125), même volume. Grille mesurée : grosse caisse moyenne sur les temps
+  de la grille, écart entre les extraits sous 10 ms ; Chrome décode les MP3 sans décalage (vérifié). « On My Mind » écarté
+  (grille instable). L'entraînement, le chapitre 2 et le chapitre 3 gardent les morceaux du site. **Pas encore écouté par
+  l'utilisateur** (tonalités des paires non vérifiées). 241 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -330,7 +342,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
-  `audio` → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `midi` →
+  `audio` → `vrais` (vraie musique) → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `avis` (avis des testeurs, rapport) →
   `demarrage` (démarrage et onglets).
@@ -342,6 +354,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   vers `index.html#vrai`. Son code sert de base à « Passer au vrai » ; `coach.html?ancien=1` l'affiche encore.
 - `tests/` — scripts Playwright (Python) : `tdz.py`, `robust.py`, `clar.py`, `play.py`, `play2.py`, `user.py`.
 - `tests/rekordbox-exemple.xml` — fausse collection rekordbox pour essayer l'import à la main.
+- `musique/` — extraits de vrais morceaux (Play House, CC0) pour « Vraie musique », refaits par `node tests/vrais-morceaux.js`.
 - `README.md` — description publique.
 
 ## Architecture du code (repères ; « fin du script » = `js/demarrage.js`)
@@ -416,7 +429,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 
 ### Clés localStorage
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
-`coach-style`, `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
+`coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-expert` (Mode Expert choisi, records sur 100), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.

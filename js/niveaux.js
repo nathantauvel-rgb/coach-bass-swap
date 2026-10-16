@@ -109,7 +109,7 @@ const sumStars = b => Object.values(b || {}).reduce((s, v) => s + (+v || 0), 0);
 const ch2Unlocked = () => ch2Open || sumStars(stars) >= 14;
 const ch3Unlocked = () => ch3Open || sumStars(ch2Stars) >= 10;
 const ch4Unlocked = () => ch2Unlocked();   // les combos s'ouvrent en même temps que le chapitre 2
-if (!['house', 'techno', 'afro', 'random'].includes(styleChoice)) styleChoice = 'house';
+if (!['house', 'techno', 'afro', 'random', 'vrai'].includes(styleChoice)) styleChoice = 'house';
 if (![1, 2, 3, 4].includes(chapter)) chapter = 1;
 if (chapter === 4 && !ch4Unlocked()) chapter = 1;
 if (chapter === 2 && !ch2Unlocked()) chapter = 1;
@@ -209,7 +209,9 @@ function startRun(demo = false){
     finally { preparing = false; $('watchBtn').disabled = false; }
     if (li !== myLi || chapter !== myCh || run){ setStartBtn(false); return; }
     if (lw.wave){ const tk = tkW; waveTk = tk; tk.bufA = tk.bufA || bufferOf(tk.A); tk.bufB = tk.bufB || bufferOf(tk.B); tracks = { A: tk.bufA, B0: tk.bufB, B1: tk.bufB }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; $('styleTag').textContent = styleLabel(); }
-    else { const d = STYLE_DEFS[styW]; BPM = d.bpm * speed; P = 60 / BPM; if (chapter === 4) $('styleTag').textContent = `${d.label} · ${Math.round(BPM)} BPM` + (speed !== 1 ? ` · ralenti ${Math.round(speed * 100)} %` : ''); tracks = { A: bufOf(songA), B0: bufOf(songB), B1: bufOf(songB) }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; }
+    else { const d = STYLE_DEFS[styW]; BPM = d.bpm * speed; P = 60 / BPM; if (chapter === 4) $('styleTag').textContent = `${d.label} · ${Math.round(BPM)} BPM` + (speed !== 1 ? ` · ralenti ${Math.round(speed * 100)} %` : ''); tracks = { A: bufOf(songA), B0: bufOf(songB), B1: bufOf(songB) }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75;
+      // vraie musique pas chargée (hors ligne…) : l'étiquette le dit pendant toute la partie
+      if (songA.panne || songB.panne) $('styleTag').textContent = 'House · 124 BPM · la vraie musique n’a pas pu se charger'; }
     const l = LESSONS[li]; Object.assign(ctrl, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
     // En Expert, le départ change d'une partie à l'autre (0, 4 ou 8 temps plus tôt) : on ne peut pas jouer de mémoire
     const xp = expertOn() && !demo; START = Math.max(0, l.start - (xp ? 4 * Math.floor(Math.random() * 3) : 0));

@@ -10,7 +10,7 @@ test.describe('Fichiers du site', () => {
     page.on('response', r => { if (r.url().startsWith('http://localhost') && r.status() >= 400) rates.push(r.url()); });
     const erreurs = await ouvrir(page);
     expect(await page.evaluate(() => [...document.scripts].map(s => s.getAttribute('src')))).toEqual(
-      ['erreurs', 'morceaux', 'audio', 'controles', 'combos', 'niveaux', 'piste', 'expert', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'table', 'reglage', 'avis', 'demarrage'].map(n => `js/${n}.js`));
+      ['erreurs', 'morceaux', 'audio', 'vrais', 'controles', 'combos', 'niveaux', 'piste', 'expert', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'table', 'reglage', 'avis', 'demarrage'].map(n => `js/${n}.js`));
     expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
     expect(rates).toEqual([]); expect(erreurs).toEqual([]); await sansBandeau(page);
   });

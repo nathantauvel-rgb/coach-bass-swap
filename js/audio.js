@@ -43,8 +43,10 @@ const songCache = {}, songOrder = [];
 function getSong(sty, vr, part, spd = 1){
   const k = sty + ':' + vr + ':' + part + (spd !== 1 ? ':' + spd : '');
   if (!songCache[k]){ const d = STYLE_DEFS[sty], isA = part === 'A';
-    const p = renderSong(sty, isA ? 'A' : 'B', d.seed + (isA ? 0 : 12) + vr * 101, isA ? SEC_A : SEC_B(part === 'B1'), isA ? { end: 128, tail: 4 } : {}, d.bpm * spd);
+    const p = sty === 'vrai' ? vraiSong(vr, part, spd) : renderSong(sty, isA ? 'A' : 'B', d.seed + (isA ? 0 : 12) + vr * 101, isA ? SEC_A : SEC_B(part === 'B1'), isA ? { end: 128, tail: 4 } : {}, d.bpm * spd);
     songCache[k] = p; p.catch(() => { if (songCache[k] === p) delete songCache[k]; });
+    // vrai morceau qui n'a pas pu se charger : on réessaiera la prochaine fois
+    if (sty === 'vrai') p.then(s => { if (s.panne && songCache[k] === p) delete songCache[k]; }, () => {});
     songOrder.push(k); while (songOrder.length > 10) delete songCache[songOrder.shift()]; }
   return songCache[k];
 }
@@ -55,9 +57,9 @@ function chooseSongs(){
   const l = LESSONS[li]; if (l.wave) return;
   if (prac) sel = { sty: prac.sty, vr: prac.vr };
   else { sel = { sty: chapter === 2 ? CH2_STYLE[li] : pickStyle(), vr: firstSel ? 0 : Math.floor(Math.random() * VARIANTS) }; firstSel = false; }
-  const s0 = sel, go = () => { if (!hasWorkers()) return; getSong(s0.sty, s0.vr, 'A').catch(() => {}); getSong(s0.sty, s0.vr, l.bBass ? 'B1' : 'B0').catch(() => {}); };
+  const s0 = sel, go = () => { if (!hasWorkers() && s0.sty !== 'vrai') return; getSong(s0.sty, s0.vr, 'A').catch(() => {}); getSong(s0.sty, s0.vr, l.bBass ? 'B1' : 'B0').catch(() => {}); };
   if (warm) warm.then(go); else go();
-  const d = STYLE_DEFS[sel.sty]; $('styleTag').textContent = d.label + ' · ' + d.bpm + ' BPM';
+  const d = STYLE_DEFS[sel.sty]; $('styleTag').textContent = sel.sty === 'vrai' ? vraiTitres(sel.vr, l.bBass) : d.label + ' · ' + d.bpm + ' BPM';
 }
 function applyCtrl(){
   Object.keys(ctrl).forEach(renderControl);

@@ -10,6 +10,8 @@ Le site suit un parcours en trois étapes :
 
 Les morceaux d'entraînement sont produits dans le navigateur (moteur de production maison : grosse caisse, charleys métalliques, réverb, sidechain, accords, mélodies, montées, plusieurs variantes par style), calculés en tâche de fond.
 
+Dans les leçons, le choix « Vraie musique » fait jouer de courts extraits de vrais morceaux à la place : « Dj », « Like An Animal » et « The Power Of The Beat » de Play House, dans le domaine public (CC0, [Free Music Archive](https://freemusicarchive.org/music/play-house)). Les extraits du dossier `musique/` sont coupés pile sur un temps et ramenés à 124 BPM par `tests/vrais-morceaux.js`.
+
 ## Utilisation
 
 Ouvre le site dans Chrome ou Edge, branche ta table en USB (logiciel DJ fermé), puis va dans « Apprendre ». Le site est pensé pour la Pioneer DDJ-FLX4 ; une autre table se règle pas à pas au premier branchement. Sans table, tout se joue aussi à la souris.

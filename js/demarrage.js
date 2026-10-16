@@ -5,7 +5,7 @@
 buildControls();
 $('startBtn').addEventListener('click', () => run ? stopRun() : withFiches(() => startRun()));
 $('watchBtn').addEventListener('click', () => { if (!run) withFiches(() => startRun(true)); });
-const styleShow = () => { const b = document.querySelector(`#styleOpts [data-style="${styleChoice}"]`); $('styleBtn').textContent = 'Morceaux : ' + (b ? b.textContent : 'House'); };
+const styleShow = () => { const b = document.querySelector(`#styleOpts [data-style="${styleChoice}"]`); $('styleBtn').textContent = styleChoice === 'vrai' ? 'Morceaux : vraie musique' : 'Morceaux : ' + (b ? b.textContent : 'House'); };
 const styleMenu = open => { $('styleOpts').hidden = !open; $('styleBtn').setAttribute('aria-expanded', String(open)); };
 $('styleBtn').addEventListener('click', () => styleMenu($('styleOpts').hidden)); styleShow();
 document.querySelectorAll('#styleOpts [data-style]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.style === styleChoice));
