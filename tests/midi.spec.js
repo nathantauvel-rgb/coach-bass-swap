@@ -60,7 +60,7 @@ test.describe('Contrôles par défaut', () => {
   });
   test('potards LOW A et B', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true } });
-    await niveau(page, 2);
+    await niveau(page, 5);
     await envoyer(page, 0xB0, 15, 64); await envoyer(page, 0xB1, 15, 127);
     let etat = await miseEnPlace(page);
     expect(etat[0]).toMatch(/^ok .*LOW de A/); expect(etat[1]).toMatch(/^wrong .*LOW de B/);
@@ -131,7 +131,7 @@ test.describe('Apprentissage d\'un contrôle', () => {
   });
   test('le bouton ON de l\'effet s\'apprend et active l\'écho', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true } });
-    await niveau(page, 5);
+    await niveau(page, 3);
     await page.locator('#setupList .learn').click();
     await envoyer(page, 0xB4, 20, 64);           // un potard : refusé pour un bouton
     expect(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).toBeNull();

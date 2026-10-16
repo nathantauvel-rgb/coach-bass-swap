@@ -29,9 +29,9 @@ test.describe('Les mots du DJ', () => {
     await expect(page.locator('#llex')).toHaveText(/^Outro : la fin d'un morceau/);
     await page.locator('.node').nth(1).click();
     await expect(page.locator('#llex')).toContainText('Drop : ');
-    await page.locator('.node').nth(2).click();
-    await expect(page.locator('#llex')).toHaveText(/^Swap : /);
     await page.locator('.node').nth(5).click();
+    await expect(page.locator('#llex')).toHaveText(/^Swap : /);
+    await page.locator('.node').nth(3).click();
     await expect(page.locator('#ltitle')).toHaveText('L\'écho out');
     await expect(page.locator('#llex')).toContainText('Écho : ');
   });
@@ -66,7 +66,7 @@ test.describe('Moins de bruit pour un débutant', () => {
     await expect(page.locator('.chap.test')).toHaveCount(1);
   });
   test('l\'accueil ne montre que la prochaine étape et l\'objectif ; le parcours est replié, les badges sont ailleurs', async ({ page }) => {
-    await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 3 }) } });
+    await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 5: 3 }) } });
     await expect(page.locator('#homeCta')).toBeVisible();
     await expect(page.locator('#homeGoal')).toBeVisible();
     await expect(page.locator('#homeStages')).toBeHidden();

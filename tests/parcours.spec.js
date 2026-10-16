@@ -74,9 +74,9 @@ test.describe('Prochaine étape', () => {
     await expect(page.locator('#lnum')).toHaveText(/^Chapitre 2/);
   });
   test('« Je sais déjà » : test raté, on reprend au premier geste raté', async ({ page }) => {
-    await accueil(page, { 'coach-guide-vu': null, 'coach-parcours': 'deja', 'coach-test': 'ko:2' });
+    await accueil(page, { 'coach-guide-vu': null, 'coach-parcours': 'deja', 'coach-test': 'ko:5' });
     await expect(page.locator('#homeTitle')).toHaveText('Les bases');
-    await expect(page.locator('#homeCta')).toHaveText('Niveau 3 : Le swap des basses');
+    await expect(page.locator('#homeCta')).toHaveText('Niveau 6 : Le swap des basses');
     await page.locator('#homeCta').click();
     await expect(page.locator('#ltitle')).toHaveText('Le swap des basses');
     await expect(page.locator('#onb')).toBeHidden();

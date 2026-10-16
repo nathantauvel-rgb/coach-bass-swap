@@ -4,7 +4,7 @@
 const { chromium } = require('@playwright/test'), path = require('path'), fs = require('fs'), { spawn } = require('child_process');
 const OUT = path.join(__dirname, '..', 'img'), BASE = 'http://localhost:8766', S = o => JSON.stringify(o);
 const jour = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
-const VENU = { 'coach-guide-vu': '1', 'coach-fiches': S(['play', 'fader', 'low', 'cfx', 'echo', 'mid']), 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 3, 2: 2 }), 'coach-badges': S(['pas', 'timing']),
+const VENU = { 'coach-guide-vu': '1', 'coach-fiches': S(['play', 'fader', 'low', 'cfx', 'echo', 'mid']), 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 3, 2: 2 }), 'coach-ordre': '2', 'coach-badges': S(['pas', 'timing']),
   'coach-objectif': S({ min: 10, jours: { [jour()]: 420 }, faits: [], best: 0 }) };
 const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-FLX4', onmidimessage: null }]]); navigator.requestMIDIAccess = () => Promise.resolve({ inputs, outputs: new Map(), onstatechange: null });
   window.__midi = { envoyer: (...d) => { for (const i of inputs.values()) if (i.onmidimessage) i.onmidimessage({ data: d }); } }; };
@@ -22,10 +22,10 @@ const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-
     if (haut){ await el.scrollIntoViewIfNeeded(); const bb = await el.boundingBox(); await p.screenshot(Object.assign(o, { fullPage: true, clip: { x: bb.x, y: bb.y + await p.evaluate(() => scrollY), width: bb.width, height: Math.min(haut, bb.height) } })); }
     else await el.screenshot(o);
     console.log('img/' + nom); };
-  // 1. Une partie en cours : la piste, le compte à rebours, le geste à faire (niveau 3, la table branchée)
+  // 1. Une partie en cours : la piste, le compte à rebours, le geste à faire (le swap des basses, niveau 6, la table branchée)
   let p = await page('apprendre');
   await p.evaluate(() => { for (const [c, n, v] of [[0, 19, 127], [1, 19, 127], [0, 15, 64], [1, 15, 0]]) window.__midi.envoyer(0xB0 + c, n, v); });
-  await p.locator('.node').nth(2).click(); await p.waitForTimeout(400);
+  await p.locator('.node').nth(5).click(); await p.waitForTimeout(400);
   await p.locator('#startBtn').click(); await p.waitForFunction(() => document.getElementById('startBtn').textContent === 'Arrêter', null, { timeout: 60000 });
   await p.waitForFunction(() => beatNow() >= 58, null, { timeout: 60000, polling: 'raf' });
   await shot(p, 'apprendre.jpg', '#stage'); await p.context().close();

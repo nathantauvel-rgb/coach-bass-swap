@@ -2,7 +2,7 @@
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* ---------- Test de placement ---------- */
-const P_STEPS = [0, 2, 3];
+const P_STEPS = [0, 5, 6];   // le bon moment, le swap des basses, la transition complète
 function startPlacement(){
   if (run) return; chapter = 1; placement = { i: 0, res: [] };
   $('pBanner').hidden = false; selectLesson(P_STEPS[0]); updatePBanner();

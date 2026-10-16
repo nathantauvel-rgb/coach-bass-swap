@@ -23,7 +23,7 @@ test.describe('Mon avis', () => {
   });
   test('un avis vide est refusé, un avis rempli est enregistré avec l\'écran et la note', async ({ page }) => {
     await ouvrir(page);
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await page.locator('#avisBtn').click();
     await page.locator('#avSave').click();
     await expect(page.locator('#avMsg')).toHaveText('Écris au moins une réponse, ou choisis une note.');
@@ -138,7 +138,7 @@ test.describe('Tout recommencer à zéro', () => {
     await expect(page.locator('#vHome')).toBeVisible();
     await expect(page.locator('#homeChoice')).toBeVisible();
     const reste = await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('coach-')).sort());
-    expect(reste).toEqual(['coach-journal', 'coach-midi-map']);   // le journal repart à zéro au rechargement
+    expect(reste).toEqual(['coach-journal', 'coach-midi-map', 'coach-ordre']);   // le journal et coach-ordre reviennent au rechargement
     expect(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).toBe(reglage);
     expect((await journal(page)).parties).toEqual([]);
   });

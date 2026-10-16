@@ -77,7 +77,7 @@ test.describe('Mes progrès', () => {
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('toucher une médaille dit comment la gagner, et où on en est', async ({ page }) => {
-    await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 2: 2 }) } });
+    await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 5: 2 }) } });
     await page.locator('#homeBadges li', { hasText: 'Swap propre' }).locator('button').click();
     await expect(page.locator('#pgMedalInfo')).toHaveText('Swap propre : 3 étoiles sur « Le swap des basses ». Tu en es à 2 sur 3 étoiles.');
     await expect(page.locator('#homeBadges li', { hasText: 'Swap propre' }).locator('button')).toHaveAttribute('aria-pressed', 'true');
@@ -88,7 +88,7 @@ test.describe('Mes progrès', () => {
     await expect(page.locator('#pgMedalInfo')).toHaveText('Mini-set de pro : 8 étoiles sur 9 dans un mini-set. Tu en es à 0 sur 8 étoiles (ton meilleur mini-set).');
   });
   test('le prochain badge : le plus proche, et « Y aller » ouvre le bon niveau', async ({ page }) => {
-    await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 2 }) } });
+    await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 5: 2 }) } });
     await expect(page.locator('#pgNextName')).toHaveText('Swap propre');
     await expect(page.locator('#pgNextHow')).toHaveText('3 étoiles sur « Le swap des basses » · 2 sur 3 étoiles');
     await page.locator('#pgNextGo').click();

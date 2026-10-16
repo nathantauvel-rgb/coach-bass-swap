@@ -41,7 +41,7 @@ test.describe('Fiches « Découvre ce bouton »', () => {
   });
   test('un niveau qui demande trois commandes nouvelles : trois fiches à la suite', async ({ page }) => {
     await ouvrir(page, { stockage: NEUF });
-    await page.locator('.node').nth(3).click();
+    await page.locator('.node').nth(6).click();
     await page.locator('#watchBtn').click();
     await expect(page.locator('#onbDots i')).toHaveCount(3);
     await expect(page.locator('#onbTitle')).toHaveText('Le bouton PLAY');
@@ -61,21 +61,21 @@ test.describe('Fiches « Découvre ce bouton »', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator('#onb')).toBeHidden();
     await expect(page.locator('#startBtn')).toHaveText('Jouer');
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await page.locator('#startBtn').click();
     await page.locator('#onbSkip').click();
     await expect(page.locator('#startBtn')).toHaveText('Arrêter', { timeout: 60000 });
   });
   test('parcours « Je sais déjà » : jamais de fiche imposée', async ({ page }) => {
     await ouvrir(page, { stockage: Object.assign({}, NEUF, { 'coach-parcours': 'deja' }) });
-    await page.locator('.node').nth(3).click();
+    await page.locator('.node').nth(6).click();
     await page.locator('#startBtn').click();
     await expect(page.locator('#startBtn')).toHaveText('Arrêter', { timeout: 60000 });
     await expect(page.locator('#onb')).toBeHidden();
   });
   test('« Revoir la fiche » dans « Comment faire ? », sans lancer de partie', async ({ page }) => {
     await ouvrir(page);
-    await page.locator('.node').nth(5).click();
+    await page.locator('.node').nth(3).click();
     await page.locator('.howto summary').click();
     await expect(page.locator('#lfiches button')).toHaveText(['Revoir la fiche : les faders', 'Revoir la fiche : l\'écho']);
     await page.locator('#lfiches button', { hasText: 'écho' }).click();
@@ -89,7 +89,7 @@ test.describe('Fiches « Découvre ce bouton »', () => {
   });
   test('ON de l\'effet sur la table compte dans la fiche de l\'écho', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-midi-map': S({ fxOn: { ch: 4, n: 71 } }) } });
-    await page.locator('.node').nth(5).click();
+    await page.locator('.node').nth(3).click();
     await page.evaluate(() => openOnb([FICHES.echo], { fiche: true, keys: ['echo'] }));
     await envoyer(page, 0x94, 71, 127);
     await expect(page.locator('#onbTry .ok')).toHaveText('Bien joué !');
@@ -99,13 +99,13 @@ test.describe('Fiches « Découvre ce bouton »', () => {
 test.describe('Avant de jouer : position de départ et gestes, bien séparés', () => {
   test('le swap : « Pendant le niveau » écrit le geste départ → arrivée, et la bulle ne le donne pas', async ({ page }) => {
     await ouvrir(page);
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await expect(page.locator('#planList li')).toHaveText(['Échange les basses : LOW de A normal → coupé, LOW de B coupé → normal']);
     await expect(page.locator('#tip')).not.toContainText('basses');
   });
   test('la transition complète : couper le LOW de B avant de lancer, puis les gestes dans l\'ordre', async ({ page }) => {
     await ouvrir(page);
-    await page.locator('.node').nth(3).click();
+    await page.locator('.node').nth(6).click();
     await expect(page.locator('#planList li')).toHaveText(['Avant de lancer B : LOW de B normal → coupé', 'Lance B (PLAY de droite)', 'Monte le fader de B jusqu\'en haut',
       'Échange les basses : LOW de A normal → coupé, LOW de B coupé → normal', 'Baisse le fader de A jusqu\'en bas']);
   });
@@ -121,7 +121,7 @@ test.describe('Avant de jouer : position de départ et gestes, bien séparés', 
   });
   test('avec la table : « Position de départ », un dessin et les mots « coupé » / « normal »', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true } });
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await expect(page.locator('#setup h3')).toHaveText('Position de départ');
     const etat = await miseEnPlace(page);
     expect(etat[0]).toContain('Potard LOW de A : normal (à midi)');
@@ -134,7 +134,7 @@ test.describe('Avant de jouer : position de départ et gestes, bien séparés', 
 test.describe('Après une fiche, table pas en place', () => {
   test('« Compris, on joue » montre la position de départ et dit quoi faire', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-fiches': null, 'coach-parcours': 'debut' } });
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await envoyer(page, 0xB0, 15, 64); await envoyer(page, 0xB1, 15, 0);
     await page.locator('#startBtn').click();
     await expect(page.locator('#onbTitle')).toHaveText('Le potard LOW : les basses');

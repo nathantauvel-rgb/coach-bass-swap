@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 const { ouvrir, sansBandeau, jouer } = require('./outils');
 
 const S = o => JSON.stringify(o);
-const JOUE = { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 3 }) };
+const JOUE = { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 5: 3 }) };
 const stocke = (page, cle) => page.evaluate(k => JSON.parse(localStorage.getItem(k) || 'null'), cle);
 const badges = page => page.locator('#homeBadges li.won strong').allTextContents();
 // Répond à la question affichée : la bonne réponse est lue dans la liste QUIZ du site

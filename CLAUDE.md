@@ -326,6 +326,17 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   demande, **« Vraie musique » est le choix par défaut** et en tête de la liste (un style choisi soi-même reste enregistré dans
   `coach-style` ; une valeur abîmée revient à `vrai`). Les tests jouent la house sauf indication contraire (`tests/outils.js`
   met `coach-style` à `house`). 243 tests verts.
+- **Lot 26 (16 oct. 2026)** : branche `lot-26-ordre` (partie de `lot-25-vrais-morceaux`), non publiée. Demande de l'utilisateur :
+  l'ordre du chapitre 1 venait de l'ordre d'ajout des niveaux. **Nouvel ordre**, chaque niveau ajoute une chose : 1. Le bon
+  moment · 2. Le fader · 3. La coupure sèche · 4. L'écho out · 5. Le filtre · 6. Le swap des basses · 7. La transition complète
+  (« Le final : tout toi-même, comme en soirée »). Le chapitre 2 suit le même ordre. Dans `js/niveaux.js` : `kind` écrit dans
+  chaque niveau, `[début, fin]`, `TARGETS` et `DEMO_CAPS` renumérotés. **Progression déplacée une seule fois**
+  (`ORDRE_1` = ancien numéro → nouveau, `ordreMigre`, clé `coach-ordre` = `2`) : `coach-lecons`, `coach-lecons-oreille`,
+  `coach-ch2`, records de `coach-expert`, `coach-test` (`ko:N`), parties et « C'était clair ? » du journal (chapitres 1 et 2).
+  Quiz : niveaux `b0`-`b6` renumérotés, **identifiants inchangés** (`b6a` est une question du niveau `b2`). Badges « Swap
+  propre » et « Comme en soirée » : niveaux 5 et 6 (`bdBest`, `BADGE_PROG`). Test de placement : `P_STEPS = [0, 5, 6]`.
+  Textes : étape « Les bases », README. Images de la présentation refaites (`tests/images-presentation.js` : swap = niveau 6).
+  Tests : numéros de niveau mis à jour, `tests/outils.js` met `coach-ordre` à `2`, nouveau `tests/ordre.spec.js`.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -412,7 +423,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - **Morceaux** : `makeSong(style, role, seed, secs, o)` (synthèse procédurale, `STYLE_DEFS`, `VARIANTS = 4`),
   calculés dans des Web Workers (`workerPool`, `renderSong`). Cache `getSong(sty, vr, part)` + `songSafe`
   (relance une fois). `chooseSongs()` précharge dès le choix du niveau. `startRun(demo)` lance la partie.
-- **Niveaux** : `BASE_LESSONS` (kinds moment, fader, swap, full, filter, echo, cut ; `targets`, `caps`)
+- **Niveaux** : `BASE_LESSONS` (kinds moment, fader, cut, echo, filter, swap, full, dans cet ordre depuis le lot 26 ; `targets`, `caps`)
   et `CH3_LESSONS`.
 - **Lisibilité** : `ACT` (texte d'action par cible), `GROUP_OF`, `setFocus(ids)` (classe `.focus`),
   `showAction` (« Dans N temps : … » puis « Maintenant : … ! »), `<details class="howto">`.
@@ -434,7 +445,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-expert` (Mode Expert choisi, records sur 100), `coach-bibliotheque` (`coach.html`).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -448,7 +459,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

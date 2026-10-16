@@ -3,32 +3,31 @@
 'use strict';
 /* ---------- Niveaux ---------- */
 const BASE_LESSONS = [
-  { title: 'Le bon moment', goal: 'Lance B pile quand A entre dans son outro.',
+  { kind: 'moment', title: 'Le bon moment', goal: 'Lance B pile quand A entre dans son outro.',
     how: 'Le geste arrive sur la piste : appuie sur LANCE B (ou PLAY de droite sur ta table) quand il touche la ligne. Tout le reste est automatique.',
     show: ['gPlay'], bBass: false, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: [] },
-  { title: 'Le fader', goal: 'Fais entrer B en douceur, puis fais sortir A avant le drop.',
+  { kind: 'fader', title: 'Le fader', goal: 'Fais entrer B en douceur, puis fais sortir A avant le drop.',
     how: 'B démarre tout seul, fader en bas. Monte son fader jusqu\'en haut, doucement, sur 16 à 32 temps. Puis baisse celui de A jusqu\'en bas : il doit y être quand le drop de B arrive sur la ligne.',
     show: ['gFad'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: ['faderA', 'faderB'] },
-  { title: 'Le swap des basses', goal: 'Échange les basses de A et B pile sur la ligne.',
-    how: 'B arrive tout seul, basses coupées. Quand le repère « SWAP » touche la ligne, échange les basses d\'un seul geste, une main sur chaque potard : LOW de A normal → coupé, LOW de B coupé → normal.',
-    show: ['gLow'], bBass: true, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: 0 }, user: ['lowA', 'lowB'] },
-  { title: 'La transition complète', goal: 'Tout toi-même, comme en soirée.',
-    how: 'Avant de lancer B, coupe son LOW (normal → coupé). Lance B quand le repère touche la ligne et monte son fader jusqu\'en haut. À la phrase suivante, échange les basses (LOW de A coupé, LOW de B normal). Enfin, baisse le fader de A jusqu\'en bas avant le drop.',
-    show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: ['faderA', 'faderB', 'lowA', 'lowB'] },
-  { kind: 'filter', title: 'Le filtre', goal: 'Efface A en douceur avec le filtre pendant que B monte.',
-    how: 'B arrive tout seul. Quand « FILTRE » touche la ligne, tourne le potard CFX de A vers la droite, lentement : il doit être tout à droite quand « À FOND » arrive, juste avant le drop de B.',
-    show: ['gCfx'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5 }, user: ['cfxA'], start: 24, end: 112 },
+  { kind: 'cut', title: 'La coupure sèche', goal: 'Coupe A et lance B sur son drop, au même instant.',
+    how: 'B est calé sur son drop. Quand les losanges touchent la ligne, lance B (PLAY droite ou espace) et baisse d\'un coup le fader de A, dans le même geste.',
+    show: ['gPlay', 'gFad'], bBass: false, autoLaunch: false, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], start: 40, end: 96 },
   { kind: 'echo', title: 'L\'écho out', goal: 'Fais disparaître A dans un écho, puis B tombe sur son drop.',
     how: 'Sur le dernier temps avant la ligne, active l\'écho (bouton ECHO, ON de l\'effet sur ta table, ou touche E), puis baisse d\'un coup le fader de A sur la ligne. B démarre tout seul sur son drop.',
     show: ['gEcho', 'gFad'], bBass: false, autoLaunch: true, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], btn: ['echo'], start: 40, end: 96 },
-  { kind: 'cut', title: 'La coupure sèche', goal: 'Coupe A et lance B sur son drop, au même instant.',
-    how: 'B est calé sur son drop. Quand les losanges touchent la ligne, lance B (PLAY droite ou espace) et baisse d\'un coup le fader de A, dans le même geste.',
-    show: ['gPlay', 'gFad'], bBass: false, autoLaunch: false, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], start: 40, end: 96 }
+  { kind: 'filter', title: 'Le filtre', goal: 'Efface A en douceur avec le filtre pendant que B monte.',
+    how: 'B arrive tout seul. Quand « FILTRE » touche la ligne, tourne le potard CFX de A vers la droite, lentement : il doit être tout à droite quand « À FOND » arrive, juste avant le drop de B.',
+    show: ['gCfx'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5 }, user: ['cfxA'], start: 24, end: 112 },
+  { kind: 'swap', title: 'Le swap des basses', goal: 'Échange les basses de A et B pile sur la ligne.',
+    how: 'B arrive tout seul, basses coupées. Quand le repère « SWAP » touche la ligne, échange les basses d\'un seul geste, une main sur chaque potard : LOW de A normal → coupé, LOW de B coupé → normal.',
+    show: ['gLow'], bBass: true, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: 0 }, user: ['lowA', 'lowB'] },
+  { kind: 'full', title: 'La transition complète', goal: 'Le final : tout toi-même, comme en soirée.',
+    how: 'Avant de lancer B, coupe son LOW (normal → coupé). Lance B quand le repère touche la ligne et monte son fader jusqu\'en haut. À la phrase suivante, échange les basses (LOW de A coupé, LOW de B normal). Enfin, baisse le fader de A jusqu\'en bas avant le drop.',
+    show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: ['faderA', 'faderB', 'lowA', 'lowB'] }
 ];
-BASE_LESSONS.forEach(l => { l.kind = l.kind || 'swap'; l.init.cfxA = l.init.cfxA ?? .5; l.launchBeat = l.launchBeat || 32; l.bCue = l.bCue || 0; l.start = l.start || 16; l.end = l.end || 116; l.btn = l.btn || []; });
-['moment', 'fader', 'swap', 'full'].forEach((k, i) => { BASE_LESSONS[i].kind = k; });
+BASE_LESSONS.forEach(l => { l.init.cfxA = l.init.cfxA ?? .5; l.launchBeat = l.launchBeat || 32; l.bCue = l.bCue || 0; l.start = l.start || 16; l.end = l.end || 116; l.btn = l.btn || []; });
 // [début, fin] en temps : la partie s'arrête peu après le dernier geste noté (avant, tous duraient jusqu'au temps 116)
-[[20, 44], [24, 100], [24, 72], [16, 100], [24, 100], [40, 74], [40, 72]].forEach(([s, e], i) => { BASE_LESSONS[i].start = s; BASE_LESSONS[i].end = e; });
+[[20, 44], [24, 100], [40, 72], [40, 74], [24, 100], [24, 72], [16, 100]].forEach(([s, e], i) => { BASE_LESSONS[i].start = s; BASE_LESSONS[i].end = e; });
 const FULL = ['k', 'b', 'h', 'c', 'cl'], CH3_INIT = { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5, midA: .5, midB: .5 };
 const CH3_LESSONS = [
   { kind: 'shortintro', wave: true, title: 'L\'intro courte', goal: 'Lance B pour que son drop tombe pile quand A s\'arrête.',
@@ -58,7 +57,7 @@ function randomizeRead(l){
   l.caps = [[aOut, 'A entre dans son outro'], [l.launchBeat, `B lancé : ${bi} temps avant la fin de A`], [l.aEnd, 'Drop de B pile à la fin de A']];
 }
 let LESSONS = BASE_LESSONS;
-const TARGETS = { 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A']], 6: [[64, 'LANCE B', 'B'], [64, 'COUPE A', 'A']], 0: [[32, 'LANCE B', 'B']], 1: [[32, 'MONTE B', 'B'], [64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'SWAP', 'AB']], 3: [[32, 'LANCE B', 'B'], [56, 'B À FOND', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
+const TARGETS = { 0: [[32, 'LANCE B', 'B']], 1: [[32, 'MONTE B', 'B'], [64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'LANCE B', 'B'], [64, 'COUPE A', 'A']], 3: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A']], 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[64, 'SWAP', 'AB']], 6: [[32, 'LANCE B', 'B'], [56, 'B À FOND', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
 const ACT = { 'LANCE B': 'lance B (PLAY de droite)', 'MONTE B': 'commence à monter le fader de B, doucement', 'B À FOND': 'monte le fader de B jusqu\'en haut', 'A SORTI': 'baisse le fader de A jusqu\'en bas', 'SWAP': 'échange les basses : LOW de A normal → coupé, LOW de B coupé → normal',
   'FILTRE': 'commence à tourner le filtre de A vers la droite, lentement', 'À FOND': 'filtre de A tout à droite', 'ECHO': 'allume l\'écho', 'COUPE A': 'baisse d\'un coup le fader de A jusqu\'en bas', 'VOIX': 'coupe le MID de A (normal → coupé)' };
 const GROUP_OF = { 'LANCE B': 'gPlay', 'MONTE B': 'gFad', 'B À FOND': 'gFad', 'A SORTI': 'gFad', 'SWAP': 'gLow', 'FILTRE': 'gCfx', 'À FOND': 'gCfx', 'ECHO': 'gEcho', 'COUPE A': 'gFad', 'VOIX': 'gMid' };
@@ -81,6 +80,25 @@ let speed = 1, slowFails = {};
 let preparing = false, li = 0, run = null, ear = false, styleChoice = 'vrai', chapter = 1, TOL = 1, placement = null, prac = null;
 // Mode Expert (expert.js) : choisi par le joueur ; xRun vaut true pendant la notation d'une partie jouée en Expert
 let expert = false, xRun = false;
+// Nouvel ordre du chapitre 1 (16 oct. 2026) : coupure, écho et filtre avant le swap, la transition complète en dernier.
+// Ce qui a été enregistré avec l'ancien ordre (étoiles, records, test de placement, journal) est déplacé une seule fois vers
+// la nouvelle place de chaque niveau ; la clé coach-ordre dit que c'est fait.
+const ORDRE_1 = [0, 1, 5, 6, 4, 3, 2];   // ancien numéro d'un niveau du chapitre 1 → nouveau numéro
+(function ordreMigre(){
+  try {
+    if (localStorage.getItem('coach-ordre') === '2') return;
+    const parNiveau = o => { if (!o || typeof o !== 'object' || Array.isArray(o)) return o; const r = {}; for (const [k, v] of Object.entries(o)) r[/^[0-6]$/.test(k) ? ORDRE_1[k] : k] = v; return r; };
+    const json = (k, f) => { const t = localStorage.getItem(k); if (t == null) return; let v; try { v = JSON.parse(t); } catch (e) { return; } localStorage.setItem(k, JSON.stringify(f(v))); };
+    for (const k of ['coach-lecons', 'coach-lecons-oreille', 'coach-ch2']) json(k, parNiveau);
+    json('coach-expert', v => v && typeof v === 'object' && !Array.isArray(v) ? Object.assign({}, v, { best: parNiveau(v.best) }) : v);
+    const t = localStorage.getItem('coach-test'); if (/^ko:[0-6]$/.test(t || '')) localStorage.setItem('coach-test', 'ko:' + ORDRE_1[t.slice(3)]);
+    json('coach-journal', v => { if (!v || typeof v !== 'object' || Array.isArray(v)) return v;
+      if (Array.isArray(v.parties)) v.parties = v.parties.map(x => x && (x.c === 1 || x.c === 2) && ORDRE_1[x.n] != null ? Object.assign({}, x, { n: ORDRE_1[x.n] }) : x);
+      if (v.clair && typeof v.clair === 'object') v.clair = Object.fromEntries(Object.entries(v.clair).map(([k, x]) => { const m = /^([12])-([0-6])$/.exec(k); return [m ? m[1] + '-' + ORDRE_1[m[2]] : k, x]; }));
+      return v; });
+    localStorage.setItem('coach-ordre', '2');
+  } catch (e) {}
+})();
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 let earStars = {}; try { earStars = JSON.parse(localStorage.getItem('coach-lecons-oreille') || '{}') || {}; } catch (e) {}
 try { styleChoice = localStorage.getItem('coach-style') || 'vrai'; } catch (e) {}
@@ -287,11 +305,11 @@ function ideal(k, b, i = li){
 }
 const DEMO_CAPS = { 0: [[32, 'B part sur le 1 de l\'outro'], [38, 'Même tempo, même phrase : B joue sous A']],
   1: [[32, 'B entre, fader en bas'], [56, 'B est à fond'], [92, 'A est sorti'], [96, 'Drop de B !']],
-  2: [[32, 'B arrive, basses coupées'], [64, 'Swap : A coupé, B ouvert'], [68, 'Les basses de B ont pris le relais']],
-  3: [[30, 'LOW de B coupé avant de lancer'], [32, 'B part sur le 1'], [56, 'B est à fond'], [64, 'Swap des basses'], [92, 'A est sorti'], [96, 'Drop de B !']] };
-Object.assign(DEMO_CAPS, { 4: [[32, 'B arrive'], [64, 'Le filtre commence : A perd ses basses'], [80, 'On continue lentement'], [92, 'Filtre à fond : A n\'est plus qu\'un souffle'], [96, 'Drop de B !']],
-  5: [[60, 'Écoute la fin de phrase de A'], [63, 'Écho activé sur le dernier temps'], [64, 'Fader de A coupé : l\'écho résonne'], [66, 'B tombe sur son drop']],
-  6: [[60, 'Prépare tes deux mains'], [64, 'A coupé et B lancé, au même instant'], [68, 'Transition nette, sans mélange']] });
+  2: [[60, 'Prépare tes deux mains'], [64, 'A coupé et B lancé, au même instant'], [68, 'Transition nette, sans mélange']],
+  3: [[60, 'Écoute la fin de phrase de A'], [63, 'Écho activé sur le dernier temps'], [64, 'Fader de A coupé : l\'écho résonne'], [66, 'B tombe sur son drop']],
+  4: [[32, 'B arrive'], [64, 'Le filtre commence : A perd ses basses'], [80, 'On continue lentement'], [92, 'Filtre à fond : A n\'est plus qu\'un souffle'], [96, 'Drop de B !']],
+  5: [[32, 'B arrive, basses coupées'], [64, 'Swap : A coupé, B ouvert'], [68, 'Les basses de B ont pris le relais']],
+  6: [[30, 'LOW de B coupé avant de lancer'], [32, 'B part sur le 1'], [56, 'B est à fond'], [64, 'Swap des basses'], [92, 'A est sorti'], [96, 'Drop de B !']] };
 BASE_LESSONS.forEach((l, i) => { l.targets = TARGETS[i]; l.caps = DEMO_CAPS[i]; });
 function demoCaptions(b){ const caps = LESSONS[li].caps; while (run.cap < caps.length && b >= caps[run.cap][0]){ pop(caps[run.cap][1], 'ok'); run.cap++; } }
 function automate(b){

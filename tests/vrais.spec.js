@@ -46,7 +46,7 @@ test.describe('Choisir la vraie musique', () => {
   });
   test('le niveau qui a des basses dans l\'intro de B prend un autre morceau B', async ({ page }) => {
     await ouvrir(page, { stockage: { 'coach-style': 'vrai' } });
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await expect(page.locator('#styleTag')).toHaveText(/puis « The Power Of The Beat »/);
     await page.locator('.node').nth(0).click();
     await expect(page.locator('#styleTag')).not.toHaveText(/Power/);

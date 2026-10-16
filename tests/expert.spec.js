@@ -90,7 +90,7 @@ test.describe('Mode Expert', () => {
 test.describe('Mode Expert : les gestes continus', () => {
   test('le swap parfait au temps entendu donne un score élevé, écrit en millisecondes', async ({ page }) => {
     await ouvrir(page, { stockage: EXPERT });
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await page.locator('#startBtn').click();
     await expect(page.locator('#startBtn')).toHaveText('Arrêter', { timeout: 60000 });
     await page.evaluate(() => { const tick = () => { if (!run) return; const hb = heardBeat(); for (const k of ['lowA', 'lowB']) ctrl[k] = ideal(k, hb); applyCtrl(); requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
@@ -103,7 +103,7 @@ test.describe('Mode Expert : les gestes continus', () => {
 
 test('Mode Expert : un geste sur la table est noté à l\'instant où il arrive', async ({ page }) => {
   await ouvrir(page, { stockage: EXPERT, midi: { branchee: true } });
-  await page.locator('.node').nth(2).click();
+  await page.locator('.node').nth(5).click();
   await page.evaluate(() => { window.__midi.envoyer(0xB0, 15, 64); window.__midi.envoyer(0xB1, 15, 0); });
   await page.locator('#startBtn').click();
   await expect(page.locator('#startBtn')).toHaveText('Arrêter', { timeout: 60000 });

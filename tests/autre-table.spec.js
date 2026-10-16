@@ -27,7 +27,7 @@ test.describe('Une autre table, pas encore réglée', () => {
     await expect(page.locator('#midiPill')).toHaveText(`${AUTRE} · à régler`);
     await expect(page.locator('#midiPill')).not.toHaveClass(/\bon\b/);
     // ses numéros ne sont pas ceux de la FLX4 : pas de position de départ demandée, « Jouer » reste libre
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await expect(page.locator('#setup')).toBeHidden();
     await expect(page.locator('#startBtn')).toBeEnabled();
     await envoyer(page, 0xB0, 15, 0);
@@ -38,7 +38,7 @@ test.describe('Une autre table, pas encore réglée', () => {
   });
   test('dans une fiche, le curseur à l\'écran remplace la table pas encore réglée', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: AUTRE }, stockage: { 'coach-fiches': null, 'coach-parcours': 'debut' } });
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await page.locator('#startBtn').click();
     await expect(page.locator('#onbTitle')).toHaveText('Le potard LOW : les basses');
     await expect(page.locator('#onbNote')).toHaveText('Ta table n\'est pas encore réglée : le curseur ci-dessus fait la même chose.');
@@ -93,7 +93,7 @@ test.describe('Régler ma table pas à pas', () => {
     await expect(page.locator('#midiPill')).toHaveClass(/\bon\b/);
     await expect(page.locator('#tableBar')).toBeHidden();
     // la table pilote maintenant le site : position de départ du swap, avec ses propres numéros
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await expect(page.locator('#setup')).toBeVisible();
     await expect(page.locator('#startBtn')).toBeDisabled();
     await envoyer(page, 0xB0, 3, 64); await envoyer(page, 0xB1, 3, 0);
@@ -162,7 +162,7 @@ test.describe('Une autre table déjà réglée', () => {
   test('une commande qu\'elle n\'a pas se fait à l\'écran et ne bloque pas « Jouer »', async ({ page }) => {
     const sansLowA = Object.assign({}, REGLEE); delete sansLowA.lowA;
     await ouvrir(page, { midi: { branchee: AUTRE }, stockage: { 'coach-table': S({ nom: AUTRE }), 'coach-midi-map': S(sansLowA) } });
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     const etat = await miseEnPlace(page);
     expect(etat[0]).toContain('à l\'écran : ta table n\'en a pas');
     expect(etat[0].startsWith('ok')).toBe(true);
@@ -227,7 +227,7 @@ test.describe('Une autre table déjà réglée', () => {
 test.describe('Le schéma suit la table', () => {
   test('fiche : l\'aiguille du potard LOW dessiné tourne avec le vrai, et avec le curseur', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-fiches': null, 'coach-parcours': 'debut' } });
-    await page.locator('.node').nth(2).click();
+    await page.locator('.node').nth(5).click();
     await envoyer(page, 0xB0, 15, 64); await envoyer(page, 0xB1, 15, 0);
     await page.locator('#startBtn').click();
     await expect(page.locator('#onbTitle')).toHaveText('Le potard LOW : les basses');

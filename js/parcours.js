@@ -31,7 +31,7 @@ const STAGES = {
     done: () => guideSeen, cta: () => 'Commencer le guide', go: () => { location.hash = '#apprendre'; setView('apprendre'); } },
   test: { title: 'Le test de placement', text: 'Trois épreuves courtes pour voir où tu en es : le bon moment, le swap des basses, la transition complète.',
     done: () => !!testDone || ch2Unlocked(), cta: () => 'Passer le test', go: () => { goLesson(1, null); startPlacement(); } },
-  ch1: { title: 'Les bases', text: 'Sept gestes, un par niveau : lancer au bon moment, le fader, le swap des basses, la transition complète, le filtre, l\'écho, la coupure.',
+  ch1: { title: 'Les bases', text: 'Sept gestes, un par niveau : lancer au bon moment, le fader, la coupure, l\'écho, le filtre, le swap des basses, puis la transition complète pour finir.',
     done: () => ch2Unlocked(), prog: () => `${sumStars(stars)} ★ sur 14`,
     cta: () => { const i = firstTodo(stars, BASE_LESSONS.length, testFail()); return `Niveau ${i + 1} : ${BASE_LESSONS[i].title}`; },
     go: () => goLesson(1, firstTodo(stars, BASE_LESSONS.length, testFail())) },
