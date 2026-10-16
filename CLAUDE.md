@@ -32,10 +32,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 13 oct. 2026, fin de session)
-- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
+- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26, 28 et 29 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
-  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini ;
+  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini, « Ça bouge » ;
   le lot 22 a été abandonné, le lot 27 est une direction artistique sans code). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
 - **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (19 points)
@@ -382,6 +382,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   nombre de jours d'affilée en grand, semaine du lundi au dimanche avec les jours réussis cochés, « Continuer » (ou Échap) mène à la
   carte de résultat. Nouvelle humeur `calme` et classe `vn-fn` (notes de musique seulement quand il danse). Nouveau
   `tests/ca-bouge.spec.js`. 273 tests verts. Images de la présentation refaites.
+- **Lot 29 publié le 16 oct. 2026** (accord de l'utilisateur ; gardien : feu orange, défaut d'Échap sur l'écran de la série corrigé
+  avant : l'écouteur passe en premier et arrête la touche). Production vérifiée (Vini calme puis danse puis joie, écran de série,
+  carte de fin +30 / 100 % / 0:12, aucune erreur). Notion à jour. À demander à l'utilisateur : le doré et les trois cartes de couleur
+  font-ils trop ? Pistes suivantes possibles : Vini sur l'accueil et « Mes progrès », sons de réussite, quêtes du jour façon Duolingo.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
