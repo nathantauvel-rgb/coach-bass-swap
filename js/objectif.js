@@ -52,3 +52,22 @@ function goalNote(){
   goalFresh = false;
 }
 document.querySelectorAll('#progGoalSet [data-goal]').forEach(b => b.addEventListener('click', () => { goalSet(+b.dataset.goal); renderProgres(); }));
+/* ---------- Écran de la série (lot 29) ----------
+   Quand l'objectif du jour vient d'être atteint : Vini danse à côté d'une flamme, le nombre de jours d'affilée en grand,
+   et la semaine en cours (lundi à dimanche), chaque jour où l'objectif a été atteint coché. */
+const SEM_LETTRES = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+function openSerie(){
+  const n = Math.max(1, goalStreak()), auj = new Date(), lundi = new Date(auj); lundi.setDate(auj.getDate() - (auj.getDay() + 6) % 7);
+  $('serieNum').textContent = String(n); $('serieTxt').textContent = n > 1 ? 'jours d’affilée\u00a0!' : 'jour d’affilée\u00a0!';
+  $('serieDit').textContent = n > 1 ? `Objectif atteint ${n} jours de suite\u00a0! Reviens demain pour continuer ta série.` : 'Objectif du jour atteint\u00a0! Reviens demain pour garder ta série.';
+  const ol = $('serieSem'); ol.innerHTML = '';
+  for (let i = 0; i < 7; i++){ const d = new Date(lundi); d.setDate(lundi.getDate() + i); const k = dayKey(d), fait = goal.faits.includes(k), li = document.createElement('li'), l = document.createElement('span'), rond = document.createElement('i');
+    li.className = (fait ? 'fait' : '') + (k === dayKey() ? ' auj' : ''); l.textContent = SEM_LETTRES[i];
+    if (fait) rond.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12.5l4 4 8-8.5"/></svg>';
+    li.setAttribute('aria-label', d.toLocaleDateString('fr-FR', { weekday: 'long' }) + (fait ? ' : objectif atteint' : '')); li.append(l, rond); ol.appendChild(li); }
+  if (!$('serieVini').firstChild) viniMettre($('serieVini'), 'danse'); else viniHumeur($('serieVini'), 'danse');
+  $('serie').hidden = false; $('serieGo').focus({ preventScroll: true });
+}
+function closeSerie(){ $('serie').hidden = true; const r = $('retry'); if (!$('result').hidden && r && !r.hidden) r.focus({ preventScroll: true }); }
+$('serieGo').addEventListener('click', closeSerie);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('serie').hidden) closeSerie(); });

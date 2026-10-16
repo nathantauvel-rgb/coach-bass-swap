@@ -805,13 +805,13 @@ button.pgch:hover{background:var(--panel)}
 .vn-anneau{stroke:var(--vini-ring);stroke-width:2.5} .vn-fossette{stroke-width:3} .vn-sourcil{stroke-width:3.5}
 .vn-arceau{stroke-width:14} .vn-arceau2{stroke-width:3.5;opacity:.9}
 .vn-f{display:none}
-.vn-danse .vn-fd,.vn-danse .vn-fb,.vn-rate .vn-fr,.vn-rate .vn-fb,.vn-parfait .vn-fp{display:inline}
+.vn-danse .vn-fd,.vn-danse .vn-fb,.vn-danse .vn-fn,.vn-rate .vn-fr,.vn-rate .vn-fb,.vn-parfait .vn-fp,.vn-calme .vn-fd,.vn-calme .vn-fb{display:inline}
 .vn-corps{transform-box:view-box;transform-origin:120px 240px}
-.vn-danse .vn-corps{animation:vn-bob var(--vini-beat) infinite cubic-bezier(.3,.7,.4,1)}
+.vn-danse .vn-corps{animation:vn-bob var(--vini-beat) infinite cubic-bezier(.3,.7,.4,1);animation-delay:var(--vini-delay,0s)}
 .vn-parfait .vn-corps{animation:vn-joie calc(var(--vini-beat)*2) infinite cubic-bezier(.3,.7,.4,1)}
 .vn-rate .vn-corps{animation:vn-triste 2.4s infinite ease-in-out}
 .vn-ombre{transform-box:view-box;transform-origin:120px 246px}
-.vn-danse .vn-ombre{animation:vn-ombre var(--vini-beat) infinite cubic-bezier(.3,.7,.4,1)}
+.vn-danse .vn-ombre{animation:vn-ombre var(--vini-beat) infinite cubic-bezier(.3,.7,.4,1);animation-delay:var(--vini-delay,0s)}
 .vn-parfait .vn-ombre{animation:vn-ombre-joie calc(var(--vini-beat)*2) infinite cubic-bezier(.3,.7,.4,1)}
 .vn-yeux{transform-box:fill-box;transform-origin:50% 50%;animation:vn-cligne 4.2s infinite}
 .vn-reflet{transform-box:view-box;transform-origin:120px 132px;animation:vn-tourne 1.9s linear infinite}
@@ -893,3 +893,44 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .pp-go:focus-visible,.pp-opt:focus-visible,.pp-back:focus-visible,.pp-skip:focus-visible{outline:3px solid var(--brand-light);outline-offset:3px}
 @media (max-width:420px){.pp-head .vini{width:96px;height:104px}.pp-bubble{font-size:18px}.pp-opt{font-size:17px}}
 @media (prefers-reduced-motion: reduce){.vini *,.pp-in,.pp-in-back,.pp-opt,.pp-note,.pp-bar i{animation:none!important;transition:none!important}}
+
+/* ---------- Ça bouge (lot 29) : Vini dans les niveaux, carte de résultat, écran de la série ---------- */
+.buddy .vini{width:84px;height:91px}
+.buddy .bubble{position:relative}
+.buddy .vini + .bubble::before{content:"";position:absolute;left:-6px;bottom:20px;width:14px;height:14px;background:var(--hi);transform:rotate(45deg);border-radius:2px}
+.rvini{width:132px;height:143px;margin:-4px auto -8px}
+.rcard h2.win{color:var(--mid)}
+.rstats{display:flex;justify-content:center;gap:10px}
+.rstat{flex:1 1 0;max-width:170px;border:3px solid var(--line);border-radius:16px;overflow:hidden;animation:rstat-in .4s ease-out both}
+.rstat:nth-child(2){animation-delay:.12s} .rstat:nth-child(3){animation-delay:.24s}
+.rstat .rlab{display:block;padding:5px 4px;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.rstat .rval{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 4px;font-size:22px;font-weight:900;font-variant-numeric:tabular-nums}
+.rstat .rval svg{width:20px;height:20px;flex-shrink:0}
+.rstat.xp{border-color:var(--mid)} .rstat.xp .rlab{background:var(--mid)} .rstat.xp .rval{color:var(--mid)}
+.rstat.prec{border-color:var(--ok)} .rstat.prec .rlab{background:var(--ok)} .rstat.prec .rval{color:var(--ok)}
+.rstat.temps{border-color:var(--brand)} .rstat.temps .rlab{background:var(--brand)} .rstat.temps .rval{color:var(--brand-light)}
+@keyframes rstat-in{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.serie{position:fixed;inset:0;z-index:41;background:var(--bg);display:flex;justify-content:center;overflow:auto}
+.serie-col{width:100%;max-width:480px;min-height:100%;display:flex;flex-direction:column;align-items:center;gap:6px;padding:48px 18px calc(24px + env(safe-area-inset-bottom, 0px))}
+.serie .serie-bulle{flex:none;text-align:center;max-width:380px}
+.serie .serie-bulle::before{left:50%;top:auto;bottom:-10px;margin-left:-8px;border-left:0;border-right:2px solid var(--line)}
+.serie-scene{display:flex;align-items:flex-end;justify-content:center;margin-top:22px}
+.serie-flamme{width:136px;height:196px;transform-origin:50% 100%;animation:serie-flamme calc(var(--vini-beat)*2) infinite ease-in-out}
+.serie-flamme .sf1{fill:var(--mid)} .serie-flamme .sf2{fill:var(--vini-spark)}
+.serie-scene .vini{width:176px;height:191px;margin-left:-34px}
+.serie-num{font-size:120px;line-height:1;font-weight:900;color:var(--mid);margin-top:10px;animation:serie-num .55s cubic-bezier(.3,1.5,.5,1) both .2s}
+.serie-txt{font-size:28px;font-weight:900;color:var(--mid)}
+.serie-sem{list-style:none;margin:22px 0 28px;padding:0;width:100%;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.serie-sem li{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:15px;font-weight:900;color:var(--muted)}
+.serie-sem i{width:40px;height:40px;border-radius:50%;background:var(--off);display:grid;place-items:center;color:var(--ink)}
+.serie-sem svg{width:22px;height:22px}
+.serie-sem li.fait i{background:var(--mid)}
+.serie-sem li.auj{color:var(--mid)}
+.serie-sem li.auj.fait i{animation:serie-jour .45s cubic-bezier(.3,1.6,.5,1) both .7s}
+.serie .pp-go{margin-top:auto}
+@keyframes serie-flamme{0%,100%{transform:scale(1,1) skewX(0)}30%{transform:scale(1.04,.95) skewX(-3deg)}65%{transform:scale(.97,1.05) skewX(3deg)}}
+@keyframes serie-num{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+@keyframes serie-jour{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.rstat .rlab,.rstat .rval{white-space:nowrap}
+@media (max-width:420px){.rvini{width:104px;height:113px}.rstats{gap:6px}.rstat .rval{font-size:19px;padding:9px 2px}.rstat .rval svg{display:none}.rstat .rlab{font-size:10.5px;letter-spacing:.02em;padding:5px 2px}}
+@media (prefers-reduced-motion: reduce){.rstat,.serie-flamme,.serie-num,.serie-sem i{animation:none!important}}

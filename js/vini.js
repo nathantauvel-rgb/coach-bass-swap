@@ -3,8 +3,8 @@
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* ---------- Vini ----------
-   Trois humeurs, choisies par une classe sur l'enveloppe : vn-danse (il danse), vn-parfait (il saute de joie),
-   vn-rate (il est déçu). Toutes les parties sont dans le dessin, la feuille de style n'affiche que celles de l'humeur. */
+   Quatre humeurs, choisies par une classe sur l'enveloppe : vn-calme (il attend en clignant des yeux), vn-danse (il danse),
+   vn-parfait (il saute de joie), vn-rate (il est déçu). Toutes les parties sont dans le dessin, la feuille de style n'affiche que celles de l'humeur. */
 const VINI_SVG = `<svg viewBox="0 0 240 260" aria-hidden="true" focusable="false">
 <ellipse class="vn-sh vn-ombre" cx="120" cy="246" rx="58" ry="8"/>
 <g class="vn-corps">
@@ -26,14 +26,33 @@ const VINI_SVG = `<svg viewBox="0 0 240 260" aria-hidden="true" focusable="false
   <rect class="vn-dk" x="14" y="98" width="31" height="56" rx="14"/><rect class="vn-dk2" x="38" y="104" width="13" height="44" rx="6.5"/><rect class="vn-dk3" x="20" y="106" width="6" height="22" rx="3"/>
   <rect class="vn-dk" x="195" y="98" width="31" height="56" rx="14"/><rect class="vn-dk2" x="189" y="104" width="13" height="44" rx="6.5"/><rect class="vn-dk3" x="214" y="106" width="6" height="22" rx="3"/>
 </g>
-<g class="vn-f vn-fd"><g class="vn-note"><ellipse class="vn-m3" cx="206" cy="50" rx="6.5" ry="5" transform="rotate(-20 206 50)"/><rect class="vn-m3" x="210.5" y="28" width="3" height="22" rx="1.5"/><path class="vn-m3" d="M212 28 Q222 32 220 42 Q217 36 212 35 Z"/></g>
+<g class="vn-f vn-fn"><g class="vn-note"><ellipse class="vn-m3" cx="206" cy="50" rx="6.5" ry="5" transform="rotate(-20 206 50)"/><rect class="vn-m3" x="210.5" y="28" width="3" height="22" rx="1.5"/><path class="vn-m3" d="M212 28 Q222 32 220 42 Q217 36 212 35 Z"/></g>
   <g class="vn-note vn-n2"><ellipse class="vn-m3" cx="30" cy="62" rx="6" ry="4.6" transform="rotate(-20 30 62)"/><rect class="vn-m3" x="34" y="42" width="3" height="20" rx="1.5"/></g></g>
 <g class="vn-f vn-fp"><path class="vn-sp vn-etoile" d="M40 26 l3.2 -9.2 l3.2 9.2 l9.2 3.2 l-9.2 3.2 l-3.2 9.2 l-3.2 -9.2 l-9.2 -3.2 z"/><path class="vn-sp vn-etoile vn-t2" d="M196 18 l2.6 -7.4 l2.6 7.4 l7.4 2.6 l-7.4 2.6 l-2.6 7.4 l-2.6 -7.4 l-7.4 -2.6 z"/><path class="vn-sp vn-etoile vn-t3" d="M222 120 l2.2 -6 l2.2 6 l6 2.2 l-6 2.2 l-2.2 6 l-2.2 -6 l-6 -2.2 z"/></g>
 <g class="vn-f vn-fr"><path class="vn-dr vn-goutte" d="M160 88 Q166 98 166 102 A6 6 0 0 1 154 102 Q154 98 160 88 Z"/></g>
 </svg>`;
-const VINI_HUMEURS = ['danse', 'parfait', 'rate'];
+const VINI_HUMEURS = ['calme', 'danse', 'parfait', 'rate'];
 // Place Vini dans `el` (vide au départ) avec une humeur ; le texte lu par les lecteurs d'écran va sur l'enveloppe
 function viniMettre(el, humeur = 'danse'){ el.classList.add('vini'); el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Vini, la mascotte de DJingo'); el.innerHTML = VINI_SVG; viniHumeur(el, humeur); }
 function viniHumeur(el, humeur){ if (!VINI_HUMEURS.includes(humeur)) humeur = 'danse'; for (const h of VINI_HUMEURS) el.classList.toggle('vn-' + h, h === humeur); }
 // Un « Parfait ! » qui dure un instant (après un bon choix, par exemple), puis Vini se remet à danser
 function viniJoie(el, ms = 900){ viniHumeur(el, 'parfait'); clearTimeout(el._vn); el._vn = setTimeout(() => viniHumeur(el, 'danse'), ms); }
+/* ---------- Vini pendant une partie (lot 29) ----------
+   À côté de la bulle de conseil : il attend (calme), danse pile sur les temps du morceau pendant la partie, saute de joie
+   sur un geste réussi et baisse les bras sur un raté, puis se remet à danser, toujours calé sur la musique. */
+function viniCale(){
+  const el = $('lvlVini'); if (!el || !el.firstChild) return;
+  clearTimeout(el._vn);
+  if (!run){ viniHumeur(el, 'calme'); return; }
+  // la danse commence par le « temps fort » : on la décale pour qu'il tombe sur les temps de la musique
+  const b = beatNow(), delai = b < START ? (START - b) * P : -(b - Math.floor(b)) * P;
+  el.style.setProperty('--vini-beat', P.toFixed(4) + 's'); el.style.setProperty('--vini-delay', delai.toFixed(3) + 's');
+  viniHumeur(el, 'calme'); void el.offsetWidth; viniHumeur(el, 'danse');
+}
+// Appelé par pop() : « ok » = un geste réussi, « bad » = raté ; les messages intermédiaires ne le font pas réagir
+function viniReagit(kind){
+  const el = $('lvlVini'); if (!el || !el.firstChild || !run || (kind !== 'ok' && kind !== 'bad')) return;
+  viniHumeur(el, kind === 'ok' ? 'parfait' : 'rate'); clearTimeout(el._vn);
+  el._vn = setTimeout(viniCale, kind === 'ok' ? 2 * P * 1000 : 1400);
+}
+viniMettre($('lvlVini'), 'calme');

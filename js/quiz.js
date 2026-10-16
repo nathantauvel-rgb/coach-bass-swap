@@ -124,7 +124,7 @@ function quizStep(){
   $('qNext').textContent = 'Retour à l\'entraînement'; if (quiz.good >= 4) confetti(quiz.good === 5 ? 160 : 60);
 }
 function closeQuiz(){
-  if (!quiz) return; const q = quiz; quiz = null; $('quiz').hidden = true; goalAdd(Math.min(300, (performance.now() - q.gT) / 1000));
+  if (!quiz) return; const q = quiz; quiz = null; $('quiz').hidden = true; goalAdd(Math.min(300, (performance.now() - q.gT) / 1000)); if (goalFresh){ goalFresh = false; openSerie(); }
   if (!q.flash) $('quizBtn').hidden = true;   // une seule question bonus par partie
   if (view === 'entrainer' && !prac) renderTrain();
   if (q.back && q.back.isConnected && !q.back.hidden) q.back.focus({ preventScroll: true });

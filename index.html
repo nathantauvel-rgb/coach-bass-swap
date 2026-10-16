@@ -27,6 +27,19 @@
     <div class="pp-foot"><button type="button" class="pp-go" id="ppGo" disabled>Continuer</button></div>
   </div>
 </div>
+<div class="serie" id="serie" hidden role="dialog" aria-modal="true" aria-labelledby="serieNum serieTxt">
+  <div class="serie-col">
+    <p class="pp-bubble serie-bulle" id="serieDit"></p>
+    <div class="serie-scene">
+      <svg class="serie-flamme" viewBox="0 0 160 230" aria-hidden="true"><path class="sf1" d="M92 12C110 58 160 84 160 146c0 50-32 82-70 82S20 198 20 152c0-42 30-58 36-98 16 16 20 36 20 46 8-22 14-54 16-88z"/><path class="sf2" d="M88 112c10 22 32 34 32 64 0 24-14 38-32 38s-32-14-32-36c0-24 20-34 32-66z"/></svg>
+      <div id="serieVini"></div>
+    </div>
+    <div class="serie-num" id="serieNum">1</div>
+    <div class="serie-txt" id="serieTxt"></div>
+    <ol class="serie-sem" id="serieSem" aria-label="Ta semaine"></ol>
+    <button type="button" class="pp-go" id="serieGo">Continuer</button>
+  </div>
+</div>
 <div class="onb" id="onb" hidden role="dialog" aria-modal="true" aria-labelledby="onbTitle">
   <div class="onb-card">
     <div class="onb-dots" id="onbDots"></div>
@@ -273,7 +286,7 @@
         <div class="tags"><span class="styletag" id="styleTag">House · 124 BPM</span><span class="modetag" id="modeTag" hidden>À l'oreille</span><button type="button" class="xtoggle" id="expertBtn" aria-pressed="false" hidden>Mode Expert</button></div>
         <div class="plan" id="plan" hidden><h3>Pendant le niveau</h3><ol id="planList"></ol><p id="planNote"></p></div>
       </div>
-      <div class="buddy" aria-live="polite"><p class="bubble" id="tip">Regarde la démo si tu hésites, puis à toi !</p></div>
+      <div class="buddy"><div id="lvlVini"></div><p class="bubble" id="tip" aria-live="polite">Regarde la démo si tu hésites, puis à toi !</p></div>
       <div class="ringwrap"><div class="ring" id="ring"><span class="big num" id="cdNum">—</span></div><span class="ringlab" id="cdLab">Appuie sur Jouer</span></div>
     </div>
     <div class="hw"><canvas id="hw" aria-label="Piste : les gestes arrivent vers la ligne de frappe"></canvas><div class="pops" id="pops"></div><span class="demo-tag" id="demoTag" hidden>DÉMO</span></div>
@@ -319,8 +332,14 @@
     <div class="result" id="result" hidden>
       <div class="rcard">
         <button type="button" class="rclose" id="rClose" aria-label="Fermer">×</button>
+        <div class="rvini" id="rVini"></div>
         <div class="rstars" id="rStars"></div>
         <h2 id="rTitle"></h2>
+        <div class="rstats" id="rStats" hidden>
+          <div class="rstat xp" id="rXpCard"><span class="rlab">XP gagnés</span><span class="rval"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2 5 13.5h6L10 22l9-12h-6z" fill="currentColor"/></svg><b id="rXp">+0</b></span></div>
+          <div class="rstat prec"><span class="rlab">Précision</span><span class="rval"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.4" fill="currentColor" stroke="none"/></svg><b id="rPrec">0 %</b></span></div>
+          <div class="rstat temps"><span class="rlab">Temps</span><span class="rval"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="13" r="8.5"/><path d="M12 9v4l3 2M9.5 2.5h5"/></svg><b id="rTemps">0:00</b></span></div>
+        </div>
         <ul class="details" id="rDetails"></ul>
         <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="rbtn" id="slowBtn" hidden></button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
         <div class="rmeta"><span class="gain" id="rGain"></span><span class="newbadge" id="rBadge" role="status" hidden></span><span class="goalline" id="rGoal"></span></div>

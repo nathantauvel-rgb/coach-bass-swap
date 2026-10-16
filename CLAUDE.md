@@ -370,6 +370,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   Production vérifiée : Premiers pas pour un nouveau venu puis guide, rien pour un habitué, Nunito chargée, nouvel ordre, partie sur
   la vraie musique (morceau A de 65,8 s), aucune erreur. Notion à jour. Prochain lot proposé : 29 « Ça bouge » (Vini dans les
   niveaux, écran de fin avec cartes XP / précision / temps, écran de série « 1 jour ! »).
+- **Lot 29 « Ça bouge » (16 oct. 2026)** : branche `lot-29-ca-bouge`, non publiée. **Vini dans les niveaux** (`#lvlVini`, à gauche
+  de la bulle de conseil, caché sur téléphone comme la bulle) : humeur `calme` (il cligne des yeux) hors partie ; pendant une partie,
+  il danse **calé sur les temps du morceau** (`viniCale` dans `js/vini.js` : `--vini-beat` = `P`, `--vini-delay` selon `beatNow()`),
+  saute de joie sur un message « ok » et baisse les bras sur un « bad » (`viniReagit`, appelé par `pop`), puis se recale.
+  **Carte de résultat** (`resultatCarte`, `resultatVini`, `compte` dans `js/niveaux.js`) : Vini (joie si 2 étoiles ou plus,
+  déception sinon), titre doré (`h2.win`), trois cartes qui se remplissent : XP gagnés (doré), précision = moyenne des gestes notés
+  (vert), temps de la partie (violet) ; pas de carte d'XP en entraînement ni au test de placement ; `#rGain` ne garde que le record,
+  le score Expert et les chapitres débloqués. **Écran de la série** (`openSerie` / `closeSerie` dans `js/objectif.js`, fenêtre
+  `#serie`) : quand l'objectif du jour vient d'être atteint (fin de partie ou fermeture du quiz), Vini danse à côté d'une flamme,
+  nombre de jours d'affilée en grand, semaine du lundi au dimanche avec les jours réussis cochés, « Continuer » (ou Échap) mène à la
+  carte de résultat. Nouvelle humeur `calme` et classe `vn-fn` (notes de musique seulement quand il danse). Nouveau
+  `tests/ca-bouge.spec.js`. 273 tests verts. Images de la présentation refaites.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -492,7 +504,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

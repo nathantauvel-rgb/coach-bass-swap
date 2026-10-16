@@ -238,6 +238,7 @@ function startRun(demo = false){
     play('A', tracks.A, t0, START * P, false);
     const earRun = (chapter === 2 || !!(prac && prac.ear) || !!LESSONS[li].noCount) && !demo;
     run = { gT: performance.now(), t0, launch: null, frames: [], lowBAtLaunch: null, bBuf: l.bBass ? tracks.B1 : tracks.B0, status: {}, popped: {}, lastBeat: START - 1, demo, cap: 0, ear: earRun, ch: chapter, expert: xp };
+    viniCale();   // Vini danse sur les temps de cette partie
     $('stage').classList.toggle('ear', earRun); $('stage').classList.add('running');
     const st0 = $('stage').getBoundingClientRect(); if (st0.top < -4 || st0.top > 40) window.scrollTo({ top: window.scrollY + st0.top - 8, behavior: REDUCED ? 'auto' : 'smooth' });
     setEcho(false); run.echoAt = null;
@@ -271,7 +272,7 @@ function launchB(){
   else { run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, ac.currentTime + .01, LESSONS[li].bCue * P + (b - k) * P + .01, true, ...(LESSONS[li].bLoop || [64, 128])); $('launchB').disabled = true; }
   judgeLaunch(k);
 }
-function stopRun(){ if (run) goalAdd((performance.now() - run.gT) / 1000); setFocus([]); lastAct = ''; const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; setStartBtn(false); $('launchB').disabled = true;
+function stopRun(){ if (run) goalAdd((performance.now() - run.gT) / 1000); setFocus([]); lastAct = ''; const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; viniCale(); setStartBtn(false); $('launchB').disabled = true;
   $('stage').classList.remove('demo', 'ear', 'running'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
   if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, LESSONS[li].init); applyCtrl(); }
   updateSetup(); }
@@ -498,7 +499,10 @@ function finish(){
   for (let i = 0; i < 3; i++){ const sp = document.createElement('span'); sp.textContent = '★'; if (i < st) sp.className = 'on'; sp.style.animationDelay = (i * .18) + 's'; rs.appendChild(sp); }
   $('rTitle').textContent = xr ? (st === 3 ? 'Expert : niveau pro !' : st === 2 ? 'Expert : bien, encore un peu de précision.' : 'Expert : pas encore. Écoute, compte, anticipe.')
     : (r.ch > 1 ? `Chapitre ${r.ch} : ` : '') + (st === 3 ? 'Parfait, transition de pro !' : st === 2 ? 'Presque ! Un détail à régler.' : 'Pas encore. Lis le conseil et rejoue.');
-  const gained = (bank[li] - before) * XP_PER[r.ch]; $('rGain').textContent = (xr ? xr.txt + (gained > 0 ? ` · +${gained} XP` : '') : gained > 0 ? `+${gained} XP` : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`) + (!wasOpen && ch2Unlocked() ? ' · Chapitres 2 et 4 débloqués !' : '') + (!was3 && ch3Unlocked() ? ' · Chapitre 3 débloqué !' : '');
+  // les XP gagnés sont dans leur carte (resultatCarte) : la ligne du bas garde le record et les chapitres débloqués
+  const gained = (bank[li] - before) * XP_PER[r.ch]; $('rGain').textContent = [xr ? xr.txt : gained > 0 ? '' : st === 3 ? 'Score maximum déjà atteint' : `Record : ${'★'.repeat(bank[li])}`,
+    !wasOpen && ch2Unlocked() ? 'Chapitres 2 et 4 débloqués !' : '', !was3 && ch3Unlocked() ? 'Chapitre 3 débloqué !' : ''].filter(Boolean).join(' · ');
+  resultatCarte(st, gained, score, (performance.now() - r.gT) / 1000);
   const ul = $('rDetails'); ul.innerHTML = ''; for (const [lvl, txt] of items){ const x = document.createElement('li'); x.className = lvl; x.textContent = txt; ul.appendChild(x); }
   $('next').hidden = li >= LESSONS.length - 1;
   $('result').hidden = false; $('retry').focus({ preventScroll: true });
@@ -507,8 +511,26 @@ function finish(){
   if (LESSONS[li].random){ const l = LESSONS[li]; randomizeRead(l); START = l.start; END = l.end; if (hasWorkers()) prepareCh3(l).then(tk => { if (!run && LESSONS[li] === l){ waveTk = tk; drawHighway(START); } }).catch(() => {}); }
   if (placement) placementStep(st);
   if (prac) pracStep(st);
+  const fresh = goalFresh;
   quizOffer(st); avisPartie(r.ch, st); goalNote(); slowOffer(st);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
+  if (fresh) openSerie();   // objectif du jour atteint avec cette partie : l'écran de la série passe devant
+}
+/* ---------- Carte de résultat façon Duolingo (lot 29) ----------
+   Vini (joie ou déception), le titre en doré si c'est réussi, et trois cartes qui se remplissent : XP gagnés, précision
+   (moyenne des gestes notés), temps de la partie. Les XP ne sont pas montrés en entraînement ni au test de placement. */
+function resultatVini(humeur){ const el = $('rVini'); if (!el.firstChild) viniMettre(el, humeur); else viniHumeur(el, humeur); }
+function resultatCarte(st, xp, score, secs){
+  resultatVini(st >= 2 ? 'parfait' : 'rate'); $('rTitle').classList.toggle('win', st >= 2);
+  $('rStats').hidden = false; $('rXpCard').hidden = !!(prac || placement);
+  const s = Math.max(0, Math.round(secs)), pc = Math.round(clamp01(score) * 100);
+  compte($('rXp'), xp, v => '+' + v); compte($('rPrec'), pc, v => v + ' %'); compte($('rTemps'), s, v => Math.floor(v / 60) + ':' + String(v % 60).padStart(2, '0'));
+}
+// Un chiffre qui défile jusqu'à sa valeur (tout de suite si l'on a demandé moins d'animations)
+function compte(el, fin, fmt, ms = 700){
+  const t0 = performance.now(); cancelAnimationFrame(el._cpt);
+  const pas = () => { const k = REDUCED ? 1 : Math.min(1, (performance.now() - t0) / ms); el.textContent = fmt(Math.round(fin * (1 - Math.pow(1 - k, 3)))); if (k < 1) el._cpt = requestAnimationFrame(pas); };
+  pas();
 }
 /* ---------- Ralenti (chapitre 4) ----------
    Proposé seulement après deux échecs de suite sur un combo, pour garder les niveaux dynamiques. Le morceau est
