@@ -87,10 +87,11 @@ function renderQuetes(){
   const faites = qt.ids.map(qtDef).filter(qtFaite).length;
   $('qtSub').textContent = `${faites} sur ${qt.ids.length} · nouvelles quêtes dans ${h} h`;
   for (const id of qt.ids){ const q = qtDef(id), v = Math.min(qtVal(q), q.but), fait = qtFaite(q), ouvert = qt.ouverts.includes(id), gain = QT_GAIN[q.niv];
-    const li = document.createElement('li'), ic = document.createElement('span'), mid = document.createElement('div'), t = document.createElement('strong'), bar = document.createElement('div'), fill = document.createElement('i'), n = document.createElement('span'), b = document.createElement('button');
+    const li = document.createElement('li'), ic = document.createElement('span'), mid = document.createElement('div'), haut = document.createElement('div'), t = document.createElement('strong'), bar = document.createElement('div'), fill = document.createElement('i'), n = document.createElement('span'), b = document.createElement('button');
     li.dataset.q = id; li.className = 'qt' + (fait ? ' faite' : '') + (ouvert ? ' ouverte' : '');
     ic.className = 'qt-ic'; ic.setAttribute('aria-hidden', 'true'); ic.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${QT_IC[q.ic]}</svg>`;
-    t.textContent = q.txt; bar.className = 'qt-bar'; fill.style.width = (v / q.but * 100) + '%'; n.className = 'qt-n'; n.textContent = `${v} / ${q.but}`; bar.append(fill, n); mid.className = 'qt-mid'; mid.append(t, bar);
+    t.textContent = q.txt; bar.className = 'qt-bar'; bar.setAttribute('aria-hidden', 'true'); fill.style.width = (v / q.but * 100) + '%'; bar.appendChild(fill);
+    n.className = 'qt-n'; n.textContent = `${v} / ${q.but}`; haut.className = 'qt-haut'; haut.append(t, n); mid.className = 'qt-mid'; mid.append(haut, bar);
     b.type = 'button'; b.className = 'qt-coffre'; b.innerHTML = ouvert ? '' : QT_COFFRE; b.disabled = !fait || ouvert;
     b.setAttribute('aria-label', ouvert ? `Coffre ouvert : +${gain} XP` : fait ? `Ouvrir le coffre : +${gain} XP` : `Coffre de ${gain} XP, à gagner`);
     if (ouvert){ const g = document.createElement('span'); g.className = 'qt-gain'; g.textContent = `+${gain} XP`; b.appendChild(g); }

@@ -40,7 +40,7 @@
   --track:#2c3039;
   --dot:#1f2229;
   --disc-in:#17191e;
-  /* Couleur de DJingo (lots 27 et 28) : le violet, seulement pour Vini et le bouton principal des « Premiers pas » */
+  /* Couleur de DJingo (lots 27 à 30) : le violet, pour Vini, le bouton principal des « Premiers pas » et les quêtes du jour */
   --brand:#8C5CFF;
   --brand-edge:#5229C4;
   --brand-light:#C8B2FF;
@@ -65,8 +65,8 @@
   --vini-drop:#79C6FF;
   --vini-tongue:#FF7FA8;
   --vini-shadow:rgba(0,0,0,.35);
-  --vini-beat:.4839s;
-  --qt-ok:#2b2f3a;   /* barre d'une quête, fond */   /* un temps à 124 BPM : Vini danse sur le tempo des morceaux */
+  --vini-beat:.4839s;   /* un temps à 124 BPM : Vini danse sur le tempo des morceaux */
+  --qt-ok:#2b2f3a;   /* barre d'une quête, fond */
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -949,10 +949,11 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .qt-ic svg{width:100%;height:100%}
 .qt-mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
 .qt-mid strong{font-size:17px;font-weight:800}
-.qt-bar{position:relative;height:20px;border-radius:10px;background:var(--qt-ok);overflow:hidden}
-.qt-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:10px;background:var(--brand);transition:width .5s cubic-bezier(.3,1.3,.5,1)}
+.qt-haut{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.qt-bar{position:relative;height:12px;border-radius:6px;background:var(--qt-ok);overflow:hidden}
+.qt-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--brand);transition:width .5s cubic-bezier(.3,1.3,.5,1)}
 .qt.faite .qt-bar i{background:var(--mid)}
-.qt-n{position:relative;display:block;text-align:center;font-size:13px;line-height:20px;font-weight:900;color:var(--fg)}
+.qt-n{flex-shrink:0;font-size:15px;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums}
 .qt-coffre{position:relative;width:56px;height:56px;flex-shrink:0;border:0;background:none;padding:4px;cursor:pointer;border-radius:14px}
 .qt-coffre svg{width:100%;height:100%;overflow:visible}
 .qt-coffre .qt-bois{fill:var(--brand)} .qt-coffre .qt-bois2{fill:var(--brand-edge)} .qt-coffre .qt-or{fill:var(--mid)}
@@ -964,7 +965,7 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .qt-couvercle{transform-box:fill-box;transform-origin:0% 100%;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
 .qt.ouvre .qt-couvercle,.qt.ouverte .qt-couvercle{transform:rotate(-38deg) translate(-2px,-4px)}
 .qt.ouvre .qt-coffre{animation:qt-secoue .35s ease-in-out}
-.qt.faite .qt-n{color:var(--ink)}
+.qt.faite .qt-n{color:var(--mid)}
 .qt.ouverte .qt-coffre{width:auto;height:auto;padding:0}
 .qt-gain{display:inline-block;padding:6px 10px;border-radius:10px;border:2px solid var(--mid);font-size:14px;font-weight:900;color:var(--mid);white-space:nowrap}
 .qt.ouvre .qt-coffre::after{content:"";position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--mid) 55%,transparent),transparent 70%);animation:qt-eclat .7s ease-out forwards}
