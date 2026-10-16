@@ -348,7 +348,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   4 écrans d'accueil cliquables (niveau, objectif, bravo, série). Atelier de dessin : `captures/mascottes.html` (hors Git).
   **Choix de l'utilisateur : Vini, en violet.** Il garde le corps (vinyle, bras, jambes, casque) mais trouve le visage trop
   « kawaii » : planche « Vini · six visages » ajoutée (Cool, Lunettes, Rétro, Grands yeux, Minimal, LED ; atelier
-  `captures/visages.html`, planche fabriquée par un script à partir de l'atelier). **En attente : le visage choisi**, puis la police. Suite prévue : lot 28 « Premiers pas » (accueil façon
+  `captures/visages.html`, planche fabriquée par un script à partir de l'atelier). **Visage choisi : « Rétro »** (yeux noirs de dessin animé des années 30 avec
+  une encoche, grand sourire, ni joues roses ni nez), appliqué à toutes les planches. Reste à valider : la police Nunito. Suite prévue : lot 28 « Premiers pas » (accueil façon
   Duolingo), lot 29 « Ça bouge » (mascotte dans les niveaux, écran de fin, série).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
