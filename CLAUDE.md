@@ -322,7 +322,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   pile sur un temps, ramenés à 124 BPM (« Dj » est à 125), même volume. Grille mesurée : grosse caisse moyenne sur les temps
   de la grille, écart entre les extraits sous 10 ms ; Chrome décode les MP3 sans décalage (vérifié). « On My Mind » écarté
   (grille instable). L'entraînement, le chapitre 2 et le chapitre 3 gardent les morceaux du site. **Pas encore écouté par
-  l'utilisateur** (tonalités des paires non vérifiées). 241 tests verts.
+  l'utilisateur** (tonalités des paires non vérifiées). 241 tests verts. Écouté par l'utilisateur : « ça rend bien ». À sa
+  demande, **« Vraie musique » est le choix par défaut** et en tête de la liste (un style choisi soi-même reste enregistré dans
+  `coach-style` ; une valeur abîmée revient à `vrai`). Les tests jouent la house sauf indication contraire (`tests/outils.js`
+  met `coach-style` à `house`). 243 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

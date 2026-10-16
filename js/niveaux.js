@@ -77,12 +77,13 @@ function showAction(t){ if (t === lastAct) return; lastAct = t; if (performance.
 const RING_LAB = { 'MONTE B': 'temps avant de monter B', 'FILTRE': 'temps avant de tourner le filtre', 'À FOND': 'temps : filtre à fond avant le drop', 'ECHO': 'temps avant d\'activer l\'écho', 'COUPE A': 'temps avant de couper A', 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
 // speed : vitesse de la partie (1 = normale, 0,9 ou 0,8 = ralenti, proposé seulement au chapitre 4 après deux échecs de suite)
 let speed = 1, slowFails = {};
-let preparing = false, li = 0, run = null, ear = false, styleChoice = 'house', chapter = 1, TOL = 1, placement = null, prac = null;
+// styleChoice : « vrai » (vraie musique, js/vrais.js) par défaut, tant que le joueur n'a pas choisi un style lui-même
+let preparing = false, li = 0, run = null, ear = false, styleChoice = 'vrai', chapter = 1, TOL = 1, placement = null, prac = null;
 // Mode Expert (expert.js) : choisi par le joueur ; xRun vaut true pendant la notation d'une partie jouée en Expert
 let expert = false, xRun = false;
 let stars = {}; try { stars = JSON.parse(localStorage.getItem('coach-lecons') || '{}') || {}; } catch (e) {}
 let earStars = {}; try { earStars = JSON.parse(localStorage.getItem('coach-lecons-oreille') || '{}') || {}; } catch (e) {}
-try { styleChoice = localStorage.getItem('coach-style') || 'house'; } catch (e) {}
+try { styleChoice = localStorage.getItem('coach-style') || 'vrai'; } catch (e) {}
 const pickStyle = () => styleChoice === 'random' ? ['house', 'techno', 'afro'][Math.floor(Math.random() * 3)] : styleChoice;
 let ch2Stars = null; try { ch2Stars = JSON.parse(localStorage.getItem('coach-ch2') || 'null'); } catch (e) {}
 if (!ch2Stars) ch2Stars = Object.assign({}, earStars);
@@ -109,7 +110,7 @@ const sumStars = b => Object.values(b || {}).reduce((s, v) => s + (+v || 0), 0);
 const ch2Unlocked = () => ch2Open || sumStars(stars) >= 14;
 const ch3Unlocked = () => ch3Open || sumStars(ch2Stars) >= 10;
 const ch4Unlocked = () => ch2Unlocked();   // les combos s'ouvrent en même temps que le chapitre 2
-if (!['house', 'techno', 'afro', 'random', 'vrai'].includes(styleChoice)) styleChoice = 'house';
+if (!['house', 'techno', 'afro', 'random', 'vrai'].includes(styleChoice)) styleChoice = 'vrai';
 if (![1, 2, 3, 4].includes(chapter)) chapter = 1;
 if (chapter === 4 && !ch4Unlocked()) chapter = 1;
 if (chapter === 2 && !ch2Unlocked()) chapter = 1;

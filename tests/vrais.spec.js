@@ -16,6 +16,22 @@ const robot = page => page.evaluate(() => { const l = LESSONS[li];
   requestAnimationFrame(tick); });
 
 test.describe('Choisir la vraie musique', () => {
+  test('c’est le choix par défaut, en tête de la liste ; un style choisi soi-même est gardé', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: { 'coach-style': null } });
+    await expect(page.locator('#styleBtn')).toHaveText('Morceaux : vraie musique');
+    await expect(page.locator('#styleTag')).toHaveText(TITRES);
+    await expect(page.locator('#styleOpts [data-style]').first()).toHaveAttribute('data-style', 'vrai');
+    await expect(page.locator('#styleOpts [data-style=vrai]')).toHaveAttribute('aria-pressed', 'true');
+    await page.locator('#styleBtn').click();
+    await page.locator('#styleOpts [data-style=techno]').click();
+    await page.reload();
+    await expect(page.locator('#styleBtn')).toHaveText('Morceaux : Techno');
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('un style enregistré abîmé revient à la vraie musique', async ({ page }) => {
+    await ouvrir(page, { stockage: { 'coach-style': 'zouk' } });
+    await expect(page.locator('#styleBtn')).toHaveText('Morceaux : vraie musique');
+  });
   test('le choix est enregistré, le bouton et l\'étiquette le disent', async ({ page }) => {
     const erreurs = await ouvrir(page);
     await page.locator('#styleBtn').click();
