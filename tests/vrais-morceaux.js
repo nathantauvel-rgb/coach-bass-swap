@@ -30,12 +30,13 @@ for (const [name, [key, parts]] of Object.entries(CUTS)){
   // morceaux de grille découpés à l'échantillon près, mis bout à bout, puis ramenés à 124 BPM (comme un vinyle un peu ralenti)
   const fc = `[0:a]aresample=${SR},asplit=${parts.length}` + parts.map((_, i) => `[s${i}]`).join('') + ';' + parts.map(([from, n], i) => `[s${i}]atrim=start=${(tr.t0 + from * P).toFixed(6)}:duration=${(n * P).toFixed(6)},asetpts=PTS-STARTPTS[p${i}]`).join(';')
     + ';' + parts.map((_, i) => `[p${i}]`).join('') + `concat=n=${parts.length}:v=0:a=1[c];[c]asetrate=${(SR * rate).toFixed(3)},aresample=${SR},afade=t=in:d=0.004,afade=t=out:st=${((parts.reduce((s, p) => s + p[1], 0) * P) / rate - .6).toFixed(3)}:d=0.6[o]`;
-  execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', path.join(SRC, tr.file), '-filter_complex', fc, '-map', '[o]', '-ac', '2', '-ar', String(SR), wav]);
+  execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', path.join(SRC, tr.file), '-filter_complex', fc, '-map', '[o]', '-map_metadata', '-1', '-ac', '2', '-ar', String(SR), wav]);
   // volume : on mesure l'énergie moyenne et on la ramène à la cible
   const raw = execFileSync('ffmpeg', ['-v', 'error', '-i', wav, '-ac', '1', '-f', 'f32le', '-'], { maxBuffer: 1 << 30 }), X = new Float32Array(raw.buffer, raw.byteOffset, raw.length / 4);
   let s = 0; for (const x of X) s += x * x; const rms = Math.sqrt(s / X.length), gain = TARGET_RMS / rms;
   const out = path.join(OUT, name + '.mp3');
-  execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', wav, '-af', `volume=${gain.toFixed(4)}`, '-c:a', 'libmp3lame', '-b:a', '128k', out]);
+  // aucune information copiée du fichier d'origine (titre, commentaire, lien) : seulement le son
+  execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', wav, '-map_metadata', '-1', '-af', `volume=${gain.toFixed(4)}`, '-c:a', 'libmp3lame', '-b:a', '128k', out]);
   console.log(name.padEnd(9), `${(X.length / SR).toFixed(1)} s`, `gain ${(20 * Math.log10(gain)).toFixed(1)} dB`, `${(fs.statSync(out).size / 1e6).toFixed(2)} Mo`);
 }
 fs.rmSync(tmp, { recursive: true, force: true });

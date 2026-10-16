@@ -51,7 +51,7 @@ function setView(v){
   for (const [k, id] of Object.entries(VIEWS)) $(id).hidden = k !== v;
   document.querySelectorAll('#tabs a').forEach(a => { if (a.dataset.view === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   $('guideBtn').hidden = v !== 'apprendre';
-  if (v === 'apprendre'){ renderHud(); drawHighway(START); updateSetup(); if (!guideSeen && parcours !== 'deja') openOnb(); }   // parcours « deja » : le guide est proposé (bouton Guide), pas imposé
+  if (v === 'apprendre'){ renderHud(); drawHighway(START); updateSetup(); warmSongs(); if (!guideSeen && parcours !== 'deja') openOnb(); }   // parcours « deja » : le guide est proposé (bouton Guide), pas imposé
   else if (v === 'accueil') renderHome();
   else if (v === 'entrainer') renderTrain();
   else if (v === 'vrai') renderReal();

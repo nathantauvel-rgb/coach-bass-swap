@@ -57,9 +57,15 @@ function chooseSongs(){
   const l = LESSONS[li]; if (l.wave) return;
   if (prac) sel = { sty: prac.sty, vr: prac.vr };
   else { sel = { sty: chapter === 2 ? CH2_STYLE[li] : pickStyle(), vr: firstSel ? 0 : Math.floor(Math.random() * VARIANTS) }; firstSel = false; }
-  const s0 = sel, go = () => { if (!hasWorkers() && s0.sty !== 'vrai') return; getSong(s0.sty, s0.vr, 'A').catch(() => {}); getSong(s0.sty, s0.vr, l.bBass ? 'B1' : 'B0').catch(() => {}); };
-  if (warm) warm.then(go); else go();
+  warmSongs();
   const d = STYLE_DEFS[sel.sty]; $('styleTag').textContent = sel.sty === 'vrai' ? vraiTitres(sel.vr, l.bBass) : d.label + ' · ' + d.bpm + ' BPM';
+}
+// Prépare à l'avance les morceaux du niveau choisi. La vraie musique (environ 2 Mo) n'est téléchargée que sur l'écran des
+// leçons : pas sur l'accueil (setView la prépare en arrivant dans Apprendre).
+function warmSongs(){
+  const l = LESSONS[li], s0 = sel; if (l.wave || (s0.sty === 'vrai' && $('vLearn').hidden)) return;
+  const go = () => { if (!hasWorkers() && s0.sty !== 'vrai') return; getSong(s0.sty, s0.vr, 'A').catch(() => {}); getSong(s0.sty, s0.vr, l.bBass ? 'B1' : 'B0').catch(() => {}); };
+  if (warm) warm.then(go); else go();
 }
 function applyCtrl(){
   Object.keys(ctrl).forEach(renderControl);

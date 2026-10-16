@@ -37,7 +37,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
   débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait ; le lot 22 a été abandonné). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
-- **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (16 points)
+- **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (19 points)
   sur la vraie FLX4. Aucun lot n'a été vérifié sur la table. À relire en particulier : le schéma de
   « Ma table » et les consignes des missions de « Passer au vrai », écrits de mémoire ; un vrai export
   rekordbox (l'import n'a vu qu'un faux fichier) ; la lisibilité du thème sombre pendant une partie.
@@ -321,8 +321,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   65,8 s, 1,05 Mo chacun, publiés) sont faits par `node tests/vrais-morceaux.js` depuis `audio-essai/fma/` (hors Git) : coupés
   pile sur un temps, ramenés à 124 BPM (« Dj » est à 125), même volume. Grille mesurée : grosse caisse moyenne sur les temps
   de la grille, écart entre les extraits sous 10 ms ; Chrome décode les MP3 sans décalage (vérifié). « On My Mind » écarté
-  (grille instable). L'entraînement, le chapitre 2 et le chapitre 3 gardent les morceaux du site. **Pas encore écouté par
-  l'utilisateur** (tonalités des paires non vérifiées). 241 tests verts. Écouté par l'utilisateur : « ça rend bien ». À sa
+  (grille instable). L'entraînement, le chapitre 2 et le chapitre 3 gardent les morceaux du site. 241 tests verts. Écouté par
+  l'utilisateur sur ce PC : « ça rend bien » (pas encore avec le casque de la FLX4). À sa
   demande, **« Vraie musique » est le choix par défaut** et en tête de la liste (un style choisi soi-même reste enregistré dans
   `coach-style` ; une valeur abîmée revient à `vrai`). Les tests jouent la house sauf indication contraire (`tests/outils.js`
   met `coach-style` à `house`). 243 tests verts.

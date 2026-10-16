@@ -91,6 +91,16 @@ test.describe('Jouer avec la vraie musique', () => {
 });
 
 test.describe('Les fichiers de musique', () => {
+  test('l\'accueil ne télécharge pas la musique ; l\'écran des leçons la prépare', async ({ page }) => {
+    const fichiers = [];
+    page.on('request', r => { if (r.url().includes('/musique/')) fichiers.push(r.url()); });
+    await ouvrir(page, { onglet: '', stockage: { 'coach-style': 'vrai', 'coach-parcours': 'debut' } });
+    await expect(page.locator('#vHome')).toBeVisible();
+    await page.waitForTimeout(800);
+    expect(fichiers).toEqual([]);
+    await page.evaluate(() => { location.hash = '#apprendre'; });
+    await expect.poll(() => fichiers.length).toBe(2);
+  });
   test('chaque extrait cité existe, aucun fichier en trop, chacun pèse moins de 1,5 Mo', async ({ page }) => {
     await ouvrir(page);
     const cites = await page.evaluate(() => [...new Set(VRAIS.flatMap(v => Object.values(v)))].map(n => n + '.mp3').sort());
