@@ -1,5 +1,13 @@
 // Lot 8 : plus clair pour un débutant (mots du DJ, échecs en écart, piste visible, accueil allégé).
 const { test, expect } = require('@playwright/test');
+
+test.describe('À l\'oreille et en Mode Expert : aucun repère devant la ligne', () => {
+  test('un geste déjà fait ne montre pas son repère avant que la ligne l\'atteigne', async ({ page }) => {
+    await page.goto('/index.html#apprendre');
+    const r = await page.evaluate(() => [markShown(true, 64, 40, 'ok'), markShown(true, 64, 64.2, 'ok'), markShown(true, 64, 70, null), markShown(false, 64, 40, null)]);
+    expect(r).toEqual([false, true, false, true]);
+  });
+});
 const { ouvrir, sansBandeau } = require('./outils');
 
 const S = o => JSON.stringify(o);

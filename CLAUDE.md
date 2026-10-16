@@ -302,6 +302,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   234 tests verts.
 - **Lot 23 publié le 16 oct. 2026** (accord de l'utilisateur). Médailles et flamme dorées (`--mid`) : l'utilisateur n'a pas
   dit si c'était trop coloré ; à reprendre s'il le demande.
+- **Lot 24 (16 oct. 2026)** : branche `lot-24-oreille`, non publiée. Défaut signalé par l'utilisateur (capture) : à l'oreille
+  (chapitre 2), un geste déjà fait affichait son repère validé (✓) **devant** la ligne, à l'endroit du bon moment, ce
+  qui trahissait la phrase ; même trou en Mode Expert. `markShown` (`js/piste.js`) : sans repères, rien devant la ligne,
+  le repère et sa note réapparaissent une fois la ligne passée. Brouillard rendu tout à fait opaque au-delà de la ligne.
+  235 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

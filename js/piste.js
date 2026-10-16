@@ -8,6 +8,9 @@ const COL = {}; const loadCol = () => { for (const k of ['a', 'b', 'fg', 'muted'
 // Couleur nommée (#rrggbb) rendue transparente, pour les dégradés du canvas
 const hexA = (hex, a) => { const m = /^#([0-9a-f]{6})$/i.exec(hex); return m ? `rgba(${parseInt(m[1].slice(0, 2), 16)},${parseInt(m[1].slice(2, 4), 16)},${parseInt(m[1].slice(4, 6), 16)},${a})` : hex; };
 function rr(g, x, y, w, h, r){ g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
+// Repère d'un geste sur la piste. Sans repères (à l'oreille, Mode Expert) : rien devant la ligne, même pour un geste déjà
+// fait (son repère montrerait où tombe la phrase) ; il réapparaît, avec sa note, une fois que la ligne l'a dépassé.
+const markShown = (hide, v, b, st) => !hide || (!!st && v <= b);
 function drawHighway(b){
   if (!COL.a) loadCol();
   const cv = $('hw'), g = cv.getContext('2d'), dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
@@ -49,10 +52,10 @@ function drawHighway(b){
   // gestes à faire
   // Brouillard « à l'oreille » ; en Expert, pas de brouillard mais aucun repère ni « B partira ici »
   const fog = run && run.ear, hide = fog || (run ? !!run.expert : expertOn());
-  if (fog){ g.save(); const gr = g.createLinearGradient(hitX + 6, 0, hitX + 90, 0); gr.addColorStop(0, hexA(COL['panel-2'], 0)); gr.addColorStop(1, hexA(COL['panel-2'], .93)); g.fillStyle = gr; g.fillRect(hitX + 6, 0, w, h);
+  if (fog){ g.save(); const gr = g.createLinearGradient(hitX + 6, 0, hitX + 90, 0); gr.addColorStop(0, hexA(COL['panel-2'], 0)); gr.addColorStop(1, hexA(COL['panel-2'], 1)); g.fillStyle = gr; g.fillRect(hitX + 6, 0, w, h);
     g.font = '700 13px ' + COL.font; const tx = 'Repères masqués : écoute', tw = g.measureText(tx).width + 24; g.fillStyle = COL.fg; rr(g, w - tw - 12, 12, tw, 26, 13); g.fill(); g.fillStyle = COL['on-fg']; g.textAlign = 'left'; g.fillText(tx, w - tw, 30); g.restore(); }
   for (const [v, lab, lane] of LESSONS[li].targets){
-    if (hide && !(run && run.status[lab])) continue;
+    if (!markShown(hide, v, b, run && run.status[lab])) continue;
     if (l.wave && !(run && run.demo)) continue;
     const x = X(v); if (x < -80 || x > w + 80) continue;
     const st = run ? run.status[lab] : null, col = st === 'ok' ? COL.ok : st === 'mid' ? COL.mid : st === 'bad' || st === 'late' ? COL.bad : COL.xp;
