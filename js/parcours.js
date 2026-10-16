@@ -52,7 +52,7 @@ const nextStage = () => parcours ? PARCOURS[parcours].stages.find(id => !STAGES[
 function setParcours(p){ if (!PARCOURS[p]) return; parcours = p; parcoursPick = false; try { localStorage.setItem('coach-parcours', p); } catch (e) {} renderHome(); }
 function renderHome(){
   const choosing = !parcours || parcoursPick, cur = nextStage(), st = STAGES[cur];
-  $('homeChoice').hidden = !choosing; $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing; $('homeGoal').hidden = choosing; $('homeTip').parentElement.hidden = !choosing;
+  $('homeChoice').hidden = !choosing; $('homeQuetes').hidden = choosing; if (!choosing) renderQuetes(); $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing; $('homeGoal').hidden = choosing; $('homeTip').parentElement.hidden = !choosing;
   document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.parcours === parcours)));
   if (choosing){
     $('homeTitle').textContent = 'Tu as une table et tu n\'y connais rien ?'; $('homeLead').textContent = 'En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.';

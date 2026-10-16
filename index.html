@@ -149,6 +149,10 @@
       </div>
       <div class="buddy" aria-hidden="true"><p class="bubble" id="homeTip">Un geste à la fois, et ça vient vite !</p></div>
     </section>
+    <section class="page quetes" id="homeQuetes" hidden aria-labelledby="qtTitre">
+      <div class="qt-head"><div><h2 id="qtTitre">Quêtes du jour</h2><p id="qtSub"></p></div><div id="qtVini"></div></div>
+      <ul class="qt-list" id="qtList"></ul>
+    </section>
     <section class="page pathbox" id="homePath" hidden>
       <details id="pathDetails"><summary id="pathSum">Voir tout mon parcours</summary>
         <div class="path-head"><h2 class="sub" id="homePathName"></h2><button type="button" class="ghost" id="homeChange">Changer de parcours</button></div>
@@ -342,7 +346,7 @@
         </div>
         <ul class="details" id="rDetails"></ul>
         <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="rbtn" id="slowBtn" hidden></button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
-        <div class="rmeta"><span class="gain" id="rGain"></span><span class="newbadge" id="rBadge" role="status" hidden></span><span class="goalline" id="rGoal"></span></div>
+        <div class="rmeta"><span class="gain" id="rGain"></span><span class="newbadge" id="rBadge" role="status" hidden></span><span class="goalline" id="rGoal"></span><span class="questline" id="rQuete" role="status" hidden></span></div>
         <details class="cmp" id="cmpBox"><summary>Voir mon geste et le geste idéal</summary><canvas id="cmp" aria-label="Comparaison entre ton geste et le geste idéal"></canvas>
           <div class="cmp-leg"><span><i></i>geste idéal</span><span><u></u>ton geste</span></div></details>
         <div class="clair" id="clairRow" role="group" aria-label="C'était clair ?" hidden><span>C'était clair ?</span><button type="button" data-clair="oui" aria-pressed="false">Oui</button><button type="button" data-clair="bof" aria-pressed="false">Bof</button><button type="button" data-clair="non" aria-pressed="false">Non</button><span class="merci" id="clairMerci" hidden>Merci !</span></div>
@@ -372,6 +376,7 @@
 <script src="js/parcours.js"></script>
 <script src="js/vini.js"></script>
 <script src="js/premiers.js"></script>
+<script src="js/quetes.js"></script>
 <script src="js/table.js"></script>
 <script src="js/reglage.js"></script>
 <script src="js/avis.js"></script>

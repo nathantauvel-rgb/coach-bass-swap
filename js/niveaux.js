@@ -163,7 +163,7 @@ function setChapter(n){
   const bank = bankOf(n), first = LESSONS.findIndex((_, i) => !(bank[i] >= 2)); selectLesson(first < 0 ? 0 : first);
 }
 // XP : 10 par étoile au chapitre 1, 15 au chapitre 2, 20 aux chapitres 3 et 4, plus le quiz (un niveau tous les 30 XP)
-const xpTotal = () => sumStars(stars) * 10 + sumStars(ch2Stars) * 15 + sumStars(ch3Stars) * 20 + sumStars(ch4Stars) * 20 + quizXp();
+const xpTotal = () => sumStars(stars) * 10 + sumStars(ch2Stars) * 15 + sumStars(ch3Stars) * 20 + sumStars(ch4Stars) * 20 + quizXp() + questXp();   // questXp : coffres des quêtes du jour (quetes.js)
 function renderHud(){
   const t1 = sumStars(stars), t2 = sumStars(ch2Stars), t3 = sumStars(ch3Stars), t4 = sumStars(ch4Stars), xp = xpTotal();
   $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
@@ -475,7 +475,7 @@ function evalVocal(fr){
 }
 function finish(){
   if (!run) return; const r = run; stopRun();
-  if (r.demo){ $('hint').textContent = 'À toi ! Appuie sur Jouer et refais exactement la même chose.'; $('startBtn').classList.add('ready'); $('cdNum').textContent = '—'; $('cdLab').textContent = 'À toi de jouer'; $('ring').classList.remove('hot'); return; }
+  if (r.demo){ questNote({ demo: true }); $('hint').textContent = 'À toi ! Appuie sur Jouer et refais exactement la même chose.'; $('startBtn').classList.add('ready'); $('cdNum').textContent = '—'; $('cdLab').textContent = 'À toi de jouer'; $('ring').classList.remove('hot'); return; }
   let items = []; xRun = !!r.expert;
   const KD = LESSONS[li].kind, evL = (L, t) => r.expert ? evalLaunchX(L, t) : evalLaunch(L, t);
   if (KD === 'moment') items = [evL(r.launch)];
@@ -511,6 +511,7 @@ function finish(){
   if (LESSONS[li].random){ const l = LESSONS[li]; randomizeRead(l); START = l.start; END = l.end; if (hasWorkers()) prepareCh3(l).then(tk => { if (!run && LESSONS[li] === l){ waveTk = tk; drawHighway(START); } }).catch(() => {}); }
   if (placement) placementStep(st);
   if (prac) pracStep(st);
+  questLigne(questNote({ st, expert: !!r.expert, ear: !!r.ear, ch: r.ch }));   // après pracStep : le défi du jour est à jour
   const fresh = goalFresh;
   quizOffer(st); avisPartie(r.ch, st); goalNote(); slowOffer(st);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);

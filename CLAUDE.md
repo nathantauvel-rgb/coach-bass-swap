@@ -386,6 +386,17 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   avant : l'écouteur passe en premier et arrête la touche). Production vérifiée (Vini calme puis danse puis joie, écran de série,
   carte de fin +30 / 100 % / 0:12, aucune erreur). Notion à jour. À demander à l'utilisateur : le doré et les trois cartes de couleur
   font-ils trop ? Pistes suivantes possibles : Vini sur l'accueil et « Mes progrès », sons de réussite, quêtes du jour façon Duolingo.
+- **Lot 30 « Quêtes du jour » (16 oct. 2026)** : branche `lot-30-quetes`, non publiée. Demande de l'utilisateur. `js/quetes.js` (chargé
+  après `premiers`) : `QUETES` (12 quêtes : identifiant, difficulté 0/1/2, texte, but, compteur, `dispo()`), chaque jour trois quêtes
+  (une par difficulté, compteurs différents) tirées de la date parmi celles qui ont un sens pour le joueur (`qtJour` : pas de quiz,
+  défi, oreille ni Expert pour un débutant, pas de combo sans chapitre 4), gardées toute la journée. Compteurs du jour (`parties`,
+  `demos`, `reussies` = 2 étoiles ou plus, `trois`, `expert`, `oreille`, `combos`, `quiz`) mis à jour par `questNote` (fin de partie,
+  démos comprises, après `pracStep`) et `questQuiz` (chaque bonne réponse) ; le défi du jour se lit dans l'entraînement. **Coffre** par
+  quête terminée (10, 15 ou 20 XP selon la difficulté, `questOuvrir`), une seule fois ; le total `xp` s'ajoute à `xpTotal`. Section
+  `#homeQuetes` sur l'accueil (entre la prochaine étape et le parcours, cachée tant qu'aucun parcours n'est choisi), en-tête violet
+  avec Vini, « N sur 3 · nouvelles quêtes dans N h ». Ligne `#rQuete` sur la carte de fin quand une partie termine une quête. Clé
+  `coach-quetes` (`{ jour, ids, cpt, ouverts, xp }`, validée à la lecture ; un nouveau jour remet compteurs et coffres à zéro, garde
+  `xp`). Nouveau `tests/quetes.spec.js`. 282 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -406,7 +417,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `vrais` (vraie musique) → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `midi` →
-  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) →
+  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `avis` (avis des testeurs, rapport) →
   `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
@@ -494,7 +505,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-bibliotheque` (`coach.html`).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -508,7 +519,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

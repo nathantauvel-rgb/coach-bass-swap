@@ -65,7 +65,8 @@
   --vini-drop:#79C6FF;
   --vini-tongue:#FF7FA8;
   --vini-shadow:rgba(0,0,0,.35);
-  --vini-beat:.4839s;   /* un temps à 124 BPM : Vini danse sur le tempo des morceaux */
+  --vini-beat:.4839s;
+  --qt-ok:#2b2f3a;   /* barre d'une quête, fond */   /* un temps à 124 BPM : Vini danse sur le tempo des morceaux */
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -934,3 +935,43 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .rstat .rlab,.rstat .rval{white-space:nowrap}
 @media (max-width:420px){.rvini{width:104px;height:113px}.rstats{gap:6px}.rstat .rval{font-size:19px;padding:9px 2px}.rstat .rval svg{display:none}.rstat .rlab{font-size:10.5px;letter-spacing:.02em;padding:5px 2px}}
 @media (prefers-reduced-motion: reduce){.rstat,.serie-flamme,.serie-num,.serie-sem i{animation:none!important}}
+
+/* ---------- Quêtes du jour (lot 30) : sur l'accueil, sous la prochaine étape ---------- */
+.quetes{padding:0;overflow:hidden}
+.qt-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px 10px;background:var(--brand-soft);border-bottom:2px solid var(--brand-line)}
+.qt-head h2{margin:0;font-size:24px;font-weight:900}
+.qt-head p{margin:2px 0 0;color:var(--brand-light);font-weight:700;font-size:15px}
+.qt-head .vini{width:76px;height:82px;margin:-6px 0 -10px}
+.qt-list{list-style:none;margin:0;padding:6px 22px 14px;display:flex;flex-direction:column}
+.qt{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.qt:last-child{border-bottom:0}
+.qt-ic{width:34px;height:34px;flex-shrink:0;color:var(--brand-light)}
+.qt-ic svg{width:100%;height:100%}
+.qt-mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.qt-mid strong{font-size:17px;font-weight:800}
+.qt-bar{position:relative;height:20px;border-radius:10px;background:var(--qt-ok);overflow:hidden}
+.qt-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:10px;background:var(--brand);transition:width .5s cubic-bezier(.3,1.3,.5,1)}
+.qt.faite .qt-bar i{background:var(--mid)}
+.qt-n{position:relative;display:block;text-align:center;font-size:13px;line-height:20px;font-weight:900;color:var(--fg)}
+.qt-coffre{position:relative;width:56px;height:56px;flex-shrink:0;border:0;background:none;padding:4px;cursor:pointer;border-radius:14px}
+.qt-coffre svg{width:100%;height:100%;overflow:visible}
+.qt-coffre .qt-bois{fill:var(--brand)} .qt-coffre .qt-bois2{fill:var(--brand-edge)} .qt-coffre .qt-or{fill:var(--mid)}
+.qt-coffre:disabled{cursor:default}
+.qt:not(.faite) .qt-coffre .qt-bois,.qt:not(.faite) .qt-coffre .qt-bois2,.qt:not(.faite) .qt-coffre .qt-or{fill:var(--off)}
+.qt:not(.faite) .qt-coffre svg{opacity:.9}
+.qt.faite:not(.ouverte) .qt-coffre{animation:qt-attend 1.6s ease-in-out infinite}
+.qt.faite:not(.ouverte) .qt-coffre:hover{background:var(--panel-2)}
+.qt-couvercle{transform-box:fill-box;transform-origin:0% 100%;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.qt.ouvre .qt-couvercle,.qt.ouverte .qt-couvercle{transform:rotate(-38deg) translate(-2px,-4px)}
+.qt.ouvre .qt-coffre{animation:qt-secoue .35s ease-in-out}
+.qt.faite .qt-n{color:var(--ink)}
+.qt.ouverte .qt-coffre{width:auto;height:auto;padding:0}
+.qt-gain{display:inline-block;padding:6px 10px;border-radius:10px;border:2px solid var(--mid);font-size:14px;font-weight:900;color:var(--mid);white-space:nowrap}
+.qt.ouvre .qt-coffre::after{content:"";position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--mid) 55%,transparent),transparent 70%);animation:qt-eclat .7s ease-out forwards}
+.questline{display:block;width:100%;color:var(--brand-light);font-weight:800}
+.qt-coffre:focus-visible{outline:3px solid var(--brand-light);outline-offset:2px}
+@keyframes qt-attend{0%,100%{transform:rotate(0) scale(1)}10%{transform:rotate(-7deg) scale(1.06)}20%{transform:rotate(6deg) scale(1.06)}30%{transform:rotate(0) scale(1)}}
+@keyframes qt-secoue{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg) scale(1.1)}75%{transform:rotate(10deg) scale(1.1)}}
+@keyframes qt-eclat{from{opacity:1;transform:scale(.4)}to{opacity:0;transform:scale(1.6)}}
+@media (max-width:520px){.qt-head{padding:14px 16px 8px}.qt-list{padding:4px 16px 10px}.qt-head .vini{width:60px;height:65px}.qt-mid strong{font-size:16px}.qt-coffre{width:50px;height:50px}}
+@media (prefers-reduced-motion: reduce){.qt-coffre,.qt-couvercle,.qt-bar i{animation:none!important;transition:none!important}}
