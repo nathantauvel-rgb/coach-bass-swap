@@ -337,6 +337,17 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   propre » et « Comme en soirée » : niveaux 5 et 6 (`bdBest`, `BADGE_PROG`). Test de placement : `P_STEPS = [0, 5, 6]`.
   Textes : étape « Les bases », README. Images de la présentation refaites (`tests/images-presentation.js` : swap = niveau 6).
   Tests : numéros de niveau mis à jour, `tests/outils.js` met `coach-ordre` à `2`, nouveau `tests/ordre.spec.js`.
+  Après le gardien (feu rouge seulement à cause des 5 MP3, qui demandent l'accord de l'utilisateur) : la vraie musique n'est
+  téléchargée que sur l'écran des leçons (`warmSongs`), extraits sans informations d'origine, présentation et checklist
+  (point 19) à jour. 249 tests verts.
+- **Lot 27 « Direction artistique » (16 oct. 2026)**, pas de code du site. Décision de l'utilisateur : retour d'une mascotte et
+  d'**un peu** de couleur, façon Duolingo (il trouvait l'ancien site trop coloré). Page privée claude.ai (canvas) :
+  https://claude.ai/artifact/MhEyunmwTB6inYCCAecyCd : trois mascottes animées sur le tempo (Vini le vinyle au casque, Axo
+  l'axolotl aux branchies-égaliseur, Boomy l'enceinte), humeurs danse / parfait / raté ; une seule couleur ajoutée (violet UV
+  `#8C5CFF` recommandé, rose néon et citron en comparaison) ; police Nunito ; boutons en relief, cartes de choix, bulle ;
+  4 écrans d'accueil cliquables (niveau, objectif, bravo, série). Atelier de dessin : `captures/mascottes.html` (hors Git).
+  **En attente du choix de l'utilisateur** (mascotte, couleur, police). Suite prévue : lot 28 « Premiers pas » (accueil façon
+  Duolingo), lot 29 « Ça bouge » (mascotte dans les niveaux, écran de fin, série).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
