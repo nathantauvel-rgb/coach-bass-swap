@@ -38,7 +38,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini, « Ça bouge », quêtes du jour ;
   le lot 22 a été abandonné, le lot 27 est une direction artistique sans code). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
-- **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (19 points)
+- **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (20 points)
   sur la vraie FLX4. Aucun lot n'a été vérifié sur la table. À relire en particulier : le schéma de
   « Ma table » et les consignes des missions de « Passer au vrai », écrits de mémoire ; un vrai export
   rekordbox (l'import n'a vu qu'un faux fichier) ; la lisibilité du thème sombre pendant une partie.
@@ -410,8 +410,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   générale ; `pop()` sonne selon le message (réussi, presque, raté ; jamais pendant une démo), `chime()` ne double pas un message qui
   vient de sonner ; fin de partie : une note par étoile puis un accord, ou deux notes qui descendent (rien si l'écran de série passe
   devant, qui a son propre son) ; coffre, série, quiz, choix des Premiers pas, fin du test de placement et du mini-set. Bouton
-  haut-parleur `#sonsBtn` dans l'en-tête (clé `coach-sons`, `0` = coupés). Image `img/accueil.jpg` refaite (Vini annonce un coffre,
-  message valable à toute heure). Nouveau `tests/vini-sons.spec.js`. 291 tests verts.
+  haut-parleur `#sonsBtn` dans l'en-tête (clé `coach-sons`, `0` = coupés). Images de la présentation refaites (sur `img/accueil.jpg`, Vini annonce
+  un coffre, message valable à toute heure). Point 20 ajouté à la checklist FLX4 (les sons au casque de la table). Nouveau `tests/vini-sons.spec.js`. 291 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

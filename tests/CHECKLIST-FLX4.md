@@ -26,6 +26,7 @@ Préparation : Chrome ou Edge, rekordbox fermé, table branchée en USB.
 | 17 | Lot 19 : brancher la FLX4 | La pastille affiche son nom **sans** « · à régler », pas de bandeau « Nouvelle table », les dessins de « Ma table » bougent dans le même sens que la table | |
 | 18 | Lot 20 : niveau 1 en Mode Expert, avec le casque de la table, en appuyant sur PLAY bien en rythme (5 essais) | Les scores sont souvent au-dessus de 80 ; noter si l'écart est toujours « trop tard » ou toujours « trop tôt » (et de combien de ms) | |
 | 19 | Lots 25 et 26 : niveau 6 « Le swap des basses » avec la vraie musique, au casque de la table | Les grosses caisses de A et B tombent ensemble (pas de « galop »), les deux morceaux ne sonnent pas faux ensemble, le volume est le même que pour la house du site | |
+| 20 | Lot 31 : un niveau en entier au casque de la table, avec quelques gestes réussis et ratés, puis en Mode Expert | Les petits sons du jeu s'entendent sans couvrir la musique, la musique ne baisse pas d'un coup à chaque son, les sons ne gênent pas en Mode Expert (sinon : le bouton haut-parleur de l'en-tête les coupe) | |
 
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 
