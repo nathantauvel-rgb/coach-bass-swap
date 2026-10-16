@@ -426,7 +426,9 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   du jour qui attend, défi pas encore réussi, ou défi réussi (danse) avec le mini-set et son record. **Passer au vrai** (`viniVrai`
   dans `js/rekordbox.js`, appelé par `renderReal` et `renderMissions`) : demander la collection, « Voilà ta paire du jour ! »,
   « Mission N sur 6 : … », paire validée (danse) ; chaque mission faite le fait sauter avec un son (`reussi`, `fin` pour la dernière).
-  Nouveau `tests/vini-partout.spec.js`.
+  Après le gardien : sur Mes progrès, la dernière phrase donne la prochaine étape (les XP étaient déjà écrits dessous) ; dans Passer
+  au vrai, Vini ne promet pas de paire s'il n'y en a aucune, et dit « une autre paire » après « Une autre paire ».
+  Nouveau `tests/vini-partout.spec.js`. 297 tests verts.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

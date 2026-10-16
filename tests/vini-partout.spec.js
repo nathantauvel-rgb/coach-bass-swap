@@ -9,7 +9,7 @@ const BASE = { 'coach-parcours': 'debut' };
 const dit = (page, nom) => page.locator(`#${nom}Tip`).evaluate(e => e.textContent.replace(/ /g, ' '));
 
 test.describe('Mes progrès', () => {
-  test('un badge presque gagné, puis l\'objectif atteint, sinon les XP qui manquent', async ({ page }) => {
+  test('un badge presque gagné, puis l\'objectif atteint, sinon la prochaine étape', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'progres', stockage: Object.assign({ 'coach-lecons': S({ 0: 3, 1: 2, 5: 2 }) }, BASE) });
     await expect(page.locator('#progVini svg')).toBeVisible();
     expect(await dit(page, 'prog')).toBe('Tu y es presque : 2 sur 3 pour le badge « Swap propre » !');
@@ -19,9 +19,9 @@ test.describe('Mes progrès', () => {
     await expect(page.locator('#progVini')).toHaveClass(/vn-danse/);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
-  test('un nouveau venu : les XP pour le niveau 2', async ({ page }) => {
+  test('un nouveau venu : sa prochaine étape (pas les XP, déjà écrits juste en dessous)', async ({ page }) => {
     await ouvrir(page, { onglet: 'progres', stockage: BASE });
-    expect(await dit(page, 'prog')).toBe('Encore 30 XP pour passer au niveau 2 !');
+    expect(await dit(page, 'prog')).toBe('Prochaine étape : « Niveau 1 : Le bon moment ». À toi de jouer !');
   });
 });
 
@@ -47,6 +47,8 @@ test.describe('Passer au vrai', () => {
     expect(await dit(page, 'real')).toBe('Montre-moi ta collection rekordbox : je te trouve deux morceaux qui vont bien ensemble !');
     await page.locator('#rbDemo').click();
     expect(await dit(page, 'real')).toBe('Voilà ta paire du jour ! Ça te tente ?');
+    await page.locator('#rbNext').click();
+    expect(await dit(page, 'real')).toBe('Voilà une autre paire pour toi ! Ça te tente ?');
     await page.locator('#rbGo').click();
     expect(await dit(page, 'real')).toBe('Mission 1 sur 6 : prépare tes deux morceaux.');
     await page.evaluate(() => { window.__sons = []; son = n => window.__sons.push(n); });
@@ -58,6 +60,14 @@ test.describe('Passer au vrai', () => {
     expect(await page.evaluate(() => window.__sons)).toEqual(['reussi', 'reussi', 'reussi', 'reussi', 'reussi', 'fin']);
     await expect(page.locator('#realVini')).toHaveClass(/vn-danse/, { timeout: 3000 });
     expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+});
+
+test.describe('Passer au vrai, sans paire', () => {
+  test('une collection sans tempo ni tonalité : Vini ne promet pas de paire', async ({ page }) => {
+    await ouvrir(page, { onglet: 'vrai', stockage: Object.assign({ 'coach-collection': JSON.stringify({ name: 'vide.xml', list: [['Un', 'A', '', 0, ''], ['Deux', 'B', '', 0, '']] }) }, BASE) });
+    await page.evaluate(() => { rbLib = [['Un', 'A', '', 0, ''], ['Deux', 'B', '', 0, '']]; rbAll = null; rbStale = true; rbSel = null; renderReal(); });
+    expect(await dit(page, 'real')).toBe('Je n’ai pas trouvé de paire : il me faut des morceaux avec leur tempo et leur tonalité.');
   });
 });
 

@@ -82,12 +82,12 @@ function homeVini(){
     : sk ? `${salut} Ta série de ${plur(sk, 'jour', 'jours')} t’attend\u00a0: quelques minutes suffisent.`
     : `${salut} Prêt pour ta prochaine transition\u00a0?`, coffres || fait ? 'danse' : 'calme');
 }
-// Vini sur « Mes progrès » (lot 32) : l'objectif atteint, un badge presque gagné, ou les XP qui manquent pour le niveau suivant
+// Vini sur « Mes progrès » (lot 32) : l'objectif atteint, un badge presque gagné, ou la prochaine étape (les XP sont déjà écrits dessous)
 function viniProgres(){
-  const xp = xpTotal(), nb = badgeNext(), p = nb ? BADGE_PROG[nb[0]]() : null;
+  const nb = badgeNext(), p = nb ? BADGE_PROG[nb[0]]() : null, st = STAGES[nextStage()];
   if (goalDone()) viniDit('prog', 'Objectif du jour atteint\u00a0: tu gères\u00a0!', 'danse');
   else if (p && p[1] > 1 && p[0] / p[1] >= .5) viniDit('prog', `Tu y es presque\u00a0: ${Math.min(p[0], p[1])} sur ${p[1]} pour le badge «\u00a0${nb[1]}\u00a0»\u00a0!`);
-  else viniDit('prog', `Encore ${30 - xp % 30} XP pour passer au niveau ${2 + Math.floor(xp / 30)}\u00a0!`);
+  else viniDit('prog', st ? `Prochaine étape\u00a0: «\u00a0${st.cta()}\u00a0». À toi de jouer\u00a0!` : 'Tu as tout fait, bravo\u00a0! Garde la main avec le défi du jour.');
 }
 $('homeCta').addEventListener('click', () => { const st = STAGES[nextStage()]; if (st) st.go(); else location.hash = '#entrainer'; });
 $('homeChange').addEventListener('click', () => { parcoursPick = true; renderHome(); });

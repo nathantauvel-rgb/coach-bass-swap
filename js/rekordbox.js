@@ -133,7 +133,9 @@ function renderMissions(){
 // Vini sur « Passer au vrai » (lot 32) : il demande la collection, présente la paire, dit la mission en cours, fête la paire validée
 function viniVrai(){
   if (!rbLib.length){ viniDit('real', 'Montre-moi ta collection rekordbox\u00a0: je te trouve deux morceaux qui vont bien ensemble\u00a0!'); return; }
-  if (!rbSel || rbChoosing){ viniDit('real', rbChoosing ? 'Choisis deux morceaux, je te prépare les missions.' : 'Voilà ta paire du jour\u00a0! Ça te tente\u00a0?'); return; }
+  if (!rbSel || rbChoosing){ const aucune = !(rbAll || rbPairs).length;
+    viniDit('real', rbChoosing ? 'Choisis deux morceaux, je te prépare les missions.' : aucune ? 'Je n’ai pas trouvé de paire\u00a0: il me faut des morceaux avec leur tempo et leur tonalité.'
+      : rbMoved ? 'Voilà une autre paire pour toi\u00a0! Ça te tente\u00a0?' : 'Voilà ta paire du jour\u00a0! Ça te tente\u00a0?'); return; }
   const list = rbMissionList(rbLib[rbSel[0]], rbLib[rbSel[1]]), cur = list.findIndex(m => !rbMis.done[m[0]]);
   if (cur < 0) viniDit('real', `Paire validée, bravo\u00a0! Tu as fait ${plur(rbMis.total, 'vraie transition', 'vraies transitions')} avec ta musique.`, 'danse');
   else viniDit('real', `Mission ${cur + 1} sur ${list.length}\u00a0: ${list[cur][1].replace(/^./, c => c.toLowerCase())}.`);
