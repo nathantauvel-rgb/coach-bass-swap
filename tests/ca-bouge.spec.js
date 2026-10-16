@@ -100,6 +100,7 @@ test.describe('Écran de la série', () => {
     await expect(page.locator('#serieTxt')).toHaveText('jours d’affilée !');
     await page.keyboard.press('Escape');
     await expect(page.locator('#serie')).toBeHidden();
+    await expect(page.locator('#result')).toBeVisible();   // Échap ne ferme que l'écran de la série
   });
   test('pas d\'écran de série si l\'objectif n\'est pas atteint, ou l\'était déjà', async ({ page }) => {
     test.setTimeout(90000);

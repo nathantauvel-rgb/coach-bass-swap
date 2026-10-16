@@ -70,4 +70,5 @@ function openSerie(){
 }
 function closeSerie(){ $('serie').hidden = true; const r = $('retry'); if (!$('result').hidden && r && !r.hidden) r.focus({ preventScroll: true }); }
 $('serieGo').addEventListener('click', closeSerie);
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('serie').hidden) closeSerie(); });
+// Échap ferme seulement l'écran de la série (écouté en premier, il ne ferme pas aussi la carte de résultat)
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('serie').hidden){ e.stopPropagation(); closeSerie(); } }, true);
