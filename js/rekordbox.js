@@ -109,11 +109,12 @@ function rbHero(i, j, chosen){
 }
 function rbCheck(id, on, list){
   if (on) rbMis.done[id] = 1; else delete rbMis.done[id];
-  if (list.every(m => rbMis.done[m[0]]) && !rbMis.done.ok){ rbMis.done.ok = 1; rbMis.total++; confetti(120); badgeSync(); }
-  rbSaveMis(); renderMissions();
+  const fini = list.every(m => rbMis.done[m[0]]) && !rbMis.done.ok;
+  if (fini){ rbMis.done.ok = 1; rbMis.total++; confetti(120); badgeSync(); }
+  rbSaveMis(); renderMissions(); if (on){ viniSaute('real', fini ? 1600 : 1100); son(fini ? 'fin' : 'reussi'); }
 }
 function renderMissions(){
-  const box = $('rbMisBox'); box.hidden = !rbSel || rbChoosing; if (box.hidden) return;
+  const box = $('rbMisBox'); box.hidden = !rbSel || rbChoosing; if (box.hidden){ viniVrai(); return; }
   const a = rbLib[rbSel[0]], b = rbLib[rbSel[1]], list = rbMissionList(a, b), ol = $('rbMissions'); ol.innerHTML = '';
   const cur = list.findIndex(m => !rbMis.done[m[0]]), fini = cur < 0;
   $('rbMisSub').textContent = fini ? `Les ${list.length} missions sont faites avec « ${a[0]} » puis « ${b[0]} ».` : `Mission ${cur + 1} sur ${list.length}. Fais-la sur ta table, puis appuie sur « C'est fait » quand c'est propre.`;
@@ -127,9 +128,18 @@ function renderMissions(){
   const dn = $('rbDone'); dn.hidden = !rbMis.done.ok; dn.textContent = `Paire validée ! Tu as réussi ${plur(rbMis.total, 'vraie transition', 'vraies transitions')} avec ta musique.` + (rbMis.total === 1 ? ' Nouveau badge : Pour de vrai.' : '');
   $('rbAgain').hidden = !rbMis.done.ok;
   $('rbMisAll').textContent = rbShowAll ? (fini ? 'Masquer les missions' : 'Ne voir que la mission en cours') : fini ? 'Revoir les missions' : 'Voir toutes les missions';
+  viniVrai();
+}
+// Vini sur « Passer au vrai » (lot 32) : il demande la collection, présente la paire, dit la mission en cours, fête la paire validée
+function viniVrai(){
+  if (!rbLib.length){ viniDit('real', 'Montre-moi ta collection rekordbox\u00a0: je te trouve deux morceaux qui vont bien ensemble\u00a0!'); return; }
+  if (!rbSel || rbChoosing){ viniDit('real', rbChoosing ? 'Choisis deux morceaux, je te prépare les missions.' : 'Voilà ta paire du jour\u00a0! Ça te tente\u00a0?'); return; }
+  const list = rbMissionList(rbLib[rbSel[0]], rbLib[rbSel[1]]), cur = list.findIndex(m => !rbMis.done[m[0]]);
+  if (cur < 0) viniDit('real', `Paire validée, bravo\u00a0! Tu as fait ${plur(rbMis.total, 'vraie transition', 'vraies transitions')} avec ta musique.`, 'danse');
+  else viniDit('real', `Mission ${cur + 1} sur ${list.length}\u00a0: ${list[cur][1].replace(/^./, c => c.toLowerCase())}.`);
 }
 function renderReal(){
-  const has = rbLib.length > 0; $('rbEmpty').hidden = has; $('rbFull').hidden = !has; if (!has) return;
+  const has = rbLib.length > 0; $('rbEmpty').hidden = has; $('rbFull').hidden = !has; if (!has){ viniVrai(); return; }
   const usable = rbLib.filter(t => t[3] && t[4]).length;
   $('rbSum').textContent = plur(rbLib.length, 'morceau', 'morceaux') + (rbName ? ' · ' + rbName : '') + (usable < rbLib.length ? ` · ${usable} avec tempo et tonalité` : '');
   if (rbStale){ const f = $('rbFind').value.trim(); if (f) rbPairs = rbBuild(f); else rbPairs = rbAll = rbAll || rbBuild(''); rbStale = false; rbPage = 0; }

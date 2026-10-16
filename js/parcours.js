@@ -74,17 +74,21 @@ function renderHome(){
 }
 // Vini sur l'accueil (lot 31) : un coffre à ouvrir, l'objectif atteint, la série à garder, ou un simple bonjour selon l'heure
 function homeVini(){
-  const el = $('homeVini'); if (!el.firstChild) viniMettre(el, 'calme');
-  if (!parcours || parcoursPick){ viniHumeur(el, 'danse'); return; }
+  if (!parcours || parcoursPick){ viniDit('home', 'Un geste à la fois, et ça vient vite\u00a0!', 'danse'); return; }
   const coffres = questCoffres(), fait = goalDone(), sk = goalStreak(), h = new Date().getHours();
   const salut = h < 5 ? 'Encore debout\u00a0?' : h < 12 ? 'Bonjour\u00a0!' : h < 18 ? 'Salut\u00a0!' : 'Bonsoir\u00a0!';
-  $('homeTip').textContent = coffres ? (coffres > 1 ? `${coffres} coffres t’attendent dans tes quêtes\u00a0!` : 'Un coffre t’attend dans tes quêtes\u00a0!')
+  viniDit('home', coffres ? (coffres > 1 ? `${coffres} coffres t’attendent dans tes quêtes\u00a0!` : 'Un coffre t’attend dans tes quêtes\u00a0!')
     : fait ? 'Objectif du jour atteint, bravo\u00a0! Reviens demain pour ta série.'
     : sk ? `${salut} Ta série de ${plur(sk, 'jour', 'jours')} t’attend\u00a0: quelques minutes suffisent.`
-    : `${salut} Prêt pour ta prochaine transition\u00a0?`;
-  viniHumeur(el, coffres || fait ? 'danse' : 'calme');
+    : `${salut} Prêt pour ta prochaine transition\u00a0?`, coffres || fait ? 'danse' : 'calme');
 }
-$('homeViniBtn').addEventListener('click', () => { const el = $('homeVini'); viniJoie(el, 1100); son('clic'); clearTimeout(el._vh); el._vh = setTimeout(homeVini, 1150); });
+// Vini sur « Mes progrès » (lot 32) : l'objectif atteint, un badge presque gagné, ou les XP qui manquent pour le niveau suivant
+function viniProgres(){
+  const xp = xpTotal(), nb = badgeNext(), p = nb ? BADGE_PROG[nb[0]]() : null;
+  if (goalDone()) viniDit('prog', 'Objectif du jour atteint\u00a0: tu gères\u00a0!', 'danse');
+  else if (p && p[1] > 1 && p[0] / p[1] >= .5) viniDit('prog', `Tu y es presque\u00a0: ${Math.min(p[0], p[1])} sur ${p[1]} pour le badge «\u00a0${nb[1]}\u00a0»\u00a0!`);
+  else viniDit('prog', `Encore ${30 - xp % 30} XP pour passer au niveau ${2 + Math.floor(xp / 30)}\u00a0!`);
+}
 $('homeCta').addEventListener('click', () => { const st = STAGES[nextStage()]; if (st) st.go(); else location.hash = '#entrainer'; });
 $('homeChange').addEventListener('click', () => { parcoursPick = true; renderHome(); });
 document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.addEventListener('click', () => setParcours(b.dataset.parcours)));
@@ -98,7 +102,7 @@ function renderProgres(){
   $('pgToday').textContent = goalDone() ? 'Objectif du jour atteint' : 'Aujourd\'hui'; $('pgTodaySub').textContent = `${mins} min sur ${goal.min}`;
   $('pgStreak').textContent = sk ? `Série : ${plur(sk, 'jour', 'jours')}` : 'Pas encore de série';
   $('pgBest').textContent = goal.best ? `Record : ${plur(goal.best, 'jour', 'jours')}` : 'Atteins ton objectif pour en lancer une';
-  renderGoal(); renderBadges();
+  renderGoal(); renderBadges(); viniProgres();
   // le prochain badge
   const nb = badgeNext(); $('pgNext').hidden = false;
   if (nb){ const [cur, max, unit, go] = BADGE_PROG[nb[0]](); $('pgNextIcon').innerHTML = iconSvg(BADGE_ICON[nb[0]]); $('pgNextName').textContent = nb[1];

@@ -77,7 +77,7 @@ function questOuvrir(id){
   const q = qtDef(id); if (!q || !qt.ids.includes(id) || qt.ouverts.includes(id) || !qtFaite(q)) return;
   const gain = QT_GAIN[q.niv]; qt.ouverts.push(id); qt.xp += gain; qtSave();
   const li = $('qtList').querySelector(`[data-q="${id}"]`); if (li) li.classList.add('ouvre');
-  const v = $('homeVini'); viniJoie(v, 1200); clearTimeout(v._vh); son('coffre'); renderHud();
+  viniSaute('home', 1200); son('coffre'); renderHud();
   setTimeout(renderQuetes, REDUCED ? 0 : 900); setTimeout(homeVini, REDUCED ? 0 : 1250);   // Vini finit de sauter avant de changer de message
 }
 // Coffres prêts à ouvrir (Vini le dit sur l'accueil)

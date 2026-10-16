@@ -36,6 +36,18 @@ const VINI_HUMEURS = ['calme', 'danse', 'parfait', 'rate'];
 function viniMettre(el, humeur = 'danse'){ el.classList.add('vini'); el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Vini, la mascotte de DJingo'); el.innerHTML = VINI_SVG; viniHumeur(el, humeur); }
 function viniHumeur(el, humeur){ if (!VINI_HUMEURS.includes(humeur)) humeur = 'danse'; for (const h of VINI_HUMEURS) el.classList.toggle('vn-' + h, h === humeur); }
 // Un « Parfait ! » qui dure un instant (après un bon choix, par exemple), puis Vini se remet à danser
+/* ---------- Vini en haut des pages (lot 32) ----------
+   Un « coin » : Vini (élément `${nom}Vini` dans le bouton `${nom}ViniBtn`) et sa bulle (`${nom}Tip`). viniDit pose la phrase et
+   l'humeur de la page ; viniSaute le fait sauter un instant, puis il reprend cette humeur ; le toucher le fait sauter. */
+function viniDit(nom, texte, humeur = 'calme'){
+  const el = $(nom + 'Vini'); if (!el) return;
+  if (!el.firstChild){ viniMettre(el, humeur); $(nom + 'ViniBtn').addEventListener('click', () => { viniSaute(nom); son('clic'); }); }
+  el._h = humeur; $(nom + 'Tip').textContent = texte; if (!el.classList.contains('vn-parfait')) viniHumeur(el, humeur);
+}
+function viniSaute(nom, ms = 1100){
+  const el = $(nom + 'Vini'); if (!el || !el.firstChild) return;
+  viniHumeur(el, 'parfait'); clearTimeout(el._vn); el._vn = setTimeout(() => viniHumeur(el, el._h || 'calme'), ms);
+}
 function viniJoie(el, ms = 900){ viniHumeur(el, 'parfait'); clearTimeout(el._vn); el._vn = setTimeout(() => viniHumeur(el, 'danse'), ms); }
 /* ---------- Vini pendant une partie (lot 29) ----------
    À côté de la bulle de conseil : il attend (calme), danse pile sur les temps du morceau pendant la partie, saute de joie

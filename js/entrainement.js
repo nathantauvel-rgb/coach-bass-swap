@@ -18,6 +18,16 @@ const streakNow = () => [dayKey(), yesterdayKey()].includes(pracStr('lastOk')) ?
 const pracPool = () => BASE_LESSONS.map((_, i) => i).filter(i => PRAC_ALL || stars[i] >= 1);
 function dailyPick(pool){ let h = 7; for (const c of dayKey()) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return { li: pool[h % pool.length], sty: PRAC_STYLES[(h >>> 4) % 3], vr: (h >>> 8) % VARIANTS }; }
+// Vini sur « S'entraîner » (lot 32) : jouer d'abord un niveau, le défi du jour qui attend, ou la suite une fois réussi
+function viniEntrainement(){
+  const pool = pracPool();
+  if (!pool.length){ viniDit('train', 'Joue d’abord un niveau dans Apprendre\u00a0: ensuite, je t’entraîne ici\u00a0!'); return; }
+  const fait = pracStr('defiDate') === dayKey(), ds = fait ? pracNum('defiStars') : 0, rec = pracNum('setBest'), p = dailyPick(pool);
+  if (ds >= 2) viniDit('train', pool.length >= 3 ? (rec ? `Défi réussi\u00a0! Et un mini-set pour battre ton record de ${rec}\u00a0★ sur 9\u00a0?` : 'Défi réussi\u00a0! Et si tu tentais un mini-set de 3 transitions\u00a0?')
+    : 'Défi réussi\u00a0! Rejoue tes gestes à l’oreille pour les affûter.', 'danse');
+  else if (fait) viniDit('train', 'Le défi du jour n’est pas encore réussi\u00a0: retente-le\u00a0!');
+  else viniDit('train', `Le défi du jour t’attend\u00a0: «\u00a0${BASE_LESSONS[p.li].title}\u00a0», en ${STYLE_DEFS[p.sty].label}.`);
+}
 function renderTrain(){
   const pool = pracPool(), ok = pool.length > 0, doneToday = pracStr('defiDate') === dayKey(), ds = doneToday ? Math.min(3, pracNum('defiStars')) : 0, sk = streakNow();
   document.querySelectorAll('#vTrain [data-prac]').forEach(b => { b.disabled = !ok || (b.dataset.prac === 'set' && pool.length < 3); });
@@ -31,6 +41,7 @@ function renderTrain(){
   $('tSetP').textContent = pool.length < 3 ? 'Joue 3 niveaux dans Apprendre pour débloquer les mini-sets.' : 'Trois transitions d\'affilée, sans pouvoir rejouer : comme en soirée.';
   renderQuizCard();
   $('trainNote').innerHTML = ok ? `L'entraînement reprend les niveaux que tu as déjà joués dans Apprendre (${pool.length} sur ${BASE_LESSONS.length}), sur d'autres morceaux.` : 'Joue d\'abord un niveau dans <a href="#apprendre">Apprendre</a> : l\'entraînement reprend les gestes que tu connais déjà.';
+  viniEntrainement();
 }
 function startPrac(kind){
   const pool = pracPool(); if (run || prac || !pool.length || (kind === 'set' && pool.length < 3)) return;

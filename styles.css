@@ -988,3 +988,10 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .sonsbtn[aria-pressed="false"]{color:var(--muted)}
 @media (max-width:760px){.hero{flex-wrap:wrap}.hero .hbuddy{display:flex;margin:0;width:100%;flex-direction:row-reverse;justify-content:flex-end}
   .hvini{width:92px;height:100px}.hbuddy .bubble::after{right:auto;left:-6px}}
+
+/* ---------- Vini en haut des pages (lot 32) ---------- */
+.vcoin{display:flex;align-items:center;gap:14px;margin:0 0 18px}
+.vcoin .hvini{width:96px;height:104px}
+.vcoin .bubble{position:relative;max-width:560px}
+.vcoin .bubble::before{content:"";position:absolute;left:-6px;top:50%;margin-top:-7px;width:14px;height:14px;background:var(--hi);transform:rotate(45deg);border-radius:2px}
+@media (max-width:520px){.vcoin{gap:10px;margin-bottom:12px}.vcoin .hvini{width:76px;height:82px}}
