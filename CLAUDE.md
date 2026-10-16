@@ -32,7 +32,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 13 oct. 2026, fin de session)
-- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21 et 23 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
+- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 et 24 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
   débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait ; le lot 22 a été abandonné). `main` = `origin/main`, à une
@@ -307,6 +307,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   qui trahissait la phrase ; même trou en Mode Expert. `markShown` (`js/piste.js`) : sans repères, rien devant la ligne,
   le repère et sa note réapparaissent une fois la ligne passée. Brouillard rendu tout à fait opaque au-delà de la ligne.
   235 tests verts.
+- **Lot 24 publié le 16 oct. 2026** (accord de l'utilisateur).
+- **Vidéo « le rêve » (16 oct. 2026)**, dans `marketing/` (hors Git) : `marketing/video/djingo-reve.html` (chambre, plongée dans
+  le vinyle, « …c'était TOI », drop avec foule, lasers et mur de LED, trois rêves, le site en trois mots, « Deviens DJ »),
+  même musique et même drop que `djingo.html`. `node marketing/video/rendu.js djingo-reve` → `sortie/djingo-reve-tiktok.mp4`.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
