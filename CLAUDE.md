@@ -415,6 +415,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - **Lot 31 publié le 16 oct. 2026** (accord de l'utilisateur ; gardien : feu orange). Production vérifiée (Vini annonce le coffre et
   danse, un seul Vini, le coffre joue ses 5 notes, contexte audio lancé, bouton des sons qui coupe et garde `coach-sons` à `0`, aucune
   erreur). Notion à jour. Prochaine étape du plan : tester avec 3 à 5 débutants (fiche `testeurs.html`), et la checklist FLX4 (20 points).
+- **Couleurs validées par l'utilisateur (16 oct. 2026)** : le violet (Vini, Premiers pas, quêtes) et le doré (titres réussis, série,
+  étoiles, XP) lui conviennent. Ne pas les retirer.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
