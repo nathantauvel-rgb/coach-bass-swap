@@ -346,7 +346,9 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   l'axolotl aux branchies-égaliseur, Boomy l'enceinte), humeurs danse / parfait / raté ; une seule couleur ajoutée (violet UV
   `#8C5CFF` recommandé, rose néon et citron en comparaison) ; police Nunito ; boutons en relief, cartes de choix, bulle ;
   4 écrans d'accueil cliquables (niveau, objectif, bravo, série). Atelier de dessin : `captures/mascottes.html` (hors Git).
-  **En attente du choix de l'utilisateur** (mascotte, couleur, police). Suite prévue : lot 28 « Premiers pas » (accueil façon
+  **Choix de l'utilisateur : Vini, en violet.** Il garde le corps (vinyle, bras, jambes, casque) mais trouve le visage trop
+  « kawaii » : planche « Vini · six visages » ajoutée (Cool, Lunettes, Rétro, Grands yeux, Minimal, LED ; atelier
+  `captures/visages.html`, planche fabriquée par un script à partir de l'atelier). **En attente : le visage choisi**, puis la police. Suite prévue : lot 28 « Premiers pas » (accueil façon
   Duolingo), lot 29 « Ça bouge » (mascotte dans les niveaux, écran de fin, série).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
