@@ -31,28 +31,21 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   3. deux parcours · 4. interface sombre · 5. schéma interactif de la FLX4.
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
-## Pour reprendre (état au 13 oct. 2026, fin de session)
-- **À REPRENDRE EN PREMIER (17 oct. 2026) : lot 33 « Prêt pour les testeurs »**, demandé par l'utilisateur (« lance la piste 1 »).
-  Code fini et enregistré sur la branche `lot-33-testeurs` (commit local, **rien de publié**). Voir l'entrée « Lot 33 » plus bas.
-  Fait : `tests/verif.spec.js` vert, tests de « Ma table », MIDI, autre table et avis verts, captures bureau et téléphone
-  regardées, contraste contrôlé (`node tests/captures.js captures/lot33-tout --vite` : seules les étoiles estompées, voulu).
-  La suite complète a été coupée par le changement de session à 215 tests réussis sur ~305, **aucun échec**.
-  Reste, dans l'ordre : 1. relancer `npm test` en arrière-plan (7 à 11 min) ; 2. lancer l'agent `gardien` ; 3. présenter le lot
-  à l'utilisateur avec des captures (`captures/lot33/`, hors Git : carte en haut de « Ma table », étapes, dessin, questions,
-  bilan) et **le message à envoyer aux testeurs** (texte prêt à coller, à écrire : le lien
-  https://coach-bass-swap.vercel.app/testeurs.html, table en USB rekordbox fermé, casque, « Mon avis » quand ça bloque, avec une
-  FLX4 « Ma table → Vérifier ma table pas à pas » 10 min, à la fin « Mon avis → Copier mon rapport » à renvoyer ; pas de table :
-  à la souris) ; 4. demander « On met en ligne ? » ; 5. après accord : fusion dans `main`, push, vérifier la production,
-  Notion (ligne au Journal), noter « Lot 33 publié » ici. Ne jamais ajouter `.gitignore` (modifié localement pour
-  `marketing/video/sortie/`) ni `marketing/` au commit.
-- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 à 32 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
+## Pour reprendre (état au 17 oct. 2026, fin de session)
+- **À REPRENDRE EN PREMIER (17 oct. 2026) : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le site est prêt pour eux
+  (lot 33 publié). Le **message à envoyer** est écrit dans `marketing/message-testeurs.md` (hors Git) : version complète,
+  version très courte, et les pièges à ne pas oublier. Il n'a **pas encore été envoyé à qui que ce soit** : c'est à
+  l'utilisateur de choisir ses testeurs. Quand les rapports arrivent, les lire ensemble et en tirer la liste des
+  corrections. Ne jamais ajouter `.gitignore` (modifié localement pour `marketing/video/sortie/`) ni `marketing/` à un commit.
+- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 à 33 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
-  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini, « Ça bouge », quêtes du jour, Vini sur l'accueil et sons, Vini partout ;
+  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini, « Ça bouge », quêtes du jour, Vini sur l'accueil et sons, Vini partout, prêt pour les testeurs ;
   le lot 22 a été abandonné, le lot 27 est une direction artistique sans code). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
-- **En attente côté utilisateur, rien n'a été fait** : la checklist `tests/CHECKLIST-FLX4.md` (20 points)
-  sur la vraie FLX4. Aucun lot n'a été vérifié sur la table. À relire en particulier : le schéma de
+- **En attente côté utilisateur, rien n'a été fait** : la vérification de la vraie FLX4. Elle se fait maintenant
+  **dans le site** : « Ma table » → « Vérifier ma table pas à pas » (20 étapes, 10 min, lot 33) ; `tests/CHECKLIST-FLX4.md`
+  reste la version papier. Aucun lot n'a été vérifié sur la table. À relire en particulier : le schéma de
   « Ma table » et les consignes des missions de « Passer au vrai », écrits de mémoire ; un vrai export
   rekordbox (l'import n'a vu qu'un faux fichier) ; la lisibilité du thème sombre pendant une partie.
 - **Le point 16 de la checklist** donne les numéros MIDI des commandes non branchées (HI, crossfader,
@@ -465,7 +458,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   pas passe l'étape 1 (« Elle est réglée et prête à jouer ») ; le nom de la table est gardé (`vf.nom`) et écrit dans le rapport.
   **À vérifier sur la vraie FLX4** (c'est justement à ça que sert la vérification) : que le filtre (CFX) et ON de l'effet
   s'apprennent bien au passage, et les numéros relevés pour crossfader, HI, TRIM, tempo, molette, CUE, pad, BEAT SYNC
-  (le point 16 de la checklist se fait maintenant par cette vérification). Pas encore publié.
+  (le point 16 de la checklist se fait maintenant par cette vérification). `tests/CHECKLIST-FLX4.md` renvoie vers la
+  vérification guidée pour son point 16 au lieu de demander de noter les numéros à la main.
+- **Lot 33 publié le 17 oct. 2026** (accord de l'utilisateur ; 305 tests verts, gardien : feu orange, rien de bloquant).
+  Production vérifiée : `js/verif.js` servi, aucune erreur dans la console, 20 étapes plus l'écran de bilan (`VF_N` = 20,
+  `VF_STEPS` en a 21), carte « Tester ta table » bien cachée sans table branchée, fiche des testeurs à jour. Notion à jour.
+  **Message aux testeurs** prêt dans `marketing/message-testeurs.md` (hors Git), pas encore envoyé.
+  **Cinq détails signalés par le gardien, laissés tels quels, à reprendre si un testeur s'y cogne** : 1. l'étape « Aller jouer
+  Le swap des basses » n'impose pas le style « Vraie musique » (c'est le défaut, mais un testeur passé à « House » jouerait
+  sans le savoir) ; 2. l'étape Mode Expert le laisse allumé après la vérification ; 3. le dessin recopié dans la fenêtre réagit
+  au survol mais pas au clic (les clics sont branchés sur `#tSvg` seulement) ; 4. appuyer plusieurs fois sur « Écouter »
+  superpose les extraits ; 5. `vfApprend` prend le **premier** message inconnu : une autre commande bougée au mauvais moment
+  peut être prise pour le filtre (rattrapable par « Revenir aux réglages de la DDJ-FLX4 »).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
