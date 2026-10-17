@@ -5,6 +5,11 @@ Les tests automatiques utilisent une fausse table : ils ne remplacent pas cette 
 
 Préparation : Chrome ou Edge, rekordbox fermé, table branchée en USB.
 
+Depuis le lot 33, le site fait cette vérification avec toi : « Ma table » → **« Vérifier ma table pas à pas »**
+(20 étapes, environ 10 minutes). Il coche tout seul les commandes qui répondent, relève les numéros des
+commandes qu'il n'utilise pas encore (point 16) et garde le résultat dans « Copier le rapport ». La liste
+ci-dessous reste la version papier, utile pour noter à part ou pour vérifier sans ouvrir la vérification.
+
 | # | À faire | Résultat attendu | OK ? |
 |---|---|---|---|
 | 1 | Ouvrir le site et accepter l'autorisation MIDI | La pastille en haut affiche le nom de la table | |
@@ -22,7 +27,7 @@ Préparation : Chrome ou Edge, rekordbox fermé, table branchée en USB.
 | 13 | Cliquer sur la pastille de la table, en haut à droite | La page « Ma table » s'ouvre et indique « Table branchée » | |
 | 14 | Sur « Ma table », bouger les faders, les LOW, le MID, appuyer sur PLAY | La bonne commande s'allume sur le schéma et affiche sa position | |
 | 15 | Comparer le schéma à la vraie table | Chaque commande est au bon endroit et porte le bon nom (sinon, noter laquelle) | |
-| 16 | Bouger une commande non utilisée (HI, crossfader, jog, pad) | Un message donne son canal et son numéro : les noter, ils serviront aux prochains exercices | |
+| 16 | « Ma table » → « Vérifier ma table pas à pas », étapes « Le crossfader » à « BEAT SYNC » | Le site relève lui-même le canal et le numéro de HI, crossfader, TRIM, tempo, molette, CUE, pad et BEAT SYNC : ils sont dans « Copier le rapport » et serviront aux prochains exercices | |
 | 17 | Lot 19 : brancher la FLX4 | La pastille affiche son nom **sans** « · à régler », pas de bandeau « Nouvelle table », les dessins de « Ma table » bougent dans le même sens que la table | |
 | 18 | Lot 20 : niveau 1 en Mode Expert, avec le casque de la table, en appuyant sur PLAY bien en rythme (5 essais) | Les scores sont souvent au-dessus de 80 ; noter si l'écart est toujours « trop tard » ou toujours « trop tôt » (et de combien de ms) | |
 | 19 | Lots 25 et 26 : niveau 6 « Le swap des basses » avec la vraie musique, au casque de la table | Les grosses caisses de A et B tombent ensemble (pas de « galop »), les deux morceaux ne sonnent pas faux ensemble, le volume est le même que pour la house du site | |
