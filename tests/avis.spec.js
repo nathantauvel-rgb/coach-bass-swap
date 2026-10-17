@@ -131,14 +131,14 @@ test.describe('Le rapport', () => {
 test.describe('Tout recommencer à zéro', () => {
   test('efface la progression mais garde les réglages de la table', async ({ page }) => {
     const reglage = S({ faderA: { ch: 0, n: 19 } });
-    await ouvrir(page, { stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3 }), 'coach-badges': S(['pas']), 'coach-midi-map': reglage } });
+    await ouvrir(page, { stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3 }), 'coach-badges': S(['pas']), 'coach-midi-map': reglage, 'coach-verif': '{"i":3}' } });
     await page.locator('#avisBtn').click();
     await page.locator('.avreset summary').click();
     await page.locator('#avReset').click();
     await expect(page.locator('#vHome')).toBeVisible();
     await expect(page.locator('#homeChoice')).toBeVisible();
     const reste = await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('coach-')).sort());
-    expect(reste).toEqual(['coach-journal', 'coach-midi-map', 'coach-ordre']);   // le journal et coach-ordre reviennent au rechargement
+    expect(reste).toEqual(['coach-journal', 'coach-midi-map', 'coach-ordre', 'coach-verif']);   // le journal et coach-ordre reviennent au rechargement
     expect(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).toBe(reglage);
     expect((await journal(page)).parties).toEqual([]);
   });

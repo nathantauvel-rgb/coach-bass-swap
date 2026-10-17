@@ -32,6 +32,19 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 13 oct. 2026, fin de session)
+- **À REPRENDRE EN PREMIER (17 oct. 2026) : lot 33 « Prêt pour les testeurs »**, demandé par l'utilisateur (« lance la piste 1 »).
+  Code fini et enregistré sur la branche `lot-33-testeurs` (commit local, **rien de publié**). Voir l'entrée « Lot 33 » plus bas.
+  Fait : `tests/verif.spec.js` vert, tests de « Ma table », MIDI, autre table et avis verts, captures bureau et téléphone
+  regardées, contraste contrôlé (`node tests/captures.js captures/lot33-tout --vite` : seules les étoiles estompées, voulu).
+  La suite complète a été coupée par le changement de session à 215 tests réussis sur ~305, **aucun échec**.
+  Reste, dans l'ordre : 1. relancer `npm test` en arrière-plan (7 à 11 min) ; 2. lancer l'agent `gardien` ; 3. présenter le lot
+  à l'utilisateur avec des captures (`captures/lot33/`, hors Git : carte en haut de « Ma table », étapes, dessin, questions,
+  bilan) et **le message à envoyer aux testeurs** (texte prêt à coller, à écrire : le lien
+  https://coach-bass-swap.vercel.app/testeurs.html, table en USB rekordbox fermé, casque, « Mon avis » quand ça bloque, avec une
+  FLX4 « Ma table → Vérifier ma table pas à pas » 10 min, à la fin « Mon avis → Copier mon rapport » à renvoyer ; pas de table :
+  à la souris) ; 4. demander « On met en ligne ? » ; 5. après accord : fusion dans `main`, push, vérifier la production,
+  Notion (ligne au Journal), noter « Lot 33 publié » ici. Ne jamais ajouter `.gitignore` (modifié localement pour
+  `marketing/video/sortie/`) ni `marketing/` au commit.
 - **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 à 32 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
@@ -433,6 +446,26 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   quatre pages, mission cochée = Vini qui saute, aucune erreur). Notion à jour. La suite de tests prend maintenant 7 à 11 minutes :
   la lancer en arrière-plan. Prochaines étapes possibles : prêt pour les testeurs (fiche, message, vérification guidée de la FLX4),
   plus de vraie musique, nouveaux exercices (il faut les numéros MIDI du point 16).
+- **Lot 33 « Prêt pour les testeurs » (17 oct. 2026)** : branche `lot-33-testeurs`, non publiée. **Vérifier ma table** (`js/verif.js`,
+  chargé après `reglage`) : la checklist FLX4 guidée pas à pas, ouverte depuis une carte en haut de « Ma table » (`.tverif`, `#tVerif`,
+  visible seulement avec une table prête à jouer ou une vérification commencée). Fenêtre `#verif`, 20 étapes `VF_STEPS` : `auto`
+  (table reconnue, faders, LOW, MID et filtre, boutons : cochés tout seuls quand la commande va d'un bout à l'autre ou est pressée ;
+  le filtre et ON de l'effet, sans réglage d'origine, sont appris au passage par `vfApprend` : le premier message inconnu du bon
+  type), `capture` (crossfader, HI A et B, TRIM A, tempo A, molette A, CUE, pad 1, BEAT SYNC : **le site relève leur numéro MIDI**
+  dans `vf.midi` sans s'en servir ; potard = 3 valeurs, second message « fin » ignoré, molette = 6 messages, bouton = deux fois le
+  même ; « Je n'ai pas cette commande »), `branche` (débrancher puis rebrancher, `verifBranche` appelé par `initMidi`), `manuel`
+  (dessin de la table avec `tableSvg`, son au casque avec « Écouter » = 4 s de vraie musique, scores du Mode Expert au casque,
+  vraie musique calée, sons du jeu ; « Aller jouer » ouvre le niveau et garde l'étape), puis bilan. Pendant la fenêtre, `onMidi`
+  passe la main à `verifMidi` (les positions `phys` restent retenues). Clé `coach-verif` (`i`, `res`, `res2`, `note`, `midi`,
+  `fini`, `nom`), validée à la lecture, **gardée par « Tout recommencer à zéro »**. « Copier le rapport » et le rapport des testeurs
+  (`verifResume`) donnent chaque étape, les numéros relevés et les réglages utilisés. Fiche `testeurs.html` à jour (questions de
+  Vini, rekordbox fermé, casque et son, section « Tu as une DDJ-FLX4 ? 10 minutes de plus »). Nouveau `tests/verif.spec.js` ; écrans
+  `18-verifier-liste` et `19-verifier-questions` dans `tests/captures.js`. Le bilan compte « à regarder » une réponse autre que
+  la première (la bonne) ou « ne marche pas » ; une commande absente ou une étape passée n'en est pas. Une autre table réglée pas à
+  pas passe l'étape 1 (« Elle est réglée et prête à jouer ») ; le nom de la table est gardé (`vf.nom`) et écrit dans le rapport.
+  **À vérifier sur la vraie FLX4** (c'est justement à ça que sert la vérification) : que le filtre (CFX) et ON de l'effet
+  s'apprennent bien au passage, et les numéros relevés pour crossfader, HI, TRIM, tempo, molette, CUE, pad, BEAT SYNC
+  (le point 16 de la checklist se fait maintenant par cette vérification). Pas encore publié.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -454,7 +487,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
-  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `avis` (avis des testeurs, rapport) →
+  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) →
   `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
@@ -541,7 +574,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-bibliotheque` (`coach.html`).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -555,7 +588,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

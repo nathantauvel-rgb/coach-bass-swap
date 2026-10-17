@@ -42,6 +42,7 @@ function onMidi(e){
   if (!e || !e.data || e.data.length < 3) return;
   const [st, d1, d2] = e.data, type = st & 0xF0, ch = st & 0x0F, val = clamp01(d2 / 127);
   if (reg.active){ regMidi(type, ch, d1, d2); return; }
+  if (verif.on){ verifMidi(type, ch, d1, d2); return; }   // « Vérifier ma table » (verif.js) écoute la table
   if (learnKey){ const btn = MIDI_NOTE.includes(learnKey), want = btn ? (type === 0x90 && d2 > 0) : (type === 0xB0 && !(d1 >= 32 && d1 < 64));
     // un contrôle déjà utilisé par un autre réglage est refusé : on continue d'attendre le bon
     const taken = (btn ? MIDI_NOTE : MIDI_CC).some(k => k !== learnKey && midiSame(map[k], ch, d1));
@@ -64,7 +65,7 @@ async function initMidi(){
     // table débranchée : ses positions ne sont plus fiables, on les oublie jusqu'au prochain mouvement
     const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); midiNames = ins.map(i => String(i.name || 'Table MIDI'));
       if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; midiCount = ins.length; renderPill();
-      updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); };
+      updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); };
     acc.onstatechange = refresh; refresh();
   } catch (e){ txt.textContent = 'Souris (MIDI bloqué ici)'; }
 }

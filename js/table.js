@@ -74,7 +74,7 @@ function renderTable(){
     : et === 'flx4' ? `Table branchée : ${nom}. Les réglages sont encore ceux de ton autre table : clique sur « Revenir aux réglages de la DDJ-FLX4 ».`
     : `Table branchée : ${nom}${tableCfg ? ' (réglée pas à pas)' : ''}. Bouge une commande pour la voir réagir.`;
   $('tKick').textContent = tableCfg || (midiCount && !midiNames.some(isFlx4)) ? 'Ta table' : 'Ta DDJ-FLX4';
-  $('tReg').hidden = !midiCount;
+  $('tReg').hidden = !midiCount; renderVerifBtn();
   svg.querySelectorAll('.tc').forEach(el => { el.classList.toggle('sel', el.dataset.c === tableSel); el.setAttribute('aria-pressed', String(el.dataset.c === tableSel)); });
   $('tNote').textContent = tableNote;
   const box = $('tPanel'); box.innerHTML = '';

@@ -93,7 +93,23 @@
     <p class="avsmall" id="avSum"></p>
     <div class="rbrow"><button type="button" class="ghost" id="avCopy">Copier mon rapport</button><button type="button" class="ghost" id="avMail" hidden>Envoyer par e-mail</button></div>
     <textarea class="avtext" id="avText" rows="8" readonly hidden aria-label="Ton rapport"></textarea>
-    <details class="avreset"><summary>Tout recommencer à zéro</summary><p class="avsmall">Efface ta progression, tes étoiles, tes badges, tes réponses au quiz et tes avis sur cet ordinateur. Les réglages de ta table sont gardés.</p><button type="button" class="rbtn" id="avReset">Oui, tout effacer</button></details>
+    <details class="avreset"><summary>Tout recommencer à zéro</summary><p class="avsmall">Efface ta progression, tes étoiles, tes badges, tes réponses au quiz et tes avis sur cet ordinateur. Les réglages et la vérification de ta table sont gardés.</p><button type="button" class="rbtn" id="avReset">Oui, tout effacer</button></details>
+  </div>
+</div>
+<div class="quiz" id="verif" hidden role="dialog" aria-modal="true" aria-labelledby="vfTitle">
+  <div class="qcard vfcard">
+    <button type="button" class="rclose" id="vfClose" aria-label="Fermer">×</button>
+    <div class="vfbar" aria-hidden="true"><i id="vfFill"></i></div>
+    <span class="lnum" id="vfKick">Vérifier ma table</span>
+    <h2 id="vfTitle" tabindex="-1"></h2>
+    <p class="regtext" id="vfText"></p>
+    <ul class="reglist vflist" id="vfList" hidden></ul>
+    <svg class="vfsvg" id="vfSvg" viewBox="0 0 920 440" aria-hidden="true" hidden></svg>
+    <div class="vfchoix" id="vfChoix" hidden></div>
+    <label class="vfnote" id="vfNoteBox" hidden><span>Un détail à noter ? (facultatif)</span><textarea id="vfNote" rows="2" maxlength="300"></textarea></label>
+    <p class="regstate" id="vfState" role="status"></p>
+    <textarea class="vfout" id="vfOut" rows="6" readonly hidden aria-label="Rapport de vérification"></textarea>
+    <div class="rbrow"><button type="button" class="ghost" id="vfBack">Retour</button><button type="button" class="ghost" id="vfKo">Ça ne marche pas</button><button type="button" class="ghost" id="vfSkip">Passer</button><button type="button" class="rbtn go" id="vfNext">Continuer</button><button type="button" class="rbtn go" id="vfCopy" hidden>Copier le rapport</button><button type="button" class="ghost" id="vfRestart" hidden>Recommencer</button></div>
   </div>
 </div>
 <div class="quiz" id="reg" hidden role="dialog" aria-modal="true" aria-labelledby="regTitle">
@@ -233,6 +249,7 @@
       <h1>Ma table</h1>
       <p class="lead">À quoi sert chaque commande, et lesquelles tu utilises dans les niveaux.</p>
       <p class="subnote" id="tState"></p>
+      <div class="tverif"><p><b>Tester ta table</b><span id="tVerifSub">10 minutes : le site vérifie chaque commande avec toi.</span></p><button type="button" class="ghost" id="tVerif">Vérifier ma table pas à pas</button></div>
       <div class="tgrid">
         <div class="tscroll"><svg id="tSvg" viewBox="0 0 920 440" role="group" aria-label="Schéma simplifié d'une table DJ"></svg></div>
         <div class="tpanel" id="tPanel" aria-live="polite"></div>
@@ -384,6 +401,7 @@
 <script src="js/quetes.js"></script>
 <script src="js/table.js"></script>
 <script src="js/reglage.js"></script>
+<script src="js/verif.js"></script>
 <script src="js/avis.js"></script>
 <script src="js/demarrage.js"></script>
 </body>

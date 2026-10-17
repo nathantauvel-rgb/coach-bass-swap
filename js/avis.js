@@ -63,6 +63,7 @@ function avisRapport(){
   L.push('', `Avis (${jr.avis.length}) :`);
   if (!jr.avis.length) L.push(' - aucun');
   for (const a of jr.avis) L.push(` - Le ${a.d}, sur « ${a.ecran} », note ${a.note ? a.note + '/5' : 'non donnée'}`, `   Bloqué : ${a.bloque || '—'}`, `   Plu : ${a.plu || '—'}`);
+  const vfl = verifResume(); if (vfl.length) L.push('', ...vfl);
   if (jr.erreurs.length) L.push('', 'Erreurs affichées :', ...jr.erreurs.map(e => ' - ' + e));
   return L.join('\n');
 }
@@ -97,10 +98,10 @@ function avisMail(){
   let t = avisRapport(); if (t.length > 1800) t = t.slice(0, 1800) + '\n(rapport coupé : utilise plutôt « Copier mon rapport »)';
   location.href = 'mailto:' + AVIS_MAIL + '?subject=' + encodeURIComponent('Rapport DJingo') + '&body=' + encodeURIComponent(t);
 }
-// Remise à zéro : tout ce que le site a enregistré, sauf les réglages de la table (et le nom d'une autre table réglée pas à pas)
+// Remise à zéro : tout ce que le site a enregistré, sauf ce qui concerne la table (réglages, nom d'une autre table, vérification)
 function avisReset(){
   jrOff = true;
-  try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && k !== 'coach-midi-map' && k !== 'coach-table').forEach(k => localStorage.removeItem(k)); } catch (e) {}
+  try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-verif'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
   location.hash = '#accueil'; location.reload();
 }
 $('avisBtn').addEventListener('click', openAvis);
