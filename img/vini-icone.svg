@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="DJingo">
+  <title>DJingo</title>
+  <!-- L'icône de l'onglet. Volontairement plus grasse que img/vini-logo.svg : à 16 pixels, le casque mange
+       la largeur et le visage disparaît. Ici le vinyle prend toute la place et l'étiquette est deux fois
+       plus grande, pour qu'on reconnaisse Vini même tout petit. -->
+  <circle cx="32" cy="32" r="31" fill="#7C4DFF"/>
+  <circle cx="32" cy="32" r="25" fill="none" stroke="#5229C4" stroke-width="2" opacity=".5"/>
+  <path d="M11 22 A24 24 0 0 1 23 11 L27 18 A16 16 0 0 0 18 26 Z" fill="#B89BFF" opacity=".7"/>
+  <circle cx="32" cy="32" r="18" fill="#FFF7E6"/>
+  <g fill="#16181F">
+    <ellipse cx="25.2" cy="28.4" rx="3.9" ry="6.2"/>
+    <ellipse cx="38.8" cy="28.4" rx="3.9" ry="6.2"/>
+  </g>
+  <path d="M26 26.8 L29.7 21.4 L31.7 24.8 Z" fill="#FFF7E6"/>
+  <path d="M39.6 26.8 L43.3 21.4 L45.3 24.8 Z" fill="#FFF7E6"/>
+  <path d="M23.6 37.6 Q32 49.4 40.4 37.6 Q32 43.4 23.6 37.6 Z" fill="#16181F"/>
+</svg>

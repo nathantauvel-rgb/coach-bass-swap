@@ -1,14 +1,17 @@
 /* Layout : appli d'apprentissage ludique et lumineuse. Barre XP · chapitres · carte des niveaux · scène (piste qui défile vers la ligne de frappe) · barre d'action collante · résultat en surimpression.
    Une seule ambiance claire, assumée : surfaces blanches, couleurs franches sans néon, boutons en relief. */
 :root{
-  /* Thème « Cabine pure » (14 oct. 2026) : noir neutre et blanc ; l'orange et le bleu sont réservés aux platines A et B,
-     le vert et le rouge aux messages réussi / raté, le jaune aux étoiles. Toutes les couleurs du site passent par cette liste. */
-  --bg:#0e0f12;
-  --glow-a:#0e0f12;
-  --glow-b:#0e0f12;
-  --panel:#17191e;
-  --panel-2:#1f2229;
-  --line:#2c3039;
+  /* Thème « Cabine » : fond très sombre et texte clair. L'orange et le bleu sont **réservés aux platines A et B**
+     (c'est un langage, pas une décoration : pendant une partie, on lit la couleur avant le texte), le vert et le rouge
+     aux messages réussi / raté, le doré aux étoiles et aux récompenses.
+     Lot 36 (18 oct. 2026) : les gris passent au bleu-noir du brief de direction artistique, le violet et la lavande
+     prennent ses valeurs exactes. Toutes les couleurs du site passent par cette liste. */
+  --bg:#0B0E16;
+  --glow-a:#0B0E16;
+  --glow-b:#0B0E16;
+  --panel:#151A27;
+  --panel-2:#1D2233;
+  --line:#3A3F56;   /* « ardoise » du brief : contours et surfaces secondaires */
   --fg:#f2f3f5;
   --muted:#a6acb8;
   --a:#ff7a45;   /* platine A : seulement ce qui touche à A */
@@ -19,43 +22,43 @@
   --mid:#ffb020;
   --medal-bg:#2a2112;   /* fond d'une médaille gagnée (lot 23), sous le doré des étoiles */
   --bad:#ff6b6b;
-  --ink:#0e0f12;
+  --ink:#0B0E16;
   --go:#f2f3f5;
   --go-edge:#8d939e;
-  --go-ink:#0e0f12;
+  --go-ink:#0B0E16;
   --edge:rgba(0,0,0,.45);
   --shadow:0 18px 40px rgba(0,0,0,.35);
   --display:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;   /* police Nunito partout (lot 28, choix de l'utilisateur) */
   --sans:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --on-fg:#0e0f12;
-  --hi:#24272e;
+  --on-fg:#0B0E16;
+  --hi:#232942;
   --ok-bg:#12301f;
   --ok-ink:#7ee2a8;
-  --xp-bg:#262a31;
-  --xp-bg-2:#2d3139;
-  --xp-line:#3b4049;
+  --xp-bg:#242A3C;
+  --xp-bg-2:#2B3145;
+  --xp-line:#434A63;
   --hot:#33201a;
   --hot-edge:#4d2c20;
-  --slot:#2a2e37;
-  --track:#2c3039;
-  --dot:#1f2229;
-  --disc-in:#17191e;
+  --slot:#282E42;
+  --track:#2C3246;
+  --dot:#1D2233;
+  --disc-in:#151A27;
   /* Couleur de DJingo (lots 27 à 30) : le violet, pour Vini, le bouton principal des « Premiers pas » et les quêtes du jour */
-  --brand:#8C5CFF;
+  --brand:#7C4DFF;
   --brand-edge:#5229C4;
-  --brand-light:#C8B2FF;
+  --brand-light:#B89BFF;
   --brand-soft:#1c1630;
   --brand-line:#3d2d7a;
-  --on-brand:#0e0f12;
-  --off:#262a33;   /* bouton grisé (rien de choisi) */
-  --off-edge:#1d2027;
+  --on-brand:#ffffff;   /* blanc : le violet du brief (#7C4DFF) est trop sombre pour du texte noir (4,0 au lieu de 4,5) */
+  --off:#242A3C;   /* bouton grisé (rien de choisi) */
+  --off-edge:#1B2030;
   --off-ink:#6b7182;
   /* Vini, la mascotte (js/vini.js) */
-  --vini-300:#C8B2FF;
-  --vini-500:#8C5CFF;
+  --vini-300:#B89BFF;
+  --vini-500:#7C4DFF;
   --vini-600:#6F3FEA;
   --vini-700:#5229C4;
-  --vini-cream:#FFF2E2;
+  --vini-cream:#FFF7E6;
   --vini-ring:#F0DCC4;
   --vini-ink:#16181F;
   --vini-dk:#2F3340;
@@ -83,8 +86,9 @@ button{cursor:pointer}
 /* En-tête */
 .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
 .brand{display:flex;align-items:center;gap:12px}
-.disc{width:40px;height:40px;border-radius:50%;background:repeating-radial-gradient(circle,var(--panel-2) 0 2px,var(--bg) 2px 4px);position:relative;box-shadow:0 0 0 2px var(--line)}
-.disc::after{content:"";position:absolute;inset:14px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--xp))}
+/* Le logo du site : Vini lui-même (lot 36). Avant, c'était un vinyle dessiné en CSS, puis un carré orange
+   hérité de l'ancien thème — ce qui contredisait la règle « l'orange, c'est la platine A ». */
+.blogo{width:40px;height:40px;display:block;flex:none}
 .brand-name{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.01em;line-height:1}
 .brand-sub{font-size:13px;color:var(--muted)}
 .hud{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -310,8 +314,7 @@ a.chip:hover{border-color:var(--muted)}
 @media (max-width:760px){
   .brand-sub{display:none}
   .brand-name{font-size:19px}
-  .disc{width:34px;height:34px;flex:none}
-  .disc::after{inset:12px}
+  .blogo{width:34px;height:34px}
   .xpbar{display:none}
   .top{flex-wrap:nowrap;align-items:center}
   .hud{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;min-width:0;padding-block:2px}
@@ -348,7 +351,7 @@ a.chip:hover{border-color:var(--muted)}
 }
 /* ---------- Habillage clair et ludique (remplace l'ambiance club) ---------- */
 body{background-image:radial-gradient(900px 480px at 8% -12%,var(--glow-a),transparent 70%),radial-gradient(760px 460px at 105% 0%,var(--glow-b),transparent 70%)}
-.disc{background:repeating-radial-gradient(circle,#2b3048 0 2px,#1b1f33 2px 4px);box-shadow:0 2px 0 var(--edge)}
+
 .brand-name{letter-spacing:-.02em}
 .chip{background:var(--panel);border-color:var(--line);box-shadow:0 2px 0 var(--line)}
 a.chip:hover,button.chip:hover{border-color:var(--muted)}
@@ -403,8 +406,7 @@ a.chip:hover,button.chip:hover{border-color:var(--muted)}
 body{background-image:radial-gradient(circle at 104% -6%,var(--glow-a) 0 260px,transparent 261px),radial-gradient(circle at -6% 108%,var(--glow-b) 0 240px,transparent 241px);background-attachment:fixed}
 h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h2,.onb-card h2,.echo,.gain,.pop,.lvl{font-family:var(--display)}
 .stage h1{font-weight:700;letter-spacing:-.01em}
-.disc{border-radius:16px;background:var(--a);box-shadow:none}
-.disc::after{inset:13px;background:var(--disc-in)}
+
 .chip{border:0;border-radius:999px;box-shadow:none;background:var(--panel)}
 .lvl{color:var(--xp)}
 .xpbar i{background:var(--xp)}

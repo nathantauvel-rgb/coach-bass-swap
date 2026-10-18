@@ -15,6 +15,31 @@ test.describe('Fichiers du site', () => {
     expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
     expect(rates).toEqual([]); expect(erreurs).toEqual([]); await sansBandeau(page);
   });
+
+  // Lot 36 : Vini est la marque du site. Le SVG n'est pas deviné comme le JPEG : servi avec le mauvais type,
+  // il ne s'affiche pas du tout — d'où la vérification du type, et pas seulement du code 200.
+  test('Vini est le logo et l’icône des trois pages', async ({ page }) => {
+    for (const [url, ancre] of [['/index.html#apprendre', '.node'], ['/presentation.html', '.pres-faq'], ['/testeurs.html', '.howlist']]){
+      const rates = [];
+      page.on('response', r => { if (r.url().startsWith('http://localhost') && r.status() >= 400) rates.push(r.url()); });
+      await page.goto(url);
+      await expect(page.locator(ancre).first()).toBeVisible();
+      await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', 'img/vini-icone.svg');
+      await expect(page.locator('.brand .blogo')).toHaveAttribute('src', 'img/vini-logo.svg');
+      // l'image est vraiment chargée, pas seulement présente dans la page
+      expect(await page.locator('.brand .blogo').evaluate(i => i.naturalWidth > 0)).toBe(true);
+      expect(rates).toEqual([]);
+    }
+  });
+
+  test('les deux dessins de Vini sont servis comme des images', async ({ page }) => {
+    for (const f of ['img/vini-logo.svg', 'img/vini-icone.svg']){
+      const r = await page.request.get('/' + f);
+      expect(r.status()).toBe(200);
+      expect(r.headers()['content-type']).toContain('image/svg+xml');
+      expect(await r.text()).toContain('<svg');
+    }
+  });
 });
 
 test.describe('Chargement avec une progression enregistrée (ancien tdz.py)', () => {

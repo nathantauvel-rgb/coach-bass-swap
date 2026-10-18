@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Vini, la mascotte de DJingo">
+  <title>DJingo</title>
+  <!-- Vini en version simplifiée : la marque du site, lisible de l'onglet du navigateur à l'affiche.
+       Le vrai Vini (js/vini.js) est bien plus détaillé, mais il a besoin de styles.css et devient illisible
+       en dessous de 80 pixels. Ici tout est en dur, le fichier se suffit à lui-même. -->
+  <defs>
+    <clipPath id="vn-disc"><circle cx="32" cy="35" r="23"/></clipPath>
+  </defs>
+  <!-- Arceau du casque -->
+  <path d="M9 36 C7 8 57 8 55 36" fill="none" stroke="#2F3340" stroke-width="6" stroke-linecap="round"/>
+  <!-- Le vinyle -->
+  <circle cx="32" cy="35" r="23" fill="#7C4DFF"/>
+  <g clip-path="url(#vn-disc)" fill="none" stroke="#5229C4" stroke-width="1.6" opacity=".55">
+    <circle cx="32" cy="35" r="19"/>
+    <circle cx="32" cy="35" r="15.5"/>
+  </g>
+  <!-- Reflet -->
+  <path d="M15.5 26 A19 19 0 0 1 24 18.5 L26.5 23 A14 14 0 0 0 20 29 Z" fill="#B89BFF" opacity=".75"/>
+  <!-- Étiquette centrale, le visage -->
+  <circle cx="32" cy="35" r="12" fill="#FFF7E6"/>
+  <g fill="#16181F">
+    <ellipse cx="27.4" cy="32.6" rx="2.5" ry="4"/>
+    <ellipse cx="36.6" cy="32.6" rx="2.5" ry="4"/>
+  </g>
+  <!-- L'encoche des yeux « Rétro » -->
+  <path d="M27.9 31.6 L30.3 28.1 L31.6 30.3 Z" fill="#FFF7E6"/>
+  <path d="M37.1 31.6 L39.5 28.1 L40.8 30.3 Z" fill="#FFF7E6"/>
+  <!-- Le sourire -->
+  <path d="M26.6 38.4 Q32 46 37.4 38.4 Q32 42 26.6 38.4 Z" fill="#16181F"/>
+  <!-- Les écouteurs -->
+  <rect x="2.5" y="28" width="11" height="19" rx="5.5" fill="#2F3340"/>
+  <rect x="11" y="30.5" width="4.5" height="14" rx="2.25" fill="#404554"/>
+  <rect x="50.5" y="28" width="11" height="19" rx="5.5" fill="#2F3340"/>
+  <rect x="48.5" y="30.5" width="4.5" height="14" rx="2.25" fill="#404554"/>
+</svg>
