@@ -1026,3 +1026,4 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .cptchoix{margin:0 0 14px;padding:14px 16px;border-radius:14px;background:var(--brand-soft);border:1px solid var(--brand-line)}
 .cptchoix .rbrow{margin-top:12px;flex-direction:column}
 #cptEtatTxt{margin:0 0 14px}
+#cptTitle:focus{outline:none}   /* titre visé à l'ouverture, comme #vfTitle : pas de cadre */
