@@ -54,9 +54,13 @@ const SANS_MEMOIRE = `(() => { const vrai = Storage.prototype.setItem;
 const base = page => page.evaluate(() => { try { return JSON.parse(sessionStorage.getItem('__faux_base') || '{}'); } catch (e) { return {}; } });
 const seConnecter = async page => { await page.locator('#cptBtn').click(); await page.locator('#cptIn').click(); };
 
+// Le site a maintenant sa vraie configuration Firebase. Ces deux tests gardent le cas « pas de configuration »,
+// qui doit rester sans effet sur le reste du site : on la vide explicitement.
+const SANS_CFG = 'window.DJINGO_FIREBASE = {};';
+
 test.describe('Sans configuration', () => {
   test('le bouton reste caché et le site marche comme avant', async ({ page }) => {
-    const err = await ouvrir(page);
+    const err = await ouvrir(page, { avant: SANS_CFG });
     await expect(page.locator('#cptBtn')).toBeHidden();
     // Aucun script Firebase n'est allé chercher quoi que ce soit
     expect(await page.evaluate(() => [...document.querySelectorAll('script')].some(s => s.src.includes('firebasejs')))).toBe(false);
@@ -65,7 +69,7 @@ test.describe('Sans configuration', () => {
   });
 
   test('la progression s\'enregistre toujours normalement', async ({ page }) => {
-    await ouvrir(page);
+    await ouvrir(page, { avant: SANS_CFG });
     await page.evaluate(() => localStorage.setItem('coach-chapitre', '2'));
     expect(await page.evaluate(() => localStorage.getItem('coach-chapitre'))).toBe('2');
   });

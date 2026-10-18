@@ -26,7 +26,7 @@
    CPT_CFG : la configuration du projet Firebase. Ces valeurs ne sont pas des secrets (elles sont visibles dans la page
    de n'importe quel site Firebase) : la sécurité vient des règles de `firestore.rules`, qui n'autorisent chaque joueur
    que sur son propre document. Tant qu'elle est vide, le bouton reste caché et rien ne change sur le site. */
-let CPT_CFG = { apiKey: '', authDomain: '', projectId: '', appId: '' };
+let CPT_CFG = { apiKey: 'AIzaSyCRQf6s3sNfUiJ-WIrRNBXV9tb09ZFeaAU', authDomain: 'djingo-1e1f4.firebaseapp.com', projectId: 'djingo-1e1f4', appId: '1:613784014718:web:d001824b712018417c6d2f' };
 try { if (window.DJINGO_FIREBASE) CPT_CFG = window.DJINGO_FIREBASE; } catch (e) {}   // pour essayer un autre projet sans modifier ce fichier
 const CPT_SDK = '11.6.0';                     // version de Firebase chargée depuis gstatic.com
 const CPT_DOC = 'joueurs';                    // la collection Firestore : un document par joueur, nommé par son identifiant Google

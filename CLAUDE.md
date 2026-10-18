@@ -518,10 +518,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - Bouton `#cptBtn` dans l'en-tête (violet quand on est connecté, avec le prénom), fenêtre `#compte`, écran `20-compte`
     dans `tests/captures.js`, nouveau `tests/compte.spec.js` (faux Firebase posé avant le chargement : le vrai chemin du
     code est parcouru, connexion, lecture, écriture et rechargement compris).
-  - **Il manque la configuration du projet Firebase** (`CPT_CFG` en haut de `js/compte.js`) : tant qu'elle est vide, le
-    bouton reste caché et le site marche exactement comme avant. La marche à suivre est dans `COMPTE-FIREBASE.md`
-    (10 min dans la console Firebase). **Seul l'utilisateur peut la faire** : il faut son compte Google.
-    Ne pas inventer de clés. Ces valeurs ne sont pas des secrets : la sécurité vient de `firestore.rules`.
+  - **Configuration Firebase remplie le 18 oct. 2026** par l'utilisateur : projet `djingo-1e1f4`, palier Spark (gratuit),
+    `CPT_CFG` en haut de `js/compte.js`. Ces valeurs ne sont pas des secrets : la sécurité vient de `firestore.rules`.
+    Vérifié dans le navigateur : les trois scripts Firebase se chargent depuis gstatic, le SDK s'initialise, aucune
+    erreur. **La connexion Google elle-même n'a pas été essayée** (c'est le compte de l'utilisateur, à lui de le faire).
+    `window.DJINGO_FIREBASE` permet toujours d'essayer un autre projet sans modifier le fichier, et c'est ce que font
+    les tests. **À confirmer avec l'utilisateur avant toute mise en ligne** : les règles de `firestore.rules` publiées
+    (étape 5 de `COMPTE-FIREBASE.md`) et `coach-bass-swap.vercel.app` ajouté aux « Authorized domains » (étape 3) —
+    sans ce dernier, la connexion marche en local mais échoue en production.
   - **Garde-fou contre le rechargement en boucle** (`cptReprend`, défaut trouvé par le gardien : 321 rechargements en
     8 secondes, sans aucune donnée abîmée). Reprendre la progression du compte se termine par `location.reload()` ;
     si le navigateur n'arrive pas à retenir où on en est (stockage plein ou refusé) ou si on a déjà repris dans cet
