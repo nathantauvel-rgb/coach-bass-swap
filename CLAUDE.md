@@ -32,20 +32,22 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
-- **À REPRENDRE EN PREMIER (18 oct. 2026) : faire essayer la connexion au compte à l'utilisateur.** Le lot 34 est en
-  ligne et vérifié côté site, mais **la connexion Google elle-même n'a jamais été essayée** : c'est son compte, à lui de
-  le faire. Lui demander d'ouvrir le site, « Se connecter », puis de rouvrir dans une fenêtre privée avec le même compte
-  pour voir sa progression revenir. Si un message d'erreur apparaît, il est déjà traduit en français et dit quoi faire
-  (`cptErreur` dans `js/compte.js`). **Ne jamais se connecter à sa place, ni inventer de clés Firebase.**
+- **À REPRENDRE EN PREMIER (18 oct. 2026) : faire essayer le compte par e-mail à l'utilisateur.** Les lots 34 et 35 sont
+  en ligne et vérifiés côté site. La **connexion Google marche** (il l'a essayée, y compris en navigation privée).
+  **Pas encore essayé** : créer un compte avec une adresse e-mail, s'y reconnecter, et « Mot de passe oublié ».
+  Si un message d'erreur apparaît, il est déjà traduit en français et dit quoi faire (`cptErreur` dans `js/compte.js`).
+  **Ne jamais se connecter à sa place, ni inventer de clés Firebase.**
+  Quand il aura confirmé : écrire une phrase dans `README.md` et sur `presentation.html` (« ta progression te suit d'un
+  appareil à l'autre »), laissées de côté exprès tant que ce n'est pas vu marcher pour de vrai.
 - **Ensuite : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le site est prêt pour eux (lot 33 publié). Le
   **message à envoyer** est écrit dans `marketing/message-testeurs.md` (hors Git) : version complète, version très courte,
   et les pièges à ne pas oublier. Il n'a **pas encore été envoyé à qui que ce soit** : c'est à l'utilisateur de choisir ses
   testeurs. Quand les rapports arrivent, les lire ensemble et en tirer la liste des corrections.
   Ne jamais ajouter `.gitignore` (modifié localement pour `marketing/video/sortie/`) ni `marketing/` à un commit.
-- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 à 34 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
+- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 à 35 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
-  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini, « Ça bouge », quêtes du jour, Vini sur l'accueil et sons, Vini partout, prêt pour les testeurs, compte Google ;
+  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini, « Ça bouge », quêtes du jour, Vini sur l'accueil et sons, Vini partout, prêt pour les testeurs, compte Google, écran de compte ;
   le lot 22 a été abandonné, le lot 27 est une direction artistique sans code). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
 - **En attente côté utilisateur, rien n'a été fait** : la vérification de la vraie FLX4. Elle se fait maintenant
@@ -605,6 +607,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     partie ne tourne, et les textes sur l'e-mail ont été remis d'accord.
   - Écrans `21-compte-creer` dans `tests/captures.js`, et les six écrans dans `captures/lot35/` (hors Git). 344 tests verts, 39 pour le compte (le faux Firebase sait créer un compte
     par e-mail, se connecter et envoyer un lien de réinitialisation).
+- **Lot 35 publié le 18 oct. 2026** (accord de l'utilisateur ; 348 tests verts, gardien : feu orange sans blocage).
+  L'utilisateur a activé « E-mail/Mot de passe » dans la console Firebase avant la mise en ligne. Production vérifiée :
+  seuls `firebase-app-compat.js` et `firebase-auth-compat.js` sont préchargés (49 Ko), **Firestore n'est pas chargé**
+  tant qu'on ne se connecte pas, les quatre écrans s'enchaînent et « Revenir à la connexion » mène bien à la connexion,
+  aucune erreur dans la console. **Pas encore essayé en vrai** : créer un compte par e-mail, s'y reconnecter, et
+  « Mot de passe oublié » — c'est à l'utilisateur de le faire, et c'est la première chose à lui demander.
+  Les e-mails de réinitialisation de Firebase sont **en anglais** par défaut (Authentication → Templates) : à passer en
+  français quand il voudra.
 - **Lot 36 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
