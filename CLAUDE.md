@@ -32,13 +32,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
-- **À REPRENDRE EN PREMIER (18 oct. 2026) : faire essayer le compte par e-mail à l'utilisateur.** Les lots 34 et 35 sont
-  en ligne et vérifiés côté site. La **connexion Google marche** (il l'a essayée, y compris en navigation privée).
-  **Pas encore essayé** : créer un compte avec une adresse e-mail, s'y reconnecter, et « Mot de passe oublié ».
-  Si un message d'erreur apparaît, il est déjà traduit en français et dit quoi faire (`cptErreur` dans `js/compte.js`).
-  **Ne jamais se connecter à sa place, ni inventer de clés Firebase.**
-  Quand il aura confirmé : écrire une phrase dans `README.md` et sur `presentation.html` (« ta progression te suit d'un
-  appareil à l'autre »), laissées de côté exprès tant que ce n'est pas vu marcher pour de vrai.
+- **À REPRENDRE EN PREMIER (18 oct. 2026) : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le compte est fini
+  et **essayé par l'utilisateur sur la production** : Google, création par e-mail, reconnexion, progression retrouvée
+  dans un autre navigateur. `README.md` et la question « Faut-il créer un compte ? » de `presentation.html` en parlent.
+  Le **message à envoyer aux testeurs** attend toujours dans `marketing/message-testeurs.md` (hors Git) : il n'a été
+  envoyé à personne, c'est à l'utilisateur de choisir ses testeurs. Quand les rapports arrivent, les lire ensemble et
+  en tirer la liste des corrections. **Ne jamais se connecter à sa place, ni inventer de clés Firebase.**
 - **Ensuite : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le site est prêt pour eux (lot 33 publié). Le
   **message à envoyer** est écrit dans `marketing/message-testeurs.md` (hors Git) : version complète, version très courte,
   et les pièges à ne pas oublier. Il n'a **pas encore été envoyé à qui que ce soit** : c'est à l'utilisateur de choisir ses
@@ -611,10 +610,9 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   L'utilisateur a activé « E-mail/Mot de passe » dans la console Firebase avant la mise en ligne. Production vérifiée :
   seuls `firebase-app-compat.js` et `firebase-auth-compat.js` sont préchargés (49 Ko), **Firestore n'est pas chargé**
   tant qu'on ne se connecte pas, les quatre écrans s'enchaînent et « Revenir à la connexion » mène bien à la connexion,
-  aucune erreur dans la console. **Pas encore essayé en vrai** : créer un compte par e-mail, s'y reconnecter, et
-  « Mot de passe oublié » — c'est à l'utilisateur de le faire, et c'est la première chose à lui demander.
-  Les e-mails de réinitialisation de Firebase sont **en anglais** par défaut (Authentication → Templates) : à passer en
-  français quand il voudra.
+  aucune erreur dans la console. **Essayé par l'utilisateur le 18 oct. 2026 sur la production** : création d'un compte
+  par e-mail, reconnexion et progression retrouvée — tout marche. Seul « Mot de passe oublié » posait problème
+  (voir la correction juste après).
 - **Correction du 18 oct. 2026, après l'essai de l'utilisateur** (branche `correction-mail-francais`). Il a tout essayé :
   création de compte par e-mail, reconnexion et progression retrouvée **marchent**. Trois soucis sur l'e-mail de
   « mot de passe oublié », tous les trois sur le même mail :
