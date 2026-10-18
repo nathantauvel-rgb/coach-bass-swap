@@ -32,20 +32,20 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
-- **À REPRENDRE EN PREMIER (17 oct. 2026) : le lot 34 « Compte DJingo »**, demandé par l'utilisateur. Code fini sur la
-  branche `lot-34-compte`, **rien de publié**. Il manque **une seule chose, que seul l'utilisateur peut faire** : créer le
-  projet Firebase et donner sa configuration (`COMPTE-FIREBASE.md`, 10 min). Sans elle, le bouton « Se connecter » reste
-  caché et le site est identique à aujourd'hui — on peut donc publier avant ou après, c'est son choix. Voir l'entrée
-  « Lot 34 » plus bas. **Ne jamais inventer de clés Firebase.**
+- **À REPRENDRE EN PREMIER (18 oct. 2026) : faire essayer la connexion au compte à l'utilisateur.** Le lot 34 est en
+  ligne et vérifié côté site, mais **la connexion Google elle-même n'a jamais été essayée** : c'est son compte, à lui de
+  le faire. Lui demander d'ouvrir le site, « Se connecter », puis de rouvrir dans une fenêtre privée avec le même compte
+  pour voir sa progression revenir. Si un message d'erreur apparaît, il est déjà traduit en français et dit quoi faire
+  (`cptErreur` dans `js/compte.js`). **Ne jamais se connecter à sa place, ni inventer de clés Firebase.**
 - **Ensuite : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le site est prêt pour eux (lot 33 publié). Le
   **message à envoyer** est écrit dans `marketing/message-testeurs.md` (hors Git) : version complète, version très courte,
   et les pièges à ne pas oublier. Il n'a **pas encore été envoyé à qui que ce soit** : c'est à l'utilisateur de choisir ses
   testeurs. Quand les rapports arrivent, les lire ensemble et en tirer la liste des corrections.
   Ne jamais ajouter `.gitignore` (modifié localement pour `marketing/video/sortie/`) ni `marketing/` à un commit.
-- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 à 33 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
+- **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 à 34 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
-  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini, « Ça bouge », quêtes du jour, Vini sur l'accueil et sons, Vini partout, prêt pour les testeurs ;
+  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini, « Ça bouge », quêtes du jour, Vini sur l'accueil et sons, Vini partout, prêt pour les testeurs, compte Google ;
   le lot 22 a été abandonné, le lot 27 est une direction artistique sans code). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
 - **En attente côté utilisateur, rien n'a été fait** : la vérification de la vraie FLX4. Elle se fait maintenant
@@ -558,6 +558,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   promettait à vide, la fenêtre bloquée sur « Vérification… » sans réseau. 3. L'appareil neuf à qui on proposait
   d'écraser le compte avec du vide. Tout est corrigé et couvert par des tests ; **chaque défaut a son test**, pour
   qu'aucun ne puisse revenir.
+- **Lot 34 publié le 18 oct. 2026** (accord de l'utilisateur ; 334 tests verts, gardien : feu orange au quatrième
+  passage, après trois feux rouges corrigés). L'utilisateur a confirmé avoir publié les règles de `firestore.rules`
+  et ajouté `coach-bass-swap.vercel.app` aux « Authorized domains ». Production vérifiée : `js/compte.js` servi, la
+  configuration `djingo-1e1f4` en place, le bouton « Se connecter » affiché, les trois scripts Firebase chargés depuis
+  gstatic, le SDK initialisé, aucune erreur dans la console. **La connexion Google n'a pas été essayée** (compte de
+  l'utilisateur). Captures dans `captures/lot34/` (hors Git) : pas connecté, connecté, et la question des deux
+  progressions. Restent à écrire quand l'utilisateur aura confirmé que ça marche : une phrase dans `README.md` et une
+  sur `presentation.html` (« ta progression te suit d'un appareil à l'autre »).
 - **Lot 35 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
