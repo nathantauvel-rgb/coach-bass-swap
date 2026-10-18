@@ -93,7 +93,7 @@
     <p class="avsmall" id="avSum"></p>
     <div class="rbrow"><button type="button" class="ghost" id="avCopy">Copier mon rapport</button><button type="button" class="ghost" id="avMail" hidden>Envoyer par e-mail</button></div>
     <textarea class="avtext" id="avText" rows="8" readonly hidden aria-label="Ton rapport"></textarea>
-    <details class="avreset"><summary>Tout recommencer à zéro</summary><p class="avsmall">Efface ta progression, tes étoiles, tes badges, tes réponses au quiz et tes avis sur cet ordinateur. Les réglages et la vérification de ta table sont gardés.</p><button type="button" class="rbtn" id="avReset">Oui, tout effacer</button></details>
+    <details class="avreset"><summary>Tout recommencer à zéro</summary><p class="avsmall">Efface ta progression, tes étoiles, tes badges, tes réponses au quiz et tes avis sur cet ordinateur, et aussi sur ton compte si tu es connecté. Les réglages et la vérification de ta table sont gardés.</p><button type="button" class="rbtn" id="avReset">Oui, tout effacer</button></details>
   </div>
 </div>
 <div class="quiz" id="verif" hidden role="dialog" aria-modal="true" aria-labelledby="vfTitle">
@@ -110,6 +110,22 @@
     <p class="regstate" id="vfState" role="status"></p>
     <textarea class="vfout" id="vfOut" rows="6" readonly hidden aria-label="Rapport de vérification"></textarea>
     <div class="rbrow"><button type="button" class="ghost" id="vfBack">Retour</button><button type="button" class="ghost" id="vfKo">Ça ne marche pas</button><button type="button" class="ghost" id="vfSkip">Passer</button><button type="button" class="rbtn go" id="vfNext">Continuer</button><button type="button" class="rbtn go" id="vfCopy" hidden>Copier le rapport</button><button type="button" class="ghost" id="vfRestart" hidden>Recommencer</button></div>
+  </div>
+</div>
+<div class="quiz" id="compte" hidden role="dialog" aria-modal="true" aria-labelledby="cptTitle">
+  <div class="qcard">
+    <button type="button" class="rclose" id="cptClose" aria-label="Fermer">×</button>
+    <span class="lnum">Ta progression</span>
+    <h2 id="cptTitle" tabindex="-1">Mon compte</h2>
+    <p class="avsmall" id="cptEtatTxt" role="status"></p>
+    <div class="cptchoix" id="cptChoix" hidden>
+      <p class="qwhy" id="cptChoixTxt"></p>
+      <div class="rbrow"><button type="button" class="rbtn go" id="cptGardeCompte">Garder celle de mon compte</button><button type="button" class="ghost" id="cptGardeIci">Garder celle de cet ordinateur</button></div>
+    </div>
+    <button type="button" class="rbtn go cptgoogle" id="cptIn">Continuer avec Google</button>
+    <button type="button" class="ghost" id="cptOut" hidden>Se déconnecter</button>
+    <p class="qwhy" id="cptMsg" role="status" hidden></p>
+    <p class="avsmall">Avec un compte, tes étoiles, tes XP, tes badges et tes quêtes te suivent sur n'importe quel ordinateur ou téléphone. DJingo enregistre ton identifiant Google, ton prénom et ta progression — pas ton e-mail. Les réglages de ta table restent sur cet ordinateur.</p>
   </div>
 </div>
 <div class="quiz" id="reg" hidden role="dialog" aria-modal="true" aria-labelledby="regTitle">
@@ -132,6 +148,7 @@
       <a class="chip status" id="midiPill" href="#table" title="Ma table : le schéma et les réglages"><i></i><span>Table…</span></a>
       <button type="button" class="chip" id="guideBtn" hidden>Guide</button>
       <button type="button" class="chip sonsbtn" id="sonsBtn"></button>
+      <button type="button" class="chip cptbtn" id="cptBtn" hidden>Se connecter</button>
       <button type="button" class="chip avbtn" id="avisBtn">Mon avis</button>
     </div>
   </header>
@@ -403,6 +420,7 @@
 <script src="js/reglage.js"></script>
 <script src="js/verif.js"></script>
 <script src="js/avis.js"></script>
+<script src="js/compte.js"></script>
 <script src="js/demarrage.js"></script>
 </body>
 </html>

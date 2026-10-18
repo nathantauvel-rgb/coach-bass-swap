@@ -32,11 +32,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
-- **À REPRENDRE EN PREMIER (17 oct. 2026) : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le site est prêt pour eux
-  (lot 33 publié). Le **message à envoyer** est écrit dans `marketing/message-testeurs.md` (hors Git) : version complète,
-  version très courte, et les pièges à ne pas oublier. Il n'a **pas encore été envoyé à qui que ce soit** : c'est à
-  l'utilisateur de choisir ses testeurs. Quand les rapports arrivent, les lire ensemble et en tirer la liste des
-  corrections. Ne jamais ajouter `.gitignore` (modifié localement pour `marketing/video/sortie/`) ni `marketing/` à un commit.
+- **À REPRENDRE EN PREMIER (17 oct. 2026) : le lot 34 « Compte DJingo »**, demandé par l'utilisateur. Code fini sur la
+  branche `lot-34-compte`, **rien de publié**. Il manque **une seule chose, que seul l'utilisateur peut faire** : créer le
+  projet Firebase et donner sa configuration (`COMPTE-FIREBASE.md`, 10 min). Sans elle, le bouton « Se connecter » reste
+  caché et le site est identique à aujourd'hui — on peut donc publier avant ou après, c'est son choix. Voir l'entrée
+  « Lot 34 » plus bas. **Ne jamais inventer de clés Firebase.**
+- **Ensuite : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le site est prêt pour eux (lot 33 publié). Le
+  **message à envoyer** est écrit dans `marketing/message-testeurs.md` (hors Git) : version complète, version très courte,
+  et les pièges à ne pas oublier. Il n'a **pas encore été envoyé à qui que ce soit** : c'est à l'utilisateur de choisir ses
+  testeurs. Quand les rapports arrivent, les lire ensemble et en tirer la liste des corrections.
+  Ne jamais ajouter `.gitignore` (modifié localement pour `marketing/video/sortie/`) ni `marketing/` à un commit.
 - **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 à 33 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
@@ -470,6 +475,93 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   au survol mais pas au clic (les clics sont branchés sur `#tSvg` seulement) ; 4. appuyer plusieurs fois sur « Écouter »
   superpose les extraits ; 5. `vfApprend` prend le **premier** message inconnu : une autre commande bougée au mauvais moment
   peut être prise pour le filtre (rattrapable par « Revenir aux réglages de la DDJ-FLX4 »).
+- **Lot 34 « Compte DJingo » (17 oct. 2026)** : branche `lot-34-compte`, non publiée. Demande de l'utilisateur : créer un compte et
+  se connecter avec Google, et que la progression (XP, niveaux, étoiles, badges, quêtes) suive le compte au lieu de rester
+  dans le navigateur. `js/compte.js` (chargé **après `avis`**, avant `demarrage`) :
+  - **Firebase chargé à la demande** (3 scripts `*-compat.js` depuis gstatic, version `CPT_SDK`), seulement quand on se
+    connecte ou qu'on était déjà connecté : la page reste aussi rapide qu'avant pour tous les autres. `cptSdk()` ne charge
+    rien si `window.firebase` existe déjà — c'est le point d'accroche des tests.
+  - **Un seul point d'enregistrement** : `localStorage.setItem` et `removeItem` sont enveloppés ici (`cptBrut` garde les
+    vraies fonctions, et l'enveloppe est dans un `try` : un navigateur qui refuse le stockage ne doit rien casser).
+    Les 55 endroits qui enregistrent la progression dans les 18 autres fichiers ne changent pas. Toute écriture d'une
+    clé suivie marque `cptSale` et déclenche un envoi 2,5 s plus tard (`cptBientot`), plus un envoi immédiat quand
+    l'onglet passe en arrière-plan ou se ferme.
+  - **On ne renvoie rien avant d'avoir comparé** (`cptBloque`, vrai à chaque chargement). `cptSync()` relit d'abord le
+    document du compte, puis décide : compte neuf **ou compte sans rien de gagné** → on envoie ce qu'il y a ici ;
+    `maj` identique à `cptMaj` → personne n'a avancé ailleurs, on débloque ; rien de gagné ici (`cptVide`) → on reprend
+    celle du compte ; on était à jour et le compte a bougé (`cptMaj` connu, rien de sale) → on reprend celle du compte ;
+    les deux ont vraiment gagné quelque chose → **on demande** (`cptAttente`, la pastille affiche « Prénom · »).
+    **C'est le point le plus important du lot** : sans lui, un deuxième appareil renvoyait sa vieille progression
+    par-dessus celle du compte au bout de quelques secondes, sans que le joueur touche à rien (défaut trouvé par le
+    gardien, reproduit puis couvert par `tests/compte.spec.js` → « Un deuxième appareil »).
+  - `coach-compte` garde `{ uid, prenom, maj, sale }` : `maj` = l'horodatage du dernier document écrit ou repris par
+    cet appareil, `sale` = des changements locaux pas encore enregistrés. C'est ce couple qui permet de distinguer
+    « le compte a avancé ailleurs » de « j'ai avancé hors ligne ».
+  - **Au retour de la progression du compte, la page est rechargée** (`cptEcrit` puis `location.reload()`) : chaque fichier
+    de `js/` lit sa progression au chargement, c'est la seule façon sûre de la faire prendre partout.
+  - **La connexion manuelle et la reprise de session suivent le même chemin** : tout passe par `onAuthStateChanged`
+    (`cptChange`) puis `cptSync()`. Il n'y a pas de fonction séparée pour le premier cas.
+  - **Ce qui ne suit pas le compte** (`CPT_LOCAL`) : `coach-midi-map`, `coach-table`, `coach-verif`, `coach-collection`,
+    `coach-bibliotheque`, `coach-sons`, `coach-compte`, `coach-journal` et **`coach-ordre`**. `coach-journal` compte le
+    temps toutes les 15 s : le suivre ferait un envoi toutes les 15 s par onglet, pour rien (le rapport des testeurs se
+    copie depuis l'appareil de toute façon). `coach-ordre` n'est pas de la progression mais le **format** des données du
+    navigateur (lot 26) : s'il voyageait et revenait absent d'un paquet, `ordreMigre` déplacerait les étoiles une deuxième
+    fois et les fausserait. Deux défauts trouvés par les tests et par le gardien, corrigés avant d'aller plus loin.
+  - Données en ligne : identifiant Google, prénom, progression. **Pas l'e-mail.** Un document par joueur dans la
+    collection `joueurs`. Règles de sécurité dans `firestore.rules` : chacun seulement sur son document, tout le reste
+    fermé. **Pas de limite de taille dans les règles** : `request.resource.size()` n'existe pas côté Firestore (c'est
+    une notion de Firebase Storage) et la console refuse de publier ; le garde-fou est `CPT_MAX` côté site.
+  - « Tout recommencer à zéro » efface aussi le document du compte (`cptOublie`, appelé par `avisReset`) et déconnecte,
+    sinon la progression reviendrait au rechargement. **Hors ligne, Firestore ne répond jamais** : au bout de `CPT_FIN`
+    (3 s) on efface et on recharge quand même, pour que le bouton ne reste jamais sans effet. De la même façon, un envoi
+    qui traîne plus de `CPT_LENT` (5 s) affiche « ta progression sera enregistrée dès que tu seras en ligne ».
+  - Bouton `#cptBtn` dans l'en-tête (violet quand on est connecté, avec le prénom), fenêtre `#compte`, écran `20-compte`
+    dans `tests/captures.js`, nouveau `tests/compte.spec.js` (faux Firebase posé avant le chargement : le vrai chemin du
+    code est parcouru, connexion, lecture, écriture et rechargement compris).
+  - **Il manque la configuration du projet Firebase** (`CPT_CFG` en haut de `js/compte.js`) : tant qu'elle est vide, le
+    bouton reste caché et le site marche exactement comme avant. La marche à suivre est dans `COMPTE-FIREBASE.md`
+    (10 min dans la console Firebase). **Seul l'utilisateur peut la faire** : il faut son compte Google.
+    Ne pas inventer de clés. Ces valeurs ne sont pas des secrets : la sécurité vient de `firestore.rules`.
+  - **Garde-fou contre le rechargement en boucle** (`cptReprend`, défaut trouvé par le gardien : 321 rechargements en
+    8 secondes, sans aucune donnée abîmée). Reprendre la progression du compte se termine par `location.reload()` ;
+    si le navigateur n'arrive pas à retenir où on en est (stockage plein ou refusé) ou si on a déjà repris dans cet
+    onglet (marque `CPT_TOUR` dans `sessionStorage`), le chargement suivant reprendrait la même décision et la page
+    se rechargerait sans fin. Dans ce cas on garde ce qui vient d'être écrit, on ne recharge pas, et la fenêtre dit
+    de recharger soi-même. `cptSync` traite aussi un document de compte sans rien de gagné (`cptPoids(d) === 0`)
+    comme un compte neuf, pour la même raison.
+  - **Hors ligne** : `cptSync` échoue → on reste bloqué (rien ne doit partir avant d'avoir comparé), la fenêtre dit
+    pourquoi (`cptSouci`) et un écouteur `online` refait la comparaison dès que la connexion revient. « Tout
+    recommencer à zéro » **renonce et n'efface rien** si le document du compte n'a pas pu être supprimé (`cptOublie`
+    renvoie `false`, `cptResetKo` l'explique) : mieux vaut ne rien faire que promettre un effacement qui n'a pas eu
+    lieu. Se déconnecter marche quand même (course avec `CPT_FIN`).
+  - **Limites connues, à dire à l'utilisateur** : la comparaison n'a lieu qu'**au chargement de la page**, donc deux
+    appareils joués en même temps ne fusionnent pas — le dernier qui enregistre gagne, et l'autre perd sa séance au
+    rechargement suivant. Et si le navigateur refuse d'écrire `coach-compte`, le compte ne se reprend pas tout seul
+    au chargement : il faut recliquer sur « Se connecter ».
+  - **`cptPoids(d)` : ce qui est vraiment gagné** (étoiles des 5 clés, badges, questions trouvées, records Expert,
+    coffres ouverts et compteurs du jour, jours d'objectif atteints, missions faites, test de placement). Il a remplacé
+    un test « est-ce que ces clés existent ? » (ancien `CPT_RIEN` / `cptPlein`), qui était faux : **un appareil tout neuf
+    écrit déjà `coach-parcours`, `coach-quetes` et `coach-objectif` avant même la connexion**, à la fin des Premiers pas
+    et au premier affichage de l'accueil. Le site croyait donc qu'il avait « une progression » et proposait de remplacer
+    celle du compte par du vide — un clic sur « Garder celle de cet ordinateur » et les étoiles étaient perdues
+    (troisième feu rouge du gardien). Avec un poids, **la question n'est posée que si les deux côtés ont vraiment gagné
+    quelque chose** : aucun des deux choix ne peut remplacer une vraie progression par du vide.
+  - `testeurs.html` dit maintenant que la progression part sur le compte si on se connecte.
+  334 tests verts (29 pour le compte).
+  **Gardien : feu rouge aux trois premiers passages**, et il avait raison les trois fois. 1. Le deuxième appareil qui
+  écrasait le compte, `request.resource.size()` qui n'existe pas dans les règles Firestore, « Tout recommencer à zéro »
+  sans effet hors ligne. 2. Le rechargement en boucle (321 rechargements en 8 secondes), l'effacement hors ligne qui
+  promettait à vide, la fenêtre bloquée sur « Vérification… » sans réseau. 3. L'appareil neuf à qui on proposait
+  d'écraser le compte avec du vide. Tout est corrigé et couvert par des tests ; **chaque défaut a son test**, pour
+  qu'aucun ne puisse revenir.
+- **Lot 35 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
+  pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
+  seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
+  rien aujourd'hui.** Il faut un algorithme qui adapte ce qui est proposé derrière : les exercices, l'ordre des étapes, les
+  quêtes du jour et les missions de « Passer au vrai » devraient suivre les réponses (par exemple : sans table, ne pas
+  proposer les missions qui demandent la table ; « mixer en soirée » plutôt que « pour moi » fait remonter le mini-set et
+  Passer au vrai ; un joueur qui se dit à l'aise saute les fiches « Découvre ce bouton »). À cadrer avec l'utilisateur
+  avant de commencer : quelles réponses changent quoi, exactement.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -491,7 +583,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
-  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) →
+  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
   `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
@@ -578,7 +670,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-bibliotheque` (`coach.html`).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -592,7 +684,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

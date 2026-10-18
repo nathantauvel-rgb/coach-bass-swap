@@ -1,0 +1,19 @@
+// Règles de sécurité de la base DJingo, à coller dans la console Firebase
+// (Firestore Database → Règles → Publier).
+//
+// Elles disent une seule chose, mais c'est la plus importante : chaque joueur connecté
+// ne peut lire et écrire QUE son propre document. Personne ne peut lire la progression
+// d'un autre, et personne ne peut rien écrire sans être connecté.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /joueurs/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;   // « write » comprend créer, modifier et supprimer
+      // Pas de limite de taille ici : les règles Firestore ne savent pas mesurer un document en octets
+      // (`request.resource.size()` n'existe pas, c'est une notion de Firebase Storage). Firestore refuse
+      // de lui-même au-delà de 1 Mo, et le site s'arrête avant (CPT_MAX dans js/compte.js).
+    }
+    // Tout le reste est fermé
+    match /{document=**} { allow read, write: if false; }
+  }
+}

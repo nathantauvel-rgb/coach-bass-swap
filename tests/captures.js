@@ -20,6 +20,13 @@ const ECRANS = [
   ['18-verifier-liste', VENU, 'table', async p => { await p.locator('#tVerif').click(); await p.evaluate(() => { vfAller(3); window.__midi.envoyer(0xB0, 11, 0); window.__midi.envoyer(0xB0, 11, 127); }); }, true],
   ['19-verifier-questions', VENU, 'table', async p => { await p.locator('#tVerif').click(); await p.evaluate(() => vfAller(17)); await p.locator('.vfopt').first().click(); }, true],
   ['12-avis', VENU, 'apprendre', async p => { await p.locator('#avisBtn').click(); await p.locator('#avBloque').fill('Je ne sais pas quand lancer B.'); await p.locator('#avNote [data-note="3"]').click(); }],
+  // Le compte : Firebase n'est pas chargé ici, on pose juste de quoi afficher la fenêtre
+  ['20-compte', VENU, 'apprendre', async p => { await p.evaluate(() => {
+    const auth = { onAuthStateChanged(){}, signInWithPopup(){ return Promise.resolve({ user: {} }); }, signOut(){ return Promise.resolve(); } };
+    const af = () => auth; af.GoogleAuthProvider = function (){};
+    window.firebase = { apps: [], initializeApp(){ this.apps.push({}); }, auth: af, firestore: () => ({ collection: () => ({ doc: () => ({ get: () => Promise.resolve({ exists: false }), set: () => Promise.resolve() }) }) }) };
+    CPT_CFG = { apiKey: 'x', authDomain: 'x', projectId: 'x', appId: 'x' }; cptEtat(); openCompte();
+  }); }],
   ['13-testeurs', {}, '', async p => { await p.goto(BASE + '/testeurs.html'); await p.evaluate(() => document.fonts.ready); }],
   ['14-presentation', {}, '', async p => { await p.goto(BASE + '/presentation.html'); await p.evaluate(() => document.fonts.ready); await p.evaluate(() => document.querySelectorAll('img').forEach(i => { i.loading = 'eager'; })); await p.waitForTimeout(600); }]
 ];

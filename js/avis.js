@@ -101,8 +101,14 @@ function avisMail(){
 // Remise à zéro : tout ce que le site a enregistré, sauf ce qui concerne la table (réglages, nom d'une autre table, vérification)
 function avisReset(){
   jrOff = true;
-  try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-verif'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
-  location.hash = '#accueil'; location.reload();
+  const efface = () => {
+    try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-verif'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+    location.hash = '#accueil'; location.reload();
+  };
+  // D'abord le compte en ligne, sinon la progression reviendrait au rechargement (compte.js est chargé après ce fichier).
+  // S'il n'a pas pu être effacé (hors ligne), on n'efface rien du tout et on le dit : pas de promesse non tenue.
+  const fini = typeof cptOublie === 'function' ? cptOublie() : Promise.resolve(true);
+  fini.then(ok => { if (ok === false && typeof cptResetKo === 'function'){ jrOff = false; cptResetKo(); return; } efface(); }, efface);
 }
 $('avisBtn').addEventListener('click', openAvis);
 $('avClose').addEventListener('click', closeAvis);

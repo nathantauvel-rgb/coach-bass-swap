@@ -1017,3 +1017,12 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .tverif{display:flex;align-items:center;justify-content:space-between;gap:12px 18px;flex-wrap:wrap;margin:0 0 16px;padding:14px 18px;border-radius:16px;background:var(--panel-2);border:1px solid var(--line)}
 .tverif p{margin:0;display:flex;flex-direction:column;gap:2px}
 .tverif span{color:var(--muted);font-size:14px}
+
+/* Lot 34 : le compte (se connecter avec Google) */
+.cptbtn{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cptbtn.on{color:var(--brand-light);border-color:var(--brand-line);background:var(--brand-soft)}
+#compte .rbtn,#compte .ghost{width:100%}
+.cptgoogle{display:flex;align-items:center;justify-content:center;gap:10px}
+.cptchoix{margin:0 0 14px;padding:14px 16px;border-radius:14px;background:var(--brand-soft);border:1px solid var(--brand-line)}
+.cptchoix .rbrow{margin-top:12px;flex-direction:column}
+#cptEtatTxt{margin:0 0 14px}
