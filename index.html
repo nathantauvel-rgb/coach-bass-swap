@@ -344,7 +344,7 @@
 
   <section class="stage" id="stage">
     <div class="stage-head">
-      <div>
+      <div class="consigne">
         <span class="lnum" id="lnum">Niveau 1</span>
         <h1 id="ltitle"></h1>
         <p class="goal" id="lgoal"></p>
@@ -357,6 +357,8 @@
     </div>
     <div class="hw"><canvas id="hw" aria-label="Piste : les gestes arrivent vers la ligne de frappe"></canvas><div class="pops" id="pops"></div><span class="demo-tag" id="demoTag" hidden>DÉMO</span></div>
     <div class="bar" aria-hidden="true"><i id="progFill"></i></div>
+    <div class="bottom">
+    <div class="deck"><span class="decklab">Ta table</span>
     <div class="controls">
       <div class="group" id="gPlay"><button type="button" class="launch" id="launchB" disabled><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l10-6.2a.8.8 0 0 0 0-1.4l-10-6.2A.8.8 0 0 0 6 3.8Z"/></svg>LANCE B</button></div>
       <div class="group" id="gCfx"><span class="gl">Filtre · CFX</span><div class="pair">
@@ -375,6 +377,8 @@
         <div class="chan chanB" id="wFadB"><div class="fader" data-k="faderB" aria-label="Volume de B"><div class="slot"></div><div class="fill"></div><div class="cap2"></div></div><span class="cl">B</span></div>
       </div></div>
     </div>
+    </div>
+    <div class="bside">
     <div class="start-row">
       <div class="setup" id="setup" hidden>
         <h3>Position de départ</h3>
@@ -393,6 +397,8 @@
       </div>
       <div class="btnrow"><button type="button" class="watch" id="watchBtn">Regarde d'abord</button><button type="button" class="start" id="startBtn">Jouer</button></div>
       </div>
+    </div>
+    </div>
 
 
     <div class="result" id="result" hidden>

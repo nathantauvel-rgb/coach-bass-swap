@@ -32,7 +32,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
-- **À REPRENDRE EN PREMIER (18 oct. 2026) : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le compte est fini
+- **À REPRENDRE EN PREMIER (18 oct. 2026) : finir le lot 36 « Identité et interface ».** Branche
+  `lot-36-vini-identite`, **rien de publié** (`main` est à `d00b2e5`). Il reste : lancer le gardien, montrer les
+  captures à l'utilisateur, demander son accord, puis fusionner et pousser. Voir l'entrée « Lot 36 » plus bas pour le
+  détail et, surtout, pour les décisions à ne pas défaire (l'orange reste la platine A, le violet reste la couleur de
+  DJingo, la maquette de Lou n'est qu'une inspiration).
+- **Ensuite : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le compte est fini
   et **essayé par l'utilisateur sur la production** : Google, création par e-mail, reconnexion, progression retrouvée
   dans un autre navigateur. `README.md` et la question « Faut-il créer un compte ? » de `presentation.html` en parlent.
   Le **message à envoyer aux testeurs** attend toujours dans `marketing/message-testeurs.md` (hors Git) : il n'a été
@@ -625,15 +630,49 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     brancher un domaine à soi comme expéditeur (Authentication → Modèles → « Personnaliser le domaine »), ce qui
     suppose d'acheter le domaine DJingo — et donc de **vérifier d'abord les marques INPI et EUIPO** (proximité avec
     « Duolingo », déjà notée au lot 21). Décision laissée à l'utilisateur ; en attendant, le site prévient.
-- **Lot 36 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
+- **Lot 36 « Identité et interface » (18 oct. 2026)** : branche `lot-36-vini-identite`, **non publiée**. L'utilisateur a
+  envoyé un **brief de direction artistique** (3 parties : projet, direction générale, palette) puis un complément sur
+  l'interface. Le brief lui-même est arrivé **tronqué** (il s'arrête au milieu de la liste « Éviter », sur « * Un ») :
+  s'il existe une partie 4 ou 5 (typographie, composants, animations), elle n'a jamais été reçue — à redemander.
+  - **Ses décisions, prises en répondant à mes questions** : la maquette que son amie Lou lui a envoyée (bleue, avec
+    une autre structure : « Les gestes », « Ta formation » en 3 cartes, « 66 gestes ») est **une simple inspiration**,
+    pas une direction à suivre — la structure du site ne change pas. Le **violet** reste la couleur de DJingo (pas le
+    bleu de la maquette, qui veut dire « platine B »). **Vini devient le représentant général du site.** Le logo qu'il
+    a envoyé est une inspiration, il n'a pas tranché.
+  - **Palette alignée sur le brief** : `--bg` `#0B0E16`, `--brand` `#7C4DFF`, `--brand-light` `#B89BFF`,
+    `--vini-cream` `#FFF7E6`, `--line` `#3A3F56` (« ardoise »), et les gris passés au même bleu-noir.
+    **`--on-brand` est passé au blanc** : le violet du brief est plus sombre que l'ancien, et le texte foncé tombait à
+    4,0 de contraste au lieu des 4,5 exigés (en blanc : 4,8). Vérifié par calcul, pas à l'œil.
+  - **L'orange du brief n'a PAS été appliqué aux boutons**, et l'utilisateur l'a confirmé explicitement : l'orange veut
+    dire **platine A** et le bleu **platine B** dans les leçons. C'est un langage appris, pas une décoration. Les
+    récompenses gardent le doré. **Ne pas appliquer cette partie du brief à la lettre.**
+  - **Vini est la marque** : nouveaux `img/vini-logo.svg` (avec le casque, pour l'en-tête) et `img/vini-icone.svg`
+    (plus gras, sans casque : à 16 px le casque mange la largeur et le visage disparaît). L'en-tête affichait jusque-là
+    un **carré orange** (reste de l'ancien thème, qui contredisait la règle ci-dessus) et le site **n'avait aucune
+    icône d'onglet**. Les deux sont corrigés sur `index.html`, `presentation.html` et `testeurs.html`. La classe
+    `.disc` a disparu, remplacée par `.blogo`.
+  - **`tests/serveur.js` ne connaissait ni le SVG ni les images** : une image SVG servie en `application/octet-stream`
+    ne s'affiche pas du tout (contrairement au JPEG, que le navigateur devine). L'icône n'aurait marché qu'en ligne.
+  - **L'écran d'un niveau, rangé en cartes** (4 demandes de l'utilisateur, toutes acceptées) : la cause du désordre
+    était que **`.actionbar` était collée en bas (`position:sticky`) même sur ordinateur**, donc elle flottait
+    par-dessus les contrôles. Elle ne l'est plus qu'en dessous de 1040 px. Nouveau découpage dans `index.html` :
+    `.consigne` (carte), `.bottom` qui contient `.deck` (carte « Ta table » : LANCE B, potards, faders) et `.bside`
+    (`.start-row` + `.actionbar`). Au-dessus de 1040 px, `.bottom` passe en **deux colonnes**. « Jouer » (`.start`)
+    devient violet et large, « Regarde d'abord » (`.watch`) un contour discret. Les règles sont à la **fin** de
+    `styles.css` : les couches héritées redéfinissent `.start` et `.watch` deux fois, il faut passer après.
+  - **Priorité à l'ordinateur** (dit par l'utilisateur le 18 oct. 2026) : **90 % des joueurs seront sur PC**, parce
+    qu'il faut y brancher la table en USB. Le téléphone doit rester utilisable, mais **ce n'est jamais lui qui décide
+    d'un choix de mise en page**. À garder en tête pour tout travail d'interface.
+  - Reste à faire avant de proposer la publication : le gardien, puis l'accord de l'utilisateur.
+- **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
   rien aujourd'hui.** Il faut un algorithme qui adapte ce qui est proposé derrière : les exercices, l'ordre des étapes, les
   quêtes du jour et les missions de « Passer au vrai » devraient suivre les réponses (par exemple : sans table, ne pas
   proposer les missions qui demandent la table ; « mixer en soirée » plutôt que « pour moi » fait remonter le mini-set et
   Passer au vrai ; un joueur qui se dit à l'aise saute les fiches « Découvre ce bouton »). À cadrer avec l'utilisateur
-  avant de commencer : quelles réponses changent quoi, exactement. (C'était le « lot 35 » avant que l'utilisateur
-  demande l'écran de compte ; renuméroté en 36.)
+  avant de commencer : quelles réponses changent quoi, exactement. (C'était le « lot 35 », puis le « lot 36 », avant
+  que l'utilisateur demande l'écran de compte puis le travail d'identité ; renuméroté en 37.)
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
