@@ -663,7 +663,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - **Priorité à l'ordinateur** (dit par l'utilisateur le 18 oct. 2026) : **90 % des joueurs seront sur PC**, parce
     qu'il faut y brancher la table en USB. Le téléphone doit rester utilisable, mais **ce n'est jamais lui qui décide
     d'un choix de mise en page**. À garder en tête pour tout travail d'interface.
-  - Reste à faire avant de proposer la publication : le gardien, puis l'accord de l'utilisateur.
+  - **350 tests verts, 0 échec**, sur le code des deux commits. Contraste contrôlé
+    (`node tests/captures.js captures/lot36-cartes --vite`) : seules les étoiles non gagnées sont signalées, comme
+    toujours. Captures avant/après dans `captures/lot36-avant`, `captures/lot36-apres` et `captures/lot36-cartes`
+    (hors Git). Écrans regardés : accueil, niveau, et le niveau sur téléphone (la barre d'action y reste collée en
+    bas, aucun débordement).
+  - **Reste à faire** : lancer le gardien, montrer les captures à l'utilisateur, demander son accord, fusionner et
+    pousser. **Le gardien n'a pas encore vu ce lot.**
 - **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
