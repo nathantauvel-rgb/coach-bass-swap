@@ -172,6 +172,8 @@ function cptSdkAuth(){
     if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(CPT_CFG);
     if (!cptFb) cptFb = {};
     cptFb.auth = firebase.auth();
+    // Sans ça, Firebase envoie ses e-mails (mot de passe oublié) en anglais, quelle que soit la langue du joueur.
+    try { cptFb.auth.languageCode = 'fr'; } catch (e) {}
     cptFb.auth.onAuthStateChanged(cptChange);
   });
   cptPretAuth.catch(() => { cptPretAuth = null; });   // un échec ne doit pas bloquer les essais suivants
@@ -338,7 +340,7 @@ function cptOubliMdp(mail){
   cptDit('Envoi en cours…'); cptBoutons(true);
   cptSdkAuth()
     .then(() => cptFb.auth.sendPasswordResetEmail(mail))
-    .then(() => { cptDit('C’est envoyé. Regarde dans ta boîte mail, et dans les indésirables : tu as un lien pour choisir un nouveau mot de passe.'); cptBoutons(false); })
+    .then(() => { cptDit('C’est envoyé. Regarde dans ta boîte mail, et surtout dans les indésirables : c’est souvent là qu’il atterrit. Si le lien n’est pas cliquable, c’est que ton logiciel le bloque : marque le message comme « non indésirable » et il s’activera.'); cptBoutons(false); })
     .catch(e => { cptDit(cptErreur(e)); cptBoutons(false); });
 }
 

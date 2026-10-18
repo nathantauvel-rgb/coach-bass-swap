@@ -51,6 +51,7 @@ window.DJINGO_FIREBASE = { apiKey: 'faux', authDomain: 'faux.firebaseapp.com', p
       window.__lienEnvoye = mail; return Promise.resolve();
     }
   };
+  auth.languageCode = null;
   const authFn = () => auth; authFn.GoogleAuthProvider = function (){};
   const db = { collection: () => ({ doc: id => ({
     get: () => { if (window.__horsLigne) return Promise.reject(Object.assign(new Error('hors ligne'), { code: 'unavailable' })); const b = lire(); return Promise.resolve({ exists: !!b[id], data: () => b[id] }); },
@@ -560,7 +561,10 @@ test.describe('Mot de passe oublié', () => {
     await page.locator('#cptMail').fill('moi@exemple.fr');
     await page.locator('#cptGo').click();
     await expect(page.locator('#cptMsg')).toContainText('est envoyé');
+    await expect(page.locator('#cptMsg')).toContainText('indésirables');
     expect(await page.evaluate(() => window.__lienEnvoye)).toBe('moi@exemple.fr');
+    // et l'e-mail doit partir en français, pas en anglais
+    expect(await page.evaluate(() => cptFb.auth.languageCode)).toBe('fr');
   });
 
   test('une adresse inconnue le dit simplement', async ({ page }) => {

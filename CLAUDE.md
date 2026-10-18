@@ -615,6 +615,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   « Mot de passe oublié » — c'est à l'utilisateur de le faire, et c'est la première chose à lui demander.
   Les e-mails de réinitialisation de Firebase sont **en anglais** par défaut (Authentication → Templates) : à passer en
   français quand il voudra.
+- **Correction du 18 oct. 2026, après l'essai de l'utilisateur** (branche `correction-mail-francais`). Il a tout essayé :
+  création de compte par e-mail, reconnexion et progression retrouvée **marchent**. Trois soucis sur l'e-mail de
+  « mot de passe oublié », tous les trois sur le même mail :
+  - **Il arrivait en anglais** : Firebase envoie dans la langue qu'on lui donne, et on ne lui donnait rien.
+    `cptFb.auth.languageCode = 'fr'` dans `cptSdkAuth`. Un test le vérifie.
+  - **Le lien n'était pas cliquable** : ce n'est pas un défaut du site, Gmail désactive les liens des messages mis en
+    indésirables. Le message du site l'explique maintenant et dit de marquer le mail comme « non indésirable ».
+  - **Il arrive dans les indésirables** : l'expéditeur est `noreply@djingo-1e1f4.firebaseapp.com`, un domaine qui
+    n'appartient pas au projet et n'a aucune réputation. **Ne se corrige pas dans le code.** La vraie solution est de
+    brancher un domaine à soi comme expéditeur (Authentication → Modèles → « Personnaliser le domaine »), ce qui
+    suppose d'acheter le domaine DJingo — et donc de **vérifier d'abord les marques INPI et EUIPO** (proximité avec
+    « Duolingo », déjà notée au lot 21). Décision laissée à l'utilisateur ; en attendant, le site prévient.
 - **Lot 36 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
