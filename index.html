@@ -113,19 +113,42 @@
   </div>
 </div>
 <div class="quiz" id="compte" hidden role="dialog" aria-modal="true" aria-labelledby="cptTitle">
-  <div class="qcard">
+  <div class="qcard cptcard">
     <button type="button" class="rclose" id="cptClose" aria-label="Fermer">×</button>
-    <span class="lnum">Ta progression</span>
-    <h2 id="cptTitle" tabindex="-1">Mon compte</h2>
-    <p class="avsmall" id="cptEtatTxt" role="status"></p>
+    <div class="cpthead">
+      <span class="cptvini" id="cptVini" aria-hidden="true"></span>
+      <span><span class="lnum" id="cptKick">Ta progression</span><h2 id="cptTitle" tabindex="-1">Mon compte</h2></span>
+    </div>
+    <p class="cptetat" id="cptEtatTxt" role="status"></p>
     <div class="cptchoix" id="cptChoix" hidden>
       <p class="qwhy" id="cptChoixTxt"></p>
       <div class="rbrow"><button type="button" class="rbtn go" id="cptGardeCompte">Garder celle de mon compte</button><button type="button" class="ghost" id="cptGardeIci">Garder celle de cet ordinateur</button></div>
     </div>
-    <button type="button" class="rbtn go cptgoogle" id="cptIn">Continuer avec Google</button>
-    <button type="button" class="ghost" id="cptOut" hidden>Se déconnecter</button>
+    <div class="cptpas" id="cptAccueil" hidden>
+      <ul class="cptplus">
+        <li>Tes étoiles, tes XP et tes badges te suivent partout</li>
+        <li>Tu changes d'ordinateur ou de téléphone sans rien reperdre</li>
+        <li>Même si tu vides ton navigateur, ta progression revient</li>
+      </ul>
+      <button type="button" class="rbtn go cptmain" id="cptVersCreer">Créer mon compte</button>
+      <button type="button" class="cptlien" id="cptVersEntrer">J'ai déjà un compte</button>
+    </div>
+    <form class="cptpas" id="cptForm" hidden novalidate>
+      <label class="cptch" id="cptChPrenom"><span>Ton prénom</span><input id="cptPrenom" type="text" autocomplete="given-name" maxlength="40" placeholder="Nathan"></label>
+      <label class="cptch" id="cptChMail"><span>Ton e-mail</span><input id="cptMail" type="email" autocomplete="email" maxlength="120" placeholder="toi@exemple.fr"></label>
+      <label class="cptch" id="cptChMdp"><span>Ton mot de passe</span><span class="cptmdp"><input id="cptMdp" type="password" maxlength="100"><button type="button" id="cptOeil" aria-pressed="false">Voir</button></span></label>
+      <p class="cptaide" id="cptAide"></p>
+      <button type="submit" class="rbtn go cptmain" id="cptGo">Créer mon compte</button>
+      <button type="button" class="cptlien" id="cptOubli">Mot de passe oublié ?</button>
+      <p class="cptou" id="cptOu"><span>ou</span></p>
+      <button type="button" class="ghost cptgoogle" id="cptIn">Continuer avec Google</button>
+      <button type="button" class="cptlien" id="cptBascule"></button>
+    </form>
+    <div class="cptpas" id="cptConnecte" hidden>
+      <button type="button" class="ghost" id="cptOut">Se déconnecter</button>
+    </div>
     <p class="qwhy" id="cptMsg" role="status" hidden></p>
-    <p class="avsmall">Avec un compte, tes étoiles, tes XP, tes badges et tes quêtes te suivent sur n'importe quel ordinateur ou téléphone. DJingo enregistre ton identifiant Google, ton prénom et ta progression — pas ton e-mail. Les réglages de ta table restent sur cet ordinateur.</p>
+    <p class="avsmall" id="cptNote"></p>
   </div>
 </div>
 <div class="quiz" id="reg" hidden role="dialog" aria-modal="true" aria-labelledby="regTitle">

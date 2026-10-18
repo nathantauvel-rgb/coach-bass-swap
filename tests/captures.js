@@ -27,6 +27,12 @@ const ECRANS = [
     window.firebase = { apps: [], initializeApp(){ this.apps.push({}); }, auth: af, firestore: () => ({ collection: () => ({ doc: () => ({ get: () => Promise.resolve({ exists: false }), set: () => Promise.resolve() }) }) }) };
     CPT_CFG = { apiKey: 'x', authDomain: 'x', projectId: 'x', appId: 'x' }; cptEtat(); openCompte();
   }); }],
+  ['21-compte-creer', VENU, 'apprendre', async p => { await p.evaluate(() => {
+    const auth = { onAuthStateChanged(){}, signInWithPopup(){ return new Promise(() => {}); }, signOut(){ return Promise.resolve(); } };
+    const af = () => auth; af.GoogleAuthProvider = function (){};
+    window.firebase = { apps: [], initializeApp(){ this.apps.push({}); }, auth: af, firestore: () => ({ collection: () => ({ doc: () => ({ get: () => new Promise(() => {}), set: () => Promise.resolve() }) }) }) };
+    CPT_CFG = { apiKey: 'x', authDomain: 'x', projectId: 'x', appId: 'x' }; cptEtat(); openCompte(); cptVa('creer');
+  }); }],
   ['13-testeurs', {}, '', async p => { await p.goto(BASE + '/testeurs.html'); await p.evaluate(() => document.fonts.ready); }],
   ['14-presentation', {}, '', async p => { await p.goto(BASE + '/presentation.html'); await p.evaluate(() => document.fonts.ready); await p.evaluate(() => document.querySelectorAll('img').forEach(i => { i.loading = 'eager'; })); await p.waitForTimeout(600); }]
 ];

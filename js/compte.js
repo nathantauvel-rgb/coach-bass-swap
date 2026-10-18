@@ -21,7 +21,8 @@
    Ce qui NE suit PAS le compte : tout ce qui décrit cet ordinateur et cette table (réglages MIDI, nom de la table,
    vérification de la table, collection rekordbox importée, sons coupés), et le journal des testeurs.
 
-   Données enregistrées en ligne : l'identifiant Google du joueur, son prénom, et sa progression. **Pas son e-mail.**
+   Données enregistrées **dans le document de progression** : l'identifiant du joueur, son prénom, et sa progression.
+   Pas son adresse e-mail : celle-ci reste chez Firebase, du côté de l'authentification (lot 35, comptes par e-mail).
 
    CPT_CFG : la configuration du projet Firebase. Ces valeurs ne sont pas des secrets (elles sont visibles dans la page
    de n'importe quel site Firebase) : la sécurité vient des règles de `firestore.rules`, qui n'autorisent chaque joueur
@@ -49,7 +50,8 @@ const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_L
 
 let cpt = null;          // personne de connecté, ou { uid, prenom }
 let cptFb = null;        // { auth, db } une fois Firebase chargé
-let cptPret = null;      // la promesse de chargement de Firebase (une seule fois)
+let cptPretAuth = null;  // la promesse de chargement de la connexion (app + auth), une seule fois
+let cptPretDb = null;    // celle de la base (firestore), chargée seulement quand elle sert
 let cptT = 0;            // minuteur de l'envoi différé
 let cptEnvoi = false;    // un envoi est en cours
 let cptLent = false;     // l'envoi en cours met trop de temps : sûrement pas de connexion
@@ -67,7 +69,11 @@ let cptSauve = null;
 try { cptSauve = JSON.parse(localStorage.getItem(CPT_KEY) || 'null'); } catch (e) {}
 if (!cptSauve || typeof cptSauve !== 'object' || typeof cptSauve.uid !== 'string') cptSauve = null;
 else { cptMaj = Math.max(0, Math.floor(+cptSauve.maj) || 0); cptSale = !!cptSauve.sale; }
-function cptNote(){ try { if (cpt) cptBrut.set(CPT_KEY, JSON.stringify({ uid: cpt.uid, prenom: cpt.prenom, maj: cptMaj, sale: cptSale })); } catch (e) {} }
+function cptNote(){
+  if (!cpt) return;
+  cptSauve = { uid: cpt.uid, prenom: cpt.prenom, maj: cptMaj, sale: cptSale };   // tenu à jour, sinon une
+  try { cptBrut.set(CPT_KEY, JSON.stringify(cptSauve)); } catch (e) {}           // reconnexion reposerait la question
+}
 
 /* ---------- Un seul point d'enregistrement ----------
    `localStorage.setItem` est enveloppé : tout le reste du site continue de l'appeler sans le savoir.
@@ -153,25 +159,41 @@ function cptResume(d){
 function cptScript(src){
   return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = src; s.onload = () => ok(); s.onerror = () => ko(new Error('chargement de ' + src)); document.head.appendChild(s); });
 }
-function cptSdk(){
-  if (cptPret) return cptPret;
-  const dejaLa = () => { try { return !!window.firebase; } catch (e) { return false; } };
-  const charge = dejaLa() ? Promise.resolve() : (() => {
-    const u = n => `https://www.gstatic.com/firebasejs/${CPT_SDK}/firebase-${n}-compat.js`;
-    return cptScript(u('app')).then(() => Promise.all([cptScript(u('auth')), cptScript(u('firestore'))]));
-  })();
-  cptPret = charge.then(() => {
+/* Firebase est coupé en deux : la **connexion** (app + auth, 48 Ko) et la **base** (firestore, 100 Ko).
+   La fenêtre Google n'a besoin que de la première ; la base ne sert qu'une fois connecté. Attendre les deux
+   avant d'ouvrir la fenêtre faisait patienter pour rien (lenteur signalée par l'utilisateur, lot 35).
+   En plus, la connexion est préparée à l'avance, en douce, pour que le clic soit immédiat. */
+const cptUrl = n => `https://www.gstatic.com/firebasejs/${CPT_SDK}/firebase-${n}-compat.js`;
+function cptSdkAuth(){
+  if (cptPretAuth) return cptPretAuth;
+  let deja = false; try { deja = !!window.firebase; } catch (e) {}
+  const charge = deja ? Promise.resolve() : cptScript(cptUrl('app')).then(() => cptScript(cptUrl('auth')));
+  cptPretAuth = charge.then(() => {
     if (!firebase.apps || !firebase.apps.length) firebase.initializeApp(CPT_CFG);
-    cptFb = { auth: firebase.auth(), db: firebase.firestore() };
+    if (!cptFb) cptFb = {};
+    cptFb.auth = firebase.auth();
     cptFb.auth.onAuthStateChanged(cptChange);
   });
-  cptPret.catch(() => { cptPret = null; });   // un échec ne doit pas bloquer les essais suivants
-  return cptPret;
+  cptPretAuth.catch(() => { cptPretAuth = null; });   // un échec ne doit pas bloquer les essais suivants
+  return cptPretAuth;
+}
+function cptSdkDb(){
+  if (cptPretDb) return cptPretDb;
+  cptPretDb = cptSdkAuth().then(() => {
+    let deja = false; try { deja = !!(window.firebase && firebase.firestore); } catch (e) {}
+    return deja ? null : cptScript(cptUrl('firestore'));
+  }).then(() => { cptFb.db = firebase.firestore(); });
+  cptPretDb.catch(() => { cptPretDb = null; });
+  return cptPretDb;
 }
 // Appelé par Firebase à chaque changement : au chargement (session reprise) comme après « Continuer avec Google ».
 function cptChange(u){
   // Un premier appel à vide avant la reprise de session ne doit pas effacer ce qu'on retient du compte
-  if (!u){ const avait = !!cpt; cpt = null; cptBloque = true; cptAttente = null; if (avait){ cptFait = ''; try { cptBrut.del(CPT_KEY); } catch (e) {} } cptEtat(); return; }
+  // Firebase annonce « personne » dès qu'il a fini de charger, même si on n'a jamais été connecté : on ne
+  // remet l'écran à l'accueil que si on vient vraiment de se déconnecter, sinon le formulaire qu'on est en
+  // train de remplir disparaîtrait tout seul.
+  if (!u){ const avait = !!cpt; cpt = null; cptBloque = true; cptAttente = null;
+    if (avait){ cptPas = 'accueil'; cptFait = ''; try { cptBrut.del(CPT_KEY); } catch (e) {} } cptEtat(); return; }
   cpt = { uid: u.uid, prenom: (u.displayName || '').trim().split(/\s+/)[0] || 'toi' };
   if (!cptSauve || cptSauve.uid !== cpt.uid){ cptMaj = 0; cptSale = false; }   // un autre compte que la dernière fois
   cptNote(); cptEtat();
@@ -182,7 +204,7 @@ function cptChange(u){
    Tant que ce n'est pas fini, `cptBloque` empêche tout envoi : la progression du compte ne peut pas être écrasée. */
 function cptSync(){
   cptBloque = true; cptSouci = ''; cptEtat();
-  return cptFb.db.collection(CPT_DOC).doc(cpt.uid).get().then(s => {
+  return cptSdkDb().then(() => cptFb.db.collection(CPT_DOC).doc(cpt.uid).get()).then(s => {
     const brut = s.exists ? s.data() : null, b = brut && brut.donnees;
     const d = b && typeof b === 'object' && !Array.isArray(b) ? b : null;
     const maj = Math.max(0, Math.floor(+(brut && brut.maj)) || 0);
@@ -197,8 +219,14 @@ function cptSync(){
     }
     if (cptVide()) return cptReprend(d, maj);                             // rien de gagné ici : on prend celle du compte
     if (cptMaj && !cptSale) return cptReprend(d, maj);                    // on était à jour : c'est un autre appareil qui a avancé
-    // On n'arrive ici que si les deux côtés ont vraiment gagné quelque chose : aucun des deux choix ne peut
-    // remplacer une vraie progression par du vide.
+    // Les deux côtés sont exactement pareils : il n'y a rien à choisir, on note juste où on en est.
+    // (Clés triées : Firestore ne les rend pas dans le même ordre que le navigateur.)
+    const pareil = o => JSON.stringify(Object.keys(o).sort().map(k => [k, o[k]]));
+    if (pareil(d) === pareil(cptDonnees())){
+      cptMaj = maj; cptSale = false; cptNote(); cptBloque = false; cptEtat(); return;
+    }
+    // On n'arrive ici que si les deux côtés ont vraiment gagné quelque chose, et qu'ils diffèrent : aucun des
+    // deux choix ne peut remplacer une vraie progression par du vide.
     cptAttente = { d, maj }; cptEtat();
   }, e => {
     // Pas de réseau au chargement : on reste bloqué (rien ne doit partir avant d'avoir comparé), on le dit,
@@ -220,7 +248,7 @@ function cptGarde(quoi){
 function cptEntrer(){
   if (!cptOn()) return;
   cptDit('Connexion en cours…'); cptBoutons(true);
-  cptSdk()
+  cptSdkAuth()
     .then(() => cptFb.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()))
     .then(() => { cptBoutons(false); })                                   // la suite est faite par cptChange → cptSync
     .catch(e => { cptDit(cptErreur(e)); cptBoutons(false); });
@@ -228,7 +256,7 @@ function cptEntrer(){
 
 /* ---------- Envoyer la progression ---------- */
 function cptPousse(){
-  if (!cpt || !cptFb || cptAttente || cptStop || cptBloque) return Promise.resolve();
+  if (!cpt || !cptFb || !cptFb.db || cptAttente || cptStop || cptBloque) return Promise.resolve();
   const d = cptDonnees();
   if (JSON.stringify(d).length > CPT_MAX){ cptDit('Ta progression est trop grosse pour être enregistrée en ligne. Préviens-moi : c\'est un défaut du site.'); return Promise.resolve(); }
   const maj = Date.now();
@@ -247,7 +275,7 @@ window.addEventListener('pagehide', cptVite);
 /* ---------- Se déconnecter, et effacer le compte ---------- */
 // Hors ligne, un envoi en cours ne répond jamais : on ne laisse pas le bouton grisé pour toujours.
 function cptSortir(){
-  if (!cptFb || !cpt) return;
+  if (!cptFb || !cptFb.auth || !cpt) return;
   cptBoutons(true); clearTimeout(cptT);
   Promise.race([cptPousse(), new Promise(ok => setTimeout(ok, CPT_FIN))])
     .then(() => cptFb.auth.signOut()).then(
@@ -260,13 +288,14 @@ function cptSortir(){
    un effacement qui n'a pas eu lieu. */
 function cptOublie(){
   if (!cptOn()) return Promise.resolve(true);
+  // il faut la base pour effacer le document
   let marque = null; try { marque = JSON.parse(localStorage.getItem(CPT_KEY) || 'null'); } catch (e) {}
   const uid = (cpt && cpt.uid) || (marque && typeof marque.uid === 'string' ? marque.uid : '');
   if (!uid) return Promise.resolve(true);
   cptStop = true; clearTimeout(cptT);
-  const boulot = cptSdk()
+  const boulot = cptSdkDb()
     .then(() => cptFb.db.collection(CPT_DOC).doc(uid).delete())
-    .then(() => (cptFb ? cptFb.auth.signOut() : null))
+    .then(() => (cptFb && cptFb.auth ? cptFb.auth.signOut() : null))
     .then(() => true, () => false);
   return Promise.race([boulot, new Promise(ok => setTimeout(() => ok(false), CPT_FIN))])
     .then(ok => { if (!ok) cptStop = false; return ok; });
@@ -278,18 +307,61 @@ function cptResetKo(){
   m.hidden = false;
 }
 
+/* ---------- Se créer un compte avec une adresse e-mail (lot 35) ----------
+   Google ne distingue pas « créer » et « se connecter » : il crée le compte tout seul la première fois.
+   L'e-mail et le mot de passe donnent les deux vrais chemins que les gens attendent (choix de l'utilisateur).
+   Il faut que « E-mail/Mot de passe » soit activé dans la console Firebase (Authentication → Sign-in method),
+   sinon Firebase répond `auth/operation-not-allowed` et on le dit en clair. */
+const CPT_MDP_MIN = 6;                        // minimum imposé par Firebase
+const cptMailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+
+function cptCreer(prenom, mail, mdp){
+  cptDit('Création de ton compte…'); cptBoutons(true);
+  cptSdkAuth()
+    .then(() => cptFb.auth.createUserWithEmailAndPassword(mail, mdp))
+    .then(r => {
+      // Le prénom sert partout sur le site (Vini, la pastille) : on le pose sur le compte.
+      cpt = { uid: r.user.uid, prenom }; cptNote(); cptEtat();
+      return r.user.updateProfile({ displayName: prenom }).catch(() => {});
+    })
+    .then(() => { cptDit(''); cptBoutons(false); })
+    .catch(e => { cptDit(cptErreur(e)); cptBoutons(false); });
+}
+function cptEntrerMail(mail, mdp){
+  cptDit('Connexion en cours…'); cptBoutons(true);
+  cptSdkAuth()
+    .then(() => cptFb.auth.signInWithEmailAndPassword(mail, mdp))
+    .then(() => { cptDit(''); cptBoutons(false); })          // la suite est faite par cptChange → cptSync
+    .catch(e => { cptDit(cptErreur(e)); cptBoutons(false); });
+}
+function cptOubliMdp(mail){
+  cptDit('Envoi en cours…'); cptBoutons(true);
+  cptSdkAuth()
+    .then(() => cptFb.auth.sendPasswordResetEmail(mail))
+    .then(() => { cptDit('C’est envoyé. Regarde dans ta boîte mail, et dans les indésirables : tu as un lien pour choisir un nouveau mot de passe.'); cptBoutons(false); })
+    .catch(e => { cptDit(cptErreur(e)); cptBoutons(false); });
+}
+
 /* ---------- Ce qu'on affiche ---------- */
 function cptErreur(e){
   const c = (e && e.code) || '';
   if (c === 'auth/popup-closed-by-user' || c === 'auth/cancelled-popup-request') return 'Connexion annulée.';
   if (c === 'auth/popup-blocked') return 'Ton navigateur a bloqué la fenêtre de connexion. Autorise les fenêtres surgissantes pour ce site, puis réessaie.';
   if (c === 'auth/network-request-failed' || c === 'unavailable') return 'Pas de connexion internet. Ta progression reste sur cet ordinateur, réessaie plus tard.';
-  if (c === 'auth/unauthorized-domain') return 'Ce site n\'est pas encore autorisé dans le projet Firebase (Authentication → Settings → Authorized domains).';
-  if (c === 'permission-denied') return 'Le compte n\'a pas le droit d\'écrire. Vérifie les règles de sécurité Firestore.';
-  return 'Ça n\'a pas marché : ' + ((e && e.message) || 'erreur inconnue');
+  if (c === 'auth/unauthorized-domain') return 'Ce site n’est pas encore autorisé dans le projet Firebase (Authentication → Settings → Authorized domains).';
+  if (c === 'permission-denied') return 'Le compte n’a pas le droit d’écrire. Vérifie les règles de sécurité Firestore.';
+  if (c === 'auth/email-already-in-use') return 'Cette adresse a déjà un compte. Choisis « J’ai déjà un compte » juste en dessous.';
+  if (c === 'auth/invalid-email') return 'Cette adresse e-mail n’a pas l’air valide.';
+  if (c === 'auth/weak-password') return 'Ton mot de passe est trop court : il en faut au moins ' + CPT_MDP_MIN + ' caractères.';
+  if (c === 'auth/user-not-found') return 'Aucun compte avec cette adresse. Tu veux peut-être en créer un ?';
+  if (c === 'auth/wrong-password' || c === 'auth/invalid-credential' || c === 'auth/invalid-login-credentials') return 'Adresse ou mot de passe incorrect.';
+  if (c === 'auth/missing-password') return 'Écris ton mot de passe.';
+  if (c === 'auth/too-many-requests') return 'Trop d’essais de suite. Attends quelques minutes, puis réessaie.';
+  if (c === 'auth/operation-not-allowed') return 'La création de compte par e-mail n’est pas activée dans Firebase (Authentication → Sign-in method → E-mail/Mot de passe).';
+  return 'Ça n’a pas marché : ' + ((e && e.message) || 'erreur inconnue');
 }
 function cptDit(t){ const m = $('cptMsg'); if (!m) return; m.textContent = t || ''; m.hidden = !t; }
-function cptBoutons(off){ for (const id of ['cptIn', 'cptOut']){ const b = $(id); if (b) b.disabled = !!off; } }
+function cptBoutons(off){ for (const id of ['cptGo', 'cptIn', 'cptOut', 'cptVersCreer', 'cptVersEntrer', 'cptOubli', 'cptBascule']){ const b = $(id); if (b) b.disabled = !!off; } }
 // La pastille de l'en-tête
 function cptEtat(){
   const b = $('cptBtn'); if (!b) return;
@@ -299,38 +371,122 @@ function cptEtat(){
   b.title = cptAttente ? 'Choisis quelle progression garder' : cpt ? 'Mon compte DJingo' : 'Se connecter pour garder ta progression';
   if ($('compte') && !$('compte').hidden) cptRend();
 }
-// Le contenu de la fenêtre
+
+/* Les écrans de la fenêtre : `accueil` (les deux chemins), `creer`, `entrer`, `oubli`.
+   Quand on est connecté, ils laissent la place à l'état du compte. */
+let cptPas = 'accueil';
+function cptVa(pas){
+  cptPas = pas; cptDit(''); cptRend();
+  const f = $(pas === 'creer' ? 'cptPrenom' : pas === 'entrer' || pas === 'oubli' ? 'cptMail' : 'cptTitle');
+  if (f) f.focus({ preventScroll: true });
+}
 function cptRend(){
-  $('cptIn').hidden = !!cpt; $('cptOut').hidden = !cpt;
+  const form = cptPas === 'creer' || cptPas === 'entrer' || cptPas === 'oubli';
+  const dehors = !cpt && !cptAttente;
   $('cptChoix').hidden = !cptAttente;
-  if (cptAttente) $('cptChoixTxt').textContent = `Ton compte a déjà une progression (${cptResume(cptAttente.d)}), et cet ordinateur en a une autre (${cptResume(cptDonnees())}). Laquelle tu gardes ? L'autre sera remplacée. Rien n'est enregistré tant que tu n'as pas choisi.`;
-  $('cptEtatTxt').textContent = !cpt ? 'Sans compte, ta progression reste sur cet ordinateur et disparaît si tu changes de navigateur.'
-    : cptAttente ? 'Choisis quelle progression garder, juste en dessous.'
-    : cptSouci ? cptSouci
-    : cptLent ? 'Pas de réseau : ta progression sera enregistrée dès que tu seras en ligne.'
-    : cptEnvoi ? 'Enregistrement en cours…'
-    : cptBloque ? 'Vérification de ta progression…'
-    : cptHeure ? `Progression enregistrée à ${cptHeure}.` : 'Ta progression est enregistrée au fur et à mesure.';
+  $('cptAccueil').hidden = !(dehors && cptPas === 'accueil');
+  $('cptForm').hidden = !(dehors && form);
+  $('cptConnecte').hidden = !cpt;
+  if (cptAttente) $('cptChoixTxt').textContent = 'Ton compte a déjà une progression (' + cptResume(cptAttente.d) + '), et cet ordinateur en a une autre (' + cptResume(cptDonnees()) + '). Laquelle tu gardes ? L’autre sera remplacée. Rien n’est enregistré tant que tu n’as pas choisi.';
+
+  if (dehors && form){
+    $('cptChPrenom').hidden = cptPas !== 'creer';
+    $('cptChMdp').hidden = cptPas === 'oubli';
+    $('cptOubli').hidden = cptPas !== 'entrer';
+    $('cptOu').hidden = cptPas === 'oubli';
+    $('cptIn').hidden = cptPas === 'oubli';
+    $('cptGo').textContent = cptPas === 'creer' ? 'Créer mon compte' : cptPas === 'entrer' ? 'Me connecter' : 'Envoyer le lien';
+    $('cptAide').textContent = cptPas === 'creer' ? 'Au moins ' + CPT_MDP_MIN + ' caractères.' : cptPas === 'oubli' ? 'On t’envoie un lien pour en choisir un nouveau.' : '';
+    $('cptAide').hidden = !$('cptAide').textContent;
+    $('cptBascule').textContent = cptPas === 'creer' ? 'J’ai déjà un compte' : cptPas === 'entrer' ? 'Je n’ai pas encore de compte' : 'Revenir à la connexion';
+  }
+
+  $('cptTitle').textContent = cpt ? 'Mon compte'
+    : cptPas === 'creer' ? 'Créer mon compte'
+    : cptPas === 'entrer' ? 'Me connecter'
+    : cptPas === 'oubli' ? 'Mot de passe oublié' : 'Garde ta progression';
+  $('cptKick').textContent = cpt ? 'Ta progression' : 'DJingo';
+  $('cptEtatTxt').textContent = cpt
+    ? (cptAttente ? 'Choisis quelle progression garder, juste en dessous.'
+      : cptSouci ? cptSouci
+      : cptLent ? 'Pas de réseau : ta progression sera enregistrée dès que tu seras en ligne.'
+      : cptEnvoi ? 'Enregistrement en cours…'
+      : cptBloque ? 'Vérification de ta progression…'
+      : cptHeure ? 'Salut ' + cpt.prenom + ' ! Progression enregistrée à ' + cptHeure + '.'
+      : 'Salut ' + cpt.prenom + ' ! Ta progression est enregistrée au fur et à mesure.')
+    : cptPas === 'accueil' ? 'Sans compte, ta progression reste sur cet ordinateur et disparaît si tu changes de navigateur.'
+    : cptPas === 'oubli' ? 'Écris l’adresse de ton compte.' : '';
+  $('cptEtatTxt').hidden = !$('cptEtatTxt').textContent;
+  $('cptNote').textContent = cpt
+    ? 'Les réglages de ta table restent sur cet ordinateur : ils ne servent qu’ici.'
+    : 'DJingo enregistre ton prénom, ton adresse et ta progression. Rien d’autre, et rien n’est partagé.';
+  viniMettre($('cptVini'), cpt && !cptAttente && !cptBloque ? 'parfait' : 'calme');
+}
+
+// Le formulaire, quel que soit l'écran : on vérifie ici avant d'embêter Firebase, les messages sont plus clairs.
+function cptEnvoyer(e){
+  if (e) e.preventDefault();
+  const prenom = $('cptPrenom').value.trim().slice(0, 40), mail = $('cptMail').value.trim(), mdp = $('cptMdp').value;
+  if (!cptMailOk(mail)){ cptDit('Écris une adresse e-mail valide, comme toi@exemple.fr.'); $('cptMail').focus(); return; }
+  if (cptPas === 'oubli'){ cptOubliMdp(mail); return; }
+  if (!mdp){ cptDit('Écris ton mot de passe.'); $('cptMdp').focus(); return; }
+  if (cptPas === 'entrer'){ cptEntrerMail(mail, mdp); return; }
+  if (!prenom){ cptDit('Écris ton prénom : c’est comme ça que Vini t’appellera.'); $('cptPrenom').focus(); return; }
+  if (mdp.length < CPT_MDP_MIN){ cptDit('Ton mot de passe est trop court : il en faut au moins ' + CPT_MDP_MIN + ' caractères.'); $('cptMdp').focus(); return; }
+  cptCreer(prenom, mail, mdp);
+}
+
+function cptOeil(voir){
+  const i = $('cptMdp'), b = $('cptOeil');
+  i.type = voir ? 'text' : 'password';
+  b.setAttribute('aria-pressed', String(!!voir));
+  b.textContent = voir ? 'Cacher' : 'Voir';
 }
 function openCompte(){
   if (!cptOn()) return;
   if (quiz) closeQuiz(); if (run) stopRun();
-  cptDit(''); cptBoutons(false); $('compte').hidden = false; cptRend();   // cptSouci, lui, reste affiché par cptRend
-  cptSdk().then(cptRend, e => cptDit(cptErreur(e)));
+  cptDit(''); cptBoutons(false);
+  $('cptPrenom').value = ''; $('cptMail').value = ''; $('cptMdp').value = ''; cptOeil(false);
+  cptPas = 'accueil';
+  $('compte').hidden = false; cptRend();   // cptSouci, lui, reste affiché par cptRend
+  cptSdkAuth().then(cptRend, e => cptDit(cptErreur(e)));
   $('cptTitle').focus({ preventScroll: true });
 }
-function closeCompte(){ if ($('compte').hidden) return; $('compte').hidden = true; const b = $('cptBtn'); if (b && !b.hidden) b.focus({ preventScroll: true }); }
+function closeCompte(){
+  if ($('compte').hidden) return;
+  $('compte').hidden = true; $('cptMdp').value = '';
+  const b = $('cptBtn'); if (b && !b.hidden) b.focus({ preventScroll: true });
+}
 
 $('cptBtn').addEventListener('click', openCompte);
 $('cptClose').addEventListener('click', closeCompte);
 $('compte').addEventListener('click', e => { if (e.target === $('compte')) closeCompte(); });
+$('cptVersCreer').addEventListener('click', () => cptVa('creer'));
+$('cptVersEntrer').addEventListener('click', () => cptVa('entrer'));
+$('cptBascule').addEventListener('click', () => cptVa(cptPas === 'entrer' ? 'creer' : 'entrer'));
+$('cptOubli').addEventListener('click', () => cptVa('oubli'));
+$('cptForm').addEventListener('submit', cptEnvoyer);
+$('cptOeil').addEventListener('click', () => cptOeil($('cptMdp').type === 'password'));
 $('cptIn').addEventListener('click', cptEntrer);
 $('cptOut').addEventListener('click', cptSortir);
 $('cptGardeCompte').addEventListener('click', () => cptGarde('compte'));
 $('cptGardeIci').addEventListener('click', () => cptGarde('ici'));
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('compte').hidden){ e.stopPropagation(); closeCompte(); } }, true);
+// Échap : on revient d'abord à l'accueil de la fenêtre, pour ne pas fermer par mégarde ce qu'on était en train de taper
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || $('compte').hidden) return;
+  e.stopPropagation();
+  if (!cpt && !cptAttente && cptPas !== 'accueil') cptVa('accueil'); else closeCompte();
+}, true);
 
 /* ---------- Au chargement ---------- */
 cptEtat();
-// Déjà connecté la dernière fois : on recharge Firebase en silence pour reprendre la session, puis cptSync compare.
-if (cptOn() && cptSauve) cptSdk().catch(() => {});
+if (cptOn()){
+  // Déjà connecté la dernière fois : on reprend la session tout de suite (cptSync comparera ensuite).
+  // Sinon, on prépare quand même la connexion une fois la page tranquille, pour que le clic soit immédiat.
+  if (cptSauve) cptSdkAuth().catch(() => {});
+  else {
+    // Jamais pendant une partie : l'image doit rester fluide. On repasse plus tard.
+    const tot = () => { if (run){ setTimeout(tot, 5000); return; } cptSdkAuth().catch(() => {}); };
+    if (window.requestIdleCallback) requestIdleCallback(tot, { timeout: 6000 }); else setTimeout(tot, 3000);
+  }
+}

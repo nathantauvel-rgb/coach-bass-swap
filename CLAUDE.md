@@ -507,7 +507,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     copie depuis l'appareil de toute façon). `coach-ordre` n'est pas de la progression mais le **format** des données du
     navigateur (lot 26) : s'il voyageait et revenait absent d'un paquet, `ordreMigre` déplacerait les étoiles une deuxième
     fois et les fausserait. Deux défauts trouvés par les tests et par le gardien, corrigés avant d'aller plus loin.
-  - Données en ligne : identifiant Google, prénom, progression. **Pas l'e-mail.** Un document par joueur dans la
+  - Données **dans le document de progression** : identifiant, prénom, progression. Pas l'adresse e-mail : elle reste
+    du côté de l'authentification Firebase (voir le lot 35, qui ajoute les comptes par e-mail). Un document par joueur dans la
     collection `joueurs`. Règles de sécurité dans `firestore.rules` : chacun seulement sur son document, tout le reste
     fermé. **Pas de limite de taille dans les règles** : `request.resource.size()` n'existe pas côté Firestore (c'est
     une notion de Firebase Storage) et la console refuse de publier ; le garde-fou est `CPT_MAX` côté site.
@@ -566,14 +567,53 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   l'utilisateur). Captures dans `captures/lot34/` (hors Git) : pas connecté, connecté, et la question des deux
   progressions. Restent à écrire quand l'utilisateur aura confirmé que ça marche : une phrase dans `README.md` et une
   sur `presentation.html` (« ta progression te suit d'un appareil à l'autre »).
-- **Lot 35 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
+- **Lot 35 « Écran de compte » (18 oct. 2026)** : branche `lot-35-ecran-compte`, non publiée. Deux demandes de
+  l'utilisateur après avoir essayé le lot 34 : « une interface normale de création de compte », avec « créer » et
+  « se connecter » séparés, et « pas mal de lenteur » à la connexion.
+  - **Pourquoi c'était un vrai sujet** : avec Google seul, « Créer un compte » et « Se connecter » sont la **même
+    action** (Google crée le compte tout seul la première fois). L'utilisateur a choisi, parmi trois options,
+    d'ajouter **l'e-mail et le mot de passe** : c'est ce qui donne deux vrais chemins.
+  - **La fenêtre `#compte` est devenue un petit parcours** : `cptPas` vaut `accueil` (ce que le compte apporte +
+    « Créer mon compte » / « J'ai déjà un compte »), `creer` (prénom, e-mail, mot de passe), `entrer` (e-mail, mot de
+    passe, « Mot de passe oublié ? ») ou `oubli` (e-mail seul). `cptVa(pas)` change d'écran, `cptRend()` adapte titre,
+    champs, bouton et bascule. Google reste proposé en raccourci sous un trait « ou ». Échap revient d'abord à
+    l'accueil de la fenêtre avant de la fermer, pour ne pas perdre ce qu'on tapait.
+  - **E-mail et mot de passe** : `cptCreer` (avec `updateProfile` pour garder le prénom, qui sert à Vini et à la
+    pastille), `cptEntrerMail`, `cptOubliMdp` (lien de réinitialisation envoyé par Firebase). `cptEnvoyer` vérifie
+    **avant** d'appeler Firebase (adresse, mot de passe d'au moins `CPT_MDP_MIN` = 6, prénom) : les messages sont plus
+    clairs et rien ne part pour rien. Bouton « Voir » pour afficher le mot de passe ; le champ est vidé à la fermeture.
+    `cptErreur` traduit en plus les codes `email-already-in-use`, `invalid-email`, `weak-password`, `user-not-found`,
+    `wrong-password`, `too-many-requests` et `operation-not-allowed`.
+    **Il faut activer « E-mail/Mot de passe »** dans la console Firebase (Authentication → Sign-in method), sinon
+    Firebase répond `auth/operation-not-allowed` — et le site le dit en clair.
+  - **Vitesse** : Firebase est coupé en deux, `cptSdkAuth()` (app + auth, **49 Ko**) et `cptSdkDb()` (firestore,
+    100 Ko). La fenêtre Google n'a besoin que de la première, la base ne sert qu'une fois connecté : **66 % de moins
+    à attendre au clic**. En plus, la connexion est préparée à l'avance (`requestIdleCallback`, repli `setTimeout`)
+    dès que la page est tranquille, donc le clic est immédiat.
+  - **Deux défauts trouvés par les tests et corrigés** : après une déconnexion, la fenêtre restait sur le formulaire
+    au lieu de revenir à l'accueil ; et se reconnecter au même compte sur le même appareil reposait la question
+    « laquelle tu gardes ? » alors que rien n'avait changé — `cptSauve` était figé au chargement de la page, il est
+    maintenant tenu à jour par `cptNote()`, et `cptSync` ne demande plus rien quand les deux paquets sont identiques.
+  - **Gardien : feu orange, aucun blocage.** Il a créé un vrai compte avec un mot de passe repérable et vérifié
+    qu'il n'est nulle part (ni stockage, ni document en ligne, ni rapport des testeurs, ni adresse de page), et a
+    passé en revue les 16 combinaisons d'écrans. **Deux vrais défauts trouvés et corrigés** : sur « Mot de passe
+    oublié », le bouton « Revenir à la connexion » menait à la création ; et `cptPas` était remis à `accueil` à
+    chaque fois que Firebase annonçait « personne », donc le formulaire disparaissait tout seul pendant qu'on le
+    remplissait dans les premières secondes de la page (c'est maintenant dans le `if (avait)`). Quatre petits points
+    aussi : les liens restent désactivés pendant une opération, la comparaison des deux paquets trie les clés
+    (Firestore ne les rend pas dans le même ordre, elle ne servait donc à rien), le préchargement attend qu'aucune
+    partie ne tourne, et les textes sur l'e-mail ont été remis d'accord.
+  - Écrans `21-compte-creer` dans `tests/captures.js`, et les six écrans dans `captures/lot35/` (hors Git). 344 tests verts, 39 pour le compte (le faux Firebase sait créer un compte
+    par e-mail, se connecter et envoyer un lien de réinitialisation).
+- **Lot 36 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
   rien aujourd'hui.** Il faut un algorithme qui adapte ce qui est proposé derrière : les exercices, l'ordre des étapes, les
   quêtes du jour et les missions de « Passer au vrai » devraient suivre les réponses (par exemple : sans table, ne pas
   proposer les missions qui demandent la table ; « mixer en soirée » plutôt que « pour moi » fait remonter le mini-set et
   Passer au vrai ; un joueur qui se dit à l'aise saute les fiches « Découvre ce bouton »). À cadrer avec l'utilisateur
-  avant de commencer : quelles réponses changent quoi, exactement.
+  avant de commencer : quelles réponses changent quoi, exactement. (C'était le « lot 35 » avant que l'utilisateur
+  demande l'écran de compte ; renuméroté en 36.)
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

@@ -13,6 +13,9 @@ window.DJINGO_FIREBASE = { apiKey: 'faux', authDomain: 'faux.firebaseapp.com', p
   const BASE = '__faux_base', SESS = '__faux_user';
   const lire = () => { try { return JSON.parse(sessionStorage.getItem(BASE) || '{}'); } catch (e) { return {}; } };
   const ecrire = o => { try { sessionStorage.setItem(BASE, JSON.stringify(o)); } catch (e) {} };
+  const GENS = '__faux_gens';
+  const gens = () => { try { return JSON.parse(sessionStorage.getItem(GENS) || '{}'); } catch (e) { return {}; } };
+  const gensEcrire = o => { try { sessionStorage.setItem(GENS, JSON.stringify(o)); } catch (e) {} };
   let user = null; try { user = JSON.parse(sessionStorage.getItem(SESS) || 'null'); } catch (e) {}
   const ecoute = [], prevenir = () => ecoute.forEach(f => { try { f(user); } catch (e) {} });
   const auth = {
@@ -23,7 +26,30 @@ window.DJINGO_FIREBASE = { apiKey: 'faux', authDomain: 'faux.firebaseapp.com', p
       try { sessionStorage.setItem(SESS, JSON.stringify(user)); } catch (e) {}
       prevenir(); return Promise.resolve({ user });
     },
-    signOut(){ user = null; try { sessionStorage.removeItem(SESS); } catch (e) {} prevenir(); return Promise.resolve(); }
+    signOut(){ user = null; try { sessionStorage.removeItem(SESS); } catch (e) {} prevenir(); return Promise.resolve(); },
+    createUserWithEmailAndPassword(mail, mdp){
+      const g = gens();
+      if (g[mail]) return Promise.reject({ code: 'auth/email-already-in-use' });
+      if (String(mdp).length < 6) return Promise.reject({ code: 'auth/weak-password' });
+      if (window.__refus) return Promise.reject({ code: window.__refus });
+      g[mail] = { uid: 'm' + (Object.keys(g).length + 1), mdp, nom: '' }; gensEcrire(g);
+      user = { uid: g[mail].uid, displayName: null, email: mail };
+      try { sessionStorage.setItem(SESS, JSON.stringify(user)); } catch (e) {}
+      prevenir();
+      return Promise.resolve({ user: Object.assign({}, user, { updateProfile(p){ const h = gens(); h[mail].nom = p.displayName; gensEcrire(h); user.displayName = p.displayName; try { sessionStorage.setItem(SESS, JSON.stringify(user)); } catch (e) {} return Promise.resolve(); } }) });
+    },
+    signInWithEmailAndPassword(mail, mdp){
+      const g = gens();
+      if (!g[mail]) return Promise.reject({ code: 'auth/user-not-found' });
+      if (g[mail].mdp !== mdp) return Promise.reject({ code: 'auth/wrong-password' });
+      user = { uid: g[mail].uid, displayName: g[mail].nom || null, email: mail };
+      try { sessionStorage.setItem(SESS, JSON.stringify(user)); } catch (e) {}
+      prevenir(); return Promise.resolve({ user });
+    },
+    sendPasswordResetEmail(mail){
+      if (!gens()[mail]) return Promise.reject({ code: 'auth/user-not-found' });
+      window.__lienEnvoye = mail; return Promise.resolve();
+    }
   };
   const authFn = () => auth; authFn.GoogleAuthProvider = function (){};
   const db = { collection: () => ({ doc: id => ({
@@ -52,7 +78,20 @@ const SANS_MEMOIRE = `(() => { const vrai = Storage.prototype.setItem;
   Storage.prototype.setItem = function (k, v){ if (k === 'coach-compte') return; return vrai.call(this, k, v); }; })();`;
 
 const base = page => page.evaluate(() => { try { return JSON.parse(sessionStorage.getItem('__faux_base') || '{}'); } catch (e) { return {}; } });
-const seConnecter = async page => { await page.locator('#cptBtn').click(); await page.locator('#cptIn').click(); };
+// La fenêtre peut déjà être ouverte (après une déconnexion, par exemple) : le bouton de l'en-tête est
+// alors caché derrière elle, et cliquer dessus attendrait pour rien.
+const ouvrirCompte = async page => { if (await page.locator('#compte').isHidden()) await page.locator('#cptBtn').click(); };
+// Google est maintenant derrière un des deux chemins de l'écran d'accueil (lot 35)
+const seConnecter = async page => { await ouvrirCompte(page); await page.locator('#cptVersCreer').click(); await page.locator('#cptIn').click(); };
+// Créer un compte avec une adresse e-mail
+const creerCompte = async (page, prenom, mail, mdp) => {
+  await ouvrirCompte(page);
+  await page.locator('#cptVersCreer').click();
+  await page.locator('#cptPrenom').fill(prenom);
+  await page.locator('#cptMail').fill(mail);
+  await page.locator('#cptMdp').fill(mdp);
+  await page.locator('#cptGo').click();
+};
 
 // Le site a maintenant sa vraie configuration Firebase. Ces deux tests gardent le cas « pas de configuration »,
 // qui doit rester sans effet sur le reste du site : on la vide explicitement.
@@ -401,5 +440,214 @@ test.describe('Un appareil tout neuf', () => {
     await expect(page.locator('#cptChoix')).toBeHidden();
     expect(await page.evaluate(() => localStorage.getItem('coach-lecons'))).toBe('{"0":3,"1":3}');
     await expect.poll(async () => (await base(page)).u1.donnees['coach-lecons']).toBe('{"0":3,"1":3}');
+  });
+});
+
+/* Lot 35 : les deux vrais chemins (créer un compte / se connecter), avec une adresse e-mail. */
+test.describe('L’écran du compte', () => {
+  test('propose les deux chemins, et on passe de l’un à l’autre', async ({ page }) => {
+    const err = await ouvrir(page, { avant: FAUX });
+    await page.locator('#cptBtn').click();
+    await expect(page.locator('#cptTitle')).toHaveText('Garde ta progression');
+    await expect(page.locator('#cptAccueil')).toBeVisible();
+    await expect(page.locator('#cptForm')).toBeHidden();
+
+    await page.locator('#cptVersCreer').click();
+    await expect(page.locator('#cptTitle')).toHaveText('Créer mon compte');
+    await expect(page.locator('#cptChPrenom')).toBeVisible();
+    await expect(page.locator('#cptOubli')).toBeHidden();
+
+    await page.locator('#cptBascule').click();
+    await expect(page.locator('#cptTitle')).toHaveText('Me connecter');
+    await expect(page.locator('#cptChPrenom')).toBeHidden();
+    await expect(page.locator('#cptOubli')).toBeVisible();
+
+    await page.locator('#cptOubli').click();
+    await expect(page.locator('#cptTitle')).toHaveText('Mot de passe oublié');
+    await expect(page.locator('#cptChMdp')).toBeHidden();
+    await expect(page.locator('#cptIn')).toBeHidden();
+    expect(err).toEqual([]);
+  });
+
+  test('Échap revient à l’accueil de la fenêtre avant de la fermer', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX });
+    await page.locator('#cptBtn').click();
+    await page.locator('#cptVersCreer').click();
+    await page.locator('#cptPrenom').fill('Nathan');
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#compte')).toBeVisible();
+    await expect(page.locator('#cptAccueil')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#compte')).toBeHidden();
+  });
+
+  test('le mot de passe se montre et se cache, et n’est pas gardé à la fermeture', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX });
+    await page.locator('#cptBtn').click();
+    await page.locator('#cptVersCreer').click();
+    await page.locator('#cptMdp').fill('tapeici123');
+    await expect(page.locator('#cptMdp')).toHaveAttribute('type', 'password');
+    await page.locator('#cptOeil').click();
+    await expect(page.locator('#cptMdp')).toHaveAttribute('type', 'text');
+    await page.locator('#cptClose').click();
+    await page.locator('#cptBtn').click();
+    await page.locator('#cptVersCreer').click();
+    await expect(page.locator('#cptMdp')).toHaveValue('');
+    await expect(page.locator('#cptMdp')).toHaveAttribute('type', 'password');
+  });
+});
+
+test.describe('Créer un compte avec une adresse', () => {
+  test('le compte est créé, le prénom s’affiche, la progression part dessus', async ({ page }) => {
+    const err = await ouvrir(page, { avant: FAUX, stockage: { 'coach-lecons': '{"0":3,"1":2}' } });
+    await creerCompte(page, 'Nathan', 'moi@exemple.fr', 'tapeici123');
+    await expect(page.locator('#cptBtn')).toHaveText('Nathan');
+    await expect(page.locator('#cptEtatTxt')).toContainText('Salut Nathan');
+    await expect.poll(async () => (await base(page)).m1.donnees['coach-lecons'], { timeout: 15000 }).toBe('{"0":3,"1":2}');
+    expect(err).toEqual([]);
+  });
+
+  test('on se reconnecte ensuite avec la même adresse', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX, stockage: { 'coach-lecons': '{"0":3}' } });
+    await creerCompte(page, 'Nathan', 'moi@exemple.fr', 'tapeici123');
+    await expect(page.locator('#cptBtn')).toHaveText('Nathan');
+    await page.locator('#cptOut').click();
+    await expect(page.locator('#cptBtn')).toHaveText('Se connecter');
+    await page.locator('#cptVersEntrer').click();
+    await page.locator('#cptMail').fill('moi@exemple.fr');
+    await page.locator('#cptMdp').fill('tapeici123');
+    await page.locator('#cptGo').click();
+    await expect(page.locator('#cptBtn')).toHaveText('Nathan', { timeout: 15000 });
+  });
+
+  test('une adresse déjà prise renvoie vers « J’ai déjà un compte »', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX });
+    await creerCompte(page, 'Nathan', 'moi@exemple.fr', 'tapeici123');
+    await expect(page.locator('#cptBtn')).toHaveText('Nathan');
+    await page.locator('#cptOut').click();
+    await creerCompte(page, 'Nathan', 'moi@exemple.fr', 'autrecode456');
+    await expect(page.locator('#cptMsg')).toContainText('a déjà un compte');
+  });
+});
+
+test.describe('Ce que le site refuse avant même d’appeler Firebase', () => {
+  const essai = async (page, prenom, mail, mdp) => {
+    await page.locator('#cptPrenom').fill(prenom); await page.locator('#cptMail').fill(mail); await page.locator('#cptMdp').fill(mdp);
+    await page.locator('#cptGo').click();
+    return page.locator('#cptMsg').textContent();
+  };
+  test('adresse invalide, mot de passe vide ou trop court, prénom manquant', async ({ page }) => {
+    const err = await ouvrir(page, { avant: FAUX });
+    await page.locator('#cptBtn').click(); await page.locator('#cptVersCreer').click();
+    expect(await essai(page, 'Nathan', 'pasuneadresse', 'tapeici123')).toContain('adresse e-mail valide');
+    expect(await essai(page, 'Nathan', 'moi@exemple.fr', '')).toContain('Écris ton mot de passe');
+    expect(await essai(page, '', 'moi@exemple.fr', 'tapeici123')).toContain('Écris ton prénom');
+    expect(await essai(page, 'Nathan', 'moi@exemple.fr', '123')).toContain('au moins 6 caractères');
+    // rien n'est parti en ligne
+    expect(Object.keys(await base(page)).length).toBe(0);
+    expect(err).toEqual([]);
+  });
+});
+
+test.describe('Mot de passe oublié', () => {
+  test('envoie le lien à une adresse connue, et le dit', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX });
+    await creerCompte(page, 'Nathan', 'moi@exemple.fr', 'tapeici123');
+    await expect(page.locator('#cptBtn')).toHaveText('Nathan');
+    await page.locator('#cptOut').click();
+    await page.locator('#cptVersEntrer').click();
+    await page.locator('#cptOubli').click();
+    await page.locator('#cptMail').fill('moi@exemple.fr');
+    await page.locator('#cptGo').click();
+    await expect(page.locator('#cptMsg')).toContainText('est envoyé');
+    expect(await page.evaluate(() => window.__lienEnvoye)).toBe('moi@exemple.fr');
+  });
+
+  test('une adresse inconnue le dit simplement', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX });
+    await page.locator('#cptBtn').click();
+    await page.locator('#cptVersEntrer').click();
+    await page.locator('#cptOubli').click();
+    await page.locator('#cptMail').fill('personne@exemple.fr');
+    await page.locator('#cptGo').click();
+    await expect(page.locator('#cptMsg')).toContainText('Aucun compte avec cette adresse');
+  });
+});
+
+test.describe('Le chargement de Firebase', () => {
+  test('la base n’est pas chargée tant qu’on n’est pas connecté', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX });
+    await page.locator('#cptBtn').click();
+    await page.waitForTimeout(600);
+    expect(await page.evaluate(() => !!(cptFb && cptFb.auth))).toBe(true);
+    expect(await page.evaluate(() => !!(cptFb && cptFb.db))).toBe(false);
+    await page.locator('#cptVersCreer').click();
+    await page.locator('#cptIn').click();
+    await expect(page.locator('#cptBtn')).toHaveText('Nathan', { timeout: 15000 });
+    expect(await page.evaluate(() => !!(cptFb && cptFb.db))).toBe(true);
+  });
+});
+
+/* Les deux défauts trouvés par le gardien sur le lot 35, vérifiés par lui dans un vrai navigateur. */
+test.describe('Les pièges de l’écran', () => {
+  test('« Revenir à la connexion » revient bien à la connexion, pas à la création', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX });
+    await page.locator('#cptBtn').click();
+    await page.locator('#cptVersEntrer').click();
+    await page.locator('#cptOubli').click();
+    await expect(page.locator('#cptTitle')).toHaveText('Mot de passe oublié');
+    await expect(page.locator('#cptBascule')).toHaveText('Revenir à la connexion');
+    await page.locator('#cptBascule').click();
+    await expect(page.locator('#cptTitle')).toHaveText('Me connecter');
+  });
+
+  test('le formulaire ne disparaît pas quand Firebase finit de charger', async ({ page }) => {
+    // Firebase annonce « personne n'est connecté » dès qu'il a fini : ça ne doit pas renvoyer à l'accueil
+    await ouvrir(page, { avant: FAUX });
+    await page.locator('#cptBtn').click();
+    await page.locator('#cptVersCreer').click();
+    await page.locator('#cptPrenom').fill('Nathan');
+    await page.evaluate(() => cptChange(null));
+    await page.waitForTimeout(300);
+    await expect(page.locator('#cptForm')).toBeVisible();
+    await expect(page.locator('#cptTitle')).toHaveText('Créer mon compte');
+    await expect(page.locator('#cptPrenom')).toHaveValue('Nathan');
+    // en revanche, une vraie déconnexion ramène bien à l'accueil
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#cptAccueil')).toBeVisible();
+    await creerCompte(page, 'Nathan', 'moi@exemple.fr', 'tapeici123');
+    await expect(page.locator('#cptBtn')).toHaveText('Nathan');
+    await page.locator('#cptOut').click();
+    await expect(page.locator('#cptAccueil')).toBeVisible();
+  });
+
+  test('pendant une connexion en cours, on ne peut pas partir sur un autre écran', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX + 'window.__lent = true;' });
+    await page.locator('#cptBtn').click();
+    await page.locator('#cptVersEntrer').click();
+    await page.locator('#cptMail').fill('moi@exemple.fr');
+    await page.locator('#cptMdp').fill('tapeici123');
+    await page.evaluate(() => { cptBoutons(true); });
+    await expect(page.locator('#cptOubli')).toBeDisabled();
+    await expect(page.locator('#cptBascule')).toBeDisabled();
+  });
+
+  test('deux progressions identiques ne font plus poser de question, quel que soit l’ordre des clés', async ({ page }) => {
+    // La base ne rend pas les clés dans le même ordre que le navigateur : la comparaison doit les trier,
+    // sinon le site demanderait « laquelle tu gardes ? » alors que les deux côtés sont exactement pareils.
+    await ouvrir(page, { avant: dejaConnecte() + FAUX, stockage: { 'coach-compte': marque(0), 'coach-lecons': '{"0":3}' } });
+    await expect(page.locator('#cptBtn')).toHaveText('Nathan');
+    const memeMaisDesordre = await page.evaluate(() => {
+      const d = cptDonnees(), envers = {};
+      for (const k of Object.keys(d).reverse()) envers[k] = d[k];
+      const b = JSON.parse(sessionStorage.getItem('__faux_base') || '{}');
+      b.u1 = { v: 1, prenom: 'Nathan', maj: 9000, donnees: envers };
+      sessionStorage.setItem('__faux_base', JSON.stringify(b));
+      return Object.keys(envers).join(',');
+    });
+    expect(memeMaisDesordre.length).toBeGreaterThan(0);
+    await page.evaluate(() => { cptMaj = 0; cptSale = false; cptAttente = null; return cptSync(); });
+    expect(await page.evaluate(() => !!cptAttente)).toBe(false);
+    expect(await page.evaluate(() => cptMaj)).toBe(9000);
   });
 });
