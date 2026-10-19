@@ -37,16 +37,23 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   captures à l'utilisateur, demander son accord, puis fusionner et pousser. Voir l'entrée « Lot 36 » plus bas pour le
   détail et, surtout, pour les décisions à ne pas défaire (l'orange reste la platine A, le violet reste la couleur de
   DJingo, la maquette de Lou n'est qu'une inspiration).
+- **Nouveau début pensé pour le PC (18 oct. 2026), validé sur maquette par l'utilisateur** (lot à faire après le 36).
+  L'écran s'appelle **« Prépare ta table »** (étapes : Toi · Ta table · Niveau 1), choix de l'utilisateur : ni « cabine »
+  (jargon), ni « platine » (dans le site, une platine est une moitié de la table, A ou B). Constat : le début copiait
+  Duolingo (appli de téléphone) alors que 90 % des joueurs seront sur PC avec la table en USB ; une dizaine d'écrans
+  (6 questions, 4 de guide, la fiche PLAY) avant de toucher la table, qui n'est jamais branchée pendant ce temps.
+  Proposition : accueil en grand → une seule question (« Tu as déjà mixé ? ») → **« Prépare ta table »** (navigateur,
+  table reconnue toute seule avec l'autorisation MIDI demandée à ce moment-là, un geste qui fait bouger le dessin, test du
+  son) → niveau 1 directement ; objectif du jour et compte après la première partie ; « Pourquoi tu veux mixer ? » retiré tant
+  que rien ne s'en sert. **Maquette** (hors Git) : `captures/maquette-debut/index.html` (via `node tests/serveur.js`, barre
+  « MAQUETTE » pour changer d'écran ou simuler une table ; dans Chrome, elle écoute la vraie table, jamais essayé) et
+  ses captures dans `captures/maquette-debut/captures/`. À faire avant le lot 37, qui dépend des questions posées.
 - **Ensuite : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le compte est fini
   et **essayé par l'utilisateur sur la production** : Google, création par e-mail, reconnexion, progression retrouvée
   dans un autre navigateur. `README.md` et la question « Faut-il créer un compte ? » de `presentation.html` en parlent.
   Le **message à envoyer aux testeurs** attend toujours dans `marketing/message-testeurs.md` (hors Git) : il n'a été
   envoyé à personne, c'est à l'utilisateur de choisir ses testeurs. Quand les rapports arrivent, les lire ensemble et
   en tirer la liste des corrections. **Ne jamais se connecter à sa place, ni inventer de clés Firebase.**
-- **Ensuite : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le site est prêt pour eux (lot 33 publié). Le
-  **message à envoyer** est écrit dans `marketing/message-testeurs.md` (hors Git) : version complète, version très courte,
-  et les pièges à ne pas oublier. Il n'a **pas encore été envoyé à qui que ce soit** : c'est à l'utilisateur de choisir ses
-  testeurs. Quand les rapports arrivent, les lire ensemble et en tirer la liste des corrections.
   Ne jamais ajouter `.gitignore` (modifié localement pour `marketing/video/sortie/`) ni `marketing/` à un commit.
 - **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 à 35 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
@@ -655,21 +662,40 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     ne s'affiche pas du tout (contrairement au JPEG, que le navigateur devine). L'icône n'aurait marché qu'en ligne.
   - **L'écran d'un niveau, rangé en cartes** (4 demandes de l'utilisateur, toutes acceptées) : la cause du désordre
     était que **`.actionbar` était collée en bas (`position:sticky`) même sur ordinateur**, donc elle flottait
-    par-dessus les contrôles. Elle ne l'est plus qu'en dessous de 1040 px. Nouveau découpage dans `index.html` :
-    `.consigne` (carte), `.bottom` qui contient `.deck` (carte « Ta table » : LANCE B, potards, faders) et `.bside`
-    (`.start-row` + `.actionbar`). Au-dessus de 1040 px, `.bottom` passe en **deux colonnes**. « Jouer » (`.start`)
-    devient violet et large, « Regarde d'abord » (`.watch`) un contour discret. Les règles sont à la **fin** de
-    `styles.css` : les couches héritées redéfinissent `.start` et `.watch` deux fois, il faut passer après.
+    par-dessus les contrôles. Nouveau découpage dans `index.html` : `.consigne` (carte), `.bottom` qui contient
+    `.deck` (carte « Ta table » : LANCE B, potards, faders) et `.bside` (`.start-row` + `.actionbar`). « Jouer »
+    (`.start`) devient violet et large, « Regarde d'abord » (`.watch`) un contour discret. Les règles sont à la
+    **fin** de `styles.css` : les couches héritées redéfinissent `.start` et `.watch` deux fois, il faut passer après.
+  - **Où est « Jouer » (corrigé après le gardien du 19 oct. 2026)** : au-dessus de 1040 px, `.stage` est une **grille**
+    et `.stage-head`, `.bottom` et `.bside` sont en `display:contents` (leurs enfants se rangent dans la grille) :
+    consigne à gauche ; à droite Vini, le compte à rebours, la « Position de départ » et la barre d'action ; puis la
+    piste et « Ta table » sur toute la largeur. Quand on choisit un niveau, `stageIntoView` monte la scène en haut de
+    l'écran : « Jouer » est dedans, même en 1366 × 768 avec la position de départ. En dessous de 1040 px, `.bottom` et
+    `.bside` restent en `display:contents` pour que `.actionbar` soit un enfant direct de la scène : **une barre collée
+    (`sticky`) ne sort jamais de la boîte qui la contient**, et rangée dans une colonne, elle ne collait plus en bas.
   - **Priorité à l'ordinateur** (dit par l'utilisateur le 18 oct. 2026) : **90 % des joueurs seront sur PC**, parce
     qu'il faut y brancher la table en USB. Le téléphone doit rester utilisable, mais **ce n'est jamais lui qui décide
     d'un choix de mise en page**. À garder en tête pour tout travail d'interface.
-  - **350 tests verts, 0 échec**, sur le code des deux commits. Contraste contrôlé
-    (`node tests/captures.js captures/lot36-cartes --vite`) : seules les étoiles non gagnées sont signalées, comme
-    toujours. Captures avant/après dans `captures/lot36-avant`, `captures/lot36-apres` et `captures/lot36-cartes`
-    (hors Git). Écrans regardés : accueil, niveau, et le niveau sur téléphone (la barre d'action y reste collée en
-    bas, aucun débordement).
-  - **Reste à faire** : lancer le gardien, montrer les captures à l'utilisateur, demander son accord, fusionner et
-    pousser. **Le gardien n'a pas encore vu ce lot.**
+  - **Gardien, 19 oct. 2026 : feu rouge** (350 tests verts, mais un recul mesuré à la taille réelle de l'écran) :
+    « Jouer » était sous le bas de l'écran d'un PC 1366 × 768 (85 px au niveau 1, 630 px avec la « Position de
+    départ »), et la barre ne collait plus en bas sur téléphone. **Les captures pleine page ne le montraient pas** :
+    pour juger un écran de niveau, toujours regarder une capture à la taille de l'écran. Corrigé (voir « Où est
+    « Jouer » » ci-dessus), deux tests dans `tests/clarte.spec.js` qui échouent sur l'ancienne mise en page. Corrigés
+    aussi : l'étiquette « Temps » de la carte de fin (texte `--ink` sur le nouveau violet : 4,0 de contraste, passée en
+    `--on-brand`), la pulsation de « Jouer » prêt (ancien gris et blanc → violet), « Regarde d'abord » grisé qui
+    changeait de couleur au survol, `--disc-in` qui ne servait plus. Images de la présentation refaites.
+    Captures : `captures/lot36-final/` (pleine page) et `captures/lot36-jouer/` (taille réelle, avec et sans table).
+- **Vidéo « La transition ratée » (18 oct. 2026)**, dans `marketing/video/` (hors Git), mode d'emploi dans
+  `video-transition.md`. Suit la **partie 8 du brief** (direction artistique des vidéos, reçue ce jour-là ; les parties
+  4 à 7 n'ont jamais été reçues) : vrai problème de débutant → vrai site → ce qu'on apprend → Vini, logo, appel. 25 s,
+  vertical. **Les images du site sont de vraies parties**, filmées par `tournage.js` avec une **horloge virtuelle**
+  (`performance.now`, `requestAnimationFrame`, minuteries, `ac.currentTime` et animations CSS remplacés : 1/60 s par pas,
+  quelle que soit la durée d'une capture) et la fausse DDJ-FLX4 des tests ; `bande-son.js` rejoue le moteur audio du
+  site hors ligne avec les mêmes gestes ; `transition-montage.js` donne le minutage aux deux. **Filmée sur la branche
+  `lot-36-vini-identite`** : à publier avant de diffuser la vidéo, sinon le site en ligne n'aura pas le même écran.
+  **Validée telle quelle par l'utilisateur le 18 oct. 2026** (`sortie/djingo-transition-tiktok.mp4`). Pas encore postée.
+  **Attention** : filmée avant que « Jouer » monte à côté de la consigne (correction du 19 oct.) ; si on la voit dans
+  la vidéo, elle ne correspond plus au site. `tournage.js` peut la refilmer à l'identique sur le nouvel écran.
 - **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à

@@ -51,8 +51,35 @@ test.describe('La piste reste visible', () => {
     await ouvrir(page);
     await page.locator('.node').nth(1).click();
     await page.waitForTimeout(800);
-    const r = await page.evaluate(() => ({ hw: document.querySelector('.hw').getBoundingClientRect().bottom, bar: $('actionbar').getBoundingClientRect().top }));
-    expect(r.hw).toBeLessThanOrEqual(r.bar);
+    const r = await page.evaluate(() => { const a = document.querySelector('.hw').getBoundingClientRect(), b = $('actionbar').getBoundingClientRect(); return { hw: [a.top, a.bottom], bar: [b.top, b.bottom] }; });
+    // Depuis le lot 36, sur ordinateur, la barre est au-dessus de la piste (à côté de la consigne) : jamais par-dessus
+    expect(r.hw[1] <= r.bar[0] || r.bar[1] <= r.hw[0]).toBe(true);
+  });
+
+  // Gardien du lot 36 : rangée en bas de la scène, « Jouer » était sous le bas de l'écran d'un PC (jusqu'à 630 px plus
+  // bas avec la « Position de départ »), alors qu'en ligne il se voyait toujours
+  test('sur un PC 1366 × 768, « Jouer » se voit sans défiler, même avec la position de départ', async ({ page }) => {
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-lecons': '{"0":3,"1":2,"2":2,"3":2,"4":2,"5":2}' } });
+    for (const n of [0, 6]){
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.locator('.node').nth(n).click();
+      if (n === 6) await expect(page.locator('#setup')).toBeVisible();
+      await expect(page.locator('#startBtn')).toBeInViewport({ ratio: 1 });
+    }
+  });
+
+  // Gardien du lot 36 : rangée dans une colonne, la barre ne pouvait plus rester collée en bas (elle ne sort jamais de sa boîte)
+  test('sur téléphone, « Jouer » reste collé en bas de l’écran pendant qu’on fait défiler la scène', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await ouvrir(page);
+    await page.locator('.node').first().click();
+    const [vus, n] = await page.evaluate(async () => { const st = $('stage'), y0 = scrollY + st.getBoundingClientRect().top, y1 = y0 + st.offsetHeight - innerHeight; let vus = 0, n = 0;
+      for (let y = y0; y <= y1; y += 60){ window.scrollTo(0, y); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const b = $('startBtn').getBoundingClientRect(); n++; if (b.top >= 0 && b.bottom <= innerHeight) vus++; }
+      return [vus, n]; });
+    expect(n).toBeGreaterThan(3);
+    expect(vus).toBe(n);
   });
 });
 
