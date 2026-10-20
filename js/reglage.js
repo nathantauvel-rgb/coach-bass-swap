@@ -84,12 +84,16 @@ function regSave(){
 
 /* ---------- Le bandeau : une autre table vient d'être branchée ---------- */
 function renderTableBar(){
-  const bar = $('tableBar'), e = tableEtat(); bar.hidden = tableLater || reg.active || (e !== 'nouvelle' && e !== 'flx4'); if (bar.hidden) return;
+  const bar = $('tableBar'), e = tableEtat(); bar.hidden = tableLater || reg.active || !['nouvelle', 'flx4', 'connue'].includes(e); if (bar.hidden) return;
+  const fi = e === 'connue' ? modeleDe(midiNames.find(modeleDe)) : null;
   $('tbText').textContent = e === 'flx4' ? 'Tu as branché une DDJ-FLX4, mais les réglages sont ceux de ton autre table. On reprend ceux de la FLX4 ?'
-    : `Nouvelle table : « ${regName()} ». Le site est réglé pour la DDJ-FLX4 : règle la tienne en une minute, en bougeant chaque commande quand il te le demande.`;
-  $('tbGo').textContent = e === 'flx4' ? 'Reprendre les réglages de la FLX4' : 'Régler ma table';
+    : fi ? `Tu as branché une ${fi.nom} : DJingo connaît ses réglages. On les prend ? Ceux de ta table réglée à la main seront remplacés.`
+    : `Nouvelle table : « ${regName()} ». DJingo ne la connaît pas encore : règle-la en une minute, en bougeant chaque commande quand il te le demande.`;
+  $('tbGo').textContent = e === 'flx4' ? 'Reprendre les réglages de la FLX4' : fi ? 'Prendre ses réglages' : 'Régler ma table';
 }
-$('tbGo').addEventListener('click', () => { if (tableEtat() === 'flx4'){ flx4Map(); if (view === 'table') renderTable(); } else openReg(); });
+// Prendre les réglages d'une table qui a sa fiche, à la place de ceux d'une table réglée à la main
+function modeleReprend(){ modeleApply(midiNames.find(modeleDe) || ''); renderPill(); updateSetup(); renderTableBar(); if (view === 'table') renderTable(); }
+$('tbGo').addEventListener('click', () => { const e = tableEtat(); if (e === 'flx4'){ flx4Map(); if (view === 'table') renderTable(); } else if (e === 'connue') modeleReprend(); else openReg(); });
 $('tbLater').addEventListener('click', () => { tableLater = true; renderTableBar(); });
 $('regSkip').addEventListener('click', () => { if (reg.i < REG_STEPS.length){ delete reg.got[REG_STEPS[reg.i].k]; regGo(reg.i + 1); } });
 $('regBack').addEventListener('click', () => {

@@ -1,5 +1,5 @@
-// Liaison Web MIDI et mise en place de la table. Réglages d'origine : ceux de la DDJ-FLX4 ;
-// une autre table se règle pas à pas (reglage.js, lot 19).
+// Liaison Web MIDI et mise en place de la table. Réglages d'origine : ceux de la DDJ-FLX4 ; une table qui a sa fiche
+// (tables.js, lot 38) prend ses réglages toute seule ; une autre table se règle pas à pas (reglage.js, lot 19).
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* ---------- Table MIDI ---------- */
@@ -11,8 +11,9 @@ const midiSame = (m, ch, n) => !!m && m.ch === ch && m.n === n;
 const isFlx4 = name => /FLX4/i.test(String(name));
 // Windows ajoute parfois « 2- » devant le nom d'une table (deux appareils pareils, ou rebranchée ailleurs) : on n'en tient pas compte
 const baseName = name => String(name).replace(/^\d+-\s*/, '');
-// Autre table réglée pas à pas : son nom, tel que le navigateur le donne (clé coach-table). Ses réglages ne reprennent rien de la FLX4.
-let tableCfg = null; try { const t = JSON.parse(localStorage.getItem('coach-table') || 'null'); if (t && typeof t.nom === 'string' && t.nom.trim() && t.nom.length <= 200) tableCfg = { nom: t.nom }; } catch (e) {}
+// Autre table que la FLX4 (clé coach-table) : son nom, tel que le navigateur le donne, et `modele` (identifiant de sa fiche) quand ses réglages viennent
+// de sa fiche (tables.js) plutôt que d'un réglage pas à pas. Ses réglages ne reprennent rien de la FLX4.
+let tableCfg = null; try { const t = JSON.parse(localStorage.getItem('coach-table') || 'null'); if (t && typeof t.nom === 'string' && t.nom.trim() && t.nom.length <= 200){ tableCfg = { nom: t.nom }; if (typeof t.modele === 'string' && modeleId(t.modele)) tableCfg.modele = t.modele; } } catch (e) {}
 // Correspondance enregistrée. FLX4 : chaque entrée invalide ou manquante reprend le réglage d'origine, et les doublons y reviennent aussi.
 // Autre table (`perso`) : une entrée invalide, manquante ou en double est absente, et la commande se fait à l'écran.
 function cleanMap(s, perso = false){
@@ -26,13 +27,27 @@ function cleanMap(s, perso = false){
   return perso ? out : Object.assign({}, DEFAULT_MAP);
 }
 let map = cleanMap(null, !!tableCfg); try { map = cleanMap(JSON.parse(localStorage.getItem('coach-midi-map') || 'null'), !!tableCfg); } catch (e) {}
-// État de la table branchée : 'aucune' ; 'ok' (une FLX4 avec ses réglages, ou la table réglée pas à pas) ;
-// 'nouvelle' (une autre table, pas encore réglée) ; 'flx4' (une FLX4, alors que les réglages sont ceux d'une autre table).
+// État de la table branchée : 'aucune' ; 'ok' (une FLX4 avec ses réglages, ou la table réglée, à la main ou d'après sa fiche) ;
+// 'nouvelle' (une autre table, pas encore réglée) ; 'flx4' (une FLX4, alors que les réglages sont ceux d'une autre table) ;
+// 'connue' (une table qui a sa fiche, alors que les réglages sont ceux d'une table réglée à la main : on demande avant de les remplacer).
 function tableEtat(){
   if (!midiNames.length) return 'aucune';
   if (tableCfg && midiNames.some(n => baseName(n) === baseName(tableCfg.nom))) return 'ok';
   if (midiNames.some(isFlx4)) return tableCfg ? 'flx4' : 'ok';
-  return 'nouvelle';
+  return midiNames.some(modeleDe) ? 'connue' : 'nouvelle';
+}
+// Une table qui a sa fiche prend ses réglages toute seule. On ne remplace sans demander que des réglages qui venaient
+// eux-mêmes d'une fiche : ceux d'une table réglée à la main restent, et le bandeau propose la fiche (état 'connue').
+function modeleAuto(){
+  if (tableCfg && midiNames.some(n => baseName(n) === baseName(tableCfg.nom))) return;
+  if (tableCfg && !tableCfg.modele) return;
+  if (midiNames.some(isFlx4)){ if (tableCfg) flx4Map(); return; }
+  const nom = midiNames.find(modeleDe); if (nom) modeleApply(nom);
+}
+function modeleApply(nom){
+  const f = modeleDe(nom); if (!f) return;
+  map = cleanMap(modeleMap(f), true); tableCfg = { nom: baseName(nom), modele: f.id }; for (const k of Object.keys(phys)) delete phys[k];
+  try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); localStorage.setItem('coach-table', JSON.stringify(tableCfg)); } catch (e) {}
 }
 const tableOn = () => tableEtat() === 'ok';
 const ccDown = {};
@@ -64,7 +79,7 @@ async function initMidi(){
   try { const acc = await navigator.requestMIDIAccess({ sysex: false });
     // table débranchée : ses positions ne sont plus fiables, on les oublie jusqu'au prochain mouvement
     const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); midiNames = ins.map(i => String(i.name || 'Table MIDI'));
-      if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; midiCount = ins.length; renderPill();
+      if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; midiCount = ins.length; modeleAuto(); renderPill();
       updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); };
     acc.onstatechange = refresh; refresh();
   } catch (e){ txt.textContent = 'Souris (MIDI bloqué ici)'; }

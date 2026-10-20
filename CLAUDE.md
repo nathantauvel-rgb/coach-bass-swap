@@ -716,6 +716,29 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   **Validée telle quelle par l'utilisateur le 18 oct. 2026** (`sortie/djingo-transition-tiktok.mp4`). Pas encore postée.
   **Attention** : filmée avant que « Jouer » monte à côté de la consigne (correction du 19 oct.) ; si on la voit dans
   la vidéo, elle ne correspond plus au site. `tournage.js` peut la refilmer à l'identique sur le nouvel écran.
+- **Lot 38 « Toutes les tables » (20 oct. 2026)** : branche `lot-38-toutes-les-tables`, non publiée. Demande de l'utilisateur :
+  ne pas se fermer à la FLX4, avant la table complète (lot A). **Fiches de table** dans `js/tables.js` (chargé juste avant
+  `midi`) : `MODELES` (13 tables : Pioneer DDJ-400, DDJ-SB3, DDJ-200 ; Hercules Inpulse 200, 300, 500, Starlight ; Numark
+  Mixtrack Platinum FX, Mixtrack Pro FX, Party Mix, DJ2GO2 Touch ; Roland DJ-505 ; Reloop Mixage), chacune avec `re` (nom du
+  port MIDI ; les « MK2 / MKII » exclues, leurs numéros peuvent changer), `cmd` (commandes que le site utilise) et `plus`
+  (aigus, TRIM, crossfader, tempo, CUE, CUE casque, **pour le lot A, rien ne les lit encore**). `modeleDe(nom)`, `modeleId`,
+  `modeleMap`. **Numéros relevés dans les correspondances du logiciel libre Mixxx** (`res/controllers/*.midi.xml`, GPL :
+  seuls les numéros, des faits, sont repris, pas de code), recoupés par marque (Pioneer = plan de la FLX4 ; Numark et
+  Roland = même plan). **Aucune n'a été essayée en vrai** (`teste` = false partout). La FLX4 n'a pas de fiche :
+  `DEFAULT_MAP` ne change pas (son filtre et ON de l'effet restent appris au passage, même si Mixxx donne les numéros :
+  canal 7 n° 23, et canal 5 n° 71). Branchement (`modeleAuto`, appelé à chaque changement de table dans `initMidi`) :
+  une table qui a sa fiche prend ses réglages toute seule (`modeleApply` : `coach-table` = `{ nom, modele }`, puis
+  `cleanMap(…, true)` comme une table réglée pas à pas, donc une commande absente se fait à l'écran) ; des réglages venus
+  d'une fiche sont remplacés sans demander (autre table connue, ou retour automatique à la FLX4 par `flx4Map`) ; ceux d'une
+  table **réglée à la main** jamais : nouvel état `'connue'` de `tableEtat()`, bandeau « DJingo connaît ses réglages. On les
+  prend ? » (`modeleReprend` dans `js/reglage.js`). « Ma table » : texte « reconnue toute seule », réglage « (d'origine) »
+  d'après la fiche, bouton du bas « Revenir aux réglages d'origine de la … » (`tableResetTxt`, `tableResetModele`). Le
+  rapport des testeurs dit « (reconnue d'après sa fiche) ». Textes mis à jour : accueil, présentation (titre « sur ta table
+  DJ », matériel, question « Et si j'ai une autre table ? »), fiche des testeurs, README. Tests : `tests/tables.spec.js`
+  (nouveau) ; dans `tests/autre-table.spec.js`, la table « inconnue » s'appelle maintenant `Controleur Mystere X1`
+  (l'Inpulse 200 est devenue connue). Pas de fiche (Mixxx n'a rien) : DDJ-FLX2, DDJ-FLX6, DDJ-REV1, Inpulse T7, DJ-202,
+  et les MK2 : réglage pas à pas. Les Traktor de Native Instruments ne parlent pas MIDI au navigateur : hors de portée.
+  **Pour qu'une fiche passe à « testée »** : le rapport de « Vérifier ma table » d'un joueur qui a cette table.
 - **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
@@ -744,7 +767,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
-  `audio` → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `midi` →
+  `audio` → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
   `demarrage` (démarrage et onglets).
@@ -847,7 +870,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

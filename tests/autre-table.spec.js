@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 const { ouvrir, envoyer, miseEnPlace, sansBandeau } = require('./outils');
 
 const S = o => JSON.stringify(o);
-const AUTRE = 'DJControl Inpulse 200';
+const AUTRE = 'Controleur Mystere X1';
 const PAR_DEFAUT = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, midA: { ch: 0, n: 11 }, midB: { ch: 1, n: 11 }, playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 } };
 // Ce que la préparation pas à pas du test ci-dessous enregistre (pas de MID sur cette table)
 const REGLEE = { faderA: { ch: 0, n: 8 }, faderB: { ch: 1, n: 8 }, lowA: { ch: 0, n: 3 }, lowB: { ch: 1, n: 3 }, cfxA: { ch: 4, n: 20 }, playB: { ch: 1, n: 30, cc: true }, fxOn: { ch: 4, n: 71 } };
