@@ -40,8 +40,10 @@ function ensureAudio(){
     d.eq = ac.createBiquadFilter(); d.eq.type = 'lowshelf'; d.eq.frequency.value = 220; d.gain = ac.createGain();
     d.mid = ac.createBiquadFilter(); d.mid.type = 'peaking'; d.mid.frequency.value = 1000; d.mid.Q.value = .7;
     d.hi = ac.createBiquadFilter(); d.hi.type = 'highshelf'; d.hi.frequency.value = 3200;
-    d.hp = ac.createBiquadFilter(); d.hp.type = 'highpass'; d.hp.frequency.value = 10; d.hp.Q.value = 1.1;
-    d.lp = ac.createBiquadFilter(); d.lp.type = 'lowpass'; d.lp.frequency.value = 22000; d.lp.Q.value = 1.1;
+    // A garde le réglage de ses filtres d'avant ; sur B (nouveau), une courbe plate : au neutre, rien ne bouge dans le son
+    const q = k === 'A' ? 1.1 : Math.SQRT1_2;
+    d.hp = ac.createBiquadFilter(); d.hp.type = 'highpass'; d.hp.frequency.value = 10; d.hp.Q.value = q;
+    d.lp = ac.createBiquadFilter(); d.lp.type = 'lowpass'; d.lp.frequency.value = 22000; d.lp.Q.value = q;
     d.pfl = ac.createGain(); d.pfl.gain.value = 0; d.xf = ac.createGain();
     d.an = ac.createAnalyser(); d.an.fftSize = 512;   // vumètre de la voie (après le fader)
     d.trim.connect(d.eq); d.eq.connect(d.mid); d.mid.connect(d.hi); d.hi.connect(d.hp); d.hp.connect(d.lp); d.lp.connect(d.gain); d.lp.connect(d.pfl); d.pfl.connect(hpBus);

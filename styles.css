@@ -1139,7 +1139,7 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .pl-tr{display:flex;gap:10px;align-items:center;justify-content:center;padding:4px;border-radius:14px}
 .pl-tr .group{padding:0}
 .rb{width:52px;height:52px;border-radius:50%;border:2px solid var(--line);background:var(--panel-2);color:var(--fg);font:inherit;font-weight:900;font-size:12px;padding:0}
-.rb.cue{border-color:var(--mid);color:var(--mid)} .rb.play{border-color:var(--ok);color:var(--ok)}
+.plA .rb{border-color:var(--a);color:var(--a)} .plB .rb{border-color:var(--b);color:var(--b)}
 .plB .launch{padding:10px 14px;font-size:14px;gap:8px}
 .plB .launch svg{width:16px;height:16px}
 .pl-pads{flex:1;min-width:0;padding:4px;border-radius:14px}
@@ -1159,7 +1159,10 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .mx .group{padding:2px;gap:0}
 .mx .knob{padding:0;gap:0}
 .mx .knob svg{width:34px;height:34px}
-.mx .knob .kv,.mx .cl,.deck .table3 .auto::after{display:none}
+.mx .cl,.deck .table3 .auto::after{display:none}
+.mx .knob{position:relative}
+.mx .knob .kv{position:absolute;left:50%;top:-4px;transform:translate(-50%,-100%);background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:11px;font-weight:800;color:var(--fg);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:3}
+.mx .knob:hover .kv,.mx .knob:focus-visible .kv,.mx .knob:active .kv,.mx .knob.bouge .kv{opacity:1}
 .mx-lab>span{font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--muted)}
 /* l'effet en haut de la table de mixage (comme le BEAT FX de la FLX4) : il reste visible pendant une partie */
 .mx-fx{grid-column:1 / 4}
@@ -1195,7 +1198,17 @@ html.pp-open,html.pp-open body{overflow:hidden}
   .stage.joue .ring{width:80px;height:80px}
   .stage.joue .deck{padding-top:10px;padding-bottom:10px}
 }
+/* Téléphone et petite fenêtre (au gardien du lot 39 : LANCE B et « Arrêter » sortaient de l'écran) : seules les commandes du
+   niveau sont affichées, comme avant ; une partie de la table qui n'a rien d'allumé disparaît ; chaque potard porte son nom */
 @media (max-width:1039px){
-  .table3{grid-template-columns:minmax(0,1fr)}
-  .mx{order:-1}
+  .table3{grid-template-columns:minmax(0,1fr);gap:10px}
+  .deck .table3 [data-g].eteint,.mx-lab{display:none}
+  .table3>section:not(:has([data-g]:not(.eteint))){display:none}
+  .mx{grid-template-columns:auto auto;align-items:end}
+  .mx-fx,.mx-fad,.mx-bas{grid-column:1 / 3}
+  .mx-col>*{height:auto}
+  .mx .knob::before{font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--muted)}
+  .mx [data-k^="trim"]::before{content:"TRIM"} .mx [data-k^="hi"]::before{content:"HI"} .mx [data-k^="mid"]::before{content:"MID"}
+  .mx [data-k^="low"]::before{content:"LOW"} .mx [data-k^="cfx"]::before{content:"FILTRE"}
+  .pl-mid,.pl-bas{gap:8px}
 }

@@ -86,8 +86,9 @@ function pressKey(k, relache = false){
 }
 // La FLX4 (table de référence) : molettes et pads, qui n'ont pas de réglage commande par commande (numéros Mixxx, à vérifier).
 // Molette : potard relatif, 64 = immobile, 720 crans par tour (côté : n° 33 ; dessus : 34 et 35). Pads : canal 8 (A) et 10 (B) ;
-// HOT CUE : notes 0 à 3 (avec SHIFT, canaux 9 et 11 : effacer) ; BEAT LOOP : notes 100, 101, 102 (4, 8, 16 temps) ; 4 BEAT/EXIT : note 77.
-const FLX4_PADS = { 7: 'A', 9: 'B' }, FLX4_PADS_SHIFT = { 8: 'A', 10: 'B' }, FLX4_BOUCLES = { 100: 4, 101: 8, 102: 16, 103: 32 };
+// HOT CUE : notes 0 à 3 (avec SHIFT, canaux 9 et 11 : effacer) ; BEAT LOOP : notes 96 à 99 pour les pads 1 à 4, rangés comme à
+// l'écran (4, 8, 16 temps, puis sortie de boucle ; dans rekordbox, ces pads font d'autres longueurs) ; RELOOP/EXIT : note 77.
+const FLX4_PADS = { 7: 'A', 9: 'B' }, FLX4_PADS_SHIFT = { 8: 'A', 10: 'B' }, FLX4_BOUCLES = { 96: 4, 97: 8, 98: 16, 99: 'exit' };
 function flx4Plus(type, ch, d1, d2){
   if (tableCfg || !midiNames.some(isFlx4)) return false;
   if (type === 0xB0 && ch <= 1 && d1 >= 33 && d1 <= 35){ if (groupeAllume('gJog')) plJog(ch ? 'B' : 'A', (d2 - 64) / 2); return true; }
@@ -98,7 +99,7 @@ function flx4Plus(type, ch, d1, d2){
   ensureAudio(); const k = pad || eff || (ch ? 'B' : 'A');
   if (eff && d1 < 4) plHotCueEfface(k, d1);
   else if (pad && d1 < 4){ padMode[k] = 'hc'; plHotCue(k, d1); }
-  else if (pad && FLX4_BOUCLES[d1]){ padMode[k] = 'lp'; plBoucle(k, FLX4_BOUCLES[d1]); }
+  else if (pad && FLX4_BOUCLES[d1]){ padMode[k] = 'lp'; if (FLX4_BOUCLES[d1] === 'exit') plSortie(k); else plBoucle(k, FLX4_BOUCLES[d1]); }
   else if (exit){ padMode[k] = 'lp'; if (deck[k].boucle) plSortie(k); else plBoucle(k, 4); }
   renderPads(k); return true;
 }

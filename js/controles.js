@@ -28,6 +28,9 @@ function buildControls(){
 }
 function renderControl(k){
   const el = controls[k]; if (!el) return; const v = ctrl[k];
+  // potard de la table de mixage qui vient de bouger : sa valeur s'affiche un instant (lot 39)
+  if (el._v != null && Math.abs(el._v - v) > .001 && el.closest('.mx')){ el.classList.add('bouge'); clearTimeout(el._b); el._b = setTimeout(() => el.classList.remove('bouge'), 900); }
+  el._v = v;
   el.style.setProperty('--v', v); el.setAttribute('aria-valuenow', String(Math.round(v * 100)));
   if (el.classList.contains('knob')){
     const a = -SWEEP + v * 2 * SWEEP; el.querySelector('.arc').setAttribute('d', arc(30, 30, 25, 0, a));

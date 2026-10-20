@@ -142,18 +142,20 @@ test.describe('Avec la table', () => {
     for (let i = 0; i < 12; i++){ await envoyer(page, 0xB0, 33, 72); await page.waitForTimeout(15); }
     expect(await page.evaluate(() => __max)).toBeGreaterThan(1.01);
   });
-  test('les pads de la FLX4 : hot cue, effacer avec SHIFT, boucle de 8, EXIT', async ({ page }) => {
+  test('les pads de la FLX4 : hot cue, effacer avec SHIFT, boucle de 8, sortie, RELOOP/EXIT', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true } }); await toutAllume(page);
     await envoyer(page, 0x97, 0, 127);
     expect(await page.evaluate(() => deck.A.cues[0])).not.toBeNull();
     await expect(page.locator('#padsA .pad').first()).toHaveClass(/pose/);
     await envoyer(page, 0x98, 0, 127);
     expect(await page.evaluate(() => deck.A.cues[0])).toBeNull();
-    await envoyer(page, 0x97, 101, 127);
+    await envoyer(page, 0x97, 97, 127);
     expect(await page.evaluate(() => deck.A.boucle && deck.A.boucle.temps)).toBe(8);
     await expect(page.locator('#padsA .pad').nth(1)).toHaveClass(/live/);
-    await envoyer(page, 0x90, 77, 127);
+    await envoyer(page, 0x97, 99, 127);   // pad 4 en BEAT LOOP : sortie
     expect(await page.evaluate(() => deck.A.boucle)).toBeNull();
+    await envoyer(page, 0x90, 77, 127);   // RELOOP/EXIT sans boucle : boucle de 4
+    expect(await page.evaluate(() => deck.A.boucle && deck.A.boucle.temps)).toBe(4);
   });
   test('une table reconnue par sa fiche : ses aigus et son crossfader marchent aussi', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: 'MIXTRACK PLATINUM FX' } }); await toutAllume(page);

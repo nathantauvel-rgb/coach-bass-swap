@@ -33,6 +33,12 @@ ci-dessous reste la version papier, utile pour noter à part ou pour vérifier s
 | 19 | Lots 25 et 26 : niveau 6 « Le swap des basses » avec la vraie musique, au casque de la table | Les grosses caisses de A et B tombent ensemble (pas de « galop »), les deux morceaux ne sonnent pas faux ensemble, le volume est le même que pour la house du site | |
 | 20 | Lot 31 : un niveau en entier au casque de la table, avec quelques gestes réussis et ratés, puis en Mode Expert | Les petits sons du jeu s'entendent sans couvrir la musique, la musique ne baisse pas d'un coup à chaque son, les sons ne gênent pas en Mode Expert (sinon : le bouton haut-parleur de l'en-tête les coupe) | |
 
+| 21 | Lot 39 : « Ma table », bouger HI, TRIM, le filtre de B, le crossfader et les deux TEMPO | La bonne commande s'allume sur le schéma et suit la table ; le crossfader va de A (gauche) à B (droite) | |
+| 22 | Lot 39 : le sens du TEMPO (numéros relevés dans Mixxx) | Curseur vers soi (en bas) = « + » à l'écran ; vers le haut = « − » | |
+| 23 | Lot 39 : la molette en lecture, puis à l'arrêt | En lecture, la tourner accélère ou freine un instant le morceau, sans à-coup ; à l'arrêt, elle le déplace. Noter si c'est trop ou pas assez sensible | |
+| 24 | Lot 39 : pads en HOT CUE (1 à 4), puis SHIFT + pad | Un pad pose un repère, puis y saute ; SHIFT + pad l'efface | |
+| 25 | Lot 39 : pads en BEAT LOOP (1, 2, 3, 4) et RELOOP/EXIT | Pads 1 à 3 : boucles de 4, 8, 16 temps ; pad 4 : sortie ; RELOOP/EXIT : boucle de 4 ou sortie | |
+| 26 | Lot 39 : CUE de A tenu, puis relâché ; CUE casque de B | CUE tenu fait écouter depuis le repère et y revient au relâchement ; avec CUE casque, B s'entend au casque seulement | |
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 
 Dernière vérification complète : jamais faite depuis l'ajout des onglets (12 oct. 2026).

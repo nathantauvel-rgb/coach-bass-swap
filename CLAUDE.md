@@ -32,6 +32,17 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
+- **Lot 39 « La table complète » publié le 20 oct. 2026** (voir l'entrée « Lot 39 »). Gardien : feu rouge, corrigé.
+  **Les 12 nouveaux numéros MIDI de la FLX4** (DEFAULT_MAP) et ceux des molettes et des pads, relevés dans Mixxx et relus
+  un par un par le gardien, **sont publiés avec l'accord explicite de l'utilisateur**, avant la checklist (points 21 à 26). Corrigés : sur téléphone, seules les commandes du niveau
+  s'affichent (LANCE B et « Arrêter » sortaient de l'écran) ; pads de la FLX4 en BEAT LOOP rangés comme à l'écran (pads
+  1 à 3 = 4, 8, 16 temps, pad 4 = sortie ; note 77 = RELOOP/EXIT) ; filtres de B à courbe plate (au neutre, le son de B ne
+  bouge plus) ; valeur d'un potard de la table de mixage au survol ou quand il bouge ; CUE et PLAY aux couleurs de leur
+  platine ; points 21 à 26 de la checklist. **Ensuite : le chapitre 5 « Le calage »**, plan présenté (7 niveaux :
+  entendre le décalage, pousser/freiner, la bonne vitesse, la vitesse à l'oreille, au casque, lancer et caler, sans filet ;
+  note continue, ★★★ sous 15 ms 85 % du temps). **L'utilisateur a dit oui aux quatre questions** : les 7 niveaux dans cet
+  ordre, ouverture en même temps que le chapitre 2 (14 étoiles au chapitre 1), casque simulé (B tout bas dans les
+  enceintes) sans sortie casque, seuils 15 / 25 ms à ajuster après ses essais sur la FLX4.
 - **Lot 36 « Identité et interface » publié le 20 oct. 2026** (accord de l'utilisateur ; 353 tests verts, gardien : feu
   orange sans blocage). Voir l'entrée « Lot 36 » plus bas pour les décisions à ne pas défaire (l'orange reste la
   platine A, le violet reste la couleur de DJingo, la maquette de Lou n'est qu'une inspiration). **Prochain travail :
