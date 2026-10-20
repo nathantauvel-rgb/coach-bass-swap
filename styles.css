@@ -1231,3 +1231,12 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .stage.sansbpm .pl-bpm{visibility:hidden}
 .calbar.attend .calaig{display:none}
 .calbar.attend .caltxt{color:var(--muted);font-weight:700}
+/* téléphone : le texte du compteur tient sur une ligne (sur deux, il poussait « Arrêter » sous le bas de l'écran) */
+@media (max-width:1039px){ .calbar{gap:10px;padding:8px 12px} .caltxt{min-width:0;font-size:13px;white-space:nowrap} }
+/* Téléphone, pendant une partie (gardien du lot 40) : la barre reste collée en bas, sinon « Arrêter » sortait de l'écran
+   aux niveaux qui allument beaucoup de commandes (chapitre 5, niveaux 5 et 6). La scène garde de la place en bas pour
+   que la barre ne cache jamais la dernière commande. */
+@media (max-width:1039px){
+  .stage.joue .actionbar{position:sticky}
+  .stage.joue .deck{margin-bottom:84px}
+}

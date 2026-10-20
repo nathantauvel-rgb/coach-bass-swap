@@ -32,6 +32,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
+- **Lot 40 « Le calage » (chapitre 5) publié le 21 oct. 2026** (voir l'entrée « Lot 40 »). **Ensuite : le chapitre 6 « Hot cues
+  et boucles »**, plan validé par l'utilisateur le 21 oct. : 7 niveaux (poser un repère, lancer depuis le repère, B attend en
+  boucle, prolonger l'outro, la montée 16 → 8 → 4, le double drop, sans filet), note en millisecondes, **Quantize allumé
+  aux niveaux 1 à 4 et éteint aux niveaux 5 à 7**, ouverture avec le chapitre 2 (14 étoiles au chapitre 1), morceaux du
+  site au même tempo (pas de calage). Il faut aussi dessiner sur la piste les hot cues posés et la zone de la boucle.
 - **Lot 39 « La table complète » publié le 20 oct. 2026** (voir l'entrée « Lot 39 »). Gardien : feu rouge, corrigé.
   **Les 12 nouveaux numéros MIDI de la FLX4** (DEFAULT_MAP) et ceux des molettes et des pads, relevés dans Mixxx et relus
   un par un par le gardien, **sont publiés avec l'accord explicite de l'utilisateur**, avant la checklist (points 21 à 26). Corrigés : sur téléphone, seules les commandes du niveau
@@ -857,6 +862,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   de 128, sinon impossible de tomber sur 124 BPM) ; le compteur garde sa place avant que B parte (`calCompteur(ms, garde)`,
   classe `.attend`) ; la démo du niveau 1 répond elle-même ; au niveau 7, la bulle ne donne plus aucune aide. Points 27 et
   28 de la checklist. Chaque correction a son test dans `tests/calage.spec.js` (« Corrections du gardien »).
+  Second passage : feu orange. Corrigé avant la mise en ligne : sur téléphone, la barre « Arrêter » reste collée en bas
+  pendant une partie (`.stage.joue .actionbar` sticky sous 1040 px, place gardée sous la table) — elle sortait de l'écran
+  aux niveaux 5 et 6 ; le texte du compteur tient sur une ligne. Laissé tel quel (à demander à l'utilisateur) : au niveau 7,
+  après LANCE B, la bulle dit de combien de temps B est parti tôt ou tard (un retour après coup, pas une aide).
+- **Lot 40 publié le 21 oct. 2026** (accord de l'utilisateur ; 421 tests verts).
 - **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
