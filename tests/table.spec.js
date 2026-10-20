@@ -37,11 +37,19 @@ test.describe('Schéma et explications', () => {
   });
   test('une commande que le site ne connaît pas encore', async ({ page }) => {
     await ouvrir(page, { onglet: 'table' });
-    for (const id of ['cross', 'jogA', 'hiB', 'padsA', 'tempoB', 'cfxB']) {
+    for (const id of ['jogA', 'padsA', 'syncB']) {
       await commande(page, id).click();
       await expect(page.locator('#tPanel .tuse')).toHaveText('Pas encore utilisée par le site.');
       await expect(page.locator('#tLearn')).toHaveCount(0);
       await expect(commande(page, id)).not.toHaveClass(/\bsite\b/);
+    }
+  });
+  // Lot 39 : la table complète a un réglage pour le crossfader, les aigus, le tempo et le filtre de B
+  test('crossfader, HI, tempo, filtre de B : reconnus, mais aucun niveau ne s\'en sert encore', async ({ page }) => {
+    await ouvrir(page, { onglet: 'table' });
+    for (const id of ['cross', 'hiB', 'tempoB', 'cfxB']) {
+      await commande(page, id).click();
+      await expect(page.locator('#tPanel .tuse')).toContainText('aucun niveau ne s\'en sert');
     }
   });
   test('MID B et PLAY A : reconnues, mais aucun niveau ne s\'en sert', async ({ page }) => {

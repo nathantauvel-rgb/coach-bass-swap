@@ -16,7 +16,9 @@ test.describe('Les fiches', () => {
         for (const [k, v] of Object.entries(Object.assign({}, f.cmd, f.plus))) if (!Array.isArray(v) || !(v[0] >= 0 && v[0] <= 15 && v[1] >= 0 && v[1] <= 127)) out.push(`${f.id}.${k} invalide`);
         for (const k of Object.keys(f.cmd)) if (!MIDI_CC.includes(k) && !MIDI_NOTE.includes(k)) out.push(`${f.id}.${k} : commande inconnue du site`);
         // cleanMap garde tout : pas de doublon dans un même groupe
-        if (Object.keys(cleanMap(modeleMap(f), true)).length !== Object.keys(f.cmd).length) out.push(`${f.id} : doublon`);
+        // cleanMap garde toutes les commandes connues du site (cmd, et plus depuis le lot 39)
+        const connues = Object.keys(Object.assign({}, f.plus, f.cmd)).filter(k => MIDI_CC.includes(k) || MIDI_NOTE.includes(k));
+        if (Object.keys(cleanMap(modeleMap(f), true)).length !== connues.length) out.push(`${f.id} : doublon`);
         if (modeleDe(f.nom.replace(/^\S+\s/, '')) !== f) out.push(`${f.id} : son nom ne la reconnaît pas`);
         if (isFlx4(f.nom)) out.push(`${f.id} : passe pour une FLX4`);
       }
@@ -112,7 +114,7 @@ test.describe('Changer de table', () => {
     await page.evaluate(() => { window.__midi.debrancher(); window.__midi.brancher('DDJ-FLX4'); });
     expect(await stocke(page, 'coach-table')).toBeNull();
     expect(await page.evaluate(() => [map.cfxA, map.fxOn])).toEqual([{ ch: 6, n: 23 }, { ch: 4, n: 71 }]);
-    expect(await stocke(page, 'coach-midi-map')).toEqual(appris);
+    expect(await stocke(page, 'coach-midi-map')).toMatchObject(appris);
     // et ça survit au rechargement
     await page.reload(); await expect(page.locator('.node').first()).toBeVisible();
     expect(await page.evaluate(() => map.cfxA)).toEqual({ ch: 6, n: 23 });

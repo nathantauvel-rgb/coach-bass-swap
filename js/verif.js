@@ -98,7 +98,7 @@ function verifMidi(type, ch, d1, d2){
     renderVerif(); return;
   }
   if (st.type === 'capture' && verif.cap && !vf.midi[st.id]){
-    const c = verif.cap; if (vfConnue(ch, d1)) return;
+    const c = verif.cap; if (vfConnue(ch, d1) && !midiSame(map[st.id], ch, d1)) return;   // une commande déjà connue ne compte pas, sauf celle qu'on vérifie (lot 39)
     if (st.genre === 'note'){ if (type !== 0x90 || d2 === 0) return;
       const k = ch + ':' + d1; c.notes[k] = (c.notes[k] || 0) + 1; c.last = { type: 'note', ch, n: d1 };
       if (c.notes[k] >= 2) vfReleve({ type: 'note', ch, n: d1 }); else renderVerif(); return; }

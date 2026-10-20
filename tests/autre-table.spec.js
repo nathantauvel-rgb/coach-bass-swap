@@ -5,7 +5,10 @@ const { ouvrir, envoyer, miseEnPlace, sansBandeau } = require('./outils');
 
 const S = o => JSON.stringify(o);
 const AUTRE = 'Controleur Mystere X1';
-const PAR_DEFAUT = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, midA: { ch: 0, n: 11 }, midB: { ch: 1, n: 11 }, playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 } };
+const PAR_DEFAUT = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, midA: { ch: 0, n: 11 }, midB: { ch: 1, n: 11 }, playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 },
+  // lot 39 : la table complète (numéros Mixxx)
+  hiA: { ch: 0, n: 7 }, hiB: { ch: 1, n: 7 }, trimA: { ch: 0, n: 4 }, trimB: { ch: 1, n: 4 }, cfxB: { ch: 6, n: 24 }, xfader: { ch: 6, n: 31 },
+  tempoA: { ch: 0, n: 0 }, tempoB: { ch: 1, n: 0 }, cueA: { ch: 0, n: 12 }, cueB: { ch: 1, n: 12 }, pflA: { ch: 0, n: 84 }, pflB: { ch: 1, n: 84 } };
 // Ce que la préparation pas à pas du test ci-dessous enregistre (pas de MID sur cette table)
 const REGLEE = { faderA: { ch: 0, n: 8 }, faderB: { ch: 1, n: 8 }, lowA: { ch: 0, n: 3 }, lowB: { ch: 1, n: 3 }, cfxA: { ch: 4, n: 20 }, playB: { ch: 1, n: 30, cc: true }, fxOn: { ch: 4, n: 71 } };
 const DEJA_REGLEE = { 'coach-table': S({ nom: AUTRE }), 'coach-midi-map': S(REGLEE) };

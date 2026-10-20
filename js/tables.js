@@ -7,8 +7,8 @@
    et `cmd`, le message envoyé par chaque commande : [canal (0 à 15), numéro]. Potards et faders envoient des messages
    de potard (CC), PLAY et ON de l'effet des notes. Une commande absente de `cmd` se fait à l'écran (comme pour une table
    réglée pas à pas sans cette commande).
-   `plus` garde les numéros des commandes que le site n'utilise pas encore (aigus, TRIM, crossfader, tempo, CUE, CUE casque),
-   pour la table complète du lot suivant ; rien ne les lit aujourd'hui.
+   `plus` : les commandes de la table complète (lot 39 : aigus, TRIM, filtre de B, crossfader, tempo, CUE, CUE casque),
+   reprises par modeleMap. Molettes et pads ne sont branchés que sur la FLX4 (flx4Plus dans midi.js) : à l'écran ailleurs.
    D'où viennent les numéros : des correspondances de la communauté du logiciel libre Mixxx (dossier res/controllers,
    relevées le 20 oct. 2026), recoupées entre tables d'une même marque. Ce sont des faits (quel bouton envoie quel
    message), pas du code repris. **Aucune de ces tables n'a été essayée en vrai** : `teste` passe à true quand un joueur
@@ -70,4 +70,5 @@ const modeleId = id => MODELES.find(f => f.id === id) || null;
 // La fiche d'un nom de port MIDI (Windows ajoute parfois « 2- » devant : le motif cherche n'importe où dans le nom)
 const modeleDe = name => MODELES.find(f => f.re.test(String(name))) || null;
 // Les réglages d'une fiche, au format de coach-midi-map
-function modeleMap(f){ const out = {}; for (const [k, [ch, n]] of Object.entries(f.cmd)) out[k] = { ch, n }; return out; }
+// (avec `plus` : les commandes de la table complète, lot 39 ; celles que le site ne connaît pas sont écartées par cleanMap)
+function modeleMap(f){ const out = {}; for (const [k, [ch, n]] of Object.entries(Object.assign({}, f.plus, f.cmd))) out[k] = { ch, n }; return out; }

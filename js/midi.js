@@ -3,10 +3,20 @@
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* ---------- Table MIDI ---------- */
-const DEFAULT_MAP = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, midA: { ch: 0, n: 11 }, midB: { ch: 1, n: 11 }, playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 } };
+const DEFAULT_MAP = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, midA: { ch: 0, n: 11 }, midB: { ch: 1, n: 11 }, playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 },
+  // Lot 39 (table complète) : numéros de la FLX4 relevés dans les correspondances du logiciel libre Mixxx (Pioneer-DDJ-FLX4.midi.xml),
+  // recoupés avec la DDJ-400 ; pas encore vérifiés sur la vraie table (« Vérifier ma table » relève les vrais numéros).
+  hiA: { ch: 0, n: 7 }, hiB: { ch: 1, n: 7 }, trimA: { ch: 0, n: 4 }, trimB: { ch: 1, n: 4 }, cfxB: { ch: 6, n: 24 }, xfader: { ch: 6, n: 31 },
+  tempoA: { ch: 0, n: 0 }, tempoB: { ch: 1, n: 0 }, cueA: { ch: 0, n: 12 }, cueB: { ch: 1, n: 12 }, pflA: { ch: 0, n: 84 }, pflB: { ch: 1, n: 84 } };
 // Potards et faders d'un côté, boutons de l'autre : deux contrôles d'un même groupe ne peuvent pas partager un numéro.
 // Un bouton envoie une note (cas de la FLX4) ou, sur d'autres tables, un message de potard : il est alors marqué `cc`.
-const MIDI_CC = ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA', 'midA', 'midB'], MIDI_NOTE = ['playA', 'playB', 'fxOn'];
+const MIDI_CC = ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA', 'midA', 'midB', 'hiA', 'hiB', 'trimA', 'trimB', 'cfxB', 'xfader', 'tempoA', 'tempoB'],
+  MIDI_NOTE = ['playA', 'playB', 'fxOn', 'cueA', 'cueB', 'pflA', 'pflB'];
+// Groupe (data-g de la table à l'écran) de chaque commande de la table complète : éteinte dans un niveau, elle ne fait rien
+const CMD_GROUPE = { hiA: 'gHi', hiB: 'gHi', trimA: 'gTrim', trimB: 'gTrim', cfxB: 'gCfxB', xfader: 'gXf', tempoA: 'gTempo', tempoB: 'gTempo',
+  cueA: 'gCue', cueB: 'gCue', pflA: 'gCasque', pflB: 'gCasque', playA: 'gCue', midB: 'gMidB' };
+const groupeAllume = g => { const el = document.querySelector(`.deck [data-g="${g}"]`); return !!el && !el.classList.contains('eteint'); };
+const cmdLibre = k => !CMD_GROUPE[k] || groupeAllume(CMD_GROUPE[k]);
 const midiSame = (m, ch, n) => !!m && m.ch === ch && m.n === n;
 const isFlx4 = name => /FLX4/i.test(String(name));
 // Windows ajoute parfois « 2- » devant le nom d'une table (deux appareils pareils, ou rebranchée ailleurs) : on n'en tient pas compte
@@ -65,8 +75,33 @@ function modeleApply(nom, garde = false){
 }
 const tableOn = () => tableEtat() === 'ok';
 const ccDown = {};
-// Un bouton de la table : PLAY de B lance B, ON de l'effet allume l'écho (PLAY de A n'est pas utilisé)
-function pressKey(k){ if (k === 'playB'){ if (onb.active) onbMoved('playB'); else launchB(); } else if (k === 'fxOn'){ if (onb.active) onbMoved('fxOn'); else toggleEcho(); } }
+// Un bouton de la table : PLAY de B lance B, ON de l'effet allume l'écho ; table complète (lot 39) : PLAY de A, CUE et CUE casque,
+// seulement quand le niveau s'en sert. `relache` : le bouton vient d'être relâché (seul CUE s'en sert : on écoute tant qu'il est tenu).
+function pressKey(k, relache = false){
+  if (k === 'cueA' || k === 'cueB'){ if (cmdLibre(k)){ ensureAudio(); plCue(k.slice(-1), !relache); } return; }
+  if (relache) return;
+  if (k === 'playB'){ if (onb.active) onbMoved('playB'); else launchB(); } else if (k === 'fxOn'){ if (onb.active) onbMoved('fxOn'); else toggleEcho(); }
+  else if (k === 'playA'){ if (cmdLibre(k)){ ensureAudio(); plLecture('A'); } }
+  else if (k === 'pflA' || k === 'pflB'){ if (cmdLibre(k)){ ensureAudio(); const s = k.slice(-1); $('casque' + s).setAttribute('aria-pressed', String(plCasqueBascule(s))); } }
+}
+// La FLX4 (table de référence) : molettes et pads, qui n'ont pas de réglage commande par commande (numéros Mixxx, à vérifier).
+// Molette : potard relatif, 64 = immobile, 720 crans par tour (côté : n° 33 ; dessus : 34 et 35). Pads : canal 8 (A) et 10 (B) ;
+// HOT CUE : notes 0 à 3 (avec SHIFT, canaux 9 et 11 : effacer) ; BEAT LOOP : notes 100, 101, 102 (4, 8, 16 temps) ; 4 BEAT/EXIT : note 77.
+const FLX4_PADS = { 7: 'A', 9: 'B' }, FLX4_PADS_SHIFT = { 8: 'A', 10: 'B' }, FLX4_BOUCLES = { 100: 4, 101: 8, 102: 16, 103: 32 };
+function flx4Plus(type, ch, d1, d2){
+  if (tableCfg || !midiNames.some(isFlx4)) return false;
+  if (type === 0xB0 && ch <= 1 && d1 >= 33 && d1 <= 35){ if (groupeAllume('gJog')) plJog(ch ? 'B' : 'A', (d2 - 64) / 2); return true; }
+  if (type !== 0x90 || !d2) return type === 0x80 || type === 0x90 ? (FLX4_PADS[ch] || FLX4_PADS_SHIFT[ch]) != null : false;
+  const pad = FLX4_PADS[ch], eff = FLX4_PADS_SHIFT[ch], exit = ch <= 1 && d1 === 77;
+  if (!pad && !eff && !exit) return false;
+  if (!groupeAllume('gPads')) return true;
+  ensureAudio(); const k = pad || eff || (ch ? 'B' : 'A');
+  if (eff && d1 < 4) plHotCueEfface(k, d1);
+  else if (pad && d1 < 4){ padMode[k] = 'hc'; plHotCue(k, d1); }
+  else if (pad && FLX4_BOUCLES[d1]){ padMode[k] = 'lp'; plBoucle(k, FLX4_BOUCLES[d1]); }
+  else if (exit){ padMode[k] = 'lp'; if (deck[k].boucle) plSortie(k); else plBoucle(k, 4); }
+  renderPads(k); return true;
+}
 function onMidi(e){
   if (!e || !e.data || e.data.length < 3) return;
   const [st, d1, d2] = e.data, type = st & 0xF0, ch = st & 0x0F, val = clamp01(d2 / 127);
@@ -81,11 +116,12 @@ function onMidi(e){
   if (view === 'table'){ tableMidi(type, ch, d1, d2, val); return; }
   // Une table pas encore réglée ne pilote rien : ses numéros ne sont pas ceux de la FLX4
   if (!tableOn()) return;
+  if (flx4Plus(type, ch, d1, d2)) return;
   if (type === 0xB0){
     const kb = MIDI_NOTE.find(k => map[k] && map[k].cc && midiSame(map[k], ch, d1));
     if (kb){ if (d2 >= 64 && !ccDown[kb]) pressKey(kb); ccDown[kb] = d2 >= 64; return; }
-    for (const k of MIDI_CC){ if (midiSame(map[k], ch, d1)){ phys[k] = val; if (onb.active){ ctrl[k] = val; applyCtrl(); onbSchemaSet($('onbSvg'), 'sv-', k, val); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = val; applyCtrl(); gestureMark(); } if (!run) updateSetup(); return; } } }
-  else if (type === 0x90 && d2 > 0){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1)); if (k) pressKey(k); }
+    for (const k of MIDI_CC){ if (midiSame(map[k], ch, d1)){ phys[k] = val; if (!cmdLibre(k)) return; if (onb.active){ ctrl[k] = val; applyCtrl(); onbSchemaSet($('onbSvg'), 'sv-', k, val); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = val; applyCtrl(); gestureMark(); } if (!run) updateSetup(); return; } } }
+  else if (type === 0x90 || type === 0x80){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1)); if (k) pressKey(k, type === 0x80 || d2 === 0); }
 }
 async function initMidi(){
   const txt = $('midiPill').lastElementChild;

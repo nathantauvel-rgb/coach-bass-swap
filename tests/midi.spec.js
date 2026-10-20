@@ -3,7 +3,10 @@
 const { test, expect } = require('@playwright/test');
 const { ouvrir, envoyer, miseEnPlace, sansBandeau, jouer } = require('./outils');
 
-const PAR_DEFAUT = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, midA: { ch: 0, n: 11 }, midB: { ch: 1, n: 11 }, playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 } };
+const PAR_DEFAUT = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, midA: { ch: 0, n: 11 }, midB: { ch: 1, n: 11 }, playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 },
+  // lot 39 : la table complète (numéros Mixxx)
+  hiA: { ch: 0, n: 7 }, hiB: { ch: 1, n: 7 }, trimA: { ch: 0, n: 4 }, trimB: { ch: 1, n: 4 }, cfxB: { ch: 6, n: 24 }, xfader: { ch: 6, n: 31 },
+  tempoA: { ch: 0, n: 0 }, tempoB: { ch: 1, n: 0 }, cueA: { ch: 0, n: 12 }, cueB: { ch: 1, n: 12 }, pflA: { ch: 0, n: 84 }, pflB: { ch: 1, n: 84 } };
 const CH3 = { 'coach-chapitre': '3', 'coach-ch2-ouvert': '1', 'coach-ch2': JSON.stringify({ 0: 3, 1: 3, 2: 3, 3: 3 }) };
 const niveau = (page, i) => page.locator('.node').nth(i).click();
 

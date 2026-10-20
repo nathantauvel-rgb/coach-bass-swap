@@ -797,8 +797,22 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   sur une ligne, puis la piste et la table ; `stageIntoView` au départ. Sur 1366 × 768, LANCE B, LOW, faders et ECHO se
   voient (test), le crossfader est un peu coupé (aucun niveau ne s'en sert encore). Tests : `tests/commandes.spec.js`.
   Captures : `captures/lot39/` (hors Git).
-  **Étapes suivantes** : 3. le branchement MIDI (FLX4 d'après Mixxx, puis les fiches `plus` de `js/tables.js` ; ignorer
-  les commandes éteintes) ; puis le chapitre 5 « Le calage ».
+  **Étape 3, le branchement sur la table (faite)** : `MIDI_CC` gagne `hiA/B`, `trimA/B`, `cfxB`, `xfader`, `tempoA/B` ;
+  `MIDI_NOTE` gagne `cueA/B` et `pflA/B` (CUE casque). **`DEFAULT_MAP` de la FLX4 reçoit ces numéros** (relevés dans Mixxx,
+  recoupés avec la DDJ-400, pas encore vérifiés en vrai ; les anciens numéros ne changent pas, le filtre de A et ON de
+  l'effet restent appris au passage). Les fiches de `js/tables.js` donnent les leurs par `plus` (`modeleMap` les reprend).
+  `CMD_GROUPE` + `cmdLibre(k)` : une commande de la table complète **éteinte dans le niveau ne fait rien** (sa position est
+  quand même retenue dans `phys`). `pressKey(k, relache)` : CUE se tient (note relâchée = `relache`), PLAY de A,
+  CUE casque. **Molettes et pads seulement sur la FLX4** (`flx4Plus` dans `midi.js`) : molette = potard relatif (64 =
+  immobile, 720 crans par tour, n° 33 à 35, `plJog(k, (valeur − 64) / 2)` en degrés), pads canaux 8 (A) et 10 (B) : HOT CUE
+  notes 0 à 3, SHIFT (canaux 9 et 11) = effacer, BEAT LOOP notes 100 à 103 (4, 8, 16, 32 temps), 4 BEAT/EXIT note 77.
+  Tempo : Mixxx donne « valeur 0 = le plus rapide », comme notre `plTempoPct`. « Ma table » : `TKEY` connaît HI, TRIM,
+  filtre de B, crossfader (`cross`), tempo, CUE, CUE casque (`casqueA` → `pflA`) ; `tableSchemaSet` dessine tempo et
+  crossfader. « Vérifier ma table » : à une étape de relevé, le numéro **déjà connu de la commande vérifiée** est
+  accepté (il confirme celui de Mixxx). Tests : `tests/commandes.spec.js` (« Avec la table ») ; `PAR_DEFAUT` mis à jour dans
+  `tests/midi.spec.js` et `tests/autre-table.spec.js`. **À vérifier sur la vraie FLX4** : sens du tempo, réglage de la
+  molette (`PL_JOG`), pads en mode HOT CUE et BEAT LOOP, CUE tenu.
+  **Suite** : le chapitre 5 « Le calage » (premiers exercices qui allument ces commandes).
 - **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à

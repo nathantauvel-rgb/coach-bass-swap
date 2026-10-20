@@ -110,3 +110,54 @@ test.describe('Pendant une partie', () => {
       const r = await page.locator(id).boundingBox(); expect(r.y + r.height, id).toBeLessThanOrEqual(768); expect(r.y, id).toBeGreaterThanOrEqual(0); }
   });
 });
+
+// Étape 3 : les mêmes commandes, depuis la table (numéros de la FLX4 relevés dans Mixxx, pas encore vérifiés en vrai)
+test.describe('Avec la table', () => {
+  const { envoyer } = require('./outils');
+  test('éteintes dans un niveau, les commandes de la table complète ne font rien (mais leur position est retenue)', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true } });
+    await page.locator('.node').nth(0).click();
+    await envoyer(page, 0xB0, 7, 0);   // HI de A
+    expect(await page.evaluate(() => [ctrl.hiA, phys.hiA])).toEqual([.5, 0]);
+  });
+  test('allumées : HI, TRIM, tempo, filtre de B et crossfader suivent la FLX4', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true } }); await toutAllume(page);
+    await envoyer(page, 0xB0, 7, 0); await envoyer(page, 0xB1, 4, 127); await envoyer(page, 0xB0, 0, 0); await envoyer(page, 0xB6, 24, 127); await envoyer(page, 0xB6, 31, 127);
+    expect(await page.evaluate(() => [ctrl.hiA, ctrl.trimB, ctrl.tempoA, ctrl.cfxB, ctrl.xfader])).toEqual([0, 1, 0, 1, 1]);
+    await expect(page.locator('#tpctA')).toHaveText('+8,0 %');
+  });
+  test('CUE (tenu puis relâché), PLAY de A et CUE casque', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true } }); await toutAllume(page);
+    await envoyer(page, 0x90, 12, 127);   // CUE de A en lecture : retour au repère et arrêt
+    expect(await page.evaluate(() => [deck.A.joue, plPos('A')])).toEqual([false, 10]);
+    await envoyer(page, 0x90, 11, 127);   // PLAY de A
+    expect(await page.evaluate(() => deck.A.joue)).toBe(true);
+    await envoyer(page, 0x91, 84, 127);   // CUE casque de B
+    expect(await page.evaluate(() => casque.B)).toBe(true);
+    await expect(page.locator('#casqueB')).toHaveAttribute('aria-pressed', 'true');
+  });
+  test('la molette de la FLX4 pousse le morceau', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true } }); await toutAllume(page);
+    await page.evaluate(() => { window.__max = 1; setInterval(() => { __max = Math.max(__max, deck.A.rate); }, 5); });
+    for (let i = 0; i < 12; i++){ await envoyer(page, 0xB0, 33, 72); await page.waitForTimeout(15); }
+    expect(await page.evaluate(() => __max)).toBeGreaterThan(1.01);
+  });
+  test('les pads de la FLX4 : hot cue, effacer avec SHIFT, boucle de 8, EXIT', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true } }); await toutAllume(page);
+    await envoyer(page, 0x97, 0, 127);
+    expect(await page.evaluate(() => deck.A.cues[0])).not.toBeNull();
+    await expect(page.locator('#padsA .pad').first()).toHaveClass(/pose/);
+    await envoyer(page, 0x98, 0, 127);
+    expect(await page.evaluate(() => deck.A.cues[0])).toBeNull();
+    await envoyer(page, 0x97, 101, 127);
+    expect(await page.evaluate(() => deck.A.boucle && deck.A.boucle.temps)).toBe(8);
+    await expect(page.locator('#padsA .pad').nth(1)).toHaveClass(/live/);
+    await envoyer(page, 0x90, 77, 127);
+    expect(await page.evaluate(() => deck.A.boucle)).toBeNull();
+  });
+  test('une table reconnue par sa fiche : ses aigus et son crossfader marchent aussi', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: 'MIXTRACK PLATINUM FX' } }); await toutAllume(page);
+    await envoyer(page, 0xB0, 23, 0); await envoyer(page, 0xBF, 8, 127);
+    expect(await page.evaluate(() => [ctrl.hiA, ctrl.xfader])).toEqual([0, 1]);
+  });
+});

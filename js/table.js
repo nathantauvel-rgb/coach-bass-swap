@@ -25,7 +25,9 @@ const TKINDS = {
   fx: ['Bouton ON de l\'effet', 'Active l\'effet choisi sur la table, par exemple un écho.']
 };
 // Réglage MIDI de chaque commande du schéma, quand il y en a un
-const TKEY = { faderA: 'faderA', faderB: 'faderB', lowA: 'lowA', lowB: 'lowB', midA: 'midA', midB: 'midB', cfxA: 'cfxA', playA: 'playA', playB: 'playB', fx: 'fxOn' };
+const TKEY = { faderA: 'faderA', faderB: 'faderB', lowA: 'lowA', lowB: 'lowB', midA: 'midA', midB: 'midB', cfxA: 'cfxA', playA: 'playA', playB: 'playB', fx: 'fxOn',
+  // lot 39 : la table complète
+  hiA: 'hiA', hiB: 'hiB', trimA: 'trimA', trimB: 'trimB', cfxB: 'cfxB', cross: 'xfader', tempoA: 'tempoA', tempoB: 'tempoB', cueA: 'cueA', cueB: 'cueB', casqueA: 'pflA', casqueB: 'pflB' };
 const tKind = id => id === 'cross' || id === 'fx' ? id : id.slice(0, -1);
 const tSide = id => id === 'cross' || id === 'fx' ? '' : id.slice(-1);
 const tName = id => TKINDS[tKind(id)][0] + (tSide(id) ? ' ' + tSide(id) : '');
@@ -62,6 +64,8 @@ function tableSvg(){
 function tableSchemaSet(key, v){
   const id = Object.keys(TKEY).find(x => TKEY[x] === key), el = id && $('tSvg').querySelector(`[data-c="${id}"]`); if (!el || v == null) return;
   if (key.startsWith('fader')) el.querySelector('.cap').setAttribute('y', (318 + (1 - v) * 66).toFixed(1));
+  else if (key.startsWith('tempo')) el.querySelector('.cap').setAttribute('y', (90 + (1 - v) * 136).toFixed(1));
+  else if (key === 'xfader') el.querySelector('.cap').setAttribute('x', (420 + v * 64).toFixed(1));
   else { const c = el.querySelector('circle'), mk = el.querySelector('.mk'); mk.setAttribute('transform', `rotate(${(-135 + 270 * v).toFixed(1)} ${c.getAttribute('cx')} ${c.getAttribute('cy')})`); }
 }
 const tablePos = k => MIDI_CC.includes(k) ? (phys[k] != null ? `Position : ${Math.round(phys[k] * 100)} %` : '') : '';
