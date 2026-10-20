@@ -1108,3 +1108,94 @@ html.pp-open,html.pp-open body{overflow:hidden}
 }
 /* « Jouer » prêt (après la démo) : la pulsation reprend le violet, plus l'ancien gris et blanc */
 @keyframes readyPulse{50%{box-shadow:0 5px 0 var(--brand-edge),0 0 0 8px color-mix(in srgb,var(--brand) 35%,transparent)}}
+
+/* ---------- Lot 39 : la table complète (deux platines et la table de mixage) ----------
+   Choix de l'utilisateur sur la maquette du 20 oct. 2026 : toute la table est affichée, mais seules les commandes dont
+   le niveau se sert sont allumées (les autres : .eteint, inertes) ; 4 pads par platine ; pendant une partie, la consigne
+   se replie (.stage.joue) pour que la piste et la table tiennent sur un écran de PC portable. */
+.table3{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:stretch}
+.pl,.mx{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px;min-width:0}
+.pl{display:flex;flex-direction:column;gap:10px}
+.pl-head{display:flex;align-items:center;gap:8px}
+.pltag{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:var(--ink)}
+.plA .pltag{background:var(--a)} .plB .pltag{background:var(--b)}
+.pl-bpm{margin-left:auto;font-weight:800;font-size:13px;color:var(--muted)}
+.pl-mid{display:flex;align-items:center;justify-content:space-around;gap:10px}
+.pl-jog,.pl-tempo{display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px;border-radius:14px}
+.pl-jog .gl{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.jog{width:104px;height:104px;border-radius:50%;position:relative;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
+  background:radial-gradient(circle,var(--panel-2) 0 33%,var(--line) 34% 36%,var(--panel-2) 37% 100%);border:2px solid var(--line);box-shadow:inset 0 0 0 8px var(--panel)}
+.jog.tenu{cursor:grabbing;border-color:var(--fg)}
+.jog .mk{position:absolute;inset:0}
+.jog .mk::before{content:"";position:absolute;left:50%;top:7px;width:4px;height:18px;margin-left:-2px;border-radius:2px}
+.plA .jog .mk::before{background:var(--a)} .plB .jog .mk::before{background:var(--b)}
+.fader.tempo{width:40px;height:104px}
+.fader.tempo .fill{display:none}
+.fader.tempo .slot::after{content:"";position:absolute;left:-10px;right:-10px;top:50%;height:2px;background:var(--line)}
+.tpct{font-size:12px;font-weight:800}
+.pl-bas{display:flex;flex-direction:column;gap:8px;align-items:stretch}
+/* CUE et PLAY (LANCE B) au-dessus des pads, côte à côte : LANCE B reste visible pendant une partie sur un PC portable */
+.pl-pads{order:1}
+.pl-tr{display:flex;gap:10px;align-items:center;justify-content:center;padding:4px;border-radius:14px}
+.pl-tr .group{padding:0}
+.rb{width:52px;height:52px;border-radius:50%;border:2px solid var(--line);background:var(--panel-2);color:var(--fg);font:inherit;font-weight:900;font-size:12px;padding:0}
+.rb.cue{border-color:var(--mid);color:var(--mid)} .rb.play{border-color:var(--ok);color:var(--ok)}
+.plB .launch{padding:10px 14px;font-size:14px;gap:8px}
+.plB .launch svg{width:16px;height:16px}
+.pl-pads{flex:1;min-width:0;padding:4px;border-radius:14px}
+.ptabs{display:flex;gap:6px;margin-bottom:6px}
+.ptabs button{flex:1;font:inherit;font-size:11px;font-weight:800;padding:5px 0;border-radius:8px;background:var(--panel-2);color:var(--muted);border:1px solid var(--line)}
+.plA .ptabs [aria-pressed="true"]{background:var(--a);border-color:var(--a);color:var(--ink)}
+.plB .ptabs [aria-pressed="true"]{background:var(--b);border-color:var(--b);color:var(--ink)}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.pad{height:44px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line);color:var(--fg);font:inherit;font-weight:900;font-size:15px;padding:0}
+.plA .pad.pose{border-color:var(--a);color:var(--a);background:color-mix(in srgb,var(--a) 16%,var(--panel-2))}
+.plB .pad.pose{border-color:var(--b);color:var(--b);background:color-mix(in srgb,var(--b) 16%,var(--panel-2))}
+.plA .pad.live{background:var(--a);border-color:var(--a);color:var(--ink)} .plB .pad.live{background:var(--b);border-color:var(--b);color:var(--ink)}
+/* Table de mixage */
+.mx{display:grid;grid-template-columns:auto auto auto;gap:6px 6px;justify-items:center;align-content:start}
+.mx-col,.mx-lab{display:flex;flex-direction:column;align-items:center;gap:2px}
+.mx-col>*,.mx-lab>span{height:35px;display:grid;place-items:center}
+.mx .group{padding:2px;gap:0}
+.mx .knob{padding:0;gap:0}
+.mx .knob svg{width:34px;height:34px}
+.mx .knob .kv,.mx .cl,.deck .table3 .auto::after{display:none}
+.mx-lab>span{font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--muted)}
+/* l'effet en haut de la table de mixage (comme le BEAT FX de la FLX4) : il reste visible pendant une partie */
+.mx-fx{grid-column:1 / 4}
+.mx-fx .group{padding:0}
+.mx .echo{width:auto;height:34px;padding:0 22px;border-radius:999px;font-size:12px;border-width:2px}
+.mx-bas{justify-content:center}
+.mx-fad{grid-column:1 / 4;display:flex;align-items:flex-end;gap:8px;justify-content:center}
+.mx-fad .group{padding:4px 6px}
+.mx-fad .pair{gap:8px;align-items:flex-end}
+.mx .fader{width:40px;height:100px}
+.vu{width:6px;height:78px;margin-bottom:11px;border-radius:3px;background:var(--track);position:relative;overflow:hidden}
+.vu i{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(to top,var(--ok) 0 60%,var(--mid) 60% 85%,var(--bad) 85%);background-size:100% 78px;background-position:bottom}
+.hcue{font:inherit;font-size:11px;font-weight:900;padding:7px 8px;border-radius:9px;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);margin-bottom:38px}
+.hcue[aria-pressed="true"]{background:var(--mid);border-color:var(--mid);color:var(--ink)}
+.mx-bas{grid-column:1 / 4;display:flex;align-items:center;gap:10px}
+.mx-xf{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border-radius:14px}
+.fader.xf{width:170px;height:34px;cursor:ew-resize}
+.fader.xf .slot{left:11px;right:11px;top:50%;bottom:auto;width:auto;height:8px;margin:-4px 0 0}
+.fader.xf .fill{display:none}
+.fader.xf .cap2{top:4px;bottom:4px;width:22px;height:auto;right:auto;left:calc(var(--v) * (100% - 22px))}
+.fader.xf .cap2::after{left:10px;right:auto;top:6px;bottom:6px;width:2px;height:auto}
+.xlab{display:flex;gap:12px;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--muted)}
+.xlab .la{color:var(--a)} .xlab .lb{color:var(--b)}
+/* Allumé / éteint, et la commande à toucher maintenant */
+.deck .eteint{opacity:.3;filter:grayscale(.7)}
+.deck [data-g].focus{background:var(--hi);box-shadow:0 0 0 3px var(--accent);border-radius:14px}
+/* Pendant une partie, la consigne se replie et la scène se resserre : Vini, le compte à rebours et « Arrêter » sur une
+   ligne, puis la piste et toute la table, sur un écran de PC portable (1366 × 768) */
+.stage.joue .consigne,.stage.joue .start-row,.stage.joue .actionbar .opts,.stage.joue .decklab{display:none}
+@media (min-width:1040px){
+  .stage.joue{grid-template-columns:minmax(0,1fr) auto minmax(220px,auto);grid-template-areas:"buddy ring act" "hw hw hw" "bar bar bar" "deck deck deck";row-gap:12px}
+  .stage.joue .actionbar{align-self:center;padding:10px}
+  .stage.joue .ring{width:80px;height:80px}
+  .stage.joue .deck{padding-top:10px;padding-bottom:10px}
+}
+@media (max-width:1039px){
+  .table3{grid-template-columns:minmax(0,1fr)}
+  .mx{order:-1}
+}

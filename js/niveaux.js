@@ -71,7 +71,8 @@ const LEX = [["intro", "Intro", "le début d'un morceau, plus léger, fait pour 
   ["écho", "Écho", "un effet qui répète le son en le laissant s'éteindre"]];
 const lexOf = t => LEX.filter(([w]) => new RegExp('(^|[^\\p{L}])' + w, 'iu').test(t));
 let lastPopAt = 0, lastAct = '';
-function setFocus(ids){ for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).classList.toggle('focus', ids.includes(g)); }
+// Une commande peut avoir plusieurs morceaux (LOW de A et de B) : on les retrouve par data-g
+function setFocus(ids){ document.querySelectorAll('.deck [data-g]').forEach(el => el.classList.toggle('focus', ids.includes(el.dataset.g))); }
 function showAction(t){ if (t === lastAct) return; lastAct = t; if (performance.now() - lastPopAt > 1600) say(t); }
 const RING_LAB = { 'MONTE B': 'temps avant de monter B', 'FILTRE': 'temps avant de tourner le filtre', 'À FOND': 'temps : filtre à fond avant le drop', 'ECHO': 'temps avant d\'activer l\'écho', 'COUPE A': 'temps avant de couper A', 'LANCE B': 'temps avant de lancer B', 'B À FOND': 'temps pour monter B', 'SWAP': 'temps avant le swap', 'A SORTI': 'temps avant le drop de B : A doit être sorti' };
 // speed : vitesse de la partie (1 = normale, 0,9 ou 0,8 = ralenti, proposé seulement au chapitre 4 après deux échecs de suite)
@@ -134,7 +135,10 @@ if (chapter === 4 && !ch4Unlocked()) chapter = 1;
 if (chapter === 2 && !ch2Unlocked()) chapter = 1;
 if (chapter === 3 && !ch3Unlocked()) chapter = 1;
 LESSONS = lessonsOf(chapter);
-const isAuto = k => !!(run && run.demo) || !LESSONS[li].user.includes(k);
+// Commande tenue par le site : pendant une démo, ou une commande des leçons que le niveau ne confie pas au joueur.
+// Celles de la table complète (CTRL_NEUTRE : aigus, TRIM, tempo…) ne sont jamais tenues : un niveau qui ne s'en sert pas
+// les éteint (tableAllume), et elles restent au neutre.
+const isAuto = k => !!(run && run.demo) || (!(k in CTRL_NEUTRE) && !LESSONS[li].user.includes(k));
 const clamp01 = x => Math.max(0, Math.min(1, x));
 
 function renderChapters(){
@@ -189,9 +193,10 @@ function selectLesson(i){
   stopRun(); speed = 1; if (i !== li) slowFails = {}; li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = tolOf();
   $('lnum').textContent = (chapter > 1 ? `Chapitre ${chapter} · ` : '') + `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
   const lex = lexOf(l.title + ' ' + l.goal + ' ' + l.how); $('llex').hidden = !lex.length; $('llex').textContent = lex.map(([, n, d]) => n + ' : ' + d + '.').join('\n');
-  for (const g of ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid']) $(g).hidden = !l.show.includes(g);
+  // La table complète reste affichée : les commandes dont le niveau ne se sert pas sont éteintes et inertes (lot 39)
+  tableAllume(l.show);
   for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k));
-  Object.assign(ctrl, CTRL_NEUTRE, l.init); applyCtrl(); casque.A = casque.B = false; plCasque();
+  Object.assign(ctrl, CTRL_NEUTRE, l.init); applyCtrl(); casque.A = casque.B = false; plCasque(); tableDepart();
   $('result').hidden = true; setStartBtn(false); $('launchB').disabled = true;
   $('cdNum').textContent = '—'; $('cdLab').textContent = ''; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
   $('hint').textContent = chapter === 4 ? 'Chapitre 4 : plusieurs gestes d\'affilée, notés au demi-temps près. 3 étoiles seulement si tout est juste.' : chapter === 3 ? 'Chapitre 3 : plus de compte à rebours. Lis les formes d\'onde, comme dans rekordbox. La démo montre le bon moment.' : chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
@@ -211,7 +216,7 @@ function selectLesson(i){
 }
 // Sur un écran peu haut, la barre des boutons (collée en bas) recouvrait la piste : on amène la scène en haut de l'écran
 function stageIntoView(){ const r = $('stage').getBoundingClientRect(); if (r.bottom > innerHeight && r.top > 8) window.scrollTo({ top: scrollY + r.top - 8, behavior: REDUCED ? 'auto' : 'smooth' }); }
-function setStartBtn(running){ const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
+function setStartBtn(running){ $('stage').classList.toggle('joue', running); if (running && !$('vLearn').hidden) requestAnimationFrame(stageIntoView); const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
 
 let START = 16, END = 116;
 function startRun(demo = false){

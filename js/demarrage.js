@@ -2,7 +2,7 @@
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* ---------- Démarrage ---------- */
-buildControls();
+buildControls(); buildCommandes();
 $('startBtn').addEventListener('click', () => run ? stopRun() : withFiches(() => startRun()));
 $('watchBtn').addEventListener('click', () => { if (!run) withFiches(() => startRun(true)); });
 const styleShow = () => { const b = document.querySelector(`#styleOpts [data-style="${styleChoice}"]`); $('styleBtn').textContent = styleChoice === 'vrai' ? 'Morceaux : vraie musique' : 'Morceaux : ' + (b ? b.textContent : 'House'); };

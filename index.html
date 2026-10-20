@@ -359,23 +359,60 @@
     <div class="bar" aria-hidden="true"><i id="progFill"></i></div>
     <div class="bottom">
     <div class="deck"><span class="decklab">Ta table</span>
-    <div class="controls">
-      <div class="group" id="gPlay"><button type="button" class="launch" id="launchB" disabled><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l10-6.2a.8.8 0 0 0 0-1.4l-10-6.2A.8.8 0 0 0 6 3.8Z"/></svg>LANCE B</button></div>
-      <div class="group" id="gCfx"><span class="gl">Filtre · CFX</span><div class="pair">
-        <div class="chan chanA" id="wCfxA"><div class="knob" data-k="cfxA" aria-label="Filtre de A"></div><span class="cl">A</span></div>
-      </div></div>
-      <div class="group" id="gEcho"><span class="gl">Effet</span><button type="button" class="echo" id="echoBtn" aria-pressed="false">ECHO</button></div>
-      <div class="group" id="gMid"><span class="gl">Voix · MID</span><div class="pair">
-        <div class="chan chanA" id="wMidA"><div class="knob" data-k="midA" aria-label="Médiums de A"></div><span class="cl">A</span></div>
-      </div></div>
-      <div class="group" id="gLow"><span class="gl">Basses · LOW</span><div class="pair">
-        <div class="chan chanA" id="wLowA"><div class="knob" data-k="lowA" aria-label="Basses de A"></div><span class="cl">A</span></div>
-        <div class="chan chanB" id="wLowB"><div class="knob" data-k="lowB" aria-label="Basses de B"></div><span class="cl">B</span></div>
-      </div></div>
-      <div class="group" id="gFad"><span class="gl">Volumes</span><div class="pair">
-        <div class="chan chanA" id="wFadA"><div class="fader" data-k="faderA" aria-label="Volume de A"><div class="slot"></div><div class="fill"></div><div class="cap2"></div></div><span class="cl">A</span></div>
-        <div class="chan chanB" id="wFadB"><div class="fader" data-k="faderB" aria-label="Volume de B"><div class="slot"></div><div class="fill"></div><div class="cap2"></div></div><span class="cl">B</span></div>
-      </div></div>
+    <!-- Lot 39 : la table complète. Les commandes dont le niveau ne se sert pas sont éteintes (classe .eteint, inertes) ;
+         data-g = le groupe de la commande (l.show d'un niveau, et setFocus pendant la partie). -->
+    <div class="table3">
+      <section class="pl plA" aria-label="Platine A">
+        <div class="pl-head"><span class="pltag">A</span><span class="pl-bpm" id="bpmA"></span></div>
+        <div class="pl-mid">
+          <div class="pl-jog" data-g="gJog"><div class="jog" id="jogA" data-p="A" role="slider" tabindex="0" aria-label="Molette de A" aria-valuetext="Molette"><span class="mk"></span></div><span class="gl">Molette</span></div>
+          <div class="pl-tempo chan chanA" data-g="gTempo"><div class="fader tempo" data-k="tempoA" aria-label="Tempo de A"><div class="slot"></div><div class="fill"></div><div class="cap2"></div></div><span class="tpct" id="tpctA">0,0 %</span></div>
+        </div>
+        <div class="pl-bas">
+          <div class="pl-tr" data-g="gCue"><button type="button" class="rb cue" id="cueA">CUE</button><button type="button" class="rb play" id="playA" aria-label="Lecture ou pause de A">▶︎❚❚</button></div>
+          <div class="pl-pads" data-g="gPads"><div class="ptabs"><button type="button" data-p="A" data-mode="hc" aria-pressed="true">HOT CUE</button><button type="button" data-p="A" data-mode="lp" aria-pressed="false">BOUCLE</button></div><div class="pgrid" id="padsA"></div></div>
+        </div>
+      </section>
+      <section class="mx" aria-label="Table de mixage">
+        <div class="mx-fx"><div class="group" id="gEcho" data-g="gEcho"><button type="button" class="echo" id="echoBtn" aria-pressed="false">ECHO</button></div></div>
+        <div class="mx-col">
+          <div class="chan chanA" data-g="gTrim"><div class="knob" data-k="trimA" aria-label="TRIM de A"></div></div>
+          <div class="chan chanA" data-g="gHi"><div class="knob" data-k="hiA" aria-label="Aigus de A"></div></div>
+          <div class="group" id="gMid" data-g="gMid"><div class="chan chanA" id="wMidA"><div class="knob" data-k="midA" aria-label="Médiums de A"></div><span class="cl">A</span></div></div>
+          <div class="group" id="gLow" data-g="gLow"><div class="chan chanA" id="wLowA"><div class="knob" data-k="lowA" aria-label="Basses de A"></div><span class="cl">A</span></div></div>
+          <div class="group" id="gCfx" data-g="gCfx"><div class="chan chanA" id="wCfxA"><div class="knob" data-k="cfxA" aria-label="Filtre de A"></div><span class="cl">A</span></div></div>
+        </div>
+        <div class="mx-lab"><span>TRIM</span><span>HI</span><span>MID</span><span>LOW</span><span>FILTRE</span></div>
+        <div class="mx-col">
+          <div class="chan chanB" data-g="gTrim"><div class="knob" data-k="trimB" aria-label="TRIM de B"></div></div>
+          <div class="chan chanB" data-g="gHi"><div class="knob" data-k="hiB" aria-label="Aigus de B"></div></div>
+          <div class="chan chanB" data-g="gMidB"><div class="knob" data-k="midB" aria-label="Médiums de B"></div></div>
+          <div class="group" data-g="gLow"><div class="chan chanB" id="wLowB"><div class="knob" data-k="lowB" aria-label="Basses de B"></div><span class="cl">B</span></div></div>
+          <div class="chan chanB" data-g="gCfxB"><div class="knob" data-k="cfxB" aria-label="Filtre de B"></div></div>
+        </div>
+        <div class="mx-fad">
+          <button type="button" class="hcue" id="casqueA" data-g="gCasque" aria-pressed="false" aria-label="Écouter A au casque">CUE 🎧</button>
+          <div class="group" id="gFad" data-g="gFad"><div class="pair">
+            <div class="chan chanA" id="wFadA"><div class="fader" data-k="faderA" aria-label="Volume de A"><div class="slot"></div><div class="fill"></div><div class="cap2"></div></div><span class="cl">A</span></div>
+            <span class="vu" id="vuA" aria-hidden="true"><i></i></span><span class="vu" id="vuB" aria-hidden="true"><i></i></span>
+            <div class="chan chanB" id="wFadB"><div class="fader" data-k="faderB" aria-label="Volume de B"><div class="slot"></div><div class="fill"></div><div class="cap2"></div></div><span class="cl">B</span></div>
+          </div></div>
+          <button type="button" class="hcue" id="casqueB" data-g="gCasque" aria-pressed="false" aria-label="Écouter B au casque">CUE 🎧</button>
+        </div>
+        <div class="mx-bas"><div class="mx-xf" data-g="gXf"><div class="fader xf" data-k="xfader" aria-label="Crossfader"><div class="slot"></div><div class="fill"></div><div class="cap2"></div></div><span class="xlab"><b class="la">A</b>CROSSFADER<b class="lb">B</b></span></div></div>
+      </section>
+      <section class="pl plB" aria-label="Platine B">
+        <div class="pl-head"><span class="pltag">B</span><span class="pl-bpm" id="bpmB"></span></div>
+        <div class="pl-mid">
+          <div class="pl-tempo chan chanB" data-g="gTempo"><div class="fader tempo" data-k="tempoB" aria-label="Tempo de B"><div class="slot"></div><div class="fill"></div><div class="cap2"></div></div><span class="tpct" id="tpctB">0,0 %</span></div>
+          <div class="pl-jog" data-g="gJog"><div class="jog" id="jogB" data-p="B" role="slider" tabindex="0" aria-label="Molette de B" aria-valuetext="Molette"><span class="mk"></span></div><span class="gl">Molette</span></div>
+        </div>
+        <div class="pl-bas">
+          <div class="pl-pads" data-g="gPads"><div class="ptabs"><button type="button" data-p="B" data-mode="hc" aria-pressed="true">HOT CUE</button><button type="button" data-p="B" data-mode="lp" aria-pressed="false">BOUCLE</button></div><div class="pgrid" id="padsB"></div></div>
+          <div class="pl-tr"><button type="button" class="rb cue" id="cueB" data-g="gCue">CUE</button>
+            <div class="group" id="gPlay" data-g="gPlay"><button type="button" class="launch" id="launchB" disabled><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 3.8v12.4a.8.8 0 0 0 1.2.7l10-6.2a.8.8 0 0 0 0-1.4l-10-6.2A.8.8 0 0 0 6 3.8Z"/></svg>LANCE B</button></div></div>
+        </div>
+      </section>
     </div>
     </div>
     <div class="bside">
@@ -432,6 +469,7 @@
 <script src="js/vrais.js"></script>
 <script src="js/sons.js"></script>
 <script src="js/controles.js"></script>
+<script src="js/commandes.js"></script>
 <script src="js/combos.js"></script>
 <script src="js/niveaux.js"></script>
 <script src="js/piste.js"></script>

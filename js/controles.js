@@ -16,7 +16,8 @@ function buildControls(){
     el.setAttribute('role', 'slider'); el.tabIndex = 0; el.setAttribute('aria-valuemin', '0'); el.setAttribute('aria-valuemax', '100');
     let sy = 0, sv = 0;
     const set = v => { if (isAuto(k)) return; ctrl[k] = Math.max(0, Math.min(1, v)); applyCtrl(); gestureMark(); };
-    const fromPos = e => { const r = el.getBoundingClientRect(); return 1 - (e.clientY - r.top - 22) / (r.height - 44); };
+    // le crossfader est couché : on lit la position de gauche (A) à droite (B)
+    const fromPos = e => { const r = el.getBoundingClientRect(); return el.classList.contains('xf') ? (e.clientX - r.left - 22) / (r.width - 44) : 1 - (e.clientY - r.top - 22) / (r.height - 44); };
     el.addEventListener('pointerdown', e => { e.preventDefault(); el.focus(); try { el.setPointerCapture(e.pointerId); } catch (_) {} sy = e.clientY; sv = ctrl[k]; if (!knob) set(fromPos(e)); el._d = true; });
     el.addEventListener('pointermove', e => { if (!el._d) return; knob ? set(sv + (sy - e.clientY) / 150) : set(fromPos(e)); });
     ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => el.addEventListener(t, () => { el._d = false; }));
@@ -31,6 +32,10 @@ function renderControl(k){
   if (el.classList.contains('knob')){
     const a = -SWEEP + v * 2 * SWEEP; el.querySelector('.arc').setAttribute('d', arc(30, 30, 25, 0, a));
     const p = el.querySelector('.ptr'); p.setAttribute('x2', (30 + 13 * Math.sin(a)).toFixed(2)); p.setAttribute('y2', (30 - 13 * Math.cos(a)).toFixed(2));
-    const t = k === 'cfxA' ? cfxText(v) : v < .04 ? 'coupé' : (lowDb(v) > 0 ? '+' : '') + lowDb(v).toFixed(0) + ' dB'; el.querySelector('.kv').textContent = t; el.setAttribute('aria-valuetext', t);
+    const db = k.startsWith('trim') ? trimDb(v) : lowDb(v);
+    const t = k.startsWith('cfx') ? cfxText(v) : v < .04 ? 'coupé' : (db > 0 ? '+' : '') + db.toFixed(0) + ' dB'; el.querySelector('.kv').textContent = t; el.setAttribute('aria-valuetext', t);
   }
+  // tempo : l'écart en pour cent, sous le curseur
+  if (k.startsWith('tempo')){ const pct = plTempoPct(k.slice(-1)) * 100, t = (pct > .05 ? '+' : pct < -.05 ? '−' : '') + Math.abs(pct).toFixed(1).replace('.', ',') + ' %';
+    const out = $('tpct' + k.slice(-1)); if (out) out.textContent = t; el.setAttribute('aria-valuetext', t); }
 }
