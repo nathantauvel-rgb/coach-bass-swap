@@ -103,10 +103,10 @@ test.describe('Avant de jouer : position de départ et gestes, bien séparés', 
     await expect(page.locator('#planList li')).toHaveText(['Échange les basses : LOW de A normal → coupé, LOW de B coupé → normal']);
     await expect(page.locator('#tip')).not.toContainText('basses');
   });
-  test('la transition complète : couper le LOW de B avant de lancer, puis les gestes dans l\'ordre', async ({ page }) => {
+  test('la transition complète : LOW de B déjà coupé au départ, puis les gestes dans l\'ordre', async ({ page }) => {
     await ouvrir(page);
     await page.locator('.node').nth(6).click();
-    await expect(page.locator('#planList li')).toHaveText(['Avant de lancer B : LOW de B normal → coupé', 'Lance B (PLAY de droite)', 'Monte le fader de B jusqu\'en haut',
+    await expect(page.locator('#planList li')).toHaveText(['Lance B (PLAY de droite)', 'Monte le fader de B jusqu\'en haut',
       'Échange les basses : LOW de A normal → coupé, LOW de B coupé → normal', 'Baisse le fader de A jusqu\'en bas']);
   });
   test('l\'encadré disparaît pendant la partie et revient après', async ({ page }) => {
@@ -128,6 +128,14 @@ test.describe('Avant de jouer : position de départ et gestes, bien séparés', 
     expect(etat[1]).toContain('Potard LOW de B : coupé (tout à gauche)');
     await expect(page.locator('#setupList .pic svg')).toHaveCount(2);
     await expect(page.locator('#tip')).toHaveText('Place ta table en position de départ, puis appuie sur Jouer.');
+  });
+  test('la transition complète et les combos qui lancent B : LOW de B coupé dès la position de départ', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true } });
+    await page.locator('.node').nth(6).click();
+    const etat = await miseEnPlace(page);
+    expect(etat.find(t => t.includes('LOW de B'))).toContain('Potard LOW de B : coupé (tout à gauche)');
+    // chapitre 4 : « La transition éclair » et « Le grand mix »
+    expect(await page.evaluate(() => CH4_LESSONS.filter(l => l.c.cutLowB).map(l => l.init.lowB))).toEqual([0, 0]);
   });
 });
 

@@ -4,7 +4,7 @@
 'use strict';
 /* ---------- Les niveaux ----------
    `c` décrit les gestes attendus, en temps :
-     cutLowB  : couper le LOW de B avant de le lancer        bFull : B à fond (fader) au plus tard à ce temps
+     cutLowB  : B doit partir basses coupées (LOW coupé dès la position de départ) bFull : B à fond (fader) au plus tard à ce temps
      swap     : temps du swap des basses                      filt  : [début, fin] du filtre de A, vers la droite
      aOut     : [premier temps permis, dernier temps] pour que A soit sorti (fader à zéro)
      cut      : A coupé d'un coup à ce temps                  echo  : écho sur le dernier temps avant `cut`
@@ -18,11 +18,11 @@ const CH4_LESSONS = [
     targets: [[48, 'FILTRE', 'A'], [64, 'SWAP', 'AB']],
     caps: [[32, 'B arrive, basses coupées'], [48, 'Le filtre commence, lentement'], [64, 'Filtre à fond, swap des basses'], [70, 'B a pris toute la place']] },
   { kind: 'c-eclair', title: 'La transition éclair', goal: 'Toute la transition en 16 temps : lance, monte, échange, coupe.',
-    how: 'Coupe le LOW de B avant de commencer. Lance B sur la ligne : il démarre 16 temps avant son drop. Monte son fader en 8 temps, puis, au drop, fais le swap des basses et baisse A d\'un coup.',
-    show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, launchBeat: 48, bCue: 48, init: Object.assign({}, CH4_INIT), user: ['faderA', 'faderB', 'lowA', 'lowB'], start: 36, end: 74,
+    how: 'Le LOW de B est déjà coupé (position de départ). Lance B sur la ligne : il démarre 16 temps avant son drop. Monte son fader en 8 temps, puis, au drop, fais le swap des basses et baisse A d\'un coup.',
+    show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, launchBeat: 48, bCue: 48, init: Object.assign({}, CH4_INIT, { lowB: 0 }), user: ['faderA', 'faderB', 'lowA', 'lowB'], start: 36, end: 74,
     c: { cutLowB: true, bFull: 56, swap: 64, cut: 64 },
     targets: [[48, 'LANCE B', 'B'], [56, 'B À FOND', 'B'], [64, 'SWAP', 'AB'], [64, 'COUPE A', 'A']],
-    caps: [[44, 'LOW de B coupé'], [48, 'B part 16 temps avant son drop'], [56, 'B est à fond'], [64, 'Swap et A coupé : drop de B !']] },
+    caps: [[44, 'B attend, basses coupées'], [48, 'B part 16 temps avant son drop'], [56, 'B est à fond'], [64, 'Swap et A coupé : drop de B !']] },
   { kind: 'c-echodrop', title: 'Écho et drop, sans filet', goal: 'Écho sur A, coupure, et B lancé sur son drop : sans compte à rebours.',
     how: 'Pas de compte à rebours : compte les phrases dans ta tête. Sur le dernier temps de la phrase de A, active l\'écho (ON de l\'effet ou touche E). Sur le premier temps de la phrase suivante, coupe A et lance B, déjà calé sur son drop, dans le même geste.',
     show: ['gPlay', 'gEcho', 'gFad'], bBass: false, autoLaunch: false, launchBeat: 64, bCue: 64, init: Object.assign({}, CH4_INIT, { faderB: 1 }), user: ['faderA'], btn: ['echo'], start: 40, end: 74, noCount: true,
@@ -30,11 +30,11 @@ const CH4_LESSONS = [
     targets: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A'], [64, 'LANCE B', 'B']],
     caps: [[56, 'Compte la fin de la phrase'], [63, 'Écho sur le dernier temps'], [64, 'A coupé, B lancé sur son drop'], [68, 'B tombe dans l\'écho']] },
   { kind: 'c-grand', title: 'Le grand mix', goal: 'Une longue transition propre : B entre, swap, filtre, et A sort avant le drop.',
-    how: 'Coupe le LOW de B, lance-le sur la ligne et monte son fader. Au début de la phrase suivante, fais le swap des basses, puis efface A au filtre, lentement, jusqu\'à « À FOND ». Baisse enfin le fader de A : il doit être à zéro au drop de B.',
-    show: ['gPlay', 'gCfx', 'gLow', 'gFad'], bBass: true, autoLaunch: false, launchBeat: 32, bCue: 0, init: Object.assign({}, CH4_INIT), user: ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA'], start: 16, end: 100,
+    how: 'Le LOW de B est déjà coupé (position de départ). Lance B sur la ligne et monte son fader. Au début de la phrase suivante, fais le swap des basses, puis efface A au filtre, lentement, jusqu\'à « À FOND ». Baisse enfin le fader de A : il doit être à zéro au drop de B.',
+    show: ['gPlay', 'gCfx', 'gLow', 'gFad'], bBass: true, autoLaunch: false, launchBeat: 32, bCue: 0, init: Object.assign({}, CH4_INIT, { lowB: 0 }), user: ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA'], start: 16, end: 100,
     c: { cutLowB: true, bFull: 56, swap: 64, filt: [64, 92], aOut: [80, 96] },
     targets: [[32, 'LANCE B', 'B'], [56, 'B À FOND', 'B'], [64, 'SWAP', 'AB'], [64, 'FILTRE', 'A'], [92, 'À FOND', 'A'], [96, 'A SORTI', 'A']],
-    caps: [[28, 'LOW de B coupé'], [32, 'B part sur le 1'], [56, 'B est à fond'], [64, 'Swap, et le filtre commence'], [92, 'Filtre à fond'], [96, 'A est sorti : drop de B !']] }
+    caps: [[28, 'B attend, basses coupées'], [32, 'B part sur le 1'], [56, 'B est à fond'], [64, 'Swap, et le filtre commence'], [92, 'Filtre à fond'], [96, 'A est sorti : drop de B !']] }
 ];
 CH4_LESSONS.forEach(l => { l.btn = l.btn || []; });
 
@@ -44,7 +44,7 @@ function ideal4(k, b, l){
   if (k === 'faderB') return l.init.faderB === 1 ? 1 : c.bFull ? r(b, L, c.bFull - L) : r(b, L, 16);
   if (k === 'faderA'){ if (c.cut) return 1 - r(b, c.cut - .25, .25); if (c.aOut) return 1 - r(b, c.aOut[1] - 4, 4); return 1; }
   if (k === 'lowA') return c.swap ? .5 - .5 * r(b, c.swap - .25, .5) : .5;
-  if (k === 'lowB'){ if (!c.swap) return .5; if (b >= c.swap - .25) return .5 * r(b, c.swap - .25, .5); return c.cutLowB ? .5 - .5 * r(b, L - 6, 2) : 0; }
+  if (k === 'lowB'){ if (!c.swap) return .5; if (b >= c.swap - .25) return .5 * r(b, c.swap - .25, .5); return 0; }
   if (k === 'cfxA') return c.filt ? .5 + .5 * r(b, c.filt[0], c.filt[1] - c.filt[0]) : .5;
   if (k === 'echo') return c.echo && b >= 63 && b < 72 ? 1 : 0;
   return .5;

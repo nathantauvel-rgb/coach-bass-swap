@@ -22,8 +22,8 @@ const BASE_LESSONS = [
     how: 'B arrive tout seul, basses coupées. Quand le repère « SWAP » touche la ligne, échange les basses d\'un seul geste, une main sur chaque potard : LOW de A normal → coupé, LOW de B coupé → normal.',
     show: ['gLow'], bBass: true, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: 0 }, user: ['lowA', 'lowB'] },
   { kind: 'full', title: 'La transition complète', goal: 'Le final : tout toi-même, comme en soirée.',
-    how: 'Avant de lancer B, coupe son LOW (normal → coupé). Lance B quand le repère touche la ligne et monte son fader jusqu\'en haut. À la phrase suivante, échange les basses (LOW de A coupé, LOW de B normal). Enfin, baisse le fader de A jusqu\'en bas avant le drop.',
-    show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: ['faderA', 'faderB', 'lowA', 'lowB'] }
+    how: 'Le LOW de B est déjà coupé (position de départ) : B entre sans ses basses. Lance B quand le repère touche la ligne et monte son fader jusqu\'en haut. À la phrase suivante, échange les basses (LOW de A coupé, LOW de B normal). Enfin, baisse le fader de A jusqu\'en bas avant le drop.',
+    show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: 0 }, user: ['faderA', 'faderB', 'lowA', 'lowB'] }
 ];
 BASE_LESSONS.forEach(l => { l.init.cfxA = l.init.cfxA ?? .5; l.launchBeat = l.launchBeat || 32; l.bCue = l.bCue || 0; l.start = l.start || 16; l.end = l.end || 116; l.btn = l.btn || []; });
 // [début, fin] en temps : la partie s'arrête peu après le dernier geste noté (avant, tous duraient jusqu'au temps 116)

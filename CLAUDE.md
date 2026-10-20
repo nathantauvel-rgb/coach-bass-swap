@@ -48,6 +48,19 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   que rien ne s'en sert. **Maquette** (hors Git) : `captures/maquette-debut/index.html` (via `node tests/serveur.js`, barre
   « MAQUETTE » pour changer d'écran ou simuler une table ; dans Chrome, elle écoute la vraie table, jamais essayé) et
   ses captures dans `captures/maquette-debut/captures/`. À faire avant le lot 37, qui dépend des questions posées.
+- **Décision du 20 oct. 2026 : monter beaucoup le niveau, avec tous les boutons de la table.** L'utilisateur veut
+  qu'un DJ qui mixe depuis un an trouve les exercices difficiles. Le site reste un **jeu pour s'entraîner** (on ne
+  remplace pas rekordbox, pas de mode « mix libre »), mais les exercices notés doivent se servir de toutes les
+  commandes. Ordre validé : **A. la table complète** (aigus/médiums/basses et TRIM sur A et B, crossfader, tempo,
+  molette, CUE casque, 4 hot cues, boucles 4/8/16/32 + exit, à l'écran et sur la FLX4 ; numéros MIDI pris dans la
+  liste officielle Pioneer puis confirmés par « Vérifier ma table », jamais inventés ; maquette à montrer avant le
+  code) → **B. chapitre 5 « Le calage »** (tempos différents, B ne se cale plus tout seul, calage au casque, décalage
+  mesuré tout du long) → **C. chapitre 6 « Hot cues et boucles »** → **D. chapitre 7 « Comme en club »** (note
+  continue sur 100 : basses doublées, creux/bosses de volume, décalage ; aucune aide). Les chapitres 1 à 4 ne
+  changent pas. Le **test de placement** (aujourd'hui tout ou rien, 3 épreuves, aucun niveau annoncé) sera refait
+  après, quand il y aura ces niveaux à mesurer ; question laissée ouverte : un niveau validé par le test vaut-il
+  2 étoiles ou est-il seulement sauté ? **SoundCloud « Free Download »** : expliqué à l'utilisateur que ce n'est
+  pas une licence (accord écrit de l'artiste ou CC0 / CC BY nécessaire) ; il se renseignera plus tard.
 - **Ensuite : l'étape 4 du plan Notion, tester avec 3 à 5 débutants.** Le compte est fini
   et **essayé par l'utilisateur sur la production** : Google, création par e-mail, reconnexion, progression retrouvée
   dans un autre navigateur. `README.md` et la question « Faut-il créer un compte ? » de `presentation.html` en parlent.
@@ -685,6 +698,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     `--on-brand`), la pulsation de « Jouer » prêt (ancien gris et blanc → violet), « Regarde d'abord » grisé qui
     changeait de couleur au survol, `--disc-in` qui ne servait plus. Images de la présentation refaites.
     Captures : `captures/lot36-final/` (pleine page) et `captures/lot36-jouer/` (taille réelle, avec et sans table).
+- **Correction ajoutée au lot 36 (20 oct. 2026), signalée par l'utilisateur avec sa table** : à « La transition
+  complète » (chapitres 1 et 2), la position de départ demandait le LOW de B **à midi**, puis la première consigne
+  disait de le couper. Il est maintenant **coupé dès la position de départ** (`init.lowB` = 0), comme au swap ; même
+  chose pour les combos « La transition éclair » et « Le grand mix » (`ideal4` ne remonte plus le LOW de B avant de
+  le recouper). La note « Basses de B coupées avant de le lancer » reste (elle vérifie qu'on ne l'a pas rouvert).
+  Test ajouté dans `tests/fiches.spec.js`.
 - **Vidéo « La transition ratée » (18 oct. 2026)**, dans `marketing/video/` (hors Git), mode d'emploi dans
   `video-transition.md`. Suit la **partie 8 du brief** (direction artistique des vidéos, reçue ce jour-là ; les parties
   4 à 7 n'ont jamais été reçues) : vrai problème de débutant → vrai site → ce qu'on apprend → Vini, logo, appel. 25 s,
