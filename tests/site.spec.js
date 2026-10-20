@@ -11,7 +11,7 @@ test.describe('Fichiers du site', () => {
     const erreurs = await ouvrir(page);
     // Seulement les fichiers du site : Firebase (gstatic) est préchargé en douce par js/compte.js (lot 35)
     expect(await page.evaluate(() => [...document.scripts].map(s => s.getAttribute('src')).filter(u => u && u.startsWith('js/')))).toEqual(
-      ['erreurs', 'morceaux', 'audio', 'vrais', 'sons', 'controles', 'combos', 'niveaux', 'piste', 'expert', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'vini', 'premiers', 'quetes', 'table', 'reglage', 'verif', 'avis', 'compte', 'demarrage'].map(n => `js/${n}.js`));
+      ['erreurs', 'morceaux', 'audio', 'vrais', 'sons', 'controles', 'combos', 'niveaux', 'piste', 'expert', 'tables', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'vini', 'premiers', 'quetes', 'table', 'reglage', 'verif', 'avis', 'compte', 'demarrage'].map(n => `js/${n}.js`));
     expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
     expect(rates).toEqual([]); expect(erreurs).toEqual([]); await sansBandeau(page);
   });
