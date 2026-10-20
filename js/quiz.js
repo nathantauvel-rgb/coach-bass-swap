@@ -91,7 +91,7 @@ const quizXp = () => quizOk.length * QUIZ_XP;
 const quizMix = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const quizPlayed = lv => PRAC_ALL || (lv === 'g' ? sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars) > 0 : lv[0] === 'c' ? ch3Stars[lv[1]] >= 1 : stars[lv[1]] >= 1 || ch2Stars[lv[1]] >= 1);
 // Question bonus du niveau affiché : une question pas encore trouvée sur ce niveau, sinon de culture générale
-const quizBonus = () => { const lv = chapter === 4 ? 'g' : (chapter === 3 ? 'c' : 'b') + li, todo = q => !quizOk.includes(q[0]); return QUIZ.find(q => q[1] === lv && todo(q)) || QUIZ.find(q => q[1] === 'g' && todo(q)) || null; };
+const quizBonus = () => { const lv = chapter >= 4 ? 'g' : (chapter === 3 ? 'c' : 'b') + li, todo = q => !quizOk.includes(q[0]); return QUIZ.find(q => q[1] === lv && todo(q)) || QUIZ.find(q => q[1] === 'g' && todo(q)) || null; };
 // Quiz éclair : 5 questions sur les niveaux déjà joués, celles pas encore trouvées d'abord
 const quizFlash = () => { const pool = quizMix(QUIZ.filter(q => quizPlayed(q[1]))); return pool.filter(q => !quizOk.includes(q[0])).concat(pool.filter(q => quizOk.includes(q[0]))).slice(0, 5); };
 function openQuiz(list, flash){

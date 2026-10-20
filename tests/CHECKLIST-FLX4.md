@@ -39,6 +39,8 @@ ci-dessous reste la version papier, utile pour noter à part ou pour vérifier s
 | 24 | Lot 39 : pads en HOT CUE (1 à 4), puis SHIFT + pad | Un pad pose un repère, puis y saute ; SHIFT + pad l'efface | |
 | 25 | Lot 39 : pads en BEAT LOOP (1, 2, 3, 4) et RELOOP/EXIT | Pads 1 à 3 : boucles de 4, 8, 16 temps ; pad 4 : sortie ; RELOOP/EXIT : boucle de 4 ou sortie | |
 | 26 | Lot 39 : CUE de A tenu, puis relâché ; CUE casque de B | CUE tenu fait écouter depuis le repère et y revient au relâchement ; avec CUE casque, B s'entend au casque seulement | |
+| 27 | Lot 40 : chapitre 5 « Le calage », niveaux 2 à 4, à la molette et au TEMPO de B | La molette ni trop ni pas assez sensible ; le TEMPO permet de tomber sur 124 BPM ; noter si 15 ms (★★★) est trop dur ou trop facile |
+| 28 | Lot 40 : niveau 5 « Au casque », avec un casque sur la table | Avec CUE casque de B, on entend B au casque et pas dans les enceintes ; en montant son fader, il entre dans les enceintes |
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 
 Dernière vérification complète : jamais faite depuis l'ajout des onglets (12 oct. 2026).

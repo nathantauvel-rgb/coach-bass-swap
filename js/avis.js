@@ -14,8 +14,8 @@ if (!jr || typeof jr !== 'object' || Array.isArray(jr)) jr = {};
     debut: typeof jr.debut === 'string' && JR_DAY.test(jr.debut) ? jr.debut : dayKey(),
     jours: arr(jr.jours, d => typeof d === 'string' && JR_DAY.test(d)),
     secs: Math.max(0, Math.floor(+jr.secs) || 0),
-    parties: arr(jr.parties, p => p && typeof p === 'object' && [1, 2, 3, 4].includes(p.c) && Number.isInteger(p.n) && p.n >= 0 && p.n < lessonsOf(p.c).length && [1, 2, 3].includes(p.e)),
-    clair: Object.fromEntries(Object.entries(cl).filter(([k, v]) => /^[1234]-[0-6]$/.test(k) && JR_CLAIR.includes(v))),
+    parties: arr(jr.parties, p => p && typeof p === 'object' && [1, 2, 3, 4, 5].includes(p.c) && Number.isInteger(p.n) && p.n >= 0 && p.n < lessonsOf(p.c).length && [1, 2, 3].includes(p.e)),
+    clair: Object.fromEntries(Object.entries(cl).filter(([k, v]) => /^[1-5]-[0-6]$/.test(k) && JR_CLAIR.includes(v))),
     avis: arr(jr.avis, a => a && typeof a === 'object' && typeof a.d === 'string').map(a => ({ d: a.d.slice(0, 10), ecran: txt(a.ecran).slice(0, 80), bloque: txt(a.bloque), plu: txt(a.plu), note: [1, 2, 3, 4, 5].includes(a.note) ? a.note : 0 })),
     erreurs: arr(jr.erreurs, e => typeof e === 'string', 5)
   };

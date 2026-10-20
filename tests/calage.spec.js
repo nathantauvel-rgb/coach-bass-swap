@@ -117,3 +117,49 @@ test.describe('En vrai', () => {
     expect(await page.evaluate(() => ch5Stars[1])).toBe(1);
   });
 });
+
+// Remarques du gardien (feu rouge du lot 40), une par test
+test.describe('Corrections du gardien', () => {
+  const { envoyer } = require('./outils');
+  test('avec « Techno » ou « Afro house » choisi, le chapitre 5 joue quand même la house à 124 BPM', async ({ page }) => {
+    await ouvrir(page, { stockage: Object.assign({ 'coach-style': 'techno' }, OUVERT) }); await ch5(page, 1);
+    expect(await page.evaluate(() => [sel.sty, STYLE_DEFS[sel.sty].bpm])).toEqual(['house', 124]);
+    await page.evaluate(() => { styleChoice = 'afro'; chooseSongs(); });
+    expect(await page.evaluate(() => sel.sty)).toBe('house');
+  });
+  test('le journal des testeurs garde les parties du chapitre 5', async ({ page }) => {
+    await ouvrir(page, { stockage: Object.assign({ 'coach-journal': JSON.stringify({ parties: [{ c: 5, n: 2, e: 3, d: '2026-10-20' }], clair: { '5-2': 'oui' } }) }, OUVERT) });
+    expect(await page.evaluate(() => [jr.parties.length, jr.clair['5-2']])).toEqual([1, 'oui']);
+  });
+  test('la question bonus du chapitre 5 n\'est pas une question du chapitre 1', async ({ page }) => {
+    await ouvrir(page, { stockage: OUVERT }); await ch5(page, 2);
+    expect(await page.evaluate(() => (quizBonus() || [, 'g'])[1])).toBe('g');
+  });
+  test('le tempo de la table en haute résolution : le gros puis le fin', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: true }, stockage: OUVERT }); await ch5(page, 2);
+    await envoyer(page, 0xB1, 0, 63); await envoyer(page, 0xB1, 32, 100);
+    expect(await page.evaluate(() => ctrl.tempoB)).toBeCloseTo((63 * 128 + 100) / 16383, 6);
+  });
+  test('niveau 7 : la bulle ne compte pas et ne dit pas « Calé »', async ({ page }) => {
+    await ouvrir(page, { stockage: OUVERT }); await ch5(page, 6);
+    await page.locator('#startBtn').click();
+    await expect(page.locator('#startBtn')).toHaveText('Arrêter', { timeout: 60000 });
+    await expect(page.locator('#tip')).toHaveText('Lance B quand tu le sens.', { timeout: 10000 });
+    await expect(page.locator('#calBar')).toBeHidden();
+  });
+  test('niveau 6 : le compteur garde sa place avant que B parte (la table ne saute pas)', async ({ page }) => {
+    await ouvrir(page, { stockage: OUVERT }); await ch5(page, 5);
+    await page.locator('#startBtn').click();
+    await expect(page.locator('#startBtn')).toHaveText('Arrêter', { timeout: 60000 });
+    await expect(page.locator('#calBar')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('#calTxt')).toHaveText('Le compteur s’allume quand B joue');
+  });
+  test('la démo du niveau 1 donne les réponses elle-même, boutons éteints', async ({ page }) => {
+    test.setTimeout(120000);
+    await ouvrir(page, { stockage: OUVERT }); await ch5(page, 0);
+    await page.locator('#watchBtn').click();
+    await expect(page.locator('#tip')).toHaveText(/^Écoute 1 : (calés|B en avance|B en retard)/, { timeout: 30000 });
+    expect(await page.evaluate(() => [...document.querySelectorAll('#calQuiz button')].every(b => b.disabled))).toBe(true);
+    await expect(page.locator('#startBtn')).toHaveClass(/ready/, { timeout: 80000 });
+  });
+});

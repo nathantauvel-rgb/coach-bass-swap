@@ -107,21 +107,27 @@ function calFrame(b){
   const l = LESSONS[li], c = l.cal, ms = plDecalage();
   if (ms != null && run.launch !== null && b >= run.launch + 1) run.cal.mes.push([b, ms, ctrl.faderB, deck.B.rate]);
   if (c.quiz){ const q = run.q;
-    if (!q.attend && q.i < q.tours.length && b >= q.debut + 8){ q.attend = true; calQuizBoutons(true); }
+    if (run.demo && q.i < q.tours.length && b >= q.debut + 8){ const ms = q.tours[q.i], bon = calSens(ms);
+      pop(`Écoute ${q.i + 1} : ${CAL_REP[bon]}${bon ? ` (${Math.abs(Math.round(ms))} ms)` : ''}`, 'ok'); q.i++;
+      if (q.i >= q.tours.length) finish(); else calTour(Math.ceil(b) + 4); return; }
+    if (!run.demo && !q.attend && q.i < q.tours.length && b >= q.debut + 8){ q.attend = true; calQuizBoutons(true); }
     showAction(q.attend ? `Écoute ${q.i + 1} sur ${q.tours.length} : calés, B en avance, ou B en retard ?` : `Écoute ${q.i + 1} sur ${q.tours.length}…`);
     calCompteur(null); return; }
   if (run.demo) calDemo(b, ms);
-  const montre = c.compteur === true || (c.compteur === 'apres' && run.launch !== null);
-  calCompteur(montre ? ms : null);
+  calCompteur(c.compteur ? ms : null, !!c.compteur);
   // la consigne du moment
-  if (c.libre && run.launch === null) showAction(b < l.launchBeat - 8 ? 'Prépare-toi à lancer B vers le temps ' + l.launchBeat + '.' : 'Lance B au début d’une mesure !');
+  // niveau 7 « Sans filet » : aucune aide dans la bulle (ni moment de lancer, ni compte à rebours, ni « Calé »)
+  if (c.compteur === false) showAction(run.launch === null ? 'Lance B quand tu le sens.' : 'Écoute, cale, et échange les basses au bon moment.');
+  else if (c.libre && run.launch === null) showAction(b < l.launchBeat - 8 ? 'Prépare-toi à lancer B vers le temps ' + l.launchBeat + '.' : 'Lance B au début d’une mesure !');
   else if (c.swap && b >= c.swap - 8 && b < c.swap + 2) showAction(`Dans ${Math.max(0, Math.ceil(c.swap - b))} temps : échange les basses !`);
   else if (c.entre && b >= c.entre - 8 && b < c.entre + 2) showAction(`Dans ${Math.max(0, Math.ceil(c.entre - b))} temps : monte le fader de B !`);
-  else if (ms != null) showAction(Math.abs(ms) <= CAL_OK ? 'Calé : garde-le comme ça.' : c.compteur === false ? 'Écoute les grosses caisses, et corrige.' : (ms > 0 ? 'B est en avance : freine-le.' : 'B est en retard : pousse-le.'));
+  else if (ms != null) showAction(Math.abs(ms) <= CAL_OK ? 'Calé : garde-le comme ça.' : (ms > 0 ? 'B est en avance : freine-le.' : 'B est en retard : pousse-le.'));
 }
-// Le compteur au-dessus de la table : texte et aiguille (±100 ms)
-function calCompteur(ms){
-  const bar = $('calBar'); bar.hidden = ms == null; if (ms == null) return;
+// Le compteur au-dessus de la table : texte et aiguille (±100 ms). `garde` : le niveau a un compteur ; tant que B ne joue
+// pas, il reste à sa place (sans aiguille) pour que la table ne saute pas quand B part.
+function calCompteur(ms, garde = false){
+  const bar = $('calBar'); bar.hidden = ms == null && !garde; bar.classList.toggle('attend', ms == null);
+  if (ms == null){ if (garde){ $('calTxt').textContent = 'Le compteur s’allume quand B joue'; bar.classList.remove('ok', 'mid'); } return; }
   const a = Math.abs(ms), ok = a <= CAL_OK;
   $('calTxt').textContent = ok ? `Calé · ${Math.round(a)} ms` : `B en ${ms > 0 ? 'avance' : 'retard'} de ${Math.round(a)} ms`;
   bar.classList.toggle('ok', ok); bar.classList.toggle('mid', !ok && a <= 50);

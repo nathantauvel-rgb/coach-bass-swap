@@ -17,6 +17,14 @@ const CMD_GROUPE = { hiA: 'gHi', hiB: 'gHi', trimA: 'gTrim', trimB: 'gTrim', cfx
   cueA: 'gCueA', cueB: 'gCueB', pflA: 'gCasqueA', pflB: 'gCasqueB', playA: 'gCueA', midB: 'gMidB' };
 const groupeAllume = g => { const el = document.querySelector(`.deck [data-g="${g}"]`); return !!el && !el.classList.contains('eteint'); };
 const cmdLibre = k => !CMD_GROUPE[k] || groupeAllume(CMD_GROUPE[k]);
+// Tempo en haute résolution : la table envoie le gros (n) puis le fin (n + 32) ; avec le fin, 16 384 positions au lieu de 128
+// (sinon on ne peut pas tomber pile sur 124 BPM au chapitre 5). Une table qui n'envoie pas le fin garde ses 128 positions.
+const tempoGros = {};
+function tempoFin(ch, d1, d2){
+  const k = ['tempoA', 'tempoB'].find(x => map[x] && map[x].ch === ch && map[x].n + 32 === d1); if (!k) return false;
+  if (tempoGros[k] != null && cmdLibre(k)){ const v = clamp01((tempoGros[k] * 128 + d2) / 16383); phys[k] = v; ctrl[k] = v; applyCtrl(); }
+  return true;
+}
 const midiSame = (m, ch, n) => !!m && m.ch === ch && m.n === n;
 const isFlx4 = name => /FLX4/i.test(String(name));
 // Windows ajoute parfois « 2- » devant le nom d'une table (deux appareils pareils, ou rebranchée ailleurs) : on n'en tient pas compte
@@ -121,7 +129,8 @@ function onMidi(e){
   if (type === 0xB0){
     const kb = MIDI_NOTE.find(k => map[k] && map[k].cc && midiSame(map[k], ch, d1));
     if (kb){ if (d2 >= 64 && !ccDown[kb]) pressKey(kb); ccDown[kb] = d2 >= 64; return; }
-    for (const k of MIDI_CC){ if (midiSame(map[k], ch, d1)){ phys[k] = val; if (!cmdLibre(k)) return; if (onb.active){ ctrl[k] = val; applyCtrl(); onbSchemaSet($('onbSvg'), 'sv-', k, val); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = val; applyCtrl(); gestureMark(); } if (!run) updateSetup(); return; } } }
+    if (tempoFin(ch, d1, d2)) return;
+    for (const k of MIDI_CC){ if (midiSame(map[k], ch, d1)){ phys[k] = val; if (k === 'tempoA' || k === 'tempoB') tempoGros[k] = d2; if (!cmdLibre(k)) return; if (onb.active){ ctrl[k] = val; applyCtrl(); onbSchemaSet($('onbSvg'), 'sv-', k, val); onbMoved(k); return; } if (!isAuto(k)){ ctrl[k] = val; applyCtrl(); gestureMark(); } if (!run) updateSetup(); return; } } }
   else if (type === 0x90 || type === 0x80){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1)); if (k) pressKey(k, type === 0x80 || d2 === 0); }
 }
 async function initMidi(){

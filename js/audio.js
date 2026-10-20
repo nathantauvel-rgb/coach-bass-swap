@@ -78,8 +78,9 @@ function chooseSongs(){
   const l = LESSONS[li]; if (l.wave) return;
   if (prac) sel = { sty: prac.sty, vr: prac.vr };
   else { sel = { sty: chapter === 2 ? CH2_STYLE[li] : pickStyle(), vr: firstSel ? 0 : Math.floor(Math.random() * VARIANTS) }; firstSel = false; }
-  // chapitre 5 : des morceaux fabriqués par le site, au tempo voulu et à la grille parfaite (la vraie musique viendra après)
-  if (chapter === 5 && (sel.sty === 'vrai' || sel.sty === 'random')) sel.sty = 'house';
+  // chapitre 5 : toujours la house fabriquée par le site, à 124 BPM (CAL_BPM_A) et à la grille parfaite, quel que soit le
+  // style choisi : avec Techno (130) ou Afro (120), A n'était pas au tempo du chapitre et B dérivait tout seul (gardien, lot 40)
+  if (chapter === 5) sel.sty = 'house';
   warmSongs();
   const d = STYLE_DEFS[sel.sty]; $('styleTag').textContent = sel.sty === 'vrai' ? vraiTitres(sel.vr, l.bBass) : d.label + ' · ' + d.bpm + ' BPM';
 }

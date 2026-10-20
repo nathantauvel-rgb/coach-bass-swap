@@ -1229,3 +1229,5 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .calbar.mid .caltxt{color:var(--mid)}
 .calbar.ok .caltxt{color:var(--ok)}
 .stage.sansbpm .pl-bpm{visibility:hidden}
+.calbar.attend .calaig{display:none}
+.calbar.attend .caltxt{color:var(--muted);font-weight:700}
