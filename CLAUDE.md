@@ -38,8 +38,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   le lot A « la table complète »** (voir la décision du 20 oct. juste en dessous), en commençant par chercher la
   liste MIDI officielle Pioneer de la FLX4 et par une maquette à montrer avant le code. Reste à refilmer la vidéo
   « La transition ratée » avant de la diffuser (« Jouer » a changé de place).
-- **Lot 38 « Toutes les tables » (20 oct. 2026)** : prêt, accord de l'utilisateur pour le publier dès que le gardien
-  donne un feu vert ou orange (voir l'entrée « Lot 38 » plus bas). **Ensuite, lot A « la table complète »** : maquette
+- **Lot 38 « Toutes les tables » publié le 20 oct. 2026** (accord de l'utilisateur ; 370 tests verts, gardien : feu rouge
+  puis feu orange ; voir l'entrée « Lot 38 » plus bas). **Ensuite, lot A « la table complète »** : maquette
   montrée le 20 oct. (`captures/maquette-table/`, hors Git : deux platines avec molette, tempo, CUE, PLAY, 4 pads en
   HOT CUE ou BOUCLE ; table de mixage TRIM / HI / MID / LOW / FILTRE, CUE casque, vumètres, crossfader ; vue « Sans
   aides »). Trois questions posées, sans réponse encore : consigne repliée et seules les commandes du niveau allumées
@@ -753,6 +753,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (`midi.js`, `table.js`, `verif.js`), parce que les vrais numéros de la Reloop Mixage tombent là (`sansFin` dans sa
   fiche) ; une table connue dont `coach-midi-map` est abîmée reprend sa fiche au chargement ; le bandeau ne parle de
   « réglages remplacés » que s'il y en a. Un test par défaut dans `tests/tables.spec.js`.
+  Second passage : feu orange. Corrigé avant la mise en ligne : une table connue **réglée à la main** (sa fiche était
+  peut-être fausse) garde son `modele` (`regSave`), donc ce réglage est gardé dans `coach-tables` et revient après un
+  passage par la FLX4.
+- **Lot 38 publié le 20 oct. 2026.**
 - **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à

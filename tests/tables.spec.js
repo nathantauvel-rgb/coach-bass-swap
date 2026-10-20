@@ -149,6 +149,16 @@ test.describe('Changer de table', () => {
     expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 0, n: 15 });
     expect(erreurs).toEqual([]);
   });
+  // Remarque du gardien (second passage) : une table connue réglée à la main perdait ce réglage après un passage par la FLX4
+  test('une table connue réglée à la main retrouve ce réglage après un passage par la FLX4', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: 'DDJ-400' } });
+    await page.evaluate(() => { reg.nom = 'DDJ-400'; reg.got = { faderA: { ch: 3, n: 70 }, playB: { ch: 3, n: 71 } }; regSave(); });
+    expect(await stocke(page, 'coach-table')).toEqual({ nom: 'DDJ-400', modele: 'ddj400' });
+    await page.evaluate(() => { window.__midi.debrancher(); window.__midi.brancher('DDJ-FLX4'); });
+    expect(await page.evaluate(() => map.faderA)).toEqual({ ch: 0, n: 19 });
+    await page.evaluate(() => { window.__midi.debrancher(); window.__midi.brancher('DDJ-400'); });
+    expect(await page.evaluate(() => [map.faderA, map.playB, map.lowA])).toEqual([{ ch: 3, n: 70 }, { ch: 3, n: 71 }, undefined]);
+  });
   test('une fiche inconnue dans coach-table est ignorée sans rien casser', async ({ page }) => {
     const erreurs = await ouvrir(page, { stockage: { 'coach-table': S({ nom: 'Truc', modele: 'nexistepas' }) } });
     expect(await page.evaluate(() => tableCfg)).toEqual({ nom: 'Truc' });

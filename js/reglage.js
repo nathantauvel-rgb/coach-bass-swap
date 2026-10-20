@@ -76,8 +76,11 @@ function renderRegState(){
   el.textContent = !st ? '' : !midiCount ? 'Ta table est débranchée : rebranche-la pour continuer.' : reg.wait ? 'Reconnu !' : reg.msg || (MIDI_NOTE.includes(st.k) ? 'J’attends que tu appuies dessus sur ta table…' : 'J’attends que tu le bouges sur ta table…');
 }
 function regSave(){
-  tableGarde(); map = cleanMap(reg.got, true); tableCfg = { nom: reg.nom }; for (const k of Object.keys(phys)) delete phys[k];
+  // une table qui a sa fiche, réglée à la main (sa fiche était peut-être fausse) : elle garde son modèle, et ce réglage
+  // est gardé dans coach-tables comme le sien, pour revenir après un passage par une autre table
+  const f = modeleDe(reg.nom); tableGarde(); map = cleanMap(reg.got, true); tableCfg = f ? { nom: baseName(reg.nom), modele: f.id } : { nom: reg.nom }; for (const k of Object.keys(phys)) delete phys[k];
   try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); localStorage.setItem('coach-table', JSON.stringify(tableCfg)); } catch (e) {}
+  if (f) tableGarde();
   closeReg(); renderPill(); updateSetup();
   if (view === 'table'){ tableNote = 'Ta table est réglée : bouge une commande pour la voir réagir.'; renderTable(); }
 }
