@@ -32,11 +32,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
-- **À REPRENDRE EN PREMIER (18 oct. 2026) : finir le lot 36 « Identité et interface ».** Branche
-  `lot-36-vini-identite`, **rien de publié** (`main` est à `d00b2e5`). Il reste : lancer le gardien, montrer les
-  captures à l'utilisateur, demander son accord, puis fusionner et pousser. Voir l'entrée « Lot 36 » plus bas pour le
-  détail et, surtout, pour les décisions à ne pas défaire (l'orange reste la platine A, le violet reste la couleur de
-  DJingo, la maquette de Lou n'est qu'une inspiration).
+- **Lot 36 « Identité et interface » publié le 20 oct. 2026** (accord de l'utilisateur ; 353 tests verts, gardien : feu
+  orange sans blocage). Voir l'entrée « Lot 36 » plus bas pour les décisions à ne pas défaire (l'orange reste la
+  platine A, le violet reste la couleur de DJingo, la maquette de Lou n'est qu'une inspiration). **Prochain travail :
+  le lot A « la table complète »** (voir la décision du 20 oct. juste en dessous), en commençant par chercher la
+  liste MIDI officielle Pioneer de la FLX4 et par une maquette à montrer avant le code. Reste à refilmer la vidéo
+  « La transition ratée » avant de la diffuser (« Jouer » a changé de place).
 - **Nouveau début pensé pour le PC (18 oct. 2026), validé sur maquette par l'utilisateur** (lot à faire après le 36).
   L'écran s'appelle **« Prépare ta table »** (étapes : Toi · Ta table · Niveau 1), choix de l'utilisateur : ni « cabine »
   (jargon), ni « platine » (dans le site, une platine est une moitié de la table, A ou B). Constat : le début copiait
