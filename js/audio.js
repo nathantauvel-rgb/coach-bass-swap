@@ -45,8 +45,10 @@ function ensureAudio(){
     d.hp = ac.createBiquadFilter(); d.hp.type = 'highpass'; d.hp.frequency.value = 10; d.hp.Q.value = q;
     d.lp = ac.createBiquadFilter(); d.lp.type = 'lowpass'; d.lp.frequency.value = 22000; d.lp.Q.value = q;
     d.pfl = ac.createGain(); d.pfl.gain.value = 0; d.xf = ac.createGain();
+    // sans sortie casque (table sans carte son à 4 sorties) : la voie au casque est jouée tout bas dans les enceintes (lot 40)
+    d.simu = ac.createGain(); d.simu.gain.value = 0;
     d.an = ac.createAnalyser(); d.an.fftSize = 512;   // vumètre de la voie (après le fader)
-    d.trim.connect(d.eq); d.eq.connect(d.mid); d.mid.connect(d.hi); d.hi.connect(d.hp); d.hp.connect(d.lp); d.lp.connect(d.gain); d.lp.connect(d.pfl); d.pfl.connect(hpBus);
+    d.trim.connect(d.eq); d.eq.connect(d.mid); d.mid.connect(d.hi); d.hi.connect(d.hp); d.hp.connect(d.lp); d.lp.connect(d.gain); d.lp.connect(d.pfl); d.pfl.connect(hpBus); d.lp.connect(d.simu); d.simu.connect(master);
     d.gain.connect(d.xf); d.xf.connect(master); d.xf.connect(d.an);
     if (k === 'A'){
       // Écho envoyé après le fader : il résonne encore quand le fader est coupé
@@ -76,6 +78,8 @@ function chooseSongs(){
   const l = LESSONS[li]; if (l.wave) return;
   if (prac) sel = { sty: prac.sty, vr: prac.vr };
   else { sel = { sty: chapter === 2 ? CH2_STYLE[li] : pickStyle(), vr: firstSel ? 0 : Math.floor(Math.random() * VARIANTS) }; firstSel = false; }
+  // chapitre 5 : des morceaux fabriqués par le site, au tempo voulu et à la grille parfaite (la vraie musique viendra après)
+  if (chapter === 5 && (sel.sty === 'vrai' || sel.sty === 'random')) sel.sty = 'house';
   warmSongs();
   const d = STYLE_DEFS[sel.sty]; $('styleTag').textContent = sel.sty === 'vrai' ? vraiTitres(sel.vr, l.bBass) : d.label + ' · ' + d.bpm + ' BPM';
 }

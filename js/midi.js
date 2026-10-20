@@ -13,8 +13,8 @@ const DEFAULT_MAP = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: 
 const MIDI_CC = ['faderA', 'faderB', 'lowA', 'lowB', 'cfxA', 'midA', 'midB', 'hiA', 'hiB', 'trimA', 'trimB', 'cfxB', 'xfader', 'tempoA', 'tempoB'],
   MIDI_NOTE = ['playA', 'playB', 'fxOn', 'cueA', 'cueB', 'pflA', 'pflB'];
 // Groupe (data-g de la table à l'écran) de chaque commande de la table complète : éteinte dans un niveau, elle ne fait rien
-const CMD_GROUPE = { hiA: 'gHi', hiB: 'gHi', trimA: 'gTrim', trimB: 'gTrim', cfxB: 'gCfxB', xfader: 'gXf', tempoA: 'gTempo', tempoB: 'gTempo',
-  cueA: 'gCue', cueB: 'gCue', pflA: 'gCasque', pflB: 'gCasque', playA: 'gCue', midB: 'gMidB' };
+const CMD_GROUPE = { hiA: 'gHi', hiB: 'gHi', trimA: 'gTrim', trimB: 'gTrim', cfxB: 'gCfxB', xfader: 'gXf', tempoA: 'gTempoA', tempoB: 'gTempoB',
+  cueA: 'gCueA', cueB: 'gCueB', pflA: 'gCasqueA', pflB: 'gCasqueB', playA: 'gCueA', midB: 'gMidB' };
 const groupeAllume = g => { const el = document.querySelector(`.deck [data-g="${g}"]`); return !!el && !el.classList.contains('eteint'); };
 const cmdLibre = k => !CMD_GROUPE[k] || groupeAllume(CMD_GROUPE[k]);
 const midiSame = (m, ch, n) => !!m && m.ch === ch && m.n === n;
@@ -91,12 +91,12 @@ function pressKey(k, relache = false){
 const FLX4_PADS = { 7: 'A', 9: 'B' }, FLX4_PADS_SHIFT = { 8: 'A', 10: 'B' }, FLX4_BOUCLES = { 96: 4, 97: 8, 98: 16, 99: 'exit' };
 function flx4Plus(type, ch, d1, d2){
   if (tableCfg || !midiNames.some(isFlx4)) return false;
-  if (type === 0xB0 && ch <= 1 && d1 >= 33 && d1 <= 35){ if (groupeAllume('gJog')) plJog(ch ? 'B' : 'A', (d2 - 64) / 2); return true; }
+  if (type === 0xB0 && ch <= 1 && d1 >= 33 && d1 <= 35){ if (groupeAllume('gJog' + (ch ? 'B' : 'A'))) plJog(ch ? 'B' : 'A', (d2 - 64) / 2); return true; }
   if (type !== 0x90 || !d2) return type === 0x80 || type === 0x90 ? (FLX4_PADS[ch] || FLX4_PADS_SHIFT[ch]) != null : false;
   const pad = FLX4_PADS[ch], eff = FLX4_PADS_SHIFT[ch], exit = ch <= 1 && d1 === 77;
   if (!pad && !eff && !exit) return false;
-  if (!groupeAllume('gPads')) return true;
-  ensureAudio(); const k = pad || eff || (ch ? 'B' : 'A');
+  const k = pad || eff || (ch ? 'B' : 'A'); if (!groupeAllume('gPads' + k)) return true;
+  ensureAudio();
   if (eff && d1 < 4) plHotCueEfface(k, d1);
   else if (pad && d1 < 4){ padMode[k] = 'hc'; plHotCue(k, d1); }
   else if (pad && FLX4_BOUCLES[d1]){ padMode[k] = 'lp'; if (FLX4_BOUCLES[d1] === 'exit') plSortie(k); else plBoucle(k, FLX4_BOUCLES[d1]); }

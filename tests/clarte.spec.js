@@ -97,10 +97,10 @@ test.describe('Moins de bruit pour un débutant', () => {
     await expect(page.locator('#homeCta')).toBeVisible();
     await expect(page.locator('#homeGoal')).toBeVisible();
     await expect(page.locator('#homeStages')).toBeHidden();
-    await expect(page.locator('#pathSum')).toHaveText('Voir tout mon parcours · étape 2 sur 6');
+    await expect(page.locator('#pathSum')).toHaveText('Voir tout mon parcours · étape 2 sur 7');
     await expect(page.locator('#homeBadges')).toBeHidden();
     await page.locator('#pathSum').click();
-    await expect(page.locator('#homeStages li')).toHaveCount(6);
+    await expect(page.locator('#homeStages li')).toHaveCount(7);
     await page.locator('#homePath a[href="#progres"]').click();
     await expect(page.locator('#homeBadges li')).toHaveCount(13);
     await expect(page.locator('#homeBadges li.won')).toHaveCount(3);

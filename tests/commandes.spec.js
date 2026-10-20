@@ -3,7 +3,7 @@
 const { test, expect } = require('@playwright/test');
 const { ouvrir, sansBandeau, jouer } = require('./outils');
 
-const TOUT = ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid', 'gMidB', 'gCfxB', 'gHi', 'gTrim', 'gTempo', 'gJog', 'gCue', 'gPads', 'gCasque', 'gXf'];
+const TOUT = ['gPlay', 'gLow', 'gFad', 'gCfx', 'gEcho', 'gMid', 'gMidB', 'gCfxB', 'gHi', 'gTrim', 'gTempoA', 'gTempoB', 'gJogA', 'gJogB', 'gCueA', 'gCueB', 'gPadsA', 'gPadsB', 'gCasqueA', 'gCasqueB', 'gXf'];
 // Tout allumer et poser un morceau muet de 60 s (120 BPM) sur la platine A, en lecture
 const toutAllume = page => page.evaluate(t => { tableAllume(t); ensureAudio(); ac.resume(); P = .5; play('A', ac.createBuffer(2, ac.sampleRate * 60, ac.sampleRate), ac.currentTime, 10, false); }, TOUT);
 

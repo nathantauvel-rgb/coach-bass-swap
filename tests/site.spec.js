@@ -11,7 +11,7 @@ test.describe('Fichiers du site', () => {
     const erreurs = await ouvrir(page);
     // Seulement les fichiers du site : Firebase (gstatic) est préchargé en douce par js/compte.js (lot 35)
     expect(await page.evaluate(() => [...document.scripts].map(s => s.getAttribute('src')).filter(u => u && u.startsWith('js/')))).toEqual(
-      ['erreurs', 'morceaux', 'audio', 'platines', 'vrais', 'sons', 'controles', 'commandes', 'combos', 'niveaux', 'piste', 'expert', 'tables', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'vini', 'premiers', 'quetes', 'table', 'reglage', 'verif', 'avis', 'compte', 'demarrage'].map(n => `js/${n}.js`));
+      ['erreurs', 'morceaux', 'audio', 'platines', 'vrais', 'sons', 'controles', 'commandes', 'combos', 'calage', 'niveaux', 'piste', 'expert', 'tables', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'vini', 'premiers', 'quetes', 'table', 'reglage', 'verif', 'avis', 'compte', 'demarrage'].map(n => `js/${n}.js`));
     expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
     expect(rates).toEqual([]); expect(erreurs).toEqual([]); await sansBandeau(page);
   });
@@ -161,7 +161,7 @@ test.describe('Progression et déblocages', () => {
     await expect(page.locator('.chap').nth(1)).toBeEnabled();
     await expect(page.locator('.chap').nth(2)).toBeDisabled();
     await expect(page.locator('#xpTxt')).toHaveText('140 XP');
-    await expect(page.locator('#starTot')).toHaveText('14/66');
+    await expect(page.locator('#starTot')).toHaveText('14/87');
   });
   test('13 étoiles ne suffisent pas', async ({ page }) => {
     await ouvrir(page, { stockage: { 'coach-lecons': JSON.stringify({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 1 }) } });

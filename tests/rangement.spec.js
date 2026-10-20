@@ -11,7 +11,7 @@ test.describe('Écran d\'un niveau', () => {
     await expect(page.locator('#chapters')).toBeHidden();
     await page.locator('#chapBtn').click();
     await expect(page.locator('#chapters')).toBeVisible();
-    await expect(page.locator('.chap')).toHaveCount(4);
+    await expect(page.locator('.chap')).toHaveCount(5);
     await page.locator('.chap').nth(1).click();
     await expect(page.locator('#chapters')).toBeHidden();
     await expect(page.locator('#chapBtn')).toHaveText('Chapitre 2 · La maîtrise');
@@ -103,7 +103,7 @@ test.describe('Mes progrès', () => {
   });
   test('chapitres ouverts : une barre chacun, et un clic ouvre le chapitre', async ({ page }) => {
     await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 2 }), 'coach-ch2': S({ 0: 2 }) } });
-    await expect(page.locator('#pgChaps li:not(.locked)')).toHaveCount(3);
+    await expect(page.locator('#pgChaps li:not(.locked)')).toHaveCount(4);   // 1, 2, 4 et 5 (le calage, lot 40)
     await expect(page.locator('#pgChaps li.locked')).toHaveText(['3 · Les vrais morceauxencore 8 étoiles au chapitre 2']);
     await page.locator('#pgChaps button', { hasText: '4 · Les combos' }).click();
     await expect(page.locator('#vLearn')).toBeVisible();

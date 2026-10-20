@@ -6,8 +6,8 @@
    d'entrée, l'ordre des étapes et la recommandation. Une étape est « faite » d'après la progression déjà
    enregistrée (étoiles, entraînement, paires validées) : le parcours ne stocke que le choix et le résultat du test. */
 const PARCOURS = {
-  debut: { name: 'Parcours « Je débute »', stages: ['guide', 'ch1', 'train', 'ch2', 'ch3', 'vrai'] },
-  deja: { name: 'Parcours « J\'améliore mes transitions »', stages: ['test', 'ch1', 'ch2', 'ch3', 'train', 'vrai'] }
+  debut: { name: 'Parcours « Je débute »', stages: ['guide', 'ch1', 'train', 'ch2', 'ch3', 'ch5', 'vrai'] },
+  deja: { name: 'Parcours « J\'améliore mes transitions »', stages: ['test', 'ch1', 'ch2', 'ch5', 'ch3', 'train', 'vrai'] }
 };
 let parcours = ''; try { parcours = localStorage.getItem('coach-parcours') || ''; } catch (e) {}
 if (!PARCOURS[parcours]) parcours = '';
@@ -20,6 +20,7 @@ if (!parcours && (guideSeen || ch2Open || sumStars(stars) + sumStars(ch2Stars) +
 let parcoursPick = false;
 const firstTodo = (bank, n, from = 0) => { for (let i = from; i < n; i++) if (!(bank[i] >= 2)) return i; for (let i = 0; i < n; i++) if (!(bank[i] >= 2)) return i; return 0; };
 const ch3Done = () => CH3_LESSONS.filter((_, i) => ch3Stars[i] >= 2).length;
+const ch5Done = () => CH5_LESSONS.filter((_, i) => ch5Stars[i] >= 2).length;
 function goLesson(ch, idx){
   location.hash = '#apprendre'; setView('apprendre');
   if (placement) quitPlacement();
@@ -45,6 +46,10 @@ const STAGES = {
     done: () => ch3Done() >= CH3_LESSONS.length, prog: () => `${ch3Done()} niveau${ch3Done() > 1 ? 'x' : ''} sur ${CH3_LESSONS.length}`,
     cta: () => { const i = firstTodo(ch3Stars, CH3_LESSONS.length); return `Chapitre 3, niveau ${i + 1} : ${CH3_LESSONS[i].title}`; },
     go: () => goLesson(3, firstTodo(ch3Stars, CH3_LESSONS.length)) },
+  ch5: { title: 'Le calage', text: 'Caler deux morceaux soi-même, sans SYNC : entendre le décalage, régler le tempo, rattraper à la molette, au casque, puis sans aucune aide.',
+    done: () => ch5Done() >= CH5_LESSONS.length, prog: () => `${ch5Done()} niveau${ch5Done() > 1 ? 'x' : ''} sur ${CH5_LESSONS.length}`,
+    cta: () => { const i = firstTodo(ch5Stars, CH5_LESSONS.length); return `Chapitre 5, niveau ${i + 1} : ${CH5_LESSONS[i].title}`; },
+    go: () => goLesson(5, firstTodo(ch5Stars, CH5_LESSONS.length)) },
   vrai: { title: 'Passer au vrai', text: 'Avec ta musique : importe ta collection rekordbox, choisis une paire, et fais les missions sur ta table.',
     done: () => rbMis.total > 0, cta: () => 'Aller à Passer au vrai', go: () => { location.hash = '#vrai'; } }
 };
@@ -119,8 +124,8 @@ function renderProgres(){
   const ch = n => CHAPTERS.find(c => c.n === n).title, max1 = BASE_LESSONS.length * 3;
   const open = (n, bank, len) => row(`${n} · ${ch(n)}`, `${sumStars(bank)} ★ sur ${len * 3}`, sumStars(bank) / (len * 3), () => goLesson(n, firstTodo(bank, len)));
   open(1, stars, BASE_LESSONS.length);
-  if (ch2Unlocked()){ open(2, ch2Stars, BASE_LESSONS.length); open(4, ch4Stars, CH4_LESSONS.length); }
-  else row(`2 · ${ch(2)} et 4 · ${ch(4)}`, `encore ${plur(14 - sumStars(stars), 'étoile', 'étoiles')} au chapitre 1`, null, null);
+  if (ch2Unlocked()){ open(2, ch2Stars, BASE_LESSONS.length); open(4, ch4Stars, CH4_LESSONS.length); open(5, ch5Stars, CH5_LESSONS.length); }
+  else row(`2 · ${ch(2)}, 4 · ${ch(4)} et 5 · ${ch(5)}`, `encore ${plur(14 - sumStars(stars), 'étoile', 'étoiles')} au chapitre 1`, null, null);
   if (ch3Unlocked()) open(3, ch3Stars, CH3_LESSONS.length);
   else row(`3 · ${ch(3)}`, ch2Unlocked() ? `encore ${plur(10 - sumStars(ch2Stars), 'étoile', 'étoiles')} au chapitre 2` : 'après le chapitre 2', null, null);
 }

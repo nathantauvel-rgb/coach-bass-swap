@@ -824,6 +824,32 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `tests/midi.spec.js` et `tests/autre-table.spec.js`. **À vérifier sur la vraie FLX4** : sens du tempo, réglage de la
   molette (`PL_JOG`), pads en mode HOT CUE et BEAT LOOP, CUE tenu.
   **Suite** : le chapitre 5 « Le calage » (premiers exercices qui allument ces commandes).
+- **Lot 40 « Le calage » (chapitre 5, 20 oct. 2026)** : branche `lot-40-calage`, non publiée. Plan validé par
+  l'utilisateur (7 niveaux, ouverture avec le chapitre 2, casque simulé, seuils 15 / 25 ms). `js/calage.js` (nouveau, chargé
+  après `combos`, avant `niveaux`) : `CH5_LESSONS` (chaque niveau a `cal` : `quiz`, `decale`, `bpmB`, `compteur`, `bpm`,
+  `grace`, `entre`, `libre`, `swap` — voir l'en-tête du fichier), `CAL_OK` = 15, `CAL_MID` = 25, `CAL_BPM_A` = 124.
+  1. Entendre le décalage (5 écoutes : calés, B en avance, B en retard ; boutons `#calQuiz`, `calTours`, `calTour`,
+  `calRepond`) · 2. Pousser, freiner (même tempo, B décalé de 40 à 90 ms, molette de B) · 3. La bonne vitesse (B à 126,
+  tempo + molette, BPM affiché) · 4. La vitesse à l'oreille (B à 121, 122, 126 ou 127, BPM caché : `.stage.sansbpm`) ·
+  5. Au casque (B fader en bas, CUE casque de B, entrer au temps 64) · 6. Lancer et caler (B lancé par le joueur à
+  l'instant exact, `calLanceLibre`, 4 BPM d'écart, swap au temps 64) · 7. Sans filet (pareil, sans BPM, sans compteur,
+  piste dans le brouillard : `noCount`).
+  Déroulé : `startRun` tire le tempo de B (`calChoisitBpm`) et fabrique B à ce tempo (`songSafe(…, bpmB / 124)`), puis
+  `calDepart` à la place de `launchAt` ; `calLance(k, ms)` lance B au temps k de A décalé de ms, `calGrille` lui donne sa
+  propre grille (`deck.B.per`) ; `frame` passe la main à `calFrame` (mesure `plDecalage` à chaque image dans
+  `run.cal.mes`, compteur `#calBar` / `calCompteur`, consignes) ; démo : `calDemo` (tempo exact puis molette) et
+  `calDemoGestes` (entrée de B, swap). Note : `calEval` (part du temps calé après la grâce, temps pour caler, BPM final de
+  B, entrée de B, swap via `evalSwap`), étoiles `calEtoiles` (★★★ : 85 % sous 15 ms, ★★ : 60 % sous 25 ms ; une autre
+  consigne ratée empêche ★★★). Au chapitre 5, la musique est toujours fabriquée par le site (house, si « vraie musique »
+  ou « surprise » était choisi : `chooseSongs`). Casque simulé : sans sortie casque (`outChannels` < 4), une voie au
+  CUE casque joue à 30 % dans les enceintes (`deck[k].simu`, `plCasque`).
+  Ailleurs : `CHAPTERS` (5 = « Le calage », 6 = « La soirée », toujours caché), `ch5Stars` (clé `coach-ch5`), `bankOf`,
+  `lessonsOf`, `BANK_KEY`, `XP_PER` (25 par étoile), `ch5Unlocked`, `xpTotal`, total d'étoiles ; parcours : étape `ch5`
+  (« Je débute » : après le chapitre 3 ; « J'améliore » : après le chapitre 2) ; « Mes progrès » ; rapport des testeurs ;
+  compte (`cptPoids`, `cptResume`). Groupes de la table **séparés par platine** : `gTempoA/B`, `gJogA/B`, `gCueA/B`,
+  `gPadsA/B`, `gCasqueA/B` (CMD_GROUPE et `flx4Plus` suivent). Tests : `tests/calage.spec.js` (dont un « robot » qui cale
+  le niveau 3 en vrai). **À essayer par l'utilisateur sur sa FLX4** : la sensibilité de la molette (`PL_JOG`) décide de la
+  difficulté réelle des niveaux 2 à 7, et les seuils 15 / 25 ms.
 - **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
@@ -852,7 +878,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
-  `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
+  `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
   `demarrage` (démarrage et onglets).
@@ -938,7 +964,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   les étoiles non gagnées, volontairement estompées.
 
 ### Clés localStorage
-`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
+`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`).

@@ -1212,3 +1212,20 @@ html.pp-open,html.pp-open body{overflow:hidden}
   .mx [data-k^="low"]::before{content:"LOW"} .mx [data-k^="cfx"]::before{content:"FILTRE"}
   .pl-mid,.pl-bas{gap:8px}
 }
+
+/* ---------- Lot 40 : chapitre 5 « Le calage » ----------
+   Au-dessus de la table : les trois réponses du niveau « Entendre le décalage », et le compteur de décalage (aiguille sur
+   ±100 ms, zone « calé » au milieu). Le BPM des platines disparaît dans les niveaux qui l'interdisent (.stage.sansbpm). */
+.calquiz{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin:0 0 12px}
+.calquiz span{font-weight:800;color:var(--muted);margin-right:4px}
+.calquiz button{font:inherit;font-weight:800;font-size:15px;padding:12px 20px;border-radius:999px;border:2px solid var(--line);background:var(--panel);color:var(--fg)}
+.calquiz button:not(:disabled):hover{border-color:var(--brand-light)}
+.calquiz button:disabled{opacity:.45}
+.calbar{display:flex;align-items:center;gap:14px;margin:0 0 12px;padding:10px 14px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}
+.calech{position:relative;flex:1;height:10px;border-radius:5px;background:var(--track)}
+.calech .calmid{position:absolute;left:calc(50% - 7.5%);width:15%;top:0;bottom:0;border-radius:5px;background:color-mix(in srgb,var(--ok) 35%,var(--track))}
+.calech .calaig{position:absolute;top:-5px;width:4px;height:20px;margin-left:-2px;border-radius:2px;background:var(--b);left:50%;transition:left .08s linear}
+.caltxt{min-width:190px;font-weight:800;font-size:15px;text-align:right;color:var(--bad)}
+.calbar.mid .caltxt{color:var(--mid)}
+.calbar.ok .caltxt{color:var(--ok)}
+.stage.sansbpm .pl-bpm{visibility:hidden}

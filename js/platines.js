@@ -99,7 +99,7 @@ const casque = { A: false, B: false };
 function plCasque(){
   // valeurs posées directement : sans carte son à 4 sorties, le casque n'est relié à rien et le navigateur ne ferait pas avancer un glissé
   if (!ac || !hpBus) return; const une = casque.A || casque.B;
-  for (const k of ['A', 'B']) deck[k].pfl.gain.value = casque[k] ? 1 : 0;
+  for (const k of ['A', 'B']){ deck[k].pfl.gain.value = casque[k] ? 1 : 0; deck[k].simu.gain.value = casque[k] && outChannels < 4 ? .3 : 0; }
   hpSalle.gain.value = une ? 0 : 1;
 }
 function plCasqueBascule(k){ casque[k] = !casque[k]; plCasque(); return casque[k]; }
