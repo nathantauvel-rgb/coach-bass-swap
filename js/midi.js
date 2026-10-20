@@ -27,6 +27,16 @@ function cleanMap(s, perso = false){
   return perso ? out : Object.assign({}, DEFAULT_MAP);
 }
 let map = cleanMap(null, !!tableCfg); try { map = cleanMap(JSON.parse(localStorage.getItem('coach-midi-map') || 'null'), !!tableCfg); } catch (e) {}
+// Table reconnue dont les réglages enregistrés sont abîmés (plus rien) : on reprend ceux de sa fiche
+if (tableCfg && tableCfg.modele && !Object.keys(map).length) map = cleanMap(modeleMap(modeleId(tableCfg.modele)), true);
+// Réglages gardés de chaque table connue, pour passer de l'une à l'autre sans rien perdre de ce qui a été appris
+// (clé coach-tables : { flx4: {...}, ddj400: {...} } ; les réglages d'une table réglée à la main restent dans coach-midi-map)
+const tablesVues = {}; try { const t = JSON.parse(localStorage.getItem('coach-tables') || 'null');
+  if (t && typeof t === 'object' && !Array.isArray(t)) for (const k of Object.keys(t)) if ((k === 'flx4' || modeleId(k)) && t[k] && typeof t[k] === 'object' && !Array.isArray(t[k])) tablesVues[k] = t[k]; } catch (e) {}
+function tableGarde(){ const id = !tableCfg ? 'flx4' : tableCfg.modele; if (!id) return; tablesVues[id] = map;
+  try { localStorage.setItem('coach-tables', JSON.stringify(tablesVues)); } catch (e) {} }
+// Second message d'un potard « fin » (numéro + 32) : ignoré, sauf sur une table dont les vrais numéros tombent là
+const msgFin = d1 => d1 >= 32 && d1 < 64 && !(tableCfg && tableCfg.modele && (modeleId(tableCfg.modele) || {}).sansFin);
 // État de la table branchée : 'aucune' ; 'ok' (une FLX4 avec ses réglages, ou la table réglée, à la main ou d'après sa fiche) ;
 // 'nouvelle' (une autre table, pas encore réglée) ; 'flx4' (une FLX4, alors que les réglages sont ceux d'une autre table) ;
 // 'connue' (une table qui a sa fiche, alors que les réglages sont ceux d'une table réglée à la main : on demande avant de les remplacer).
@@ -41,12 +51,16 @@ function tableEtat(){
 function modeleAuto(){
   if (tableCfg && midiNames.some(n => baseName(n) === baseName(tableCfg.nom))) return;
   if (tableCfg && !tableCfg.modele) return;
-  if (midiNames.some(isFlx4)){ if (tableCfg) flx4Map(); return; }
-  const nom = midiNames.find(modeleDe); if (nom) modeleApply(nom);
+  if (midiNames.some(isFlx4)){ if (tableCfg){ tableGarde(); flx4Reprend(); } return; }
+  const nom = midiNames.find(modeleDe); if (nom){ tableGarde(); modeleApply(nom, true); }
 }
-function modeleApply(nom){
+// Retour à la FLX4 : ses réglages, avec ce qu'elle avait appris (filtre, ON de l'effet) avant qu'on branche une autre table
+function flx4Reprend(){ flx4Map(); if (!tablesVues.flx4) return; map = cleanMap(tablesVues.flx4); try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); } catch (e) {} }
+// `garde` : reprendre ce qui avait été appris sur cette table la dernière fois ; sans lui (bouton « Revenir aux réglages
+// d'origine »), les réglages de sa fiche
+function modeleApply(nom, garde = false){
   const f = modeleDe(nom); if (!f) return;
-  map = cleanMap(modeleMap(f), true); tableCfg = { nom: baseName(nom), modele: f.id }; for (const k of Object.keys(phys)) delete phys[k];
+  map = cleanMap(garde && tablesVues[f.id] || modeleMap(f), true); if (!Object.keys(map).length) map = cleanMap(modeleMap(f), true); tableCfg = { nom: baseName(nom), modele: f.id }; for (const k of Object.keys(phys)) delete phys[k];
   try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); localStorage.setItem('coach-table', JSON.stringify(tableCfg)); } catch (e) {}
 }
 const tableOn = () => tableEtat() === 'ok';
@@ -58,7 +72,7 @@ function onMidi(e){
   const [st, d1, d2] = e.data, type = st & 0xF0, ch = st & 0x0F, val = clamp01(d2 / 127);
   if (reg.active){ regMidi(type, ch, d1, d2); return; }
   if (verif.on){ verifMidi(type, ch, d1, d2); return; }   // « Vérifier ma table » (verif.js) écoute la table
-  if (learnKey){ const btn = MIDI_NOTE.includes(learnKey), want = btn ? (type === 0x90 && d2 > 0) : (type === 0xB0 && !(d1 >= 32 && d1 < 64));
+  if (learnKey){ const btn = MIDI_NOTE.includes(learnKey), want = btn ? (type === 0x90 && d2 > 0) : (type === 0xB0 && !msgFin(d1));
     // un contrôle déjà utilisé par un autre réglage est refusé : on continue d'attendre le bon
     const taken = (btn ? MIDI_NOTE : MIDI_CC).some(k => k !== learnKey && midiSame(map[k], ch, d1));
     if (want && !taken){ map = Object.assign({}, map, { [learnKey]: { ch, n: d1 } }); try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); } catch (_) {}

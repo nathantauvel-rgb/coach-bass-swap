@@ -102,7 +102,7 @@ function avisMail(){
 function avisReset(){
   jrOff = true;
   const efface = () => {
-    try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-verif'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+    try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
     location.hash = '#accueil'; location.reload();
   };
   // D'abord le compte en ligne, sinon la progression reviendrait au rechargement (compte.js est chargé après ce fichier).

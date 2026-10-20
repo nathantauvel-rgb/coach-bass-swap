@@ -44,7 +44,7 @@ const CPT_MAX = 400000;                       // au-delà, on n'envoie pas (gard
    - `coach-ordre` : ce n'est pas de la progression mais le **format** des données de ce navigateur (lot 26, nouvel
      ordre du chapitre 1). Il est posé à chaque chargement par `ordreMigre`. S'il voyageait et revenait absent d'un
      paquet, les étoiles seraient déplacées une deuxième fois, donc fausses. */
-const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', CPT_KEY];
+const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', CPT_KEY];
 const cptOn = () => !!(CPT_CFG && CPT_CFG.apiKey && CPT_CFG.projectId && CPT_CFG.appId);
 const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_LOCAL.includes(k);
 

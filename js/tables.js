@@ -59,7 +59,9 @@ const MODELES = [
     cmd: { faderA: [0, 28], faderB: [1, 28], lowA: [0, 25], lowB: [1, 25], midA: [0, 24], midB: [1, 24], cfxA: [0, 26], playA: [0, 0], playB: [1, 0] },
     plus: { hiA: [0, 23], hiB: [1, 23], trimA: [0, 22], trimB: [1, 22], cfxB: [1, 26], xfader: [15, 8], pflA: [0, 27], pflB: [1, 27] } },
   // Reloop : tout sur le canal 1. Son potard d'effet ne devient un filtre qu'avec SHIFT : pas de filtre ici.
-  { id: 'mixage', nom: 'Reloop Mixage', re: /Mixage/i,
+  // Ses numéros (49 à 62) tombent là où d'autres tables envoient le « second message » d'un potard fin : `sansFin`
+  // dit au site de ne pas les ignorer (apprentissage, « Ma table », « Vérifier ma table »).
+  { id: 'mixage', nom: 'Reloop Mixage', re: /Mixage/i, sansFin: true,
     cmd: { faderA: [0, 56], faderB: [0, 62], lowA: [0, 55], lowB: [0, 61], midA: [0, 54], midB: [0, 60], playA: [0, 12], playB: [0, 26] },
     plus: { hiA: [0, 53], hiB: [0, 59], trimA: [0, 51], trimB: [0, 57], xfader: [0, 49], cueA: [0, 11], cueB: [0, 25], pflA: [0, 14], pflB: [0, 28] } }
 ];

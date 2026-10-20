@@ -38,6 +38,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   le lot A « la table complète »** (voir la décision du 20 oct. juste en dessous), en commençant par chercher la
   liste MIDI officielle Pioneer de la FLX4 et par une maquette à montrer avant le code. Reste à refilmer la vidéo
   « La transition ratée » avant de la diffuser (« Jouer » a changé de place).
+- **Lot 38 « Toutes les tables » (20 oct. 2026)** : prêt, accord de l'utilisateur pour le publier dès que le gardien
+  donne un feu vert ou orange (voir l'entrée « Lot 38 » plus bas). **Ensuite, lot A « la table complète »** : maquette
+  montrée le 20 oct. (`captures/maquette-table/`, hors Git : deux platines avec molette, tempo, CUE, PLAY, 4 pads en
+  HOT CUE ou BOUCLE ; table de mixage TRIM / HI / MID / LOW / FILTRE, CUE casque, vumètres, crossfader ; vue « Sans
+  aides »). Trois questions posées, sans réponse encore : consigne repliée et seules les commandes du niveau allumées
+  pendant une partie ; 4 pads ou 8 ; ordre de travail (son, puis table à l'écran, puis branchement sur les tables).
 - **Nouveau début pensé pour le PC (18 oct. 2026), validé sur maquette par l'utilisateur** (lot à faire après le 36).
   L'écran s'appelle **« Prépare ta table »** (étapes : Toi · Ta table · Niveau 1), choix de l'utilisateur : ni « cabine »
   (jargon), ni « platine » (dans le site, une platine est une moitié de la table, A ou B). Constat : le début copiait
@@ -739,6 +745,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (l'Inpulse 200 est devenue connue). Pas de fiche (Mixxx n'a rien) : DDJ-FLX2, DDJ-FLX6, DDJ-REV1, Inpulse T7, DJ-202,
   et les MK2 : réglage pas à pas. Les Traktor de Native Instruments ne parlent pas MIDI au navigateur : hors de portée.
   **Pour qu'une fiche passe à « testée »** : le rapport de « Vérifier ma table » d'un joueur qui a cette table.
+  **Gardien : feu rouge au premier passage**, corrigé : passer par une table connue effaçait ce que la FLX4 avait appris
+  (filtre, ON de l'effet). Maintenant chaque table connue garde ses réglages dans `coach-tables` (`tableGarde` avant
+  chaque changement automatique, `flx4Reprend` pour revenir à la FLX4 avec ce qu'elle avait appris, `modeleApply(nom,
+  true)` pour reprendre ceux d'une table connue). Les boutons « Revenir aux réglages d'origine » remettent, eux, les
+  réglages d'origine. Aussi : `msgFin(d1)` remplace les tests « numéro entre 32 et 63 = second message d'un potard fin »
+  (`midi.js`, `table.js`, `verif.js`), parce que les vrais numéros de la Reloop Mixage tombent là (`sansFin` dans sa
+  fiche) ; une table connue dont `coach-midi-map` est abîmée reprend sa fiche au chargement ; le bandeau ne parle de
+  « réglages remplacés » que s'il y en a. Un test par défaut dans `tests/tables.spec.js`.
 - **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
@@ -856,7 +870,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (nom d'une autre table réglée pas à pas ; gardée par « Tout recommencer à zéro »), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester

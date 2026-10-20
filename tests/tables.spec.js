@@ -102,6 +102,53 @@ test.describe('Changer de table', () => {
     expect(await stocke(page, 'coach-table')).toBeNull();
     expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 0, n: 15 });
   });
+  // Défaut trouvé par le gardien (feu rouge) : passer par une table connue effaçait ce que la FLX4 avait appris
+  test('la FLX4 garde son filtre et ON de l\'effet appris, même après une autre table connue', async ({ page }) => {
+    const appris = { faderA: { ch: 0, n: 19 }, faderB: { ch: 1, n: 19 }, lowA: { ch: 0, n: 15 }, lowB: { ch: 1, n: 15 }, midA: { ch: 0, n: 11 }, midB: { ch: 1, n: 11 },
+      playA: { ch: 0, n: 11 }, playB: { ch: 1, n: 11 }, cfxA: { ch: 6, n: 23 }, fxOn: { ch: 4, n: 71 } };
+    await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-midi-map': S(appris) } });
+    await page.evaluate(() => { window.__midi.debrancher(); window.__midi.brancher('DDJ-400'); });
+    expect(await stocke(page, 'coach-table')).toEqual({ nom: 'DDJ-400', modele: 'ddj400' });
+    await page.evaluate(() => { window.__midi.debrancher(); window.__midi.brancher('DDJ-FLX4'); });
+    expect(await stocke(page, 'coach-table')).toBeNull();
+    expect(await page.evaluate(() => [map.cfxA, map.fxOn])).toEqual([{ ch: 6, n: 23 }, { ch: 4, n: 71 }]);
+    expect(await stocke(page, 'coach-midi-map')).toEqual(appris);
+    // et ça survit au rechargement
+    await page.reload(); await expect(page.locator('.node').first()).toBeVisible();
+    expect(await page.evaluate(() => map.cfxA)).toEqual({ ch: 6, n: 23 });
+  });
+  test('une commande réapprise sur une table connue revient quand on la rebranche après la FLX4', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: 'DDJ-400' } });
+    await page.evaluate(() => { learnKey = 'lowA'; });
+    await envoyer(page, 0xB0, 90, 64);
+    expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 0, n: 90 });
+    await page.evaluate(() => { window.__midi.debrancher(); window.__midi.brancher('DDJ-FLX4'); });
+    expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 0, n: 15 });
+    await page.evaluate(() => { window.__midi.debrancher(); window.__midi.brancher('DDJ-400'); });
+    expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 0, n: 90 });
+  });
+  test('Reloop Mixage : ses numéros entre 32 et 63 s\'apprennent (ce ne sont pas des seconds messages)', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: 'Reloop Mixage' } });
+    await page.evaluate(() => { learnKey = 'lowA'; });
+    await envoyer(page, 0xB0, 45, 64);
+    expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 0, n: 45 });
+  });
+  test('sans table réglée à la main, le bandeau ne parle pas de réglages remplacés', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: 'DDJ-400' } });
+    await page.evaluate(() => { flx4Map(); });
+    await expect(page.locator('#tbText')).toHaveText('Tu as branché une Pioneer DDJ-400 : DJingo connaît ses réglages. On les prend ?');
+  });
+  test('table connue dont les réglages enregistrés sont abîmés : elle reprend sa fiche', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: { 'coach-table': S({ nom: 'DDJ-400', modele: 'ddj400' }), 'coach-midi-map': '{oops' } });
+    expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 0, n: 15 });
+    expect(erreurs).toEqual([]);
+  });
+  test('« coach-tables » abîmée : ignorée sans rien casser', async ({ page }) => {
+    const erreurs = await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-tables': '[1, 2]' } });
+    await page.evaluate(() => { window.__midi.debrancher(); window.__midi.brancher('DDJ-400'); window.__midi.debrancher(); window.__midi.brancher('DDJ-FLX4'); });
+    expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 0, n: 15 });
+    expect(erreurs).toEqual([]);
+  });
   test('une fiche inconnue dans coach-table est ignorée sans rien casser', async ({ page }) => {
     const erreurs = await ouvrir(page, { stockage: { 'coach-table': S({ nom: 'Truc', modele: 'nexistepas' }) } });
     expect(await page.evaluate(() => tableCfg)).toEqual({ nom: 'Truc' });

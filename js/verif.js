@@ -67,7 +67,7 @@ const vfConnue = (ch, n) => MIDI_CC.concat(MIDI_NOTE).some(k => midiSame(map[k],
 // Une commande de l'étape pas encore réglée (le filtre et ON de l'effet ne le sont pas d'origine) : le premier message qui lui
 // ressemble et qui n'appartient à aucune autre commande devient son réglage, comme « Apprendre » dans « Ma table »
 function vfApprend(k, type, ch, d1, d2){
-  const btn = MIDI_NOTE.includes(k), fin = d1 >= 32 && d1 < 64;
+  const btn = MIDI_NOTE.includes(k), fin = msgFin(d1);
   const ok = btn ? (type === 0x90 && d2 > 0) || (type === 0xB0 && d2 >= 64 && !fin) : type === 0xB0 && !fin;
   if (!ok || vfConnue(ch, d1)) return false;
   map = Object.assign({}, map, { [k]: btn && type === 0xB0 ? { ch, n: d1, cc: true } : { ch, n: d1 } });
@@ -103,7 +103,7 @@ function verifMidi(type, ch, d1, d2){
       const k = ch + ':' + d1; c.notes[k] = (c.notes[k] || 0) + 1; c.last = { type: 'note', ch, n: d1 };
       if (c.notes[k] >= 2) vfReleve({ type: 'note', ch, n: d1 }); else renderVerif(); return; }
     if (type !== 0xB0) return;
-    if (st.genre === 'cc' && d1 >= 32 && d1 < 64) return;   // second message d'un potard « fin » : on garde le premier
+    if (st.genre === 'cc' && msgFin(d1)) return;   // second message d'un potard « fin » : on garde le premier
     if (!c.last || c.last.ch !== ch || c.last.n !== d1){ c.vals = new Set(); c.nb = 0; }
     c.last = { type: 'cc', ch, n: d1 }; c.vals.add(d2); c.nb++;
     if ((st.genre === 'jog' && c.nb >= 6) || (st.genre === 'cc' && c.vals.size >= 3)) vfReleve({ type: 'cc', ch, n: d1 }); else renderVerif();

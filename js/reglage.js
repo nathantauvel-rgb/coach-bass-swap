@@ -76,7 +76,7 @@ function renderRegState(){
   el.textContent = !st ? '' : !midiCount ? 'Ta table est débranchée : rebranche-la pour continuer.' : reg.wait ? 'Reconnu !' : reg.msg || (MIDI_NOTE.includes(st.k) ? 'J’attends que tu appuies dessus sur ta table…' : 'J’attends que tu le bouges sur ta table…');
 }
 function regSave(){
-  map = cleanMap(reg.got, true); tableCfg = { nom: reg.nom }; for (const k of Object.keys(phys)) delete phys[k];
+  tableGarde(); map = cleanMap(reg.got, true); tableCfg = { nom: reg.nom }; for (const k of Object.keys(phys)) delete phys[k];
   try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); localStorage.setItem('coach-table', JSON.stringify(tableCfg)); } catch (e) {}
   closeReg(); renderPill(); updateSetup();
   if (view === 'table'){ tableNote = 'Ta table est réglée : bouge une commande pour la voir réagir.'; renderTable(); }
@@ -87,13 +87,13 @@ function renderTableBar(){
   const bar = $('tableBar'), e = tableEtat(); bar.hidden = tableLater || reg.active || !['nouvelle', 'flx4', 'connue'].includes(e); if (bar.hidden) return;
   const fi = e === 'connue' ? modeleDe(midiNames.find(modeleDe)) : null;
   $('tbText').textContent = e === 'flx4' ? 'Tu as branché une DDJ-FLX4, mais les réglages sont ceux de ton autre table. On reprend ceux de la FLX4 ?'
-    : fi ? `Tu as branché une ${fi.nom} : DJingo connaît ses réglages. On les prend ? Ceux de ta table réglée à la main seront remplacés.`
+    : fi ? `Tu as branché une ${fi.nom} : DJingo connaît ses réglages. On les prend ?${tableCfg ? ' Ceux de ta table réglée à la main seront remplacés.' : ''}`
     : `Nouvelle table : « ${regName()} ». DJingo ne la connaît pas encore : règle-la en une minute, en bougeant chaque commande quand il te le demande.`;
   $('tbGo').textContent = e === 'flx4' ? 'Reprendre les réglages de la FLX4' : fi ? 'Prendre ses réglages' : 'Régler ma table';
 }
 // Prendre les réglages d'une table qui a sa fiche, à la place de ceux d'une table réglée à la main
-function modeleReprend(){ modeleApply(midiNames.find(modeleDe) || ''); renderPill(); updateSetup(); renderTableBar(); if (view === 'table') renderTable(); }
-$('tbGo').addEventListener('click', () => { const e = tableEtat(); if (e === 'flx4'){ flx4Map(); if (view === 'table') renderTable(); } else if (e === 'connue') modeleReprend(); else openReg(); });
+function modeleReprend(){ modeleApply(midiNames.find(modeleDe) || '', true); renderPill(); updateSetup(); renderTableBar(); if (view === 'table') renderTable(); }
+$('tbGo').addEventListener('click', () => { const e = tableEtat(); if (e === 'flx4'){ flx4Reprend(); if (view === 'table') renderTable(); } else if (e === 'connue') modeleReprend(); else openReg(); });
 $('tbLater').addEventListener('click', () => { tableLater = true; renderTableBar(); });
 $('regSkip').addEventListener('click', () => { if (reg.i < REG_STEPS.length){ delete reg.got[REG_STEPS[reg.i].k]; regGo(reg.i + 1); } });
 $('regBack').addEventListener('click', () => {

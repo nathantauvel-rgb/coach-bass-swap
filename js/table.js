@@ -112,7 +112,7 @@ function tableSeen(key, txt){
 }
 function tableMidi(type, ch, d1, d2, val){
   if (type === 0xB0){ const kb = MIDI_NOTE.find(x => map[x] && map[x].cc && midiSame(map[x], ch, d1)); if (kb){ if (d2 >= 64) tableSeen(kb, 'Appuyée !'); return; }
-    const k = MIDI_CC.find(x => midiSame(map[x], ch, d1)); if (!k && d1 >= 32 && d1 < 64) return;
+    const k = MIDI_CC.find(x => midiSame(map[x], ch, d1)); if (!k && msgFin(d1)) return;
     if (k){ phys[k] = val; tableSeen(k, `Position : ${Math.round(val * 100)} %`); } else { tableNote = `Commande reçue mais pas encore utilisée par le site (potard ou fader, canal ${ch + 1}, numéro ${d1}).`; $('tNote').textContent = tableNote; } }
   else if (type === 0x90 && d2 > 0){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1));
     if (k) tableSeen(k, 'Appuyée !'); else { tableNote = `Commande reçue mais pas encore utilisée par le site (bouton, canal ${ch + 1}, numéro ${d1}).`; $('tNote').textContent = tableNote; } }
