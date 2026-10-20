@@ -160,4 +160,4 @@ function updateSetup(){
   const ready = setupReady();
   btn.disabled = !ready; btn.classList.toggle('ready', ready); btn.textContent = ready ? 'Jouer' : 'Mets ta table en place';
 }
-$('setupSkip').addEventListener('click', () => { mouseMode = true; const l = LESSONS[li]; Object.assign(ctrl, l.init); applyCtrl(); updateSetup(); });
+$('setupSkip').addEventListener('click', () => { mouseMode = true; const l = LESSONS[li]; Object.assign(ctrl, CTRL_NEUTRE, l.init); applyCtrl(); updateSetup(); });

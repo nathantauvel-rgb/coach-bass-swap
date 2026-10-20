@@ -757,6 +757,30 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   peut-être fausse) garde son `modele` (`regSave`), donc ce réglage est gardé dans `coach-tables` et revient après un
   passage par la FLX4.
 - **Lot 38 publié le 20 oct. 2026.**
+- **Lot 39 « La table complète » (= lot A, commencé le 20 oct. 2026)** : branche `lot-39-table-complete`, non publiée.
+  Réponses de l'utilisateur sur la maquette (`captures/maquette-table/`) : pendant une partie, la consigne se replie et
+  seules les commandes du niveau sont allumées ; **4 pads** par platine ; ordre : le son, puis la table à l'écran, puis le
+  branchement sur la FLX4 et les autres tables. **Étape 1, le son (faite)** :
+  - `js/audio.js` : chaque voie est maintenant TRIM → LOW → MID → HI → filtre (coupe-bas / coupe-haut, sur A **et** B) →
+    écoute au casque → fader → crossfader → salle. Nouvelles valeurs de `ctrl` : `hiA/B`, `trimA/B`, `cfxB`, `xfader`,
+    `tempoA/B`, toutes à .5 dans `CTRL_NEUTRE` ; au neutre, le son est identique à avant. **Chaque niveau repart du
+    neutre** : `Object.assign(ctrl, CTRL_NEUTRE, l.init)` partout où on appliquait `l.init`, et `selectLesson` coupe
+    le casque des deux voies. `trimDb` (coupé à gauche, 0 dB à midi, +9 dB à droite), `xfGain` (les deux voies à fond au
+    milieu, sans creux), `cfxFreq`. Casque : `hpBus` (sorties 3-4 d'une table à 4 sorties) reçoit la salle (`hpSalle`)
+    tant qu'aucune voie n'a son CUE casque, sinon seulement les voies au casque, avant leur fader (`deck[k].pfl`).
+    Vumètre : `deck[k].an` (AnalyserNode après le fader, rien ne le lit encore).
+  - `js/platines.js` (nouveau, chargé juste après `audio`) : chaque platine retient une ancre (`ancT`, `ancP`, `rate`),
+    `plPos(k)` donne sa position exacte, boucles comprises (`boucle` du joueur, sinon `secu`, la boucle de sécurité posée
+    par `play`). `play()` et `stop()` passent par là (`plDemarre`), sans rien changer pour les niveaux. Tempo :
+    `plTempoPct` (curseur en haut = plus lent, ±8 % : `PL_TEMPO`), `plVitesse` ; molette `plJog(k, crans)` (en lecture,
+    pousse ou freine selon sa vitesse, `PL_JOG` ; à l'arrêt, déplace) ; `plLecture` (PLAY/pause) ; `plCue(k, appuyé)`
+    comme une table DJ ; `plHotCue(k, n)` (vide : se pose sur le temps le plus proche ; posé : y saute),
+    `plHotCueEfface` ; `plBoucle(k, temps)` et `plSortie(k)` (la boucle de sécurité revient) ; `plCasqueBascule(k)` ;
+    `plDecalage()` = décalage A/B en millisecondes (positif : B en avance), pour le chapitre 5. **Les réglages de la
+    molette (`PL_JOG`) sont à ajuster sur la vraie table.**
+  - Tests : `tests/platines.spec.js` (12 tests ; morceau muet de 60 s posé directement sur une platine).
+  **Étapes suivantes** : 2. la table à l'écran (d'après la maquette) ; 3. le branchement MIDI (FLX4 d'après Mixxx, puis les
+  fiches `plus` de `js/tables.js`) ; puis le chapitre 5 « Le calage ».
 - **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
@@ -785,7 +809,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
-  `audio` → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
+  `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `combos` (chapitre 4) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
   `demarrage` (démarrage et onglets).

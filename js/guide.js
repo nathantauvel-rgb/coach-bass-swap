@@ -84,7 +84,7 @@ function closeOnb(){
   onb.active = false; $('onb').hidden = true; onbStopMusic(); cancelAnimationFrame(onb.raf);
   if (onb.fiche){ for (const k of onb.keys) if (!fichesSeen.includes(k)) fichesSeen.push(k); try { localStorage.setItem('coach-fiches', JSON.stringify(fichesSeen)); } catch (e) {} }
   else { guideSeen = true; try { localStorage.setItem('coach-guide-vu', '1'); } catch (e) {} }
-  Object.assign(ctrl, LESSONS[li].init); applyCtrl(); updateSetup();
+  Object.assign(ctrl, CTRL_NEUTRE, LESSONS[li].init); applyCtrl(); updateSetup();
 }
 // Fin d'une série de fiches : la partie demandée démarre (sauf si on a fermé avec Échap ou la croix)
 function closeFiche(go){ const after = onb.after; closeOnb(); if (go && after) after(); }
