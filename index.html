@@ -65,7 +65,7 @@
     <p class="onb-note" id="onbNote"></p>
     <div class="onb-nav">
       <button type="button" class="skip" id="onbSkip">Passer le guide</button>
-      <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="back" id="onbTest" hidden>Je mixe déjà : test de placement</button><button type="button" class="back" id="onbBack">Retour</button><button type="button" class="go" id="onbNext">Suivant</button></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="back" id="onbBack">Retour</button><button type="button" class="go" id="onbNext">Suivant</button></div>
     </div>
   </div>
 </div>
@@ -200,11 +200,12 @@
           <div class="gtxt"><strong id="goalTitle"></strong><span id="goalSub"></span></div>
         </div>
         <div class="choices" id="homeChoice">
-          <p class="ask">Tu en es où ?</p>
-          <button type="button" class="choice" data-parcours="debut" aria-pressed="false"><strong>Je débute complètement</strong><span>On part de zéro : la table, les phrases, puis tes premières transitions.</span></button>
-          <button type="button" class="choice" data-parcours="deja" aria-pressed="false"><strong>Je sais déjà lancer deux morceaux</strong><span>Un test rapide en 3 épreuves, puis on travaille tes transitions.</span></button>
+          <p class="ask">Ton niveau</p>
+          <button type="button" class="choice" data-parcours="debut" aria-pressed="false"><strong>Grand débutant</strong><span>Je n'ai jamais mixé. On part de zéro : chaque bouton, un par un, puis tes premières transitions.</span></button>
+          <button type="button" class="choice" data-parcours="apprenti" aria-pressed="false"><strong>Apprenti DJ</strong><span>Je sais lancer deux morceaux. Tout est ouvert, en Mode Expert : chaque geste noté à la milliseconde.</span></button>
+          <button type="button" class="choice" data-parcours="confirme" aria-pressed="false"><strong>DJ confirmé</strong><span>Je mixe déjà. On attaque direct le calage sans SYNC, puis les combos sans filet.</span></button>
         </div>
-        <p class="need" id="homeNeed">Il te faut une table DJ branchée en USB (le site reconnaît tout seul la Pioneer DDJ-FLX4 et une douzaine d'autres tables de débutant ; les autres se règlent en une minute), et Chrome ou Edge. Pas encore de table ? Tu peux essayer à la souris.</p>
+        <p class="need" id="homeNeed">Il te faut une table DJ branchée en USB (le site reconnaît tout seul une quinzaine de tables de débutant, de Pioneer, Hercules, Numark, Roland et Reloop ; les autres se règlent en une minute), et Chrome ou Edge. Pas encore de table ? Tu peux essayer à la souris.</p>
       </div>
       <div class="buddy hbuddy"><p class="bubble" id="homeTip" aria-live="polite">Un geste à la fois, et ça vient vite !</p><button type="button" class="hvini" id="homeViniBtn" aria-label="Faire sauter Vini"><span id="homeVini"></span></button></div>
     </section>
@@ -287,7 +288,7 @@
 
   <div class="view" id="vTable" hidden>
     <section class="page">
-      <span class="lnum" id="tKick">Ta DDJ-FLX4</span>
+      <span class="lnum" id="tKick">Ta table</span>
       <h1>Ma table</h1>
       <p class="lead">À quoi sert chaque commande, et lesquelles tu utilises dans les niveaux.</p>
       <p class="subnote" id="tState"></p>

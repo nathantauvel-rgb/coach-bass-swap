@@ -2,7 +2,7 @@
 // Usage : node tests/images-presentation.js     (le serveur de test est lancé tout seul)
 // À relancer quand l'écran d'un niveau, l'accueil ou « Passer au vrai » change.
 const { chromium } = require('@playwright/test'), path = require('path'), fs = require('fs'), { spawn } = require('child_process');
-const OUT = path.join(__dirname, '..', 'img'), BASE = 'http://localhost:8766', S = o => JSON.stringify(o);
+const OUT = path.join(__dirname, '..', 'img'), BASE = `http://localhost:${process.env.DJ_PORT || 8766}`, S = o => JSON.stringify(o);
 const jour = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const VENU = { 'coach-guide-vu': '1', 'coach-fiches': S(['play', 'fader', 'low', 'cfx', 'echo', 'mid']), 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 3, 2: 2 }), 'coach-ordre': '2', 'coach-badges': S(['pas', 'timing']),
   'coach-objectif': S({ min: 10, jours: { [jour()]: 420 }, faits: [], best: 0 }),

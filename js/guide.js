@@ -28,10 +28,10 @@ fichesSeen = Array.isArray(fichesSeen) ? Object.keys(FICHES).filter(k => fichesS
 function fichesOf(l){ const f = [];
   if (!l.autoLaunch) f.push('play'); if (l.user.some(k => k.startsWith('fader'))) f.push('fader'); if (l.user.some(k => k.startsWith('low'))) f.push('low');
   if (l.user.includes('cfxA')) f.push('cfx'); if (l.btn.includes('echo')) f.push('echo'); if (l.user.includes('midA')) f.push('mid'); return f; }
-// Avant de jouer : les fiches pas encore vues de ce niveau, puis la partie. Jamais dans le parcours « Je sais déjà »,
+// Avant de jouer : les fiches pas encore vues de ce niveau, puis la partie. Jamais pour un Apprenti DJ ou un DJ confirmé (lot 37),
 // ni pendant l'entraînement ou le test de placement.
 function withFiches(go){
-  const keys = parcours === 'deja' || prac || placement || run ? [] : fichesOf(LESSONS[li]).filter(k => !fichesSeen.includes(k));
+  const keys = parcoursAvance(parcours) || prac || placement || run ? [] : fichesOf(LESSONS[li]).filter(k => !fichesSeen.includes(k));
   if (!keys.length) return go();
   openOnb(keys.map(k => FICHES[k]), { fiche: true, keys, after: go });
 }
@@ -126,7 +126,7 @@ function renderOnb(){
   $('onbTitle').textContent = st.title; $('onbText').textContent = st.text;
   if (st.k && st.k !== 'playB' && st.k !== 'fxOn') onb.base[st.k] = ctrl[st.k];
   $('onbSvg').style.display = st.hl ? '' : 'none'; onbHighlight(st.hl); onbSchemaSync();
-  $('onbBack').hidden = onb.i === 0; $('onbTest').hidden = onb.fiche || !last || ch2Unlocked();
+  $('onbBack').hidden = onb.i === 0;
   $('onbSkip').textContent = onb.fiche ? 'Je connais, passer' : 'Passer le guide';
   $('onbNext').textContent = st.cta || (!last ? 'Suivant' : onb.fiche ? (onb.after ? 'Compris, on joue' : 'Compris') : 'Terminer');
   const pot = st.k && st.k !== 'playB' && st.k !== 'fxOn';
@@ -147,7 +147,6 @@ $('onbNext').addEventListener('click', () => {
 });
 $('onbBack').addEventListener('click', () => { if (onb.i > 0){ onb.i--; renderOnb(); } });
 $('onbSkip').addEventListener('click', () => { if (onb.fiche) closeFiche(true); else closeOnb(); });
-$('onbTest').addEventListener('click', () => { closeOnb(); startPlacement(); });
 $('guideBtn').addEventListener('click', () => { if (!run) openOnb(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && onb.active){ if (onb.fiche) closeFiche(false); else closeOnb(); } });
 

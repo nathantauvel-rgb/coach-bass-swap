@@ -1,4 +1,4 @@
-// Petit serveur de fichiers pour les tests : sert la racine du dépôt sur http://localhost:8766
+// Petit serveur de fichiers pour les tests : sert la racine du dépôt sur http://localhost:8766 (ou sur le port DJ_PORT)
 const http = require('http'), fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..');
 // Le SVG n'est pas deviné par le navigateur comme le JPEG : sans son type, une image SVG ne s'affiche pas du tout.
@@ -13,4 +13,4 @@ http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': TYPES[path.extname(file)] || 'application/octet-stream' });
     res.end(req.method === 'HEAD' ? undefined : data);
   });
-}).listen(8766);
+}).listen(+process.env.DJ_PORT || 8766);

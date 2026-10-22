@@ -161,9 +161,6 @@ function renderChapters(){
     b.innerHTML = `<span class="cn">Chapitre ${c.n}</span><strong></strong><span class="cs"></span>`; b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = sub;
     b.addEventListener('click', () => { chapMenu(false); setChapter(c.n); }); bar.appendChild(b);
   }
-  if (!ch2Unlocked() && parcours !== 'debut'){ const t = document.createElement('button'); t.type = 'button'; t.className = 'chap test';
-    t.innerHTML = '<span class="cn">Tu mixes déjà ?</span><strong>Test de placement</strong><span class="cs">3 épreuves pour sauter les bases</span>';
-    t.addEventListener('click', () => { chapMenu(false); startPlacement(); }); bar.appendChild(t); }
 }
 // La liste des chapitres s'ouvre sous le bouton « Chapitre N · titre »
 function chapMenu(open){ $('chapters').hidden = !open; $('chapBtn').setAttribute('aria-expanded', String(open)); }
