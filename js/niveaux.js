@@ -138,7 +138,11 @@ const sumStars = b => Object.values(b || {}).reduce((s, v) => s + (+v || 0), 0);
 // ch2Open / ch3Open, qui disent ce que le joueur a vraiment débloqué (badge « Les bases », étapes du parcours).
 // Il est lu ici, au chargement, parce que les lignes juste en dessous vérifient le chapitre enregistré avant que parcours.js
 // soit chargé (sinon un Apprenti DJ revenait au chapitre 1 à chaque rechargement). 'deja' = l'ancien nom de l'Apprenti DJ.
-let parcoursOuvert = false; try { parcoursOuvert = ['apprenti', 'confirme', 'deja'].includes(localStorage.getItem('coach-parcours')); } catch (e) {}
+// Un ancien joueur sans parcours enregistré est rangé par parcours.js : Apprenti DJ s'il avait réussi l'ancien test de
+// placement (chapitre 2 ouvert sans les 14 étoiles). La règle est ici, pour être lue au chargement elle aussi (gardien du lot 37).
+const parcoursDevineApprenti = () => ch2Open && sumStars(stars) < 14;
+let parcoursOuvert = false; try { const p = localStorage.getItem('coach-parcours');
+  parcoursOuvert = ['apprenti', 'confirme', 'deja'].includes(p) || (!['debut', 'apprenti', 'confirme', 'deja'].includes(p) && parcoursDevineApprenti()); } catch (e) {}
 const ch2Unlocked = () => ch2Open || parcoursOuvert || sumStars(stars) >= 14;
 const ch3Unlocked = () => ch3Open || parcoursOuvert || sumStars(ch2Stars) >= 10;
 const ch4Unlocked = () => ch2Unlocked();   // les combos s'ouvrent en même temps que le chapitre 2

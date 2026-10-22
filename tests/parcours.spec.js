@@ -83,6 +83,13 @@ test.describe('Parcours avancés : rien de gagné sans jouer', () => {
     await expect(page.locator('#lnum')).toHaveText(new RegExp(`^Chapitre ${ch} `));
     expect(erreurs).toEqual([]);
   });
+  // Gardien du lot 37 (troisième passage) : un ancien joueur qui avait réussi le test de placement, sans parcours enregistré
+  test('parcours deviné (ancien test de placement réussi) : après un rechargement, on reste au chapitre 3', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: { 'coach-ch2-ouvert': '1', 'coach-test': 'ok', 'coach-chapitre': '3' } });
+    expect(await page.evaluate(() => [parcours, chapter])).toEqual(['apprenti', 3]);
+    await expect(page.locator('#lnum')).toHaveText(/^Chapitre 3 /);
+    expect(erreurs).toEqual([]);
+  });
   test("apprenti : « La maîtrise » n'est pas faite tant que le chapitre 2 n'est pas joué", async ({ page }) => {
     await accueil(page, { 'coach-parcours': 'apprenti' });
     const e = await etapes(page);
