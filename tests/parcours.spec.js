@@ -90,6 +90,10 @@ test.describe('Parcours avancés : rien de gagné sans jouer', () => {
     await expect(page.locator('#lnum')).toHaveText(/^Chapitre 3 /);
     expect(erreurs).toEqual([]);
   });
+  test('parcours deviné : il reste Apprenti DJ après sa 14e étoile au chapitre 1 (rien ne change sans son choix)', async ({ page }) => {
+    await ouvrir(page, { stockage: { 'coach-ch2-ouvert': '1', 'coach-test': 'ok', 'coach-chapitre': '3', 'coach-lecons': JSON.stringify({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 2 }) } });
+    expect(await page.evaluate(() => [parcours, chapter, ch3Unlocked()])).toEqual(['apprenti', 3, true]);
+  });
   test("apprenti : « La maîtrise » n'est pas faite tant que le chapitre 2 n'est pas joué", async ({ page }) => {
     await accueil(page, { 'coach-parcours': 'apprenti' });
     const e = await etapes(page);

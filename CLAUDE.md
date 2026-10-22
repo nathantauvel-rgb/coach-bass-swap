@@ -1039,6 +1039,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   trop tard pour niveaux.js, et revenait au chapitre 1 (chapitre 3 seulement). La règle qui devine est maintenant une seule
   fonction, `parcoursDevineApprenti` (niveaux.js), lue au chargement et par parcours.js. Test « parcours deviné : après un
   rechargement, on reste au chapitre 3 » (il échoue sur l'ancien code, vérifié).
+  Quatrième passage : **feu orange**, 431 tests verts, aucun blocage. Corrigé quand même : la règle devinait « chapitre 2
+  ouvert **et moins de 14 étoiles** », recalculée à chaque chargement, donc le joueur redevenait Grand débutant à sa 14e
+  étoile. Elle ne lit plus que `coach-ch2-ouvert` (écrit seulement par l'ancien test réussi) : un ancien joueur qui a réussi
+  le test et n'a jamais choisi de parcours est Apprenti DJ, quel que soit son nombre d'étoiles (avant le lot 37, avec 14
+  étoiles ou plus, il était rangé Grand débutant). Test « il reste Apprenti DJ après sa 14e étoile ». Laissé pour un
+  nettoyage : `coach-parcours` valant « constructor », « __proto__ » ou « toString » fait planter l'accueil (défaut ancien,
+  depuis le lot 3, seulement si on modifie la valeur exprès).
   Contenu : `PP_ETAPES` = salut, niveau, table, objectif ; `PP_NIVEAUX` = `debut` / `apprenti` / `confirme` (= parcours) ;
   écran de table : `ppBranchee()` reconnaît la table branchée (appelé par `initMidi` via `ppMidi`), sinon « J'ai une table »
   + liste par marque `#ppModele` (`PP_LISTE`), ou « Pas encore de table » ; `coach-accueil` = `{ niveau, table, modele, min,
@@ -1047,7 +1054,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `parcoursAvance()`, `parcoursOuvre()` (ouvre ch2 et ch3 sans rien enregistrer) ; ancien `deja` → `apprenti`. Fiches et
   guide jamais imposés aux deux parcours avancés. Test de placement : plus aucun point d'entrée (`js/placement.js` reste
   chargé mais inerte ; à supprimer dans un nettoyage à part). Textes : accueil, présentation (« Trois parcours »), testeurs,
-  README. **Reste** : accord de l'utilisateur sur les captures, gardien, puis push.
+  README. **Publié le 22 oct. 2026** avec l'accord de l'utilisateur (captures validées, « publie le lot 37 si les tests
+  passent ») : 432 tests verts, gardien orange au quatrième passage. Le chapitre 6 est publié juste après, fusionné dessus.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
