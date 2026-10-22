@@ -151,11 +151,11 @@ test.describe('La première connexion', () => {
   });
 
   test('navigateur neuf : la progression du compte revient, après rechargement', async ({ page }) => {
-    const err = await ouvrir(page, { avant: FAUX + dansLaBase('u1', { 'coach-lecons': '{"0":3,"1":3,"2":3}', 'coach-parcours': 'deja', 'coach-badges': '["a","b"]' }) });
+    const err = await ouvrir(page, { avant: FAUX + dansLaBase('u1', { 'coach-lecons': '{"0":3,"1":3,"2":3}', 'coach-parcours': 'apprenti', 'coach-badges': '["a","b"]' }) });
     await seConnecter(page);
     // Le site recharge la page : on attend que la progression soit là
     await expect.poll(() => page.evaluate(() => localStorage.getItem('coach-lecons')), { timeout: 15000 }).toBe('{"0":3,"1":3,"2":3}');
-    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('deja');
+    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('apprenti');
     await expect(page.locator('#cptBtn')).toHaveText('Nathan');
     expect(err).toEqual([]);
   });
