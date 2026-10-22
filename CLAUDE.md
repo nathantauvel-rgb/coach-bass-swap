@@ -982,6 +982,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   chargement, avant parcours.js**, donc un Apprenti DJ revenait au chapitre 1 à chaque rechargement. `parcoursOuvert` est
   maintenant lu dans `coach-parcours` dès niveaux.js (piège : tout ce que niveaux.js vérifie au chargement ne connaît pas
   encore le parcours). Test « après un rechargement, on reste au chapitre N ». Captures : `captures/lot37/` (dossier principal).
+  Troisième passage (22 oct. au soir, 430 tests verts) : feu rouge pour le même défaut dans un cas plus étroit, un ancien
+  joueur **sans parcours enregistré** qui avait réussi l'ancien test de placement est deviné Apprenti DJ par parcours.js,
+  trop tard pour niveaux.js, et revenait au chapitre 1 (chapitre 3 seulement). La règle qui devine est maintenant une seule
+  fonction, `parcoursDevineApprenti` (niveaux.js), lue au chargement et par parcours.js. Test « parcours deviné : après un
+  rechargement, on reste au chapitre 3 » (il échoue sur l'ancien code, vérifié).
   Contenu : `PP_ETAPES` = salut, niveau, table, objectif ; `PP_NIVEAUX` = `debut` / `apprenti` / `confirme` (= parcours) ;
   écran de table : `ppBranchee()` reconnaît la table branchée (appelé par `initMidi` via `ppMidi`), sinon « J'ai une table »
   + liste par marque `#ppModele` (`PP_LISTE`), ou « Pas encore de table » ; `coach-accueil` = `{ niveau, table, modele, min,
@@ -1011,7 +1016,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
-  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
+  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
   `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
@@ -1032,10 +1037,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   Apprendre, plus au chargement. Les tests ouvrent `index.html#apprendre`.
 - **Parcours** (`js/parcours.js`) : `PARCOURS` (ordre des étapes de chaque parcours), `STAGES` (pour
   chaque étape : `done()` calculé depuis la progression existante, `cta()`, `go()`), `nextStage()`,
-  `renderHome()`. Seuls le choix (`coach-parcours` : `debut` ou `deja`) et le résultat du test
-  (`coach-test` : `ok` ou `ko:N`, N = premier niveau raté) sont enregistrés. Sans choix enregistré, un
-  utilisateur qui a déjà une progression est rangé d'office dans un parcours, sans question. Dans le
-  parcours `deja`, le guide ne s'ouvre pas tout seul (`setView`).
+  `renderHome()`. Seul le choix est enregistré (`coach-parcours` : `debut`, `apprenti` ou `confirme` depuis le lot 37 ;
+  l'ancien `deja` est relu comme `apprenti`) ; `coach-test` (ancien test de placement, `ok` ou `ko:N`) n'est plus écrit
+  mais reste relu. Sans choix enregistré, un utilisateur qui a déjà une progression est rangé d'office dans un parcours,
+  sans question : Apprenti DJ s'il avait réussi l'ancien test (`parcoursDevineApprenti`, dans niveaux.js), sinon Grand
+  débutant. Dans les parcours `apprenti` et `confirme`, le guide et les fiches ne s'ouvrent pas tout seuls.
 - **Quiz et badges** (`js/quiz.js`) : `QUIZ` (une question = identifiant, niveau `b0`-`b6` / `c0`-`c3` / `g`,
   question, 3 réponses dont la première est la bonne, explication ; ne jamais changer un identifiant),
   `quizBonus()` (question du niveau affiché), `quizFlash()` (5 questions sur les niveaux joués),

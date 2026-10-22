@@ -26,7 +26,8 @@ let testDone = ''; try { testDone = localStorage.getItem('coach-test') || ''; } 
 if (!/^(ok|ko:[0-6])$/.test(testDone)) testDone = '';
 const testFail = () => testDone.startsWith('ko:') ? +testDone.slice(3) : 0;
 // Quelqu'un qui a déjà une progression n'a pas à choisir : on déduit son parcours
-if (!parcours && (guideSeen || ch2Open || sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars) > 0)) parcours = ch2Open && sumStars(stars) < 14 ? 'apprenti' : 'debut';
+// (parcoursDevineApprenti est dans niveaux.js, qui en a besoin dès le chargement)
+if (!parcours && (guideSeen || ch2Open || sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars) > 0)) parcours = parcoursDevineApprenti() ? 'apprenti' : 'debut';
 // Apprenti DJ et DJ confirmé : tous les chapitres sont ouverts (sans rien enregistrer : c'est le parcours qui les ouvre).
 // Surtout pas ch2Open : il donne le badge « Les bases », qui ferait croire au compte qu'il y a une progression (lot 34).
 const parcoursOuvre = () => { parcoursOuvert = parcoursAvance(parcours); };
