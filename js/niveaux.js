@@ -135,8 +135,10 @@ const sumStars = b => Object.values(b || {}).reduce((s, v) => s + (+v || 0), 0);
 // Il est lu ici, au chargement, parce que les lignes juste en dessous vérifient le chapitre enregistré avant que parcours.js
 // soit chargé (sinon un Apprenti DJ revenait au chapitre 1 à chaque rechargement). 'deja' = l'ancien nom de l'Apprenti DJ.
 // Un ancien joueur sans parcours enregistré est rangé par parcours.js : Apprenti DJ s'il avait réussi l'ancien test de
-// placement (chapitre 2 ouvert sans les 14 étoiles). La règle est ici, pour être lue au chargement elle aussi (gardien du lot 37).
-const parcoursDevineApprenti = () => ch2Open && sumStars(stars) < 14;
+// placement. La règle est ici, pour être lue au chargement elle aussi (gardien du lot 37). Elle ne lit que coach-ch2-ouvert,
+// écrit seulement par ce test réussi, donc stable : avec « et moins de 14 étoiles », le joueur redevenait Grand débutant
+// le jour de sa 14e étoile, sans rien avoir choisi (gardien, quatrième passage).
+const parcoursDevineApprenti = () => ch2Open;
 let parcoursOuvert = false; try { const p = localStorage.getItem('coach-parcours');
   parcoursOuvert = ['apprenti', 'confirme', 'deja'].includes(p) || (!['debut', 'apprenti', 'confirme', 'deja'].includes(p) && parcoursDevineApprenti()); } catch (e) {}
 const ch2Unlocked = () => ch2Open || parcoursOuvert || sumStars(stars) >= 14;
