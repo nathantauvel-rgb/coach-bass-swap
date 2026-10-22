@@ -68,7 +68,11 @@ const LEX = [["intro", "Intro", "le début d'un morceau, plus léger, fait pour 
   ["break", "Break", "une pause au milieu du morceau : la musique se vide, puis repart de plus belle"],
   ["phrase", "Phrase", "32 temps, soit 8 mesures de 4 temps : la musique change au début de chaque phrase"],
   ["swap", "Swap", "l'échange des basses entre les deux morceaux"],
-  ["écho", "Écho", "un effet qui répète le son en le laissant s'éteindre"]];
+  ["écho", "Écho", "un effet qui répète le son en le laissant s'éteindre"],
+  // chapitre 6 (lot 41)
+  ["hot cue", "Hot cue", "un repère gardé sur un pad : un premier appui le pose, les suivants font repartir le morceau de là (même s'il était arrêté). Pour l'effacer : SHIFT + pad sur la table, clic droit à l'écran"],
+  ["boucle", "Boucle", "un passage de 4, 8 ou 16 temps qui se répète tant qu'on n'en sort pas (EXIT)"],
+  ["quantize", "Quantize", "un réglage qui range les repères et les boucles sur le temps le plus proche, même si l'appui tombe un peu à côté"]];
 const lexOf = t => LEX.filter(([w]) => new RegExp('(^|[^\\p{L}])' + w, 'iu').test(t));
 let lastPopAt = 0, lastAct = '';
 // Une commande peut avoir plusieurs morceaux (LOW de A et de B) : on les retrouve par data-g
@@ -194,8 +198,9 @@ function renderHud(){
 }
 function styleLabel(){ if (chapter === 3) return 'House · 124 BPM'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
   return styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM'; }
-// Précision demandée, en temps : 1 au chapitre 1, 0,5 aux chapitres 2 et 4, 0,25 en Mode Expert
-const tolOf = () => expertOn() ? .25 : chapter === 2 || chapter === 4 ? .5 : 1;
+// Précision demandée, en temps : 1 au chapitre 1, 0,5 aux chapitres 2 et 4, 0,25 en Mode Expert et au chapitre 6 (noté en ms :
+// avec 1 temps de marge, un swap 265 ms en retard s'affichait « SWAP PARFAIT ! » au double drop, gardien du lot 41)
+const tolOf = () => expertOn() || chapter === 6 ? .25 : chapter === 2 || chapter === 4 ? .5 : 1;
 function selectLesson(i){
   // Changement de chapitre : l'ancien numéro de niveau peut ne pas exister dans le nouveau (le chapitre 4 n'a que 4 niveaux)
   if (!LESSONS[li]) li = 0;
@@ -205,7 +210,7 @@ function selectLesson(i){
   // La table complète reste affichée : les commandes dont le niveau ne se sert pas sont éteintes et inertes (lot 39)
   tableAllume(l.show);
   for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k));
-  Object.assign(ctrl, CTRL_NEUTRE, l.init); applyCtrl(); casque.A = casque.B = false; plCasque(); tableDepart();
+  Object.assign(ctrl, CTRL_NEUTRE, l.init); applyCtrl(); casque.A = casque.B = false; plCasque(); tableDepart(); if (l.hc) hcModes(l);
   $('result').hidden = true; setStartBtn(false); $('launchB').disabled = true;
   $('cdNum').textContent = '—'; $('cdLab').textContent = ''; $('ring').classList.remove('hot'); $('progFill').style.width = '0';
   $('stage').classList.toggle('sansbpm', !!(l.cal && !l.cal.bpm)); $('calQuiz').hidden = true; $('calBar').hidden = true;
@@ -241,7 +246,7 @@ function startRun(demo = false){
     let songA = null, songB = null;
     // chapitre 5 : B a son propre tempo, tiré au départ de chaque partie
     const bpmB = lw.cal ? calChoisitBpm(lw) : 0, vB = lw.cal ? bpmB / STYLE_DEFS[sel.sty].bpm : speed;
-    try { if (lw.wave) tkW = await prepareCh3(lw).catch(() => prepareCh3(lw)); else { styW = sel.sty; vrW = sel.vr; const aD = !!(lw.hc && lw.hc.aDrop); [songA, songB] = await Promise.all([songSafe(styW, vrW, aD ? 'B1' : 'A', speed), songSafe(styW, aD ? (vrW + 1) % VARIANTS : vrW, lw.bBass ? 'B1' : 'B0', vB)]); } }
+    try { if (lw.wave) tkW = await prepareCh3(lw).catch(() => prepareCh3(lw)); else { styW = sel.sty; vrW = sel.vr; const aD = !!(lw.hc && lw.hc.aDrop); [songA, songB] = await Promise.all([songSafe(styW, vrW, aD ? 'B1' : 'A', speed), songSafe(styW, hcVarB(lw, vrW), lw.bBass ? 'B1' : 'B0', vB)]); } }
     finally { preparing = false; $('watchBtn').disabled = false; }
     if (li !== myLi || chapter !== myCh || run){ setStartBtn(false); return; }
     if (lw.wave){ const tk = tkW; waveTk = tk; tk.bufA = tk.bufA || bufferOf(tk.A); tk.bufB = tk.bufB || bufferOf(tk.B); tracks = { A: tk.bufA, B0: tk.bufB, B1: tk.bufB }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; $('styleTag').textContent = styleLabel(); }
@@ -263,7 +268,7 @@ function startRun(demo = false){
     if (l.cal) calDepart(demo); else if (l.hc) hcDepart(demo); else if (l.autoLaunch || demo) launchAt(l.launchBeat);
     $('stage').classList.toggle('demo', demo); $('demoTag').hidden = !demo; $('watchBtn').disabled = true;
     $('result').hidden = true; setStartBtn(true); $('setup').hidden = true; $('plan').hidden = true; $('startBtn').disabled = false; $('startBtn').classList.remove('ready'); $('launchB').disabled = !!l.autoLaunch; $('startBtn').blur();
-    $('hint').textContent = demo ? 'Démonstration : regarde les contrôles bouger et écoute le résultat.' : l.btn.includes('echo') ? 'Astuce : la touche E active aussi l\'écho.' : !l.autoLaunch ? 'Astuce : la barre d\'espace lance aussi B.' : '';
+    $('hint').textContent = demo ? 'Démonstration : regarde les contrôles bouger et écoute le résultat.' : l.hc ? 'Astuce : sur ta table, choisis le bon mode des pads (HOT CUE ou BEAT LOOP).' : l.btn.includes('echo') ? 'Astuce : la touche E active aussi l\'écho.' : !l.autoLaunch ? 'Astuce : la barre d\'espace lance aussi B.' : '';
     if (demo) for (const w of ['wLowA', 'wLowB', 'wFadA', 'wFadB', 'wCfxA', 'wMidA']) $(w).classList.add('auto');
     $('echoBtn').disabled = demo || !l.btn.includes('echo');
   }, 30);
@@ -284,6 +289,8 @@ function judgeLaunch(k){
 }
 function launchB(){
   if (!run || run.launch !== null || LESSONS[li].autoLaunch) return;
+  // chapitre 6 : B part de son hot cue, avec le pad (la barre d'espace ou PLAY le lanceraient sans passer par le repère)
+  if (LESSONS[li].hc){ say('Ici, B part de son hot cue : appuie sur le pad 1 de B.'); return; }
   if (LESSONS[li].cal){ calLanceLibre(); return; }
   if (run.expert){ launchExpert(); return; }
   const b = beatNow(), k = Math.round(b);
@@ -399,7 +406,8 @@ function frame(){
   automate(b); if (run.demo) demoCaptions(b); else liveJudge(hb);
   run.frames.push(snapFrame(hb));
   // chapitre 5 : sa propre consigne, son compteur, pas de compte à rebours
-  if (LESSONS[li].hc){ hcFrame(b); const rg = $('ring'); $('cdNum').textContent = '♪'; $('cdLab').textContent = ''; rg.classList.remove('hot'); setFocus(LESSONS[li].show);
+  // chapitre 6 : sa consigne et son compte à rebours sont dans hcFrame (hotcues.js)
+  if (LESSONS[li].hc){ hcFrame(b); setFocus(LESSONS[li].show);
     $('progFill').style.width = clamp01((b - START) / (END - START)) * 100 + '%'; drawHighway(b); if (b >= END) finish();
     if (run && !LESSONS[li].autoLaunch && run.launch === null && b > LESSONS[li].launchBeat + 40) finish(); return; }
   if (LESSONS[li].cal){ calFrame(b); const rg = $('ring'); $('cdNum').textContent = '♪'; $('cdLab').textContent = ''; rg.classList.remove('hot'); setFocus(LESSONS[li].show);

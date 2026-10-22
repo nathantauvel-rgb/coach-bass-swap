@@ -19,8 +19,9 @@ function heardTime(){
   return ac.currentTime - (ac.outputLatency || ac.baseLatency || 0);
 }
 const heardBeat = () => (heardTime() - run.t0) / P + START;
-// En Expert, chaque geste est noté à l'instant même où il arrive (table ou souris), pas seulement à l'image suivante de l'écran
-function gestureMark(){ if (run && run.expert && !run.demo) run.frames.push(snapFrame(heardBeat())); }
+// En Expert (et au chapitre 6, noté en millisecondes), chaque geste est noté à l'instant même où il arrive (table ou souris),
+// pas seulement à l'image suivante de l'écran
+function gestureMark(){ if (run && (run.expert || LESSONS[li].hc) && !run.demo) run.frames.push(snapFrame(heardBeat())); }
 // Lancer B sans calage : il part du début de son intro à l'instant précis (entendu) de l'appui
 function launchExpert(){
   const l = LESSONS[li], T = ac.currentTime, h = heardTime(), b = (h - run.t0) / P + START;

@@ -88,7 +88,9 @@ function chooseSongs(){
 // leçons : pas sur l'accueil (setView la prépare en arrivant dans Apprendre).
 function warmSongs(){
   const l = LESSONS[li], s0 = sel; if (l.wave || (s0.sty === 'vrai' && $('vLearn').hidden)) return;
-  const go = () => { if (!hasWorkers() && s0.sty !== 'vrai') return; getSong(s0.sty, s0.vr, 'A').catch(() => {}); getSong(s0.sty, s0.vr, l.bBass ? 'B1' : 'B0').catch(() => {}); };
+  // chapitre 6, double drop : A joue un morceau qui a un drop, et B une autre version aux mêmes accords (hcVarB)
+  const aD = !!(l.hc && l.hc.aDrop);
+  const go = () => { if (!hasWorkers() && s0.sty !== 'vrai') return; getSong(s0.sty, s0.vr, aD ? 'B1' : 'A').catch(() => {}); getSong(s0.sty, hcVarB(l, s0.vr), l.bBass ? 'B1' : 'B0').catch(() => {}); };
   if (warm) warm.then(go); else go();
 }
 function applyCtrl(){

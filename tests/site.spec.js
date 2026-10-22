@@ -161,7 +161,7 @@ test.describe('Progression et déblocages', () => {
     await expect(page.locator('.chap').nth(1)).toBeEnabled();
     await expect(page.locator('.chap').nth(2)).toBeDisabled();
     await expect(page.locator('#xpTxt')).toHaveText('140 XP');
-    await expect(page.locator('#starTot')).toHaveText('14/87');
+    await expect(page.locator('#starTot')).toHaveText('14/108');
   });
   test('13 étoiles ne suffisent pas', async ({ page }) => {
     await ouvrir(page, { stockage: { 'coach-lecons': JSON.stringify({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 1 }) } });

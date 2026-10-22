@@ -18,7 +18,7 @@ test.describe('Ouverture du chapitre 4', () => {
   test('verrouillé au début, ouvert avec 14 étoiles au chapitre 1, comme le chapitre 2', async ({ page }) => {
     await ouvrir(page);
     await page.locator('#chapBtn').click();
-    await expect(page.locator('.chap')).toHaveCount(5);
+    await expect(page.locator('.chap')).toHaveCount(6);
     await expect(page.locator('.chap').nth(3)).toBeDisabled();
     await expect(page.locator('.chap').nth(3)).toContainText('Verrouillé : 0/14 ★ au chapitre 1');
   });
@@ -28,7 +28,7 @@ test.describe('Ouverture du chapitre 4', () => {
     await expect(page.locator('.node')).toHaveCount(4);
     await expect(page.locator('.node .t')).toHaveText(['Filtre et swap', 'La transition éclair', 'Écho et drop, sans filet', 'Le grand mix']);
     expect(await page.evaluate(() => TOL)).toBe(.5);
-    await expect(page.locator('#starTot')).toHaveText('14/87');
+    await expect(page.locator('#starTot')).toHaveText('14/108');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('un chapitre 4 mémorisé mais verrouillé ramène au chapitre 1', async ({ page }) => {

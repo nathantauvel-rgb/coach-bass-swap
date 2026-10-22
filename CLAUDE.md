@@ -37,9 +37,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   maquettes et vidéos de `marketing/`. **Trois identifiants techniques gardent l'ancien nom et ne doivent jamais être
   renommés** : `djingo-1e1f4` (projet Firebase : le renommer couperait tous les comptes), `window.DJINGO_FIREBASE` et
   `__djingo-compte-repris`. Restent inchangés aussi, comme au lot 21 : les clés `coach-*`, le dépôt, l'adresse
-  https://coach-bass-swap.vercel.app, et les noms de fichiers `marketing/video/djingo*.html`. **État au 22 oct. :
-  le renommage n'est PAS publié**, il est en local sur la branche `lot-41-hotcues` (qui porte aussi le chapitre 6
-  inachevé). `npm test` : **421 verts** une fois le chapitre 6 masqué (voir le lot 41 ci-dessous).
+  https://coach-bass-swap.vercel.app, et les noms de fichiers `marketing/video/djingo*.html`. **Le renommage est
+  publié** (commit `6926ee5`, 22 oct. 2026, voir juste en dessous), avec le chapitre 6 masqué à ce moment-là.
    **Domaine `djingood.fr`
   acheté chez OVH le 22 oct. 2026** (dit par l'utilisateur ; c'est l'adresse écrite à la fin de la vidéo POV).
   **Le domaine marche, vérifié le 22 oct. 2026 au soir** : `djingood.fr` ET `www.djingood.fr` servent le site en
@@ -61,6 +60,23 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `COMPTE-FIREBASE.md` (étape 3) et `marketing/message-testeurs.md` (hors Git). Les images de `img/` sont
   des morceaux d'écran sans l'en-tête : aucun nom dedans (refaites quand même). **Pas encore fait** : vérifier les marques
   (INPI, EUIPO) avant d'acheter un domaine, et refaire les MP4 de `marketing/video/sortie/`, qui montrent l'ancien nom.
+- **PUBLIÉ le 22 oct. 2026 (commit `6926ee5`), avec l'accord de l'utilisateur** : le nouveau nom **DJingood**,
+  l'habillage (vinyles, barre d'onglets, « Jouer » orange) et le code du chapitre 6 **masqué**. 421 tests verts.
+  **Gardien : feu rouge au premier passage**, et il avait raison : le chapitre 6 restait visible à trois endroits
+  (deux dans « Mes progrès », un sur la carte de fin, qui promettait un chapitre introuvable). Corrigé, puis feu vert.
+  Production vérifiée : titre « DJingood », `CH6_PRET = false` bien servi, le « DJ » violet en place, aucune erreur.
+  **Pas commités, volontairement** : `.gitignore` (modifié en local) et `marketing/` (366 Mo, non ignoré par Git :
+  **ne jamais faire `git add .`**, ajouter les fichiers un par un).
+  **Reste à faire après cette mise en ligne** : la checklist `tests/CHECKLIST-FLX4.md` sur la vraie table (le lot
+  touche `midi.js`, `audio.js`, `commandes.js`, `platines.js`, `niveaux.js`, `piste.js`), et refaire la vidéo POV
+  si on veut qu'elle montre la nouvelle interface.
+- **Chapitre 6 « Hot cues et boucles » FINI le 22 oct. 2026 au soir, sur la branche `lot-41-hotcues`, PAS PUBLIÉ** :
+  `CH6_PRET = true`, une douzaine de défauts corrigés, 29 tests dans `tests/hotcues.spec.js` (détail dans l'entrée
+  « Lot 41 repris et fini » plus bas). Gardien : feu orange, ses remarques corrigées. **Ordre de publication : le lot 37
+  d'abord** (choix de l'utilisateur, branche `lot-37-parcours-adapte` dans la copie `Documents\coach-dj-lot37`), puis
+  le chapitre 6 fusionné par-dessus (conflits attendus dans `niveaux.js`, `midi.js` et les tests parcours, clarte,
+  avis), `npm test` et le gardien à refaire. **Rien ne part sans l'accord de l'utilisateur.** Captures dans
+  `captures/lot41/` (hors Git). Jamais joué sur une vraie FLX4 : points 29 à 31 de la checklist.
 - **Habillage « maquettes » (22 oct. 2026), d'après deux images envoyées par l'utilisateur** (`Parcours néon du DJing.png`
   et `Tableau de bord DJingo futuriste et musical.png`, dans ses Téléchargements). Il voulait « plus de vie, plus
   ludique », avec « l'orange et le violet qu'on voit un peu plus ». Fait, tout à la **fin de `styles.css`** (les
@@ -935,6 +951,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   après LANCE B, la bulle dit de combien de temps B est parti tôt ou tard (un retour après coup, pas une aide).
 - **Lot 40 publié le 21 oct. 2026** (accord de l'utilisateur ; 421 tests verts).
 - **Lot 41 « Hot cues et boucles » (chapitre 6, commencé le 21 oct. 2026) : COMMENCÉ, NON FINI, et MASQUÉ.**
+  (État du 22 oct. au matin. **Fini le soir même et `CH6_PRET` passé à `true`**, avec ses tests : voir l'entrée
+  « Lot 41 repris et fini » juste après. Le paragraphe ci-dessous reste utile pour le principe de l'interrupteur.)
   `js/hotcues.js` (195 lignes, chargé entre `calage` et `niveaux`) : `CH6_LESSONS`, les hot cues et les boucles
   pendant une partie (`hcPad`), le dessin des repères et de la zone de boucle sur la piste, la note en
   millisecondes. Étoiles dans `coach-ch6`, 25 XP par étoile.
@@ -949,7 +967,41 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   cinq endroits**, pas seulement à la liste des chapitres.
   **Pour reprendre le lot 41** : passer `CH6_PRET` à `true`, finir les 7 niveaux, et **écrire
   `tests/hotcues.spec.js`** — il n'y a aujourd'hui aucun test du chapitre 6, il partirait sans filet.
-- **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
+- **Lot 41 repris et fini le 22 oct. 2026** (branche `lot-41-hotcues`, **non publiée** ; demande de l'utilisateur :
+  « on enchaîne sur le site »). `CH6_PRET = true`. Un « robot » a joué les 7 niveaux (démo, geste parfait, rien du tout) :
+  tous allaient au bout sans erreur, mais une dizaine de défauts, tous corrigés et couverts par `tests/hotcues.spec.js` :
+  - **Mesure** : la coupure du fader n'était notée qu'à l'image suivante (jusqu'à 30 ms d'erreur sur un geste parfait) ;
+    `gestureMark` (expert.js) note maintenant aussi au chapitre 6. Les pads de l'écran partaient **au relâchement du clic**
+    (toujours en retard) : ils partent à l'appui (`pointerdown` dans `buildCommandes`, le clavier garde le clic).
+  - **Le son sort après son calcul** (environ 50 ms dans le navigateur de test) : sans Quantize, la boucle se posait plus
+    loin que ce que le joueur entendait. `plHotCue(k, n, ici)` et `plBoucle(k, temps, ici)` prennent maintenant l'endroit
+    entendu (`hcPad` le lit avec `heardTime()` avant que `plBoucle` repose l'ancre) ; sans `ici`, rien ne change ailleurs.
+  - **Triche** : la barre d'espace et PLAY de B lançaient B par l'ancien chemin, sans hot cue ; `launchB` refuse au chapitre 6.
+  - **Consignes** : le rond compte de nouveau les temps (`hcConsigne`) ; « Coupe A » est jugé pendant la partie (`hcCoupe`) ;
+    au niveau 3, un repère **EXIT** au temps 60 et la consigne visent la dernière mesure (temps 60 à 64), pas le drop, et la
+    sortie est juste si **le drop tombe sur la phrase** (calculé à l'appui), pas selon l'instant exact ; A est coupé par le
+    site au temps 64 (sinon deux basses après le drop). « Pendant le niveau » : chaque niveau a son `plan` (il disait
+    « PLAY de droite »), et la démo ses légendes (`caps`).
+  - **Fin de A (niveaux 4 et 7)** : une boucle qui dépasse la fin emmène A au bout quand même (silence), avec une marge de
+    `HC_ZERO` ms (un retard de quelques ms sans Quantize ne doit pas couper A) ; la note dit « Ta boucle dépassait la fin ».
+    Au niveau 7, toute boucle posée au début d'une mesure fait l'affaire, notée en ms par rapport à cette mesure.
+  - **Double drop** : les deux morceaux n'avaient pas la même suite d'accords et frottaient. `hcVarB` : B prend la version
+    `vr + VARIANTS` (graine + 404, même suite d'accords sur les 4 de `PROGS`, autre motif) ; `warmSongs` la prépare.
+  - **Piste** : la boucle est une **zone** (le tour en cours en vif, les suivants pâles, depuis l'endroit où elle a été posée :
+    `run.hc.depuis`), les hot cues posés ont un **fanion numéroté**, et au niveau 3 la piste d'attente montre la boucle puis
+    le drop au temps 64. Les pads sont dans le bon mode dès le choix du niveau (`hcModes`).
+  - Niveaux plus courts ou plus propres : niveau 1 de 32 à 62 (B lancé au temps 36), niveau 3 de 44 à 76 ; niveaux 3, 4 et
+    5 avec B sans basse dans l'intro (`bBass: false`), pour ne pas avoir deux basses sous la boucle.
+  - Deux messages au même instant (lancer B et couper A) ne s'écrivent plus l'un sur l'autre (`pop`, piste.js, tous chapitres).
+  - Points 29 à 31 de la checklist FLX4. Seuils `HC_OK` = 20 ms et `HC_ZERO` = 150 ms **à ajuster après les essais de
+    l'utilisateur sur sa table**, comme ceux du chapitre 5. Les tests « 14/87 » du total d'étoiles passent à « 14/108 ».
+  - **Gardien : feu orange** (447 tests verts), trois remarques corrigées, un test chacune : au double drop, un swap 265 ms
+    en retard affichait « SWAP PARFAIT ! » en vert (`tolOf` vaut maintenant 0,25 au chapitre 6, comme en Expert, et la
+    couleur des lignes du swap suit leur note en ms) ; aux niveaux 4 et 7, une boucle posée une mesure plus tôt affichait
+    « 1933 ms trop tôt » alors que la note l'accepte (`hcStatut` mesure à la mesure la plus proche) ; au niveau 1, un
+    second appui ne disait pas comment effacer le repère (la bulle le dit). Le lexique de « Comment faire ? » explique
+    maintenant hot cue, boucle et Quantize (`LEX`).
+- **Lot 37 « Parcours adapté aux réponses » (fait le 22 oct. 2026)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
   rien aujourd'hui.** Il faut un algorithme qui adapte ce qui est proposé derrière : les exercices, l'ordre des étapes, les
@@ -958,6 +1010,39 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   Passer au vrai ; un joueur qui se dit à l'aise saute les fiches « Découvre ce bouton »). À cadrer avec l'utilisateur
   avant de commencer : quelles réponses changent quoi, exactement. (C'était le « lot 35 », puis le « lot 36 », avant
   que l'utilisateur demande l'écran de compte puis le travail d'identité ; renuméroté en 37.)
+  **Décisions de l'utilisateur du 22 oct. 2026 (remplacent ce qui les contredit)** : 1. **la DDJ-FLX4 n'est plus présentée
+  comme « la table de base »** : on demande au joueur quelle table il a, toutes les tables sur un pied d'égalité (proposé :
+  la table branchée est reconnue toute seule, sinon liste par marque, ou « pas encore de table »). 2. **Les chapitres ne
+  sont pas de plus en plus durs**, ce sont des gestes différents : le test de placement « tu commences au chapitre N »
+  n'a pas de sens. Le chapitre 1 (apprendre chaque bouton) reste pour ceux qui n'ont jamais touché une table ; ceux qui
+  ont déjà touché doivent avoir des **exercices vraiment plus difficiles** (aujourd'hui : Mode Expert, combos, calage ;
+  plus tard chapitres 6 et 7). **Validé par l'utilisateur le 22 oct.** : table reconnue toute seule au branchement, liste
+  par marque en secours, « Je n'ai pas encore de table » ; une seule question de niveau à trois réponses (débutant complet
+  → parcours actuel ; un peu d'expérience → tout ouvert en Mode Expert, puis combos, calage ; mixe déjà → le plus dur
+  d'emblée), **test de placement supprimé**. Il n'aime pas la formule « touché une table » ; **réponses choisies :
+  « Grand débutant » · « Apprenti DJ » · « DJ confirmé »**. **Lot 37 avant le chapitre 6** (choix de l'utilisateur).
+  **FAIT le 22 oct. 2026, NON PUBLIÉ** : branche `lot-37-parcours-adapte` (commit `68a321b`), travaillée dans une **copie
+  à part `Documents\coach-dj-lot37`** (git worktree, `node_modules` relié par jonction) pour ne pas toucher au dossier
+  principal, où le chapitre 6 était en cours (`CH6_PRET = true` non commité) et où un autre serveur occupait le port 8766.
+  **Tests : `DJ_PORT=8767 npx playwright test`** (port réglable ajouté dans `playwright.config.js`, `tests/serveur.js`,
+  `tests/captures.js`, `tests/images-presentation.js` ; sinon Playwright réutilise le serveur d'une autre copie et teste
+  le mauvais code). 430 tests verts. **Gardien : feu rouge au premier passage**, corrigé : ouvrir les chapitres par
+  le parcours mettait `ch2Open` à vrai, ce qui donnait le badge « Les bases » sans jouer (le compte croyait alors à une
+  progression, le défaut du lot 34) et cochait l'étape « La maîtrise ». Maintenant un drapeau à part, `parcoursOuvert`
+  (niveaux.js), lu par `ch2Unlocked` / `ch3Unlocked` seulement ; les étapes ch1 et ch2 se jugent sur les étoiles.
+  Second passage : feu rouge pour un défaut déjà là au premier commit : niveaux.js vérifie le chapitre enregistré **au
+  chargement, avant parcours.js**, donc un Apprenti DJ revenait au chapitre 1 à chaque rechargement. `parcoursOuvert` est
+  maintenant lu dans `coach-parcours` dès niveaux.js (piège : tout ce que niveaux.js vérifie au chargement ne connaît pas
+  encore le parcours). Test « après un rechargement, on reste au chapitre N ». Captures : `captures/lot37/` (dossier principal).
+  Contenu : `PP_ETAPES` = salut, niveau, table, objectif ; `PP_NIVEAUX` = `debut` / `apprenti` / `confirme` (= parcours) ;
+  écran de table : `ppBranchee()` reconnaît la table branchée (appelé par `initMidi` via `ppMidi`), sinon « J'ai une table »
+  + liste par marque `#ppModele` (`PP_LISTE`), ou « Pas encore de table » ; `coach-accueil` = `{ niveau, table, modele, min,
+  fini }` (anciennes valeurs relues). Parcours : `apprenti` = expert, ch4, ch5, ch2, ch3, ch6, train, vrai ; `confirme` = ch5,
+  ch4, expert, ch6, ch3, train, vrai ; nouvelles étapes `expert` (niveau compté à 60/100 dans `xBest`) et `ch4` ;
+  `parcoursAvance()`, `parcoursOuvre()` (ouvre ch2 et ch3 sans rien enregistrer) ; ancien `deja` → `apprenti`. Fiches et
+  guide jamais imposés aux deux parcours avancés. Test de placement : plus aucun point d'entrée (`js/placement.js` reste
+  chargé mais inerte ; à supprimer dans un nettoyage à part). Textes : accueil, présentation (« Trois parcours »), testeurs,
+  README. **Reste** : accord de l'utilisateur sur les captures, gardien, puis push.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

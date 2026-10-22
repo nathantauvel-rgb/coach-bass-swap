@@ -112,7 +112,10 @@ function drawCompare(fr, i, launch){
   $('cmpBox').hidden = false;
 }
 function say(t){ const el = $('tip'); if (el && t) el.textContent = t; const h = $('hint'); if (h && t && run && h.textContent !== t) h.textContent = t; }
-function pop(text, kind){ lastPopAt = performance.now(); lastAct = ''; say(text); const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text; $('pops').appendChild(d); setTimeout(() => d.remove(), 1400); viniReagit(kind);
+function pop(text, kind){ lastPopAt = performance.now(); lastAct = ''; say(text); const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text;
+  // deux gestes au même instant (lancer B et couper A) : le second message se met sous le premier au lieu de l'écrire par-dessus
+  const n = $('pops').children.length; if (n) d.style.top = `calc(42% + ${n * 44}px)`;
+  $('pops').appendChild(d); setTimeout(() => d.remove(), 1400); viniReagit(kind);
   if (!(run && run.demo)) son(kind === 'ok' ? 'reussi' : kind === 'bad' ? 'rate' : 'presque'); }
 // Petit carillon (guide, réglage de la table…) ; juste après un message de partie, celui-ci a déjà sonné (js/sons.js)
 function chime(good){ if (performance.now() - lastPopAt < 150) return; son(good ? 'reussi' : 'presque'); }

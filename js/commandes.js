@@ -70,9 +70,13 @@ function buildCommandes(){
     cue.addEventListener('pointerdown', e => { e.preventDefault(); ensureAudio(); plCue(k, true); });
     ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => cue.addEventListener(t, () => plCue(k, false)));
     $('casque' + k).addEventListener('click', () => { ensureAudio(); $('casque' + k).setAttribute('aria-pressed', String(plCasqueBascule(k))); });
-    const box = $('pads' + k);
-    box.addEventListener('click', e => { const b = e.target.closest('.pad'); if (b) padPresse(k, [...box.children].indexOf(b)); });
-    box.addEventListener('contextmenu', e => { const b = e.target.closest('.pad'); if (!b || padMode[k] !== 'hc') return; e.preventDefault(); plHotCueEfface(k, [...box.children].indexOf(b)); renderPads(k); });
+    const box = $('pads' + k), num = b => [...box.children].indexOf(b);
+    // Un pad part à l'appui (comme sur la table), pas au relâchement du clic : au chapitre 6, l'appui est noté en millisecondes.
+    // Le clic sans souris (clavier : Entrée ou espace sur le pad) garde le chemin du clic.
+    box.addEventListener('pointerdown', e => { const b = e.target.closest('.pad'); if (!b || e.button !== 0) return; e.preventDefault(); padPresse(k, num(b)); });
+    box.addEventListener('click', e => { const b = e.target.closest('.pad'); if (b && e.detail === 0) padPresse(k, num(b)); });
+    box.addEventListener('contextmenu', e => { const b = e.target.closest('.pad'); if (!b || padMode[k] !== 'hc') return; e.preventDefault();
+      if (run && LESSONS[li].hc) hcPad(k, 'efface', num(b)); else { plHotCueEfface(k, num(b)); renderPads(k); } });
     renderPads(k);
   }
   $('playA').addEventListener('click', () => { ensureAudio(); plLecture('A'); });

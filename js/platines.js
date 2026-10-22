@@ -71,20 +71,23 @@ function plCue(k, appuye){
     if (!d.joue){ if (Math.abs((d.ancP || 0) - (d.cue || 0)) > .002) d.cue = d.ancP || 0; d.cueTenu = true; plDemarre(k, ac.currentTime, d.cue); }
   } else if (d.cueTenu){ d.cueTenu = false; stop(k); d.ancP = d.cue || 0; }
 }
-// Hot cue n (0 à 3) : vide, il se pose sur le temps le plus proche ; posé, il y saute (et lance la lecture si on était arrêté)
-function plHotCue(k, n){
+// Hot cue n (0 à 3) : vide, il se pose sur le temps le plus proche ; posé, il y saute (et lance la lecture si on était arrêté).
+// `ici` (facultatif) : l'endroit du morceau que le joueur entendait au moment de l'appui (chapitre 6, hotcues.js). Le son sort
+// de la carte son un peu après son calcul : sans lui, le repère se poserait quelques dizaines de millisecondes trop loin.
+function plHotCue(k, n, ici = null){
   const d = deck[k]; if (!ac || !d.buf || !(n >= 0 && n < 4)) return;
-  if (d.cues[n] == null){ d.cues[n] = plSurTemps(k, plPos(k)); return 'pose'; }
+  if (d.cues[n] == null){ d.cues[n] = plSurTemps(k, ici ?? plPos(k)); return 'pose'; }
   d.boucle = null; plDemarre(k, ac.currentTime, d.cues[n]); return 'saut';
 }
 function plHotCueEfface(k, n){ if (deck[k].cues) deck[k].cues[n] = null; }
 
 /* ---------- Boucles ---------- */
-// Boucle de `temps` temps, calée sur le temps le plus proche ; une nouvelle longueur remplace la précédente (même départ)
-function plBoucle(k, temps){
+// Boucle de `temps` temps, calée sur le temps le plus proche ; une nouvelle longueur remplace la précédente (même départ).
+// `ici` : comme pour plHotCue, l'endroit entendu au moment de l'appui (la boucle contient bien l'endroit en cours, un peu plus loin).
+function plBoucle(k, temps, ici = null){
   const d = deck[k]; if (!ac || !d.buf || !(temps > 0)) return;
   plAncre(k); const per = d.per || P, p = plPos(k);
-  const s = d.boucle ? d.boucle.s : plSurTemps(k, p), e = s + temps * per;
+  const s = d.boucle ? d.boucle.s : plSurTemps(k, ici ?? p), e = s + temps * per;
   if (e > d.buf.duration) return;
   d.boucle = { s, e, temps };
   // déjà au-delà de la nouvelle fin (boucle raccourcie) : on repart du début de la boucle, comme une table DJ

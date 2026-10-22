@@ -40,6 +40,9 @@ ci-dessous reste la version papier, utile pour noter à part ou pour vérifier s
 | 26 | Lot 39 : CUE de A tenu, puis relâché ; CUE casque de B | CUE tenu fait écouter depuis le repère et y revient au relâchement ; avec CUE casque, B s'entend au casque seulement | |
 | 27 | Lot 40 : chapitre 5 « Le calage », niveaux 2 à 4, à la molette et au TEMPO de B | La molette ni trop ni pas assez sensible ; le TEMPO permet de tomber sur 124 BPM ; noter si 15 ms (★★★) est trop dur ou trop facile | |
 | 28 | Lot 40 : niveau 5 « Au casque », avec un casque sur la table | Avec CUE casque de B, on entend B au casque et pas dans les enceintes ; en montant son fader, il entre dans les enceintes | |
+| 29 | Lot 41 : chapitre 6, niveaux 1 et 2, pads de B en HOT CUE | Niveau 1 : le pad 1 de B pose le repère (un fanion « 1 » apparaît sur la piste) ; niveau 2 : le pad 1 de B lance B sur son drop. Noter l'écart annoncé en ms sur 5 essais : toujours « trop tard » ou toujours « trop tôt » ? | |
+| 30 | Lot 41 : niveaux 3 à 5, pads en BEAT LOOP | Niveau 3 : le pad 4 (ou RELOOP/EXIT) fait sortir B de sa boucle ; niveaux 4 et 5 : les pads 1, 2, 3 de A font des boucles de 4, 8, 16 temps, et la boucle se raccourcit sans à-coup | |
+| 31 | Lot 41 : les seuils du chapitre 6 | Un appui « bien en rythme » au casque de la table donne-t-il souvent ★★★ (moins de 20 ms) ? Si c'est impossible ou trop facile, le dire : les seuils HC_OK (20 ms) et HC_ZERO (150 ms) sont dans `js/hotcues.js` | |
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 
 Dernière vérification complète : jamais faite depuis l'ajout des onglets (12 oct. 2026).

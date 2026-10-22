@@ -166,6 +166,7 @@ function pictoOf(k, v){ const s = document.createElement('span'); s.className = 
   return s; }
 // « Pendant le niveau » : les gestes, dans l'ordre, écrits départ → arrivée
 function planSteps(l){
+  if (l.plan) return l.plan;   // chapitre 6 : les gestes des pads sont écrits dans le niveau (hotcues.js)
   const out = [], seen = new Set();
   if (!l.autoLaunch && l.user.includes('lowB') && l.init.lowB >= .4) out.push('Avant de lancer B : LOW de B normal → coupé');
   for (const [, lab] of (l.targets || []).slice().sort((x, y) => x[0] - y[0])){ if (seen.has(lab) || !ACT[lab]) continue; seen.add(lab); out.push(ACT[lab].charAt(0).toUpperCase() + ACT[lab].slice(1)); }
