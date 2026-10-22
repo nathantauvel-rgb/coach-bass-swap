@@ -27,8 +27,9 @@ if (!/^(ok|ko:[0-6])$/.test(testDone)) testDone = '';
 const testFail = () => testDone.startsWith('ko:') ? +testDone.slice(3) : 0;
 // Quelqu'un qui a déjà une progression n'a pas à choisir : on déduit son parcours
 if (!parcours && (guideSeen || ch2Open || sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars) > 0)) parcours = ch2Open && sumStars(stars) < 14 ? 'apprenti' : 'debut';
-// Apprenti DJ et DJ confirmé : tous les chapitres sont ouverts (sans rien enregistrer : c'est le parcours qui les ouvre)
-const parcoursOuvre = () => { if (parcoursAvance(parcours)){ ch2Open = true; ch3Open = true; } };
+// Apprenti DJ et DJ confirmé : tous les chapitres sont ouverts (sans rien enregistrer : c'est le parcours qui les ouvre).
+// Surtout pas ch2Open : il donne le badge « Les bases », qui ferait croire au compte qu'il y a une progression (lot 34).
+const parcoursOuvre = () => { parcoursOuvert = parcoursAvance(parcours); };
 parcoursOuvre();
 let parcoursPick = false;
 const firstTodo = (bank, n, from = 0) => { for (let i = from; i < n; i++) if (!(bank[i] >= 2)) return i; for (let i = 0; i < n; i++) if (!(bank[i] >= 2)) return i; return 0; };
@@ -57,13 +58,13 @@ const STAGES = {
     cta: () => { const i = firstTodo(ch4Stars, CH4_LESSONS.length); return `Chapitre 4, niveau ${i + 1} : ${CH4_LESSONS[i].title}`; },
     go: () => goLesson(4, firstTodo(ch4Stars, CH4_LESSONS.length)) },
   ch1: { title: 'Les bases', text: 'Sept gestes, un par niveau : lancer au bon moment, le fader, la coupure, l\'écho, le filtre, le swap des basses, puis la transition complète pour finir.',
-    done: () => ch2Unlocked(), prog: () => `${sumStars(stars)} ★ sur 14`,
+    done: () => ch2Open || sumStars(stars) >= 14, prog: () => `${sumStars(stars)} ★ sur 14`,
     cta: () => { const i = firstTodo(stars, BASE_LESSONS.length, testFail()); return `Niveau ${i + 1} : ${BASE_LESSONS[i].title}`; },
     go: () => goLesson(1, firstTodo(stars, BASE_LESSONS.length, testFail())) },
   train: { title: 'S\'entraîner', text: 'Refais les gestes que tu connais sur d\'autres morceaux : défi du jour, variations, à l\'oreille, mini-set.',
     done: () => !!pracStr('lastOk') || pracNum('vars') + pracNum('ears') + pracNum('setBest') > 0, cta: () => 'Aller à l\'entraînement', go: () => { location.hash = '#entrainer'; } },
   ch2: { title: 'La maîtrise', text: 'Les mêmes gestes à l\'oreille, sans compte à rebours, et deux fois plus précis.',
-    done: () => ch3Unlocked(), prog: () => `${sumStars(ch2Stars)} ★ sur 10`,
+    done: () => ch3Open || sumStars(ch2Stars) >= 10, prog: () => `${sumStars(ch2Stars)} ★ sur 10`,
     cta: () => { const i = firstTodo(ch2Stars, BASE_LESSONS.length); return `Chapitre 2, niveau ${i + 1} : ${BASE_LESSONS[i].title}`; },
     go: () => goLesson(2, firstTodo(ch2Stars, BASE_LESSONS.length)) },
   ch3: { title: 'Les vrais morceaux', text: 'Lire les formes d\'onde, éviter le piège du break, gérer les voix : comme dans rekordbox.',

@@ -66,6 +66,25 @@ test.describe('Première visite', () => {
   });
 });
 
+// Défauts trouvés par le gardien du lot 37 : ouvrir les chapitres par le parcours ne doit rien faire « gagner »
+test.describe('Parcours avancés : rien de gagné sans jouer', () => {
+  for (const p of ['apprenti', 'confirme']) test(`${p} : pas de badge gratuit, rien de gagné aux yeux du compte`, async ({ page }) => {
+    const erreurs = await accueil(page, { 'coach-parcours': p });
+    await page.goto('/index.html#progres'); await page.waitForTimeout(500);
+    await page.goto('/index.html#accueil'); await page.waitForTimeout(500);
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('coach-badges') || '[]'))).toEqual([]);
+    expect(await page.evaluate(() => cptVide())).toBe(true);
+    expect(await page.evaluate(() => [ch2Unlocked(), ch3Unlocked()])).toEqual([true, true]);
+    expect(erreurs).toEqual([]);
+  });
+  test("apprenti : « La maîtrise » n'est pas faite tant que le chapitre 2 n'est pas joué", async ({ page }) => {
+    await accueil(page, { 'coach-parcours': 'apprenti' });
+    const e = await etapes(page);
+    expect(e.find(x => x.includes('La maîtrise'))).toBe('a-venir | La maîtrise | À venir');
+    expect(e.filter(x => x.startsWith('done'))).toEqual([]);
+  });
+});
+
 test.describe('Prochaine étape', () => {
   test('utilisateur déjà venu : pas de question, il reprend où il en était', async ({ page }) => {
     await accueil(page, { 'coach-lecons': S({ 0: 3 }) });

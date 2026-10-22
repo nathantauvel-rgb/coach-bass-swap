@@ -949,7 +949,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   cinq endroits**, pas seulement à la liste des chapitres.
   **Pour reprendre le lot 41** : passer `CH6_PRET` à `true`, finir les 7 niveaux, et **écrire
   `tests/hotcues.spec.js`** — il n'y a aujourd'hui aucun test du chapitre 6, il partirait sans filet.
-- **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
+- **Lot 37 « Parcours adapté aux réponses » (fait le 22 oct. 2026)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
   rien aujourd'hui.** Il faut un algorithme qui adapte ce qui est proposé derrière : les exercices, l'ordre des étapes, les
@@ -958,6 +958,35 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   Passer au vrai ; un joueur qui se dit à l'aise saute les fiches « Découvre ce bouton »). À cadrer avec l'utilisateur
   avant de commencer : quelles réponses changent quoi, exactement. (C'était le « lot 35 », puis le « lot 36 », avant
   que l'utilisateur demande l'écran de compte puis le travail d'identité ; renuméroté en 37.)
+  **Décisions de l'utilisateur du 22 oct. 2026 (remplacent ce qui les contredit)** : 1. **la DDJ-FLX4 n'est plus présentée
+  comme « la table de base »** : on demande au joueur quelle table il a, toutes les tables sur un pied d'égalité (proposé :
+  la table branchée est reconnue toute seule, sinon liste par marque, ou « pas encore de table »). 2. **Les chapitres ne
+  sont pas de plus en plus durs**, ce sont des gestes différents : le test de placement « tu commences au chapitre N »
+  n'a pas de sens. Le chapitre 1 (apprendre chaque bouton) reste pour ceux qui n'ont jamais touché une table ; ceux qui
+  ont déjà touché doivent avoir des **exercices vraiment plus difficiles** (aujourd'hui : Mode Expert, combos, calage ;
+  plus tard chapitres 6 et 7). **Validé par l'utilisateur le 22 oct.** : table reconnue toute seule au branchement, liste
+  par marque en secours, « Je n'ai pas encore de table » ; une seule question de niveau à trois réponses (débutant complet
+  → parcours actuel ; un peu d'expérience → tout ouvert en Mode Expert, puis combos, calage ; mixe déjà → le plus dur
+  d'emblée), **test de placement supprimé**. Il n'aime pas la formule « touché une table » ; **réponses choisies :
+  « Grand débutant » · « Apprenti DJ » · « DJ confirmé »**. **Lot 37 avant le chapitre 6** (choix de l'utilisateur).
+  **FAIT le 22 oct. 2026, NON PUBLIÉ** : branche `lot-37-parcours-adapte` (commit `68a321b`), travaillée dans une **copie
+  à part `Documents\coach-dj-lot37`** (git worktree, `node_modules` relié par jonction) pour ne pas toucher au dossier
+  principal, où le chapitre 6 était en cours (`CH6_PRET = true` non commité) et où un autre serveur occupait le port 8766.
+  **Tests : `DJ_PORT=8767 npx playwright test`** (port réglable ajouté dans `playwright.config.js`, `tests/serveur.js`,
+  `tests/captures.js`, `tests/images-presentation.js` ; sinon Playwright réutilise le serveur d'une autre copie et teste
+  le mauvais code). 427 tests verts. **Gardien : feu rouge au premier passage**, corrigé : ouvrir les chapitres par
+  le parcours mettait `ch2Open` à vrai, ce qui donnait le badge « Les bases » sans jouer (le compte croyait alors à une
+  progression, le défaut du lot 34) et cochait l'étape « La maîtrise ». Maintenant un drapeau à part, `parcoursOuvert`
+  (niveaux.js), lu par `ch2Unlocked` / `ch3Unlocked` seulement ; les étapes ch1 et ch2 se jugent sur les étoiles. Captures : `captures/lot37/` (dossier principal).
+  Contenu : `PP_ETAPES` = salut, niveau, table, objectif ; `PP_NIVEAUX` = `debut` / `apprenti` / `confirme` (= parcours) ;
+  écran de table : `ppBranchee()` reconnaît la table branchée (appelé par `initMidi` via `ppMidi`), sinon « J'ai une table »
+  + liste par marque `#ppModele` (`PP_LISTE`), ou « Pas encore de table » ; `coach-accueil` = `{ niveau, table, modele, min,
+  fini }` (anciennes valeurs relues). Parcours : `apprenti` = expert, ch4, ch5, ch2, ch3, ch6, train, vrai ; `confirme` = ch5,
+  ch4, expert, ch6, ch3, train, vrai ; nouvelles étapes `expert` (niveau compté à 60/100 dans `xBest`) et `ch4` ;
+  `parcoursAvance()`, `parcoursOuvre()` (ouvre ch2 et ch3 sans rien enregistrer) ; ancien `deja` → `apprenti`. Fiches et
+  guide jamais imposés aux deux parcours avancés. Test de placement : plus aucun point d'entrée (`js/placement.js` reste
+  chargé mais inerte ; à supprimer dans un nettoyage à part). Textes : accueil, présentation (« Trois parcours »), testeurs,
+  README. **Reste** : accord de l'utilisateur sur les captures, gardien, puis push.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
