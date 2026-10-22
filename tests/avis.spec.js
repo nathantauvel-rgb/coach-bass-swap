@@ -87,7 +87,7 @@ test.describe('Le rapport', () => {
         clair: { '1-0': 'oui', '1-1': 'non' }, avis: [{ d: '2026-10-10', ecran: 'Accueil', bloque: 'Le mot outro', plu: 'Les étoiles', note: 4 }], erreurs: [] }) } });
     const r = await rapport(page);
     expect(r).toMatch(/^Rapport DJingood du \d{4}-\d\d-\d\d\n/);
-    expect(r).toContain('Parcours : Parcours « Je débute » · sans table (souris)');
+    expect(r).toContain('Parcours : Parcours « Grand débutant » · sans table (souris)');
     expect(r).toContain('Temps sur le site : 10 min, sur 2 jours (première visite le 2026-10-10)');
     expect(r).toContain('Étoiles : chapitre 1 4/21, chapitre 2 0/21, chapitre 3 0/12, chapitre 4 0/12, chapitre 5 0/21, chapitre 6 0/21 · 45 XP · badges 2/13 · quiz 1/25');
     expect(r).toContain('Niveaux joués (3 parties, dont 1 en entraînement et 0 au test de placement) :');

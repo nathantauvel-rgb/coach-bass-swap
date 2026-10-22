@@ -70,9 +70,9 @@ test.describe('Le chapitre', () => {
     await page.locator('.node').nth(2).click();
     await expect(page.locator('#planList li').nth(1)).toHaveText('Entre les temps 60 et 64 : pad EXIT de B, pour sortir de la boucle');
   });
-  test('c\'est une étape des deux parcours, après le chapitre 5', async ({ page }) => {
+  test('c\'est une étape des trois parcours (Grand débutant, Apprenti DJ, DJ confirmé)', async ({ page }) => {
     await ouvrir(page, { stockage: OUVERT });
-    expect(await page.evaluate(() => [PARCOURS.debut.stages, PARCOURS.deja.stages].map(s => s.indexOf('ch6') - s.indexOf('ch5')))).toEqual([1, 1]);
+    expect(await page.evaluate(() => ['debut', 'apprenti', 'confirme'].map(p => PARCOURS[p].stages.includes('ch6')))).toEqual([true, true, true]);
   });
 });
 

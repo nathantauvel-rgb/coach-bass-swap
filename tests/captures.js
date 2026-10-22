@@ -3,7 +3,7 @@
 // --vite : seulement les écrans fixes (pour comparer deux versions image par image) ; sinon aussi une partie en cours et un résultat.
 const { chromium } = require('@playwright/test'), path = require('path'), fs = require('fs'), { spawn } = require('child_process'), crypto = require('crypto');
 const out = path.resolve(process.argv[2] || 'captures'), vite = process.argv.includes('--vite');
-const S = o => JSON.stringify(o), BASE = 'http://localhost:8766';
+const S = o => JSON.stringify(o), BASE = `http://localhost:${process.env.DJ_PORT || 8766}`;
 const VENU = { 'coach-guide-vu': '1', 'coach-fiches': S(['play', 'fader', 'low', 'cfx', 'echo', 'mid']), 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 2: 1 }) };
 const ECRANS = [
   ['01-accueil-nouveau', {}, '', null],

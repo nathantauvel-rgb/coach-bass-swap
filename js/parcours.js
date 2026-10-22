@@ -1,29 +1,45 @@
-// Les deux parcours : choix à la première visite, étapes, et « prochaine étape » sur l'accueil.
+// Les trois parcours : choix à la première visite, étapes, et « prochaine étape » sur l'accueil.
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* ---------- Parcours ----------
-   Les deux parcours utilisent les mêmes niveaux et les mêmes règles de déblocage : seuls changent le point
-   d'entrée, l'ordre des étapes et la recommandation. Une étape est « faite » d'après la progression déjà
-   enregistrée (étoiles, entraînement, paires validées) : le parcours ne stocke que le choix et le résultat du test. */
+   Lot 37 (choix de l'utilisateur, 22 oct. 2026) : trois parcours, un par niveau des Premiers pas.
+   - « Grand débutant » : chaque bouton expliqué, un par un (guide, fiches « Découvre ce bouton », chapitre 1), puis le reste.
+   - « Apprenti DJ » et « DJ confirmé » : pas d'explications imposées (les fiches restent dans « Comment faire ? »), tous les
+     chapitres ouverts d'office, et des exercices vraiment durs : Mode Expert, combos, calage. Le confirmé commence par le calage.
+   Les chapitres ne sont pas de plus en plus durs (ce sont des gestes différents) : il n'y a donc plus de test de placement.
+   Une étape est « faite » d'après la progression déjà enregistrée (étoiles, records, entraînement, paires validées) :
+   le parcours ne stocke que le choix. */
 const PARCOURS = {
-  debut: { name: 'Parcours « Je débute »', stages: ['guide', 'ch1', 'train', 'ch2', 'ch3', 'ch5', 'ch6', 'vrai'] },
-  deja: { name: 'Parcours « J\'améliore mes transitions »', stages: ['test', 'ch1', 'ch2', 'ch5', 'ch6', 'ch3', 'train', 'vrai'] }
+  debut: { name: 'Parcours « Grand débutant »', stages: ['guide', 'ch1', 'train', 'ch2', 'ch3', 'ch5', 'ch6', 'vrai'] },
+  apprenti: { name: 'Parcours « Apprenti DJ »', stages: ['expert', 'ch4', 'ch5', 'ch2', 'ch3', 'ch6', 'train', 'vrai'] },
+  confirme: { name: 'Parcours « DJ confirmé »', stages: ['ch5', 'ch4', 'expert', 'ch6', 'ch3', 'train', 'vrai'] }
 };
+const parcoursAvance = p => p === 'apprenti' || p === 'confirme';
 // Tant que le chapitre 6 n'est pas prêt (CH6_PRET dans js/hotcues.js), il n'est pas une étape du parcours.
 if (!CH6_PRET) for (const p of Object.values(PARCOURS)) p.stages = p.stages.filter(s => s !== 'ch6');
 let parcours = ''; try { parcours = localStorage.getItem('coach-parcours') || ''; } catch (e) {}
+// Avant le lot 37, « Je sais déjà lancer deux morceaux » s'appelait 'deja' : c'est l'Apprenti DJ
+if (parcours === 'deja'){ parcours = 'apprenti'; try { localStorage.setItem('coach-parcours', parcours); } catch (e) {} }
 if (!PARCOURS[parcours]) parcours = '';
 // Résultat du test de placement : 'ok', ou 'ko:N' avec N = premier niveau raté (voir placementVerdict)
 let testDone = ''; try { testDone = localStorage.getItem('coach-test') || ''; } catch (e) {}
 if (!/^(ok|ko:[0-6])$/.test(testDone)) testDone = '';
 const testFail = () => testDone.startsWith('ko:') ? +testDone.slice(3) : 0;
 // Quelqu'un qui a déjà une progression n'a pas à choisir : on déduit son parcours
-if (!parcours && (guideSeen || ch2Open || sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars) > 0)) parcours = ch2Open && sumStars(stars) < 14 ? 'deja' : 'debut';
+if (!parcours && (guideSeen || ch2Open || sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars) > 0)) parcours = ch2Open && sumStars(stars) < 14 ? 'apprenti' : 'debut';
+// Apprenti DJ et DJ confirmé : tous les chapitres sont ouverts (sans rien enregistrer : c'est le parcours qui les ouvre).
+// Surtout pas ch2Open : il donne le badge « Les bases », qui ferait croire au compte qu'il y a une progression (lot 34).
+const parcoursOuvre = () => { parcoursOuvert = parcoursAvance(parcours); };
+parcoursOuvre();
 let parcoursPick = false;
 const firstTodo = (bank, n, from = 0) => { for (let i = from; i < n; i++) if (!(bank[i] >= 2)) return i; for (let i = 0; i < n; i++) if (!(bank[i] >= 2)) return i; return 0; };
 const ch3Done = () => CH3_LESSONS.filter((_, i) => ch3Stars[i] >= 2).length;
 const ch5Done = () => CH5_LESSONS.filter((_, i) => ch5Stars[i] >= 2).length;
 const ch6Done = () => CH6_LESSONS.filter((_, i) => ch6Stars[i] >= 2).length;
+const ch4Done = () => CH4_LESSONS.filter((_, i) => ch4Stars[i] >= 2).length;
+// Mode Expert : un niveau compte quand son record vaut 2 étoiles (60 sur 100, comme expertResult)
+const X_OK = 60, xDone = () => BASE_LESSONS.filter((_, i) => xBest[i] >= X_OK).length;
+const xTodo = () => { const i = BASE_LESSONS.findIndex((_, k) => !(xBest[k] >= X_OK)); return i < 0 ? 0 : i; };
 function goLesson(ch, idx){
   location.hash = '#apprendre'; setView('apprendre');
   if (placement) quitPlacement();
@@ -33,16 +49,22 @@ function goLesson(ch, idx){
 const STAGES = {
   guide: { title: 'Découvre ta table', text: 'Un petit tour d\'une minute, avec le son : compter les phrases et reconnaître les parties d\'un morceau. Chaque bouton de ta table te sera présenté juste avant de t\'en servir.',
     done: () => guideSeen, cta: () => 'Commencer le guide', go: () => { location.hash = '#apprendre'; setView('apprendre'); } },
-  test: { title: 'Le test de placement', text: 'Trois épreuves courtes pour voir où tu en es : le bon moment, le swap des basses, la transition complète.',
-    done: () => !!testDone || ch2Unlocked(), cta: () => 'Passer le test', go: () => { goLesson(1, null); startPlacement(); } },
+  expert: { title: 'Les bases en Mode Expert', text: 'Les sept gestes, sans aucune aide : B part à l\'instant où tu appuies, pas de compte à rebours, chaque geste noté à la milliseconde. Vise 60 sur 100 à chaque niveau.',
+    done: () => xDone() >= BASE_LESSONS.length, prog: () => `${xDone()} niveau${xDone() > 1 ? 'x' : ''} sur ${BASE_LESSONS.length}`,
+    cta: () => `Mode Expert, niveau ${xTodo() + 1} : ${BASE_LESSONS[xTodo()].title}`,
+    go: () => { if (!expert){ expert = true; saveExpert(); } goLesson(1, xTodo()); } },
+  ch4: { title: 'Les combos', text: 'Plusieurs gestes enchaînés, au demi-temps près : filtre et swap, la transition éclair, écho et drop, le grand mix.',
+    done: () => ch4Done() >= CH4_LESSONS.length, prog: () => `${ch4Done()} niveau${ch4Done() > 1 ? 'x' : ''} sur ${CH4_LESSONS.length}`,
+    cta: () => { const i = firstTodo(ch4Stars, CH4_LESSONS.length); return `Chapitre 4, niveau ${i + 1} : ${CH4_LESSONS[i].title}`; },
+    go: () => goLesson(4, firstTodo(ch4Stars, CH4_LESSONS.length)) },
   ch1: { title: 'Les bases', text: 'Sept gestes, un par niveau : lancer au bon moment, le fader, la coupure, l\'écho, le filtre, le swap des basses, puis la transition complète pour finir.',
-    done: () => ch2Unlocked(), prog: () => `${sumStars(stars)} ★ sur 14`,
+    done: () => ch2Open || sumStars(stars) >= 14, prog: () => `${sumStars(stars)} ★ sur 14`,
     cta: () => { const i = firstTodo(stars, BASE_LESSONS.length, testFail()); return `Niveau ${i + 1} : ${BASE_LESSONS[i].title}`; },
     go: () => goLesson(1, firstTodo(stars, BASE_LESSONS.length, testFail())) },
   train: { title: 'S\'entraîner', text: 'Refais les gestes que tu connais sur d\'autres morceaux : défi du jour, variations, à l\'oreille, mini-set.',
     done: () => !!pracStr('lastOk') || pracNum('vars') + pracNum('ears') + pracNum('setBest') > 0, cta: () => 'Aller à l\'entraînement', go: () => { location.hash = '#entrainer'; } },
   ch2: { title: 'La maîtrise', text: 'Les mêmes gestes à l\'oreille, sans compte à rebours, et deux fois plus précis.',
-    done: () => ch3Unlocked(), prog: () => `${sumStars(ch2Stars)} ★ sur 10`,
+    done: () => ch3Open || sumStars(ch2Stars) >= 10, prog: () => `${sumStars(ch2Stars)} ★ sur 10`,
     cta: () => { const i = firstTodo(ch2Stars, BASE_LESSONS.length); return `Chapitre 2, niveau ${i + 1} : ${BASE_LESSONS[i].title}`; },
     go: () => goLesson(2, firstTodo(ch2Stars, BASE_LESSONS.length)) },
   ch3: { title: 'Les vrais morceaux', text: 'Lire les formes d\'onde, éviter le piège du break, gérer les voix : comme dans rekordbox.',
@@ -61,13 +83,13 @@ const STAGES = {
     done: () => rbMis.total > 0, cta: () => 'Aller à Passer au vrai', go: () => { location.hash = '#vrai'; } }
 };
 const nextStage = () => parcours ? PARCOURS[parcours].stages.find(id => !STAGES[id].done()) || '' : '';
-function setParcours(p){ if (!PARCOURS[p]) return; parcours = p; parcoursPick = false; try { localStorage.setItem('coach-parcours', p); } catch (e) {} renderHome(); }
+function setParcours(p){ if (!PARCOURS[p]) return; parcours = p; parcoursPick = false; try { localStorage.setItem('coach-parcours', p); } catch (e) {} parcoursOuvre(); renderHome(); }
 function renderHome(){
   const choosing = !parcours || parcoursPick, cur = nextStage(), st = STAGES[cur];
   $('homeChoice').hidden = !choosing; $('homeQuetes').hidden = choosing; if (!choosing) renderQuetes(); $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing; $('homeGoal').hidden = choosing;
   document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.parcours === parcours)));
   if (choosing){
-    $('homeTitle').textContent = 'Tu as une table et tu n\'y connais rien ?'; $('homeLead').textContent = 'En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.';
+    $('homeTitle').textContent = 'Tu en es où avec le mix ?'; $('homeLead').textContent = 'Choisis ton niveau : DJingood te prépare le parcours qui va avec. Tu pourras en changer quand tu veux.';
     $('homeTip').textContent = 'Un geste à la fois, et ça vient vite !'; homeVini(); return; }
   $('homeKicker').textContent = cur ? 'Ta prochaine étape' : 'Parcours terminé';
   $('homeTitle').textContent = st ? st.title : 'Bravo, tu as tout fait !';

@@ -2,7 +2,9 @@
 
 Tu as une table et tu n'y connais rien : en deux semaines, tu fais tes premières vraies transitions propres avec ta musique.
 
-Le site suit un parcours en trois étapes :
+À la première visite, la mascotte Vini pose trois questions (ton niveau, ta table, ton objectif du jour) et prépare l'un des trois parcours : « Grand débutant » (chaque bouton expliqué, un par un), « Apprenti DJ » (tout ouvert, en Mode Expert) ou « DJ confirmé » (le calage sans SYNC d'abord).
+
+Le site est rangé en trois onglets :
 
 - **Apprendre** : les leçons guidées, sur des morceaux d'entraînement faits pour s'enchaîner (le bon moment, le fader, la coupure, l'écho, le filtre, le swap des basses, et pour finir la transition complète).
 - **S'entraîner** : défi du jour, variations, à l'oreille, mini-sets, sur les niveaux déjà joués dans Apprendre.
@@ -16,4 +18,4 @@ Un compte n'est pas obligatoire : sans lui, la progression reste dans le navigat
 
 ## Utilisation
 
-Ouvre le site dans Chrome ou Edge, branche ta table en USB (logiciel DJ fermé), puis va dans « Apprendre ». Le site reconnaît tout seul la Pioneer DDJ-FLX4, et une douzaine d'autres tables de débutant (Pioneer DDJ-400, DDJ-SB3 et DDJ-200, Hercules Inpulse 200, 300 et 500 et Starlight, Numark Mixtrack Platinum FX et Pro FX, Party Mix et DJ2GO2 Touch, Roland DJ-505, Reloop Mixage) ; une autre table se règle pas à pas au premier branchement. Sans table, tout se joue aussi à la souris.
+Ouvre le site dans Chrome ou Edge, branche ta table en USB (logiciel DJ fermé), puis va dans « Apprendre ». Le site reconnaît tout seul une quinzaine de tables de débutant (Pioneer DDJ-FLX4, DDJ-400, DDJ-SB3 et DDJ-200, Hercules Inpulse 200, 300 et 500 et Starlight, Numark Mixtrack Platinum FX et Pro FX, Party Mix et DJ2GO2 Touch, Roland DJ-505, Reloop Mixage) ; une autre table se règle pas à pas au premier branchement. Sans table, tout se joue aussi à la souris.

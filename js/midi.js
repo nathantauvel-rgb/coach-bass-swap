@@ -144,7 +144,7 @@ async function initMidi(){
     // table débranchée : ses positions ne sont plus fiables, on les oublie jusqu'au prochain mouvement
     const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); midiNames = ins.map(i => String(i.name || 'Table MIDI'));
       if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; midiCount = ins.length; modeleAuto(); renderPill();
-      updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); };
+      updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); ppMidi(); };
     acc.onstatechange = refresh; refresh();
   } catch (e){ txt.textContent = 'Souris (MIDI bloqué ici)'; }
 }

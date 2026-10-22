@@ -79,7 +79,7 @@ function renderTable(){
     : et === 'connue' ? `Table branchée : ${nom}. DJingood connaît ses réglages, mais ceux en place sont ceux de ta table réglée à la main : clique sur « ${tableResetTxt()} », en bas de la page.`
     : tableCfg && tableCfg.modele ? `Table branchée : ${nom}, reconnue toute seule. Ses réglages viennent de sa documentation et n'ont pas encore été vérifiés sur une vraie table : si une commande ne répond pas, « Vérifier ma table » le dira, et tu peux la réapprendre.`
     : `Table branchée : ${nom}${tableCfg ? ' (réglée pas à pas)' : ''}. Bouge une commande pour la voir réagir.`;
-  $('tKick').textContent = tableCfg || (midiCount && !midiNames.some(isFlx4)) ? 'Ta table' : 'Ta DDJ-FLX4';
+  $('tKick').textContent = tableCfg || (midiCount && !midiNames.some(isFlx4)) || !midiCount ? 'Ta table' : 'Ta DDJ-FLX4';
   $('tReg').hidden = !midiCount; renderVerifBtn();
   svg.querySelectorAll('.tc').forEach(el => { el.classList.toggle('sel', el.dataset.c === tableSel); el.setAttribute('aria-pressed', String(el.dataset.c === tableSel)); });
   $('tNote').textContent = tableNote;

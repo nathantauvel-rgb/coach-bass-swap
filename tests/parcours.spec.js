@@ -1,6 +1,6 @@
-// Les deux parcours : choix à la première visite, prochaine étape, changement de parcours.
+// Les trois parcours (lot 37) : choix à la première visite, prochaine étape, changement de parcours.
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau, jouer } = require('./outils');
+const { ouvrir, sansBandeau } = require('./outils');
 
 const S = o => JSON.stringify(o);
 const CH1_FINI = S({ 0: 2, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 });
@@ -11,11 +11,11 @@ test.describe('Première visite', () => {
   test('la question est posée, rien d\'autre n\'est proposé', async ({ page }) => {
     const erreurs = await accueil(page, { 'coach-guide-vu': null });
     await expect(page.locator('#homeChoice')).toBeVisible();
-    await expect(page.locator('#homeChoice .choice')).toHaveText([/Je débute complètement/, /Je sais déjà lancer deux morceaux/]);
+    await expect(page.locator('#homeChoice .choice strong')).toHaveText(['Grand débutant', 'Apprenti DJ', 'DJ confirmé']);
     await expect(page.locator('#homeCta')).toBeHidden(); await expect(page.locator('#homePath')).toBeHidden();
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
-  test('« Je débute » : le parcours démarre par le guide de la table', async ({ page }) => {
+  test('« Grand débutant » : le parcours démarre par le guide de la table', async ({ page }) => {
     await accueil(page, { 'coach-guide-vu': null });
     await page.locator('[data-parcours=debut]').click();
     expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('debut');
@@ -27,26 +27,67 @@ test.describe('Première visite', () => {
     await expect(page.locator('#vLearn')).toBeVisible();
     await expect(page.locator('#onb')).toBeVisible();
   });
-  test('« Je sais déjà lancer deux morceaux » : test de placement, sans guide imposé', async ({ page }) => {
+  test('« Apprenti DJ » : Mode Expert d\'abord, sans guide imposé, tout est ouvert', async ({ page }) => {
     const erreurs = await accueil(page, { 'coach-guide-vu': null });
-    await page.locator('[data-parcours=deja]').click();
-    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('deja');
-    await expect(page.locator('#homeTitle')).toHaveText('Le test de placement');
-    expect((await etapes(page)).map(e => e.split(' | ')[1])).toEqual(['Le test de placement', 'Les bases', 'La maîtrise', 'Le calage', 'Hot cues et boucles', 'Les vrais morceaux', 'S\'entraîner', 'Passer au vrai']);
+    await page.locator('[data-parcours=apprenti]').click();
+    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('apprenti');
+    await expect(page.locator('#homeTitle')).toHaveText('Les bases en Mode Expert');
+    await expect(page.locator('#homeCta')).toHaveText('Mode Expert, niveau 1 : Le bon moment');
+    expect((await etapes(page)).map(e => e.split(' | ')[1])).toEqual(['Les bases en Mode Expert', 'Les combos', 'Le calage', 'La maîtrise', 'Les vrais morceaux', 'Hot cues et boucles', 'S\'entraîner', 'Passer au vrai']);
     await page.locator('#homeCta').click();
     await expect(page.locator('#vLearn')).toBeVisible();
     await expect(page.locator('#onb')).toBeHidden();
-    await expect(page.locator('#pBanner')).toBeVisible();
-    await expect(page.locator('#pTitle')).toHaveText('Test de placement · épreuve 1 sur 3');
+    await expect(page.locator('#expertBtn')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('#guideBtn')).toBeVisible();
+    await page.locator('#chapBtn').click();
+    await expect(page.locator('#chapters .chap:disabled')).toHaveCount(0);
+    await expect(page.locator('#chapters')).not.toContainText('Test de placement');
     expect(erreurs).toEqual([]);
+  });
+  test('« DJ confirmé » : le calage d\'abord', async ({ page }) => {
+    await accueil(page, { 'coach-guide-vu': null });
+    await page.locator('[data-parcours=confirme]').click();
+    expect((await etapes(page)).map(e => e.split(' | ')[1])).toEqual(['Le calage', 'Les combos', 'Les bases en Mode Expert', 'Hot cues et boucles', 'Les vrais morceaux', 'S\'entraîner', 'Passer au vrai']);
+    await page.locator('#homeCta').click();
+    await expect(page.locator('#lnum')).toHaveText(/^Chapitre 5 · Niveau 1/);
+    await expect(page.locator('#onb')).toBeHidden();
   });
   test('le choix est gardé après rechargement', async ({ page }) => {
     await accueil(page, { 'coach-guide-vu': null });
-    await page.locator('[data-parcours=deja]').click();
+    await page.locator('[data-parcours=confirme]').click();
     await page.reload();
     await expect(page.locator('#homeChoice')).toBeHidden();
-    await expect(page.locator('#homePathName')).toHaveText('Parcours « J\'améliore mes transitions »');
+    await expect(page.locator('#homePathName')).toHaveText('Parcours « DJ confirmé »');
+  });
+  test('ancien parcours « Je sais déjà » : devient Apprenti DJ', async ({ page }) => {
+    await accueil(page, { 'coach-parcours': 'deja', 'coach-test': 'ok' });
+    await expect(page.locator('#homePathName')).toHaveText('Parcours « Apprenti DJ »');
+    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('apprenti');
+  });
+});
+
+// Défauts trouvés par le gardien du lot 37 : ouvrir les chapitres par le parcours ne doit rien faire « gagner »
+test.describe('Parcours avancés : rien de gagné sans jouer', () => {
+  for (const p of ['apprenti', 'confirme']) test(`${p} : pas de badge gratuit, rien de gagné aux yeux du compte`, async ({ page }) => {
+    const erreurs = await accueil(page, { 'coach-parcours': p });
+    await page.goto('/index.html#progres'); await page.waitForTimeout(500);
+    await page.goto('/index.html#accueil'); await page.waitForTimeout(500);
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('coach-badges') || '[]'))).toEqual([]);
+    expect(await page.evaluate(() => cptVide())).toBe(true);
+    expect(await page.evaluate(() => [ch2Unlocked(), ch3Unlocked()])).toEqual([true, true]);
+    expect(erreurs).toEqual([]);
+  });
+  for (const [p, ch] of [['apprenti', 2], ['confirme', 5], ['deja', 3]]) test(`${p} : après un rechargement, on reste au chapitre ${ch}`, async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: { 'coach-parcours': p, 'coach-chapitre': String(ch) } });
+    expect(await page.evaluate(() => chapter)).toBe(ch);
+    await expect(page.locator('#lnum')).toHaveText(new RegExp(`^Chapitre ${ch} `));
+    expect(erreurs).toEqual([]);
+  });
+  test("apprenti : « La maîtrise » n'est pas faite tant que le chapitre 2 n'est pas joué", async ({ page }) => {
+    await accueil(page, { 'coach-parcours': 'apprenti' });
+    const e = await etapes(page);
+    expect(e.find(x => x.includes('La maîtrise'))).toBe('a-venir | La maîtrise | À venir');
+    expect(e.filter(x => x.startsWith('done'))).toEqual([]);
   });
 });
 
@@ -54,7 +95,7 @@ test.describe('Prochaine étape', () => {
   test('utilisateur déjà venu : pas de question, il reprend où il en était', async ({ page }) => {
     await accueil(page, { 'coach-lecons': S({ 0: 3 }) });
     await expect(page.locator('#homeChoice')).toBeHidden();
-    await expect(page.locator('#homePathName')).toHaveText('Parcours « Je débute »');
+    await expect(page.locator('#homePathName')).toHaveText('Parcours « Grand débutant »');
     await expect(page.locator('#homeTitle')).toHaveText('Les bases');
     await expect(page.locator('#homeCta')).toHaveText('Niveau 2 : Le fader');
     expect((await etapes(page)).slice(0, 2)).toEqual(['done | Découvre ta table | Fait', 'now | Les bases | 3 ★ sur 14']);
@@ -62,7 +103,7 @@ test.describe('Prochaine étape', () => {
     await expect(page.locator('#vLearn')).toBeVisible();
     await expect(page.locator('#ltitle')).toHaveText('Le fader');
   });
-  test('« Je débute » : après les bases vient l\'entraînement, puis le chapitre 2', async ({ page }) => {
+  test('« Grand débutant » : après les bases vient l\'entraînement, puis le chapitre 2', async ({ page }) => {
     await accueil(page, { 'coach-parcours': 'debut', 'coach-lecons': CH1_FINI });
     await expect(page.locator('#homeTitle')).toHaveText('S\'entraîner');
     await page.locator('#homeCta').click();
@@ -73,19 +114,17 @@ test.describe('Prochaine étape', () => {
     await page.locator('#homeCta').click();
     await expect(page.locator('#lnum')).toHaveText(/^Chapitre 2/);
   });
-  test('« Je sais déjà » : test raté, on reprend au premier geste raté', async ({ page }) => {
-    await accueil(page, { 'coach-guide-vu': null, 'coach-parcours': 'deja', 'coach-test': 'ko:5' });
-    await expect(page.locator('#homeTitle')).toHaveText('Les bases');
-    await expect(page.locator('#homeCta')).toHaveText('Niveau 6 : Le swap des basses');
+  test('« Apprenti DJ » : un niveau compte en Expert à partir de 60 sur 100, puis les combos', async ({ page }) => {
+    await accueil(page, { 'coach-parcours': 'apprenti', 'coach-expert': S({ on: true, best: { 0: 75, 1: 59 } }) });
+    expect((await etapes(page))[0]).toBe('now | Les bases en Mode Expert | 1 niveau sur 7');
+    await expect(page.locator('#homeCta')).toHaveText('Mode Expert, niveau 2 : Le fader');
     await page.locator('#homeCta').click();
-    await expect(page.locator('#ltitle')).toHaveText('Le swap des basses');
-    await expect(page.locator('#onb')).toBeHidden();
-  });
-  test('« Je sais déjà » : test réussi, les bases sont passées', async ({ page }) => {
-    await accueil(page, { 'coach-parcours': 'deja', 'coach-test': 'ok', 'coach-ch2-ouvert': '1' });
-    expect((await etapes(page)).slice(0, 3)).toEqual(['done | Le test de placement | Fait', 'done | Les bases | Fait', 'now | La maîtrise | 0 ★ sur 10']);
+    await expect(page.locator('#ltitle')).toHaveText('Le fader');
+    await page.evaluate(() => localStorage.setItem('coach-expert', JSON.stringify({ on: true, best: { 0: 60, 1: 90, 2: 70, 3: 61, 4: 80, 5: 66, 6: 99 } })));
+    await page.goto('/index.html'); await page.reload();
+    await expect(page.locator('#homeTitle')).toHaveText('Les combos');
     await page.locator('#homeCta').click();
-    await expect(page.locator('#lnum')).toHaveText(/^Chapitre 2 · Niveau 1/);
+    await expect(page.locator('#lnum')).toHaveText(/^Chapitre 4 · Niveau 1/);
   });
   test('chapitre 3 puis Passer au vrai', async ({ page }) => {
     await accueil(page, { 'coach-parcours': 'debut', 'coach-lecons': CH1_FINI, 'coach-entrainement': S({ vars: 1 }), 'coach-ch2': S({ 0: 3, 1: 3, 2: 2, 3: 2 }) });
@@ -112,37 +151,14 @@ test.describe('Changer de parcours', () => {
     await page.locator('#homeChange').click();
     await expect(page.locator('#homeChoice')).toBeVisible();
     await expect(page.locator('[data-parcours=debut]')).toHaveAttribute('aria-pressed', 'true');
-    await page.locator('[data-parcours=deja]').click();
-    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('deja');
-    await expect(page.locator('#homeTitle')).toHaveText('Le test de placement');
+    await page.locator('[data-parcours=apprenti]').click();
+    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('apprenti');
+    await expect(page.locator('#homeTitle')).toHaveText('Les bases en Mode Expert');
     expect(JSON.parse(await page.evaluate(() => localStorage.getItem('coach-lecons')))).toEqual({ 0: 3, 1: 2 });
   });
   test('valeurs enregistrées abîmées : pas de plantage, la question est reposée', async ({ page }) => {
     const erreurs = await accueil(page, { 'coach-guide-vu': null, 'coach-parcours': 'zzz', 'coach-test': '{oops' });
     await expect(page.locator('#homeChoice')).toBeVisible();
     expect(erreurs).toEqual([]); await sansBandeau(page);
-  });
-});
-
-test.describe('Test de placement', () => {
-  test('raté sans rien toucher : le résultat est noté et on repart du niveau 1', async ({ page }) => {
-    test.setTimeout(300000);
-    const erreurs = await accueil(page, { 'coach-guide-vu': null });
-    await page.locator('[data-parcours=deja]').click();
-    await page.locator('#homeCta').click();
-    for (let i = 0; i < 3; i++) {
-      await jouer(page);
-      await expect(page.locator('#result')).toBeVisible({ timeout: 90000 });
-      await page.locator('#next').click();
-    }
-    await expect(page.locator('#rTitle')).toHaveText('On commence par les bases');
-    await expect(page.locator('#next')).toHaveText('Commencer le chapitre 1');
-    expect(await page.evaluate(() => localStorage.getItem('coach-test'))).toBe('ko:0');
-    expect(await page.evaluate(() => localStorage.getItem('coach-lecons'))).not.toBeNull();
-    await page.locator('#next').click();
-    await expect(page.locator('#ltitle')).toHaveText('Le bon moment');
-    await page.locator('a.brand').click();
-    await expect(page.locator('#homeTitle')).toHaveText('Les bases');
-    expect(erreurs).toEqual([]);
   });
 });

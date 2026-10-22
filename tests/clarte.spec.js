@@ -84,13 +84,10 @@ test.describe('La piste reste visible', () => {
 });
 
 test.describe('Moins de bruit pour un débutant', () => {
-  test('pas de « Test de placement » dans les chapitres du parcours « Je débute »', async ({ page }) => {
-    await ouvrir(page, { stockage: { 'coach-parcours': 'debut' } });
+  // Lot 37 : le test de placement n'existe plus (les chapitres ne sont pas de plus en plus durs), dans aucun parcours
+  for (const p of ['debut', 'apprenti', 'confirme']) test(`pas de « Test de placement » dans les chapitres du parcours ${p}`, async ({ page }) => {
+    await ouvrir(page, { stockage: { 'coach-parcours': p } });
     await expect(page.locator('.chap.test')).toHaveCount(0);
-  });
-  test('il reste dans l\'autre parcours', async ({ page }) => {
-    await ouvrir(page, { stockage: { 'coach-parcours': 'deja' } });
-    await expect(page.locator('.chap.test')).toHaveCount(1);
   });
   test('l\'accueil ne montre que la prochaine étape et l\'objectif ; le parcours est replié, les badges sont ailleurs', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 2, 5: 3 }) } });

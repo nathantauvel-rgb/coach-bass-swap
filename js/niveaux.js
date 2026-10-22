@@ -134,8 +134,13 @@ const bankOf = c => c === 6 ? ch6Stars : c === 5 ? ch5Stars : c === 4 ? ch4Stars
 const lessonsOf = n => n === 6 ? CH6_LESSONS : n === 5 ? CH5_LESSONS : n === 4 ? CH4_LESSONS : n === 3 ? CH3_LESSONS : BASE_LESSONS;
 const BANK_KEY = { 1: 'coach-lecons', 2: 'coach-ch2', 3: 'coach-ch3', 4: 'coach-ch4', 5: 'coach-ch5', 6: 'coach-ch6' }, XP_PER = { 1: 10, 2: 15, 3: 20, 4: 20, 5: 25, 6: 25 };
 const sumStars = b => Object.values(b || {}).reduce((s, v) => s + (+v || 0), 0);
-const ch2Unlocked = () => ch2Open || sumStars(stars) >= 14;
-const ch3Unlocked = () => ch3Open || sumStars(ch2Stars) >= 10;
+// parcoursOuvert : Apprenti DJ et DJ confirmé ont tous les chapitres ouverts (lot 37, posé par parcours.js). Il est à part de
+// ch2Open / ch3Open, qui disent ce que le joueur a vraiment débloqué (badge « Les bases », étapes du parcours).
+// Il est lu ici, au chargement, parce que les lignes juste en dessous vérifient le chapitre enregistré avant que parcours.js
+// soit chargé (sinon un Apprenti DJ revenait au chapitre 1 à chaque rechargement). 'deja' = l'ancien nom de l'Apprenti DJ.
+let parcoursOuvert = false; try { parcoursOuvert = ['apprenti', 'confirme', 'deja'].includes(localStorage.getItem('coach-parcours')); } catch (e) {}
+const ch2Unlocked = () => ch2Open || parcoursOuvert || sumStars(stars) >= 14;
+const ch3Unlocked = () => ch3Open || parcoursOuvert || sumStars(ch2Stars) >= 10;
 const ch4Unlocked = () => ch2Unlocked();   // les combos s'ouvrent en même temps que le chapitre 2
 const ch5Unlocked = () => ch2Unlocked();   // le calage aussi (choix de l'utilisateur, lot 40)
 const ch6Unlocked = () => CH6_PRET && ch2Unlocked();   // et les hot cues (lot 41), tant qu'il est prêt
@@ -165,9 +170,6 @@ function renderChapters(){
     b.innerHTML = `<span class="cn">Chapitre ${c.n}</span><strong></strong><span class="cs"></span>`; b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = sub;
     b.addEventListener('click', () => { chapMenu(false); setChapter(c.n); }); bar.appendChild(b);
   }
-  if (!ch2Unlocked() && parcours !== 'debut'){ const t = document.createElement('button'); t.type = 'button'; t.className = 'chap test';
-    t.innerHTML = '<span class="cn">Tu mixes déjà ?</span><strong>Test de placement</strong><span class="cs">3 épreuves pour sauter les bases</span>';
-    t.addEventListener('click', () => { chapMenu(false); startPlacement(); }); bar.appendChild(t); }
 }
 // La liste des chapitres s'ouvre sous le bouton « Chapitre N · titre »
 function chapMenu(open){ $('chapters').hidden = !open; $('chapBtn').setAttribute('aria-expanded', String(open)); }
