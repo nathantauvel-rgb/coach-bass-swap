@@ -70,13 +70,20 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   **Reste à faire après cette mise en ligne** : la checklist `tests/CHECKLIST-FLX4.md` sur la vraie table (le lot
   touche `midi.js`, `audio.js`, `commandes.js`, `platines.js`, `niveaux.js`, `piste.js`), et refaire la vidéo POV
   si on veut qu'elle montre la nouvelle interface.
-- **Chapitre 6 « Hot cues et boucles » FINI le 22 oct. 2026 au soir, sur la branche `lot-41-hotcues`, PAS PUBLIÉ** :
-  `CH6_PRET = true`, une douzaine de défauts corrigés, 29 tests dans `tests/hotcues.spec.js` (détail dans l'entrée
-  « Lot 41 repris et fini » plus bas). Gardien : feu orange, ses remarques corrigées. **Ordre de publication : le lot 37
-  d'abord** (choix de l'utilisateur, branche `lot-37-parcours-adapte` dans la copie `Documents\coach-dj-lot37`), puis
-  le chapitre 6 fusionné par-dessus (conflits attendus dans `niveaux.js`, `midi.js` et les tests parcours, clarte,
-  avis), `npm test` et le gardien à refaire. **Rien ne part sans l'accord de l'utilisateur.** Captures dans
-  `captures/lot41/` (hors Git). Jamais joué sur une vraie FLX4 : points 29 à 31 de la checklist.
+- **PUBLIÉS le 23 oct. 2026, avec l'accord de l'utilisateur, dans l'ordre qu'il a choisi** :
+  1. **Lot 37 « Parcours adapté »** (commit `9efdcd4`) : trois parcours, test de placement supprimé, table reconnue
+     toute seule. 432 tests verts, gardien orange au quatrième passage (trois feux rouges corrigés avant). Vérifié en
+     production : un nouveau venu voit la question « Grand débutant / Apprenti DJ / DJ confirmé », aucune erreur.
+  2. **Chapitre 6 « Hot cues et boucles »** (lot 41), fusionné par-dessus le lot 37 (branche `lot-41-sur-37`) :
+     `CH6_PRET = true`, une douzaine de défauts corrigés, 29 tests dans `tests/hotcues.spec.js` (détail dans l'entrée
+     « Lot 41 repris et fini » plus bas). 461 tests verts ; gardien orange sur le chapitre seul (remarques corrigées), puis
+     orange sur la version fusionnée, sans blocage. Captures dans `captures/lot41/` (hors Git).
+  **Jamais joués sur une vraie FLX4** : points 29 à 31 de la checklist (chapitre 6) et le nouvel écran « Ta table » des
+  Premiers pas (lot 37). Les seuils du chapitre 6 (`HC_OK` 20 ms, `HC_ZERO` 150 ms) sont à régler après ses essais.
+  Notion : l'utilisateur colle lui-même le texte fourni (pas de connecteur Notion dans Claude Code pour l'instant).
+  Les copies `Documents\coach-dj-lot37` et `Documents\coach-dj-lot42` (git worktree) peuvent être supprimées un jour
+  (`git worktree remove`), après avoir vérifié qu'il n'y reste rien de non commité (`lot-42-voix-ch3` a un essai de voix
+  chantée non commité dans `js/morceaux.js`, jamais présenté à l'utilisateur).
 - **Habillage « maquettes » (22 oct. 2026), d'après deux images envoyées par l'utilisateur** (`Parcours néon du DJing.png`
   et `Tableau de bord DJingo futuriste et musical.png`, dans ses Téléchargements). Il voulait « plus de vie, plus
   ludique », avec « l'orange et le violet qu'on voit un peu plus ». Fait, tout à la **fin de `styles.css`** (les
@@ -967,7 +974,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   cinq endroits**, pas seulement à la liste des chapitres.
   **Pour reprendre le lot 41** : passer `CH6_PRET` à `true`, finir les 7 niveaux, et **écrire
   `tests/hotcues.spec.js`** — il n'y a aujourd'hui aucun test du chapitre 6, il partirait sans filet.
-- **Lot 41 repris et fini le 22 oct. 2026** (branche `lot-41-hotcues`, **non publiée** ; demande de l'utilisateur :
+- **Lot 41 repris et fini le 22 oct. 2026, publié le 23 oct. après le lot 37** (branche `lot-41-sur-37` ; demande de l'utilisateur :
   « on enchaîne sur le site »). `CH6_PRET = true`. Un « robot » a joué les 7 niveaux (démo, geste parfait, rien du tout) :
   tous allaient au bout sans erreur, mais une dizaine de défauts, tous corrigés et couverts par `tests/hotcues.spec.js` :
   - **Mesure** : la coupure du fader n'était notée qu'à l'image suivante (jusqu'à 30 ms d'erreur sur un geste parfait) ;
