@@ -974,10 +974,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   principal, où le chapitre 6 était en cours (`CH6_PRET = true` non commité) et où un autre serveur occupait le port 8766.
   **Tests : `DJ_PORT=8767 npx playwright test`** (port réglable ajouté dans `playwright.config.js`, `tests/serveur.js`,
   `tests/captures.js`, `tests/images-presentation.js` ; sinon Playwright réutilise le serveur d'une autre copie et teste
-  le mauvais code). 427 tests verts. **Gardien : feu rouge au premier passage**, corrigé : ouvrir les chapitres par
+  le mauvais code). 430 tests verts. **Gardien : feu rouge au premier passage**, corrigé : ouvrir les chapitres par
   le parcours mettait `ch2Open` à vrai, ce qui donnait le badge « Les bases » sans jouer (le compte croyait alors à une
   progression, le défaut du lot 34) et cochait l'étape « La maîtrise ». Maintenant un drapeau à part, `parcoursOuvert`
-  (niveaux.js), lu par `ch2Unlocked` / `ch3Unlocked` seulement ; les étapes ch1 et ch2 se jugent sur les étoiles. Captures : `captures/lot37/` (dossier principal).
+  (niveaux.js), lu par `ch2Unlocked` / `ch3Unlocked` seulement ; les étapes ch1 et ch2 se jugent sur les étoiles.
+  Second passage : feu rouge pour un défaut déjà là au premier commit : niveaux.js vérifie le chapitre enregistré **au
+  chargement, avant parcours.js**, donc un Apprenti DJ revenait au chapitre 1 à chaque rechargement. `parcoursOuvert` est
+  maintenant lu dans `coach-parcours` dès niveaux.js (piège : tout ce que niveaux.js vérifie au chargement ne connaît pas
+  encore le parcours). Test « après un rechargement, on reste au chapitre N ». Captures : `captures/lot37/` (dossier principal).
   Contenu : `PP_ETAPES` = salut, niveau, table, objectif ; `PP_NIVEAUX` = `debut` / `apprenti` / `confirme` (= parcours) ;
   écran de table : `ppBranchee()` reconnaît la table branchée (appelé par `initMidi` via `ppMidi`), sinon « J'ai une table »
   + liste par marque `#ppModele` (`PP_LISTE`), ou « Pas encore de table » ; `coach-accueil` = `{ niveau, table, modele, min,

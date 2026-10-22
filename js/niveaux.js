@@ -132,7 +132,9 @@ const BANK_KEY = { 1: 'coach-lecons', 2: 'coach-ch2', 3: 'coach-ch3', 4: 'coach-
 const sumStars = b => Object.values(b || {}).reduce((s, v) => s + (+v || 0), 0);
 // parcoursOuvert : Apprenti DJ et DJ confirmé ont tous les chapitres ouverts (lot 37, posé par parcours.js). Il est à part de
 // ch2Open / ch3Open, qui disent ce que le joueur a vraiment débloqué (badge « Les bases », étapes du parcours).
-let parcoursOuvert = false;
+// Il est lu ici, au chargement, parce que les lignes juste en dessous vérifient le chapitre enregistré avant que parcours.js
+// soit chargé (sinon un Apprenti DJ revenait au chapitre 1 à chaque rechargement). 'deja' = l'ancien nom de l'Apprenti DJ.
+let parcoursOuvert = false; try { parcoursOuvert = ['apprenti', 'confirme', 'deja'].includes(localStorage.getItem('coach-parcours')); } catch (e) {}
 const ch2Unlocked = () => ch2Open || parcoursOuvert || sumStars(stars) >= 14;
 const ch3Unlocked = () => ch3Open || parcoursOuvert || sumStars(ch2Stars) >= 10;
 const ch4Unlocked = () => ch2Unlocked();   // les combos s'ouvrent en même temps que le chapitre 2

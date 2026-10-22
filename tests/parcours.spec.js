@@ -77,6 +77,12 @@ test.describe('Parcours avancés : rien de gagné sans jouer', () => {
     expect(await page.evaluate(() => [ch2Unlocked(), ch3Unlocked()])).toEqual([true, true]);
     expect(erreurs).toEqual([]);
   });
+  for (const [p, ch] of [['apprenti', 2], ['confirme', 5], ['deja', 3]]) test(`${p} : après un rechargement, on reste au chapitre ${ch}`, async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: { 'coach-parcours': p, 'coach-chapitre': String(ch) } });
+    expect(await page.evaluate(() => chapter)).toBe(ch);
+    await expect(page.locator('#lnum')).toHaveText(new RegExp(`^Chapitre ${ch} `));
+    expect(erreurs).toEqual([]);
+  });
   test("apprenti : « La maîtrise » n'est pas faite tant que le chapitre 2 n'est pas joué", async ({ page }) => {
     await accueil(page, { 'coach-parcours': 'apprenti' });
     const e = await etapes(page);
