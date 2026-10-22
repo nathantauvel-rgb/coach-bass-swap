@@ -1,4 +1,4 @@
-# Brancher les comptes DJingo (environ 10 minutes)
+# Brancher les comptes DJingood (environ 10 minutes)
 
 Le code des comptes est écrit et testé. Il lui manque une seule chose : **les coordonnées de ta base**.
 Tant qu'elles ne sont pas remplies, le bouton « Se connecter » reste caché et le site marche
@@ -14,7 +14,7 @@ Je ne peux pas faire ces étapes à ta place : elles demandent ton compte Google
 ## 1. Créer le projet
 
 1. Va sur https://console.firebase.google.com et clique **Créer un projet**.
-2. Nom : `DJingo`. Tu peux **désactiver Google Analytics** (on n'en a pas besoin).
+2. Nom : `DJingood`. Tu peux **désactiver Google Analytics** (on n'en a pas besoin).
 3. Attends la création, puis entre dans le projet.
 
 ## 2. Autoriser la connexion avec Google
@@ -50,7 +50,7 @@ C'est ce qui garantit qu'un joueur ne peut voir que sa propre progression.
 ## 6. Récupérer les coordonnées
 
 1. Roue dentée en haut à gauche → **Paramètres du projet**.
-2. Section **Vos applications** → icône **`</>`** (Web) → nom `DJingo` → **Enregistrer l'application**
+2. Section **Vos applications** → icône **`</>`** (Web) → nom `DJingood` → **Enregistrer l'application**
    (ne coche **pas** Firebase Hosting, on est déjà sur Vercel).
 3. Firebase affiche un bloc `const firebaseConfig = { … }`. **Copie-le et envoie-le-moi**, ou remplis
    toi-même le haut de [js/compte.js](js/compte.js) :

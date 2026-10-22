@@ -25,6 +25,8 @@ function renderPads(k){
   });
 }
 function padPresse(k, i){
+  // chapitre 6 : le geste est noté (instant entendu), et le niveau décide de ce qu'il fait (hotcues.js)
+  if (run && LESSONS[li].hc){ hcPad(k, padMode[k], i); return; }
   ensureAudio();
   if (padMode[k] === 'hc') plHotCue(k, i);
   else if (PAD_BOUCLES[i]) plBoucle(k, PAD_BOUCLES[i]); else plSortie(k);

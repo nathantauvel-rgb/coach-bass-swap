@@ -80,7 +80,7 @@ function chooseSongs(){
   else { sel = { sty: chapter === 2 ? CH2_STYLE[li] : pickStyle(), vr: firstSel ? 0 : Math.floor(Math.random() * VARIANTS) }; firstSel = false; }
   // chapitre 5 : toujours la house fabriquée par le site, à 124 BPM (CAL_BPM_A) et à la grille parfaite, quel que soit le
   // style choisi : avec Techno (130) ou Afro (120), A n'était pas au tempo du chapitre et B dérivait tout seul (gardien, lot 40)
-  if (chapter === 5) sel.sty = 'house';
+  if (chapter === 5 || chapter === 6) sel.sty = 'house';   // chapitre 6 aussi (lot 41) : grille parfaite, drop au temps 64
   warmSongs();
   const d = STYLE_DEFS[sel.sty]; $('styleTag').textContent = sel.sty === 'vrai' ? vraiTitres(sel.vr, l.bBass) : d.label + ' · ' + d.bpm + ' BPM';
 }

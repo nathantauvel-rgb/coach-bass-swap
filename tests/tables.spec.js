@@ -1,4 +1,4 @@
-// Lot 38 : les tables de débutant que DJingo reconnaît toutes seules (fiches de js/tables.js).
+// Lot 38 : les tables de débutant que DJingood reconnaît toutes seules (fiches de js/tables.js).
 // Les fausses tables portent le nom d'une vraie table ; leurs numéros sont ceux de la fiche (rien n'est essayé en vrai).
 const { test, expect } = require('@playwright/test');
 const { ouvrir, envoyer, sansBandeau } = require('./outils');
@@ -84,7 +84,7 @@ test.describe('Changer de table', () => {
   test('une table réglée à la main n\'est pas remplacée sans demander : le bandeau propose la fiche', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: 'DJControl Inpulse 300' }, stockage: { 'coach-table': S({ nom: 'Controleur Mystere X1' }), 'coach-midi-map': S({ faderA: { ch: 0, n: 8 } }) } });
     await expect(page.locator('#tableBar')).toBeVisible();
-    await expect(page.locator('#tbText')).toContainText('Tu as branché une Hercules DJControl Inpulse 300 : DJingo connaît ses réglages');
+    await expect(page.locator('#tbText')).toContainText('Tu as branché une Hercules DJControl Inpulse 300 : DJingood connaît ses réglages');
     await expect(page.locator('#midiPill')).not.toHaveClass(/\bon\b/);
     await page.locator('#tbGo').click();
     await expect(page.locator('#tableBar')).toBeHidden();
@@ -138,7 +138,7 @@ test.describe('Changer de table', () => {
   test('sans table réglée à la main, le bandeau ne parle pas de réglages remplacés', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: 'DDJ-400' } });
     await page.evaluate(() => { flx4Map(); });
-    await expect(page.locator('#tbText')).toHaveText('Tu as branché une Pioneer DDJ-400 : DJingo connaît ses réglages. On les prend ?');
+    await expect(page.locator('#tbText')).toHaveText('Tu as branché une Pioneer DDJ-400 : DJingood connaît ses réglages. On les prend ?');
   });
   test('table connue dont les réglages enregistrés sont abîmés : elle reprend sa fiche', async ({ page }) => {
     const erreurs = await ouvrir(page, { stockage: { 'coach-table': S({ nom: 'DDJ-400', modele: 'ddj400' }), 'coach-midi-map': '{oops' } });

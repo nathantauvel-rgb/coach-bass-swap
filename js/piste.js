@@ -44,11 +44,12 @@ function drawHighway(b){
       else { wave(waveTk.envB, yB, COL.b, b, .32); g.fillStyle = COL.b; g.fillText('B si tu le lances maintenant', 8, yB + H + 18); } }
     else { g.fillText('Préparation des formes d\'onde…', 12, yA + 28); }
   } else {
-  block(16, 32, yA, COL.a, true, 'Corps'); block(32, 128, yA, COL.a, false, 'Outro');
+  for (const [f, t, s, lab] of (l.blocsA || [[16, 32, true, 'Corps'], [32, 128, false, 'Outro']])) block(f, t, yA, COL.a, s, lab);   // blocsA : chapitre 6
   if (L !== null){ if (l.bCue >= 64){ block(L, L + 160, yB, COL.b, true, 'Drop'); } else if (l.bCue){ block(L, L + 64 - l.bCue, yB, COL.b, false, 'Fin d\'intro'); block(L + 64 - l.bCue, L + 160, yB, COL.b, true, 'Drop'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'Intro (avec basse)' : 'Intro'); block(L + 64, L + 160, yB, COL.b, true, 'Drop'); } }
   else if (!(run ? run.expert : expertOn())){ const a = X(l.launchBeat); g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, X(l.launchBeat + 64) - a - 2, H, H / 2); g.stroke(); g.setLineDash([]);
     if (a < w - 60){ g.fillStyle = COL.b; g.font = '600 13px ' + COL.font; g.textAlign = 'left'; g.fillText('B partira ici', Math.max(a + 30, 8), yB + 28); } }
   }
+  if (l.hc) hcDessine(g, X, b, yA, yB, H, w, hitX);   // chapitre 6 : boucles, fin de A, hot cue qui attend (sous les repères)
   // gestes à faire
   // Brouillard « à l'oreille » ; en Expert, pas de brouillard mais aucun repère ni « B partira ici »
   const fog = run && run.ear, hide = fog || (run ? !!run.expert : expertOn());

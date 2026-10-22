@@ -148,6 +148,6 @@ test.describe('Vini', () => {
     await page.evaluate(() => viniJoie($('ppVini'), 150));
     expect(await cls()).toMatch(/vn-parfait/);
     await expect(page.locator('#ppVini')).toHaveClass(/vn-danse/);
-    await expect(page.locator('#ppVini')).toHaveAttribute('aria-label', 'Vini, la mascotte de DJingo');
+    await expect(page.locator('#ppVini')).toHaveAttribute('aria-label', 'Vini, la mascotte de DJingood');
   });
 });

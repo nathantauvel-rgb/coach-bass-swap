@@ -17,7 +17,7 @@ test.describe('Vini pendant une partie', () => {
     const erreurs = await ouvrir(page);
     await expect(vini(page).locator('svg')).toBeVisible();
     await expect(vini(page)).toHaveClass(/vn-calme/);
-    await expect(vini(page)).toHaveAttribute('aria-label', 'Vini, la mascotte de DJingo');
+    await expect(vini(page)).toHaveAttribute('aria-label', 'Vini, la mascotte de DJingood');
     await jouer(page);
     await expect(vini(page)).toHaveClass(/vn-danse/);
     expect(await page.evaluate(() => parseFloat($('lvlVini').style.getPropertyValue('--vini-beat')))).toBeCloseTo(60 / 124, 3);

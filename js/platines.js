@@ -54,7 +54,10 @@ function plJog(k, crans){
 }
 
 /* ---------- PLAY, CUE et hot cues ---------- */
-const plSurTemps = (k, p) => { const per = deck[k].per || P; return Math.round(p / per) * per; };
+// Quantize (comme dans rekordbox) : un repère ou une boucle se range sur le temps le plus proche. Éteint au chapitre 6,
+// niveaux 5 à 7 (lot 41) : ils partent exactement à l'appui. Remis à vrai à chaque fin de partie.
+let plQuantize = true;
+const plSurTemps = (k, p) => { if (!plQuantize) return p; const per = deck[k].per || P; return Math.round(p / per) * per; };
 function plLecture(k){
   const d = deck[k]; if (!ac || !d.buf) return;
   if (d.joue) stop(k); else plDemarre(k, ac.currentTime, d.ancP || 0);

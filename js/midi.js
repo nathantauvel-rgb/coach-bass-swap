@@ -105,6 +105,10 @@ function flx4Plus(type, ch, d1, d2){
   if (!pad && !eff && !exit) return false;
   const k = pad || eff || (ch ? 'B' : 'A'); if (!groupeAllume('gPads' + k)) return true;
   ensureAudio();
+  // chapitre 6 : le geste est noté et le niveau décide de ce qu'il fait (hotcues.js)
+  if (run && LESSONS[li].hc){ if (eff && d1 < 4) hcPad(k, 'efface', d1); else if (pad && d1 < 4) hcPad(k, 'hc', d1);
+    else if (pad && FLX4_BOUCLES[d1]) hcPad(k, 'lp', FLX4_BOUCLES[d1] === 'exit' ? 3 : PAD_BOUCLES.indexOf(FLX4_BOUCLES[d1]));
+    else if (exit) hcPad(k, 'lp', deck[k].boucle ? 3 : 0); return true; }
   if (eff && d1 < 4) plHotCueEfface(k, d1);
   else if (pad && d1 < 4){ padMode[k] = 'hc'; plHotCue(k, d1); }
   else if (pad && FLX4_BOUCLES[d1]){ padMode[k] = 'lp'; if (FLX4_BOUCLES[d1] === 'exit') plSortie(k); else plBoucle(k, FLX4_BOUCLES[d1]); }

@@ -86,7 +86,7 @@ test.describe('Le rapport', () => {
       'coach-journal': S({ debut: '2026-10-10', jours: ['2026-10-10'], secs: 600, parties: [{ c: 1, n: 0, e: 2, k: '', d: '2026-10-10' }, { c: 1, n: 0, e: 3, k: 'var', d: '2026-10-10' }, { c: 1, n: 1, e: 1, k: '', d: '2026-10-10' }],
         clair: { '1-0': 'oui', '1-1': 'non' }, avis: [{ d: '2026-10-10', ecran: 'Accueil', bloque: 'Le mot outro', plu: 'Les étoiles', note: 4 }], erreurs: [] }) } });
     const r = await rapport(page);
-    expect(r).toMatch(/^Rapport DJingo du \d{4}-\d\d-\d\d\n/);
+    expect(r).toMatch(/^Rapport DJingood du \d{4}-\d\d-\d\d\n/);
     expect(r).toContain('Parcours : Parcours « Je débute » · sans table (souris)');
     expect(r).toContain('Temps sur le site : 10 min, sur 2 jours (première visite le 2026-10-10)');
     expect(r).toContain('Étoiles : chapitre 1 4/21, chapitre 2 0/21, chapitre 3 0/12, chapitre 4 0/12, chapitre 5 0/21 · 45 XP · badges 2/13 · quiz 1/25');
@@ -101,14 +101,14 @@ test.describe('Le rapport', () => {
     await page.locator('#avisBtn').click();
     await page.locator('#avCopy').click();
     await expect(page.locator('#avMsg')).toContainText('Rapport copié');
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('Rapport DJingo du');
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('Rapport DJingood du');
   });
   test('sans presse-papiers, le rapport s\'affiche pour être copié à la main', async ({ page }) => {
     await ouvrir(page, { avant: 'Object.defineProperty(navigator, "clipboard", { value: undefined });' });
     await page.locator('#avisBtn').click();
     await page.locator('#avCopy').click();
     await expect(page.locator('#avText')).toBeVisible();
-    await expect(page.locator('#avText')).toHaveValue(/^Rapport DJingo du/);
+    await expect(page.locator('#avText')).toHaveValue(/^Rapport DJingood du/);
   });
   test('un journal abîmé ne bloque pas la page et repart proprement', async ({ page }) => {
     const erreurs = await ouvrir(page, { stockage: { 'coach-journal': S({ debut: 5, jours: 'x', secs: -3, parties: [{ c: 9, n: 0, e: 2 }, { c: 1, n: 0, e: 2 }, null], clair: { '1-0': 'peut-être', '2-3': 'oui' }, avis: [{ d: '2026-10-10', note: 9, bloque: 42 }] }) } });
@@ -148,7 +148,7 @@ test.describe('Fiche des testeurs', () => {
   test('la page s\'ouvre et mène au site', async ({ page }) => {
     const erreurs = []; page.on('pageerror', e => erreurs.push(String(e)));
     await page.goto('/testeurs.html');
-    await expect(page.locator('h1')).toHaveText('Tester DJingo');
+    await expect(page.locator('h1')).toHaveText('Tester DJingood');
     await page.locator('a.cta').click();
     await expect(page.locator('#vHome')).toBeVisible();
     expect(erreurs).toEqual([]);

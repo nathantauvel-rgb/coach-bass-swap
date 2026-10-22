@@ -42,13 +42,27 @@
   --slot:#282E42;
   --track:#2C3246;
   --dot:#1D2233;
-  /* Couleur de DJingo (lots 27 à 30) : le violet, pour Vini, le bouton principal des « Premiers pas » et les quêtes du jour */
+  /* Couleur de DJingood (lots 27 à 30) : le violet, pour Vini, le bouton principal des « Premiers pas » et les quêtes du jour */
   --brand:#7C4DFF;
   --brand-edge:#5229C4;
   --brand-light:#B89BFF;
   --brand-soft:#1c1630;
   --brand-line:#3d2d7a;
   --on-brand:#ffffff;   /* blanc : le violet du brief (#7C4DFF) est trop sombre pour du texte noir (4,0 au lieu de 4,5) */
+  --a-edge:#C0522A;   /* le relief sous le bouton « Jouer », orange foncé (maquette du 22 oct. 2026) */
+  /* Les disques des niveaux (maquette du 22 oct. 2026) */
+  --vinyle-haut:#272E40;    /* reflet en haut à gauche du disque */
+  --vinyle-bas:#0A0D14;     /* le noir du disque */
+  --vinyle-haut-fait:#2B3346;   /* un peu plus clair quand le niveau est réussi */
+  --vinyle-sillon:rgba(255,255,255,.07);
+  --vinyle-sillon-fait:rgba(255,255,255,.09);
+  --vinyle-bord:rgba(255,255,255,.07);
+  --vinyle-bord-fait:rgba(255,255,255,.10);
+  --vinyle-lisere:rgba(255,255,255,.22);   /* le liseré autour de la pastille centrale */
+  --vinyle-reflet:rgba(255,255,255,.06);   /* la brillance en diagonale sur le disque */
+  --vinyle-bande:rgba(0,0,0,.5);           /* les sillons profonds, plus espacés */
+  --vinyle-rim:rgba(255,255,255,.14);      /* le bord extérieur du disque, qui accroche la lumière */
+  --vinyle-ombre:rgba(0,0,0,.55);
   --off:#242A3C;   /* bouton grisé (rien de choisi) */
   --off-edge:#1B2030;
   --off-ink:#6b7182;
@@ -1240,3 +1254,175 @@ html.pp-open,html.pp-open body{overflow:hidden}
   .stage.joue .actionbar{position:sticky}
   .stage.joue .deck{margin-bottom:84px}
 }
+
+/* ---------- Les niveaux en vinyles (22 oct. 2026) ----------
+   Demande de l'utilisateur, d'après deux maquettes qu'il a envoyées : les pastilles des niveaux deviennent de
+   vrais disques (sillons, pastille centrale colorée), et l'orange et le violet se voient davantage — « ça rajoute
+   de la vie et c'est plus ludique ».
+   Les couleurs alternent d'un niveau à l'autre : --pastille vaut l'orange ou le violet. ATTENTION : c'est de la
+   décoration, pas le langage des platines. Pendant une partie, l'orange veut toujours dire « platine A » et le
+   bleu « platine B » (piste, potards, faders) : ces règles-là ne sont pas touchées.
+   Cette section est à la FIN du fichier exprès : les couches héritées plus haut redéfinissent .node .dot,
+   .xpbar i et .lnum, il faut passer après elles. */
+.node{--pastille:var(--brand)}
+.map .node:nth-child(odd){--pastille:var(--a)}
+
+.node .dot{
+  position:relative;
+  width:62px;height:62px;border-radius:50%;
+  font-family:var(--display);font-weight:900;font-size:23px;
+  color:var(--on-brand);
+  border:2px solid var(--vinyle-bord);
+  background:
+    radial-gradient(circle at 50% 50%, var(--pastille) 0 35%, rgba(0,0,0,0) 35.5%),
+    repeating-radial-gradient(circle at 50% 50%, var(--vinyle-sillon) 0 1px, rgba(0,0,0,0) 1px 4px),
+    radial-gradient(circle at 36% 30%, var(--vinyle-haut) 0%, var(--vinyle-bas) 72%);
+  box-shadow:0 6px 18px var(--vinyle-ombre);
+  transition:transform .15s, box-shadow .25s;
+}
+/* l'arc de néon autour du disque */
+.node .dot::after{
+  content:"";position:absolute;inset:-6px;border-radius:50%;pointer-events:none;
+  background:conic-gradient(from 205deg, var(--pastille) 0deg 68deg, rgba(0,0,0,0) 68deg 178deg, var(--pastille) 178deg 232deg, rgba(0,0,0,0) 232deg 360deg);
+  -webkit-mask:radial-gradient(farthest-side, rgba(0,0,0,0) calc(100% - 3px), #000 calc(100% - 2px));
+          mask:radial-gradient(farthest-side, rgba(0,0,0,0) calc(100% - 3px), #000 calc(100% - 2px));
+  opacity:.45;
+}
+.node.done .dot{background:
+    radial-gradient(circle at 50% 50%, var(--pastille) 0 35%, rgba(0,0,0,0) 35.5%),
+    repeating-radial-gradient(circle at 50% 50%, var(--vinyle-sillon-fait) 0 1px, rgba(0,0,0,0) 1px 4px),
+    radial-gradient(circle at 36% 30%, var(--vinyle-haut-fait) 0%, var(--vinyle-bas) 72%);
+  border-color:var(--vinyle-bord-fait);color:var(--on-brand)}
+.node.done .dot::after{opacity:.75}
+.node:hover .dot{transform:translateY(-3px);box-shadow:0 10px 24px var(--vinyle-ombre)}
+
+/* le niveau en cours : anneau complet, lumineux, qui tourne lentement comme un disque */
+.node[aria-pressed="true"] .dot{box-shadow:0 0 0 3px var(--bg), 0 0 26px -2px var(--pastille), 0 8px 22px var(--vinyle-ombre)}
+.node[aria-pressed="true"] .dot::after{
+  inset:-8px;opacity:1;
+  background:conic-gradient(from 0deg, var(--a), var(--brand) 38%, var(--brand-light) 55%, var(--a) 100%);
+  animation:vinyle-tourne 9s linear infinite;
+}
+@keyframes vinyle-tourne{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.node[aria-pressed="true"] .dot::after{animation:none}}
+
+/* le fil qui relie les disques, aux deux couleurs */
+.map::before{background:var(--line);opacity:.65}
+.map .prog{background:linear-gradient(90deg,var(--brand),var(--a))}
+
+/* un peu plus de couleur ailleurs, sans toucher au langage des platines */
+.xpbar i{background:linear-gradient(90deg,var(--brand),var(--a))}
+.lnum{color:var(--brand-light)}
+
+@media (max-width:760px){.node .dot{width:54px;height:54px;font-size:20px}}
+@media (max-width:420px){.node .dot{width:48px;height:48px;font-size:18px}.node .dot::after{inset:-5px}}
+
+/* ---------- Barre d'onglets, boutons et espacement, d'après la maquette (22 oct. 2026) ----------
+   Demande de l'utilisateur : « fais tout comme sur la capture », sauf le fond d'écran et le logo au vinyle orange.
+   Choix validé par lui : on GARDE les quatre onglets (Accueil, Apprendre, S'entraîner, Passer au vrai) et on leur
+   donne l'allure de la maquette — centrés, une icône chacun, soulignement violet sur l'onglet affiché. Les trois
+   numéros 1-2-3 des onglets ont été remplacés par des icônes, comme sur la maquette.
+   « Jouer » passe à l'ORANGE et « Regarde d'abord » prend un contour violet, comme sur la maquette.
+   Toujours à la fin du fichier : les couches héritées redéfinissent .tabs, .start et .watch plus haut. */
+.tabs{background:none;border-radius:0;padding:0;gap:4px;justify-content:center;flex-wrap:wrap}
+.tabs a{position:relative;gap:9px;padding:12px 18px 14px;border-radius:12px;color:var(--muted);font-weight:700;font-size:16px}
+.tabs a .tn{width:20px;height:20px;background:none;border-radius:0;color:inherit}
+.tabs a .tn svg{width:20px;height:20px;display:block}
+.tabs a:hover{color:var(--fg);background:var(--hi)}
+.tabs a[aria-current="page"]{background:none;color:var(--fg)}
+.tabs a[aria-current="page"] .tn{background:none;color:var(--brand-light)}
+/* le trait violet sous l'onglet affiché */
+.tabs a[aria-current="page"]::after{
+  content:"";position:absolute;left:18px;right:18px;bottom:2px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--brand),var(--brand-light));
+}
+
+/* les deux boutons de la barre d'action */
+.start{background:var(--a);color:var(--ink);box-shadow:0 5px 0 var(--a-edge)}
+.start:hover:not(:disabled){filter:brightness(1.06)}
+.start:disabled{background:var(--off);color:var(--off-ink);box-shadow:0 4px 0 var(--off-edge);filter:none}
+.watch{border:2px solid var(--brand-line);color:var(--brand-light)}
+.watch:hover:not(:disabled){border-color:var(--brand-light);background:var(--brand-soft);color:var(--brand-light)}
+
+/* « Pendant le niveau » : des pastilles violettes numérotées au lieu de 1. 2. */
+.plan{padding:16px 18px;gap:10px}
+.plan ol{list-style:none;padding-left:0;gap:9px;counter-reset:plan}
+.plan ol li{counter-increment:plan;display:flex;align-items:flex-start;gap:11px;line-height:1.35}
+.plan ol li::before{
+  content:counter(plan);flex:none;width:25px;height:25px;border-radius:50%;
+  background:var(--brand);color:var(--on-brand);
+  display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:13px;margin-top:1px;
+}
+
+/* un peu plus d'air, comme sur la maquette */
+.chapsel{margin-bottom:6px}
+.map{padding-top:10px;gap:10px}
+.node{gap:9px}
+@media (max-width:600px){
+  .tabs a{padding:10px 10px 12px;font-size:14px;gap:7px}
+  .tabs a .tn,.tabs a .tn svg{width:18px;height:18px;display:block}
+  .tabs a[aria-current="page"]::after{left:10px;right:10px}
+}
+
+/* ---------- Retours de l'utilisateur sur l'habillage (22 oct. 2026, soir) ----------
+   1. « Accueil / Apprendre / S'entraîner / Passer au vrai sont trop bas » → la barre remonte sur la ligne du logo,
+      tout en haut, et les pastilles (XP, table, Guide…) passent sur la ligne du dessous. Sur petit écran, l'ordre
+      s'inverse : les pastilles d'abord, les onglets en dessous et qui défilent — l'ordinateur décide de la mise en
+      page (90 % des joueurs), le téléphone doit juste rester utilisable.
+   2. « Mets le D et le J en violet » → .brand-name .dj.
+   3. « Des disques plus réalistes, avec les petits détails » → le disque est fait de six couches superposées :
+      la pastille, son liseré, la brillance en diagonale, les sillons fins, les sillons profonds, puis le corps du
+      disque ; plus un liseré de lumière sur le bord extérieur et un halo coloré sur l'arc de néon. */
+.top{justify-content:space-between;row-gap:12px}
+.top .tabs{order:2;flex:1 1 auto;justify-content:center}
+.top .hud{order:3;flex:1 1 100%;justify-content:center}
+.brand-name .dj{color:var(--brand-light)}
+
+.node .dot{
+  width:66px;height:66px;font-size:24px;
+  background:
+    radial-gradient(circle at 50% 50%, var(--pastille) 0 32%, rgba(0,0,0,0) 32.4%),
+    radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 32.4%, var(--vinyle-lisere) 32.4% 33.8%, rgba(0,0,0,0) 34%),
+    conic-gradient(from 140deg at 50% 50%, rgba(0,0,0,0) 0deg, var(--vinyle-reflet) 24deg, rgba(0,0,0,0) 54deg,
+      rgba(0,0,0,0) 176deg, var(--vinyle-reflet) 204deg, rgba(0,0,0,0) 234deg, rgba(0,0,0,0) 360deg),
+    repeating-radial-gradient(circle at 50% 50%, var(--vinyle-sillon) 0 .5px, rgba(0,0,0,0) .5px 2.5px),
+    repeating-radial-gradient(circle at 50% 50%, var(--vinyle-bande) 0 1px, rgba(0,0,0,0) 1px 8px),
+    radial-gradient(circle at 34% 26%, var(--vinyle-haut) 0%, var(--vinyle-bas) 68%);
+  box-shadow:inset 0 0 0 1px var(--vinyle-rim), 0 7px 20px var(--vinyle-ombre);
+}
+.node.done .dot{
+  background:
+    radial-gradient(circle at 50% 50%, var(--pastille) 0 32%, rgba(0,0,0,0) 32.4%),
+    radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 32.4%, var(--vinyle-lisere) 32.4% 33.8%, rgba(0,0,0,0) 34%),
+    conic-gradient(from 140deg at 50% 50%, rgba(0,0,0,0) 0deg, var(--vinyle-reflet) 24deg, rgba(0,0,0,0) 54deg,
+      rgba(0,0,0,0) 176deg, var(--vinyle-reflet) 204deg, rgba(0,0,0,0) 234deg, rgba(0,0,0,0) 360deg),
+    repeating-radial-gradient(circle at 50% 50%, var(--vinyle-sillon-fait) 0 .5px, rgba(0,0,0,0) .5px 2.5px),
+    repeating-radial-gradient(circle at 50% 50%, var(--vinyle-bande) 0 1px, rgba(0,0,0,0) 1px 8px),
+    radial-gradient(circle at 34% 26%, var(--vinyle-haut-fait) 0%, var(--vinyle-bas) 68%);
+}
+.node .dot::after{inset:-7px;filter:drop-shadow(0 0 5px var(--pastille))}
+.node[aria-pressed="true"] .dot::after{inset:-9px;filter:drop-shadow(0 0 9px var(--pastille))}
+
+@media (max-width:980px){
+  .top{flex-wrap:wrap}
+  .top .tabs{order:3;flex:1 1 100%}
+  .top .hud{order:2;flex:1 1 100%}
+}
+@media (max-width:760px){
+  .top{flex-wrap:wrap}
+  .top .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;justify-content:flex-start}
+  .top .tabs::-webkit-scrollbar{display:none}
+  .top .tabs a{flex:none}
+  .node .dot{width:58px;height:58px;font-size:21px}
+}
+@media (max-width:420px){.node .dot{width:52px;height:52px;font-size:19px}}
+
+/* Le fil passe DERRIÈRE les disques (sur la maquette il s'arrête au bord), et le disque du niveau en cours
+   est plus gros que les autres, comme sur l'image de référence. */
+.map::before,.map .prog{z-index:0}
+.node{z-index:1}
+.node[aria-pressed="true"] .dot{transform:scale(1.13)}
+.node[aria-pressed="true"]:hover .dot{transform:scale(1.13) translateY(-3px)}
+
+/* Le fil doit relier le CENTRE des disques : il suit leur taille (10 px de padding + la moitié de 66 px). */
+.map::before,.map .prog{top:41px}

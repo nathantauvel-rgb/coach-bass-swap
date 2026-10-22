@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>DJingo</title>
+<title>DJingood</title>
 <meta name="theme-color" content="#0B0E16">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,7 +83,7 @@
 <div class="quiz" id="avis" hidden role="dialog" aria-modal="true" aria-labelledby="avTitle">
   <div class="qcard">
     <button type="button" class="rclose" id="avClose" aria-label="Fermer">×</button>
-    <span class="lnum">DJingo est en test</span>
+    <span class="lnum">DJingood est en test</span>
     <h2 id="avTitle">Ton avis</h2>
     <label class="avq">Qu'est-ce qui t'a bloqué ou gêné ?<textarea id="avBloque" rows="3" maxlength="1000"></textarea></label>
     <label class="avq">Qu'est-ce qui t'a plu ?<textarea id="avPlu" rows="3" maxlength="1000"></textarea></label>
@@ -166,7 +166,13 @@
 </div>
 <div class="wrap">
   <header class="top">
-    <a class="brand" href="#accueil" aria-label="DJingo, retour à l'accueil"><img class="blogo" src="img/vini-logo.svg" alt="" width="40" height="40"><div><div class="brand-name">DJingo</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
+    <a class="brand" href="#accueil" aria-label="DJingood, retour à l'accueil"><img class="blogo" src="img/vini-logo.svg" alt="" width="40" height="40"><div><div class="brand-name"><span class="dj">DJ</span>ingood</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
+    <nav class="tabs" id="tabs" aria-label="Parcours">
+      <a href="#accueil" data-view="accueil"><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>Accueil</a>
+      <a href="#apprendre" data-view="apprendre"><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>Apprendre</a>
+      <a href="#entrainer" data-view="entrainer"><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg></span>S'entraîner</a>
+      <a href="#vrai" data-view="vrai"><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V10"/><path d="M12 20V4"/><path d="M19 20v-6"/></svg></span>Passer au vrai</a>
+    </nav>
     <div class="hud">
       <a class="chip lvlchip" href="#progres" title="Mes progrès : niveau, étoiles, badges"><span class="lvl" id="lvl">Niv. 1</span><span class="xpbar"><i id="xpFill" style="width:0"></i></span><span class="num" id="xpTxt">0 XP</span><span class="star" aria-hidden="true">★</span><span class="num" id="starTot">0/12</span></a>
       <a class="chip status" id="midiPill" href="#table" title="Ma table : le schéma et les réglages"><i></i><span>Table…</span></a>
@@ -181,11 +187,6 @@
     <div class="rbrow"><button type="button" class="rbtn go" id="tbGo">Régler ma table</button><button type="button" class="ghost" id="tbLater">Plus tard</button></div>
   </div>
 
-  <nav class="tabs" id="tabs" aria-label="Parcours">
-    <a href="#apprendre" data-view="apprendre"><span class="tn">1</span>Apprendre</a>
-    <a href="#entrainer" data-view="entrainer"><span class="tn">2</span>S'entraîner</a>
-    <a href="#vrai" data-view="vrai"><span class="tn">3</span>Passer au vrai</a>
-  </nav>
 
   <div class="view" id="vHome">
     <section class="hero">
@@ -475,6 +476,7 @@
 <script src="js/commandes.js"></script>
 <script src="js/combos.js"></script>
 <script src="js/calage.js"></script>
+<script src="js/hotcues.js"></script>
 <script src="js/niveaux.js"></script>
 <script src="js/piste.js"></script>
 <script src="js/expert.js"></script>

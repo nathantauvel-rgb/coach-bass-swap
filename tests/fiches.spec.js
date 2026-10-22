@@ -9,7 +9,7 @@ const vues = page => page.evaluate(() => JSON.parse(localStorage.getItem('coach-
 test.describe('Le guide ne parle plus que de la musique', () => {
   test('4 étapes, sans bouton de la table', async ({ page }) => {
     await ouvrir(page);
-    expect(await page.evaluate(() => ONB.map(s => s.title))).toEqual(['Bienvenue sur DJingo', 'Compter en phrases', 'Les parties d\'un morceau', 'Tu es prêt']);
+    expect(await page.evaluate(() => ONB.map(s => s.title))).toEqual(['Bienvenue sur DJingood', 'Compter en phrases', 'Les parties d\'un morceau', 'Tu es prêt']);
     expect(await page.evaluate(() => ONB.some(s => s.k))).toBe(false);
   });
 });

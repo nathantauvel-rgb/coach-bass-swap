@@ -11,7 +11,7 @@ test.describe('Fichiers du site', () => {
     const erreurs = await ouvrir(page);
     // Seulement les fichiers du site : Firebase (gstatic) est préchargé en douce par js/compte.js (lot 35)
     expect(await page.evaluate(() => [...document.scripts].map(s => s.getAttribute('src')).filter(u => u && u.startsWith('js/')))).toEqual(
-      ['erreurs', 'morceaux', 'audio', 'platines', 'vrais', 'sons', 'controles', 'commandes', 'combos', 'calage', 'niveaux', 'piste', 'expert', 'tables', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'vini', 'premiers', 'quetes', 'table', 'reglage', 'verif', 'avis', 'compte', 'demarrage'].map(n => `js/${n}.js`));
+      ['erreurs', 'morceaux', 'audio', 'platines', 'vrais', 'sons', 'controles', 'commandes', 'combos', 'calage', 'hotcues', 'niveaux', 'piste', 'expert', 'tables', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'vini', 'premiers', 'quetes', 'table', 'reglage', 'verif', 'avis', 'compte', 'demarrage'].map(n => `js/${n}.js`));
     expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
     expect(rates).toEqual([]); expect(erreurs).toEqual([]); await sansBandeau(page);
   });
@@ -99,7 +99,7 @@ test.describe('Première visite et parties (anciens play.py et play2.py)', () =>
   test('le guide s\'ouvre, donne du son, puis laisse jouer et rejouer', async ({ page }) => {
     const erreurs = await ouvrir(page, { stockage: { 'coach-guide-vu': null } });
     await expect(page.locator('#onb')).toBeVisible();
-    await expect(page.locator('#onbTitle')).toHaveText('Bienvenue sur DJingo');
+    await expect(page.locator('#onbTitle')).toHaveText('Bienvenue sur DJingood');
     await page.locator('#onbNext').click();
     await expect(page.locator('#onbTitle')).toHaveText('Compter en phrases', { timeout: 60000 });
     await page.locator('#onbSkip').click();

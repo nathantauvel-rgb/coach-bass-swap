@@ -1,7 +1,7 @@
 {
   "name": "coach-dj",
   "private": true,
-  "description": "Outils de test de DJingo (le site lui-même n'a aucune dépendance)",
+  "description": "Outils de test de DJingood (le site lui-même n'a aucune dépendance)",
   "scripts": {
     "test": "playwright test"
   },

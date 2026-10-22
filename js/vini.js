@@ -33,7 +33,7 @@ const VINI_SVG = `<svg viewBox="0 0 240 260" aria-hidden="true" focusable="false
 </svg>`;
 const VINI_HUMEURS = ['calme', 'danse', 'parfait', 'rate'];
 // Place Vini dans `el` (vide au départ) avec une humeur ; le texte lu par les lecteurs d'écran va sur l'enveloppe
-function viniMettre(el, humeur = 'danse'){ el.classList.add('vini'); el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Vini, la mascotte de DJingo'); el.innerHTML = VINI_SVG; viniHumeur(el, humeur); }
+function viniMettre(el, humeur = 'danse'){ el.classList.add('vini'); el.setAttribute('role', 'img'); el.setAttribute('aria-label', 'Vini, la mascotte de DJingood'); el.innerHTML = VINI_SVG; viniHumeur(el, humeur); }
 function viniHumeur(el, humeur){ if (!VINI_HUMEURS.includes(humeur)) humeur = 'danse'; for (const h of VINI_HUMEURS) el.classList.toggle('vn-' + h, h === humeur); }
 // Un « Parfait ! » qui dure un instant (après un bon choix, par exemple), puis Vini se remet à danser
 /* ---------- Vini en haut des pages (lot 32) ----------

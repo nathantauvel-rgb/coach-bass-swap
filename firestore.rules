@@ -1,4 +1,4 @@
-// Règles de sécurité de la base DJingo, à coller dans la console Firebase
+// Règles de sécurité de la base DJingood, à coller dans la console Firebase
 // (Firestore Database → Règles → Publier).
 //
 // Elles disent une seule chose, mais c'est la plus importante : chaque joueur connecté

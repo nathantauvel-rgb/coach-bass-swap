@@ -5,7 +5,7 @@
    Le guide ne parle que de la musique (compter, parties d'un morceau). Chaque bouton de la table est présenté par
    une fiche, au moment où un niveau s'en sert pour la première fois (lot 18). */
 const ONB = [
-  { title: 'Bienvenue sur DJingo', text: 'Une transition, c\'est passer d\'un morceau à l\'autre sans que la piste de danse s\'arrête. Ici, tu l\'apprends geste par geste, sur ta table. D\'abord deux choses sur la musique : comment la compter, et comment un morceau est construit. Les boutons de ta table te seront présentés au moment de t\'en servir.', cta: 'C\'est parti' },
+  { title: 'Bienvenue sur DJingood', text: 'Une transition, c\'est passer d\'un morceau à l\'autre sans que la piste de danse s\'arrête. Ici, tu l\'apprends geste par geste, sur ta table. D\'abord deux choses sur la musique : comment la compter, et comment un morceau est construit. Les boutons de ta table te seront présentés au moment de t\'en servir.', cta: 'C\'est parti' },
   { title: 'Compter en phrases', text: 'Chaque coup de grosse caisse est un temps. 4 temps font une mesure, 8 mesures font une phrase de 32 temps. La musique change toujours au début d\'une phrase : c\'est là qu\'on fait les transitions. Suis la grille avec la musique.', phrase: true },
   { title: "Les parties d'un morceau", text: 'Un morceau se découpe en parties de quelques phrases. Dans les niveaux, elles portent ces noms et ont ces couleurs sur la piste.', parts: true },
   { title: 'Tu es prêt', text: 'Commence par le niveau 1. Avant chaque niveau, le site te montre la position de départ de ta table et les gestes à faire. Si tu hésites, « Regarde d\'abord » te montre le geste parfait.', cta: 'Commencer le niveau 1' }

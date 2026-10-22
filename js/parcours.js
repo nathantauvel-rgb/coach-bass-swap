@@ -6,9 +6,11 @@
    d'entrée, l'ordre des étapes et la recommandation. Une étape est « faite » d'après la progression déjà
    enregistrée (étoiles, entraînement, paires validées) : le parcours ne stocke que le choix et le résultat du test. */
 const PARCOURS = {
-  debut: { name: 'Parcours « Je débute »', stages: ['guide', 'ch1', 'train', 'ch2', 'ch3', 'ch5', 'vrai'] },
-  deja: { name: 'Parcours « J\'améliore mes transitions »', stages: ['test', 'ch1', 'ch2', 'ch5', 'ch3', 'train', 'vrai'] }
+  debut: { name: 'Parcours « Je débute »', stages: ['guide', 'ch1', 'train', 'ch2', 'ch3', 'ch5', 'ch6', 'vrai'] },
+  deja: { name: 'Parcours « J\'améliore mes transitions »', stages: ['test', 'ch1', 'ch2', 'ch5', 'ch6', 'ch3', 'train', 'vrai'] }
 };
+// Tant que le chapitre 6 n'est pas prêt (CH6_PRET dans js/hotcues.js), il n'est pas une étape du parcours.
+if (!CH6_PRET) for (const p of Object.values(PARCOURS)) p.stages = p.stages.filter(s => s !== 'ch6');
 let parcours = ''; try { parcours = localStorage.getItem('coach-parcours') || ''; } catch (e) {}
 if (!PARCOURS[parcours]) parcours = '';
 // Résultat du test de placement : 'ok', ou 'ko:N' avec N = premier niveau raté (voir placementVerdict)
@@ -21,6 +23,7 @@ let parcoursPick = false;
 const firstTodo = (bank, n, from = 0) => { for (let i = from; i < n; i++) if (!(bank[i] >= 2)) return i; for (let i = 0; i < n; i++) if (!(bank[i] >= 2)) return i; return 0; };
 const ch3Done = () => CH3_LESSONS.filter((_, i) => ch3Stars[i] >= 2).length;
 const ch5Done = () => CH5_LESSONS.filter((_, i) => ch5Stars[i] >= 2).length;
+const ch6Done = () => CH6_LESSONS.filter((_, i) => ch6Stars[i] >= 2).length;
 function goLesson(ch, idx){
   location.hash = '#apprendre'; setView('apprendre');
   if (placement) quitPlacement();
@@ -50,6 +53,10 @@ const STAGES = {
     done: () => ch5Done() >= CH5_LESSONS.length, prog: () => `${ch5Done()} niveau${ch5Done() > 1 ? 'x' : ''} sur ${CH5_LESSONS.length}`,
     cta: () => { const i = firstTodo(ch5Stars, CH5_LESSONS.length); return `Chapitre 5, niveau ${i + 1} : ${CH5_LESSONS[i].title}`; },
     go: () => goLesson(5, firstTodo(ch5Stars, CH5_LESSONS.length)) },
+  ch6: { title: 'Hot cues et boucles', text: 'Partir au bon endroit et gagner du temps : poser un repère, lancer depuis lui, sortir d’une boucle sur la phrase, prolonger une outro, faire monter la tension.',
+    done: () => ch6Done() >= CH6_LESSONS.length, prog: () => `${ch6Done()} niveau${ch6Done() > 1 ? 'x' : ''} sur ${CH6_LESSONS.length}`,
+    cta: () => { const i = firstTodo(ch6Stars, CH6_LESSONS.length); return `Chapitre 6, niveau ${i + 1} : ${CH6_LESSONS[i].title}`; },
+    go: () => goLesson(6, firstTodo(ch6Stars, CH6_LESSONS.length)) },
   vrai: { title: 'Passer au vrai', text: 'Avec ta musique : importe ta collection rekordbox, choisis une paire, et fais les missions sur ta table.',
     done: () => rbMis.total > 0, cta: () => 'Aller à Passer au vrai', go: () => { location.hash = '#vrai'; } }
 };
@@ -124,8 +131,10 @@ function renderProgres(){
   const ch = n => CHAPTERS.find(c => c.n === n).title, max1 = BASE_LESSONS.length * 3;
   const open = (n, bank, len) => row(`${n} · ${ch(n)}`, `${sumStars(bank)} ★ sur ${len * 3}`, sumStars(bank) / (len * 3), () => goLesson(n, firstTodo(bank, len)));
   open(1, stars, BASE_LESSONS.length);
-  if (ch2Unlocked()){ open(2, ch2Stars, BASE_LESSONS.length); open(4, ch4Stars, CH4_LESSONS.length); open(5, ch5Stars, CH5_LESSONS.length); }
-  else row(`2 · ${ch(2)}, 4 · ${ch(4)} et 5 · ${ch(5)}`, `encore ${plur(14 - sumStars(stars), 'étoile', 'étoiles')} au chapitre 1`, null, null);
+  // Le chapitre 6 n'apparaît ici que s'il est prêt (CH6_PRET dans js/hotcues.js) : sinon on l'annoncerait à un
+  // joueur qui ne pourrait jamais l'ouvrir, et son bouton ne mènerait nulle part.
+  if (ch2Unlocked()){ open(2, ch2Stars, BASE_LESSONS.length); open(4, ch4Stars, CH4_LESSONS.length); open(5, ch5Stars, CH5_LESSONS.length); if (CH6_PRET) open(6, ch6Stars, CH6_LESSONS.length); }
+  else row(`2 · ${ch(2)}, 4 · ${ch(4)}, 5 · ${ch(5)}${CH6_PRET ? ` et 6 · ${ch(6)}` : ''}`, `encore ${plur(14 - sumStars(stars), 'étoile', 'étoiles')} au chapitre 1`, null, null);
   if (ch3Unlocked()) open(3, ch3Stars, CH3_LESSONS.length);
   else row(`3 · ${ch(3)}`, ch2Unlocked() ? `encore ${plur(10 - sumStars(ch2Stars), 'étoile', 'étoiles')} au chapitre 2` : 'après le chapitre 2', null, null);
 }

@@ -1,4 +1,4 @@
-// Compte DJingo : se connecter avec Google pour que la progression suive le joueur d'un appareil à l'autre.
+// Compte DJingood : se connecter avec Google pour que la progression suive le joueur d'un appareil à l'autre.
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* ---------- Le compte (lot 34) ----------
@@ -106,7 +106,7 @@ function cptPoids(d){
   const vals = v => (v && typeof v === 'object' ? Object.values(v) : []);
   const combien = v => (v && typeof v === 'object' ? Object.keys(v).length : 0);
   const somme = k => vals(lu(k)).reduce((t, x) => t + (Math.max(0, Math.floor(+x)) || 0), 0);
-  let n = somme('coach-lecons') + somme('coach-lecons-oreille') + somme('coach-ch2') + somme('coach-ch3') + somme('coach-ch4') + somme('coach-ch5');
+  let n = somme('coach-lecons') + somme('coach-lecons-oreille') + somme('coach-ch2') + somme('coach-ch3') + somme('coach-ch4') + somme('coach-ch5') + somme('coach-ch6');
   n += combien(lu('coach-badges')) + combien(lu('coach-quiz'));
   const ex = lu('coach-expert'); n += combien(ex && ex.best);
   const qt = lu('coach-quetes'); if (qt) n += combien(qt.ouverts) + (vals(qt.cpt).some(x => +x > 0) ? 1 : 0) + ((+qt.xp || 0) > 0 ? 1 : 0);
@@ -150,7 +150,7 @@ function cptReprend(d, maj){
 // Un résumé en une ligne, pour que le joueur sache ce qu'il choisit
 function cptResume(d){
   const n = k => { try { const v = JSON.parse(d[k] || '{}'); return Object.values(v).reduce((s, x) => s + (+x || 0), 0); } catch (e) { return 0; } };
-  const et = n('coach-lecons') + n('coach-ch2') + n('coach-ch3') + n('coach-ch4') + n('coach-ch5');
+  const et = n('coach-lecons') + n('coach-ch2') + n('coach-ch3') + n('coach-ch4') + n('coach-ch5') + n('coach-ch6');
   let bg = 0; try { bg = (JSON.parse(d['coach-badges'] || '[]') || []).length; } catch (e) {}
   return `${plur(et, 'étoile', 'étoiles')} et ${plur(bg, 'badge', 'badges')}`;
 }
@@ -370,7 +370,7 @@ function cptEtat(){
   b.hidden = !cptOn();
   b.textContent = cpt ? cpt.prenom + (cptAttente ? ' ·' : '') : 'Se connecter';
   b.classList.toggle('on', !!cpt);
-  b.title = cptAttente ? 'Choisis quelle progression garder' : cpt ? 'Mon compte DJingo' : 'Se connecter pour garder ta progression';
+  b.title = cptAttente ? 'Choisis quelle progression garder' : cpt ? 'Mon compte DJingood' : 'Se connecter pour garder ta progression';
   if ($('compte') && !$('compte').hidden) cptRend();
 }
 
@@ -407,7 +407,7 @@ function cptRend(){
     : cptPas === 'creer' ? 'Créer mon compte'
     : cptPas === 'entrer' ? 'Me connecter'
     : cptPas === 'oubli' ? 'Mot de passe oublié' : 'Garde ta progression';
-  $('cptKick').textContent = cpt ? 'Ta progression' : 'DJingo';
+  $('cptKick').textContent = cpt ? 'Ta progression' : 'DJingood';
   $('cptEtatTxt').textContent = cpt
     ? (cptAttente ? 'Choisis quelle progression garder, juste en dessous.'
       : cptSouci ? cptSouci
@@ -421,7 +421,7 @@ function cptRend(){
   $('cptEtatTxt').hidden = !$('cptEtatTxt').textContent;
   $('cptNote').textContent = cpt
     ? 'Les réglages de ta table restent sur cet ordinateur : ils ne servent qu’ici.'
-    : 'DJingo enregistre ton prénom, ton adresse et ta progression. Rien d’autre, et rien n’est partagé.';
+    : 'DJingood enregistre ton prénom, ton adresse et ta progression. Rien d’autre, et rien n’est partagé.';
   viniMettre($('cptVini'), cpt && !cptAttente && !cptBloque ? 'parfait' : 'calme');
 }
 

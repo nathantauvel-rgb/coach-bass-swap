@@ -1,4 +1,4 @@
-# DJingo
+# DJingood
 
 Tu as une table et tu n'y connais rien : en deux semaines, tu fais tes premières vraies transitions propres avec ta musique.
 

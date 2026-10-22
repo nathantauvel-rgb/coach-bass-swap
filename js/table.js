@@ -76,7 +76,7 @@ function renderTable(){
   $('tState').textContent = !midiCount ? 'Aucune table branchée : tu peux lire les explications, et brancher ta table pour voir les commandes réagir.'
     : et === 'nouvelle' ? `Table branchée : ${nom}. Elle n'est pas encore réglée : clique sur « Régler ma table pas à pas », puis bouge chaque commande quand le site te le demande.`
     : et === 'flx4' ? `Table branchée : ${nom}. Les réglages sont encore ceux de ton autre table : clique sur « Revenir aux réglages de la DDJ-FLX4 ».`
-    : et === 'connue' ? `Table branchée : ${nom}. DJingo connaît ses réglages, mais ceux en place sont ceux de ta table réglée à la main : clique sur « ${tableResetTxt()} », en bas de la page.`
+    : et === 'connue' ? `Table branchée : ${nom}. DJingood connaît ses réglages, mais ceux en place sont ceux de ta table réglée à la main : clique sur « ${tableResetTxt()} », en bas de la page.`
     : tableCfg && tableCfg.modele ? `Table branchée : ${nom}, reconnue toute seule. Ses réglages viennent de sa documentation et n'ont pas encore été vérifiés sur une vraie table : si une commande ne répond pas, « Vérifier ma table » le dira, et tu peux la réapprendre.`
     : `Table branchée : ${nom}${tableCfg ? ' (réglée pas à pas)' : ''}. Bouge une commande pour la voir réagir.`;
   $('tKick').textContent = tableCfg || (midiCount && !midiNames.some(isFlx4)) ? 'Ta table' : 'Ta DDJ-FLX4';

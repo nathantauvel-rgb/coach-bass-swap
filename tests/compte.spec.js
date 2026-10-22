@@ -1,4 +1,4 @@
-// Le compte DJingo (lot 34) : se connecter avec Google, la progression qui suit le joueur.
+// Le compte DJingood (lot 34) : se connecter avec Google, la progression qui suit le joueur.
 // Firebase n'est jamais appelé pour de vrai : un faux service est posé AVANT le chargement de la page.
 // Le site ne charge ses scripts que si `window.firebase` n'existe pas encore, donc il prend le faux
 // et tout le reste du chemin (connexion, lecture, écriture, rechargement) est bien celui du vrai code.

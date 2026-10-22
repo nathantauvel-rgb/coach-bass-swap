@@ -186,7 +186,7 @@ function verifResume(){
   return L;
 }
 function vfCopier(){
-  const t = ['Vérification DJingo du ' + dayKey(), 'Table : ' + (midiNames.join(', ') || 'aucune branchée'), ''].concat(verifResume()).join('\n').replace(/ /g, ' ');
+  const t = ['Vérification DJingood du ' + dayKey(), 'Table : ' + (midiNames.join(', ') || 'aucune branchée'), ''].concat(verifResume()).join('\n').replace(/ /g, ' ');
   const show = () => { const a = $('vfOut'); a.value = t; a.hidden = false; a.focus(); a.select(); };
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => { $('vfState').textContent = 'Rapport copié ! Colle-le dans un message.'; $('vfState').className = 'regstate ok'; }, show); else show();
 }

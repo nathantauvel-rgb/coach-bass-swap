@@ -1,4 +1,4 @@
-// Fiches de table (lot 38) : les tables de débutant que DJingo reconnaît toutes seules, sans réglage pas à pas.
+// Fiches de table (lot 38) : les tables de débutant que DJingood reconnaît toutes seules, sans réglage pas à pas.
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 // Chargé avant midi.js, qui s'en sert dès le chargement (validation de coach-table).
 'use strict';

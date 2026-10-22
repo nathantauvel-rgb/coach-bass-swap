@@ -1,9 +1,9 @@
-# DJingo (anciennement Coach DJ) — mémoire du projet pour Claude
+# DJingood (anciennement Coach DJ) — mémoire du projet pour Claude
 
 À lire en premier dans toute nouvelle session. L'utilisateur (Nathan, francophone, débutant en code)
 parle en français : répondre en français, sans jargon technique inutile.
 
-**Plan et avancement côté utilisateur :** page Notion « DJingo — Plan et suivi » (ancien titre : Coach DJ)
+**Plan et avancement côté utilisateur :** page Notion « DJingood — Plan et suivi » (ancien titre : Coach DJ)
 https://app.notion.com/p/3f7c35cc3054816ab64cf22e8dfd49c1
 → Après chaque étape terminée : cocher la case dans Notion, ajouter une ligne au « Journal »,
 et mettre à jour la section « Où on en est » ci-dessous.
@@ -32,6 +32,73 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
+- **Nom définitif : « DJingood » (22 oct. 2026, décision de l'utilisateur, remplace « DJingo » du lot 21).** Renommé partout
+  dans le texte affiché : pages, guide, Vini, fiches de table, rapports, README, présentation, fiche des testeurs, agents,
+  maquettes et vidéos de `marketing/`. **Trois identifiants techniques gardent l'ancien nom et ne doivent jamais être
+  renommés** : `djingo-1e1f4` (projet Firebase : le renommer couperait tous les comptes), `window.DJINGO_FIREBASE` et
+  `__djingo-compte-repris`. Restent inchangés aussi, comme au lot 21 : les clés `coach-*`, le dépôt, l'adresse
+  https://coach-bass-swap.vercel.app, et les noms de fichiers `marketing/video/djingo*.html`. **État au 22 oct. :
+  le renommage n'est PAS publié**, il est en local sur la branche `lot-41-hotcues` (qui porte aussi le chapitre 6
+  inachevé). `npm test` : **421 verts** une fois le chapitre 6 masqué (voir le lot 41 ci-dessous).
+   **Domaine `djingood.fr`
+  acheté chez OVH le 22 oct. 2026** (dit par l'utilisateur ; c'est l'adresse écrite à la fin de la vidéo POV).
+  **Le domaine marche, vérifié le 22 oct. 2026 au soir** : `djingood.fr` ET `www.djingood.fr` servent le site en
+  HTTPS. Zone DNS finale, lue directement sur le serveur autoritaire d'OVH (`nslookup -type=A djingood.fr
+  ns103.ovh.net`) : racine `A 76.76.21.21`, `www CNAME af685902ae9496e5.vercel-dns-017.com.`, et **plus aucun
+  `AAAA`**. C'est l'`AAAA` d'OVH (`2001:41d0:301::29`) qui faisait tomber un visiteur sur « Site en construction »
+  une fois sur deux, selon qu'il passait en IPv4 ou en IPv6 : **le supprimer était la correction**. Les pièges
+  rencontrés en chemin, à se rappeler : OVH refuse un CNAME sur un nom qui a déjà un A, un AAAA ou un TXT
+  (« CNAME and other data ») ; Vercel a DEUX pages « Domains », celle du compte et celle du projet, et seule
+  celle du projet rattache vraiment le domaine (sinon Vercel répond 404 et ne fabrique pas de certificat) ;
+  un cache DNS garde l'ancienne réponse plusieurs heures, donc **mesurer sur le serveur autoritaire**.
+  Vérifier d'ici avec `nslookup` et `curl` plutôt que de croire l'interface. Procédure complète si c'est à
+  refaire : il faut l'ajouter dans Vercel (projet `coach-bass-swap` → Settings → Domains), recopier
+  dans la zone DNS d'OVH **les valeurs exactes affichées par Vercel** (elles changent avec le temps, ne jamais les
+  donner de mémoire) en supprimant d'abord les enregistrements de parking d'OVH, puis — **piège qui casse tous les
+  comptes** — ajouter `djingood.fr` et `www.djingood.fr` aux « Authorized domains » de Firebase
+  (console → `djingo-1e1f4` → Authentication → Settings), sans quoi la connexion renvoie `auth/unauthorized-domain`.
+  Une seule adresse en dur dans le site publié : `presentation.html` ligne 10 (`og:image`) ; sinon
+  `COMPTE-FIREBASE.md` (étape 3) et `marketing/message-testeurs.md` (hors Git). Les images de `img/` sont
+  des morceaux d'écran sans l'en-tête : aucun nom dedans (refaites quand même). **Pas encore fait** : vérifier les marques
+  (INPI, EUIPO) avant d'acheter un domaine, et refaire les MP4 de `marketing/video/sortie/`, qui montrent l'ancien nom.
+- **Habillage « maquettes » (22 oct. 2026), d'après deux images envoyées par l'utilisateur** (`Parcours néon du DJing.png`
+  et `Tableau de bord DJingo futuriste et musical.png`, dans ses Téléchargements). Il voulait « plus de vie, plus
+  ludique », avec « l'orange et le violet qu'on voit un peu plus ». Fait, tout à la **fin de `styles.css`** (les
+  couches héritées redéfinissent ces sélecteurs plus haut, il faut passer après) :
+  **les niveaux sont des disques vinyles** (sillons, pastille centrale, arc de néon ; la couleur alterne orange /
+  violet avec `--pastille` et `:nth-child`, le niveau en cours a un anneau complet qui tourne, coupé par
+  `prefers-reduced-motion`) ; le disque **garde toujours son numéro** (avant, 3 étoiles affichaient un ★ à la place) ;
+  **barre d'onglets** refaite façon maquette — **l'utilisateur a choisi de GARDER les quatre onglets** (Accueil ajouté,
+  puis Apprendre, S'entraîner, Passer au vrai) avec une icône chacun et un soulignement violet, **et non les 3 onglets
+  de la maquette**, qui auraient fait disparaître S'entraîner et Passer au vrai ; les numéros 1-2-3 des onglets sont
+  devenus des icônes ; **« Jouer » passe à l'orange** (`--a`, relief `--a-edge`) et « Regarde d'abord » prend un contour
+  violet ; « Pendant le niveau » numérote ses étapes dans des pastilles violettes ; barre d'XP et fil des niveaux en
+  dégradé violet → orange ; `.lnum` en lavande. Nouveaux jetons dans `:root` : `--a-edge`, `--vinyle-*`.
+  **Non repris de la maquette, à sa demande** : le fond d'écran et le logo au vinyle orange (Vini reste le logo).
+  **Retours de l'utilisateur le soir même, tous appliqués** : la barre d'onglets est remontee **sur la ligne du logo**
+  (le `<nav class="tabs">` est maintenant DANS `header.top`, les pastilles XP/table/Guide passent sur la ligne du
+  dessous ; sous 980 px l'ordre s'inverse et les onglets defilent) ; le **D et le J de DJingood sont en violet**
+  (`.brand-name .dj`, sur les trois pages) ; les **disques sont plus realistes** : six couches superposees
+  (pastille, liseré de la pastille, brillance en diagonale, sillons fins, sillons profonds, corps du disque),
+  liseré de lumiere sur le bord, halo colore sur l'arc de neon, **le disque du niveau en cours est plus gros**
+  (x1,13) et **le fil passe derriere les disques**, centre sur eux (`top:41px` = padding 10 + la moitie de 66).
+  Piege a retenir : si on change la taille des disques, **il faut rebouger ce `top`**, sinon le fil traverse les
+  disques au lieu de relier leurs centres.
+  **L'orange reste le langage de la platine A pendant une partie** (piste, potards, faders) : rien de cela n'a changé,
+  l'orange des disques et du bouton « Jouer » est de la décoration, hors partie.
+- **Vidéo TikTok « POV » en cours (22 oct. 2026), dans `marketing/video/` (hors Git).** Fichiers : `djingood-pov.html`
+  (la vidéo, pilotée par `render(t)`), `texte-voix.md` (le texte que l'utilisateur doit lire), `voix.js` (mesure le
+  volume de sa voix 30 fois par seconde → `son/voix.json` et `son/voix.js`). `rendu.js` sait maintenant mélanger une
+  voix off (`window.VOIX_FICHIER`) avec la musique baissée dessous (sidechaincompress) ; sans voix, il se comporte
+  comme avant. Rendu : `node marketing/video/rendu.js djingood-pov` → `sortie/djingood-pov-tiktok.mp4`.
+  **Version 2 : 19,2 s**, 125 BPM, drop au temps 8 (3,84 s), musique « Dj » de Play House (CC0) à partir de 118,808 s.
+  **Décisions de l'utilisateur, à ne pas défaire** : angle « POV : tu viens d'acheter une table » ; 100 % motion design
+  (pas de capture du site) ; **deux couleurs seulement, l'ORANGE et le VIOLET** (il a refusé le vert et le bleu, en
+  montrant une capture d'écran de référence) ; **Vini doit être présent, animé et PARLER** tout du long ; l'adresse
+  affichée est **djingood.fr**. La v1 (27 s) a été refusée : accroche trop lente (4 s de carton qui s'ouvre), rythme
+  trop lent, pas de voix. **Prochaine étape : l'utilisateur enregistre sa voix** (`son/voix.m4a`), puis
+  `node marketing/video/voix.js` et on relance le rendu ; la bouche de Vini se cale sur le volume réel de sa voix.
+  **Attention** : `marketing/` n'est jamais commité, donc ces fichiers n'existent que sur ce PC.
 - **Lot 40 « Le calage » (chapitre 5) publié le 21 oct. 2026** (voir l'entrée « Lot 40 »). **Ensuite : le chapitre 6 « Hot cues
   et boucles »**, plan validé par l'utilisateur le 21 oct. : 7 niveaux (poser un repère, lancer depuis le repère, B attend en
   boucle, prolonger l'outro, la montée 16 → 8 → 4, le double drop, sans filet), note en millisecondes, **Quantize allumé
@@ -50,7 +117,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   enceintes) sans sortie casque, seuils 15 / 25 ms à ajuster après ses essais sur la FLX4.
 - **Lot 36 « Identité et interface » publié le 20 oct. 2026** (accord de l'utilisateur ; 353 tests verts, gardien : feu
   orange sans blocage). Voir l'entrée « Lot 36 » plus bas pour les décisions à ne pas défaire (l'orange reste la
-  platine A, le violet reste la couleur de DJingo, la maquette de Lou n'est qu'une inspiration). **Prochain travail :
+  platine A, le violet reste la couleur de DJingood, la maquette de Lou n'est qu'une inspiration). **Prochain travail :
   le lot A « la table complète »** (voir la décision du 20 oct. juste en dessous), en commençant par chercher la
   liste MIDI officielle Pioneer de la FLX4 et par une maquette à montrer avant le code. Reste à refilmer la vidéo
   « La transition ratée » avant de la diffuser (« Jouer » a changé de place).
@@ -94,7 +161,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - **Tout est en ligne** : étapes 1 à 3 du plan Notion, puis lots 0 à 21, 23 à 26 et 28 à 35 (quiz et badges, outils pour les testeurs, clarté pour les débutants, objectif du jour,
   page de présentation, rangement des écrans, Passer au vrai étape par étape, niveaux plus courts, chapitre 4
   « Les combos », ralenti des combos, thème « Cabine pure », « Passer au vrai » visuel, clarté pour un vrai
-  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingo, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini, « Ça bouge », quêtes du jour, Vini sur l'accueil et sons, Vini partout, prêt pour les testeurs, compte Google, écran de compte ;
+  débutant et fiches « Découvre ce bouton », autres tables et schéma vivant, Mode Expert, nouveau nom DJingood, « Mes progrès » refait, vraie musique, nouvel ordre du chapitre 1, Premiers pas avec Vini, « Ça bouge », quêtes du jour, Vini sur l'accueil et sons, Vini partout, prêt pour les testeurs, compte Google, écran de compte ;
   le lot 22 a été abandonné, le lot 27 est une direction artistique sans code). `main` = `origin/main`, à une
   note de documentation près (ce fichier), à envoyer avec le prochain lot.
 - **En attente côté utilisateur, rien n'a été fait** : la vérification de la vraie FLX4. Elle se fait maintenant
@@ -328,13 +395,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   évaluations du swap, de l'écho et de la coupure quand `xRun`), score sur 100 = moyenne des gestes, étoiles : 90 → 3,
   60 → 2 ; `expertResult` garde le record. Le mode normal ne change pas. Le test de placement met le Mode Expert de côté ;
   `quitPlacement` le rétablit (`tolOf`). 229 tests verts.
-- **Lot 21 (15 oct. 2026)** : branche `lot-21-djingo` (partie de `lot-20-expert`), non publiée. **Nouveau nom : DJingo**
-  (décision de l'utilisateur) dans les pages, le guide (« Bienvenue sur DJingo »), le rapport des testeurs, la présentation,
-  la fiche des testeurs, le README, les agents. Les noms internes ne changent pas : clés `coach-*`, dépôt, adresse
-  https://coach-bass-swap.vercel.app (changer d'adresse ou de nom de projet Vercel est une décision à part). Recherche
-  rapide : aucune appli « DJingo » trouvée ; avant d'acheter un domaine ou un logo, vérifier les marques (INPI, EUIPO) et la
-  proximité avec « Duolingo ». Images de la présentation refaites.
-- **Vidéo DJingo (15 oct. 2026)**, dans `marketing/` (hors Git) : `marketing/video/djingo.html`, animation sans capture du site
+- **Lot 21 (15 oct. 2026)** : branche `lot-21-djingo` (partie de `lot-20-expert`), non publiée. **Nouveau nom : « DJingo »**
+  (décision de l'utilisateur ; devenu « DJingood » le 22 oct. 2026, voir le lot 42) dans les pages, le guide, le rapport des
+  testeurs, la présentation, la fiche des testeurs, le README, les agents. Les noms internes ne changent pas : clés `coach-*`,
+  dépôt, adresse https://coach-bass-swap.vercel.app (changer d'adresse ou de nom de projet Vercel est une décision à part).
+  Avant d'acheter un domaine ou un logo, vérifier les marques (INPI, EUIPO) et la proximité avec « Duolingo ».
+  Images de la présentation refaites.
+- **Vidéo DJingood (15 oct. 2026)**, dans `marketing/` (hors Git) : `marketing/video/djingo.html`, animation sans capture du site
   (accroche, silence avant le drop, logo sur le drop, jeu de rythme, table qui bouge, Mode Expert, progression, appel),
   musique « Dj » de Play House (CC0) à partir de 1 min 54,968 s, drop au temps 16 de la vidéo. `node marketing/video/rendu.js
   djingo` → `marketing/video/sortie/djingo-tiktok.mp4` et `-sans-son.mp4` (27 s). « Gratuit pendant la bêta » écrit à la fin.
@@ -524,7 +591,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   au survol mais pas au clic (les clics sont branchés sur `#tSvg` seulement) ; 4. appuyer plusieurs fois sur « Écouter »
   superpose les extraits ; 5. `vfApprend` prend le **premier** message inconnu : une autre commande bougée au mauvais moment
   peut être prise pour le filtre (rattrapable par « Revenir aux réglages de la DDJ-FLX4 »).
-- **Lot 34 « Compte DJingo » (17 oct. 2026)** : branche `lot-34-compte`, non publiée. Demande de l'utilisateur : créer un compte et
+- **Lot 34 « Compte DJingood » (17 oct. 2026)** : branche `lot-34-compte`, non publiée. Demande de l'utilisateur : créer un compte et
   se connecter avec Google, et que la progression (XP, niveaux, étoiles, badges, quêtes) suive le compte au lieu de rester
   dans le navigateur. `js/compte.js` (chargé **après `avis`**, avant `demarrage`) :
   - **Firebase chargé à la demande** (3 scripts `*-compat.js` depuis gstatic, version `CPT_SDK`), seulement quand on se
@@ -671,7 +738,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - **Il arrive dans les indésirables** : l'expéditeur est `noreply@djingo-1e1f4.firebaseapp.com`, un domaine qui
     n'appartient pas au projet et n'a aucune réputation. **Ne se corrige pas dans le code.** La vraie solution est de
     brancher un domaine à soi comme expéditeur (Authentication → Modèles → « Personnaliser le domaine »), ce qui
-    suppose d'acheter le domaine DJingo — et donc de **vérifier d'abord les marques INPI et EUIPO** (proximité avec
+    suppose d'acheter le domaine DJingood — et donc de **vérifier d'abord les marques INPI et EUIPO** (proximité avec
     « Duolingo », déjà notée au lot 21). Décision laissée à l'utilisateur ; en attendant, le site prévient.
 - **Lot 36 « Identité et interface » (18 oct. 2026)** : branche `lot-36-vini-identite`, **non publiée**. L'utilisateur a
   envoyé un **brief de direction artistique** (3 parties : projet, direction générale, palette) puis un complément sur
@@ -679,7 +746,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   s'il existe une partie 4 ou 5 (typographie, composants, animations), elle n'a jamais été reçue — à redemander.
   - **Ses décisions, prises en répondant à mes questions** : la maquette que son amie Lou lui a envoyée (bleue, avec
     une autre structure : « Les gestes », « Ta formation » en 3 cartes, « 66 gestes ») est **une simple inspiration**,
-    pas une direction à suivre — la structure du site ne change pas. Le **violet** reste la couleur de DJingo (pas le
+    pas une direction à suivre — la structure du site ne change pas. Le **violet** reste la couleur de DJingood (pas le
     bleu de la maquette, qui veut dire « platine B »). **Vini devient le représentant général du site.** Le logo qu'il
     a envoyé est une inspiration, il n'a pas tranché.
   - **Palette alignée sur le brief** : `--bg` `#0B0E16`, `--brand` `#7C4DFF`, `--brand-light` `#B89BFF`,
@@ -752,7 +819,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   une table qui a sa fiche prend ses réglages toute seule (`modeleApply` : `coach-table` = `{ nom, modele }`, puis
   `cleanMap(…, true)` comme une table réglée pas à pas, donc une commande absente se fait à l'écran) ; des réglages venus
   d'une fiche sont remplacés sans demander (autre table connue, ou retour automatique à la FLX4 par `flx4Map`) ; ceux d'une
-  table **réglée à la main** jamais : nouvel état `'connue'` de `tableEtat()`, bandeau « DJingo connaît ses réglages. On les
+  table **réglée à la main** jamais : nouvel état `'connue'` de `tableEtat()`, bandeau « DJingood connaît ses réglages. On les
   prend ? » (`modeleReprend` dans `js/reglage.js`). « Ma table » : texte « reconnue toute seule », réglage « (d'origine) »
   d'après la fiche, bouton du bas « Revenir aux réglages d'origine de la … » (`tableResetTxt`, `tableResetModele`). Le
   rapport des testeurs dit « (reconnue d'après sa fiche) ». Textes mis à jour : accueil, présentation (titre « sur ta table
@@ -867,6 +934,21 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   aux niveaux 5 et 6 ; le texte du compteur tient sur une ligne. Laissé tel quel (à demander à l'utilisateur) : au niveau 7,
   après LANCE B, la bulle dit de combien de temps B est parti tôt ou tard (un retour après coup, pas une aide).
 - **Lot 40 publié le 21 oct. 2026** (accord de l'utilisateur ; 421 tests verts).
+- **Lot 41 « Hot cues et boucles » (chapitre 6, commencé le 21 oct. 2026) : COMMENCÉ, NON FINI, et MASQUÉ.**
+  `js/hotcues.js` (195 lignes, chargé entre `calage` et `niveaux`) : `CH6_LESSONS`, les hot cues et les boucles
+  pendant une partie (`hcPad`), le dessin des repères et de la zone de boucle sur la piste, la note en
+  millisecondes. Étoiles dans `coach-ch6`, 25 XP par étoile.
+  **TOUT LE CHAPITRE EST DERRIÈRE UN SEUL INTERRUPTEUR** : `const CH6_PRET = false;` en haut de `js/hotcues.js`
+  (choix de l'utilisateur le 22 oct., au moment de publier le nouveau nom : ne pas montrer un chapitre en chantier).
+  À `false`, le chapitre n'existe pas pour le joueur : absent de la liste des chapitres (`soon: !CH6_PRET`),
+  `ch6Unlocked()` faux, hors du total d'étoiles, hors des deux parcours, hors du rapport des testeurs,
+  hors de « Mes chapitres » dans Mes progrès, et la carte de fin annonce « Chapitres 2, 4 et 5 débloqués »
+  au lieu de « 2, 4, 5 et 6 ». Le code reste chargé mais inerte (tous les points d'entrée testent `LESSONS[li].hc`).
+  **Le gardien a mis un feu rouge** le 22 oct. parce que trois de ces endroits avaient été oubliés (les deux de
+  « Mes progrès » et la carte de fin) : si on remet un chapitre derrière ce genre de drapeau, **penser à ces
+  cinq endroits**, pas seulement à la liste des chapitres.
+  **Pour reprendre le lot 41** : passer `CH6_PRET` à `true`, finir les 7 niveaux, et **écrire
+  `tests/hotcues.spec.js`** — il n'y a aujourd'hui aucun test du chapitre 6, il partirait sans filet.
 - **Lot 37 « Parcours adapté aux réponses » (prévu, pas commencé)** : demande de l'utilisateur du 17 oct. 2026. Les Premiers
   pas posent déjà cinq questions et gardent tout dans `coach-accueil` (`{ niveau, table, pourquoi, min, depart }`), mais
   seuls `niveau` (choix du parcours), `min` (objectif du jour) et `depart` servent. **`table` et `pourquoi` ne servent à
@@ -895,7 +977,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
-  `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
+  `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les deux parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
   `demarrage` (démarrage et onglets).
@@ -981,7 +1063,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   les étoiles non gagnées, volontairement estompées.
 
 ### Clés localStorage
-`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-chapitre`,
+`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`).

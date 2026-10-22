@@ -90,8 +90,8 @@ function renderTableBar(){
   const bar = $('tableBar'), e = tableEtat(); bar.hidden = tableLater || reg.active || !['nouvelle', 'flx4', 'connue'].includes(e); if (bar.hidden) return;
   const fi = e === 'connue' ? modeleDe(midiNames.find(modeleDe)) : null;
   $('tbText').textContent = e === 'flx4' ? 'Tu as branché une DDJ-FLX4, mais les réglages sont ceux de ton autre table. On reprend ceux de la FLX4 ?'
-    : fi ? `Tu as branché une ${fi.nom} : DJingo connaît ses réglages. On les prend ?${tableCfg ? ' Ceux de ta table réglée à la main seront remplacés.' : ''}`
-    : `Nouvelle table : « ${regName()} ». DJingo ne la connaît pas encore : règle-la en une minute, en bougeant chaque commande quand il te le demande.`;
+    : fi ? `Tu as branché une ${fi.nom} : DJingood connaît ses réglages. On les prend ?${tableCfg ? ' Ceux de ta table réglée à la main seront remplacés.' : ''}`
+    : `Nouvelle table : « ${regName()} ». DJingood ne la connaît pas encore : règle-la en une minute, en bougeant chaque commande quand il te le demande.`;
   $('tbGo').textContent = e === 'flx4' ? 'Reprendre les réglages de la FLX4' : fi ? 'Prendre ses réglages' : 'Régler ma table';
 }
 // Prendre les réglages d'une table qui a sa fiche, à la place de ceux d'une table réglée à la main
