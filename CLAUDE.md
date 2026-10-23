@@ -32,6 +32,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
+- **Carrousel TikTok « Quelle table DJ acheter pour débuter ? » : à poster vers le 13 nov. 2026** (décidé le 23 oct. 2026,
+  noté aussi dans Notion, section « À faire bientôt »). Avant le Black Friday (27 nov.), au plus tard le 20 nov. **La semaine
+  du 9 nov. : revérifier les prix, puis fabriquer les 8 images** (format vertical, orange et violet, Vini, comme les vidéos
+  de `marketing/`). Choix : un post de photos à faire défiler plutôt qu'une vidéo (c'est un repère qu'on enregistre) ; pas
+  de note sur 10 (l'utilisateur n'a essayé que la FLX4) mais, pour chaque table, prix, pour qui, un point fort, un point
+  faible. Tables et prix relevés le 23 oct. : Hercules Inpulse 200 MK3 (~109 €), Inpulse 300 MK2 (150 à 200 €), Pioneer
+  DJ DDJ-FLX2 (155 à 189 €), Inpulse 500 (249 à 300 €), DDJ-FLX4 (299 à 349 €), Numark Mixstream Pro Go sans ordinateur
+  (769 à 819 €) ; écartées : Mixtrack Platinum FX (plus en stock), DDJ-GRV6 (trop chère). Slides : accroche · trois
+  règles · moins de 120 € · duel à 170 € (FLX2 contre Inpulse 300 MK2) · autour de 300 € · sans ordinateur · conseil
+  selon le niveau (Grand débutant, Apprenti DJ, DJ confirmé) · djingood.fr. **Ne pas écrire « compatible DJingood » sur
+  chaque table** : Inpulse 200 MK3, 300 MK2 et FLX2 n'ont pas de fiche dans `js/tables.js` (les MK sont exclues), elles
+  se règlent pas à pas. Points forts et faibles à revérifier sur les pages des fabricants avant de fabriquer.
 - **Lot 44 « Le set » (chapitre 7) : FAIT le 23 oct. 2026 sur la branche `lot-44-le-set`, NON PUBLIÉ.** La branche part de
   `lot-43-domaine` (pas encore publié non plus : les deux partiront ensemble). L'utilisateur a validé la maquette v3 et dit
   oui aux quatre questions (7 niveaux, platines qui alternent, note en direct aux niveaux 1 à 6, house du site), et demandé
