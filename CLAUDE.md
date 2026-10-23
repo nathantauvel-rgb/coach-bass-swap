@@ -44,6 +44,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   selon le niveau (Grand débutant, Apprenti DJ, DJ confirmé) · djingood.fr. **Ne pas écrire « compatible DJingood » sur
   chaque table** : Inpulse 200 MK3, 300 MK2 et FLX2 n'ont pas de fiche dans `js/tables.js` (les MK sont exclues), elles
   se règlent pas à pas. Points forts et faibles à revérifier sur les pages des fabricants avant de fabriquer.
+  **Rappel programmé le lun. 9 nov. 2026 à 9 h (heure de Paris)**, à sa demande. Sept autres idées de TikTok notées dans
+  Notion (même section, dans l'ordre conseillé : « Bats mon score », « Mes potes qui n'ont jamais mixé essaient », Vini
+  en série façon chouette de Duolingo, un DJ confirmé qui essaie le jeu, son histoire « je ne sais pas coder », les
+  erreurs de débutant, les mains filmées d'en haut), après avoir fini la POV et le Spot.
 - **Lot 44 « Le set » (chapitre 7) : FAIT le 23 oct. 2026 sur la branche `lot-44-le-set`, NON PUBLIÉ.** La branche part de
   `lot-43-domaine` (pas encore publié non plus : les deux partiront ensemble). L'utilisateur a validé la maquette v3 et dit
   oui aux quatre questions (7 niveaux, platines qui alternent, note en direct aux niveaux 1 à 6, house du site), et demandé
