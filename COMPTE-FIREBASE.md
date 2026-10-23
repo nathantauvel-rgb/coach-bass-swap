@@ -149,10 +149,16 @@ Ne supprime aucune autre ligne de la zone : le site et la réception des mails s
 
 1. Clique sur **Verify** (« Valider »). Ça prend de quelques minutes à 48 heures : si Firebase répond « en
    attente », ce n'est pas une erreur, reviens plus tard.
-2. Une fois validé, dans le modèle : nom de l'expéditeur **`DJingood`**, adresse **`noreply@djingood.fr`**.
+2. Une fois validé, dans le modèle : nom de l'expéditeur **`DJingood`** (le nom affiché, pas une adresse), adresse
+   **`noreply@djingood.fr`**. Ne touche ni à l'objet ni au message : ils sont affichés en anglais, mais le site
+   demande le français à chaque envoi. Le lien du mail reste en `djingo-1e1f4.firebaseapp.com`, c'est normal.
+   Le `%APP_NAME%` du mail est le **nom public** du projet : roue dentée → Paramètres du projet → Général →
+   Nom public → `DJingood`. Seulement ce nom-là : l'identifiant `djingo-1e1f4` ne change jamais.
 3. Fais-toi envoyer un « Mot de passe oublié » depuis le site et regarde où il arrive. S'il arrive dans la boîte de
    réception, le message du site (qui dit aujourd'hui de regarder dans les indésirables) pourra être adouci.
 
 **Pour vérifier sans croire l'interface** : `nslookup -type=TXT djingood.fr ns103.ovh.net` doit montrer **une
 seule** ligne qui commence par `v=spf1`, avec le morceau de Firebase dedans. Mesurer sur ce serveur-là (celui
-d'OVH), pas sur celui de ta box, qui garde l'ancienne réponse plusieurs heures.
+d'OVH), pas sur celui de ta box, qui garde l'ancienne réponse plusieurs heures. Une ligne `"1|www.djingood.fr"`
+apparaît aussi : c'est un reste d'OVH, sans danger, on la laisse. Si Firebase reste « en attente » plus de 48 h,
+regarder d'abord la ligne `v=spf1`.

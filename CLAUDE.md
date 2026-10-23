@@ -1072,6 +1072,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   chargé mais inerte ; à supprimer dans un nettoyage à part). Textes : accueil, présentation (« Trois parcours »), testeurs,
   README. **Publié le 22 oct. 2026** avec l'accord de l'utilisateur (captures validées, « publie le lot 37 si les tests
   passent ») : 432 tests verts, gardien orange au quatrième passage. Le chapitre 6 est publié juste après, fusionné dessus.
+- **Lot 43 « Domaine » (23 oct. 2026)** : branche `lot-43-domaine`, non publiée. Après la connexion Google réparée sur
+  `djingood.fr` (domaines autorisés ajoutés par l'utilisateur dans Firebase) : `og:image` de `presentation.html` sur
+  djingood.fr, `COMPTE-FIREBASE.md` (étape 3, et section « Envoyer les e-mails depuis djingood.fr » avec le piège du SPF
+  d'OVH, le nom de l'expéditeur et le nom public du projet), `marketing/message-testeurs.md` (hors Git). Aucun fichier du
+  jeu ne change. 461 tests verts, gardien : feu orange (seulement cette ligne manquante). Le domaine des e-mails est en
+  cours côté utilisateur : il en était à la page du modèle « Réinitialisation du mot de passe », avant « Personnaliser
+  le domaine ». Une fois les lignes DNS de Firebase recopiées chez OVH, vérifier sur `ns103.ovh.net` qu'il n'y a qu'un `v=spf1`.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
