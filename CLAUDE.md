@@ -56,8 +56,17 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   donner de mémoire) en supprimant d'abord les enregistrements de parking d'OVH, puis — **piège qui casse tous les
   comptes** — ajouter `djingood.fr` et `www.djingood.fr` aux « Authorized domains » de Firebase
   (console → `djingo-1e1f4` → Authentication → Settings), sans quoi la connexion renvoie `auth/unauthorized-domain`.
-  Une seule adresse en dur dans le site publié : `presentation.html` ligne 10 (`og:image`) ; sinon
-  `COMPTE-FIREBASE.md` (étape 3) et `marketing/message-testeurs.md` (hors Git). Les images de `img/` sont
+  **Fait par l'utilisateur le 23 oct. 2026** (les deux adresses, l'ancienne gardée) : connexion Google essayée sur
+  `djingood.fr`, elle marche. Aucun changement de code nécessaire (connexion par fenêtre `signInWithPopup`, `authDomain`
+  reste `djingo-1e1f4.firebaseapp.com`).
+  **Lot 43 « Domaine » (23 oct. 2026, branche `lot-43-domaine`)** : les trois endroits qui donnaient l'ancienne adresse
+  passent à `djingood.fr` (`presentation.html` ligne 10 `og:image`, `COMPTE-FIREBASE.md` étape 3,
+  `marketing/message-testeurs.md` hors Git, dont les notes « avant d'envoyer » sont remises à jour). Nouvelle section à
+  la fin de `COMPTE-FIREBASE.md` : **envoyer les e-mails de Firebase depuis `djingood.fr`** (Templates → Customize
+  domain), pour que « Mot de passe oublié » ne tombe plus dans les indésirables. **Piège relevé sur le serveur d'OVH** :
+  la zone a déjà un SPF `v=spf1 include:mx.ovh.com -all` ; il faut y glisser l'`include:` de Firebase, jamais ajouter
+  un second `v=spf1`. À faire par l'utilisateur (console et zone DNS) ; le message du site sur les indésirables
+  (`js/compte.js`, `cptOubliMdp`) reste tant qu'un mail n'est pas arrivé en boîte de réception. Les images de `img/` sont
   des morceaux d'écran sans l'en-tête : aucun nom dedans (refaites quand même). **Pas encore fait** : vérifier les marques
   (INPI, EUIPO) avant d'acheter un domaine, et refaire les MP4 de `marketing/video/sortie/`, qui montrent l'ancien nom.
 - **PUBLIÉ le 22 oct. 2026 (commit `6926ee5`), avec l'accord de l'utilisateur** : le nouveau nom **DJingood**,

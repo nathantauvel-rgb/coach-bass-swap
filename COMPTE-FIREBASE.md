@@ -26,10 +26,12 @@ Je ne peux pas faire ces étapes à ta place : elles demandent ton compte Google
 ## 3. Autoriser nos adresses
 
 Toujours dans **Authentication** → onglet **Settings** → **Authorized domains**.
-`localhost` y est déjà. Ajoute :
+`localhost` y est déjà. Ajoute, une ligne à la fois :
 
 ```
 coach-bass-swap.vercel.app
+djingood.fr
+www.djingood.fr
 ```
 
 Sans ça, la connexion affichera « Ce site n'est pas encore autorisé ».
@@ -99,3 +101,58 @@ appareil à l'autre »).
 | « Le compte n'a pas le droit d'écrire » | Étape 5 : les règles ne sont pas publiées |
 | « Ton navigateur a bloqué la fenêtre » | Autoriser les fenêtres surgissantes pour le site |
 | Le bouton n'apparaît pas | Les coordonnées de l'étape 6 ne sont pas remplies |
+| Le mail « Mot de passe oublié » arrive dans les indésirables | Section suivante : envoyer les e-mails depuis djingood.fr |
+
+## Envoyer les e-mails depuis djingood.fr (15 minutes, puis jusqu'à 48 h d'attente)
+
+**Pourquoi** : l'e-mail « Mot de passe oublié » part aujourd'hui de `noreply@djingo-1e1f4.firebaseapp.com`, une
+adresse qui n'appartient pas à DJingood. Gmail le range dans les indésirables et y désactive le lien. En l'envoyant
+depuis `djingood.fr`, le domaine qui est à toi, tu prouves aux messageries que le message vient bien de toi. Ça ne
+garantit pas la boîte de réception dès le premier jour (un domaine tout neuf n'a pas encore de réputation), mais
+c'est la condition pour y arriver.
+
+Ouvre deux onglets côte à côte : la console Firebase, et la zone DNS d'OVH (Web Cloud → Noms de domaine →
+`djingood.fr` → Zone DNS).
+
+### A. Dans Firebase : demander le domaine
+
+1. Projet `djingo-1e1f4` → **Authentication** → onglet **Templates** (« Modèles »).
+2. Choisis le modèle **Password reset** (« Réinitialisation du mot de passe ») et clique sur le crayon.
+3. À côté de l'expéditeur, clique sur **Customize domain** (« Personnaliser le domaine »).
+4. Tape `djingood.fr` et valide. Firebase affiche les lignes à ajouter chez OVH (en général une ou deux lignes
+   **TXT** et deux lignes **CNAME**). **Laisse cette page ouverte** : ce sont ces valeurs-là qu'il faut recopier,
+   à la lettre. Ne les prends jamais ailleurs (ni de mémoire, ni dans un tuto) : elles sont propres à ton projet.
+
+### B. Chez OVH : recopier les lignes
+
+Pour chaque ligne donnée par Firebase : **Ajouter une entrée**, choisis le type (TXT ou CNAME), puis :
+
+- **Sous-domaine** : OVH ajoute `djingood.fr` tout seul derrière. Si Firebase donne
+  `firebase1._domainkey.djingood.fr`, tape seulement `firebase1._domainkey`. Si Firebase donne `djingood.fr` tout
+  court (ou `@`), laisse le champ **vide**.
+- **Cible / valeur** : copier-coller exact depuis Firebase.
+
+⚠️ **Le piège de la ligne SPF** (celle dont la valeur commence par `v=spf1`). Ta zone en a **déjà une**, mise par
+OVH : `v=spf1 include:mx.ovh.com -all`. Un domaine ne doit en avoir **qu'une seule** : avec deux, les messageries
+n'en croient aucune, et les mails partent encore plus sûrement en indésirables. Donc **n'en ajoute pas une
+deuxième** : modifie celle qui existe (le crayon au bout de la ligne ; chez OVH elle peut être affichée en type
+TXT ou SPF) en y glissant le morceau `include:…` donné par Firebase, juste avant `-all`. Par exemple, si Firebase
+donne `v=spf1 include:_spf.exemple.com ~all`, ta ligne devient :
+
+```
+v=spf1 include:mx.ovh.com include:_spf.exemple.com -all
+```
+
+Ne supprime aucune autre ligne de la zone : le site et la réception des mails sur `djingood.fr` en dépendent.
+
+### C. De retour dans Firebase : valider
+
+1. Clique sur **Verify** (« Valider »). Ça prend de quelques minutes à 48 heures : si Firebase répond « en
+   attente », ce n'est pas une erreur, reviens plus tard.
+2. Une fois validé, dans le modèle : nom de l'expéditeur **`DJingood`**, adresse **`noreply@djingood.fr`**.
+3. Fais-toi envoyer un « Mot de passe oublié » depuis le site et regarde où il arrive. S'il arrive dans la boîte de
+   réception, le message du site (qui dit aujourd'hui de regarder dans les indésirables) pourra être adouci.
+
+**Pour vérifier sans croire l'interface** : `nslookup -type=TXT djingood.fr ns103.ovh.net` doit montrer **une
+seule** ligne qui commence par `v=spf1`, avec le morceau de Firebase dedans. Mesurer sur ce serveur-là (celui
+d'OVH), pas sur celui de ta box, qui garde l'ancienne réponse plusieurs heures.
