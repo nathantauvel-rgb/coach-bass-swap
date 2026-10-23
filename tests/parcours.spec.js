@@ -22,7 +22,7 @@ test.describe('Première visite', () => {
     await expect(page.locator('#homeChoice')).toBeHidden();
     await expect(page.locator('#homeKicker')).toHaveText('Ta prochaine étape');
     await expect(page.locator('#homeTitle')).toHaveText('Découvre ta table');
-    expect(await etapes(page)).toEqual(['now | Découvre ta table | En cours', 'a-venir | Les bases | À venir', 'a-venir | S\'entraîner | À venir', 'a-venir | La maîtrise | À venir', 'a-venir | Les vrais morceaux | À venir', 'a-venir | Le calage | À venir', 'a-venir | Hot cues et boucles | À venir', 'a-venir | Passer au vrai | À venir']);
+    expect(await etapes(page)).toEqual(['now | Découvre ta table | En cours', 'a-venir | Les bases | À venir', 'a-venir | S\'entraîner | À venir', 'a-venir | La maîtrise | À venir', 'a-venir | Les vrais morceaux | À venir', 'a-venir | Le calage | À venir', 'a-venir | Hot cues et boucles | À venir', 'a-venir | Le set | À venir', 'a-venir | Passer au vrai | À venir']);
     await page.locator('#homeCta').click();
     await expect(page.locator('#vLearn')).toBeVisible();
     await expect(page.locator('#onb')).toBeVisible();
@@ -33,7 +33,7 @@ test.describe('Première visite', () => {
     expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('apprenti');
     await expect(page.locator('#homeTitle')).toHaveText('Les bases en Mode Expert');
     await expect(page.locator('#homeCta')).toHaveText('Mode Expert, niveau 1 : Le bon moment');
-    expect((await etapes(page)).map(e => e.split(' | ')[1])).toEqual(['Les bases en Mode Expert', 'Les combos', 'Le calage', 'La maîtrise', 'Les vrais morceaux', 'Hot cues et boucles', 'S\'entraîner', 'Passer au vrai']);
+    expect((await etapes(page)).map(e => e.split(' | ')[1])).toEqual(['Les bases en Mode Expert', 'Les combos', 'Le calage', 'Le set', 'La maîtrise', 'Les vrais morceaux', 'Hot cues et boucles', 'S\'entraîner', 'Passer au vrai']);
     await page.locator('#homeCta').click();
     await expect(page.locator('#vLearn')).toBeVisible();
     await expect(page.locator('#onb')).toBeHidden();
@@ -44,12 +44,12 @@ test.describe('Première visite', () => {
     await expect(page.locator('#chapters')).not.toContainText('Test de placement');
     expect(erreurs).toEqual([]);
   });
-  test('« DJ confirmé » : le calage d\'abord', async ({ page }) => {
+  test('« DJ confirmé » : le set d\'abord (lot 44)', async ({ page }) => {
     await accueil(page, { 'coach-guide-vu': null });
     await page.locator('[data-parcours=confirme]').click();
-    expect((await etapes(page)).map(e => e.split(' | ')[1])).toEqual(['Le calage', 'Les combos', 'Les bases en Mode Expert', 'Hot cues et boucles', 'Les vrais morceaux', 'S\'entraîner', 'Passer au vrai']);
+    expect((await etapes(page)).map(e => e.split(' | ')[1])).toEqual(['Le set', 'Le calage', 'Les combos', 'Les bases en Mode Expert', 'Hot cues et boucles', 'Les vrais morceaux', 'S\'entraîner', 'Passer au vrai']);
     await page.locator('#homeCta').click();
-    await expect(page.locator('#lnum')).toHaveText(/^Chapitre 5 · Niveau 1/);
+    await expect(page.locator('#lnum')).toHaveText(/^Chapitre 7 · Niveau 1/);
     await expect(page.locator('#onb')).toBeHidden();
   });
   test('le choix est gardé après rechargement', async ({ page }) => {
@@ -147,7 +147,7 @@ test.describe('Prochaine étape', () => {
   test('tout est fait : le parcours est terminé', async ({ page }) => {
     await accueil(page, { 'coach-parcours': 'debut', 'coach-lecons': CH1_FINI, 'coach-entrainement': S({ vars: 1 }), 'coach-ch2': S({ 0: 3, 1: 3, 2: 2, 3: 2 }),
       'coach-ch3': S({ 0: 2, 1: 2, 2: 3, 3: 2 }), 'coach-ch5': S({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 }),
-      'coach-ch6': S({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 }), 'coach-missions': S({ pair: '', done: {}, total: 1 }) });
+      'coach-ch6': S({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 }), 'coach-ch7': S({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 }), 'coach-missions': S({ pair: '', done: {}, total: 1 }) });
     await expect(page.locator('#homeKicker')).toHaveText('Parcours terminé');
     expect((await etapes(page)).every(e => e.startsWith('done'))).toBe(true);
     await page.locator('#homeCta').click();

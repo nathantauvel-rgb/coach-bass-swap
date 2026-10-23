@@ -18,6 +18,8 @@ function drawHighway(b){
   g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
   const hitX = Math.max(90, w * .22), ppb = (w - hitX) / 22, X = v => hitX + (v - b) * ppb;
   const yA = 54, yB = 136, H = 46;
+  if (LESSONS[li].set) encDessine(g, w, h, hitX, (w - hitX) / 40, yA, yB, H);   // chapitre 7 : la piste du set (set.js), 40 temps devant pour voir la phrase suivante
+  else {
   // repères de temps
   for (let v = Math.floor(b - hitX / ppb) - 1; v <= b + 24; v++){
     if (v < START - 4 || v > END + 4) continue; const x = X(v), ph = v % 32 === 0, bar = v % 4 === 0;
@@ -65,6 +67,7 @@ function drawHighway(b){
     g.beginPath(); g.arc(x, y, 16, 0, Math.PI * 2); g.fill(); g.lineWidth = 4; g.strokeStyle = COL.panel; g.stroke(); g.restore();
     g.fillStyle = COL.ink; g.font = '800 15px ' + COL.font; g.textAlign = 'center'; g.fillText(st === 'ok' ? '✓' : st ? '!' : '◆', x, y + 5);
     g.fillStyle = col; g.font = '800 13px ' + COL.disp; g.fillText(lab, x, lane === 'A' ? 18 : yB + H + 18);
+  }
   }
   // ligne de frappe
   g.save(); g.strokeStyle = COL.fg; g.lineWidth = 3;

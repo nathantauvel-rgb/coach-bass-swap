@@ -50,8 +50,9 @@ function ensureAudio(){
     d.an = ac.createAnalyser(); d.an.fftSize = 512;   // vumètre de la voie (après le fader)
     d.trim.connect(d.eq); d.eq.connect(d.mid); d.mid.connect(d.hi); d.hi.connect(d.hp); d.hp.connect(d.lp); d.lp.connect(d.gain); d.lp.connect(d.pfl); d.pfl.connect(hpBus); d.lp.connect(d.simu); d.simu.connect(master);
     d.gain.connect(d.xf); d.xf.connect(master); d.xf.connect(d.an);
-    if (k === 'A'){
-      // Écho envoyé après le fader : il résonne encore quand le fader est coupé
+    {
+      // Écho envoyé après le fader : il résonne encore quand le fader est coupé. Un par platine (lot 44 : au chapitre 7,
+      // le morceau qui sort peut être sur B) ; setEcho n'en ouvre qu'un à la fois.
       d.echoIn = ac.createGain(); d.echoIn.gain.value = 0; d.delay = ac.createDelay(4); d.delay.delayTime.value = P * .75;
       d.fb = ac.createGain(); d.fb.gain.value = .58; d.wet = ac.createGain(); d.wet.gain.value = .85;
       d.gain.connect(d.echoIn); d.echoIn.connect(d.delay); d.delay.connect(d.fb); d.fb.connect(d.delay); d.delay.connect(d.wet); d.wet.connect(master);
@@ -76,6 +77,7 @@ const songSafe = (sty, vr, part, spd = 1) => getSong(sty, vr, part, spd).catch((
 let sel = { sty: 'house', vr: 0 }, firstSel = true, warm = null;
 function chooseSongs(){
   const l = LESSONS[li]; if (l.wave) return;
+  if (l.set){ encPrepare(l); $('styleTag').textContent = encEtiquette(l); return; }   // chapitre 7 : ses propres morceaux (set.js)
   if (prac) sel = { sty: prac.sty, vr: prac.vr };
   else { sel = { sty: chapter === 2 ? CH2_STYLE[li] : pickStyle(), vr: firstSel ? 0 : Math.floor(Math.random() * VARIANTS) }; firstSel = false; }
   // chapitre 5 : toujours la house fabriquée par le site, à 124 BPM (CAL_BPM_A) et à la grille parfaite, quel que soit le
@@ -87,7 +89,7 @@ function chooseSongs(){
 // Prépare à l'avance les morceaux du niveau choisi. La vraie musique (environ 2 Mo) n'est téléchargée que sur l'écran des
 // leçons : pas sur l'accueil (setView la prépare en arrivant dans Apprendre).
 function warmSongs(){
-  const l = LESSONS[li], s0 = sel; if (l.wave || (s0.sty === 'vrai' && $('vLearn').hidden)) return;
+  const l = LESSONS[li], s0 = sel; if (l.set){ encPrepare(l); return; } if (l.wave || (s0.sty === 'vrai' && $('vLearn').hidden)) return;
   // chapitre 6, double drop : A joue un morceau qui a un drop, et B une autre version aux mêmes accords (hcVarB)
   const aD = !!(l.hc && l.hc.aDrop);
   const go = () => { if (!hasWorkers() && s0.sty !== 'vrai') return; getSong(s0.sty, s0.vr, aD ? 'B1' : 'A').catch(() => {}); getSong(s0.sty, hcVarB(l, s0.vr), l.bBass ? 'B1' : 'B0').catch(() => {}); };

@@ -24,11 +24,11 @@ function placementVerdict(){
   const firstFail = ok ? 0 : P_STEPS[Math.max(0, P_STEPS.findIndex((_, j) => !(res[j] >= 2)))];
   testDone = ok ? 'ok' : 'ko:' + firstFail; try { localStorage.setItem('coach-test', testDone); } catch (e) {}
   quitPlacement();
-  son(ok ? 'fin' : 'finRatee'); $('rStars').innerHTML = ''; $('rStats').hidden = true; resultatVini(ok ? 'parfait' : 'rate'); $('rTitle').classList.toggle('win', ok); $('rTitle').textContent = ok ? 'Tu maîtrises les bases : chapitres 2 et 4 débloqués !' : 'On commence par les bases';
+  son(ok ? 'fin' : 'finRatee'); $('rStars').innerHTML = ''; resultatListe(); resultatVini(ok ? 'parfait' : 'rate'); $('rTitle').classList.toggle('win', ok); $('rTitle').textContent = ok ? 'Tu maîtrises les bases : chapitres 2 et 4 débloqués !' : 'On commence par les bases';
   $('rGain').textContent = ok ? 'Les niveaux du chapitre 1 restent jouables quand tu veux.' : 'Le chapitre 2 se débloque avec 14 étoiles au chapitre 1.';
   $('rDetails').innerHTML = ''; $('cmpBox').hidden = true;
   ['Le bon moment', 'Le swap des basses', 'La transition complète'].forEach((t, j) => { const x = document.createElement('li'); x.className = (res[j] || 0) >= 2 ? 'ok' : 'bad'; x.textContent = `${t} : ${'★'.repeat(res[j] || 0) || 'pas réussi'}`; $('rDetails').appendChild(x); });
   $('next').hidden = false; $('next').textContent = ok ? 'Aller au chapitre 2' : firstFail ? 'Reprendre à : ' + BASE_LESSONS[firstFail].title : 'Commencer le chapitre 1';
-  $('next').dataset.go = ok ? 'ch2' : 'ch1'; $('next').dataset.li = String(firstFail); $('retry').hidden = true; $('quizBtn').hidden = true; $('clairRow').hidden = true; badgeNote('rBadge'); $('result').hidden = false; renderHud();
+  $('next').dataset.go = ok ? 'ch2' : 'ch1'; $('next').dataset.li = String(firstFail); $('retry').hidden = true; $('quizBtn').hidden = true; $('clairRow').hidden = true; badgeNote('rBadge'); resultatBoutons(3); $('result').hidden = false; renderHud();
 }
 $('pQuit').addEventListener('click', () => { quitPlacement(); });

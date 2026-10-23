@@ -119,11 +119,11 @@ test.describe('Premiers pas', () => {
     expect(await page.evaluate(() => [ch2Unlocked(), ch3Unlocked(), ch4Unlocked(), ch5Unlocked()])).toEqual([true, true, true, true]);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
-  test('DJ confirmé : on commence par le calage', async ({ page }) => {
+  test('DJ confirmé : on commence par le set (lot 44)', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU });
     await repondre(page, { niveau: 2, table: 1, minutes: 2 });
     await expect(page.locator('#vLearn')).toBeVisible();
-    await expect(page.locator('#lnum')).toHaveText(/^Chapitre 5 · Niveau 1/);
+    await expect(page.locator('#lnum')).toHaveText(/^Chapitre 7 · Niveau 1/);
     await expect(page.locator('#onb')).toBeHidden();
     expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('confirme');
     expect((await stocke(page, 'coach-objectif')).min).toBe(15);

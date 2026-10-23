@@ -15,7 +15,7 @@ const PP_ETAPES = ['salut', 'niveau', 'table', 'objectif'];
 const PP_NIVEAUX = [
   ['debut', 'Grand débutant', 'Je n’ai jamais mixé', 'Parfait, on part de zéro. Chaque bouton, un par un !'],
   ['apprenti', 'Apprenti DJ', 'Je sais lancer deux morceaux, mes transitions ne sont pas encore propres', 'On saute les explications : tout est ouvert, en Mode Expert.'],
-  ['confirme', 'DJ confirmé', 'Je mixe déjà, je veux du défi', 'Alors on attaque direct le calage, sans SYNC. Accroche-toi !']
+  ['confirme', 'DJ confirmé', 'Je mixe déjà, je veux du défi', 'Alors on attaque direct par un vrai set : plusieurs morceaux enchaînés, noté sur 100. Accroche-toi !']
 ];
 const PP_TABLES = [['table', 'J’ai une table', 'Branche-la en USB : je la reconnais toute seule'], ['souris', 'Pas encore de table', 'Je joue à la souris']];
 const PP_MINUTES = [[5, 'Tranquille', 'à ton rythme !'], [10, 'Normal', 'en 2 semaines !'], [15, 'Intensif', 'encore plus vite !']];
@@ -64,7 +64,7 @@ function openPremiers(){
 }
 function ppClose(){ pp.on = false; $('pp').hidden = true; document.documentElement.classList.remove('pp-open'); }
 // Le dernier écran choisit le parcours et l'objectif du jour, puis mène à la première étape de ce parcours :
-// le niveau 1 (et le guide) pour un Grand débutant, le Mode Expert pour un Apprenti DJ, le calage pour un DJ confirmé
+// le niveau 1 (et le guide) pour un Grand débutant, le Mode Expert pour un Apprenti DJ, le set (chapitre 7) pour un DJ confirmé
 function ppFin(){
   const r = pp.rep;
   ppSave({ niveau: r.niveau, table: r.table, modele: r.modele, min: r.min, fini: dayKey() });

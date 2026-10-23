@@ -2,7 +2,7 @@
 
 Tu as une table et tu n'y connais rien : en deux semaines, tu fais tes premières vraies transitions propres avec ta musique.
 
-À la première visite, la mascotte Vini pose trois questions (ton niveau, ta table, ton objectif du jour) et prépare l'un des trois parcours : « Grand débutant » (chaque bouton expliqué, un par un), « Apprenti DJ » (tout ouvert, en Mode Expert) ou « DJ confirmé » (le calage sans SYNC d'abord).
+À la première visite, la mascotte Vini pose trois questions (ton niveau, ta table, ton objectif du jour) et prépare l'un des trois parcours : « Grand débutant » (chaque bouton expliqué, un par un), « Apprenti DJ » (tout ouvert, en Mode Expert) ou « DJ confirmé » (un vrai set d'abord : plusieurs morceaux enchaînés sans que la musique s'arrête, noté sur 100).
 
 Le site est rangé en trois onglets :
 

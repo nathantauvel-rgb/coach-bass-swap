@@ -156,7 +156,7 @@ function renderPill(){ const pill = $('midiPill'); pill.className = 'chip status
 /* ---------- Mise en place de la table ---------- */
 const phys = {}; let midiCount = 0, midiNames = [], mouseMode = false, learnKey = null;
 const LEARN_TXT = { midA: 'Tourne le potard MID de A…', cfxA: 'Tourne le potard CFX de A…', fxOn: 'Appuie sur ON de l\'effet…' };
-const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B', cfxA: 'Potard CFX de A', midA: 'Potard MID de A' };
+const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B', cfxA: 'Potard CFX de A', midA: 'Potard MID de A', midB: 'Potard MID de B' };
 // Vocabulaire du site (lot 18) : potard « normal » (à midi) ou « coupé » (tout à gauche), fader « en haut » ou « en bas »
 function targetText(k, v){ if (k.startsWith('fader')) return v >= .5 ? 'en haut' : 'en bas'; if (k === 'cfxA') return v > .9 ? 'tout à droite' : 'neutre (à midi)'; return v < .1 ? 'coupé (tout à gauche)' : 'normal (à midi)'; }
 // Petit dessin de la position : un potard avec son aiguille, ou un fader avec son curseur (couleur de la platine)
@@ -166,6 +166,7 @@ function pictoOf(k, v){ const s = document.createElement('span'); s.className = 
   return s; }
 // « Pendant le niveau » : les gestes, dans l'ordre, écrits départ → arrivée
 function planSteps(l){
+  if (l.set) return [];   // chapitre 7 : la feuille de route remplace « Pendant le niveau » (set.js)
   if (l.plan) return l.plan;   // chapitre 6 : les gestes des pads sont écrits dans le niveau (hotcues.js)
   const out = [], seen = new Set();
   if (!l.autoLaunch && l.user.includes('lowB') && l.init.lowB >= .4) out.push('Avant de lancer B : LOW de B normal → coupé');
@@ -181,13 +182,13 @@ function inPlace(k, v, p){ if (p == null) return null; return k.startsWith('fade
 const needSetup = () => midiCount > 0 && tableOn() && !mouseMode && LESSONS[li].user.length > 0;
 // Une commande que la table réglée pas à pas n'a pas se fait à l'écran : elle ne bloque pas « Jouer »
 const onScreen = k => !map[k] && !!tableCfg;
-function setupReady(){ const l = LESSONS[li]; return l.user.every(k => onScreen(k) || (map[k] && inPlace(k, l.init[k], phys[k]) === true)); }
+function setupReady(){ const l = LESSONS[li]; return (l.depart || l.user).every(k => onScreen(k) || (map[k] && inPlace(k, l.init[k], phys[k]) === true)); }
 function updateSetup(){
   renderPlan();
   const box = $('setup'), btn = $('startBtn');
   if (run || !needSetup()){ box.hidden = true; if (!run){ btn.disabled = false; btn.classList.remove('ready'); if (btn.textContent !== 'Préparation…') btn.textContent = 'Jouer'; } return; }
   const l = LESSONS[li], ul = $('setupList'); ul.innerHTML = '';
-  for (const k of l.user){
+  for (const k of l.depart || l.user){
     const v = l.init[k], p = map[k] ? phys[k] : null, ok = map[k] ? inPlace(k, v, p) : null;
     const li2 = document.createElement('li'); li2.className = ok === true || onScreen(k) ? 'ok' : ok === false ? 'wrong' : '';
     const ic = document.createElement('span'); ic.className = 'ic'; ic.textContent = onScreen(k) ? '•' : ok === true ? '✓' : ok === false ? '!' : '?';

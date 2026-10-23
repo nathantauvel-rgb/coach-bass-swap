@@ -5,14 +5,14 @@
    Lot 37 (choix de l'utilisateur, 22 oct. 2026) : trois parcours, un par niveau des Premiers pas.
    - « Grand débutant » : chaque bouton expliqué, un par un (guide, fiches « Découvre ce bouton », chapitre 1), puis le reste.
    - « Apprenti DJ » et « DJ confirmé » : pas d'explications imposées (les fiches restent dans « Comment faire ? »), tous les
-     chapitres ouverts d'office, et des exercices vraiment durs : Mode Expert, combos, calage. Le confirmé commence par le calage.
+     chapitres ouverts d'office, et des exercices vraiment durs : Mode Expert, combos, calage. Le confirmé commence par le set (chapitre 7, lot 44).
    Les chapitres ne sont pas de plus en plus durs (ce sont des gestes différents) : il n'y a donc plus de test de placement.
    Une étape est « faite » d'après la progression déjà enregistrée (étoiles, records, entraînement, paires validées) :
    le parcours ne stocke que le choix. */
 const PARCOURS = {
-  debut: { name: 'Parcours « Grand débutant »', stages: ['guide', 'ch1', 'train', 'ch2', 'ch3', 'ch5', 'ch6', 'vrai'] },
-  apprenti: { name: 'Parcours « Apprenti DJ »', stages: ['expert', 'ch4', 'ch5', 'ch2', 'ch3', 'ch6', 'train', 'vrai'] },
-  confirme: { name: 'Parcours « DJ confirmé »', stages: ['ch5', 'ch4', 'expert', 'ch6', 'ch3', 'train', 'vrai'] }
+  debut: { name: 'Parcours « Grand débutant »', stages: ['guide', 'ch1', 'train', 'ch2', 'ch3', 'ch5', 'ch6', 'ch7', 'vrai'] },
+  apprenti: { name: 'Parcours « Apprenti DJ »', stages: ['expert', 'ch4', 'ch5', 'ch7', 'ch2', 'ch3', 'ch6', 'train', 'vrai'] },
+  confirme: { name: 'Parcours « DJ confirmé »', stages: ['ch7', 'ch5', 'ch4', 'expert', 'ch6', 'ch3', 'train', 'vrai'] }
 };
 const parcoursAvance = p => p === 'apprenti' || p === 'confirme';
 // Tant que le chapitre 6 n'est pas prêt (CH6_PRET dans js/hotcues.js), il n'est pas une étape du parcours.
@@ -37,6 +37,7 @@ const firstTodo = (bank, n, from = 0) => { for (let i = from; i < n; i++) if (!(
 const ch3Done = () => CH3_LESSONS.filter((_, i) => ch3Stars[i] >= 2).length;
 const ch5Done = () => CH5_LESSONS.filter((_, i) => ch5Stars[i] >= 2).length;
 const ch6Done = () => CH6_LESSONS.filter((_, i) => ch6Stars[i] >= 2).length;
+const ch7Done = () => CH7_LESSONS.filter((_, i) => ch7Stars[i] >= 2).length;
 const ch4Done = () => CH4_LESSONS.filter((_, i) => ch4Stars[i] >= 2).length;
 // Mode Expert : un niveau compte quand son record vaut 2 étoiles (60 sur 100, comme expertResult)
 const X_OK = 60, xDone = () => BASE_LESSONS.filter((_, i) => xBest[i] >= X_OK).length;
@@ -80,6 +81,10 @@ const STAGES = {
     done: () => ch6Done() >= CH6_LESSONS.length, prog: () => `${ch6Done()} niveau${ch6Done() > 1 ? 'x' : ''} sur ${CH6_LESSONS.length}`,
     cta: () => { const i = firstTodo(ch6Stars, CH6_LESSONS.length); return `Chapitre 6, niveau ${i + 1} : ${CH6_LESSONS[i].title}`; },
     go: () => goLesson(6, firstTodo(ch6Stars, CH6_LESSONS.length)) },
+  ch7: { title: 'Le set', text: 'Des morceaux enchaînés sans que la musique s’arrête, comme en soirée : lancer sur la phrase, caler, échanger les basses, faire sortir. Noté sur 100.',
+    done: () => ch7Done() >= CH7_LESSONS.length, prog: () => `${ch7Done()} niveau${ch7Done() > 1 ? 'x' : ''} sur ${CH7_LESSONS.length}`,
+    cta: () => { const i = firstTodo(ch7Stars, CH7_LESSONS.length); return `Chapitre 7, niveau ${i + 1} : ${CH7_LESSONS[i].title}`; },
+    go: () => goLesson(7, firstTodo(ch7Stars, CH7_LESSONS.length)) },
   vrai: { title: 'Passer au vrai', text: 'Avec ta musique : importe ta collection rekordbox, choisis une paire, et fais les missions sur ta table.',
     done: () => rbMis.total > 0, cta: () => 'Aller à Passer au vrai', go: () => { location.hash = '#vrai'; } }
 };
@@ -156,8 +161,8 @@ function renderProgres(){
   open(1, stars, BASE_LESSONS.length);
   // Le chapitre 6 n'apparaît ici que s'il est prêt (CH6_PRET dans js/hotcues.js) : sinon on l'annoncerait à un
   // joueur qui ne pourrait jamais l'ouvrir, et son bouton ne mènerait nulle part.
-  if (ch2Unlocked()){ open(2, ch2Stars, BASE_LESSONS.length); open(4, ch4Stars, CH4_LESSONS.length); open(5, ch5Stars, CH5_LESSONS.length); if (CH6_PRET) open(6, ch6Stars, CH6_LESSONS.length); }
-  else row(`2 · ${ch(2)}, 4 · ${ch(4)}, 5 · ${ch(5)}${CH6_PRET ? ` et 6 · ${ch(6)}` : ''}`, `encore ${plur(14 - sumStars(stars), 'étoile', 'étoiles')} au chapitre 1`, null, null);
+  if (ch2Unlocked()){ open(2, ch2Stars, BASE_LESSONS.length); open(4, ch4Stars, CH4_LESSONS.length); open(5, ch5Stars, CH5_LESSONS.length); if (CH6_PRET) open(6, ch6Stars, CH6_LESSONS.length); open(7, ch7Stars, CH7_LESSONS.length); }
+  else row(`2 · ${ch(2)}, 4 · ${ch(4)}, 5 · ${ch(5)}${CH6_PRET ? `, 6 · ${ch(6)}` : ''} et 7 · ${ch(7)}`, `encore ${plur(14 - sumStars(stars), 'étoile', 'étoiles')} au chapitre 1`, null, null);
   if (ch3Unlocked()) open(3, ch3Stars, CH3_LESSONS.length);
   else row(`3 · ${ch(3)}`, ch2Unlocked() ? `encore ${plur(10 - sumStars(ch2Stars), 'étoile', 'étoiles')} au chapitre 2` : 'après le chapitre 2', null, null);
 }

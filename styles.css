@@ -472,12 +472,12 @@ h1,.brand-name,.chap strong,.node .dot,.ring .big,.launch,.start,.watch,.rcard h
 .setup{border:0;border-radius:22px}
 .setup li{border-radius:14px}
 .pbanner{border:0;border-radius:22px;background:var(--hi)}
-.howto{margin-top:6px}
-.howto summary{cursor:pointer;font-weight:700;color:var(--xp);font-size:14px;list-style:none;display:inline-flex;align-items:center;gap:6px}
-.howto summary::-webkit-details-marker{display:none}
-.howto summary::before{content:"+";display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--xp-bg);font-size:15px}
-.howto[open] summary::before{content:"–"}
-.howto .how{margin-top:6px}
+:is(.howto,.setnotebox){margin-top:6px}
+:is(.howto,.setnotebox) summary{cursor:pointer;font-weight:700;color:var(--xp);font-size:14px;list-style:none;display:inline-flex;align-items:center;gap:6px}
+:is(.howto,.setnotebox) summary::-webkit-details-marker{display:none}
+:is(.howto,.setnotebox) summary::before{content:"+";display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--xp-bg);font-size:15px}
+:is(.howto,.setnotebox)[open] summary::before{content:"–"}
+:is(.howto,.setnotebox) .how{margin-top:6px}
 .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .tags .styletag{margin-top:0}
 .modetag{font-size:13px;font-weight:700;color:var(--ink);background:var(--xp);border-radius:999px;padding:4px 12px}
@@ -1430,3 +1430,85 @@ html.pp-open,html.pp-open body{overflow:hidden}
 
 /* Le fil doit relier le CENTRE des disques : il suit leur taille (10 px de padding + la moitié de 66 px). */
 .map::before,.map .prog{top:41px}
+
+/* ---------- Lot 44 : la carte de résultat, plus simple ----------
+   Demande de l'utilisateur (23 oct. 2026, sur la maquette du set) : « trop de couleurs, trop d'informations ». Le titre n'est
+   plus doré (le doré reste aux étoiles), plus de cartes de couleur ; une ligne grise (record, XP), puis « À travailler » ;
+   « Rejouer » ou « Niveau suivant » en orange comme « Jouer », l'autre en contour violet ; le détail est replié. */
+.rcard{gap:18px}
+.rcard h2.win{color:var(--fg)}
+.rnote{margin:-6px 0 0;font-family:var(--display);line-height:1}
+.rnote b{font-size:48px;font-weight:900}
+.rnote span{font-size:20px;font-weight:800;color:var(--muted)}
+.rgain{margin:-6px 0 0}
+.rgain .gain{font-family:var(--sans);font-size:15px;font-weight:700;color:var(--muted)}
+.rgain:has(.gain:empty){display:none}
+.rtravail{background:var(--panel-2);border-radius:20px;padding:18px 20px;text-align:left}
+.rtravail h3{margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.rquoi{margin:0;font-size:16.5px;font-weight:800;line-height:1.45}
+.rcout{margin:6px 0 0;font-size:14px;font-weight:700;color:var(--muted)}
+.rastuce{display:flex;gap:12px;align-items:center;margin:14px 0 0;padding-top:14px;border-top:1px solid var(--line);font-size:15px;font-weight:700;line-height:1.5}
+.rastuce img{width:38px;height:38px;flex:none}
+.rtravail [hidden]{display:none}
+.rcard .rrow{flex-wrap:nowrap}
+.rcard .rrow .rbtn{flex:1;max-width:260px;border-radius:999px;padding:14px 18px;font-size:16px;font-weight:800;background:transparent;border:2px solid var(--brand);color:var(--brand-light);box-shadow:none}
+.rcard .rrow .rbtn.go{order:2;flex:1.3;background:var(--a);border-color:transparent;color:var(--ink);box-shadow:0 5px 0 var(--a-edge)}
+.rcard .rrow .rbtn[hidden]{display:none}
+.rplus{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.rplus:not(:has(> :not([hidden]))),.rmeta:not(:has(> :not([hidden]):not(:empty))){display:none}
+.rmeta{color:var(--muted)}
+.rtout{text-align:left}
+.rtout>summary{cursor:pointer;font-weight:800;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:10px}
+.rtout>summary::-webkit-details-marker{display:none}
+.rtout>summary::before{content:"+";width:22px;height:22px;border-radius:50%;background:var(--hi);display:grid;place-items:center;font-weight:900;color:var(--muted);flex:none}
+.rtout[open]>summary::before{content:"−"}
+.rtout[open]>summary{margin-bottom:12px}
+.rtout .cmp{margin-top:12px}
+
+/* ---------- Lot 44 : chapitre 7 « Le set » ----------
+   Avant de jouer, la feuille de route à droite (sous « Jouer ») ; pendant le set, une ligne « Morceau 2 sur 4 » au-dessus de
+   la piste, et la table dessinée rangée quand une vraie table est branchée (.rangee). Maquette validée le 23 oct. 2026. */
+.setroute,.setligne,.setrange{min-width:0}
+.setroute[hidden],.setligne[hidden],.setrange[hidden]{display:none}
+.setroute{background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:16px 18px}
+.setroute h3{margin:0 0 12px;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.setroute ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:10px 8px}
+.setroute li{display:grid;justify-items:center;gap:4px;text-align:center;min-width:68px}
+.setroute li b{font-weight:800;font-size:14px}
+.setroute li small{color:var(--muted);font-size:12px;font-weight:700}
+.setroute li.sep{min-width:0;color:var(--muted);font-size:20px;font-weight:900;padding-top:8px}
+.setroute li.sep small{font-size:11px;font-weight:800;color:var(--fg)}
+.setroute p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5;text-align:center}
+.setroute p:empty{display:none}
+.enctag{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;color:var(--ink);font-weight:900;font-size:12px;flex:none}
+.enctag.a{background:var(--a)} .enctag.b{background:var(--b)}
+.setroute .enctag{width:38px;height:38px;font-size:15px}
+.setnote{white-space:pre-line}
+.setligne{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:14.5px;font-weight:700;color:var(--muted);padding:0 4px}
+.setligne>b{color:var(--fg);font-weight:800}
+.encdots{display:flex;gap:7px}
+.encdots i{width:11px;height:11px;border-radius:50%;background:var(--track)}
+.encdots i.f{background:var(--muted);opacity:.5}
+.encdots i.c.a{background:var(--a)} .encdots i.c.b{background:var(--b)}
+.setligne .ens{margin-left:auto;display:flex;align-items:center;gap:7px}
+.setligne .ens b{color:var(--fg)}
+.setrange{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13.5px;font-weight:700}
+.stage.joue.rangee .deck{display:none}
+/* sans BPM au set, le pourcentage du tempo est caché aussi (il donnerait l'écart de tempo) */
+.stage.estset.sansbpm .tpct{visibility:hidden}
+/* pendant le set, la feuille de route se range (sinon elle prenait une colonne de plus et écrasait la scène) */
+.stage.joue .setroute{display:none}
+@media (min-width:1040px){
+  .stage.estset:not(.joue){grid-template-areas:"cons buddy ring" "cons start start" "cons act act" "cons route route" "hw hw hw" "bar bar bar" "deck deck deck"}
+  .setroute{grid-area:route}
+  .stage.joue.estset{grid-template-areas:"buddy ring act" "ligne ligne ligne" "hw hw hw" "bar bar bar" "range range range" "deck deck deck"}
+  .setligne{grid-area:ligne} .setrange{grid-area:range}
+}
+/* Lot 44 (gardien) : la carte de fin s'affiche en haut de la scène, pas au milieu (au set, la scène est haute et les
+   boutons tombaient sous le bas de l'écran) ; au set, pas de pads : la table tient sous la piste */
+.result{align-items:start;padding-top:24px}
+.stage.estset .pl-pads{display:none}
+/* Au set, à la souris (gardien) : sans TRIM ni HI dessinés, faders et crossfader tiennent sous la piste en 1366 × 768.
+   Ils marchent toujours sur la vraie table. */
+.stage.joue.estset .mx [data-g="gTrim"],.stage.joue.estset .mx [data-g="gHi"],.stage.joue.estset .mx-lab span:nth-child(-n+2){display:none}
+@media (min-width:1040px){ .stage.joue.estset{row-gap:8px} .stage.joue.estset .deck{padding-top:6px;padding-bottom:6px} }

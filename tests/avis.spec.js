@@ -89,7 +89,7 @@ test.describe('Le rapport', () => {
     expect(r).toMatch(/^Rapport DJingood du \d{4}-\d\d-\d\d\n/);
     expect(r).toContain('Parcours : Parcours « Grand débutant » · sans table (souris)');
     expect(r).toContain('Temps sur le site : 10 min, sur 2 jours (première visite le 2026-10-10)');
-    expect(r).toContain('Étoiles : chapitre 1 4/21, chapitre 2 0/21, chapitre 3 0/12, chapitre 4 0/12, chapitre 5 0/21, chapitre 6 0/21 · 45 XP · badges 2/13 · quiz 1/25');
+    expect(r).toContain('Étoiles : chapitre 1 4/21, chapitre 2 0/21, chapitre 3 0/12, chapitre 4 0/12, chapitre 5 0/21, chapitre 6 0/21, chapitre 7 0/21 · 45 XP · badges 2/13 · quiz 1/25');
     expect(r).toContain('Niveaux joués (3 parties, dont 1 en entraînement et 0 au test de placement) :');
     expect(r).toContain(' - Chapitre 1, niveau 1 « Le bon moment » : 2 essais, meilleur ★★★, dernier ★★★, clair : oui');
     expect(r).toContain(' - Chapitre 1, niveau 2 « Le fader » : 1 essai, meilleur ★, dernier ★, clair : non');

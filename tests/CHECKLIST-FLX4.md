@@ -43,6 +43,9 @@ ci-dessous reste la version papier, utile pour noter à part ou pour vérifier s
 | 29 | Lot 41 : chapitre 6, niveaux 1 et 2, pads de B en HOT CUE | Niveau 1 : le pad 1 de B pose le repère (un fanion « 1 » apparaît sur la piste) ; niveau 2 : le pad 1 de B lance B sur son drop. Noter l'écart annoncé en ms sur 5 essais : toujours « trop tard » ou toujours « trop tôt » ? | |
 | 30 | Lot 41 : niveaux 3 à 5, pads en BEAT LOOP | Niveau 3 : le pad 4 (ou RELOOP/EXIT) fait sortir B de sa boucle ; niveaux 4 et 5 : les pads 1, 2, 3 de A font des boucles de 4, 8, 16 temps, et la boucle se raccourcit sans à-coup | |
 | 31 | Lot 41 : les seuils du chapitre 6 | Un appui « bien en rythme » au casque de la table donne-t-il souvent ★★★ (moins de 20 ms) ? Si c'est impossible ou trop facile, le dire : les seuils HC_OK (20 ms) et HC_ZERO (150 ms) sont dans `js/hotcues.js` | |
+| 32 | Lot 44 : chapitre 7 « Le set », niveau 1, avec la table | La table dessinée est rangée pendant le set (bouton « Afficher la table » pour la ressortir) ; PLAY de gauche lance A, PLAY de droite lance B ; le troisième morceau arrive bien sur A une fois le premier sorti ; ON de l'effet met l'écho sur le morceau en cours, même quand il est sur B | |
+| 33 | Lot 44 : la note du set | Un set joué « proprement » à l'oreille donne-t-il 90 ou plus (★★★) ? Noter ce qui coûte des points sans raison (calage, basses, volume, phrase) : les seuils sont en haut de `js/set.js` (ENC_OK 15 ms, ★★★ à 90, ★★ à 75) | |
+| 34 | Lot 44 : niveau 5 « Au casque », avec un casque sur la table | Avec CUE casque du morceau qui entre, on l'entend au casque et pas dans les enceintes, qu'il soit sur A ou sur B | |
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 
 Dernière vérification complète : jamais faite depuis l'ajout des onglets (12 oct. 2026).

@@ -352,13 +352,19 @@
         <p class="goal" id="lgoal"></p>
         <details class="howto"><summary>Comment faire ?</summary><p class="how" id="lhow"></p><p class="how lex" id="llex" hidden></p><span class="lfiches" id="lfiches" hidden></span><p class="how">Clavier : espace pour lancer B, E pour l'écho. Niveau réussi ? Refais le même geste dans rekordbox, avec ta musique.</p></details>
         <div class="tags"><span class="styletag" id="styleTag">House · 124 BPM</span><span class="modetag" id="modeTag" hidden>À l'oreille</span><button type="button" class="xtoggle" id="expertBtn" aria-pressed="false" hidden>Mode Expert</button></div>
+        <!-- Chapitre 7 (lot 44) : la note du set, repliée -->
+        <details class="setnotebox" id="setNoteBox" hidden><summary>Comment c'est noté ?</summary><p class="how setnote" id="setNoteTxt"></p></details>
         <div class="plan" id="plan" hidden><h3>Pendant le niveau</h3><ol id="planList"></ol><p id="planNote"></p></div>
       </div>
       <div class="buddy"><div id="lvlVini"></div><p class="bubble" id="tip" aria-live="polite">Regarde la démo si tu hésites, puis à toi !</p></div>
       <div class="ringwrap"><div class="ring" id="ring"><span class="big num" id="cdNum">—</span></div><span class="ringlab" id="cdLab">Appuie sur Jouer</span></div>
     </div>
+    <!-- Chapitre 7 : où on en est dans le set (« Morceau 2 sur 4 », la prochaine transition) -->
+    <div class="setligne" id="setLigne" hidden></div>
     <div class="hw"><canvas id="hw" aria-label="Piste : les gestes arrivent vers la ligne de frappe"></canvas><div class="pops" id="pops"></div><span class="demo-tag" id="demoTag" hidden>DÉMO</span></div>
     <div class="bar" aria-hidden="true"><i id="progFill"></i></div>
+    <!-- Chapitre 7 : avec une table branchée, la table dessinée est rangée pendant le set -->
+    <div class="setrange" id="setRange" hidden><span id="setRangeTxt"></span><button type="button" class="linkbtn" id="setTableBtn">Afficher la table</button></div>
     <div class="bottom">
     <div class="deck"><span class="decklab">Ta table</span>
     <!-- Lot 39 : la table complète. Les commandes dont le niveau ne se sert pas sont éteintes (classe .eteint, inertes) ;
@@ -439,6 +445,8 @@
       </div>
       <div class="btnrow"><button type="button" class="watch" id="watchBtn">Regarde d'abord</button><button type="button" class="start" id="startBtn">Jouer</button></div>
       </div>
+    <!-- Chapitre 7 : la feuille de route (les morceaux du set, leur platine, la technique de chaque transition) -->
+    <div class="setroute" id="setRoute" hidden><h3>Ta feuille de route</h3><ol id="setRouteList"></ol><p id="setRouteNote"></p></div>
     </div>
     </div>
 
@@ -449,16 +457,18 @@
         <div class="rvini" id="rVini"></div>
         <div class="rstars" id="rStars"></div>
         <h2 id="rTitle"></h2>
-        <div class="rstats" id="rStats" hidden>
-          <div class="rstat xp" id="rXpCard"><span class="rlab">XP gagnés</span><span class="rval"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2 5 13.5h6L10 22l9-12h-6z" fill="currentColor"/></svg><b id="rXp">+0</b></span></div>
-          <div class="rstat prec"><span class="rlab">Précision</span><span class="rval"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.4" fill="currentColor" stroke="none"/></svg><b id="rPrec">0 %</b></span></div>
-          <div class="rstat temps"><span class="rlab">Temps</span><span class="rval"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="13" r="8.5"/><path d="M12 9v4l3 2M9.5 2.5h5"/></svg><b id="rTemps">0:00</b></span></div>
-        </div>
-        <ul class="details" id="rDetails"></ul>
-        <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="rbtn" id="slowBtn" hidden></button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
-        <div class="rmeta"><span class="gain" id="rGain"></span><span class="newbadge" id="rBadge" role="status" hidden></span><span class="goalline" id="rGoal"></span><span class="questline" id="rQuete" role="status" hidden></span></div>
-        <details class="cmp" id="cmpBox"><summary>Voir mon geste et le geste idéal</summary><canvas id="cmp" aria-label="Comparaison entre ton geste et le geste idéal"></canvas>
-          <div class="cmp-leg"><span><i></i>geste idéal</span><span><u></u>ton geste</span></div></details>
+        <p class="rnote" id="rNote" hidden><b id="rNoteVal">0</b> <span>/ 100</span></p>
+        <p class="rgain"><span class="gain" id="rGain"></span></p>
+        <div class="rtravail" id="rTravail" hidden><h3>À travailler</h3><p class="rquoi" id="rQuoi"></p><p class="rcout" id="rCout" hidden></p>
+          <p class="rastuce" id="rAstuce" hidden><img src="img/vini-icone.svg" alt=""><span id="rAstuceTxt"></span></p></div>
+        <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
+        <div class="rplus"><button type="button" class="linkbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="linkbtn" id="slowBtn" hidden></button></div>
+        <div class="rmeta"><span class="newbadge" id="rBadge" role="status" hidden></span><span class="goalline" id="rGoal"></span><span class="questline" id="rQuete" role="status" hidden></span></div>
+        <details class="rtout" id="rTout"><summary id="rToutSum">Voir le détail</summary>
+          <ul class="details" id="rDetails"></ul>
+          <details class="cmp" id="cmpBox"><summary>Voir mon geste et le geste idéal</summary><canvas id="cmp" aria-label="Comparaison entre ton geste et le geste idéal"></canvas>
+            <div class="cmp-leg"><span><i></i>geste idéal</span><span><u></u>ton geste</span></div></details>
+        </details>
         <div class="clair" id="clairRow" role="group" aria-label="C'était clair ?" hidden><span>C'était clair ?</span><button type="button" data-clair="oui" aria-pressed="false">Oui</button><button type="button" data-clair="bof" aria-pressed="false">Bof</button><button type="button" data-clair="non" aria-pressed="false">Non</button><span class="merci" id="clairMerci" hidden>Merci !</span></div>
       </div>
     </div>
@@ -478,6 +488,7 @@
 <script src="js/combos.js"></script>
 <script src="js/calage.js"></script>
 <script src="js/hotcues.js"></script>
+<script src="js/set.js"></script>
 <script src="js/niveaux.js"></script>
 <script src="js/piste.js"></script>
 <script src="js/expert.js"></script>

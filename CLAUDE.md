@@ -32,6 +32,82 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
+- **Lot 44 « Le set » (chapitre 7) : FAIT le 23 oct. 2026 sur la branche `lot-44-le-set`, NON PUBLIÉ.** La branche part de
+  `lot-43-domaine` (pas encore publié non plus : les deux partiront ensemble). L'utilisateur a validé la maquette v3 et dit
+  oui aux quatre questions (7 niveaux, platines qui alternent, note en direct aux niveaux 1 à 6, house du site), et demandé
+  de simplifier aussi la carte de fin des chapitres 1 à 6. Ce qui est fait :
+  - `js/set.js` (nouveau, chargé entre `hotcues` et `niveaux`, préfixe `enc` car les noms `set…` sont pris) : `CH7_LESSONS`,
+    `ENC_FORMES` (normal, basse, court, break), morceaux fabriqués par le site avec un nom (`encSpecs`, `encMorceau` : les
+    deux premiers dès le choix du niveau, les suivants pendant le set, les morceaux joués oubliés pour la mémoire),
+    `encDemarre` (appelé par `startRun`), `encFrame` (appelé par `frame`), la note (`encPerte`, `encListe` avec un plafond
+    par critère, `encScore`, `encEval` appelé par `finish`), la démo et le « robot » des tests (`encAutomate`,
+    `window.ENC_ROBOT`), la piste (`encDessine`, appelée par `drawHighway` : chaque platine défile à sa vraie vitesse, un
+    morceau pas lancé est dessiné en pointillé « s'il part maintenant »). Records sur 100 dans `coach-set`
+    (`{ best: { niveau: note } }`, suit le compte et compte dans `cptPoids`), étoiles dans `coach-ch7`, 30 XP par étoile.
+  - Pendant le set : PLAY de A et de B sont des PLAY/pause ordinaires, la barre d'espace lance le morceau qui attend
+    (`encLance`) ; l'écho existe maintenant sur les deux platines (`setEcho(on, k)`, `echoDeck`) et s'applique au
+    morceau en cours ; avec une table branchée, la table dessinée est rangée (`.stage.rangee`, bouton « Afficher la table »).
+  - **Carte de fin simplifiée pour tous les chapitres** (`resultatCarte(st, items, o)`, `resultatListe`, `resultatBoutons`
+    dans `js/niveaux.js`) : plus de `#rStats` (les trois cartes de couleur), titre blanc, `#rGain` = une ligne (record,
+    « +30 XP », chapitres débloqués), `#rTravail` « À travailler » = le geste le moins réussi (au set : `#rCout` et le
+    conseil `#rAstuce`), `#rNote` (note sur 100, set seulement), boutons « Niveau suivant » / « Rejouer » (le bon en
+    orange, `.go`), question bonus et ralenti en liens sous les boutons, `#rDetails` et le schéma repliés dans `#rTout`.
+  - Parcours : `ch7` après `ch6` (Grand débutant), après `ch5` (Apprenti DJ), en premier (DJ confirmé). Mes progrès,
+    rapport des testeurs, compte, total d'étoiles (« /129 ») à jour. Points 32 à 34 de la checklist FLX4.
+  - Tests : `tests/set.spec.js` (structure, note, pendant le set, table rangée, trois sets entiers dont deux joués par le
+    robot) ; `ca-bouge`, `rangement`, `combos`, `site`, `hotcues` mis à jour pour la nouvelle carte et le total d'étoiles.
+  - Détails d'affichage : la piste du set montre 40 temps devant MAINTENANT (au lieu de 22) pour voir arriver la phrase
+    suivante ; sans BPM (niveaux 4, 5, 7), le pourcentage du tempo est caché aussi ; pendant le set, la feuille de route
+    est rangée (elle prenait une colonne de plus et écrasait la scène : vu sur capture, pas par les tests).
+  - **470 tests verts** (23 oct. 2026). Piège des tests : la note de la carte de fin défile de 0 à sa valeur en 700 ms ;
+    la lire trop tôt donnait 23 au lieu de 100 (`noteFinale` dans `tests/set.spec.js`). Captures : `captures/lot44/`
+    (hors Git, `node captures/lot44/captures.js` avec le serveur de test lancé).
+  - **Gardien, premier passage : feu rouge** (469 + 1 test instable ancien), corrigé : « C'était clair ? » du chapitre 7
+    perdu au rechargement (`js/avis.js`, filtre `[1-7]`) ; MID de B sans nom dans la position de départ (`CTRL_LABEL`) ;
+    « Jouer » sous l'écran avec une table (la position de départ du set ne demande plus que faders et LOW : `l.depart`,
+    lu par `setupReady` et `updateSetup`) ; table rangée même après « Je joue à la souris » (`mouseMode`) ; carte de fin
+    centrée sur toute la scène, boutons sous l'écran (`.result{align-items:start}` et la scène remonte à la fin) ;
+    plus de bouton orange au mini-set quand « Rejouer » est caché (`resultatBoutons`) ; table du set trop haute à la
+    souris (pads, TRIM et HI cachés à l'écran pendant le set, ils marchent sur la table) ; le test instable de « Tout
+    recommencer à zéro » (l'accueil réécrivait les quêtes : `history.replaceState` au lieu de `location.hash`).
+    Guillemets « » avec espaces insécables dans `js/set.js`.
+  - **Gardien, second passage : feu orange, aucun blocage, 474 tests verts.** Choix à dire à l'utilisateur : au set, les
+    pads ne servent à rien (ni à l'écran ni sur la table) ; à la souris, TRIM et HI ne sont pas dessinés pendant le set ;
+    la position de départ ne vérifie plus MID ni le filtre. **Rien n'est commité ni publié** : ajouter `js/set.js` et
+    `tests/set.spec.js` un par un au commit (jamais `.gitignore` ni `marketing/`).
+  **Jamais joué sur une vraie FLX4.** Seuils à régler après les essais de l'utilisateur (haut de `js/set.js`).
+  Ce qui suit est l'historique de la proposition :
+  Proposé le 23 oct. 2026. Sa demande :
+  de vrais exercices durs pour ceux qui savent déjà (transitions enchaînées, tempos différents), sans les mélanger aux grands
+  débutants. Trois pistes présentées : « Comprendre » (de la théorie en petites leçons, parcours Grand débutant seulement),
+  « Le set », et un « Entraînement sur mesure » qui règle sa difficulté tout seul (2 réussites = un cran plus dur, 2 échecs =
+  un cran plus facile). **Il a choisi de commencer par Le set.** Maquette (hors Git) : `captures/maquette-set/index.html`
+  (s'ouvre directement en fichier, barre MAQUETTE, 5 écrans : chapitre, pendant le set, sans aides, fin du set, parcours),
+  captures 1366 × 768 dans `captures/maquette-set/captures/` (`node captures/maquette-set/captures.js`). Proposé :
+  7 niveaux (Premier enchaînement : 3 morceaux au même tempo · Les tempos bougent · Transitions imposées : swap, filtre,
+  écho · Morceaux pièges : intro courte, break, intro avec basses, house → techno · Au casque · La montée : de 120 à
+  128 BPM en douceur · Le grand set : 6 morceaux, environ 4 min, aucune aide, piste dans le brouillard) ; **les platines
+  alternent** (morceau 1 sur A, 2 sur B, 3 sur A…), le site charge le suivant sur la platine libérée ; une « feuille de
+  route » dit comment enchaîner, jamais quand ; **on part de 100** : Calage 35, Basses 25, Volume 20, Phrase 20, musique
+  arrêtée −15 ; jauges et dernière erreur en direct aux niveaux 1 à 6 ; ★★★ à 90, ★★ à 75 ; carte de fin avec la frise
+  du set et le détail transition par transition ; house du site, un nom par morceau (« Néon », « Minuit »…) ; parcours :
+  Grand débutant après le ch. 6, Apprenti DJ après le ch. 5, DJ confirmé en première étape. Questions posées : ces
+  7 niveaux, l'alternance des platines, les jauges en direct, la house du site plutôt que la vraie musique.
+  **Retour de l'utilisateur sur la maquette : « l'écran est trop chargé, il faudrait que ce soit beaucoup plus espacé ».**
+  Version 2 faite le même jour (la v1 reste dans `index-v1.html` et `captures-v1/`) : avant de jouer, seulement le titre,
+  une phrase, la feuille de route en trois pastilles, « Jouer » ; la note et les explications rangées derrière « Comment
+  c'est noté ? » et « Comment faire ? ». Pendant le set : Vini et sa bulle, la note sur 100, « Morceau 2 sur 4 » et
+  la prochaine transition, la piste ; **plus de jauges en direct** (le détail attend la fin, Vini dit dans sa bulle
+  quand on perd des points) ; **la table à l'écran est rangée quand une table est branchée** (bouton « Afficher la
+  table »), visible à la souris. Carte de fin : note, XP, temps, frise avec 3 repères et une ligne par perte de points,
+  un conseil de Vini ; le détail par critère est replié.
+  **Second retour, sur la carte de fin : « trop de couleurs, trop d'informations, pas très clair ».** Version 3 (la v2 reste
+  dans `index-v2.html`) : Vini, les étoiles (seul doré), « Beau set ! », « 82 / 100 », « C'est ton nouveau record · +50 XP »,
+  puis un seul encadré « À travailler » écrit en phrases (« « Velours » est entré trop tard… Ça t'a coûté 13 points. »
+  et le conseil de Vini), les deux boutons, et « Voir toutes mes erreurs (3) » replié. Plus de cartes de couleur ni de frise.
+  **Règle générale de l'utilisateur, pour tout le site : le plus explicite possible, peu d'informations à la fois, peu de
+  couleurs ; l'essentiel visible, le reste replié.** La carte de fin des chapitres 1 à 6 a encore les trois cartes de
+  couleur (XP, précision, temps) du lot 29 : proposé de la simplifier pareil.
 - **Nom définitif : « DJingood » (22 oct. 2026, décision de l'utilisateur, remplace « DJingo » du lot 21).** Renommé partout
   dans le texte affiché : pages, guide, Vini, fiches de table, rapports, README, présentation, fiche des testeurs, agents,
   maquettes et vidéos de `marketing/`. **Trois identifiants techniques gardent l'ancien nom et ne doivent jamais être
@@ -131,6 +207,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   trop lent, pas de voix. **Prochaine étape : l'utilisateur enregistre sa voix** (`son/voix.m4a`), puis
   `node marketing/video/voix.js` et on relance le rendu ; la bouche de Vini se cale sur le volume réel de sa voix.
   **Attention** : `marketing/` n'est jamais commité, donc ces fichiers n'existent que sur ce PC.
+- **Vidéo « Spot » (23 oct. 2026), plan dans `marketing/video/plan-spot.md`, à valider avant de fabriquer.** Modèle donné
+  par l'utilisateur : la pub Amazon de @rikibosso sur TikTok (motion design premium passé sur un écran et filmé au
+  téléphone, texte « Claude ate with this one 🤯 » : le sujet est « regardez ce que j'ai fait », pas une pub). Décisions :
+  **il filme lui-même son écran avec la FLX4 devant**, phrases en français, orange et violet, Vini. La pub se fabrique à
+  l'horizontale (1920 × 1080, pour remplir l'écran), 19,2 s, musique « Dj » à partir de 114,968 s (drop à 7,68 s, sur la
+  transition). Le plan des séries de vidéos éducatives (« Tu entends la différence ? », etc.) est **mis de côté** à sa demande.
+  **Version 1 fabriquée le 23 oct. 2026** : `marketing/video/djingood-spot.html` → `node marketing/video/rendu.js djingood-spot`
+  → `sortie/djingood-spot-ecran.mp4` (et `-sans-son`), **environ 14 min de rendu**. `rendu.js` sait faire de l'horizontal
+  (`window.TAILLE`, sortie « -ecran ») ; nouveau `apercu.js` (images fixes à des instants donnés, dans `apercu/`).
+  En attente : l'avis de l'utilisateur sur la v1, puis son tournage (il m'envoie le film, je remets le son propre dessus).
 - **Lot 40 « Le calage » (chapitre 5) publié le 21 oct. 2026** (voir l'entrée « Lot 40 »). **Ensuite : le chapitre 6 « Hot cues
   et boucles »**, plan validé par l'utilisateur le 21 oct. : 7 niveaux (poser un repère, lancer depuis le repère, B attend en
   boucle, prolonger l'outro, la montée 16 → 8 → 4, le double drop, sans filet), note en millisecondes, **Quantize allumé
@@ -1098,7 +1184,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
-  `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
+  `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `set` (chapitre 7 « Le set », lot 44) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
   `demarrage` (démarrage et onglets).
@@ -1185,7 +1271,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   les étoiles non gagnées, volontairement estompées.
 
 ### Clés localStorage
-`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-chapitre`,
+`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`).
