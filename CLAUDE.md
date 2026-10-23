@@ -31,9 +31,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   3. deux parcours · 4. interface sombre · 5. schéma interactif de la FLX4.
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
-## Pour reprendre (état au 17 oct. 2026, fin de session)
-- **Lot 44 « Le set » (chapitre 7) : FAIT le 23 oct. 2026 sur la branche `lot-44-le-set`, NON PUBLIÉ.** La branche part de
-  `lot-43-domaine` (pas encore publié non plus : les deux partiront ensemble). L'utilisateur a validé la maquette v3 et dit
+## Pour reprendre (état au 23 oct. 2026)
+- **Lots 43 et 44 PUBLIÉS le 23 oct. 2026** (commit `09b2312` sur `main`, envoyé avec l'accord explicite de l'utilisateur,
+  **sans attendre l'essai sur la vraie table**, à sa demande). Production vérifiée sur djingood.fr : `js/set.js` servi, sept
+  chapitres dont « Le set », la démo du niveau 1 démarre (morceau 1 sur 3, note 100), aucune erreur dans la console.
+  **Reste à faire** : la checklist FLX4 (points 32 à 34 et tous ceux jamais faits), régler les seuils du set après ses
+  essais, mettre à jour Notion (texte donné à l'utilisateur le 23 oct.). Prochaines pistes déjà présentées : « Comprendre »
+  (théorie pour les grands débutants) et « Entraînement sur mesure » (difficulté qui s'adapte toute seule).
+- **Lot 44 « Le set » (chapitre 7) : fait le 23 oct. 2026 sur la branche `lot-44-le-set`, publié le même jour.** La branche part de
+  `lot-43-domaine` (publié avec lui). L'utilisateur a validé la maquette v3 et dit
   oui aux quatre questions (7 niveaux, platines qui alternent, note en direct aux niveaux 1 à 6, house du site), et demandé
   de simplifier aussi la carte de fin des chapitres 1 à 6. Ce qui est fait :
   - `js/set.js` (nouveau, chargé entre `hotcues` et `niveaux`, préfixe `enc` car les noms `set…` sont pris) : `CH7_LESSONS`,
@@ -73,8 +79,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     Guillemets « » avec espaces insécables dans `js/set.js`.
   - **Gardien, second passage : feu orange, aucun blocage, 474 tests verts.** Choix à dire à l'utilisateur : au set, les
     pads ne servent à rien (ni à l'écran ni sur la table) ; à la souris, TRIM et HI ne sont pas dessinés pendant le set ;
-    la position de départ ne vérifie plus MID ni le filtre. **Rien n'est commité ni publié** : ajouter `js/set.js` et
-    `tests/set.spec.js` un par un au commit (jamais `.gitignore` ni `marketing/`).
+    la position de départ ne vérifie plus MID ni le filtre. Commité fichier par fichier (jamais `.gitignore` ni
+    `marketing/`), publié le 23 oct. 2026 (commit `09b2312`).
   **Jamais joué sur une vraie FLX4.** Seuils à régler après les essais de l'utilisateur (haut de `js/set.js`).
   Ce qui suit est l'historique de la proposition :
   Proposé le 23 oct. 2026. Sa demande :
