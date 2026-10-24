@@ -12,7 +12,7 @@ test.describe('Schéma et explications', () => {
     await page.locator('#midiPill').click();
     await expect(page.locator('#vTable')).toBeVisible();
     await expect(page.locator('#tabs a[aria-current]')).toHaveCount(0);
-    await expect(page.locator('#tState')).toContainText('Aucune table branchée');
+    await expect(page.locator('#tState')).toContainText('Aucune table vue');
     await expect(page.locator('#tSvg .tc')).toHaveCount(28);
     await expect(page.locator('#tPanel strong')).toHaveText('Choisis une commande');
     expect(erreurs).toEqual([]); await sansBandeau(page);
@@ -109,7 +109,7 @@ test.describe('En direct avec la table', () => {
     await page.evaluate(() => window.__midi.brancher());
     await expect(page.locator('#tState')).toContainText('Table branchée');
     await page.evaluate(() => window.__midi.debrancher());
-    await expect(page.locator('#tState')).toContainText('Aucune table branchée');
+    await expect(page.locator('#tState')).toContainText('Aucune table vue');
   });
 });
 

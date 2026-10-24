@@ -1512,3 +1512,18 @@ html.pp-open,html.pp-open body{overflow:hidden}
    Ils marchent toujours sur la vraie table. */
 .stage.joue.estset .mx [data-g="gTrim"],.stage.joue.estset .mx [data-g="gHi"],.stage.joue.estset .mx-lab span:nth-child(-n+2){display:none}
 @media (min-width:1040px){ .stage.joue.estset{row-gap:8px} .stage.joue.estset .deck{padding-top:6px;padding-bottom:6px} }
+
+/* ---------- Lot 45 : « Ta table n'apparaît pas ? » ----------
+   Dans « Ma table » (sous l'état de la table) et à l'écran de la table des Premiers pas : un bloc qui se replie, avec ce que
+   le joueur doit vérifier selon ce que le navigateur a répondu (midi.js). */
+.taide,.pp-aide{background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:12px 16px;text-align:left}
+.taide{margin:0 0 16px}
+.taide[hidden],.pp-aide[hidden]{display:none}
+.taide>summary,.pp-aide>summary{cursor:pointer;font-weight:800;font-size:15px;list-style:none;display:flex;align-items:center;gap:10px}
+.taide>summary::-webkit-details-marker,.pp-aide>summary::-webkit-details-marker{display:none}
+.taide>summary::before,.pp-aide>summary::before{content:"+";width:22px;height:22px;border-radius:50%;background:var(--hi);display:grid;place-items:center;font-weight:900;color:var(--muted);flex:none}
+.taide[open]>summary::before,.pp-aide[open]>summary::before{content:"−"}
+.taide-in{margin-top:10px;font-size:14.5px;line-height:1.5;color:var(--muted)}
+.taide-in p{margin:0 0 8px;color:var(--fg)}
+.taide-in ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.taide-in .ghost{margin-top:12px}

@@ -1,0 +1,113 @@
+// Lot 45 : « Ta table n'apparaît pas ? ». Deux joueurs ne voyaient pas leur table (DDJ-FLX2, XDJ-AZ) et le site ne disait
+// pas pourquoi. La pastille du haut, « Ma table », l'écran de la table des Premiers pas et le rapport des testeurs disent
+// maintenant ce que le navigateur a répondu : pas de Web MIDI, question en attente, accès refusé, ou aucune table vue.
+const { test, expect } = require('@playwright/test');
+const { ouvrir, sansBandeau } = require('./outils');
+
+const NOUVEAU = { 'coach-guide-vu': null, 'coach-fiches': null, 'coach-accueil': null };
+const SANS_MIDI = 'try { Object.defineProperty(Navigator.prototype, "requestMIDIAccess", { value: undefined, configurable: true }); } catch (e) {}';
+// Jusqu'à l'écran de la table des Premiers pas (Grand débutant)
+async function ecranTable(page) {
+  await page.locator('#ppGo').click();
+  await page.locator('#ppOpts .pp-opt').nth(0).click(); await page.locator('#ppGo').click();
+  await expect(page.locator('#ppOpts .pp-opt')).toHaveCount(2);
+}
+
+test.describe('Ma table : pourquoi la table n\'apparaît pas', () => {
+  test('aucune table vue : l\'aide est ouverte, puis se replie quand la table arrive', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: 'table', midi: { branchee: false } });
+    await expect(page.locator('#midiPill')).toHaveText('Souris (aucune table vue)');
+    await expect(page.locator('#tAide')).toHaveAttribute('open', '');
+    await expect(page.locator('#tAideSum')).toHaveText('Ta table n’apparaît pas ?');
+    await expect(page.locator('#tAideBody li')).toHaveCount(4);
+    await expect(page.locator('#tAideBody')).toContainText('Ferme rekordbox');
+    await expect(page.locator('#tAideBody')).toContainText('SOFTWARE CONTROL');
+    await expect(page.locator('#tAideBody')).toContainText('pilote');
+    // une DDJ-FLX2 branchée : le site la voit, propose de la régler, et l'aide devient « ne réagit pas ? », repliée
+    await page.evaluate(() => window.__midi.brancher('DDJ-FLX2'));
+    await expect(page.locator('#midiPill')).toHaveText('DDJ-FLX2 · à régler');
+    await expect(page.locator('#tableBar')).toContainText('DDJ-FLX2');
+    await expect(page.locator('#tAideSum')).toHaveText('Ta table ne réagit pas ?');
+    await expect(page.locator('#tAide')).not.toHaveAttribute('open', '');
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('accès refusé : la marche à suivre, et « Réessayer » redemande', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: 'table', midi: { refuse: true } });
+    await expect(page.locator('#midiPill')).toHaveText('Table non autorisée');
+    await expect(page.locator('#tAide')).toHaveAttribute('open', '');
+    await expect(page.locator('#tAideBody')).toContainText('« Appareils MIDI » sur « Autoriser »');
+    await page.locator('#tAideBody button', { hasText: 'Réessayer' }).click();
+    await expect(page.locator('#tAideBody')).toContainText('Toujours refusé.');
+    // cette fois, le joueur autorise : la table branchée apparaît
+    await page.evaluate(() => { window.__midiCfg.refuse = false; });
+    await page.locator('#tAideBody button', { hasText: 'Réessayer' }).click();
+    await expect(page.locator('#midiPill')).toHaveText('Souris (aucune table vue)');
+    await page.evaluate(() => window.__midi.brancher());
+    await expect(page.locator('#midiPill')).toHaveText('DDJ-FLX4');
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('le navigateur attend une réponse : on dit de cliquer sur « Autoriser »', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: 'table', avant: 'navigator.requestMIDIAccess = () => new Promise(() => {});' });
+    await expect(page.locator('#midiPill')).toHaveText('Autorise l’accès à ta table');
+    await expect(page.locator('#tAideBody')).toContainText('clique sur « Autoriser »');
+    expect(erreurs).toEqual([]);
+  });
+  test('navigateur sans Web MIDI : Chrome ou Edge', async ({ page }) => {
+    await ouvrir(page, { onglet: 'table', avant: SANS_MIDI });
+    await expect(page.locator('#midiPill')).toHaveText('Prends Chrome ou Edge');
+    await expect(page.locator('#tAideBody')).toContainText('Ouvre DJingood dans Chrome ou Edge');
+  });
+  test.describe('sur iPhone', () => {
+    test.use({ userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1' });
+    test('on dit d\'ouvrir le site sur un ordinateur', async ({ page }) => {
+      await ouvrir(page, { onglet: 'table', avant: SANS_MIDI });
+      await expect(page.locator('#midiPill')).toHaveText('Souris (table sur ordinateur)');
+      await expect(page.locator('#tAideBody')).toContainText('sur un ordinateur');
+    });
+  });
+});
+
+test.describe('Premiers pas : la table branchée que le navigateur ne voit pas', () => {
+  test('« J’ai une table » sans table vue : l\'aide est proposée, repliée ; à la souris, elle disparaît', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
+    await ecranTable(page);
+    await expect(page.locator('#ppAide')).toBeHidden();
+    await page.locator('#ppOpts .pp-opt').nth(0).click();
+    await expect(page.locator('#ppAide')).toBeVisible();
+    await expect(page.locator('#ppAide summary')).toHaveText('Elle est branchée, mais je ne la vois pas ?');
+    await expect(page.locator('#ppAide')).not.toHaveAttribute('open', '');
+    await page.locator('#ppAide summary').click();
+    await expect(page.locator('#ppAide')).toContainText('Ferme rekordbox');
+    await page.locator('#ppOpts .pp-opt').nth(1).click();
+    await expect(page.locator('#ppAide')).toBeHidden();
+    // la table arrive : reconnue, plus d'aide
+    await page.evaluate(() => window.__midi.brancher('DDJ-FLX2'));
+    await expect(page.locator('#ppAsk')).toContainText('Je vois ta table');
+    await expect(page.locator('#ppAide')).toHaveCount(0);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('accès refusé : Vini le dit, et l\'aide est ouverte avec « Réessayer »', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { refuse: true } });
+    await ecranTable(page);
+    await expect(page.locator('#ppAsk')).toHaveText(/refusé l’accès à ta table/);
+    await expect(page.locator('#ppAide')).toBeVisible();
+    await expect(page.locator('#ppAide')).toHaveAttribute('open', '');
+    await expect(page.locator('#ppAide button', { hasText: 'Réessayer' })).toBeVisible();
+  });
+  test('le navigateur attend une réponse : Vini dit de cliquer sur « Autoriser »', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: 'navigator.requestMIDIAccess = () => new Promise(() => {});' });
+    await ecranTable(page);
+    await expect(page.locator('#ppAsk')).toHaveText(/clique sur « Autoriser »/);
+  });
+});
+
+test.describe('Rapport des testeurs', () => {
+  for (const [nom, midi, attendu] of [['aucune table vue', { branchee: false }, 'sans table (souris) · aucune table vue par le navigateur'],
+    ['accès refusé', { refuse: true }, 'sans table (souris) · accès à la table refusé']]) {
+    test(`sans table, il dit pourquoi : ${nom}`, async ({ page }) => {
+      await ouvrir(page, { onglet: 'accueil', midi });
+      await expect(page.locator('#midiPill')).not.toHaveText('Table…');
+      expect(await page.evaluate(() => avisRapport())).toContain(attendu);
+    });
+  }
+});

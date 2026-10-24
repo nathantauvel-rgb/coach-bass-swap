@@ -7,6 +7,7 @@ const { expect } = require('@playwright/test');
 function fausseTable(cfg) {
   const inputs = new Map(), acc = { inputs, outputs: new Map(), onstatechange: null };
   navigator.requestMIDIAccess = () => cfg.refuse ? Promise.reject(new DOMException('refusé', 'SecurityError')) : Promise.resolve(acc);
+  window.__midiCfg = cfg;   // pour changer la réponse du navigateur en cours de test (« Réessayer », lot 45)
   const api = {
     brancher(nom) { inputs.set('1', { id: '1', name: nom || 'DDJ-FLX4', onmidimessage: null }); if (acc.onstatechange) acc.onstatechange({}); },
     debrancher() { inputs.delete('1'); if (acc.onstatechange) acc.onstatechange({}); },

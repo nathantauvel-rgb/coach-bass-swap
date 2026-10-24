@@ -46,10 +46,12 @@ function navName(){
   const os = /Windows/.test(u) ? 'Windows' : /iPhone|iPad/.test(u) ? 'iPhone ou iPad' : /Android/.test(u) ? 'Android' : /Mac OS/.test(u) ? 'Mac' : /Linux/.test(u) ? 'Linux' : '';
   return nav + (os ? ', ' + os : '');
 }
+// Sans table, pourquoi (lot 45) : le navigateur ne peut pas en voir, l'accès a été refusé, ou il n'en voit aucune
+const MIDI_RAPPORT = { absent: ' · navigateur qui ne sait pas parler aux tables', refuse: ' · accès à la table refusé', question: ' · accès à la table pas encore autorisé', pret: ' · aucune table vue par le navigateur' };
 function avisRapport(){
   const L = [], lv = (c, n) => lessonsOf(c)[n], max = BASE_LESSONS.length * 3;
   L.push(`Rapport DJingood du ${dayKey()}`);
-  L.push(`Parcours : ${PARCOURS[parcours] ? PARCOURS[parcours].name : 'pas encore choisi'} · ${midiCount > 0 ? 'table branchée : ' + midiNames.join(', ') + (tableCfg ? (tableCfg.modele ? ' (reconnue d’après sa fiche)' : ' (réglée pas à pas)') : tableOn() ? '' : ' (pas encore réglée)') : 'sans table (souris)'} · ${navName()}`);
+  L.push(`Parcours : ${PARCOURS[parcours] ? PARCOURS[parcours].name : 'pas encore choisi'} · ${midiCount > 0 ? 'table branchée : ' + midiNames.join(', ') + (tableCfg ? (tableCfg.modele ? ' (reconnue d’après sa fiche)' : ' (réglée pas à pas)') : tableOn() ? '' : ' (pas encore réglée)') : 'sans table (souris)' + (MIDI_RAPPORT[midiEtat] || '')} · ${navName()}`);
   L.push(`Premiers pas : ${ppResume()}`);
   L.push(`Temps sur le site : ${Math.round(jr.secs / 60)} min, sur ${plur(jr.jours.length, 'jour', 'jours')} (première visite le ${jr.debut})`);
   L.push(`Étoiles : chapitre 1 ${sumStars(stars)}/${max}, chapitre 2 ${sumStars(ch2Stars)}/${max}, chapitre 3 ${sumStars(ch3Stars)}/${CH3_LESSONS.length * 3}, chapitre 4 ${sumStars(ch4Stars)}/${CH4_LESSONS.length * 3}, chapitre 5 ${sumStars(ch5Stars)}/${CH5_LESSONS.length * 3}${CH6_PRET ? `, chapitre 6 ${sumStars(ch6Stars)}/${CH6_LESSONS.length * 3}` : ''}, chapitre 7 ${sumStars(ch7Stars)}/${CH7_LESSONS.length * 3} · ${$('xpTxt').textContent} · badges ${badgesWon.length}/${BADGES.length} · quiz ${quizOk.length}/${QUIZ.length}`);

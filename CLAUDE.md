@@ -32,6 +32,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
+- **Lot 45 « Ta table n'apparaît pas ? » : FAIT le 24 oct. 2026 sur la branche `claude/magical-bohr-9pn8gk` (session cloud), NON PUBLIÉ.**
+  Deux joueurs (commentaires TikTok) : le site « ne détecte pas » leur **DDJ-FLX2** et leur **XDJ-AZ**. Rien de propre à ces tables
+  dans le code (le site écoute toutes les tables que Chrome lui montre, quel que soit leur nom) : il ne disait simplement pas
+  pourquoi il ne voyait rien. Demande de l'utilisateur : « je veux qu'ils puissent utiliser leurs platines ». Voir l'entrée
+  « Lot 45 » à la fin de « Où on en est ». **Pas encore fait : les fiches de la FLX2 et de l'XDJ-AZ** (listes officielles
+  Pioneer trouvées, mais le réseau de la session cloud bloquait leurs sites) ; en attendant, ces tables se règlent pas à pas.
 - **Lot 44 « Le set » (chapitre 7) : FAIT le 23 oct. 2026 sur la branche `lot-44-le-set`, NON PUBLIÉ.** La branche part de
   `lot-43-domaine` (pas encore publié non plus : les deux partiront ensemble). L'utilisateur a validé la maquette v3 et dit
   oui aux quatre questions (7 niveaux, platines qui alternent, note en direct aux niveaux 1 à 6, house du site), et demandé
@@ -1165,6 +1171,33 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   jeu ne change. 461 tests verts, gardien : feu orange (seulement cette ligne manquante). Le domaine des e-mails est en
   cours côté utilisateur : il en était à la page du modèle « Réinitialisation du mot de passe », avant « Personnaliser
   le domaine ». Une fois les lignes DNS de Firebase recopiées chez OVH, vérifier sur `ns103.ovh.net` qu'il n'y a qu'un `v=spf1`.
+- **Lot 45 « Ta table n'apparaît pas ? » (24 oct. 2026)** : branche `claude/magical-bohr-9pn8gk`, non publiée. Après deux messages
+  de joueurs (DDJ-FLX2, XDJ-AZ « pas détectées »).
+  - `midiEtat` (midi.js) : `attente` ; `question` (le navigateur n'a pas répondu au bout de 1,5 s : la question « Autoriser »
+    de Chrome attend, souvent cachée derrière les Premiers pas) ; `absent` (pas de Web MIDI : Safari, iPhone, iPad) ; `refuse` ;
+    `pret`. « Réessayer » (`midiReessaie`, `midiEssais`) redemande l'accès : si la question avait seulement été fermée, Chrome la
+    repose. **`initMidi` est appelé par demarrage.js AVANT `let view`** : rien de synchrone dans `initMidi` ne doit lire `view`.
+  - Pastille (`renderPill`, `MIDI_SOURIS`, **190 px au plus**, mesurés) : « Souris (aucune table vue) » (avant : « aucune table
+    branchée », faux quand elle est branchée), « Table non autorisée », « Prends Chrome ou Edge », « Souris (table sur ordinateur) »
+    (iPhone, iPad), « Autorise l'accès à ta table ».
+  - Aide `midiAide()` / `midiAideRemplir(box)` : selon `midiEtat`, une phrase et au plus quatre points (fermer rekordbox, Serato,
+    djay et VirtualDJ ; câble livré, sans hub ; tout-en-un en mode ordinateur, XDJ-AZ : SOURCE → SOFTWARE CONTROL ; pilote sur
+    Windows, XDJ-AZ). Dans « Ma table » : `#tAide` sous l'état, ouverte sans table, repliée en « Ta table ne réagit pas ? » avec une
+    table. Premiers pas, écran de la table : `#ppAide` (`ppAideVue` : « J'ai une table » sans table vue, ou accès refusé ; jamais à
+    la souris) et Vini qui dit ce qui se passe (`ppTableDit`). « Aucune table vue pour l'instant » dans Ma table et Vérifier ma table.
+  - Rapport des testeurs : la raison après « sans table (souris) » (`MIDI_RAPPORT`, avis.js). `testeurs.html` : tout-en-un, pilote,
+    et « Ma table » qui dit quoi vérifier.
+  - Tests : `tests/aide-table.spec.js` ; `fausseTable` expose `window.__midiCfg` (changer la réponse en cours de test). **Le
+    Chromium de test refuse l'accès MIDI** quand on ne lui donne pas de fausse table (`midi: null` → état `refuse`) : les tests
+    qui lisent les phrases de Vini à l'écran de la table passent `midi: { branchee: false }`.
+  - Session cloud : Playwright 1.64 attend Chromium 1248, le conteneur a 1243 → configuration copiée hors du dépôt avec
+    `executablePath: '/opt/pw-browsers/chromium'` (ne pas modifier `playwright.config.js` pour ça).
+  - **Pas fait, à reprendre** : fiches `ddjflx2` et `xdjaz` dans `js/tables.js`. Mixxx n'a aucune des deux. Listes officielles :
+    `https://assets.pioneerdjhub.com/DDJ-FLX2_MIDI_Message_List_E1.pdf` et
+    `https://www.pioneerdj.com/-/media/pioneerdj/software-info/system/xdj-az/xdj-az_midi_message_list_e1.pdf` (pages d'aide
+    AlphaTheta « DDJ-FLX2 / XDJ-AZ MIDI-compatible software »). Bloquées par le réseau de la session : il faut que l'utilisateur
+    autorise ces sites dans les réglages de l'environnement. L'XDJ-AZ a sa propre table de mixage : ce que devient le son du
+    site s'il sort par sa carte son n'a jamais été essayé. Sur Windows, elle demande son pilote.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -1288,7 +1321,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

@@ -93,12 +93,24 @@ function ppTableOpts(add){
   sel.value = r.modele || '';
   sel.addEventListener('change', () => { r.modele = sel.value; ppMaj(); });
   box.append(t, sel); $('ppOpts').appendChild(box);
+  // Lot 45 : la table est branchée mais le navigateur ne la voit pas, ou l'accès a été refusé (midi.js)
+  const d = document.createElement('details'), sm = document.createElement('summary'), body = document.createElement('div');
+  d.className = 'pp-aide'; d.id = 'ppAide'; body.className = 'taide-in'; midiAideRemplir(body);
+  sm.textContent = midiEtat === 'refuse' ? 'Comment l’autoriser ?' : 'Elle est branchée, mais je ne la vois pas ?'; d.open = midiEtat === 'refuse';
+  d.append(sm, body); $('ppOpts').appendChild(d);
 }
+// L'aide se montre quand on dit avoir une table et qu'aucune n'est vue, ou quand l'accès a été refusé (sauf à la souris)
+const ppAideVue = r => r.table !== 'souris' && (midiEtat === 'refuse' || (midiEtat === 'pret' && r.table === 'table'));
 function ppTableDit(){
   const r = pp.rep, b = ppBranchee();
   if (b) return b.id === 'inconnue' ? `Je vois ta table, mais je ne la connais pas encore : je te montrerai comment la régler, ça prend deux minutes.`
     : `Je la reconnais : ta ${b.nom} est prête à jouer !`;
   if (r.table === 'souris') return 'Aucun problème : tout se joue à la souris. Tu brancheras une table plus tard.';
+  // ce que le navigateur a répondu (lot 45) : il ne peut pas voir de table, il attend qu'on l'autorise, ou on l'a refusé
+  if (midiEtat === 'absent') return midiIos() ? 'Sur iPhone et iPad, je ne peux pas parler à une table. Continue à la souris, et ouvre DJingood sur un ordinateur pour brancher ta table.'
+    : 'Ce navigateur ne sait pas parler aux tables DJ : ouvre DJingood dans Chrome ou Edge pour brancher la tienne. En attendant, tout marche à la souris.';
+  if (midiEtat === 'question') return 'Ton navigateur te demande si je peux parler à ta table : clique sur « Autoriser », en haut de l’écran.';
+  if (midiEtat === 'refuse') return 'Ton navigateur m’a refusé l’accès à ta table. Regarde juste en dessous comment l’autoriser.';
   if (r.table !== 'table') return 'Tu as une table DJ ?';
   if (r.modele === 'autre') return 'Pas de souci : quand tu la brancheras, je te montrerai comment la régler.';
   if (r.modele) return `Je connais la ${ppNomDe(r.modele)} : je la reconnaîtrai dès que tu la brancheras.`;
@@ -145,6 +157,7 @@ function ppMaj(){
   const sel = { niveau: r.niveau, table: r.table, objectif: r.min }[id];
   $('ppOpts').querySelectorAll('.pp-opt').forEach(b => b.setAttribute('aria-pressed', String(sel !== null && sel !== undefined && String(sel) === b.dataset.v)));
   const liste = $('ppListe'); if (liste) liste.hidden = r.table !== 'table';
+  const aide = $('ppAide'); if (aide) aide.hidden = !ppAideVue(r);
   $('ppAsk').textContent = id === 'salut' ? 'Salut, moi c’est Vini ! Je vais t’apprendre à mixer. D’abord, trois questions pour préparer ton parcours.'
     : id === 'niveau' ? (r.niveau === null ? 'Tu en es où avec le mix ?' : PP_NIVEAUX.find(x => x[0] === r.niveau)[3])
     : id === 'table' ? ppTableDit()

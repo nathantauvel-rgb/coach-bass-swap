@@ -138,23 +138,61 @@ function onMidi(e){
   else if (type === 0x90 || type === 0x80){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1)); if (k) pressKey(k, type === 0x80 || d2 === 0); }
 }
 async function initMidi(){
-  const txt = $('midiPill').lastElementChild;
-  if (!navigator.requestMIDIAccess){ txt.textContent = 'Souris (MIDI indisponible)'; return; }
-  try { const acc = await navigator.requestMIDIAccess({ sysex: false });
+  if (!navigator.requestMIDIAccess){ midiEtat = 'absent'; renderPill(); return; }
+  // Chrome demande la permission à la première visite : sans réponse au bout d'un moment, on dit d'aller cliquer sur « Autoriser »
+  setTimeout(() => { if (midiEtat === 'attente'){ midiEtat = 'question'; renderPill(); midiAideMaj(); } }, 1500);
+  try { const acc = await navigator.requestMIDIAccess({ sysex: false }); midiEtat = 'pret';
     // table débranchée : ses positions ne sont plus fiables, on les oublie jusqu'au prochain mouvement
     const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); midiNames = ins.map(i => String(i.name || 'Table MIDI'));
       if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; midiCount = ins.length; modeleAuto(); renderPill();
       updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); ppMidi(); };
-    acc.onstatechange = refresh; refresh();
-  } catch (e){ txt.textContent = 'Souris (MIDI bloqué ici)'; }
+    acc.onstatechange = refresh; refresh(); midiAideMaj();
+  } catch (e){ midiEtat = 'refuse'; renderPill(); midiAideMaj(); }
 }
-// La pastille du haut : le nom de la table, « à régler » tant qu'elle ne pilote rien
+// La pastille du haut : le nom de la table, « à régler » tant qu'elle ne pilote rien ; sans table, ce qui empêche de la voir
+// (190 px au plus : au-delà, le texte est coupé)
+const MIDI_SOURIS = { attente: 'Table…', question: 'Autorise l’accès à ta table', refuse: 'Table non autorisée', pret: 'Souris (aucune table vue)' };
 function renderPill(){ const pill = $('midiPill'); pill.className = 'chip status' + (tableOn() ? ' on' : '');
-  pill.lastElementChild.textContent = midiCount ? midiNames.join(', ') + (tableOn() ? '' : ' · à régler') : 'Souris (aucune table branchée)'; }
+  pill.lastElementChild.textContent = midiCount ? midiNames.join(', ') + (tableOn() ? '' : ' · à régler')
+    : midiEtat === 'absent' ? (midiIos() ? 'Souris (table sur ordinateur)' : 'Prends Chrome ou Edge') : MIDI_SOURIS[midiEtat]; }
+
+/* ---------- Ta table n'apparaît pas ? (lot 45) ----------
+   Deux joueurs ne voyaient pas leur table (une DDJ-FLX2, une XDJ-AZ) et le site ne disait pas pourquoi. L'aide suit ce que
+   le navigateur a répondu (midiEtat) ; elle est dans « Ma table » et à l'écran de la table des Premiers pas (premiers.js). */
+const midiIos = () => /iPhone|iPad/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+function midiAide(){
+  const titre = 'Ta table n’apparaît pas ?';
+  if (midiEtat === 'absent') return { titre, texte: midiIos() ? 'Sur iPhone et iPad, aucun navigateur ne sait parler à une table DJ. Ouvre DJingood sur un ordinateur, avec Chrome ou Edge, et branche ta table en USB.'
+    : 'Ce navigateur ne sait pas parler aux tables DJ (Safari, par exemple). Ouvre DJingood dans Chrome ou Edge, puis branche ta table en USB.', points: [] };
+  if (midiEtat === 'attente' || midiEtat === 'question') return { titre, texte: 'Ton navigateur te demande, en haut de l’écran (parfois avec une petite icône dans la barre d’adresse), si DJingood peut utiliser tes appareils MIDI, c’est-à-dire ta table : clique sur « Autoriser ».', points: [] };
+  if (midiEtat === 'refuse') return { titre, texte: (midiEssais ? 'Toujours refusé. ' : '') + 'Ton navigateur a refusé l’accès à ta table. Pour l’autoriser :', encore: true,
+    points: ['Clique sur le cadenas, à gauche de l’adresse du site.', 'Mets « Appareils MIDI » sur « Autoriser ».', 'Recharge la page.'].concat(/Firefox\//.test(navigator.userAgent) ? ['Sur Firefox, le plus simple est d’ouvrir DJingood dans Chrome ou Edge.'] : []) };
+  const rb = 'Ferme rekordbox, Serato, djay et VirtualDJ : sur Windows, une table ne parle qu’à un seul logiciel à la fois.';
+  if (midiCount) return { titre: 'Ta table ne réagit pas ?', texte: 'Le navigateur la voit, mais rien ne bouge quand tu touches une commande ?',
+    points: [rb + ' Puis recharge la page.', 'Table tout-en-un, avec un écran (XDJ-AZ, XDJ-RX3, XDJ-XZ…) : vérifie qu’elle est en mode ordinateur. Sur l’XDJ-AZ : bouton SOURCE, puis SOFTWARE CONTROL.'] };
+  return { titre, texte: 'Le navigateur ne voit aucune table. Vérifie, dans l’ordre :', points: [rb + ' Puis débranche ta table et rebranche-la.',
+    'Branche-la directement sur l’ordinateur, sans hub, avec le câble livré avec (certains câbles ne font que charger). Si elle a une prise de courant, allume-la.',
+    'Table tout-en-un, avec un écran (XDJ-AZ, XDJ-RX3, XDJ-XZ…) : passe-la en mode ordinateur. Sur l’XDJ-AZ : bouton SOURCE, puis SOFTWARE CONTROL.',
+    'Sur Windows, certaines tables demandent d’installer leur pilote, sur le site de la marque (c’est le cas de l’XDJ-AZ). La DDJ-FLX4 et la plupart des petites tables n’en ont pas besoin.'] };
+}
+// Remplit `box` avec l'aide qui correspond à la situation ; renvoie l'aide (son titre sert de résumé)
+function midiAideRemplir(box){
+  const a = midiAide(); box.innerHTML = '';
+  const p = document.createElement('p'); p.textContent = a.texte; box.appendChild(p);
+  if (a.points.length){ const ol = document.createElement('ol'); for (const t of a.points){ const x = document.createElement('li'); x.textContent = t; ol.appendChild(x); } box.appendChild(ol); }
+  if (a.encore){ const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost'; b.textContent = 'Réessayer'; b.addEventListener('click', midiReessaie); box.appendChild(b); }
+  return a;
+}
+// Redemander l'accès : si la question avait seulement été fermée, le navigateur la repose
+function midiReessaie(){ midiEssais++; midiEtat = 'attente'; initMidi(); }
+function midiAideMaj(){ if (view === 'table') renderTable(); if (pp.on && PP_ETAPES[pp.i] === 'table') ppRender(0); }
 
 
 /* ---------- Mise en place de la table ---------- */
 const phys = {}; let midiCount = 0, midiNames = [], mouseMode = false, learnKey = null;
+// Ce que le navigateur a répondu (lot 45) : 'attente', 'question' (il attend qu'on clique sur « Autoriser »), 'absent'
+// (navigateur sans Web MIDI : Safari, iPhone…), 'refuse' (accès refusé) ou 'pret' ; midiEssais : nombre de « Réessayer »
+let midiEtat = 'attente', midiEssais = 0;
 const LEARN_TXT = { midA: 'Tourne le potard MID de A…', cfxA: 'Tourne le potard CFX de A…', fxOn: 'Appuie sur ON de l\'effet…' };
 const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B', cfxA: 'Potard CFX de A', midA: 'Potard MID de A', midB: 'Potard MID de B' };
 // Vocabulaire du site (lot 18) : potard « normal » (à midi) ou « coupé » (tout à gauche), fader « en haut » ou « en bas »
