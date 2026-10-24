@@ -162,8 +162,11 @@ function renderPill(){ const pill = $('midiPill'); pill.className = 'chip status
 const midiIos = () => /iPhone|iPad/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
 function midiAide(){
   const titre = 'Ta table n’apparaît pas ?';
-  if (midiEtat === 'absent') return { titre, texte: midiIos() ? 'Sur iPhone et iPad, aucun navigateur ne sait parler à une table DJ. Ouvre DJingood sur un ordinateur, avec Chrome ou Edge, et branche ta table en USB.'
-    : 'Ce navigateur ne sait pas parler aux tables DJ (Safari, par exemple). Ouvre DJingood dans Chrome ou Edge, puis branche ta table en USB.', points: [] };
+  // Safari (et tout navigateur d'iPhone ou d'iPad) n'a pas Web MIDI : Apple ne l'a jamais ajouté, on ne peut que faire passer à Chrome
+  if (midiEtat === 'absent') return midiIos() ? { titre, lien: true, texte: 'Sur iPhone et iPad, aucun navigateur ne sait parler à une table DJ. Ouvre DJingood sur un ordinateur, avec Chrome ou Edge :',
+      points: ['Copie le lien de DJingood avec le bouton ci-dessous, et envoie-le-toi (par message ou par mail).', 'Ouvre-le sur ton ordinateur, dans Chrome ou Edge, et branche ta table en USB.'] }
+    : { titre, lien: true, chrome: true, texte: 'Ce navigateur ne sait pas parler aux tables DJ (Safari, par exemple). Ouvre DJingood dans Chrome ou Edge :',
+      points: ['Copie le lien de DJingood avec le bouton ci-dessous.', 'Ouvre Chrome (ou télécharge-le, c’est gratuit) et colle le lien dans la barre d’adresse.', 'Branche ta table, et clique sur « Autoriser » quand Chrome te le demande.'] };
   if (midiEtat === 'attente' || midiEtat === 'question') return { titre, texte: 'Ton navigateur te demande, en haut de l’écran (parfois avec une petite icône dans la barre d’adresse), si DJingood peut utiliser tes appareils MIDI, c’est-à-dire ta table : clique sur « Autoriser ».', points: [] };
   if (midiEtat === 'refuse') return { titre, texte: (midiEssais ? 'Toujours refusé. ' : '') + 'Ton navigateur a refusé l’accès à ta table. Pour l’autoriser :', encore: true,
     points: ['Clique sur le cadenas, à gauche de l’adresse du site.', 'Mets « Appareils MIDI » sur « Autoriser ».', 'Recharge la page.'].concat(/Firefox\//.test(navigator.userAgent) ? ['Sur Firefox, le plus simple est d’ouvrir DJingood dans Chrome ou Edge.'] : []) };
@@ -181,7 +184,20 @@ function midiAideRemplir(box){
   const p = document.createElement('p'); p.textContent = a.texte; box.appendChild(p);
   if (a.points.length){ const ol = document.createElement('ol'); for (const t of a.points){ const x = document.createElement('li'); x.textContent = t; ol.appendChild(x); } box.appendChild(ol); }
   if (a.encore){ const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost'; b.textContent = 'Réessayer'; b.addEventListener('click', midiReessaie); box.appendChild(b); }
+  if (a.lien){ const row = document.createElement('div'); row.className = 'taide-act';
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost'; b.textContent = 'Copier le lien'; b.addEventListener('click', () => midiCopieLien(b, box)); row.appendChild(b);
+    if (a.chrome){ const c = document.createElement('a'); c.className = 'ghost'; c.href = 'https://www.google.com/chrome/'; c.target = '_blank'; c.rel = 'noopener'; c.textContent = 'Télécharger Chrome'; row.appendChild(c); }
+    box.appendChild(row); }
   return a;
+}
+// Le lien du site, sans ce qui suit # (on arrive à l'accueil). Sans presse-papiers (refusé ou absent), le lien s'écrit en
+// toutes lettres pour qu'on le recopie.
+const midiLien = () => location.origin + location.pathname;
+async function midiCopieLien(b, box){
+  let ok = false; try { await navigator.clipboard.writeText(midiLien()); ok = true; } catch (e) {}
+  if (ok){ b.textContent = 'Lien copié !'; setTimeout(() => { b.textContent = 'Copier le lien'; }, 2500); return; }
+  let p = box.querySelector('.taide-lien'); if (!p){ p = document.createElement('p'); p.className = 'taide-lien'; box.appendChild(p); }
+  p.textContent = 'Recopie ce lien : ' + midiLien();
 }
 // Redemander l'accès : si la question avait seulement été fermée, le navigateur la repose
 function midiReessaie(){ midiEssais++; midiEtat = 'attente'; initMidi(); }

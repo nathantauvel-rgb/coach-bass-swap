@@ -96,11 +96,13 @@ function ppTableOpts(add){
   // Lot 45 : la table est branchée mais le navigateur ne la voit pas, ou l'accès a été refusé (midi.js)
   const d = document.createElement('details'), sm = document.createElement('summary'), body = document.createElement('div');
   d.className = 'pp-aide'; d.id = 'ppAide'; body.className = 'taide-in'; midiAideRemplir(body);
-  sm.textContent = midiEtat === 'refuse' ? 'Comment l’autoriser ?' : 'Elle est branchée, mais je ne la vois pas ?'; d.open = midiEtat === 'refuse';
+  sm.textContent = midiEtat === 'refuse' ? 'Comment l’autoriser ?' : midiEtat === 'absent' ? (midiIos() ? 'Ouvrir DJingood sur un ordinateur' : 'Ouvrir DJingood dans Chrome') : 'Elle est branchée, mais je ne la vois pas ?';
+  d.open = midiEtat === 'refuse' || midiEtat === 'absent';
   d.append(sm, body); $('ppOpts').appendChild(d);
 }
-// L'aide se montre quand on dit avoir une table et qu'aucune n'est vue, ou quand l'accès a été refusé (sauf à la souris)
-const ppAideVue = r => r.table !== 'souris' && (midiEtat === 'refuse' || (midiEtat === 'pret' && r.table === 'table'));
+// L'aide se montre quand on dit avoir une table et qu'aucune n'est vue, quand l'accès a été refusé, ou quand le navigateur ne
+// sait pas parler aux tables (Safari) ; jamais à la souris
+const ppAideVue = r => r.table !== 'souris' && (midiEtat === 'refuse' || midiEtat === 'absent' || (midiEtat === 'pret' && r.table === 'table'));
 function ppTableDit(){
   const r = pp.rep, b = ppBranchee();
   if (b) return b.id === 'inconnue' ? `Je vois ta table, mais je ne la connais pas encore : je te montrerai comment la régler, ça prend deux minutes.`

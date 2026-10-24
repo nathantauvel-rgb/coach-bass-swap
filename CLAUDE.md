@@ -1185,6 +1185,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     Windows, XDJ-AZ). Dans « Ma table » : `#tAide` sous l'état, ouverte sans table, repliée en « Ta table ne réagit pas ? » avec une
     table. Premiers pas, écran de la table : `#ppAide` (`ppAideVue` : « J'ai une table » sans table vue, ou accès refusé ; jamais à
     la souris) et Vini qui dit ce qui se passe (`ppTableDit`). « Aucune table vue pour l'instant » dans Ma table et Vérifier ma table.
+  - **Safari** (demandé par l'utilisateur après « il est sur Mac ») : Apple n'a jamais mis Web MIDI dans Safari (demande WebKit
+    ouverte depuis 2013), ni dans aucun navigateur d'iPhone ou d'iPad : **impossible à régler de notre côté**. Pistes écartées :
+    l'extension « Web MIDI for Safari » (tierce, non vérifiée), une application Mac (compte Apple à 99 €/an, signature, mises à
+    jour). Fait : l'aide de l'état `absent` donne trois étapes, un bouton « Copier le lien » (`midiCopieLien`, `midiLien` = adresse
+    sans le `#` ; sans presse-papiers, le lien s'écrit en toutes lettres, `.taide-lien`) et « Télécharger Chrome »
+    (https://www.google.com/chrome/, pas sur iPhone ni iPad). Aux Premiers pas, l'aide est ouverte sur Safari (« Ouvrir DJingood
+    dans Chrome »). Firefox sait parler aux tables sur Mac (petite autorisation à installer) : jamais essayé avec DJingood.
+  - Test instable ancien corrigé (il échouait aussi sur `main`) : « Tout recommencer à zéro » lisait le stockage avant la fin du
+    rechargement ; il attend maintenant (`expect.poll`).
   - Rapport des testeurs : la raison après « sans table (souris) » (`MIDI_RAPPORT`, avis.js). `testeurs.html` : tout-en-un, pilote,
     et « Ma table » qui dit quoi vérifier.
   - Tests : `tests/aide-table.spec.js` ; `fausseTable` expose `window.__midiCfg` (changer la réponse en cours de test). **Le

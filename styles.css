@@ -1527,3 +1527,6 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .taide-in p{margin:0 0 8px;color:var(--fg)}
 .taide-in ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
 .taide-in .ghost{margin-top:12px}
+.taide-act{display:flex;flex-wrap:wrap;gap:10px}
+.taide-act a.ghost{display:inline-block;text-decoration:none}
+.taide-in .taide-lien{margin:10px 0 0;color:var(--fg);font-weight:700;word-break:break-all}

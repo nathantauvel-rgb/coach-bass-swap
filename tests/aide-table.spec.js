@@ -52,10 +52,28 @@ test.describe('Ma table : pourquoi la table n\'apparaît pas', () => {
     await expect(page.locator('#tAideBody')).toContainText('clique sur « Autoriser »');
     expect(erreurs).toEqual([]);
   });
-  test('navigateur sans Web MIDI : Chrome ou Edge', async ({ page }) => {
+  test('navigateur sans Web MIDI (Safari) : la marche à suivre, « Copier le lien » et « Télécharger Chrome »', async ({ page }) => {
     await ouvrir(page, { onglet: 'table', avant: SANS_MIDI });
     await expect(page.locator('#midiPill')).toHaveText('Prends Chrome ou Edge');
+    await expect(page.locator('#tAide')).toHaveAttribute('open', '');
     await expect(page.locator('#tAideBody')).toContainText('Ouvre DJingood dans Chrome ou Edge');
+    await expect(page.locator('#tAideBody li')).toHaveCount(3);
+    await expect(page.locator('#tAideBody a', { hasText: 'Télécharger Chrome' })).toHaveAttribute('href', 'https://www.google.com/chrome/');
+    await expect(page.locator('#tAideBody button', { hasText: 'Copier le lien' })).toBeVisible();
+  });
+  test.describe('copier le lien', () => {
+    test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
+    test('le lien de l\'accueil part dans le presse-papiers', async ({ page }) => {
+      await ouvrir(page, { onglet: 'table', avant: SANS_MIDI });
+      await page.locator('#tAideBody button', { hasText: 'Copier le lien' }).click();
+      await expect(page.locator('#tAideBody button', { hasText: 'Lien copié !' })).toBeVisible();
+      expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(await page.evaluate(() => location.origin + '/index.html'));
+    });
+  });
+  test('sans presse-papiers, le lien s\'écrit en toutes lettres', async ({ page }) => {
+    await ouvrir(page, { onglet: 'table', avant: SANS_MIDI + ' try { Object.defineProperty(Navigator.prototype, "clipboard", { value: { writeText: () => Promise.reject(new Error("non")) }, configurable: true }); } catch (e) {}' });
+    await page.locator('#tAideBody button', { hasText: 'Copier le lien' }).click();
+    await expect(page.locator('#tAideBody .taide-lien')).toHaveText(/^Recopie ce lien : http:\/\/localhost:\d+\/index\.html$/);
   });
   test.describe('sur iPhone', () => {
     test.use({ userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1' });
@@ -63,6 +81,8 @@ test.describe('Ma table : pourquoi la table n\'apparaît pas', () => {
       await ouvrir(page, { onglet: 'table', avant: SANS_MIDI });
       await expect(page.locator('#midiPill')).toHaveText('Souris (table sur ordinateur)');
       await expect(page.locator('#tAideBody')).toContainText('sur un ordinateur');
+      await expect(page.locator('#tAideBody button', { hasText: 'Copier le lien' })).toBeVisible();
+      await expect(page.locator('#tAideBody a', { hasText: 'Télécharger Chrome' })).toHaveCount(0);
     });
   });
 });
@@ -93,6 +113,18 @@ test.describe('Premiers pas : la table branchée que le navigateur ne voit pas',
     await expect(page.locator('#ppAide')).toBeVisible();
     await expect(page.locator('#ppAide')).toHaveAttribute('open', '');
     await expect(page.locator('#ppAide button', { hasText: 'Réessayer' })).toBeVisible();
+  });
+  test('Safari : Vini dit d\'ouvrir Chrome, et l\'aide est ouverte avec « Copier le lien » ; à la souris, elle disparaît', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: SANS_MIDI });
+    await ecranTable(page);
+    await expect(page.locator('#ppAsk')).toHaveText(/ouvre DJingood dans Chrome ou Edge/);
+    await expect(page.locator('#ppAide')).toBeVisible();
+    await expect(page.locator('#ppAide')).toHaveAttribute('open', '');
+    await expect(page.locator('#ppAide summary')).toHaveText('Ouvrir DJingood dans Chrome');
+    await expect(page.locator('#ppAide button', { hasText: 'Copier le lien' })).toBeVisible();
+    await page.locator('#ppOpts .pp-opt').nth(1).click();
+    await expect(page.locator('#ppAide')).toBeHidden();
+    await expect(page.locator('#ppAsk')).toHaveText(/tout se joue à la souris/);
   });
   test('le navigateur attend une réponse : Vini dit de cliquer sur « Autoriser »', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: 'navigator.requestMIDIAccess = () => new Promise(() => {});' });
