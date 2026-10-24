@@ -32,7 +32,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 17 oct. 2026, fin de session)
-- **Lot 45 « Ta table n'apparaît pas ? » : FAIT le 24 oct. 2026 sur la branche `claude/magical-bohr-9pn8gk` (session cloud), NON PUBLIÉ.**
+- **Lot 45 « Ta table n'apparaît pas ? » : PUBLIÉ le 24 oct. 2026 (« Vas-y publie »), depuis la branche `claude/magical-bohr-9pn8gk` (session cloud).**
+  490 tests verts, gardien : feu rouge puis feu orange sans blocage. **Pas vérifié sur la vraie FLX4** (points 1, 8 et 13 de la
+  checklist touchés : autorisation de Chrome, pastille au débranchement, aide de « Ma table ») ; production pas vérifiable depuis la
+  session cloud (réseau fermé à djingood.fr et vercel.app) : l'utilisateur recharge la page lui-même.
   Deux joueurs (commentaires TikTok) : le site « ne détecte pas » leur **DDJ-FLX2** et leur **XDJ-AZ**. Rien de propre à ces tables
   dans le code (le site écoute toutes les tables que Chrome lui montre, quel que soit leur nom) : il ne disait simplement pas
   pourquoi il ne voyait rien. Demande de l'utilisateur : « je veux qu'ils puissent utiliser leurs platines ». Voir l'entrée
@@ -1171,7 +1174,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   jeu ne change. 461 tests verts, gardien : feu orange (seulement cette ligne manquante). Le domaine des e-mails est en
   cours côté utilisateur : il en était à la page du modèle « Réinitialisation du mot de passe », avant « Personnaliser
   le domaine ». Une fois les lignes DNS de Firebase recopiées chez OVH, vérifier sur `ns103.ovh.net` qu'il n'y a qu'un `v=spf1`.
-- **Lot 45 « Ta table n'apparaît pas ? » (24 oct. 2026)** : branche `claude/magical-bohr-9pn8gk`, non publiée. Après deux messages
+- **Lot 45 « Ta table n'apparaît pas ? » (24 oct. 2026)** : branche `claude/magical-bohr-9pn8gk`, **publié le 24 oct. 2026** (gardien :
+  feu rouge puis feu orange, 490 tests verts ; pas vérifié sur la vraie FLX4). Après deux messages
   de joueurs (DDJ-FLX2, XDJ-AZ « pas détectées »).
   - `midiEtat` (midi.js) : `attente` ; `question` (le navigateur n'a pas répondu au bout de 1,5 s : la question « Autoriser »
     de Chrome attend, souvent cachée derrière les Premiers pas) ; `absent` (pas de Web MIDI : Safari, iPhone, iPad) ; `refuse` ;
