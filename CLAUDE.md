@@ -1192,6 +1192,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     sans le `#` ; sans presse-papiers, le lien s'écrit en toutes lettres, `.taide-lien`) et « Télécharger Chrome »
     (https://www.google.com/chrome/, pas sur iPhone ni iPad). Aux Premiers pas, l'aide est ouverte sur Safari (« Ouvrir DJingood
     dans Chrome »). Firefox sait parler aux tables sur Mac (petite autorisation à installer) : jamais essayé avec DJingood.
+  - **Gardien, premier passage : feu rouge**, corrigé (un test chacun, qui échoue sur l'ancien code) : 1. une erreur levée tout de
+    suite par `requestMIDIAccess` (extension, rustine) passait par le `catch` AVANT `let view` → bandeau rouge « view is not
+    defined » : `midiAideMaj` y est maintenant appelé par `setTimeout` ; 2. « Réessayer » cliqué deux fois demandait l'accès deux
+    fois → table écoutée deux fois (chaque bouton compté double) : `midiReessaie` ne fait rien pendant une demande et redessine
+    l'aide tout de suite, et `initMidi` ignore une seconde réponse. Remarques reprises : un accès déjà accordé sur un ordinateur
+    lent ne fait plus dire « Autorise l'accès » (`midiQuestion` demande d'abord `navigator.permissions.query({ name: 'midi' })`,
+    et l'état `attente` dit « Un instant : le navigateur cherche ta table ») ; le lien écrit en toutes lettres reste quand « Ma
+    table » se redessine (`midiLienEcrit`, `midiLienMontre`). Suite complète : 486 réussis, 1 échoué, **le test de la molette
+    (`tests/platines.spec.js`, « molette : en lecture… ») est instable quand l'ordinateur est chargé** (il mesure à 100 ms près ;
+    trois séries de tests tournaient en même temps) ; il passait dans la première suite complète.
   - Test instable ancien corrigé (il échouait aussi sur `main`) : « Tout recommencer à zéro » lisait le stockage avant la fin du
     rechargement ; il attend maintenant (`expect.poll`).
   - Rapport des testeurs : la raison après « sans table (souris) » (`MIDI_RAPPORT`, avis.js). `testeurs.html` : tout-en-un, pilote,

@@ -46,6 +46,32 @@ test.describe('Ma table : pourquoi la table n\'apparaît pas', () => {
     await expect(page.locator('#midiPill')).toHaveText('DDJ-FLX4');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
+  test('le navigateur lève une erreur tout de suite : pas de bandeau rouge (gardien)', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: 'table', avant: 'navigator.requestMIDIAccess = () => { throw new TypeError("x"); };' });
+    await expect(page.locator('#midiPill')).toHaveText('Table non autorisée');
+    await expect(page.locator('#tAideBody')).toContainText('Appareils MIDI');
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('« Réessayer » cliqué deux fois : une seule demande, la table écoutée une seule fois (gardien)', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: 'table', avant: `window.__appels = 0; window.__entrees = [];
+      navigator.requestMIDIAccess = () => { window.__appels++; if (window.__appels === 1) return Promise.reject(new DOMException('non', 'SecurityError'));
+        const e = { id: 'x', name: 'DDJ-FLX4', onmidimessage: null }; window.__entrees.push(e);
+        return new Promise(r => setTimeout(() => r({ inputs: new Map([['x', e]]), outputs: new Map(), onstatechange: null }), 300)); };` });
+    await expect(page.locator('#midiPill')).toHaveText('Table non autorisée');
+    await page.locator('#tAideBody button', { hasText: 'Réessayer' }).dblclick();
+    await expect(page.locator('#midiPill')).toHaveText('DDJ-FLX4');
+    expect(await page.evaluate(() => [window.__appels, window.__entrees.filter(e => e.onmidimessage).length])).toEqual([2, 1]);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('accès déjà accordé, navigateur lent : pas de « Autorise l’accès » (gardien)', async ({ page }) => {
+    await ouvrir(page, { onglet: 'table', avant: `const q = navigator.permissions.query.bind(navigator.permissions);
+      navigator.permissions.query = d => d && d.name === 'midi' ? Promise.resolve({ state: 'granted' }) : q(d);
+      navigator.requestMIDIAccess = () => new Promise(r => setTimeout(() => r({ inputs: new Map(), outputs: new Map(), onstatechange: null }), 2500));` });
+    await page.waitForTimeout(2000);
+    await expect(page.locator('#midiPill')).toHaveText('Table…');
+    await expect(page.locator('#tAideBody')).toContainText('Un instant');
+    await expect(page.locator('#midiPill')).toHaveText('Souris (aucune table vue)');
+  });
   test('le navigateur attend une réponse : on dit de cliquer sur « Autoriser »', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'table', avant: 'navigator.requestMIDIAccess = () => new Promise(() => {});' });
     await expect(page.locator('#midiPill')).toHaveText('Autorise l’accès à ta table');
@@ -74,6 +100,9 @@ test.describe('Ma table : pourquoi la table n\'apparaît pas', () => {
     await ouvrir(page, { onglet: 'table', avant: SANS_MIDI + ' try { Object.defineProperty(Navigator.prototype, "clipboard", { value: { writeText: () => Promise.reject(new Error("non")) }, configurable: true }); } catch (e) {}' });
     await page.locator('#tAideBody button', { hasText: 'Copier le lien' }).click();
     await expect(page.locator('#tAideBody .taide-lien')).toHaveText(/^Recopie ce lien : http:\/\/localhost:\d+\/index\.html$/);
+    // il reste écrit quand « Ma table » se redessine (clic sur une commande du schéma)
+    await page.locator('#tSvg .tc').first().click();
+    await expect(page.locator('#tAideBody .taide-lien')).toBeVisible();
   });
   test.describe('sur iPhone', () => {
     test.use({ userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1' });
