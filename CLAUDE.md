@@ -36,7 +36,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (« OK vas-y, on part là-dessus ») avec les trois choix : les 7 leçons dans cet ordre ; sur un téléphone, après les questions
   de Vini, on va à Comprendre ; sur ordinateur rien n'est imposé, étoiles dans le total (129 → 150), 10 XP par étoile.
   Détail dans l'entrée « Lot 48 » de « Où on en est ». Maquette et captures d'avant (hors Git) : `captures/maquette-comprendre/`.
-  **À faire avant de publier** : gardien, captures montrées à l'utilisateur, son accord. **Jamais écouté par un humain** : les
+  **Gardien : feu rouge puis feu orange (second passage, aucun blocage)** ; lot 47 publié fusionné dedans (commit `b4c9379`) ;
+  **543 tests verts** sur la version fusionnée (26 oct. 2026). Captures montrées à l'utilisateur. **Reste : son accord pour publier.** **Jamais écouté par un humain** : les
   sons sont fabriqués par le site (boîte à rythmes de `js/comprendre.js`), à faire écouter à l'utilisateur sur son téléphone.
   Même jour, question de l'utilisateur « faut-il forcer la création d'un compte ? » : conseillé **non** (modèle Duolingo : on
   joue d'abord, le compte est proposé juste après une réussite, avec une vraie raison ; obligatoire seulement plus tard, au
@@ -53,7 +54,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la fois » supprimée partout (« je veux plus jamais l'entendre ») : **ne jamais remettre de voix fabriquée par le site**.
   Détail dans l'entrée « Lot 47 » de « Où on en est » (sur `main`). **Pour la branche `lot-48-comprendre`** : fusionner
   `origin/main` avant de publier (le lot 47 touche aussi `js/parcours.js`, ligne de l'étape ch3, et CLAUDE.md).
-  À proposer à l'utilisateur : raccourcir aussi l'attente entre deux transitions au chapitre 7 (environ 15 s de drop).
+- **Lot 49 « Set plus court » (25-26 oct. 2026, NON PUBLIÉ) : branche `lot-49-set-plus-court` (commit `c8f451f`, partie de
+  `origin/main` après le lot 47), dans la copie `Documents\coach-dj-lot47`.** Demande de l'utilisateur : raccourcir l'attente
+  entre deux transitions au chapitre 7. Le drop de chaque morceau du set dure 16 temps au lieu de 32 (≈ 7 s seul au lieu de
+  15), phrases de 16 temps au set, et la démo de « La montée » ramène enfin le tempo (défaut ancien). 523 tests verts. Détail
+  dans l'entrée « Lot 49 » du CLAUDE.md de cette branche. Avant de publier : gardien, puis l'accord de l'utilisateur.
+  Numéroté 49 parce que ce dossier fait le lot 48.
 - **Lot 46 « Stats et retours » : PUBLIÉ le 25 oct. 2026** (commit `462c377`, « Oui, publie le lot 46 », règles
   `firestore.rules` publiées par l'utilisateur juste avant). Production vérifiée : `js/stats.js` servi avec l'identifiant,
   `confidentialite.html` en ligne, `avisEnvoie` servi. **À faire par l'utilisateur** : voir sa visite dans « Realtime »
