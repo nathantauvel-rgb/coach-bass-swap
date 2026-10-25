@@ -32,9 +32,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 25 oct. 2026)
-- **Lot 47 « Niveaux plus courts » (25 oct. 2026, branche `lot-47-plus-court`, copie `Documents\coach-dj-lot47`, NON PUBLIÉ).**
-  Niveaux écourtés (plus d'attente après le seul geste) et voix fabriquée du chapitre 3 supprimée. Voir l'entrée « Lot 47 » à
-  la fin de « Où on en est ». Avant de publier : gardien, puis l'accord de l'utilisateur.
+- **Lot 47 « Niveaux plus courts » : PUBLIÉ le 25 oct. 2026 au soir** (commit `4dff949`, « Oui, publie le lot 47 malgré le feu
+  orange »). Niveaux écourtés (plus d'attente après le seul geste) et voix fabriquée du chapitre 3 supprimée. Production
+  vérifiée (nouveaux fichiers servis, plus de voix, aucune erreur). Voir l'entrée « Lot 47 » à la fin de « Où on en est ».
+  Reste : l'essai sur la vraie FLX4 ; proposer de raccourcir l'attente entre deux transitions au chapitre 7.
 - **Lot 46 « Stats et retours » (25 oct. 2026, branche `lot-46-stats`, NON PUBLIÉ).** Contexte donné par l'utilisateur : la
   première vidéo TikTok a fait 10 000 vues, 350 likes et beaucoup d'enregistrements ; 5 comptes créés (vus dans Firebase) ;
   des retours « le concept est cool » mais aucun retour détaillé. Pour lui, la priorité est d'être actif sur TikTok ; il
