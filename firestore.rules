@@ -3,7 +3,7 @@
 //
 // La plus importante : chaque joueur connecté ne peut lire et écrire QUE son propre document.
 // Personne ne peut lire la progression d'un autre, et personne ne peut rien écrire sans être connecté.
-// Seule exception (lot 45) : la collection `avis`, où n'importe qui peut DÉPOSER un avis, connecté ou non,
+// Seule exception (lot 46) : la collection `avis`, où n'importe qui peut DÉPOSER un avis, connecté ou non,
 // sans jamais pouvoir le relire, le modifier ou l'effacer. Seule l'équipe les lit, dans la console Firebase.
 rules_version = '2';
 service cloud.firestore {

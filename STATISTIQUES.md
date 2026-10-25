@@ -1,4 +1,4 @@
-# Suivre les visites et lire les avis (lot 45)
+# Suivre les visites et lire les avis (lot 46)
 
 Deux choses distinctes :
 
@@ -17,7 +17,8 @@ Deux choses distinctes :
    l'identifiant du site (`data-website-id`) et le met dans `STATS_ID`, en haut de `js/stats.js`.
    Ce n'est pas un secret : il est visible dans la page de n'importe quel site qui utilise Umami.
 
-Tant que `STATS_ID` est vide, rien n'est compté.
+**Fait le 25 oct. 2026** : l'identifiant de djingood.fr est dans `js/stats.js`. Tant que `STATS_ID` est vide,
+rien n'est compté.
 
 ## 2. Publier les nouvelles règles Firebase (2 minutes, AVANT la mise en ligne)
 
@@ -35,14 +36,23 @@ repart tout seul à sa visite suivante.
 Tu vas beaucoup jouer : sur chacun de tes appareils, ouvre https://djingood.fr/confidentialite.html et
 appuie sur **Ne plus compter mes visites**. (À refaire si tu vides ton navigateur.)
 
-## 4. Le lien à mettre dans ta bio TikTok
+## 4. Savoir combien viennent de TikTok
+
+Avec moins de 1 000 abonnés, le lien de la bio TikTok n'est pas cliquable : les gens tapent `djingood.fr`
+eux-mêmes. Umami les range alors dans les visites **« Direct »** (sans provenance). Tant que TikTok est le
+seul endroit où DJingood est montré, **Direct ≈ TikTok** : regarde la courbe des visites dans les heures qui
+suivent chaque vidéo.
+
+Pour que l'adresse soit facile à recopier : écrite en gros et dite dans chaque vidéo, et un commentaire
+épinglé « 👉 djingood.fr » (on peut le copier en gardant le doigt appuyé dessus).
+
+Le jour où le lien de la bio devient cliquable (1 000 abonnés), y mettre :
 
 ```
 https://djingood.fr/?utm_source=tiktok
 ```
 
-Umami range alors ces visiteurs sous « tiktok », même quand l'appli TikTok ne dit pas d'où ils viennent.
-Pour une vidéo précise : `?utm_source=tiktok&utm_campaign=nom-de-la-video`.
+Umami rangera alors ces visiteurs sous « tiktok ».
 
 ## Où lire quoi
 

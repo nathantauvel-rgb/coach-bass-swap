@@ -34,7 +34,7 @@ test.describe('Premiers pas', () => {
     });
   }
   test('trois niveaux ; « Continuer » est grisé tant que rien n\'est choisi ; « Retour » garde les réponses', async ({ page }) => {
-    await ouvrir(page, { onglet: '', stockage: NOUVEAU });
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
     await suite(page);
     await expect(page.locator('#ppAsk')).toHaveText('Tu en es où avec le mix ?');
     await expect(page.locator('#ppOpts .pp-opt .pp-txt > span:first-child')).toHaveText(['Grand débutant', 'Apprenti DJ', 'DJ confirmé']);
@@ -50,7 +50,7 @@ test.describe('Premiers pas', () => {
     await expect(page.locator('#ppGo')).toBeEnabled();
   });
   test('table : aucune n\'est mise en avant ; la liste par marque dit si DJingood la connaît', async ({ page }) => {
-    await ouvrir(page, { onglet: '', stockage: NOUVEAU });
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
     await suite(page); await choix(page, 0); await suite(page);
     await expect(page.locator('#ppOpts .pp-opt')).toHaveCount(2);
     await expect(page.locator('#ppOpts .pp-opt').filter({ hasText: 'FLX4' })).toHaveCount(0);

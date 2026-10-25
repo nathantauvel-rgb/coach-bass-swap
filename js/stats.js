@@ -1,4 +1,4 @@
-// Statistiques de visite (lot 45) : combien de gens viennent, d'où, et jusqu'où ils vont dans le jeu.
+// Statistiques de visite (lot 46) : combien de gens viennent, d'où, et jusqu'où ils vont dans le jeu.
 // Ce fichier ne dépend d'aucun autre : index.html le charge tout de suite après erreurs.js (pour que tous les autres
 // puissent appeler `stat`), et presentation.html et confidentialite.html le chargent seul.
 'use strict';

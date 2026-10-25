@@ -13,7 +13,7 @@ const niveau = (page, i) => page.locator('.node').nth(i).click();
 test.describe('Détection', () => {
   test('aucune table : on joue à la souris', async ({ page }) => {
     const erreurs = await ouvrir(page, { midi: { branchee: false } });
-    await expect(page.locator('#midiPill')).toHaveText('Souris (aucune table branchée)');
+    await expect(page.locator('#midiPill')).toHaveText('Souris (aucune table vue)');
     await expect(page.locator('#midiPill')).not.toHaveClass(/\bon\b/);
     await niveau(page, 1);
     await expect(page.locator('#setup')).toBeHidden();
@@ -22,13 +22,13 @@ test.describe('Détection', () => {
   });
   test('autorisation MIDI refusée : on joue à la souris', async ({ page }) => {
     const erreurs = await ouvrir(page, { midi: { refuse: true } });
-    await expect(page.locator('#midiPill')).toHaveText('Souris (MIDI bloqué ici)');
+    await expect(page.locator('#midiPill')).toHaveText('Table non autorisée');
     await expect(page.locator('#startBtn')).toBeEnabled();
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('navigateur sans Web MIDI', async ({ page }) => {
     const erreurs = await ouvrir(page, { avant: 'try { Object.defineProperty(Navigator.prototype, "requestMIDIAccess", { value: undefined, configurable: true }); } catch (e) {}' });
-    await expect(page.locator('#midiPill')).toHaveText('Souris (MIDI indisponible)');
+    await expect(page.locator('#midiPill')).toHaveText('Prends Chrome ou Edge');
     expect(erreurs).toEqual([]);
   });
   test('table branchée : son nom s\'affiche et la mise en place est demandée', async ({ page }) => {
@@ -171,7 +171,7 @@ test.describe('Débranchement et rebranchement', () => {
     const erreurs = await ouvrir(page, { midi: { branchee: true } });
     await niveau(page, 1);
     await page.evaluate(() => window.__midi.debrancher());
-    await expect(page.locator('#midiPill')).toHaveText('Souris (aucune table branchée)');
+    await expect(page.locator('#midiPill')).toHaveText('Souris (aucune table vue)');
     await expect(page.locator('#setup')).toBeHidden();
     await expect(page.locator('#startBtn')).toBeEnabled();
     await page.evaluate(() => window.__midi.brancher());

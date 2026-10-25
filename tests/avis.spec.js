@@ -137,8 +137,9 @@ test.describe('Tout recommencer à zéro', () => {
     await page.locator('#avReset').click();
     await expect(page.locator('#vHome')).toBeVisible();
     await expect(page.locator('#homeChoice')).toBeVisible();
-    const reste = await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('coach-')).sort());
-    expect(reste).toEqual(['coach-journal', 'coach-midi-map', 'coach-ordre', 'coach-verif']);   // le journal et coach-ordre reviennent au rechargement
+    // le journal et coach-ordre reviennent au rechargement : on attend qu'il soit fini (l'accueil s'affiche parfois avant)
+    await expect.poll(() => page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('coach-')).sort()))
+      .toEqual(['coach-journal', 'coach-midi-map', 'coach-ordre', 'coach-verif']);
     expect(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).toBe(reglage);
     expect((await journal(page)).parties).toEqual([]);
   });

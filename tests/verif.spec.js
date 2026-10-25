@@ -132,7 +132,7 @@ test.describe('Vérifier ma table', () => {
       await expect(page.locator('#vfKick')).toHaveText('Vérifier ma table · étape 1 sur 20');
       await expect(titre(page)).toHaveText('Les faders de volume', { timeout: 3000 });
       await page.evaluate(() => window.__midi.debrancher());
-      await expect(page.locator('#vfState')).toHaveText('Aucune table branchée pour l’instant.');
+      await expect(page.locator('#vfState')).toHaveText('Aucune table vue pour l’instant.');
       expect(erreurs).toEqual([]); await sansBandeau(page);
     });
   }

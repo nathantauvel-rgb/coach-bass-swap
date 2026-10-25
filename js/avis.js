@@ -18,7 +18,7 @@ if (!jr || typeof jr !== 'object' || Array.isArray(jr)) jr = {};
     parties: arr(jr.parties, p => p && typeof p === 'object' && [1, 2, 3, 4, 5, 6, 7].includes(p.c) && Number.isInteger(p.n) && p.n >= 0 && p.n < lessonsOf(p.c).length && [1, 2, 3].includes(p.e)),
     clair: Object.fromEntries(Object.entries(cl).filter(([k, v]) => /^[1-7]-[0-6]$/.test(k) && JR_CLAIR.includes(v))),
     avis: arr(jr.avis, a => a && typeof a === 'object' && typeof a.d === 'string').map(a => Object.assign({ d: a.d.slice(0, 10), ecran: txt(a.ecran).slice(0, 80), bloque: txt(a.bloque), plu: txt(a.plu), note: [1, 2, 3, 4, 5].includes(a.note) ? a.note : 0 },
-      a.p === 0 || a.p === 1 ? { p: a.p } : {})),   // p : 0 = pas encore parti, 1 = parti (lot 45) ; sans p, écrit avant qu'un avis puisse partir
+      a.p === 0 || a.p === 1 ? { p: a.p } : {})),   // p : 0 = pas encore parti, 1 = parti (lot 46) ; sans p, écrit avant qu'un avis puisse partir
     erreurs: arr(jr.erreurs, e => typeof e === 'string', 5)
   };
 }
@@ -55,10 +55,12 @@ function navName(){
   const os = /Windows/.test(u) ? 'Windows' : /iPhone|iPad/.test(u) ? 'iPhone ou iPad' : /Android/.test(u) ? 'Android' : /Mac OS/.test(u) ? 'Mac' : /Linux/.test(u) ? 'Linux' : '';
   return nav + (os ? ', ' + os : '');
 }
+// Sans table, pourquoi (lot 45) : le navigateur ne peut pas en voir, l'accès a été refusé, ou il n'en voit aucune
+const MIDI_RAPPORT = { absent: ' · navigateur qui ne sait pas parler aux tables', refuse: ' · accès à la table refusé', question: ' · accès à la table pas encore autorisé', pret: ' · aucune table vue par le navigateur' };
 function avisRapport(){
   const L = [], lv = (c, n) => lessonsOf(c)[n], max = BASE_LESSONS.length * 3;
   L.push(`Rapport DJingood du ${dayKey()}`);
-  L.push(`Parcours : ${PARCOURS[parcours] ? PARCOURS[parcours].name : 'pas encore choisi'} · ${midiCount > 0 ? 'table branchée : ' + midiNames.join(', ') + (tableCfg ? (tableCfg.modele ? ' (reconnue d’après sa fiche)' : ' (réglée pas à pas)') : tableOn() ? '' : ' (pas encore réglée)') : 'sans table (souris)'} · ${navName()}`);
+  L.push(`Parcours : ${PARCOURS[parcours] ? PARCOURS[parcours].name : 'pas encore choisi'} · ${midiCount > 0 ? 'table branchée : ' + midiNames.join(', ') + (tableCfg ? (tableCfg.modele ? ' (reconnue d’après sa fiche)' : ' (réglée pas à pas)') : tableOn() ? '' : ' (pas encore réglée)') : 'sans table (souris)' + (MIDI_RAPPORT[midiEtat] || '')} · ${navName()}`);
   L.push(`Premiers pas : ${ppResume()}`);
   L.push(`Temps sur le site : ${Math.round(jr.secs / 60)} min, sur ${plur(jr.jours.length, 'jour', 'jours')} (première visite le ${jr.debut})`);
   L.push(`Étoiles : chapitre 1 ${sumStars(stars)}/${max}, chapitre 2 ${sumStars(ch2Stars)}/${max}, chapitre 3 ${sumStars(ch3Stars)}/${CH3_LESSONS.length * 3}, chapitre 4 ${sumStars(ch4Stars)}/${CH4_LESSONS.length * 3}, chapitre 5 ${sumStars(ch5Stars)}/${CH5_LESSONS.length * 3}${CH6_PRET ? `, chapitre 6 ${sumStars(ch6Stars)}/${CH6_LESSONS.length * 3}` : ''}, chapitre 7 ${sumStars(ch7Stars)}/${CH7_LESSONS.length * 3} · ${$('xpTxt').textContent} · badges ${badgesWon.length}/${BADGES.length} · quiz ${quizOk.length}/${QUIZ.length}`);
@@ -105,7 +107,7 @@ function avisSave(){
     avisMsg(ok ? 'Merci, ton avis est bien arrivé chez l’équipe DJingood ! Tu peux en écrire un autre quand tu veux.'
       : 'Ton avis est gardé sur cet ordinateur, mais il n’a pas pu partir (pas de connexion ?). Il repartira tout seul à ta prochaine visite.'); });
 }
-/* ---------- Envoyer l'avis à l'équipe (lot 45) ----------
+/* ---------- Envoyer l'avis à l'équipe (lot 46) ----------
    Sur le vrai site, chaque avis est enregistré dans la base Firebase (collection `avis`) : tout le monde peut en écrire un,
    personne ne peut les relire depuis le site (firestore.rules). L'équipe les lit dans la console Firebase.
    Avec l'avis partent : la date, l'écran, le parcours, la table branchée, le navigateur, et l'identifiant du compte si on

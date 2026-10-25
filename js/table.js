@@ -73,12 +73,15 @@ function renderTable(){
   const svg = $('tSvg'); if (!svg.firstChild) svg.innerHTML = tableSvg();
   for (const k of MIDI_CC) tableSchemaSet(k, phys[k]);
   const et = tableEtat(), nom = midiNames.join(', ');
-  $('tState').textContent = !midiCount ? 'Aucune table branchée : tu peux lire les explications, et brancher ta table pour voir les commandes réagir.'
+  $('tState').textContent = !midiCount ? 'Aucune table vue pour l’instant : tu peux lire les explications, et brancher ta table pour voir les commandes réagir.'
     : et === 'nouvelle' ? `Table branchée : ${nom}. Elle n'est pas encore réglée : clique sur « Régler ma table pas à pas », puis bouge chaque commande quand le site te le demande.`
     : et === 'flx4' ? `Table branchée : ${nom}. Les réglages sont encore ceux de ton autre table : clique sur « Revenir aux réglages de la DDJ-FLX4 ».`
     : et === 'connue' ? `Table branchée : ${nom}. DJingood connaît ses réglages, mais ceux en place sont ceux de ta table réglée à la main : clique sur « ${tableResetTxt()} », en bas de la page.`
     : tableCfg && tableCfg.modele ? `Table branchée : ${nom}, reconnue toute seule. Ses réglages viennent de sa documentation et n'ont pas encore été vérifiés sur une vraie table : si une commande ne répond pas, « Vérifier ma table » le dira, et tu peux la réapprendre.`
     : `Table branchée : ${nom}${tableCfg ? ' (réglée pas à pas)' : ''}. Bouge une commande pour la voir réagir.`;
+  // « Ta table n'apparaît pas ? » (lot 45) : ouverte quand aucune table n'est vue, repliée sinon (« Ta table ne réagit pas ? »)
+  const aide = midiAideRemplir($('tAideBody')), ta = $('tAide'), cle = midiEtat + (midiCount ? '+' : '');
+  $('tAideSum').textContent = aide.titre; if (ta.dataset.k !== cle){ ta.dataset.k = cle; ta.open = !midiCount; }
   $('tKick').textContent = tableCfg || (midiCount && !midiNames.some(isFlx4)) || !midiCount ? 'Ta table' : 'Ta DDJ-FLX4';
   $('tReg').hidden = !midiCount; renderVerifBtn();
   svg.querySelectorAll('.tc').forEach(el => { el.classList.toggle('sel', el.dataset.c === tableSel); el.setAttribute('aria-pressed', String(el.dataset.c === tableSel)); });

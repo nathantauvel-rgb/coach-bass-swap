@@ -143,7 +143,7 @@ function renderVerif(){
     else if (verif.cap && verif.cap.last) sEl.textContent = `Reçu : ${vfCanal(verif.cap.last)}… continue.`;
     else sEl.textContent = 'J’écoute ta table…'; }
   if ((st.type === 'auto' || st.type === 'branche') && vf.res[st.id] === 'ok'){ sEl.textContent = 'Tout répond ✓'; sEl.classList.add('ok'); }
-  else if ((st.type === 'auto') && !midiCount){ sEl.textContent = 'Aucune table branchée pour l’instant.'; }
+  else if ((st.type === 'auto') && !midiCount){ sEl.textContent = 'Aucune table vue pour l’instant.'; }
   // les questions
   const box = $('vfChoix'); box.innerHTML = ''; box.hidden = st.type !== 'manuel';
   if (st.type === 'manuel'){

@@ -1,4 +1,4 @@
-// Lot 45 : statistiques de visite (Umami) et avis envoyés à l'équipe (Firebase).
+// Lot 46 : statistiques de visite (Umami) et avis envoyés à l'équipe (Firebase).
 // Umami et Firebase ne sont jamais appelés pour de vrai : un faux est posé AVANT le chargement de la page. Le site ne charge
 // leurs scripts que si `window.umami` / `window.firebase` n'existent pas encore, donc tout le reste du chemin est le vrai.
 const { test, expect } = require('@playwright/test');
@@ -91,7 +91,7 @@ test.describe('Statistiques de visite', () => {
   test('un navigateur sans MIDI (iPhone, appli TikTok) est compté', async ({ page }) => {
     await ouvrir(page, { avant: FAUX_UMAMI + `Object.defineProperty(navigator, 'requestMIDIAccess', { value: undefined });` });
     await expect.poll(() => noms(page)).toEqual(['sans-midi']);
-    await expect(page.locator('#midiPill')).toContainText('MIDI indisponible');
+    await expect(page.locator('#midiPill')).toContainText('Prends Chrome ou Edge');
   });
   test('Premiers pas : passés, ou finis avec le parcours choisi', async ({ page }) => {
     const NOUVEAU = { 'coach-guide-vu': null, 'coach-fiches': null, 'coach-accueil': null };
