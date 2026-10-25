@@ -16,7 +16,7 @@
      en haut d'« Apprendre », repliées (choix de l'utilisateur, 25 oct. 2026). */
 const CP_KEY = 'coach-comprendre', CP_XP = 10, CP_BPM = 124;
 let cpStars = {}; try { cpStars = cleanBank(JSON.parse(localStorage.getItem(CP_KEY) || '{}')); } catch (e) {}
-const cpMobile = () => midiEtat === 'absent' || matchMedia('(pointer: coarse) and (max-width: 900px)').matches;
+const cpMobile = () => (midiEtat === 'absent' && midiIos()) || matchMedia('(pointer: coarse) and (max-width: 900px)').matches;
 const cpEtape = () => cpMobile();
 const cpEtoiles = () => sumStars(cpStars);
 const cpXp = () => cpEtoiles() * CP_XP;
@@ -28,18 +28,19 @@ const CP_TOUT = { kick: true, hat: true, clap: true, basse: true, accords: true 
 const cpE = (dit, son, o = {}) => Object.assign({ t: 'explique', dit, son }, o);
 const cpT = (mode, titre, sous, son, o = {}) => Object.assign({ t: 'tape', mode, titre, sous, son }, o);
 const cpC = (titre, options, bonne, juste, faux, o = {}) => Object.assign({ t: 'choix', titre, options: options.map(x => typeof x === 'string' ? { t: x } : x), bonne, juste, faux }, o);
-const cpO = (titre, items, juste, faux) => ({ t: 'ordre', titre, items, juste, faux });
+// `aussi` : d'autres ordres justes (indices de `items`)
+const cpO = (titre, items, juste, faux, aussi = []) => ({ t: 'ordre', titre, items, juste, faux, aussi });
 const CP_LECONS = [
   { titre: 'Le temps', sous: 'Le « boum » qui ne s’arrête jamais',
     retenir: 'Un temps, c’est un « boum » de la grosse caisse. Les DJ comptent les temps pour savoir quand lancer le morceau suivant.',
     cartes: [
-      cpE('Dans la house, la grosse caisse frappe toujours au même rythme. Chaque « boum », c’est un temps.', cpM(8, { kick: true }), { points: true }),
+      cpE('Dans la house, la grosse caisse frappe toujours au même rythme. Chaque « boum », c’est un temps.', cpM(8, { kick: true }), { points: true, astuceSon: true }),
       cpE('Tout le reste se cale sur ces temps : les « tss » entre deux « boum », le clap, la basse.', cpM(8, { kick: true, hat: true, clap: true, basse: true }), { points: true }),
-      cpT('temps', 'Tape sur chaque « boum »', '8 temps. Les ronds comptent avec toi au début.', cpM(12, { kick: true, hat: true })),
+      cpT('temps', 'Tape sur chaque « boum »', '8 temps. Le rond compte avec toi au début, puis tape avec la grosse caisse.', cpM(12, { kick: true, hat: true })),
       cpC('Lequel garde toujours le même écart ?', [{ t: 'Morceau A', son: cpM(8, { kick: true, irregulier: true }) }, { t: 'Morceau B', son: cpM(8, { kick: true }) }], 1,
         'Bien entendu ! En B, chaque « boum » tombe pile au même écart. C’est ce qui permet de compter.',
         'C’est B : écoute A, certains « boum » arrivent trop tôt ou trop tard.'),
-      cpT('temps', 'Encore, sans les ronds', 'Cette fois, seulement avec tes oreilles.', cpM(12, { kick: true, hat: true, clap: true }), { sansAide: true })
+      cpT('temps', 'Encore, sans aide', 'Cette fois, le rond ne clignote plus : seulement tes oreilles.', cpM(12, { kick: true, hat: true, clap: true }), { sansAide: true })
     ] },
   { titre: 'Compter jusqu’à 4', sous: 'Trouver le « 1 »',
     retenir: '4 temps font 1 mesure. Le « 1 » est le temps fort : c’est souvent là que la musique change.',
@@ -87,8 +88,9 @@ const CP_LECONS = [
         'C’est le break : la grosse caisse s’est arrêtée.', { son: cpM(8, { hat: true, nappe: true }) }),
       cpC('Et celle-ci ?', ['L’intro', 'Le drop', 'Le break'], 1, 'Oui : tout joue, c’est le drop.',
         'C’est le drop : la basse et les accords jouent avec la grosse caisse.', { son: cpM(8, CP_TOUT) }),
-      cpO('Remets les parties dans l’ordre', ['Intro', 'Break', 'Drop', 'Outro'], 'C’est ça : on entre doucement, la tension monte, ça explose, puis on redescend.',
-        'L’ordre : intro, break, drop, outro. On entre doucement, la tension monte, ça explose, puis on redescend.')
+      cpO('Remets les parties dans l’ordre', ['Intro', 'Break', 'Drop', 'Outro'],
+        'C’est ça : l’intro au début, l’outro à la fin. Au milieu, le break et le drop se répondent : la tension monte, puis ça explose.',
+        'L’intro est toujours au début et l’outro à la fin ; au milieu, le break et le drop se répondent.', [[0, 2, 1, 3]])
     ] },
   { titre: 'Grave, médium, aigu', sous: 'Pourquoi on coupe les basses',
     retenir: 'Le potard LOW règle les graves. Deux basses en même temps, c’est la bouillie : on n’en garde qu’une à la fois.',
@@ -111,7 +113,7 @@ const CP_LECONS = [
   { titre: 'La transition', sous: 'Ce que tu vas faire avec ta table',
     retenir: 'B entre sur une phrase, sans ses basses. On échange les basses, puis A s’en va. C’est ce que tu vas faire au chapitre 1, avec ta table.',
     cartes: [
-      cpE('Une transition, c’est passer d’un morceau à l’autre sans que la danse s’arrête. Écoute : A joue, puis B entre sur une phrase, sans ses basses.',
+      cpE('Une transition, c’est passer d’un morceau à l’autre sans que la danse s’arrête. Écoute : A joue, puis B entre, sans ses basses.',
         cpM(16, { kick: true, hat: true, accords: true, basse: true, nappe: [8, 16], clap: [8, 16] })),
       cpE('Puis on échange les basses : celle de A s’en va, celle de B arrive. Enfin, A s’en va.', cpM(16, { kick: true, hat: [0, 8], accords: [0, 8], basse: [0, 4], basseB: [4, 16], nappe: true, clap: true })),
       cpO('Remets les gestes dans l’ordre', ['Lancer B au début d’une phrase', 'Monter le volume de B', 'Échanger les basses', 'Baisser le volume de A'],
@@ -174,6 +176,7 @@ function cpMotif(bus, m, t0){
 }
 function cpJoue(son, apres = .15){
   ensureAudio(); if (ac.state !== 'running') ac.resume(); cpStop();
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}   // iPhone : le son passe même en mode silencieux
   const liste = Array.isArray(son) ? son : [son], bus = ac.createGain(); bus.connect(master);
   const t0 = ac.currentTime + apres; let t = t0;
   liste.forEach((m, i) => { t = cpMotif(bus, m, t) + (i < liste.length - 1 ? .5 : 0); });
@@ -238,7 +241,8 @@ function cpRend(){
     const h = cpEl('div', 'pp-head'), v = cpEl('div'), p = cpEl('p', 'pp-bubble', c.dit); p.id = 'cpTitre'; p.setAttribute('aria-live', 'polite');
     viniMettre(v, 'calme'); h.append(v, p); corps.appendChild(h);
     if (c.son){ corps.appendChild(cpEcoute('Écouter', c.son, c)); if (c.points || c.mesures){ corps.appendChild(cpReperes(c));
-      corps.appendChild(cpEl('p', 'cp-legende', c.mesures ? 'Chaque case est une mesure de 4 temps.' : 'Chaque rond s’allume sur un temps.')); } }
+      corps.appendChild(cpEl('p', 'cp-legende', c.mesures ? 'Chaque case est une mesure de 4 temps.' : 'Chaque rond s’allume sur un temps.')); }
+      if (c.astuceSon) corps.appendChild(cpEl('p', 'cp-legende', 'Tu n’entends rien ? Monte le son, et enlève le mode silencieux.')); }
     cpPied('Continuer', cpSuivante);
     return;
   }
@@ -279,7 +283,7 @@ function cpTapeDemarre(c){
 function cpTapeAnime(c, b){
   const pad = $('cpPad'); if (!pad || !cp.tape) return;
   const avant = c.mode === 'change' ? c.change : 4;
-  pad.textContent = b < 0 ? 'Écoute…' : b < avant && c.mode !== 'change' ? (c.sansAide ? 'Écoute…' : String(4 - b)) : 'Tape';
+  pad.textContent = b < 0 ? 'Écoute…' : b < avant && c.mode !== 'change' ? (c.sansAide ? 'Écoute…' : String(b + 1)) : 'Tape';
   pad.classList.toggle('bat', b >= 0 && b < cp.tape.e.n && !c.sansAide && (c.mode !== 'un' || b % 4 === 0));
 }
 // Une frappe, à l'instant entendu (les tests passent l'instant eux-mêmes)
@@ -292,6 +296,7 @@ function cpFrappe(t = cpEntendu()){
   if (bk < 4 || bk > dernier) return;
   if (c.mode === 'un' && bk % 4){ tp.ailleurs++; cpRetour('Pas sur le « 1 »', 'mal'); return; }
   const k = c.mode === 'un' ? bk / 4 - 1 : bk - 4, err = t - tp.attendus[k];
+  if (tp.coups[k] !== null) tp.ailleurs++;   // une deuxième frappe sur le même temps
   if (tp.coups[k] === null || Math.abs(err) < Math.abs(tp.coups[k])) tp.coups[k] = err;
   if (coups[k]) coups[k].className = cpClasse(tp.coups[k]);
   cpRetour(cpMot(err), cpClasse(err));
@@ -303,10 +308,14 @@ function cpTapeFin(){
   const tp = cp.tape; if (!tp || tp.fini || !cp.on || cpCarte() !== tp.c) return; tp.fini = true;
   const c = tp.c, bons = tp.coups.filter(e => e !== null && Math.abs(e) <= CP_PRESQUE).length;
   let juste, texte;
-  if (c.mode === 'temps'){ juste = bons >= 6; texte = juste ? `${bons} temps sur 8 dans le rythme.` : `${bons} temps sur 8 dans le rythme. Écoute la grosse caisse et tape avec elle, sans te presser.`; }
+  if (c.mode === 'temps'){ juste = bons >= 6 && tp.ailleurs <= 2;
+    texte = juste ? `${bons} temps sur 8 dans le rythme.` : tp.ailleurs > 2 ? 'Un seul tap par « boum » : écoute la grosse caisse et tape avec elle, sans te presser.' : `${bons} temps sur 8 dans le rythme. Écoute la grosse caisse et tape avec elle, sans te presser.`; }
   else if (c.mode === 'un'){ juste = bons >= 3 && tp.ailleurs <= 1; texte = juste ? `${bons} « 1 » sur 4.` : tp.ailleurs > 1 ? 'Tu as tapé sur d’autres temps : attends la cymbale, une fois par mesure.' : `${bons} « 1 » sur 4. Compte 1, 2, 3, 4 dans ta tête et tape sur le 1.`; }
   else { const e = tp.coups[0]; juste = e !== null && e >= -.25 && e <= .4;
     texte = juste ? 'Pile au début de la nouvelle phrase.' : e === null ? 'Tu n’as pas tapé. Compte les mesures : le changement arrive après la 8e.' : e < 0 ? 'Trop tôt : compte les mesures jusqu’à la 8e, puis tape sur le « 1 » suivant.' : 'Un peu tard : en comptant les mesures, tu peux le sentir arriver.'; }
+  const errs = tp.coups.filter(e => e !== null);
+  if (!juste && errs.length >= 3 && errs.every(e => e > .06) && errs.reduce((a, e) => a + e, 0) / errs.length > .12)
+    texte += ' Tes frappes arrivent toutes un peu tard : avec des écouteurs sans fil, le son a du retard. Essaie avec le haut-parleur.';
   const premier = cp.essais === 0; cpNote1(juste);
   const pad = $('cpPad'); if (pad){ pad.textContent = juste ? 'Bravo' : 'Fini'; pad.classList.remove('bat'); }
   if (juste) cpVerdict(true, 'Bien joué !', texte, [['Continuer', cpSuivante]]);
@@ -358,8 +367,8 @@ function cpOrdreRend(c, corps){
 }
 function cpOrdreVerifie(c){
   if (cp.ordre.length !== c.items.length) return; cp.choixFige = true;
-  const juste = cp.ordre.every((v, i) => v === i); cpNote1(juste);
-  document.querySelectorAll('#cpCases li').forEach((li, i) => li.classList.add(cp.ordre[i] === i ? 'juste' : 'faux'));
+  const pareil = o => o.every((v, i) => cp.ordre[i] === v), juste = pareil(c.items.map((_, i) => i)) || (c.aussi || []).some(pareil); cpNote1(juste);
+  document.querySelectorAll('#cpCases li').forEach((li, i) => li.classList.add(juste || cp.ordre[i] === i ? 'juste' : 'faux'));
   cpVerdict(juste, juste ? 'Bien vu !' : 'Pas tout à fait', juste ? c.juste : c.faux, [[juste ? 'Continuer' : 'Compris', cpSuivante]]);
 }
 
@@ -388,8 +397,10 @@ function cpTermine(){
     const a = cpEl('button', 'cp-lien', 'crée ton compte'); a.type = 'button'; a.addEventListener('click', () => { cpFerme(); openCompte(); cptVa('creer'); });
     p.appendChild(a); p.appendChild(document.createTextNode('.')); f.appendChild(p); }
   corps.appendChild(f);
-  for (let k = 0; k < st; k++) setTimeout(() => son('etoile', k), 150 + k * 180); setTimeout(() => son('fin'), 200 + st * 180);
-  viniJoie(v); b1.focus({ preventScroll: true });
+  // l'objectif du jour vient d'être atteint : l'écran de la série passe devant, avec son propre son (comme après une partie)
+  if (goalFresh){ goalFresh = false; openSerie(); }
+  else { for (let k = 0; k < st; k++) setTimeout(() => son('etoile', k), 150 + k * 180); setTimeout(() => son('fin'), 200 + st * 180); }
+  viniJoie(v); if ($('serie').hidden) b1.focus({ preventScroll: true });
 }
 
 /* ---------- Dans « Apprendre » : la liste des leçons ---------- */
@@ -419,8 +430,9 @@ async function cpEnvoieLien(b){
 }
 $('cpX').addEventListener('click', cpFerme);
 $('homeLienBtn').addEventListener('click', e => cpEnvoieLien(e.currentTarget));
-document.addEventListener('keydown', e => {
-  if (!cp.on) return;
+// Sur `window` : il passe avant celui de l'écran de la série (sur `document`), qui se ferme seul avec Échap
+window.addEventListener('keydown', e => {
+  if (!cp.on || !$('serie').hidden) return;
   if (e.key === 'Escape'){ e.stopPropagation(); cpFerme(); return; }
-  if (e.code === 'Space' && cp.tape !== undefined && cpCarte() && cpCarte().t === 'tape' && !cp.fin && $('cpVerdict').hidden){ e.preventDefault(); e.stopPropagation(); cpPadAppui(cpCarte()); }
+  if (e.code === 'Space' && cp.tape !== undefined && cpCarte() && cpCarte().t === 'tape' && !cp.fin && $('cpVerdict').hidden){ e.preventDefault(); e.stopPropagation(); if (!e.repeat) cpPadAppui(cpCarte()); }
 }, true);

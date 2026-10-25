@@ -3,8 +3,12 @@ const { test, expect } = require('@playwright/test');
 const { ouvrir, sansBandeau } = require('./outils');
 
 const S = o => JSON.stringify(o);
-// Un téléphone : aucun navigateur d'iPhone (ni l'appli TikTok) ne sait parler aux tables
-const SANS_MIDI = `Object.defineProperty(navigator, 'requestMIDIAccess', { value: undefined });`;
+// Un iPhone : aucun de ses navigateurs (ni l'appli TikTok) ne sait parler aux tables
+const SANS_MIDI = `Object.defineProperty(navigator, 'requestMIDIAccess', { value: undefined });
+  Object.defineProperty(navigator, 'userAgent', { value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1' });`;
+// Safari sur un Mac : pas de Web MIDI non plus, mais c'est un ordinateur
+const MAC_SAFARI = `Object.defineProperty(navigator, 'requestMIDIAccess', { value: undefined });`;
+const aujourdhui = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const FAUX_UMAMI = `window.__stats = []; window.umami = { track(n, d){ window.__stats.push(d === undefined ? [n] : [n, d]); } };`;
 const NOUVEAU = { 'coach-guide-vu': null, 'coach-fiches': null, 'coach-accueil': null };
 const etoiles = page => page.evaluate(() => JSON.parse(localStorage.getItem('coach-comprendre') || 'null'));
@@ -170,6 +174,12 @@ test.describe('Une leçon', () => {
     for (const t of ['Intro', 'Break', 'Drop', 'Outro']) await page.locator('.cp-puce', { hasText: t }).click();
     await go(page);
     await expect(page.locator('#cpVTitre')).toHaveText('Bien vu !');
+    // la leçon présente le drop avant le break : cet ordre-là est juste aussi (gardien du lot 48)
+    await carte(page, 4, 5);
+    for (const t of ['Intro', 'Drop', 'Break', 'Outro']) await page.locator('.cp-puce', { hasText: t }).click();
+    await go(page);
+    await expect(page.locator('#cpVTitre')).toHaveText('Bien vu !');
+    await expect(page.locator('#cpCases li.juste')).toHaveCount(4);
     await carte(page, 4, 5);
     for (const t of ['Drop', 'Intro', 'Break', 'Outro']) await page.locator('.cp-puce', { hasText: t }).click();
     await page.locator('.cp-dans', { hasText: 'Drop' }).click();   // on peut retirer une partie posée
@@ -177,7 +187,7 @@ test.describe('Une leçon', () => {
     await page.locator('.cp-puce', { hasText: 'Drop' }).click();
     await go(page);
     await expect(page.locator('#cpVTitre')).toHaveText('Pas tout à fait');
-    await expect(page.locator('#cpVTexte')).toContainText('intro, break, drop, outro');
+    await expect(page.locator('#cpVTexte')).toContainText('l’outro à la fin');
   });
   test('au clavier : Espace tape, Échap ferme', async ({ page }) => {
     await ouvrir(page);
@@ -196,6 +206,66 @@ test.describe('Une leçon', () => {
       cpStop(); return k; });
     expect(n).toBeGreaterThan(20);
     expect(erreurs).toEqual([]);
+  });
+});
+
+test.describe('Corrections du gardien', () => {
+  test('l\'objectif du jour atteint pendant une leçon : l\'écran de la série s\'affiche, Échap ne ferme que lui', async ({ page }) => {
+    test.setTimeout(60000);
+    await ouvrir(page, { stockage: { 'coach-objectif': S({ min: 5, jours: { [aujourdhui()]: 295 }, faits: [] }) } });
+    await carte(page, 0, 4); await taper(page); await suite(page);
+    await expect(page.locator('#serie')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#serie')).toBeHidden();
+    await expect(page.locator('#cp')).toBeVisible();
+    await expect(page.locator('.cp-ftitre')).toHaveText('Leçon terminée !');
+  });
+  test('Safari sur un Mac est un ordinateur : niveau 1 après les questions, pas de lien d\'envoi', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: MAC_SAFARI });
+    await page.locator('#ppGo').click(); await page.locator('#ppOpts .pp-opt').nth(0).click(); await page.locator('#ppGo').click();
+    await page.locator('#ppOpts .pp-opt').nth(1).click(); await page.locator('#ppGo').click();
+    await page.locator('#ppOpts .pp-opt').nth(1).click(); await page.locator('#ppGo').click();
+    await expect(page.locator('#cp')).toBeHidden();
+    await expect(page.locator('#vLearn')).toBeVisible();
+    await page.evaluate(() => { location.hash = '#accueil'; });
+    await expect(page.locator('#homeLien')).toBeHidden();
+  });
+  test('taper sans arrêt ne réussit pas « Tape sur chaque boum »', async ({ page }) => {
+    test.setTimeout(60000);
+    await ouvrir(page);
+    await carte(page, 0, 2);
+    await page.locator('#cpPad').dispatchEvent('pointerdown');
+    await page.evaluate(async () => { const tp = cp.tape; for (let t = tp.e.t0 + 3.6 * tp.e.per; t < tp.e.fin; t += .12){ while (cpEntendu() < t) await new Promise(r => setTimeout(r, 5)); cpFrappe(t); } });
+    await expect(page.locator('#cpVerdict')).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('#cpVTitre')).toHaveText('Presque');
+    await expect(page.locator('#cpVTexte')).toContainText('Un seul tap par « boum »');
+  });
+  test('toutes les frappes en retard du même écart : le conseil des écouteurs sans fil', async ({ page }) => {
+    test.setTimeout(60000);
+    await ouvrir(page);
+    await carte(page, 0, 2);
+    await taper(page, { ecart: .22 });
+    await expect(page.locator('#cpVTexte')).toContainText('écouteurs sans fil');
+  });
+  test('Espace tenu enfoncé n\'envoie pas une rafale de frappes ; le rond compte 1, 2, 3, 4', async ({ page }) => {
+    await ouvrir(page);
+    await carte(page, 0, 2);
+    await page.keyboard.down('Space'); await page.keyboard.down('Space'); await page.keyboard.down('Space');
+    expect(await page.evaluate(() => [!!cp.tape, cp.tape.frappes.length])).toEqual([true, 0]);
+    await page.keyboard.up('Space');
+    await expect(page.locator('#cpPad')).toHaveText('1', { timeout: 3000 });
+    await expect(page.locator('#cpPad')).toHaveText('2', { timeout: 3000 });
+  });
+  test('rouvrir le choix du parcours cache le lien d\'envoi', async ({ page }) => {
+    await ouvrir(page, { onglet: 'accueil', stockage: { 'coach-parcours': 'debut' }, avant: SANS_MIDI });
+    await expect(page.locator('#homeLien')).toBeVisible();
+    await page.evaluate(() => { parcoursPick = true; renderHome(); });   // ce que fait « Changer de parcours »
+    await expect(page.locator('#homeLien')).toBeHidden();
+  });
+  test('la première explication dit quoi faire si on n\'entend rien', async ({ page }) => {
+    await ouvrir(page);
+    await page.evaluate(() => cpLecon(0));
+    await expect(page.locator('#cpCorps')).toContainText('enlève le mode silencieux');
   });
 });
 

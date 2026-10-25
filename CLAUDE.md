@@ -43,13 +43,17 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   moment de payer). C'est ce que fait la fin de leçon sur téléphone. À mesurer avec l'étape `compte` d'Umami.
   Piège rencontré : les heredocs de Git Bash mangent les antislashs (`\1` devenu un caractère de contrôle) ; écrire les
   scripts avec l'outil d'écriture, et l'outil d'écriture transforme les `\u00a0` en vrais caractères (sans gêne en JS).
-- **Lot 47 « Niveaux plus courts » (25 oct. 2026, NON PUBLIÉ) : branche `lot-47-plus-court` (commit `b354876`, partie de
-  `origin/main`, indépendante du lot 46), dans la copie à part `Documents\coach-dj-lot47`** (git worktree ; tests depuis cette
-  copie : `DJ_PORT=8768 npx playwright test`, 499 sur 500 verts, l'échec est le test instable « accès déjà accordé, navigateur
-  lent » de `aide-table.spec.js`, qui passe seul). Demandes de l'utilisateur : plus d'attente après le seul geste d'un niveau,
-  et la voix fabriquée de « Une seule voix à la fois » supprimée partout (« je veux plus jamais l'entendre ») : le niveau
-  devient « Une seule mélodie à la fois ». Le détail est dans le CLAUDE.md de cette branche (entrée « Lot 47 »). Avant de
-  publier : gardien, puis l'accord de l'utilisateur ; il faudra fusionner les notes avec celles du lot 46.
+- **Lot 47 « Niveaux plus courts » : PUBLIÉ le 25 oct. 2026 au soir** (commit `4dff949` sur `main`, « Oui, publie le lot 47
+  malgré le feu orange » ; fait dans la copie `Documents\coach-dj-lot47`, branche `lot-47-plus-court`, fusionnée avec le
+  lot 46 avant l'envoi). Gardien : feu orange sans blocage, 520 tests sur 521 (l'échec : `vini-sons.spec.js` calcule « hier »
+  en retirant 24 h, faux la nuit du passage à l'heure d'hiver ; il échoue aussi sur l'ancienne version, le site n'a pas ce
+  défaut). Production vérifiée : nouveaux `js/niveaux.js` et `js/morceaux.js` servis, plus de voix, « Une seule mélodie à la
+  fois », aucune erreur. Demandes de l'utilisateur : plus d'attente après le seul geste d'un niveau (une partie commence au
+  plus 16 temps avant le premier geste, finit au plus 12 temps après le dernier), et la voix fabriquée de « Une seule voix à
+  la fois » supprimée partout (« je veux plus jamais l'entendre ») : **ne jamais remettre de voix fabriquée par le site**.
+  Détail dans l'entrée « Lot 47 » de « Où on en est » (sur `main`). **Pour la branche `lot-48-comprendre`** : fusionner
+  `origin/main` avant de publier (le lot 47 touche aussi `js/parcours.js`, ligne de l'étape ch3, et CLAUDE.md).
+  À proposer à l'utilisateur : raccourcir aussi l'attente entre deux transitions au chapitre 7 (environ 15 s de drop).
 - **Lot 46 « Stats et retours » : PUBLIÉ le 25 oct. 2026** (commit `462c377`, « Oui, publie le lot 46 », règles
   `firestore.rules` publiées par l'utilisateur juste avant). Production vérifiée : `js/stats.js` servi avec l'identifiant,
   `confidentialite.html` en ligne, `avisEnvoie` servi. **À faire par l'utilisateur** : voir sa visite dans « Realtime »
@@ -1347,8 +1351,22 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     (`renderHud`), « Mes progrès » (ligne Comprendre en tête), rapport des testeurs, `cptPoids` et `cptResume` (sinon une
     progression faite seulement dans Comprendre sur un téléphone serait vue comme vide par le compte, et perdue).
     `goalAdd` (objectif du jour). Statistiques : `comprendre-1`, `comprendre-fin`.
-  - Tests : `tests/comprendre.spec.js` (15) ; « Mes progrès » a une ligne de plus (`rangement.spec.js`) ; « /129 » → « /150 » dans `combos`, `hotcues`, `set`, `site` ; ordre des fichiers
+  - Tests : `tests/comprendre.spec.js` (22) ; « Mes progrès » a une ligne de plus (`rangement.spec.js`) ; « /129 » → « /150 » dans `combos`, `hotcues`, `set`, `site` ; ordre des fichiers
     dans `site.spec.js` ; ligne du rapport dans `avis.spec.js`. Essai et captures : `captures/lot48/` (hors Git).
+  - **Gardien, premier passage : feu rouge** (525 tests verts), corrigé, un test chacun (« Corrections du gardien ») :
+    1. « Remets les parties dans l'ordre » refusait « intro, drop, break, outro », l'ordre que la leçon venait de présenter :
+       `cpO(…, aussi)` accepte les deux ordres du milieu (l'intro au début, l'outro à la fin) ; 2. l'écran de la série ne
+       s'affichait pas quand l'objectif du jour était atteint pendant une leçon (`goalFresh` → `openSerie`, comme le quiz) ;
+       l'écouteur du clavier de la leçon est sur `window` pour passer avant celui de la série (Échap ne ferme qu'elle).
+    Remarques reprises : un Mac avec Safari n'est pas un téléphone (`cpMobile` = pas de Web MIDI **et** `midiIos()`, ou écran
+    tactile) ; le rond compte 1, 2, 3, 4 ; textes de la leçon 1 (« le rond », « Encore, sans aide ») et 7 (« B entre », sans
+    « sur une phrase » : dans le son il entre au bout de 8 temps) ; « Tu n'entends rien ? » sur la première carte et
+    `navigator.audioSession.type = 'playback'` (iPhone en mode silencieux, Safari 17 et plus, jamais essayé) ; taper sans arrêt
+    ne réussit plus (une deuxième frappe sur un temps compte « ailleurs », au plus 2) ; frappes toutes en retard du même écart :
+    conseil des écouteurs sans fil (les AirPods ajoutent un retard que l'iPhone ne donne sans doute pas : à essayer) ; Espace
+    tenu enfoncé n'envoie plus de rafale ; le lien d'envoi se cache quand on rouvre le choix du parcours.
+    **À dire à l'utilisateur** : si son ordinateur a déjà sa propre progression avant la connexion, le site demande laquelle
+    garder (limite du lot 34) ; garder celle de l'ordinateur ferait perdre les étoiles de Comprendre gagnées sur le téléphone.
   - **Test fragile repéré (pas lié au lot)** : `vini-sons.spec.js` « objectif atteint, série en cours… » échoue le soir du
     passage à l'heure d'hiver (25 oct. 2026, dernière heure) : il prend « hier » = maintenant − 24 h, alors que ce jour-là dure
     25 h. Échoue aussi sur `main` (vérifié dans une copie à part). Repasse tout seul le lendemain ; à corriger un jour (calculer hier

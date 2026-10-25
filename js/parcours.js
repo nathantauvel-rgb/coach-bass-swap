@@ -94,6 +94,7 @@ const nextStage = () => parcours ? parcoursEtapes(parcours).find(id => !STAGES[i
 function setParcours(p){ if (!PARCOURS[p]) return; parcours = p; parcoursPick = false; try { localStorage.setItem('coach-parcours', p); } catch (e) {} parcoursOuvre(); renderHome(); }
 function renderHome(){
   const choosing = !parcours || parcoursPick, cur = nextStage(), st = STAGES[cur];
+  $('homeLien').hidden = true;   // montré plus bas, sur un téléphone, hors du choix du parcours (lot 48)
   $('homeChoice').hidden = !choosing; $('homeQuetes').hidden = choosing; if (!choosing) renderQuetes(); $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing; $('homeGoal').hidden = choosing;
   document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.parcours === parcours)));
   if (choosing){
