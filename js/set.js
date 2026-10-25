@@ -8,17 +8,21 @@
 'use strict';
 /* ---------- Les morceaux ----------
    Les parties d'un morceau : [début, fin, instruments, nom], en temps du morceau. drop : où commence son premier drop (le set
-   démarre là, et le dernier morceau s'arrête 32 temps après). Les phrases d'un morceau (32 temps) partent de son drop, même
-   quand son intro est courte. */
+   démarre là, et le dernier morceau s'arrête ENC_SOLO temps après). Les phrases d'un morceau (ENC_PHRASE temps) partent de son
+   drop, même quand son intro est courte.
+   Lot 49 (demande de l'utilisateur, après le lot 47 « niveaux plus courts ») : le drop dure 16 temps au lieu de 32. Entre deux
+   transitions, le morceau jouait seul une phrase entière (environ 15 s) sans rien à faire ; c'est maintenant environ 7 s. Les
+   parties du morceau tombent toutes sur des blocs de 16 temps : les lignes PHRASE de la piste et la note « phrase » aussi. */
+const ENC_SOLO = 16, ENC_PHRASE = 16;
 const ENC_I = ['k', 'h', 'p'], ENC_D = ['k', 'b', 'h', 'cl', 'c', 'lead', 'p', 'pad'], ENC_O = ['k', 'b', 'h', 'p'];
 const ENC_FORMES = {
-  normal: { drop: 32, p: [[0, 32, ENC_I, 'Intro'], [32, 64, ENC_D, 'Drop'], [64, 96, ENC_O, 'Outro']] },
-  basse: { drop: 32, p: [[0, 32, ENC_I.concat('b'), 'Intro avec basse'], [32, 64, ENC_D, 'Drop'], [64, 96, ENC_O, 'Outro']] },
-  court: { drop: 16, p: [[0, 16, ENC_I, 'Intro courte'], [16, 48, ENC_D, 'Drop'], [48, 80, ENC_O, 'Outro']] },
-  break: { drop: 32, p: [[0, 32, ENC_I, 'Intro'], [32, 48, ENC_D, 'Drop'], [48, 64, ['pad', 'h'], 'Break'], [64, 96, ENC_D, 'Drop'], [96, 128, ENC_O, 'Outro']] }
+  normal: { drop: 32, p: [[0, 32, ENC_I, 'Intro'], [32, 48, ENC_D, 'Drop'], [48, 80, ENC_O, 'Outro']] },
+  basse: { drop: 32, p: [[0, 32, ENC_I.concat('b'), 'Intro avec basse'], [32, 48, ENC_D, 'Drop'], [48, 80, ENC_O, 'Outro']] },
+  court: { drop: 16, p: [[0, 16, ENC_I, 'Intro courte'], [16, 32, ENC_D, 'Drop'], [32, 64, ENC_O, 'Outro']] },
+  break: { drop: 32, p: [[0, 32, ENC_I, 'Intro'], [32, 48, ENC_D, 'Drop'], [48, 64, ['pad', 'h'], 'Break'], [64, 80, ENC_D, 'Drop'], [80, 112, ENC_O, 'Outro']] }
 };
 const encFin = f => f.p[f.p.length - 1][1];
-const encPhrase = s => ENC_FORMES[s.forme].drop % 32;
+const encPhrase = s => ENC_FORMES[s.forme].drop % ENC_PHRASE;
 const ENC_NOMS = ['Néon', 'Minuit', 'Velours', 'Lumière', 'Comète', 'Satin', 'Aurore', 'Mirage', 'Orbite', 'Écume', 'Saphir', 'Nuage', 'Opale', 'Zénith'];
 /* ---------- La note ----------
    On part de 100. Calage : quand on entend les deux morceaux, ils restent calés à moins de ENC_OK ms. Basses : jamais deux
@@ -109,11 +113,11 @@ function encPrepare(l){ if (!hasWorkers()) return; encGarde(l); for (const s of 
 // Durée approximative d'un set joué proprement : chaque morceau joue jusqu'à ce que le suivant prenne le relais
 function encDuree(sp){
   let s = 0;
-  sp.forEach((x, i) => { const f = ENC_FORMES[x.forme], debut = i ? 0 : f.drop, fin = i < sp.length - 1 ? encFin(f) - ENC_FORMES[sp[i + 1].forme].drop : f.drop + 32;
+  sp.forEach((x, i) => { const f = ENC_FORMES[x.forme], debut = i ? 0 : f.drop, fin = i < sp.length - 1 ? encFin(f) - ENC_FORMES[sp[i + 1].forme].drop : f.drop + ENC_SOLO;
     s += (fin - debut) * 60 / x.bpm; });
   return s;
 }
-const encMinutes = s => { const t = Math.round(s / 10) * 10, m = Math.floor(t / 60), r = t % 60; return r ? `${m} min ${r}` : `${m} min`; };
+const encMinutes = s => { const t = Math.round(s / 10) * 10, m = Math.floor(t / 60), r = t % 60; return !m ? `${r} s` : r ? `${m} min ${r}` : `${m} min`; };
 function encEtiquette(l){
   const sp = encSpecs(l), bp = sp.map(s => s.bpm), mn = Math.min(...bp), mx = Math.max(...bp);
   const tempo = l.set.tirage ? 'de 120 à 130 BPM' : !l.set.aides.bpm ? 'tempos à trouver' : mn === mx ? `${mn} BPM` : `de ${mn} à ${mx} BPM`;
@@ -260,9 +264,9 @@ function encFrame(){
     if (!tr.entre && vn.joue && casque[kn]) tr.casqueT = (tr.casqueT || 0) + db;
     // Phrase : le morceau qui entre est-il parti au début d'une phrase ? (mesuré quand on commence à l'entendre)
     if (!tr.entre && an){
-      if (vm.joue){ const ph = (((vm.x - encPhrase(vm.s)) - (vn.x - encPhrase(vn.s))) % 32 + 32) % 32, d = Math.min(ph, 32 - ph);
+      if (vm.joue){ const ph = (((vm.x - encPhrase(vm.s)) - (vn.x - encPhrase(vn.s))) % ENC_PHRASE + ENC_PHRASE) % ENC_PHRASE, d = Math.min(ph, ENC_PHRASE - ph);
         tr.entre = { d }; tr.avait = vm.basse;
-        if (d >= .5) encPerte(S, 'entree', n, Math.min(8, Math.round(d)), { d: Math.round(d), sens: ph <= 16 ? 'après' : 'avant' }, `« ${vn.s.nom} » n’est pas parti sur la phrase`); }
+        if (d >= .5) encPerte(S, 'entree', n, Math.min(8, Math.round(d)), { d: Math.round(d), sens: ph <= ENC_PHRASE / 2 ? 'après' : 'avant' }, `« ${vn.s.nom} » n’est pas parti sur la phrase`); }
       else tr.entre = { d: 0 };
     }
     if (tr.entre){
@@ -292,7 +296,7 @@ function encFrame(){
   encAffiche(S, A, vm, vn, km, kn);
 }
 // Le dernier morceau a joué son drop : le set est fini
-function encFinSet(S){ const k = encDeck(S.cur), v = encVoie(k, S); if (S.cur === S.sp.length - 1 && v.s && v.x >= ENC_FORMES[v.s.forme].drop + 32){ finish(); return true; } return false; }
+function encFinSet(S){ const k = encDeck(S.cur), v = encVoie(k, S); if (S.cur === S.sp.length - 1 && v.s && v.x >= ENC_FORMES[v.s.forme].drop + ENC_SOLO){ finish(); return true; } return false; }
 function encFinTransition(S, n, km){
   const l = LESSONS[li], tr = S.tr[n], tech = l.set.tech && l.set.tech[n - 1];
   if (tech && !(tech === 'swap' ? tr.eq : tech === 'filtre' ? tr.filtre : tech === 'echo' ? tr.echo : tr.coupe)) encPerte(S, 'consigne', n, ENC_CONSIGNE, { tech }, `Il fallait ${ENC_TECH[tech]}`);
@@ -360,14 +364,15 @@ function encLigne(S){
    Le set joué proprement : le morceau suivant part pile sur la phrase (son drop tombe à la fin du morceau en cours), au même
    tempo ; son fader monte sur 16 temps (après 8 temps au casque au niveau 5) ; les basses passent de l'un à l'autre au
    début d'une phrase ; le morceau en cours sort avec la technique demandée. À la montée, chaque morceau revient doucement à
-   son vrai tempo une fois seul (1 % toutes les 8 temps). */
+   son vrai tempo une fois seul (environ 1 % toutes les 6 temps : avec 16 temps seul, 2 BPM de rattrapage tiennent). */
 function encAutomate(S, dt){
   const l = LESSONS[li], N = S.sp.length, km = encDeck(S.cur), kn = encAutre(km), n = S.cur + 1, t = ac.currentTime, dm = deck[km];
   if (!dm.buf) return;
   const sm = S.sp[S.cur], xm = plPos(km) / dm.per, finM = encFin(ENC_FORMES[sm.forme]), perM = dm.per / (dm.rate || 1);
   let ch = false; const met = (k, v) => { v = clamp01(v); if (Math.abs(ctrl[k] - v) > .002){ ctrl[k] = v; ch = true; } }, rampe = (x, a, z) => clamp01((x - a) / (z - a));
   const dn = n < N && S.en[kn] === n ? deck[kn] : null;
-  if (l.set.montee && !(dn && dn.joue)){ const v = ctrl['tempo' + km], pas = .0078 * dt / perM; if (Math.abs(v - .5) > .001) met('tempo' + km, v + Math.sign(.5 - v) * Math.min(pas, Math.abs(.5 - v))); }
+  // (sans passer par met : un pas par image est plus petit que son seuil, et le tempo ne bougeait jamais, défaut trouvé au lot 49)
+  if (l.set.montee && !(dn && dn.joue)){ const v = ctrl['tempo' + km], pas = .01 * dt / perM; if (Math.abs(v - .5) > .001){ ctrl['tempo' + km] = v + Math.sign(.5 - v) * Math.min(pas, Math.abs(.5 - v)); ch = true; } }
   if (dn && dn.buf){
     const sn = S.sp[n], fn = ENC_FORMES[sn.forme], L = finM - fn.drop, basseIntro = fn.p[0][2].includes('b'), tech = l.set.tech && l.set.tech[n - 1];
     if (!dn.joue && xm >= L - 8){ met('tempo' + kn, .5 - (sm.bpm * (1 + plTempoPct(km)) / sn.bpm - 1) / (2 * PL_TEMPO)); met('low' + kn, basseIntro ? 0 : .5); }
@@ -395,9 +400,9 @@ function encDessine(g, w, h, hitX, ppb, yA, yB, H){
   const fit = (t, max) => { if (g.measureText(t).width <= max) return t; while (t.length > 1 && g.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; };
   let km = 'A', xm = ENC_FORMES[sp[0].forme].drop, perM = 60 / sp[0].bpm, off = encPhrase(sp[0]);
   if (S){ km = encDeck(S.cur); const d = deck[km]; if (d.buf){ xm = plPos(km) / d.per; perM = d.per / (d.rate || 1); } off = encPhrase(S.sp[S.cur]); }
-  // une ligne par mesure, une plus forte par phrase (32 temps du morceau en cours)
+  // une ligne par mesure, une plus forte par phrase (ENC_PHRASE temps du morceau en cours)
   if (A.phrases) for (let j = Math.floor(xm - hitX / ppb) - 1; j <= xm + 26; j++){
-    if (j % 4) continue; const x = hitX + (j - xm) * ppb, ph = ((j - off) % 32 + 32) % 32 === 0;
+    if (j % 4) continue; const x = hitX + (j - xm) * ppb, ph = ((j - off) % ENC_PHRASE + ENC_PHRASE) % ENC_PHRASE === 0;
     g.strokeStyle = ph ? COL.muted : COL.line; g.globalAlpha = ph ? .9 : .4; g.lineWidth = ph ? 2 : 1; g.beginPath(); g.moveTo(x, 26); g.lineTo(x, h - 30); g.stroke(); g.globalAlpha = 1;
     if (ph && x > 80){ g.fillStyle = COL.muted; g.font = '800 11px ' + COL.font; g.textAlign = 'center'; g.fillText('PHRASE', x, 16); } }
   for (const k of ['A', 'B']){

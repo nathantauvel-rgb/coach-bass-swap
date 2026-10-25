@@ -45,6 +45,17 @@ test.describe('Le chapitre', () => {
     await expect(page.locator('#stage')).toHaveClass(/sansbpm/);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
+  test('entre deux transitions, un morceau ne joue plus seul que 16 temps (lot 49)', async ({ page }) => {
+    await ouvrir(page, { stockage: OUVERT });
+    // chaque drop dure 16 temps (avant : 32, soit environ 15 s sans rien à faire entre deux transitions)
+    expect(await page.evaluate(() => Object.values(ENC_FORMES).every(f => f.p.filter(x => x[3] === 'Drop').every(([a, z]) => z - a === 16)))).toBe(true);
+    // toutes les parties d'un morceau tombent sur un bloc de 16 temps : les lignes PHRASE de la piste aussi
+    expect(await page.evaluate(() => ENC_PHRASE === 16 && Object.values(ENC_FORMES).every(f => f.p.every(([a, z]) => a % 16 === 0 && z % 16 === 0)))).toBe(true);
+    // le premier set dure moins d'une minute (avant : environ 1 min 20)
+    expect(await page.evaluate(() => encDuree(encSpecs(CH7_LESSONS[0])))).toBeLessThan(60);
+    await ch7(page, 0);
+    await expect(page.locator('#styleTag')).toHaveText('3 morceaux · 124 BPM · environ 50 s');
+  });
   test('il est une étape des trois parcours', async ({ page }) => {
     await ouvrir(page, { onglet: 'accueil' });
     const etapes = await page.evaluate(() => Object.fromEntries(Object.entries(PARCOURS).map(([k, p]) => [k, p.stages])));
@@ -161,6 +172,15 @@ test.describe('Des sets entiers', () => {
     await ch7(page, 2); await jouer(page);
     const items = await resultat(page, 190000);
     expect(items.join(' / ')).not.toContain('il fallait');
+    expect(await noteFinale(page), items.join(' / ')).toBeGreaterThanOrEqual(90);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('niveau 6 « La montée » joué proprement : le tempo remonte pendant les 16 temps seul, sans sauter (lot 49)', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: OUVERT, avant: ROBOT });
+    await ch7(page, 5); await jouer(page);
+    const items = await resultat(page, 190000);
+    expect(items.join(' / ')).not.toContain('sauté');
+    expect(items.join(' / ')).not.toContain('La soirée a fini');
     expect(await noteFinale(page), items.join(' / ')).toBeGreaterThanOrEqual(90);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });

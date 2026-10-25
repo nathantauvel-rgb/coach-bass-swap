@@ -74,7 +74,7 @@ const LEX = [["intro", "Intro", "le début d'un morceau, plus léger, fait pour 
   ["outro", "Outro", "la fin d'un morceau, qui se vide peu à peu : c'est là qu'on fait entrer le suivant"],
   ["drop", "Drop", "le moment où tout le morceau arrive d'un coup, basses comprises, après l'intro ou un break"],
   ["break", "Break", "une pause au milieu du morceau : la musique se vide, puis repart de plus belle"],
-  ["phrase", "Phrase", "32 temps, soit 8 mesures de 4 temps : la musique change au début de chaque phrase"],
+  ["phrase", "Phrase", "32 temps, soit 8 mesures de 4 temps (parfois 16 temps, comme au set) : la musique change au début de chaque phrase"],
   ["swap", "Swap", "l'échange des basses entre les deux morceaux"],
   ["écho", "Écho", "un effet qui répète le son en le laissant s'éteindre"],
   // chapitre 6 (lot 41)

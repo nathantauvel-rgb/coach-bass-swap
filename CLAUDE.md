@@ -32,10 +32,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 25 oct. 2026)
+- **Lot 49 « Set plus court » (25 oct. 2026, branche `lot-49-set-plus-court`, copie `Documents\coach-dj-lot47`, NON PUBLIÉ).**
+  Au chapitre 7, le drop de chaque morceau dure 16 temps au lieu de 32 : l'attente entre deux transitions passe d'environ
+  15 s à environ 7 s (demande de l'utilisateur après le lot 47). Numéroté 49 parce qu'une autre session fait le lot 48
+  (`lot-48-comprendre`). Voir l'entrée « Lot 49 » à la fin de « Où on en est ». Avant de publier : gardien, puis son accord.
 - **Lot 47 « Niveaux plus courts » : PUBLIÉ le 25 oct. 2026 au soir** (commit `4dff949`, « Oui, publie le lot 47 malgré le feu
   orange »). Niveaux écourtés (plus d'attente après le seul geste) et voix fabriquée du chapitre 3 supprimée. Production
   vérifiée (nouveaux fichiers servis, plus de voix, aucune erreur). Voir l'entrée « Lot 47 » à la fin de « Où on en est ».
-  Reste : l'essai sur la vraie FLX4 ; proposer de raccourcir l'attente entre deux transitions au chapitre 7.
+  Reste : l'essai sur la vraie FLX4. (L'attente entre deux transitions du chapitre 7 : lot 49, juste au-dessus.)
 - **Lot 46 « Stats et retours » (25 oct. 2026, branche `lot-46-stats`, NON PUBLIÉ).** Contexte donné par l'utilisateur : la
   première vidéo TikTok a fait 10 000 vues, 350 likes et beaucoup d'enregistrements ; 5 comptes créés (vus dans Firebase) ;
   des retours « le concept est cool » mais aucun retour détaillé. Pour lui, la priorité est d'être actif sur TikTok ; il
@@ -1342,6 +1346,25 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     « B arrive tout seul » devenus « B joue déjà » ; fiche du MID « les voix et les mélodies ». Laissé, à faire essayer à
     l'utilisateur : au chapitre 2 et en Expert, il ne reste que 16 temps (8 à 16 en Expert) pour sentir la phrase au filtre
     et au swap ; au chapitre 3, on n'entend plus le drop de B tomber.
+- **Lot 49 « Set plus court » (25 oct. 2026)** : branche `lot-49-set-plus-court`, partie de `origin/main` après le lot 47,
+  dans la copie `Documents\coach-dj-lot47` (tests : `DJ_PORT=8768 npx playwright test`). Demande de l'utilisateur : « raccourcis
+  aussi l'attente entre deux transitions au chapitre 7 ».
+  - `js/set.js` : **le drop de chaque forme dure 16 temps** (`ENC_FORMES` : normal et basse = intro 0-32, drop 32-48, outro
+    48-80 ; court = 0-16, 16-32, 32-64 ; break = intro, drop 32-48, break 48-64, drop 64-80, outro 80-112). Entre deux
+    transitions, le morceau joue seul environ 14 temps (7 s) au lieu de 30 (15 s). Le set commence toujours au drop du premier
+    morceau (16 temps avant de lancer le suivant, au lieu de 32) et finit `ENC_SOLO` = 16 temps après le drop du dernier.
+  - **Phrases de 16 temps au set** (`ENC_PHRASE`) : toutes les parties tombent sur des blocs de 16, donc les lignes PHRASE de la
+    piste sont tous les 16 temps, et « parti sur la phrase » se mesure modulo 16 (le swap l'était déjà). Le lexique dit
+    « 32 temps (parfois 16, comme au set) ».
+  - Durées d'un set joué proprement : niveau 1 et 2 de 77 à 54 s, niveau 3 de 108 à 77 s, niveau 4 de 123 à 92 s, niveau 5
+    de 109 à 78 s, niveau 6 de 139 à 100 s. L'étiquette dit « environ 50 s » sous la minute (`encMinutes`, avant « 0 min 50 »).
+  - **Défaut ancien corrigé** : à « La montée » (niveau 6), la démo (et le robot des tests) ne ramenait jamais le tempo du
+    morceau à son vrai tempo une fois seul : le pas par image était plus petit que le seuil de `met`, le tempo ne bougeait pas
+    et la soirée finissait à 120 BPM (−5). Le tempo est maintenant changé directement, un peu plus vite (`.01` par temps).
+  - Tests : dans `tests/set.spec.js`, « entre deux transitions, un morceau ne joue plus seul que 16 temps » et un set entier
+    de « La montée » joué par le robot (note 90 ou plus, pas de saut de tempo, soirée finie au bon tempo).
+  - **À essayer par l'utilisateur** : avec 7 s seul, il reste moins de temps pour préparer le morceau suivant (tempo, LOW,
+    casque) avant de le lancer ; on peut aussi le préparer une fois lancé, fader en bas.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
