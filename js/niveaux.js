@@ -26,25 +26,32 @@ const BASE_LESSONS = [
     show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: 0 }, user: ['faderA', 'faderB', 'lowA', 'lowB'] }
 ];
 BASE_LESSONS.forEach(l => { l.init.cfxA = l.init.cfxA ?? .5; l.launchBeat = l.launchBeat || 32; l.bCue = l.bCue || 0; l.start = l.start || 16; l.end = l.end || 116; l.btn = l.btn || []; });
-// [début, fin] en temps : la partie s'arrête peu après le dernier geste noté (avant, tous duraient jusqu'au temps 116)
-[[20, 44], [24, 100], [40, 72], [40, 74], [24, 100], [24, 72], [16, 100]].forEach(([s, e], i) => { BASE_LESSONS[i].start = s; BASE_LESSONS[i].end = e; });
+// [début, fin] en temps : la partie s'arrête peu après le dernier geste noté (avant, tous duraient jusqu'au temps 116).
+// Lot 47 : elle commence aussi 16 temps avant le premier geste (avant, jusqu'à 40 temps à attendre au filtre et au swap,
+// pendant que B arrivait tout seul : B est alors déjà en route au départ, voir launchAt)
+[[20, 44], [24, 100], [48, 72], [48, 72], [48, 100], [48, 72], [16, 100]].forEach(([s, e], i) => { BASE_LESSONS[i].start = s; BASE_LESSONS[i].end = e; });
 const FULL = ['k', 'b', 'h', 'c', 'cl'], CH3_INIT = { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5, midA: .5, midB: .5 };
+// Lot 47 (demande de l'utilisateur : « il lance B, et après il attend 30 secondes ») : chaque niveau commence peu avant le
+// geste et s'arrête une douzaine de temps après, comme « Le bon moment » au chapitre 1. On n'attend plus le drop de B :
+// la note tombe dès le geste. Le break a été resserré (break, 16 temps de A, puis son outro) pour garder le piège.
 const CH3_LESSONS = [
   { kind: 'shortintro', wave: true, title: 'L\'intro courte', goal: 'Lance B pour que son drop tombe pile quand A s\'arrête.',
     how: 'Ici, B n\'a que 16 temps d\'intro. Sur la piste, la forme d\'onde bleue pâle montre où tomberait B si tu le lançais maintenant : lance-le quand son drop (là où l\'onde grossit) s\'aligne sur la fin de A.',
-    show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 0, end: 72,
+    show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 16, end: 44,
     A: [[0, 16, FULL], [16, 48, ['k', 'b', 'h']]], aEnd: 48, B: [[0, 16, ['k', 'h']], [16, 80, FULL]], bIntro: 16, bLoop: [16, 80], launchBeat: 32,
-    targets: [[32, 'LANCE B', 'B']], caps: [[16, 'A entre dans son outro'], [32, 'B lancé : 16 temps avant la fin de A'], [48, 'Drop de B pile à la fin de A']] },
+    targets: [[32, 'LANCE B', 'B']], caps: [[16, 'A entre dans son outro'], [32, 'B lancé : 16 temps avant la fin de A'], [38, 'Son drop tombera pile à la fin de A']] },
   { kind: 'break', wave: true, title: 'Le piège du break', goal: 'Ne te fais pas avoir par le break : attends la vraie fin de A.',
     how: 'A a un break au milieu : la musique se vide, puis repart de plus belle. Repère sur la forme d\'onde la vraie fin du morceau, puis lance B (32 temps d\'intro) pour que son drop tombe quand A s\'arrête.',
-    show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 0, end: 108,
-    A: [[0, 16, FULL], [16, 32, ['pad', 'h']], [32, 64, FULL], [64, 96, ['k', 'b', 'h']]], aEnd: 96, B: [[0, 32, ['k', 'h']], [32, 96, FULL]], bIntro: 32, bLoop: [32, 96], launchBeat: 64,
-    targets: [[64, 'LANCE B', 'B']], caps: [[16, 'Break : ce n\'est pas la fin !'], [32, 'A repart à fond'], [64, 'Vraie outro : B est lancé'], [96, 'Drop de B à la fin de A']] },
-  { kind: 'vocal', wave: true, title: 'Une seule voix à la fois', goal: 'Coupe le MID de A quand la voix de B arrive.',
-    how: 'A chante encore pendant son outro, et B a une voix dans son intro. Quand B commence à chanter, coupe le MID de A (le potard des voix) pour qu\'on n\'entende jamais deux voix ensemble. B arrive tout seul.',
-    show: ['gMid'], autoLaunch: true, init: CH3_INIT, user: ['midA'], start: 16, end: 108,
-    A: [[0, 32, FULL.concat('v')], [32, 80, ['k', 'b', 'h', 'v']], [80, 96, ['k', 'b', 'h']]], aEnd: 96, B: [[0, 16, ['k', 'h']], [16, 64, ['k', 'h', 'v']], [64, 128, FULL]], bIntro: 64, bLoop: [64, 128], launchBeat: 32,
-    targets: [[48, 'VOIX', 'A']], caps: [[32, 'B arrive, sans voix'], [48, 'B chante : MID de A coupé'], [96, 'Drop de B']] },
+    show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 8, end: 60,
+    A: [[0, 16, FULL], [16, 32, ['pad', 'h']], [32, 48, FULL], [48, 80, ['k', 'b', 'h']]], aEnd: 80, B: [[0, 32, ['k', 'h']], [32, 96, FULL]], bIntro: 32, bLoop: [32, 96], launchBeat: 48,
+    targets: [[48, 'LANCE B', 'B']], caps: [[16, 'Break : ce n\'est pas la fin !'], [32, 'A repart à fond'], [48, 'Vraie outro : B est lancé'], [54, 'Son drop tombera pile à la fin de A']] },
+  // Lot 47 : ce niveau avait deux voix fabriquées par le site ; l'utilisateur les trouvait très désagréables (« je veux plus
+  // jamais l'entendre »). Ce sont maintenant deux mélodies (le « lead » des morceaux du site), et la voix n'existe plus.
+  { kind: 'vocal', wave: true, title: 'Une seule mélodie à la fois', goal: 'Coupe le MID de A quand la mélodie de B arrive.',
+    how: 'A joue encore sa mélodie pendant son outro, et B a une mélodie dans son intro. Quand celle de B commence, coupe le MID de A (le potard des médiums, là où vivent les mélodies et les voix) pour qu\'on n\'entende jamais deux mélodies ensemble. B arrive tout seul.',
+    show: ['gMid'], autoLaunch: true, init: CH3_INIT, user: ['midA'], start: 32, end: 56,
+    A: [[0, 32, FULL.concat('lead')], [32, 80, ['k', 'b', 'h', 'lead']], [80, 96, ['k', 'b', 'h']]], aEnd: 96, B: [[0, 16, ['k', 'h']], [16, 64, ['k', 'h', 'lead']], [64, 128, FULL]], bIntro: 64, bLoop: [64, 128], launchBeat: 32,
+    targets: [[48, 'MÉLODIE', 'A']], caps: [[32, 'B arrive, sans mélodie'], [48, 'La mélodie de B commence : MID de A coupé'], [52, 'Une seule mélodie à la fois']] },
   { kind: 'read', wave: true, random: true, title: 'Lecture express', goal: 'Structure inconnue : lis les formes d\'onde et lance B au bon moment.',
     how: 'À chaque partie, l\'outro de A et l\'intro de B changent de longueur. Lis la forme d\'onde de A pour trouver sa fin, regarde l\'intro de B, et lance B pour que son drop tombe quand A s\'arrête.',
     show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 0, end: 100, launchBeat: 32, targets: [], caps: [] }
@@ -53,14 +60,15 @@ CH3_LESSONS.forEach(l => { l.init = Object.assign({}, l.init); l.bCue = 0; l.btn
 function randomizeRead(l){
   const aOut = [32, 48, 64][Math.floor(Math.random() * 3)], bi = [16, 32][Math.floor(Math.random() * 2)];
   Object.assign(l, { A: [[0, aOut, FULL], [aOut, aOut + 32, ['k', 'b', 'h']]], aEnd: aOut + 32, B: [[0, bi, ['k', 'h']], [bi, bi + 64, FULL]], bIntro: bi, bLoop: [bi, bi + 64] });
-  l.launchBeat = l.aEnd - bi; l.start = Math.max(0, aOut - 20); l.end = l.aEnd + 20; l.targets = [[l.launchBeat, 'LANCE B', 'B']];
-  l.caps = [[aOut, 'A entre dans son outro'], [l.launchBeat, `B lancé : ${bi} temps avant la fin de A`], [l.aEnd, 'Drop de B pile à la fin de A']];
+  // 16 temps avant le bon moment, 12 après (lot 47 ; avant : jusqu'à 52 temps d'attente après le lancement)
+  l.launchBeat = l.aEnd - bi; l.start = Math.max(0, l.launchBeat - 16); l.end = l.launchBeat + 12; l.targets = [[l.launchBeat, 'LANCE B', 'B']];
+  l.caps = [[aOut, 'A entre dans son outro'], [l.launchBeat, `B lancé : ${bi} temps avant la fin de A`], [l.launchBeat + 6, 'Son drop tombera pile à la fin de A']];
 }
 let LESSONS = BASE_LESSONS;
 const TARGETS = { 0: [[32, 'LANCE B', 'B']], 1: [[32, 'MONTE B', 'B'], [64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'LANCE B', 'B'], [64, 'COUPE A', 'A']], 3: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A']], 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[64, 'SWAP', 'AB']], 6: [[32, 'LANCE B', 'B'], [56, 'B À FOND', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
 const ACT = { 'LANCE B': 'lance B (PLAY de droite)', 'MONTE B': 'commence à monter le fader de B, doucement', 'B À FOND': 'monte le fader de B jusqu\'en haut', 'A SORTI': 'baisse le fader de A jusqu\'en bas', 'SWAP': 'échange les basses : LOW de A normal → coupé, LOW de B coupé → normal',
-  'FILTRE': 'commence à tourner le filtre de A vers la droite, lentement', 'À FOND': 'filtre de A tout à droite', 'ECHO': 'allume l\'écho', 'COUPE A': 'baisse d\'un coup le fader de A jusqu\'en bas', 'VOIX': 'coupe le MID de A (normal → coupé)' };
-const GROUP_OF = { 'LANCE B': 'gPlay', 'MONTE B': 'gFad', 'B À FOND': 'gFad', 'A SORTI': 'gFad', 'SWAP': 'gLow', 'FILTRE': 'gCfx', 'À FOND': 'gCfx', 'ECHO': 'gEcho', 'COUPE A': 'gFad', 'VOIX': 'gMid' };
+  'FILTRE': 'commence à tourner le filtre de A vers la droite, lentement', 'À FOND': 'filtre de A tout à droite', 'ECHO': 'allume l\'écho', 'COUPE A': 'baisse d\'un coup le fader de A jusqu\'en bas', 'MÉLODIE': 'coupe le MID de A (normal → coupé)' };
+const GROUP_OF = { 'LANCE B': 'gPlay', 'MONTE B': 'gFad', 'B À FOND': 'gFad', 'A SORTI': 'gFad', 'SWAP': 'gLow', 'FILTRE': 'gCfx', 'À FOND': 'gCfx', 'ECHO': 'gEcho', 'COUPE A': 'gFad', 'MÉLODIE': 'gMid' };
 // Mots du DJ expliqués dans « Comment faire ? » quand le niveau les emploie (aussi utilisés par le guide)
 const LEX = [["intro", "Intro", "le début d'un morceau, plus léger, fait pour le mélanger au morceau d'avant"],
   ["outro", "Outro", "la fin d'un morceau, qui se vide peu à peu : c'est là qu'on fait entrer le suivant"],
@@ -115,7 +123,7 @@ const CH2_STYLE = ['techno', 'afro', 'house', 'techno', 'afro', 'house', 'techno
 const CHAPTERS = [
   { n: 1, title: 'Les bases', sub: 'Guidé, un geste à la fois' },
   { n: 2, title: 'La maîtrise', sub: 'À l\'oreille, précision ×2' },
-  { n: 3, title: 'Les vrais morceaux', sub: 'Formes d\'onde, breaks, voix' },
+  { n: 3, title: 'Les vrais morceaux', sub: 'Formes d\'onde, breaks, mélodies' },
   { n: 4, title: 'Les combos', sub: 'Plusieurs gestes, au demi-temps près' },
   { n: 5, title: 'Le calage', sub: 'Caler deux morceaux soi-même, sans SYNC' },
   { n: 6, title: 'Hot cues et boucles', sub: 'Partir au bon endroit, gagner du temps', soon: !CH6_PRET },
@@ -289,7 +297,10 @@ function startRun(demo = false){
   }, 30);
 }
 const beatNow = () => run ? (ac.currentTime - run.t0) / P + START : null;
-function launchAt(k){ run.launch = k; run.lowBAtLaunch = ctrl.lowB; play('B', run.bBuf, run.t0 + (k - START) * P, LESSONS[li].bCue * P, true, ...(LESSONS[li].bLoop || [64, 128])); $('launchB').disabled = true; }
+// B lancé au temps k de A. Si la partie commence après k (lot 47 : le filtre et le swap commencent au temps 48, B part
+// au temps 32), B est déjà en route au départ : il démarre avec A, plus loin dans son morceau.
+function launchAt(k){ run.launch = k; run.lowBAtLaunch = ctrl.lowB; const avance = Math.max(0, START - k);
+  play('B', run.bBuf, run.t0 + (k + avance - START) * P, (LESSONS[li].bCue + avance) * P, true, ...(LESSONS[li].bLoop || [64, 128])); $('launchB').disabled = true; }
 function judgeLaunch(k){
   const LW = LESSONS[li];
   if (LW.wave){ const d = k + LW.bIntro - LW.aEnd;
@@ -359,8 +370,8 @@ const DEMO_CAPS = { 0: [[32, 'B part sur le 1 de l\'outro'], [38, 'Même tempo, 
   1: [[32, 'B entre, fader en bas'], [56, 'B est à fond'], [92, 'A est sorti'], [96, 'Drop de B !']],
   2: [[60, 'Prépare tes deux mains'], [64, 'A coupé et B lancé, au même instant'], [68, 'Transition nette, sans mélange']],
   3: [[60, 'Écoute la fin de phrase de A'], [63, 'Écho activé sur le dernier temps'], [64, 'Fader de A coupé : l\'écho résonne'], [66, 'B tombe sur son drop']],
-  4: [[32, 'B arrive'], [64, 'Le filtre commence : A perd ses basses'], [80, 'On continue lentement'], [92, 'Filtre à fond : A n\'est plus qu\'un souffle'], [96, 'Drop de B !']],
-  5: [[32, 'B arrive, basses coupées'], [64, 'Swap : A coupé, B ouvert'], [68, 'Les basses de B ont pris le relais']],
+  4: [[48, 'B joue déjà sous A'], [64, 'Le filtre commence : A perd ses basses'], [80, 'On continue lentement'], [92, 'Filtre à fond : A n\'est plus qu\'un souffle'], [96, 'Drop de B !']],
+  5: [[48, 'B joue sous A, basses coupées'], [64, 'Swap : A coupé, B ouvert'], [68, 'Les basses de B ont pris le relais']],
   6: [[30, 'B attend, basses coupées'], [32, 'B part sur le 1'], [56, 'B est à fond'], [64, 'Swap des basses'], [92, 'A est sorti'], [96, 'Drop de B !']] };
 BASE_LESSONS.forEach((l, i) => { l.targets = TARGETS[i]; l.caps = DEMO_CAPS[i]; });
 function demoCaptions(b){ const caps = LESSONS[li].caps; while (run.cap < caps.length && b >= caps[run.cap][0]){ pop(caps[run.cap][1], 'ok'); run.cap++; } }
@@ -401,8 +412,8 @@ function liveJudge(b){
   }
   const L0 = LESSONS[li];
   if (L0.kind === 'vocal'){
-    if (!s.VOIX && b >= 36 && ctrl.midA < .12){ const e = b - 48, ok = Math.abs(e) <= 1; pop(ok ? 'Voix coupée pile !' : e < 0 ? 'Coupé trop tôt' : 'Coupé en retard', ok ? 'ok' : 'mid'); s.VOIX = ok ? 'ok' : 'mid'; if (ok) chime(true); }
-    if (!s.VOIX && b > 50){ pop('Deux voix en même temps !', 'bad'); s.VOIX = 'bad'; }
+    if (!s['MÉLODIE'] && b >= 36 && ctrl.midA < .12){ const e = b - 48, ok = Math.abs(e) <= 1; pop(ok ? 'Mélodie coupée pile !' : e < 0 ? 'Coupé trop tôt' : 'Coupé en retard', ok ? 'ok' : 'mid'); s['MÉLODIE'] = ok ? 'ok' : 'mid'; if (ok) chime(true); }
+    if (!s['MÉLODIE'] && b > 50){ pop('Deux mélodies en même temps !', 'bad'); s['MÉLODIE'] = 'bad'; }
   }
   if (!L0.wave && !L0.autoLaunch && run.launch === null && b > L0.launchBeat + 3 && !s['LANCE B']){ pop('Trop tard ! Lance B', 'bad'); s['LANCE B'] = 'late'; }
   if (L0.kind === 'filter'){
@@ -524,16 +535,17 @@ function evalWave(L, l){
   if (d === 0) out.push(['ok', 'Le drop de B est tombé pile quand A s\'est arrêté.', 1]);
   else if (d < 0) out.push([d >= -2 ? 'mid' : 'bad', `B lancé trop tôt : son drop est tombé ${-d} temps avant la fin de A, pendant que A jouait encore.` + how, d >= -2 ? .5 : 0]);
   else out.push([d <= 2 ? 'mid' : 'bad', `B lancé trop tard : ${d} temps de vide entre la fin de A et le drop de B.` + how, d <= 2 ? .5 : 0]);
-  if (l.kind === 'break' && L >= 16 && L < 64) out.push(['bad', 'Tu t\'es fait piéger par le break de A : la musique s\'est vidée, mais ce n\'était pas la fin. Sur la forme d\'onde, on voyait qu\'elle repartait.', 0]);
+  // piégé : lancé pendant le break, ou juste après (plus de 8 temps trop tôt ; une légère avance n'est pas le piège)
+  if (l.kind === 'break' && L >= 16 && L < l.launchBeat - 8) out.push(['bad', 'Tu t\'es fait piéger par le break de A : la musique s\'est vidée, mais ce n\'était pas la fin. Sur la forme d\'onde, on voyait qu\'elle repartait.', 0]);
   return out;
 }
 function evalVocal(fr){
   const t = firstAt(fr, 36, x => x.ma < .12);
-  if (t == null) return [['bad', 'Le MID de A n\'a jamais été coupé : les deux voix se sont superposées pendant toute l\'intro de B.', 0]];
+  if (t == null) return [['bad', 'Le MID de A n\'a jamais été coupé : les deux mélodies se sont superposées.', 0]];
   const e = t - 48;
-  if (Math.abs(e) <= 1) return [['ok', 'MID de A coupé pile quand B commence à chanter : une seule voix à la fois.', 1]];
-  if (e < 0) return [[e >= -4 ? 'mid' : 'bad', `MID coupé ${fr1(-e)} temps trop tôt : A a perdu sa voix alors que B ne chantait pas encore.`, e >= -4 ? .5 : 0]];
-  return [[e <= 4 ? 'mid' : 'bad', `MID coupé ${fr1(e)} temps trop tard : on a entendu deux voix ensemble pendant ${fr1(e)} temps.`, e <= 4 ? .5 : 0]];
+  if (Math.abs(e) <= 1) return [['ok', 'MID de A coupé pile quand la mélodie de B commence : une seule mélodie à la fois.', 1]];
+  if (e < 0) return [[e >= -4 ? 'mid' : 'bad', `MID coupé ${fr1(-e)} temps trop tôt : A a perdu sa mélodie alors que celle de B n'avait pas commencé.`, e >= -4 ? .5 : 0]];
+  return [[e <= 4 ? 'mid' : 'bad', `MID coupé ${fr1(e)} temps trop tard : on a entendu deux mélodies ensemble pendant ${fr1(e)} temps.`, e <= 4 ? .5 : 0]];
 }
 function finish(){
   if (!run) return; const r = run; stopRun();

@@ -90,7 +90,9 @@ function drawCompare(fr, i, launch){
   const dpr = window.devicePixelRatio || 1, w = cv.clientWidth; cv.width = Math.round(w * dpr); cv.height = Math.round(H * dpr);
   const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, H);
   const L0 = 66, X = v => L0 + (v - START) / (END - START) * (w - L0 - 10);
-  for (const v of [32, 64, 96]){ g.strokeStyle = COL.line; g.lineWidth = 1; g.beginPath(); g.moveTo(X(v), 6); g.lineTo(X(v), H - 16); g.stroke();
+  // repères de temps dans la partie seulement (lot 47 : certains niveaux ne durent plus que 24 temps)
+  const pas = END - START > 48 ? 32 : 16;
+  for (let v = Math.ceil(START / pas) * pas; v <= END; v += pas){ g.strokeStyle = COL.line; g.lineWidth = 1; g.beginPath(); g.moveTo(X(v), 6); g.lineTo(X(v), H - 16); g.stroke();
     g.fillStyle = COL.muted; g.font = '500 11px ' + COL.font; g.textAlign = 'center'; g.fillText('temps ' + v, X(v), H - 3); }
   let y = 10;
   const label = (t, yy) => { g.fillStyle = COL.muted; g.font = '600 12px ' + COL.font; g.textAlign = 'left'; g.fillText(t, 6, yy); };

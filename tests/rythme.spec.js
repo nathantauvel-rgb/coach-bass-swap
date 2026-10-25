@@ -5,7 +5,7 @@ const { ouvrir, sansBandeau, jouer } = require('./outils');
 test.describe('Durée des niveaux', () => {
   test('chaque niveau du chapitre 1 s\'arrête peu après son dernier geste', async ({ page }) => {
     await ouvrir(page);
-    expect(await page.evaluate(() => BASE_LESSONS.map(l => [l.start, l.end]))).toEqual([[20, 44], [24, 100], [40, 72], [40, 74], [24, 100], [24, 72], [16, 100]]);
+    expect(await page.evaluate(() => BASE_LESSONS.map(l => [l.start, l.end]))).toEqual([[20, 44], [24, 100], [48, 72], [48, 72], [48, 100], [48, 72], [16, 100]]);
     // aucune légende de démo ne tombe après la fin du niveau
     expect(await page.evaluate(() => BASE_LESSONS.every(l => l.caps.every(c => c[0] < l.end)))).toBe(true);
     // aucun geste noté ne tombe après la fin du niveau
