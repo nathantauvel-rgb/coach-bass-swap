@@ -1273,9 +1273,9 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     l'arrivée du script) ; `stat1(nom)` = une étape **une seule fois par navigateur**, liste `STATS_ETAPES`, gardée dans
     `coach-stats`, et marquée seulement si elle part vraiment (`statsActif`). Refus : `umami.disabled` dans localStorage
     (réglage prévu par Umami), bouton de `confidentialite.html` (`statsRefuser`). Les tests posent un faux `window.umami`.
-  - Étapes appelées depuis : `midi.js` (`sans-midi`, `table-branchee` avec le nom), `premiers.js` (`premiers-pas-fin` avec
+  - Étapes appelées depuis : `midi.js` (`sans-midi`, `table-branchee` avec le modèle, « autre table » pour une table inconnue : jamais le nom brut d'un appareil), `premiers.js` (`premiers-pas-fin` avec
     parcours et table oui/non, `premiers-pas-passes`), `niveaux.js` (`premiere-partie` dans `startRun` hors démo ;
-    `premiere-reussite` et `chapitre-N` dans `finish` à 2 étoiles ou plus, hors entraînement et test), `compte.js` (`compte`),
+    `premiere-reussite` (entraînement compris) et `chapitre-N` (hors entraînement et test) dans `finish`, à 2 étoiles ou plus), `compte.js` (`compte`),
     `rekordbox.js` (`rekordbox`), `avis.js` (`revenu` à 2 jours différents, `jours-7`). À chaque fois : `clair` (niveau +
     réponse, quand la réponse change) et `avis` (la note). `coach-stats` est dans `CPT_LOCAL` et **gardée par « Tout
     recommencer à zéro »** (un testeur qui recommence ne doit pas compter deux fois).
@@ -1295,7 +1295,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     présentation (question « Qu'est-ce que DJingood sait de moi ? » + pied de page) et la fiche des testeurs (dont le texte
     « Rien n'est envoyé tout seul » est corrigé). Classes `.avlien`, `.pres-pied` à la fin de `styles.css`.
   - `STATISTIQUES.md` : la marche à suivre de l'utilisateur (compte Umami, règles, exclure ses visites, lien TikTok, où lire quoi).
-  - Tests : `tests/stats.spec.js` (19 tests). Captures : `captures/lot45/` (hors Git, `node captures/lot45/captures.js`).
+  - Tests : `tests/stats.spec.js` (21 tests). Captures : `captures/lot45/` (hors Git, `node captures/lot45/captures.js`).
   **Pas fait, à décider avec l'utilisateur** : une vraie adresse de contact (aujourd'hui « écris-nous avec Mon avis ») ;
   mentions légales.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·

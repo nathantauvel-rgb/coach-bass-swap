@@ -147,7 +147,7 @@ async function initMidi(){
     const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); midiNames = ins.map(i => String(i.name || 'Table MIDI'));
       if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; midiCount = ins.length; modeleAuto(); renderPill();
       updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); ppMidi();
-      const b = ppBranchee(); if (b) stat1('table-branchee', { table: b.nom }); };
+      const b = ppBranchee(); if (b) stat1('table-branchee', { table: b.id === 'inconnue' ? 'autre table' : b.nom }); };   // jamais le nom brut d'un appareil inconnu (« iPad de Lou »)
     acc.onstatechange = refresh; refresh(); midiAideMaj();
   } catch (e){ midiEtat = 'refuse'; renderPill(); setTimeout(midiAideMaj); }   // plus tard : une erreur levée tout de suite arrive avant `let view` (demarrage.js)
 }

@@ -18,7 +18,9 @@ window.DJINGO_FIREBASE = { apiKey: 'faux', authDomain: 'faux.firebaseapp.com', p
   const authFn = () => auth; authFn.GoogleAuthProvider = function (){};
   const db = { collection: nom => ({ add: d => {
     if (window.__horsLigne) return new Promise(() => {});   // hors ligne, Firestore ne répond jamais
-    const l = lire(); l.push(Object.assign({ __col: nom }, d)); sessionStorage.setItem('__avis', JSON.stringify(l)); return Promise.resolve({ id: 'a' + l.length }); } }) };
+    const ecrit = () => { const l = lire(); l.push(Object.assign({ __col: nom }, d)); sessionStorage.setItem('__avis', JSON.stringify(l)); return { id: 'a' + l.length }; };
+    if (window.__lent) return new Promise(ok => setTimeout(() => ok(ecrit()), window.__lent));   // connexion très lente
+    return Promise.resolve(ecrit()); } }) };
   const fsFn = () => db; fsFn.FieldValue = { serverTimestamp: () => 'HEURE_DU_SERVEUR' };
   window.firebase = { apps: [], initializeApp(){ this.apps.push({}); }, auth: authFn, firestore: fsFn };
 })();`;
@@ -87,6 +89,10 @@ test.describe('Statistiques de visite', () => {
     await page.evaluate(() => { window.__midi.debrancher(); window.__midi.brancher(); });
     expect(await envois(page)).toHaveLength(1);
     expect(erreurs).toEqual([]);
+  });
+  test('une table inconnue part comme « autre table », jamais avec le nom de l\'appareil', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX_UMAMI, midi: { branchee: 'iPad de Lou' } });
+    await expect.poll(() => envois(page)).toEqual([['table-branchee', { table: 'autre table' }]]);
   });
   test('un navigateur sans MIDI (iPhone, appli TikTok) est compté', async ({ page }) => {
     await ouvrir(page, { avant: FAUX_UMAMI + `Object.defineProperty(navigator, 'requestMIDIAccess', { value: undefined });` });
@@ -168,6 +174,18 @@ test.describe('Les avis partent chez l\'équipe', () => {
     await expect.poll(() => base(page), { timeout: 20000 }).toHaveLength(1);
     expect((await base(page))[0].bloque).toBe('Pas de réseau');
     expect((await journal(page)).avis.map(a => a.p)).toEqual([1]);
+  });
+  test('connexion très lente : l\'avis arrivé après les 8 s est noté comme parti et ne repart pas en double', async ({ page }) => {
+    test.setTimeout(60000);
+    await ouvrir(page, { avant: FAUX_FB + FAUX_UMAMI });
+    await page.evaluate(() => { window.__lent = 9500; });
+    await ecrireAvis(page, 'Lent', 3);
+    await expect(page.locator('#avMsg')).toContainText('n’a pas pu partir', { timeout: 15000 });
+    await expect.poll(() => base(page), { timeout: 10000 }).toHaveLength(1);
+    await expect.poll(async () => (await journal(page)).avis.map(a => a.p)).toEqual([1]);
+    expect(await envois(page)).toContainEqual(['avis', { note: 3 }]);
+    await page.reload(); await page.waitForTimeout(11500);
+    expect(await base(page)).toHaveLength(1);
   });
   test('un avis écrit avant ce lot ne part jamais (on avait promis « rien n\'est envoyé sans toi »)', async ({ page }) => {
     test.setTimeout(40000);

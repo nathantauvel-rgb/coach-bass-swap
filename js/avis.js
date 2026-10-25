@@ -126,10 +126,12 @@ function avisDoc(a){
 const avisEnCours = new Set();   // un avis en route ne doit pas repartir une deuxième fois en même temps
 function avisEnvoie(a){
   let fin = 0; avisEnCours.add(a);
-  return Promise.race([
-    cptSdkDb().then(() => cptFb.db.collection(AVIS_DOC).add(avisDoc(a))),
+  const part = cptSdkDb().then(() => cptFb.db.collection(AVIS_DOC).add(avisDoc(a)));
+  // Noté comme parti dès qu'il arrive, même après les 8 s (connexion très lente) : sinon il repartirait en double
+  part.then(() => { if (a.p !== 1){ a.p = 1; saveJr(); stat('avis', { note: a.note }); } }, () => {});
+  return Promise.race([part,
     new Promise((_, ko) => { fin = setTimeout(() => ko(new Error('trop lent')), AVIS_LENT); })   // hors ligne, Firestore ne répond jamais
-  ]).then(() => { a.p = 1; saveJr(); stat('avis', { note: a.note }); return true; }, () => false)
+  ]).then(() => true, () => false)
     .then(ok => { clearTimeout(fin); avisEnCours.delete(a); return ok; });
 }
 // Les avis restés en attente repartent, un par un, une fois la page tranquille
