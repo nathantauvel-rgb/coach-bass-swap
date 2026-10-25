@@ -68,10 +68,11 @@ function ppClose(){ pp.on = false; $('pp').hidden = true; document.documentEleme
 function ppFin(){
   const r = pp.rep;
   ppSave({ niveau: r.niveau, table: r.table, modele: r.modele, min: r.min, fini: dayKey() });
+  stat1('premiers-pas-fin', { parcours: r.niveau, table: r.table === 'table' ? 'oui' : 'non' });
   goalSet(r.min); ppClose(); setParcours(r.niveau);
   if (r.niveau === 'debut') goLesson(1, 0); else STAGES[nextStage() || PARCOURS[r.niveau].stages[0]].go();
 }
-function ppPasser(){ ppSave({ passe: true, fini: dayKey() }); ppClose(); renderHome(); }
+function ppPasser(){ ppSave({ passe: true, fini: dayKey() }); stat1('premiers-pas-passes'); ppClose(); renderHome(); }
 const ppPret = () => { const r = pp.rep, id = PP_ETAPES[pp.i];
   return id === 'salut' || (id === 'niveau' && r.niveau !== null) || (id === 'table' && r.table !== null) || (id === 'objectif' && r.min !== null); };
 /* L'écran de la table. Une table branchée est reconnue toute seule (ppMidi est appelé par initMidi à chaque branchement) ;

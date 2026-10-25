@@ -88,7 +88,8 @@
     <label class="avq">Qu'est-ce qui t'a bloqué ou gêné ?<textarea id="avBloque" rows="3" maxlength="1000"></textarea></label>
     <label class="avq">Qu'est-ce qui t'a plu ?<textarea id="avPlu" rows="3" maxlength="1000"></textarea></label>
     <div class="avnote" id="avNote" role="group" aria-label="Ta note sur 5"><span>Ta note</span><button type="button" data-note="1" aria-pressed="false">1</button><button type="button" data-note="2" aria-pressed="false">2</button><button type="button" data-note="3" aria-pressed="false">3</button><button type="button" data-note="4" aria-pressed="false">4</button><button type="button" data-note="5" aria-pressed="false">5</button></div>
-    <button type="button" class="rbtn go" id="avSave">Enregistrer mon avis</button>
+    <button type="button" class="rbtn go" id="avSave">Envoyer mon avis</button>
+    <p class="avsmall">Ton avis part chez l'équipe DJingood avec le nom de l'écran, ta table et ton navigateur. <a class="avlien" href="confidentialite.html" target="_blank" rel="noopener">Ce que DJingood garde sur toi</a></p>
     <p class="qwhy" id="avMsg" role="status" hidden></p>
     <h3 class="avh">Ton rapport</h3>
     <p class="avsmall" id="avSum"></p>
@@ -150,6 +151,7 @@
     </div>
     <p class="qwhy" id="cptMsg" role="status" hidden></p>
     <p class="avsmall" id="cptNote"></p>
+    <p class="avsmall"><a class="avlien" href="confidentialite.html" target="_blank" rel="noopener">Ce que DJingood garde sur toi</a></p>
   </div>
 </div>
 <div class="quiz" id="reg" hidden role="dialog" aria-modal="true" aria-labelledby="regTitle">
@@ -479,6 +481,7 @@
 </div>
 
 <script src="js/erreurs.js"></script>
+<script src="js/stats.js"></script>
 <script src="js/morceaux.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/platines.js"></script>

@@ -11,7 +11,7 @@ test.describe('Fichiers du site', () => {
     const erreurs = await ouvrir(page);
     // Seulement les fichiers du site : Firebase (gstatic) est préchargé en douce par js/compte.js (lot 35)
     expect(await page.evaluate(() => [...document.scripts].map(s => s.getAttribute('src')).filter(u => u && u.startsWith('js/')))).toEqual(
-      ['erreurs', 'morceaux', 'audio', 'platines', 'vrais', 'sons', 'controles', 'commandes', 'combos', 'calage', 'hotcues', 'set', 'niveaux', 'piste', 'expert', 'tables', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'vini', 'premiers', 'quetes', 'table', 'reglage', 'verif', 'avis', 'compte', 'demarrage'].map(n => `js/${n}.js`));
+      ['erreurs', 'stats', 'morceaux', 'audio', 'platines', 'vrais', 'sons', 'controles', 'commandes', 'combos', 'calage', 'hotcues', 'set', 'niveaux', 'piste', 'expert', 'tables', 'midi', 'placement', 'entrainement', 'rekordbox', 'guide', 'objectif', 'quiz', 'parcours', 'vini', 'premiers', 'quetes', 'table', 'reglage', 'verif', 'avis', 'compte', 'demarrage'].map(n => `js/${n}.js`));
     expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
     expect(rates).toEqual([]); expect(erreurs).toEqual([]); await sansBandeau(page);
   });
@@ -19,7 +19,7 @@ test.describe('Fichiers du site', () => {
   // Lot 36 : Vini est la marque du site. Le SVG n'est pas deviné comme le JPEG : servi avec le mauvais type,
   // il ne s'affiche pas du tout — d'où la vérification du type, et pas seulement du code 200.
   test('Vini est le logo et l’icône des trois pages', async ({ page }) => {
-    for (const [url, ancre] of [['/index.html#apprendre', '.node'], ['/presentation.html', '.pres-faq'], ['/testeurs.html', '.howlist']]){
+    for (const [url, ancre] of [['/index.html#apprendre', '.node'], ['/presentation.html', '.pres-faq'], ['/testeurs.html', '.howlist'], ['/confidentialite.html', '.howlist']]){
       const rates = [];
       page.on('response', r => { if (r.url().startsWith('http://localhost') && r.status() >= 400) rates.push(r.url()); });
       await page.goto(url);

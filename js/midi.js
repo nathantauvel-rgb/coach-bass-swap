@@ -138,7 +138,7 @@ function onMidi(e){
   else if (type === 0x90 || type === 0x80){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1)); if (k) pressKey(k, type === 0x80 || d2 === 0); }
 }
 async function initMidi(){
-  if (!navigator.requestMIDIAccess){ midiEtat = 'absent'; renderPill(); return; }
+  if (!navigator.requestMIDIAccess){ midiEtat = 'absent'; renderPill(); stat1('sans-midi'); return; }   // iPhone, Safari, appli TikTok… (stats.js)
   setTimeout(midiQuestion, 1500);
   try { const acc = await navigator.requestMIDIAccess({ sysex: false });
     if (midiEtat === 'pret') return;   // deux demandes ont abouti (« Réessayer ») : la table n'est écoutée qu'une fois
@@ -146,7 +146,8 @@ async function initMidi(){
     // table débranchée : ses positions ne sont plus fiables, on les oublie jusqu'au prochain mouvement
     const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); midiNames = ins.map(i => String(i.name || 'Table MIDI'));
       if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; midiCount = ins.length; modeleAuto(); renderPill();
-      updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); ppMidi(); };
+      updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); ppMidi();
+      const b = ppBranchee(); if (b) stat1('table-branchee', { table: b.id === 'inconnue' ? 'autre table' : b.nom }); };   // jamais le nom brut d'un appareil inconnu (« iPad de Lou »)
     acc.onstatechange = refresh; refresh(); midiAideMaj();
   } catch (e){ midiEtat = 'refuse'; renderPill(); setTimeout(midiAideMaj); }   // plus tard : une erreur levée tout de suite arrive avant `let view` (demarrage.js)
 }

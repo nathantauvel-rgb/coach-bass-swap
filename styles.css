@@ -1530,3 +1530,8 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .taide-act{display:flex;flex-wrap:wrap;gap:10px}
 .taide-act a.ghost{display:inline-block;text-decoration:none}
 .taide-in .taide-lien{margin:10px 0 0;color:var(--fg);font-weight:700;word-break:break-all}
+
+/* ---------- Lot 46 : liens vers « Ce que DJingood garde sur toi » ---------- */
+.avlien,.pres-faq p a{color:var(--brand-light);font-weight:700}
+.avlien:hover,.pres-faq p a:hover{color:var(--fg)}
+.pres-pied{text-align:center}
