@@ -8,26 +8,29 @@
 'use strict';
 /* ---------- Les morceaux ----------
    Les parties d'un morceau : [début, fin, instruments, nom], en temps du morceau. drop : où commence son premier drop (le set
-   démarre là, et le dernier morceau s'arrête ENC_SOLO temps après). Les phrases d'un morceau (ENC_PHRASE temps) partent de son
-   drop, même quand son intro est courte.
+   démarre là, et le dernier morceau s'arrête ENC_SOLO temps après).
    Lot 49 (demande de l'utilisateur, après le lot 47 « niveaux plus courts ») : le drop dure 16 temps au lieu de 32. Entre deux
-   transitions, le morceau jouait seul une phrase entière (environ 15 s) sans rien à faire ; c'est maintenant environ 7 s. Les
-   parties du morceau tombent toutes sur des blocs de 16 temps : les lignes PHRASE de la piste et la note « phrase » aussi. */
-const ENC_SOLO = 16, ENC_PHRASE = 16;
+   transitions, le morceau jouait seul une phrase entière (environ 15 s) sans rien à faire ; c'est maintenant environ 7 s.
+   Drop (16) + outro (32) ne font plus un multiple de 32 : les phrases (ENC_PHRASE temps) se comptent donc depuis la FIN du
+   morceau qui joue. Une ligne PHRASE de la piste tombe au début de son outro (le moment de lancer un morceau qui a 32 temps
+   d'intro) et à sa fin. Le break est resserré (drop 8, break 8, drop 16) pour que son morceau ne joue pas seul 23 s, et sa
+   musique se vide hors d'une ligne PHRASE, comme avant (gardien du lot 49). */
+const ENC_SOLO = 16, ENC_PHRASE = 32;
 const ENC_I = ['k', 'h', 'p'], ENC_D = ['k', 'b', 'h', 'cl', 'c', 'lead', 'p', 'pad'], ENC_O = ['k', 'b', 'h', 'p'];
 const ENC_FORMES = {
   normal: { drop: 32, p: [[0, 32, ENC_I, 'Intro'], [32, 48, ENC_D, 'Drop'], [48, 80, ENC_O, 'Outro']] },
   basse: { drop: 32, p: [[0, 32, ENC_I.concat('b'), 'Intro avec basse'], [32, 48, ENC_D, 'Drop'], [48, 80, ENC_O, 'Outro']] },
   court: { drop: 16, p: [[0, 16, ENC_I, 'Intro courte'], [16, 32, ENC_D, 'Drop'], [32, 64, ENC_O, 'Outro']] },
-  break: { drop: 32, p: [[0, 32, ENC_I, 'Intro'], [32, 48, ENC_D, 'Drop'], [48, 64, ['pad', 'h'], 'Break'], [64, 80, ENC_D, 'Drop'], [80, 112, ENC_O, 'Outro']] }
+  break: { drop: 32, p: [[0, 32, ENC_I, 'Intro'], [32, 40, ENC_D, 'Drop'], [40, 48, ['pad', 'h'], 'Break'], [48, 64, ENC_D, 'Drop'], [64, 96, ENC_O, 'Outro']] }
 };
 const encFin = f => f.p[f.p.length - 1][1];
-const encPhrase = s => ENC_FORMES[s.forme].drop % ENC_PHRASE;
+// où commencent les phrases du morceau (comptées depuis sa fin), pour les lignes PHRASE de la piste
+const encPhrase = s => encFin(ENC_FORMES[s.forme]) % ENC_PHRASE;
 const ENC_NOMS = ['Néon', 'Minuit', 'Velours', 'Lumière', 'Comète', 'Satin', 'Aurore', 'Mirage', 'Orbite', 'Écume', 'Saphir', 'Nuage', 'Opale', 'Zénith'];
 /* ---------- La note ----------
    On part de 100. Calage : quand on entend les deux morceaux, ils restent calés à moins de ENC_OK ms. Basses : jamais deux
-   basses ensemble plus de 2 temps. Volume : pas de trou de son. Phrase : chaque morceau part au début d'une phrase, et les
-   basses changent de morceau sur une phrase. Chaque critère a son plafond (ENC_MAX) ; les malus (musique arrêtée, consigne
+   basses ensemble plus de 2 temps. Volume : pas de trou de son. Phrase : chaque morceau part au bon moment (son drop tombe à la
+   fin du morceau qui sort, lot 49), et les basses changent de morceau sur une phrase (de 16 temps). Chaque critère a son plafond (ENC_MAX) ; les malus (musique arrêtée, consigne
    pas suivie, morceau pas joué) s'ajoutent. Choix de l'utilisateur sur la maquette du 23 oct. 2026 ; seuils à régler après
    ses essais sur la FLX4, comme ceux des chapitres 5 et 6. */
 const ENC_OK = 15, ENC_MAX = { calage: 35, basses: 25, volume: 20, phrase: 20 }, ENC_BLANC = 15, ENC_CONSIGNE = 5, ENC_RESTE = 30, ENC_3 = 90, ENC_2 = 75;
@@ -143,7 +146,7 @@ function encNoteTexte(l){
     `Calage (35 points) : quand on entend les deux morceaux, ils restent calés à moins de ${ENC_OK} ms.`,
     'Basses (25) : jamais deux basses en même temps plus de 2 temps.',
     'Volume (20) : pas de trou de son pendant une transition.',
-    'Phrase (20) : chaque morceau part au début d’une phrase, et les basses changent de morceau sur une phrase.',
+    'Phrase (20) : chaque morceau part au bon moment (son drop tombe pile à la fin du précédent), et les basses changent de morceau sur une phrase.',
     `Musique arrêtée : −${ENC_BLANC}. Morceau pas joué : −${ENC_RESTE}.`];
   if (l.set.tech) L.push(`Technique pas respectée : −${ENC_CONSIGNE}.`);
   if (l.set.casque) L.push(`Morceau pas écouté au casque avant d’entrer : −${ENC_CONSIGNE}.`);
@@ -262,17 +265,19 @@ function encFrame(){
   if (tr){
     // Avant d'entrer : écouté au casque ?
     if (!tr.entre && vn.joue && casque[kn]) tr.casqueT = (tr.casqueT || 0) + db;
-    // Phrase : le morceau qui entre est-il parti au début d'une phrase ? (mesuré quand on commence à l'entendre)
+    // Phrase : le morceau qui entre est-il parti au bon moment ? Son drop doit tomber à la fin du morceau qui sort (mesuré quand
+    // on commence à l'entendre). Lot 49 : c'est ce qui punit les deux pièges (lancer pendant le break, ou lancer une intro
+    // courte comme une intro normale), depuis que les parties des morceaux du set ne tombent plus sur des phrases de 32 temps.
     if (!tr.entre && an){
-      if (vm.joue){ const ph = (((vm.x - encPhrase(vm.s)) - (vn.x - encPhrase(vn.s))) % ENC_PHRASE + ENC_PHRASE) % ENC_PHRASE, d = Math.min(ph, ENC_PHRASE - ph);
+      if (vm.joue){ const tombe = vm.x + ENC_FORMES[vn.s.forme].drop - vn.x, e = tombe - encFin(vm.f), d = Math.abs(e);
         tr.entre = { d }; tr.avait = vm.basse;
-        if (d >= .5) encPerte(S, 'entree', n, Math.min(8, Math.round(d)), { d: Math.round(d), sens: ph <= ENC_PHRASE / 2 ? 'après' : 'avant' }, `« ${vn.s.nom} » n’est pas parti sur la phrase`); }
+        if (d >= .5) encPerte(S, 'entree', n, Math.min(8, Math.round(d)), { d: Math.round(d), sens: e > 0 ? 'après' : 'avant' }, `« ${vn.s.nom} » n’est pas parti au bon moment`); }
       else tr.entre = { d: 0 };
     }
     if (tr.entre){
       // Phrase : les basses passent d'un morceau à l'autre au début d'une phrase (de 16 temps)
       if (!tr.basses){ if (vm.basse) tr.avait = true;
-        if (vn.basse && !vm.basse && tr.avait){ const x = vn.x - encPhrase(vn.s), r = ((x % 16) + 16) % 16, d = Math.min(r, 16 - r);
+        if (vn.basse && !vm.basse && tr.avait){ const x = vn.x - ENC_FORMES[vn.s.forme].drop, r = ((x % 16) + 16) % 16, d = Math.min(r, 16 - r);
           tr.basses = { d }; tr.eq = ctrl['fader' + km] > .3 && ctrl['low' + km] < .25;
           if (d >= .75) encPerte(S, 'swap', n, Math.min(4, Math.round(d)), { d: Math.round(d) }, 'Basses pas sur la phrase'); } }
       // Technique (niveau 3) : filtre, coupure, écho
@@ -336,7 +341,9 @@ function encConseil(S, vm, vn, km, kn){
   if (n >= S.sp.length) return `« ${cur} » termine le set : laisse-le jouer.`;
   const nom = S.sp[n].nom, out = cur, tech = l.set.tech && l.set.tech[n - 1];
   if (S.en[kn] !== n) return `« ${cur} » joue seul. Le morceau suivant arrive sur la platine ${kn}.`;
-  if (!deck[kn].joue) return `Lance « ${nom} » sur la platine ${kn} au début d’une phrase${l.set.aides.phrases ? ' (une ligne PHRASE)' : ''}${l.set.casque ? ', fader en bas et CUE 🎧 allumé' : ''}.`;
+  // pendant un break, Vini prévient : ce n'est pas la fin (avant, il disait de lancer sur la phrase, en plein piège : gardien)
+  if (!deck[kn].joue && vm.joue && (vm.f.p.find(([a, z]) => vm.x >= a && vm.x < z) || [])[3] === 'Break') return `« ${cur} » est dans son break : ce n’est pas la fin, il va repartir. Attends avant de lancer « ${nom} ».`;
+  if (!deck[kn].joue) return `Lance « ${nom} » sur la platine ${kn} pour que son drop tombe pile à la fin de « ${cur} »${l.set.aides.phrases ? ' (regarde où il tomberait, en pointillé)' : ''}${l.set.casque ? ', fader en bas et CUE 🎧 allumé' : ''}.`;
   if (vn.p <= .15){
     if (l.set.aides.decal && S.decal != null && Math.abs(S.decal) <= ENC_OK) return `« ${nom} » est calé : monte son fader sur une phrase.`;
     return l.set.casque ? `Cale « ${nom} » au casque (tempo, puis molette), puis monte son fader.` : `Cale « ${nom} » (tempo, puis molette), puis monte son fader sur une phrase.`;
@@ -400,7 +407,7 @@ function encDessine(g, w, h, hitX, ppb, yA, yB, H){
   const fit = (t, max) => { if (g.measureText(t).width <= max) return t; while (t.length > 1 && g.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; };
   let km = 'A', xm = ENC_FORMES[sp[0].forme].drop, perM = 60 / sp[0].bpm, off = encPhrase(sp[0]);
   if (S){ km = encDeck(S.cur); const d = deck[km]; if (d.buf){ xm = plPos(km) / d.per; perM = d.per / (d.rate || 1); } off = encPhrase(S.sp[S.cur]); }
-  // une ligne par mesure, une plus forte par phrase (ENC_PHRASE temps du morceau en cours)
+  // une ligne par mesure, une plus forte par phrase (ENC_PHRASE temps, comptés depuis la fin du morceau en cours)
   if (A.phrases) for (let j = Math.floor(xm - hitX / ppb) - 1; j <= xm + 26; j++){
     if (j % 4) continue; const x = hitX + (j - xm) * ppb, ph = ((j - off) % ENC_PHRASE + ENC_PHRASE) % ENC_PHRASE === 0;
     g.strokeStyle = ph ? COL.muted : COL.line; g.globalAlpha = ph ? .9 : .4; g.lineWidth = ph ? 2 : 1; g.beginPath(); g.moveTo(x, 26); g.lineTo(x, h - 30); g.stroke(); g.globalAlpha = 1;
@@ -442,7 +449,7 @@ function encTexte(S, p){
     case 'basses': return [`Deux basses en même temps pendant ${Math.round(q.temps)} temps, entre « ${a} » et « ${b} ».`, 'Coupe les basses du morceau qui entre (LOW à gauche) tant que l’autre a les siennes.'];
     case 'volume': return [q.seul ? `Le son de « ${q.nom} » a baissé pendant ${Math.round(q.temps)} temps.` : `Le son a baissé pendant ${Math.round(q.temps)} temps, entre « ${a} » et « ${b} ».`, 'Monte le morceau qui entre avant de baisser celui qui sort.'];
     case 'blanc': return [`La musique s’est arrêtée après « ${q.nom || a} ».`, 'Lance le morceau suivant avant la fin de celui qui joue : regarde où finit son outro sur la piste.'];
-    case 'entree': return [`« ${b} » n’est pas parti au début d’une phrase de « ${a} » (${q.d} temps ${q.sens}).`, l.set.aides.phrases ? 'Lance le morceau suivant quand une ligne PHRASE touche MAINTENANT.' : 'Compte les mesures : lance le morceau suivant au début d’une phrase.'];
+    case 'entree': return [`« ${b} » n’est pas parti au bon moment : son drop est tombé ${q.d} temps ${q.sens} la fin de « ${a} ».`, l.set.aides.phrases ? 'Lance le morceau suivant pour que son drop tombe pile à la fin de celui qui joue : regarde où il tomberait, en pointillé sur la piste. Attention aux intros courtes et aux breaks.' : 'Compte les mesures : lance le morceau suivant pour que son drop tombe pile à la fin de celui qui joue (une intro courte part plus tard).'];
     case 'swap': return [`Les basses sont passées de « ${a} » à « ${b} » ${q.d} temps à côté d’une phrase.`, 'Échange les basses au début d’une phrase.'];
     case 'consigne': return [`Entre « ${a} » et « ${b} », il fallait ${ENC_TECH[q.tech]}.`, ENC_TECH_COMMENT[q.tech]];
     case 'casque': return [`« ${b} » est entré sans avoir été écouté au casque.`, 'Allume CUE 🎧 du morceau qui entre, et cale-le avant de monter son fader.'];

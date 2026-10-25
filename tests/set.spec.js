@@ -45,12 +45,16 @@ test.describe('Le chapitre', () => {
     await expect(page.locator('#stage')).toHaveClass(/sansbpm/);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
-  test('entre deux transitions, un morceau ne joue plus seul que 16 temps (lot 49)', async ({ page }) => {
+  test('entre deux transitions, un morceau joue seul la moitié moins longtemps (lot 49)', async ({ page }) => {
     await ouvrir(page, { stockage: OUVERT });
-    // chaque drop dure 16 temps (avant : 32, soit environ 15 s sans rien à faire entre deux transitions)
-    expect(await page.evaluate(() => Object.values(ENC_FORMES).every(f => f.p.filter(x => x[3] === 'Drop').every(([a, z]) => z - a === 16)))).toBe(true);
-    // toutes les parties d'un morceau tombent sur un bloc de 16 temps : les lignes PHRASE de la piste aussi
-    expect(await page.evaluate(() => ENC_PHRASE === 16 && Object.values(ENC_FORMES).every(f => f.p.every(([a, z]) => a % 16 === 0 && z % 16 === 0)))).toBe(true);
+    // du drop d'un morceau au moment de lancer le suivant (32 temps d'intro) : 16 temps (avant : 32, environ 15 s sans rien
+    // à faire entre deux transitions) ; 32 pour le morceau qui a un break (avant : 64)
+    expect(await page.evaluate(() => Object.fromEntries(Object.entries(ENC_FORMES).map(([k, f]) => [k, encFin(f) - 32 - f.drop]))))
+      .toEqual({ normal: 16, basse: 16, court: 16, break: 32 });
+    // les lignes PHRASE se comptent depuis la fin du morceau : au début de son outro et à sa fin, jamais au début du break
+    expect(await page.evaluate(() => Object.entries(ENC_FORMES).map(([k, f]) => { const o = encPhrase({ forme: k }), sur = x => (x - o) % 32 === 0;
+      return [k, f.p.every(([a, , , nom]) => nom !== 'Outro' || sur(a)) && sur(encFin(f)) && f.p.every(([a, , , nom]) => nom !== 'Break' || !sur(a))]; })))
+      .toEqual([['normal', true], ['basse', true], ['court', true], ['break', true]]);
     // le premier set dure moins d'une minute (avant : environ 1 min 20)
     expect(await page.evaluate(() => encDuree(encSpecs(CH7_LESSONS[0])))).toBeLessThan(60);
     await ch7(page, 0);
@@ -182,6 +186,40 @@ test.describe('Des sets entiers', () => {
     expect(items.join(' / ')).not.toContain('sauté');
     expect(items.join(' / ')).not.toContain('La soirée a fini');
     expect(await noteFinale(page), items.join(' / ')).toBeGreaterThanOrEqual(90);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('niveau 4 « Morceaux pièges » joué proprement : 3 étoiles, intro courte et break compris (lot 49)', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: OUVERT, avant: ROBOT });
+    await ch7(page, 3); await jouer(page);
+    const items = await resultat(page, 190000);
+    expect(await noteFinale(page), items.join(' / ')).toBeGreaterThanOrEqual(90);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  // Lot 49, gardien : avec les drops de 16 temps, ces deux pièges ne coûtaient plus rien (et Vini poussait dans le premier)
+  test('le piège du break coûte des points, et Vini prévient pendant le break', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: OUVERT, avant: ROBOT });
+    await ch7(page, 3); await jouer(page);
+    // le robot joue jusqu'au morceau qui a un break (le 2e, sur B) ; le suivant attend sur A
+    await page.waitForFunction(() => { const S = run && run.set; return S && S.cur === 1 && S.en.A === 2 && deck.A.buf && !deck.A.joue && plPos('B') / deck.B.per >= 41; }, null, { timeout: 120000, polling: 'raf' });
+    await expect(page.locator('#tip')).toContainText('break');
+    // au début du break, le joueur lance le morceau suivant (le piège) : son drop tombera bien avant la fin
+    await page.evaluate(() => { const S = run.set; S.robot = false; ctrl.tempoA = .5 - (124 / 125 - 1) / (2 * PL_TEMPO); ctrl.lowA = 0; ctrl.faderA = 1; applyCtrl(); plLecture('A'); });
+    await page.waitForFunction(() => run && run.set && run.set.tr[2].entre, null, { timeout: 10000 });
+    const perte = await page.evaluate(() => { const p = run.set.pertes.get('entree:2'); return p ? Math.round(p.pts) : 0; });
+    expect(perte).toBeGreaterThanOrEqual(5);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('le piège de l\'intro courte coûte des points : lancée comme une intro normale, son drop tombe trop tôt', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: OUVERT, avant: ROBOT });
+    // le grand set, avec des morceaux choisis : un normal, puis une intro courte
+    await page.evaluate(() => { const l = CH7_LESSONS[6]; l.set.tir = [[124, 'normal', 'house'], [124, 'court', 'house'], [124, 'normal', 'house']]; l.set.graine = 0; });
+    await ch7(page, 6); await jouer(page);
+    await page.waitForFunction(() => { const S = run && run.set; return S && S.cur === 0 && deck.B.buf && !deck.B.joue && plPos('A') / deck.A.per >= 48; }, null, { timeout: 60000, polling: 'raf' });
+    // lancée au début de l'outro, comme une intro de 32 temps : son drop tombe 16 temps avant la fin du premier morceau
+    await page.evaluate(() => { run.set.robot = false; ctrl.faderB = 1; applyCtrl(); plLecture('B'); });
+    await page.waitForFunction(() => run && run.set && run.set.tr[1].entre, null, { timeout: 10000 });
+    const p = await page.evaluate(() => { const x = run.set.pertes.get('entree:1'); return x ? [Math.round(x.pts), x.q.sens] : null; });
+    expect(p).toEqual([8, 'avant']);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('sans rien toucher : la musique s\'arrête, les morceaux pas joués coûtent cher', async ({ page }) => {

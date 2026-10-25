@@ -1353,16 +1353,24 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     48-80 ; court = 0-16, 16-32, 32-64 ; break = intro, drop 32-48, break 48-64, drop 64-80, outro 80-112). Entre deux
     transitions, le morceau joue seul environ 14 temps (7 s) au lieu de 30 (15 s). Le set commence toujours au drop du premier
     morceau (16 temps avant de lancer le suivant, au lieu de 32) et finit `ENC_SOLO` = 16 temps après le drop du dernier.
-  - **Phrases de 16 temps au set** (`ENC_PHRASE`) : toutes les parties tombent sur des blocs de 16, donc les lignes PHRASE de la
-    piste sont tous les 16 temps, et « parti sur la phrase » se mesure modulo 16 (le swap l'était déjà). Le lexique dit
-    « 32 temps (parfois 16, comme au set) ».
-  - Durées d'un set joué proprement : niveau 1 et 2 de 77 à 54 s, niveau 3 de 108 à 77 s, niveau 4 de 123 à 92 s, niveau 5
+  - **Gardien, premier passage : feu orange, mais un vrai recul**, corrigé avant de publier : avec des phrases de 16 temps
+    (première version), les deux pièges ne coûtaient plus rien (lancer pendant le break au niveau 4, lancer une intro courte
+    comme une intro normale au niveau 7) et Vini disait de lancer « sur une ligne PHRASE » en plein break. Maintenant :
+    1. **la note « phrase » vérifie que le drop du morceau qui entre tombe pile à la fin de celui qui sort** (`tombe`, dans
+    `encFrame` ; 8 points au plus, comme avant) ; 2. **les lignes PHRASE (32 temps, `ENC_PHRASE`) se comptent depuis la fin du
+    morceau qui joue** (`encPhrase`) : une au début de son outro (le moment de lancer une intro de 32 temps), une à sa fin ;
+    3. le break est resserré : drop 32-40, break 40-48, drop 48-64, outro 64-96 (seul ~30 temps au lieu de ~46 avec la
+    première version), et sa musique se vide hors d'une ligne PHRASE, comme avant le lot ; 4. Vini, pendant un break : « ce
+    n'est pas la fin, il va repartir » ; ses conseils et la carte de fin disent « pour que son drop tombe pile à la fin ».
+    Le swap reste mesuré sur des phrases de 16 temps. Le lexique dit « 32 temps (parfois 16, comme au set) ».
+  - Durées d'un set joué proprement : niveau 1 et 2 de 77 à 54 s, niveau 3 de 108 à 77 s, niveau 4 de 123 à 85 s, niveau 5
     de 109 à 78 s, niveau 6 de 139 à 100 s. L'étiquette dit « environ 50 s » sous la minute (`encMinutes`, avant « 0 min 50 »).
   - **Défaut ancien corrigé** : à « La montée » (niveau 6), la démo (et le robot des tests) ne ramenait jamais le tempo du
     morceau à son vrai tempo une fois seul : le pas par image était plus petit que le seuil de `met`, le tempo ne bougeait pas
     et la soirée finissait à 120 BPM (−5). Le tempo est maintenant changé directement, un peu plus vite (`.01` par temps).
-  - Tests : dans `tests/set.spec.js`, « entre deux transitions, un morceau ne joue plus seul que 16 temps » et un set entier
-    de « La montée » joué par le robot (note 90 ou plus, pas de saut de tempo, soirée finie au bon tempo).
+  - Tests : dans `tests/set.spec.js`, « entre deux transitions, un morceau joue seul la moitié moins longtemps » (durées,
+    lignes PHRASE), des sets entiers de « La montée » et de « Morceaux pièges » joués par le robot (note 90 ou plus), et les
+    deux pièges (lancer pendant le break : des points perdus et Vini qui prévient ; intro courte lancée trop tôt : −8).
   - **À essayer par l'utilisateur** : avec 7 s seul, il reste moins de temps pour préparer le morceau suivant (tempo, LOW,
     casque) avant de le lancer ; on peut aussi le préparer une fois lancé, fader en bas.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
