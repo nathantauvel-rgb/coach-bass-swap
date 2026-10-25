@@ -32,16 +32,25 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 25 oct. 2026)
-- **Lot 46 « Stats et retours » (25 oct. 2026, branche `lot-46-stats`, NON PUBLIÉ).** Contexte donné par l'utilisateur : la
+- **Lot 47 « Niveaux plus courts » (25 oct. 2026, NON PUBLIÉ) : branche `lot-47-plus-court` (commit `b354876`, partie de
+  `origin/main`, indépendante du lot 46), dans la copie à part `Documents\coach-dj-lot47`** (git worktree ; tests depuis cette
+  copie : `DJ_PORT=8768 npx playwright test`, 499 sur 500 verts, l'échec est le test instable « accès déjà accordé, navigateur
+  lent » de `aide-table.spec.js`, qui passe seul). Demandes de l'utilisateur : plus d'attente après le seul geste d'un niveau,
+  et la voix fabriquée de « Une seule voix à la fois » supprimée partout (« je veux plus jamais l'entendre ») : le niveau
+  devient « Une seule mélodie à la fois ». Le détail est dans le CLAUDE.md de cette branche (entrée « Lot 47 »). Avant de
+  publier : gardien, puis l'accord de l'utilisateur ; il faudra fusionner les notes avec celles du lot 46.
+- **Lot 46 « Stats et retours » : PUBLIÉ le 25 oct. 2026** (commit `462c377`, « Oui, publie le lot 46 », règles
+  `firestore.rules` publiées par l'utilisateur juste avant). Production vérifiée : `js/stats.js` servi avec l'identifiant,
+  `confidentialite.html` en ligne, `avisEnvoie` servi. **À faire par l'utilisateur** : voir sa visite dans « Realtime »
+  d'Umami, puis « Ne plus compter mes visites » sur ses appareils ; envoyer un avis de test et le voir dans Firestore
+  (`avis`) ; choisir une adresse de contact pour la page de confidentialité (le RGPD demande qui gère le site). Contexte donné par l'utilisateur : la
   première vidéo TikTok a fait 10 000 vues, 350 likes et beaucoup d'enregistrements ; 5 comptes créés (vus dans Firebase) ;
   des retours « le concept est cool » mais aucun retour détaillé. Pour lui, la priorité est d'être actif sur TikTok ; il
   voulait suivre les stats « avec Google Analytics ». **Choix de l'utilisateur : Umami** (GA demande un bandeau de cookies
   en France ; le compteur gratuit de Vercel ne compte pas les étapes du jeu). Détail dans l'entrée « Lot 46 » plus bas et
   dans `STATISTIQUES.md` (marche à suivre pour lui). Numéroté 45 au départ, **renommé 46** parce qu'une session cloud avait
   publié un autre « lot 45 » le 24 oct. ; fusionné avec `origin/main` le 25 oct. **`STATS_ID` est rempli** (commit
-  `14e7423`, identifiant Umami de djingood.fr). **Avant de publier** : 1. l'utilisateur publie `firestore.rules` dans la
-  console Firebase ; 2. gardien, puis son accord pour le push. Ensuite : lui dire de cliquer « Ne plus compter mes visites »
-  sur ses appareils (`djingood.fr/confidentialite.html`).
+  `14e7423`, identifiant Umami de djingood.fr ; le script `cloud.umami.is/script.js` envoie à `gateway.umami.is`).
   **Lien en bio TikTok pas cliquable** (compte personnel, 44 abonnés, il en faut 1 000 ; passer en compte Entreprise :
   « trop compliqué pour le moment ») : pas de lien `?utm_source=tiktok`. Conseillé : l'adresse bien visible et dite dans
   chaque vidéo, un commentaire épinglé « 👉 djingood.fr », et lire les visites « Direct » d'Umami comme venant de TikTok.
@@ -1263,7 +1272,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     AlphaTheta « DDJ-FLX2 / XDJ-AZ MIDI-compatible software »). Bloquées par le réseau de la session : il faut que l'utilisateur
     autorise ces sites dans les réglages de l'environnement. L'XDJ-AZ a sa propre table de mixage : ce que devient le son du
     site s'il sort par sa carte son n'a jamais été essayé. Sur Windows, elle demande son pilote.
-- **Lot 46 « Stats et retours » (25 oct. 2026)** : branche `lot-46-stats`, non publiée (numérotée 45 au départ). Deux trous bouchés : le site ne comptait
+- **Lot 46 « Stats et retours » (25 oct. 2026)** : branche `lot-46-stats`, **publié le 25 oct. 2026** (commit `462c377` ; gardien :
+  feu orange, 509 tests verts, remarques corrigées : page de confidentialité exacte, « autre table », avis en double). Numéroté 45 au départ. Deux trous bouchés : le site ne comptait
   aucune visite, et « Mon avis » / « C'était clair ? » restaient dans le navigateur du joueur (jamais lus par l'équipe).
   - `js/stats.js` (nouveau, **chargé juste après `erreurs`**, ne dépend d'aucun autre fichier ; aussi chargé seul par
     `presentation.html` et `confidentialite.html`) : Umami Cloud (`STATS_SRC` = `https://cloud.umami.is/script.js`,
