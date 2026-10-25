@@ -14,7 +14,7 @@
    - Refuser : `umami.disabled` dans localStorage (le réglage prévu par Umami), posé par le bouton de confidentialite.html.
      Il n'est pas effacé par « Tout recommencer à zéro » (ce n'est pas une clé `coach-`).
    - STATS_ID vide : rien n'est chargé, `stat` ne fait rien. */
-const STATS_ID = '';
+const STATS_ID = 'e77050d6-198a-4d10-949f-74ec3df03ac2';
 const STATS_SRC = 'https://cloud.umami.is/script.js';
 const STATS_DOMAINES = ['djingood.fr', 'www.djingood.fr', 'coach-bass-swap.vercel.app'];
 const STATS_KEY = 'coach-stats', STATS_NON = 'umami.disabled';
