@@ -1332,6 +1332,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - Schéma de fin (`drawCompare`) : repères de temps seulement dans la partie (tous les 16 temps si elle est courte).
   - Tests : `tests/plus-court.spec.js` (nouveau : règle des durées, B déjà en route, voix disparue, MID efficace, chaque
     niveau du chapitre 3 joué par un robot, piège du break) ; `rythme.spec.js` et `midi.spec.js` mis à jour.
+  - Fusionné avec `origin/main` (lot 46 déjà en ligne, commit `462c377`) le 25 oct. au soir : seul CLAUDE.md en conflit.
+  - **Gardien : feu orange, aucun blocage** (520 tests verts sur 521). L'échec est dans `tests/vini-sons.spec.js` (« objectif
+    atteint, série en cours… ») : la nuit du 25 au 26 oct. 2026 dure 25 h (heure d'hiver) et le test calcule « hier » en
+    retirant 24 h ; il échoue aussi sur `origin/main`, le site (`goalStreak`) n'a pas ce défaut. À corriger un jour dans le
+    test. Remarques corrigées : au filtre et au swap, B est à fond dès la position de départ (`init.faderB` = 1) et les
+    commandes tenues par le site prennent leur place avant que le son parte (`automate(START)` dans `startRun`) ; textes
+    « B arrive tout seul » devenus « B joue déjà » ; fiche du MID « les voix et les mélodies ». Laissé, à faire essayer à
+    l'utilisateur : au chapitre 2 et en Expert, il ne reste que 16 temps (8 à 16 en Expert) pour sentir la phrase au filtre
+    et au swap ; au chapitre 3, on n'entend plus le drop de B tomber.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
