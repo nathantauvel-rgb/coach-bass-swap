@@ -40,8 +40,11 @@ test.describe('Durée des niveaux', () => {
     test.setTimeout(60000);
     const erreurs = await ouvrir(page);
     await page.locator('.node').nth(5).click();
+    // B est déjà à fond au départ : son fader est en haut avant même de jouer (il ne saute pas au clic sur « Jouer »)
+    expect(await page.evaluate(() => ctrl.faderB)).toBe(1);
     await jouer(page);
     await page.waitForFunction(() => beatNow() >= 50, null, { timeout: 30000, polling: 'raf' });
+    expect(await page.evaluate(() => ctrl.faderB)).toBe(1);
     // A au temps b, B lancé au temps 32 (depuis le début de son morceau) : B en est à son temps b − 32
     const [joue, ecart] = await page.evaluate(() => [deck.B.joue, plPos('B') / P - (beatNow() - 32)]);
     expect(joue).toBe(true);

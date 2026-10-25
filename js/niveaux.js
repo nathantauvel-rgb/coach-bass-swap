@@ -15,12 +15,12 @@ const BASE_LESSONS = [
   { kind: 'echo', title: 'L\'écho out', goal: 'Fais disparaître A dans un écho, puis B tombe sur son drop.',
     how: 'Sur le dernier temps avant la ligne, active l\'écho (bouton ECHO, ON de l\'effet sur ta table, ou touche E), puis baisse d\'un coup le fader de A sur la ligne. B démarre tout seul sur son drop.',
     show: ['gEcho', 'gFad'], bBass: false, autoLaunch: true, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], btn: ['echo'], start: 40, end: 96 },
-  { kind: 'filter', title: 'Le filtre', goal: 'Efface A en douceur avec le filtre pendant que B monte.',
-    how: 'B arrive tout seul. Quand « FILTRE » touche la ligne, tourne le potard CFX de A vers la droite, lentement : il doit être tout à droite quand « À FOND » arrive, juste avant le drop de B.',
-    show: ['gCfx'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5 }, user: ['cfxA'], start: 24, end: 112 },
+  { kind: 'filter', title: 'Le filtre', goal: 'Efface A en douceur avec le filtre pendant que B joue.',
+    how: 'B joue déjà, tout seul. Quand « FILTRE » touche la ligne, tourne le potard CFX de A vers la droite, lentement : il doit être tout à droite quand « À FOND » arrive, juste avant le drop de B.',
+    show: ['gCfx'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['cfxA'], start: 24, end: 112 },
   { kind: 'swap', title: 'Le swap des basses', goal: 'Échange les basses de A et B pile sur la ligne.',
-    how: 'B arrive tout seul, basses coupées. Quand le repère « SWAP » touche la ligne, échange les basses d\'un seul geste, une main sur chaque potard : LOW de A normal → coupé, LOW de B coupé → normal.',
-    show: ['gLow'], bBass: true, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: 0 }, user: ['lowA', 'lowB'] },
+    how: 'B joue déjà, tout seul, basses coupées. Quand le repère « SWAP » touche la ligne, échange les basses d\'un seul geste, une main sur chaque potard : LOW de A normal → coupé, LOW de B coupé → normal.',
+    show: ['gLow'], bBass: true, autoLaunch: true, init: { faderA: 1, faderB: 1, lowA: .5, lowB: 0 }, user: ['lowA', 'lowB'] },
   { kind: 'full', title: 'La transition complète', goal: 'Le final : tout toi-même, comme en soirée.',
     how: 'Le LOW de B est déjà coupé (position de départ) : B entre sans ses basses. Lance B quand le repère touche la ligne et monte son fader jusqu\'en haut. À la phrase suivante, échange les basses (LOW de A coupé, LOW de B normal). Enfin, baisse le fader de A jusqu\'en bas avant le drop.',
     show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: 0 }, user: ['faderA', 'faderB', 'lowA', 'lowB'] }
@@ -290,6 +290,9 @@ function startRun(demo = false){
     const st0 = $('stage').getBoundingClientRect(); if (st0.top < -4 || st0.top > 40) window.scrollTo({ top: window.scrollY + st0.top - 8, behavior: REDUCED ? 'auto' : 'smooth' });
     setEcho(false); run.echoAt = null;
     if (l.cal) calDepart(demo); else if (l.hc) hcDepart(demo); else if (l.autoLaunch || demo) launchAt(l.launchBeat);
+    // les commandes tenues par le site prennent leur place du départ avant que le son parte (lot 47 : au filtre et au swap,
+    // B est déjà à fond au temps 48 ; en Mode Expert, la partie peut commencer 8 temps plus tôt, B à moitié monté)
+    if (!l.cal && !l.hc) automate(START);
     $('stage').classList.toggle('demo', demo); $('demoTag').hidden = !demo; $('watchBtn').disabled = true;
     $('result').hidden = true; setStartBtn(true); $('setup').hidden = true; $('plan').hidden = true; $('startBtn').disabled = false; $('startBtn').classList.remove('ready'); $('launchB').disabled = !!l.autoLaunch; $('startBtn').blur();
     $('hint').textContent = demo ? 'Démonstration : regarde les contrôles bouger et écoute le résultat.' : l.hc ? 'Astuce : sur ta table, choisis le bon mode des pads (HOT CUE ou BEAT LOOP).' : l.btn.includes('echo') ? 'Astuce : la touche E active aussi l\'écho.' : !l.autoLaunch ? 'Astuce : la barre d\'espace lance aussi B.' : '';
