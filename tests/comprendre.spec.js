@@ -219,6 +219,7 @@ test.describe('Corrections du gardien', () => {
     await expect(page.locator('#serie')).toBeHidden();
     await expect(page.locator('#cp')).toBeVisible();
     await expect(page.locator('.cp-ftitre')).toHaveText('Leçon terminée !');
+    await expect(page.locator('.cp-fin .cp-vgo')).toBeFocused();   // pas « Rejouer » d'une partie restée derrière (gardien)
   });
   test('Safari sur un Mac est un ordinateur : niveau 1 après les questions, pas de lien d\'envoi', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: MAC_SAFARI });
