@@ -182,7 +182,7 @@ $('rbMisAll').addEventListener('click', () => { rbShowAll = !rbShowAll; renderMi
 $('rbFind').addEventListener('input', () => { rbStale = true; renderReal(); });
 $('rbFile').addEventListener('change', async e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return; $('rbMsg').textContent = '';
-  try { const list = rbParse(await f.text()); if (!list.length) throw new Error('vide'); const cut = list.length > RB_MAX; rbSet(list, f.name.replace(/\.xml$/i, ''));
+  try { const list = rbParse(await f.text()); if (!list.length) throw new Error('vide'); const cut = list.length > RB_MAX; rbSet(list, f.name.replace(/\.xml$/i, '')); stat1('rekordbox');
     if (cut) $('rbMsg').textContent = `Ta collection est très grande : seuls les ${RB_MAX} premiers morceaux sont utilisés.`; }
   catch (err) { $('rbMsg').textContent = err && err.message === 'vide' ? 'Ce fichier ne contient aucun morceau.' : 'Ce fichier n\'est pas une collection rekordbox. Dans rekordbox : Fichier, puis Exporter la collection au format xml.'; }
 });

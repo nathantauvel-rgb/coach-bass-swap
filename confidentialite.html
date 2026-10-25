@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DJingood · Confidentialité</title>
+<meta name="theme-color" content="#0B0E16">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
+<link rel="icon" href="img/vini-icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="index.html#accueil"><img class="blogo" src="img/vini-logo.svg" alt="" width="40" height="40"><div><div class="brand-name"><span class="dj">DJ</span>ingood</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
+  </header>
+  <section class="page">
+    <span class="lnum">Confidentialité</span>
+    <h1>Ce que DJingood garde sur toi</h1>
+    <p class="lead">En bref : pas de publicité, pas de cookie, et rien n'est revendu. Voici tout ce que le site enregistre, et où.</p>
+
+    <h2 class="sub">Sur ton ordinateur</h2>
+    <p>Ta progression (étoiles, XP, badges, quêtes), tes réponses aux premières questions et les réglages de ta table sont enregistrés dans ton navigateur. Ils ne partent nulle part, sauf si tu crées un compte. Pour tout effacer : <b>Mon avis</b>, puis <b>Tout recommencer à zéro</b>.</p>
+
+    <h2 class="sub">Si tu crées un compte</h2>
+    <p>Ton adresse e-mail (ou ton compte Google), ton prénom et ta progression sont enregistrés chez Firebase, le service de Google qui fait marcher les comptes. Ils servent seulement à retrouver ta progression sur un autre appareil. « Tout recommencer à zéro » efface aussi ta progression en ligne ; pour supprimer ton adresse, écris-nous (voir tout en bas).</p>
+
+    <h2 class="sub">Les statistiques de visite</h2>
+    <p>DJingood compte ses visites avec Umami, <b>sans cookie</b> et sans rien qui permette de te suivre sur d'autres sites. Ce sont des totaux : ils ne disent pas qui tu es, et ils servent seulement à améliorer le site. Ce qui est compté :</p>
+    <ul class="howlist">
+      <li>les pages vues, le pays, le type d'appareil et de navigateur, et le site d'où tu arrives ;</li>
+      <li>quelques étapes du jeu, par exemple « première partie jouée » ou « premier niveau réussi » ;</li>
+      <li>tes réponses à « C'était clair ? ».</li>
+    </ul>
+    <p class="avsmall" id="statsEtat" role="status"></p>
+    <div class="rbrow"><button type="button" class="ghost" id="statsBtn">Ne plus compter mes visites</button></div>
+
+    <h2 class="sub">Quand tu envoies ton avis</h2>
+    <p>Avec le bouton <b>Mon avis</b>, ton avis part chez l'équipe DJingood : ton texte, ta note, la date, l'écran où tu étais, ton parcours, le nom de ta table et de ton navigateur, et l'identifiant de ton compte si tu es connecté (pas ton adresse). Seule l'équipe peut les lire.</p>
+
+    <h2 class="sub">Une question ?</h2>
+    <p>Pour supprimer ton compte ou poser une question, écris-nous avec le bouton <b>Mon avis</b> du site, en laissant ton adresse e-mail si tu veux une réponse.</p>
+    <p class="page-note">Mis à jour le 25 octobre 2026.</p>
+    <div class="rbrow" style="margin-top:22px"><a class="cta" href="index.html">Revenir au site</a></div>
+  </section>
+</div>
+<script src="js/stats.js"></script>
+<script>
+(function(){
+  var b = document.getElementById('statsBtn'), e = document.getElementById('statsEtat');
+  function rend(){ var non = statsRefuse();
+    b.textContent = non ? 'Compter de nouveau mes visites' : 'Ne plus compter mes visites';
+    e.textContent = non ? 'Sur ce navigateur, tes visites ne sont plus comptées.' : 'Sur ce navigateur, tes visites sont comptées (sans cookie, sans savoir qui tu es).'; }
+  b.addEventListener('click', function(){ statsRefuser(!statsRefuse()); rend(); });
+  rend();
+})();
+</script>
+</body>
+</html>

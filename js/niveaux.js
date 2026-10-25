@@ -253,6 +253,7 @@ function startRun(demo = false){
   if (!demo && needSetup() && !setupReady()){ updateSetup(); say('Remets ta table en position de départ : « Jouer » se débloquera tout seul.'); $('setup').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' }); return; }
   ensureAudio(); if (ac.state !== 'running') ac.resume();
   if (preparing) return; preparing = true;
+  if (!demo) stat1('premiere-partie');
   $('startBtn').textContent = hasWorkers() ? 'Préparation…' : 'Préparation (quelques secondes)…'; $('watchBtn').disabled = true;
   const myLi = li, myCh = chapter;
   setTimeout(async () => {
@@ -560,6 +561,8 @@ function finish(){
   const xr = r.expert ? expertResult(score) : null, st = r.set ? encEtoiles(r.set.score) : LESSONS[li].cal ? calEtoiles(r, items) : LESSONS[li].hc ? hcEtoiles(items) : xr ? xr.st : speed < 1 ? Math.min(2, st0) : st0;
   const wasOpen = ch2Unlocked(), was3 = ch3Unlocked(), bank = bankOf(r.ch), before = bank[li] || 0;
   if (!prac){ bank[li] = Math.max(before, st); try { localStorage.setItem(BANK_KEY[r.ch], JSON.stringify(bank)); } catch (e) {} }
+  // statistiques : la première réussite (2 étoiles ou plus), puis le premier niveau réussi de chaque chapitre (stats.js)
+  if (st >= 2){ stat1('premiere-reussite'); if (!prac && !placement) stat1('chapitre-' + r.ch); }
   const rs = $('rStars'); rs.innerHTML = '';
   for (let i = 0; i < 3; i++){ const sp = document.createElement('span'); sp.textContent = '★'; if (i < st) sp.className = 'on'; sp.style.animationDelay = (i * .18) + 's'; rs.appendChild(sp); }
   $('rTitle').textContent = xr ? (st === 3 ? 'Expert : niveau pro !' : st === 2 ? 'Expert : bien, encore un peu de précision.' : 'Expert : pas encore. Écoute, compte, anticipe.')

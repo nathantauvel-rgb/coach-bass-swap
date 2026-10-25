@@ -139,12 +139,13 @@ function onMidi(e){
 }
 async function initMidi(){
   const txt = $('midiPill').lastElementChild;
-  if (!navigator.requestMIDIAccess){ txt.textContent = 'Souris (MIDI indisponible)'; return; }
+  if (!navigator.requestMIDIAccess){ txt.textContent = 'Souris (MIDI indisponible)'; stat1('sans-midi'); return; }   // iPhone, appli TikTok… (stats.js)
   try { const acc = await navigator.requestMIDIAccess({ sysex: false });
     // table débranchée : ses positions ne sont plus fiables, on les oublie jusqu'au prochain mouvement
     const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); midiNames = ins.map(i => String(i.name || 'Table MIDI'));
       if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; midiCount = ins.length; modeleAuto(); renderPill();
-      updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); ppMidi(); };
+      updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); ppMidi();
+      const b = ppBranchee(); if (b) stat1('table-branchee', { table: b.nom }); };
     acc.onstatechange = refresh; refresh();
   } catch (e){ txt.textContent = 'Souris (MIDI bloqué ici)'; }
 }

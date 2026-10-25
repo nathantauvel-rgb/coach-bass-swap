@@ -1512,3 +1512,8 @@ html.pp-open,html.pp-open body{overflow:hidden}
    Ils marchent toujours sur la vraie table. */
 .stage.joue.estset .mx [data-g="gTrim"],.stage.joue.estset .mx [data-g="gHi"],.stage.joue.estset .mx-lab span:nth-child(-n+2){display:none}
 @media (min-width:1040px){ .stage.joue.estset{row-gap:8px} .stage.joue.estset .deck{padding-top:6px;padding-bottom:6px} }
+
+/* ---------- Lot 45 : liens vers « Ce que DJingood garde sur toi » ---------- */
+.avlien,.pres-faq p a{color:var(--brand-light);font-weight:700}
+.avlien:hover,.pres-faq p a:hover{color:var(--fg)}
+.pres-pied{text-align:center}

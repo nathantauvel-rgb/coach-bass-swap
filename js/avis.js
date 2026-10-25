@@ -2,8 +2,9 @@
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* ---------- Journal ----------
-   Tout reste sur l'ordinateur du testeur, dans `coach-journal`, jusqu'à ce qu'il copie ou envoie son rapport.
-   Rien n'est envoyé automatiquement. */
+   Le journal reste sur l'ordinateur du testeur, dans `coach-journal`, jusqu'à ce qu'il copie ou envoie son rapport.
+   Seuls partent : chaque avis, quand on appuie sur « Envoyer mon avis » (plus bas), et les réponses à « C'était clair ? »,
+   comptées par Umami sans rien qui désigne le joueur (stats.js). */
 const JR_KEY = 'coach-journal', JR_MAX = 200, AVIS_MAIL = '';   // AVIS_MAIL : adresse qui reçoit les rapports ; vide = pas de bouton e-mail
 const JR_DAY = /^\d{4}-\d\d-\d\d$/, JR_CLAIR = ['oui', 'bof', 'non'];
 let jr = {}; try { jr = JSON.parse(localStorage.getItem(JR_KEY) || '{}'); } catch (e) {}
@@ -16,7 +17,8 @@ if (!jr || typeof jr !== 'object' || Array.isArray(jr)) jr = {};
     secs: Math.max(0, Math.floor(+jr.secs) || 0),
     parties: arr(jr.parties, p => p && typeof p === 'object' && [1, 2, 3, 4, 5, 6, 7].includes(p.c) && Number.isInteger(p.n) && p.n >= 0 && p.n < lessonsOf(p.c).length && [1, 2, 3].includes(p.e)),
     clair: Object.fromEntries(Object.entries(cl).filter(([k, v]) => /^[1-7]-[0-6]$/.test(k) && JR_CLAIR.includes(v))),
-    avis: arr(jr.avis, a => a && typeof a === 'object' && typeof a.d === 'string').map(a => ({ d: a.d.slice(0, 10), ecran: txt(a.ecran).slice(0, 80), bloque: txt(a.bloque), plu: txt(a.plu), note: [1, 2, 3, 4, 5].includes(a.note) ? a.note : 0 })),
+    avis: arr(jr.avis, a => a && typeof a === 'object' && typeof a.d === 'string').map(a => Object.assign({ d: a.d.slice(0, 10), ecran: txt(a.ecran).slice(0, 80), bloque: txt(a.bloque), plu: txt(a.plu), note: [1, 2, 3, 4, 5].includes(a.note) ? a.note : 0 },
+      a.p === 0 || a.p === 1 ? { p: a.p } : {})),   // p : 0 = pas encore parti, 1 = parti (lot 45) ; sans p, écrit avant qu'un avis puisse partir
     erreurs: arr(jr.erreurs, e => typeof e === 'string', 5)
   };
 }
@@ -24,6 +26,9 @@ let jrOff = false;   // vrai pendant la remise à zéro : plus rien ne doit êtr
 const saveJr = () => { if (jrOff) return; try { localStorage.setItem(JR_KEY, JSON.stringify(jr)); } catch (e) {} };
 if (jr.jours[jr.jours.length - 1] !== dayKey()){ jr.jours.push(dayKey()); jr.jours = jr.jours.slice(-JR_MAX); }
 saveJr();
+// revenu un autre jour, puis sept jours différents (stats.js)
+if (jr.jours.length >= 2) stat1('revenu');
+if (jr.jours.length >= 7) stat1('jours-7');
 // Temps passé : seulement quand la page est affichée
 setInterval(() => { if (document.visibilityState === 'visible'){ jr.secs += 15; saveJr(); } }, 15000);
 // Les erreurs affichées dans le bandeau sont aussi gardées pour le rapport
@@ -38,7 +43,11 @@ function avisPartie(ch, st){
   clairKey = ch + '-' + li; $('clairRow').hidden = false; clairShow();
 }
 function clairShow(){ const v = jr.clair[clairKey] || ''; document.querySelectorAll('#clairRow [data-clair]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.clair === v))); $('clairMerci').hidden = !v; }
-document.querySelectorAll('#clairRow [data-clair]').forEach(b => b.addEventListener('click', () => { if (!clairKey) return; jr.clair[clairKey] = b.dataset.clair; saveJr(); clairShow(); }));
+document.querySelectorAll('#clairRow [data-clair]').forEach(b => b.addEventListener('click', () => { if (!clairKey) return;
+  const avant = jr.clair[clairKey]; jr.clair[clairKey] = b.dataset.clair; saveJr(); clairShow();
+  // compté par Umami à chaque réponse qui change : le niveau et la réponse, rien d'autre
+  if (avant !== b.dataset.clair){ const [c, n] = clairKey.split('-').map(Number), l = lessonsOf(c)[n];
+    stat('clair', { niveau: `Ch. ${c} · ${n + 1}. ${l ? l.title : ''}`, reponse: b.dataset.clair }); } }));
 
 /* ---------- Le rapport ---------- */
 function navName(){
@@ -72,7 +81,7 @@ function avisRapport(){
 let avis = null;   // fenêtre ouverte : { back, note }
 const SCREEN_NAME = { accueil: 'Accueil', apprendre: 'Apprendre', entrainer: 'S\'entraîner', vrai: 'Passer au vrai', table: 'Ma table', progres: 'Mes progrès' };
 const avisScreen = () => (SCREEN_NAME[view] || 'Accueil') + (view === 'apprendre' ? ' · ' + (prac ? 'entraînement, ' : '') + LESSONS[li].title : '');
-function avisSum(){ $('avSum').textContent = `Il contient ${plur(jr.avis.length, 'avis', 'avis')}, ${plur(jr.parties.length, 'partie jouée', 'parties jouées')} et le temps passé sur le site. Rien n'est envoyé sans toi.`; }
+function avisSum(){ $('avSum').textContent = `Il contient ${plur(jr.avis.length, 'avis', 'avis')}, ${plur(jr.parties.length, 'partie jouée', 'parties jouées')} et le temps passé sur le site. Il reste sur cet ordinateur tant que tu ne le copies pas.`; }
 function avisMsg(t){ const m = $('avMsg'); m.textContent = t; m.hidden = !t; }
 function openAvis(){
   if (avis) return; if (quiz) closeQuiz(); if (run) stopRun();
@@ -86,10 +95,44 @@ function avisNote(n){ if (avis) avis.note = n; document.querySelectorAll('#avNot
 function avisSave(){
   const bloque = $('avBloque').value.trim().slice(0, 1000), plu = $('avPlu').value.trim().slice(0, 1000);
   if (!bloque && !plu && !avis.note){ avisMsg('Écris au moins une réponse, ou choisis une note.'); return; }
-  jr.avis.push({ d: dayKey(), ecran: avis.ecran, bloque, plu, note: avis.note }); jr.avis = jr.avis.slice(-JR_MAX); saveJr();
+  const a = { d: dayKey(), ecran: avis.ecran, bloque, plu, note: avis.note }, enLigne = avisEnLigne();
+  if (enLigne) a.p = 0;
+  jr.avis.push(a); jr.avis = jr.avis.slice(-JR_MAX); saveJr();
   $('avBloque').value = ''; $('avPlu').value = ''; avisNote(0); avisSum();
-  avisMsg('Merci, ton avis est enregistré ! Quand tu as fini de tester, envoie ton rapport ci-dessous.');
+  if (!enLigne){ avisMsg('Merci, ton avis est enregistré ! Quand tu as fini de tester, envoie ton rapport ci-dessous.'); return; }
+  avisMsg('Envoi de ton avis…'); $('avSave').disabled = true;
+  avisEnvoie(a).then(ok => { $('avSave').disabled = false;
+    avisMsg(ok ? 'Merci, ton avis est bien arrivé chez l’équipe DJingood ! Tu peux en écrire un autre quand tu veux.'
+      : 'Ton avis est gardé sur cet ordinateur, mais il n’a pas pu partir (pas de connexion ?). Il repartira tout seul à ta prochaine visite.'); });
 }
+/* ---------- Envoyer l'avis à l'équipe (lot 45) ----------
+   Sur le vrai site, chaque avis est enregistré dans la base Firebase (collection `avis`) : tout le monde peut en écrire un,
+   personne ne peut les relire depuis le site (firestore.rules). L'équipe les lit dans la console Firebase.
+   Avec l'avis partent : la date, l'écran, le parcours, la table branchée, le navigateur, et l'identifiant du compte si on
+   est connecté (pour retrouver sa progression). Pas l'adresse e-mail, pas le prénom.
+   Un avis qui n'a pas pu partir (`p` : 0) repart tout seul à la visite suivante. Les avis écrits avant ce lot n'ont pas
+   de `p` : ils restent sur l'ordinateur, puisqu'on avait promis « rien n'est envoyé sans toi ».
+   En local et pendant les tests, rien ne part, sauf avec le faux Firebase des tests (`window.DJINGO_FIREBASE`). */
+const AVIS_DOC = 'avis', AVIS_LENT = 8000;
+const avisEnLigne = () => typeof cptOn === 'function' && cptOn() && (STATS_DOMAINES.includes(location.hostname) || !!window.DJINGO_FIREBASE);
+function avisDoc(a){
+  const b = ppBranchee(), d = { v: 1, quand: firebase.firestore.FieldValue.serverTimestamp(), jour: a.d, ecran: a.ecran, note: a.note,
+    bloque: a.bloque, plu: a.plu, parcours: parcours || '', table: b ? b.nom.slice(0, 120) : 'aucune', appareil: navName().slice(0, 80) };
+  if (cpt) d.uid = cpt.uid;
+  return d;
+}
+const avisEnCours = new Set();   // un avis en route ne doit pas repartir une deuxième fois en même temps
+function avisEnvoie(a){
+  let fin = 0; avisEnCours.add(a);
+  return Promise.race([
+    cptSdkDb().then(() => cptFb.db.collection(AVIS_DOC).add(avisDoc(a))),
+    new Promise((_, ko) => { fin = setTimeout(() => ko(new Error('trop lent')), AVIS_LENT); })   // hors ligne, Firestore ne répond jamais
+  ]).then(() => { a.p = 1; saveJr(); stat('avis', { note: a.note }); return true; }, () => false)
+    .then(ok => { clearTimeout(fin); avisEnCours.delete(a); return ok; });
+}
+// Les avis restés en attente repartent, un par un, une fois la page tranquille
+setTimeout(() => { if (!avisEnLigne()) return;
+  jr.avis.filter(a => a.p === 0 && !avisEnCours.has(a)).reduce((p, a) => p.then(() => avisEnvoie(a)), Promise.resolve()); }, 10000);
 function avisCopy(){
   const t = avisRapport(), box = $('avText'), show = () => { box.value = t; box.hidden = false; box.focus(); box.select(); avisMsg('Sélectionne le texte ci-dessous et copie-le (Ctrl + C), puis colle-le dans ton message.'); };
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => avisMsg('Rapport copié ! Colle-le dans un e-mail ou un message (Ctrl + V).'), show); else show();
@@ -99,10 +142,11 @@ function avisMail(){
   location.href = 'mailto:' + AVIS_MAIL + '?subject=' + encodeURIComponent('Rapport DJingood') + '&body=' + encodeURIComponent(t);
 }
 // Remise à zéro : tout ce que le site a enregistré, sauf ce qui concerne la table (réglages, nom d'une autre table, vérification)
+// et les étapes déjà comptées par les statistiques (sinon un testeur qui recommence serait compté deux fois)
 function avisReset(){
   jrOff = true;
   const efface = () => {
-    try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+    try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-stats'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
     // replaceState ne déclenche pas hashchange : avec location.hash, l'accueil se réaffichait une fraction de seconde et
     // réécrivait les quêtes du jour juste après l'effacement (test instable, trouvé par le gardien du lot 44)
     history.replaceState(null, '', '#accueil'); location.reload();

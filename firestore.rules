@@ -1,9 +1,10 @@
 // Règles de sécurité de la base DJingood, à coller dans la console Firebase
 // (Firestore Database → Règles → Publier).
 //
-// Elles disent une seule chose, mais c'est la plus importante : chaque joueur connecté
-// ne peut lire et écrire QUE son propre document. Personne ne peut lire la progression
-// d'un autre, et personne ne peut rien écrire sans être connecté.
+// La plus importante : chaque joueur connecté ne peut lire et écrire QUE son propre document.
+// Personne ne peut lire la progression d'un autre, et personne ne peut rien écrire sans être connecté.
+// Seule exception (lot 45) : la collection `avis`, où n'importe qui peut DÉPOSER un avis, connecté ou non,
+// sans jamais pouvoir le relire, le modifier ou l'effacer. Seule l'équipe les lit, dans la console Firebase.
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -13,6 +14,24 @@ service cloud.firestore {
       // (`request.resource.size()` n'existe pas, c'est une notion de Firebase Storage). Firestore refuse
       // de lui-même au-delà de 1 Mo, et le site s'arrête avant (CPT_MAX dans js/compte.js).
     }
+
+    // Un champ de texte facultatif, pas plus long que `max`
+    function texte(d, k, max) {
+      return !(k in d) || (d[k] is string && d[k].size() <= max);
+    }
+    // Un avis tel que le site l'envoie (avisDoc dans js/avis.js), et rien d'autre
+    function avisOk(d) {
+      return d.keys().hasOnly(['v', 'quand', 'jour', 'ecran', 'note', 'bloque', 'plu', 'parcours', 'table', 'appareil', 'uid'])
+        && d.v == 1 && d.quand == request.time
+        && d.note is int && d.note >= 0 && d.note <= 5
+        && texte(d, 'jour', 10) && texte(d, 'ecran', 80) && texte(d, 'bloque', 1000) && texte(d, 'plu', 1000)
+        && texte(d, 'parcours', 20) && texte(d, 'table', 120) && texte(d, 'appareil', 80)
+        && (!('uid' in d) || (request.auth != null && d.uid == request.auth.uid));
+    }
+    match /avis/{id} {
+      allow create: if avisOk(request.resource.data);
+    }
+
     // Tout le reste est fermé
     match /{document=**} { allow read, write: if false; }
   }

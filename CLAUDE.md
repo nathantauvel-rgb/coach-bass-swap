@@ -31,7 +31,27 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   3. deux parcours · 4. interface sombre · 5. schéma interactif de la FLX4.
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
-## Pour reprendre (état au 23 oct. 2026)
+## Pour reprendre (état au 25 oct. 2026)
+- **Lot 45 « Stats et retours » (25 oct. 2026, branche `lot-45-stats`, NON PUBLIÉ).** Contexte donné par l'utilisateur : la
+  première vidéo TikTok a fait 10 000 vues, 350 likes et beaucoup d'enregistrements ; 5 comptes créés (vus dans Firebase) ;
+  des retours « le concept est cool » mais aucun retour détaillé. Pour lui, la priorité est d'être actif sur TikTok ; il
+  voulait suivre les stats « avec Google Analytics ». **Choix de l'utilisateur : Umami** (GA demande un bandeau de cookies
+  en France ; le compteur gratuit de Vercel ne compte pas les étapes du jeu). Détail dans l'entrée « Lot 45 » plus bas et
+  dans `STATISTIQUES.md` (marche à suivre pour lui). **Avant de publier** : 1. il crée son compte Umami (région EU) et
+  donne le code de suivi → mettre l'identifiant dans `STATS_ID` (haut de `js/stats.js`) ; 2. il publie les nouvelles règles
+  `firestore.rules` dans la console Firebase ; 3. gardien, puis son accord pour le push. Ensuite : lui dire de cliquer
+  « Ne plus compter mes visites » sur ses appareils et de mettre `djingood.fr/?utm_source=tiktok` dans sa bio.
+  **Vu en essayant djingood.fr comme un visiteur sur téléphone (25 oct.)** : sur iPhone ou dans l'appli TikTok, aucune table
+  ne peut se brancher (pas de Web MIDI), mais Vini dit quand même « Branche-la en USB, je t'attends ! ». Lot proposé, pas
+  commencé : reconnaître le téléphone, dire « DJingood se joue sur ordinateur avec ta table », bouton pour s'envoyer le lien.
+  L'étape `sans-midi` des stats dira combien de visiteurs sont concernés.
+- **Marketing TikTok (25 oct. 2026) : l'utilisateur me demande d'être son « directeur marketing ».** Avant de proposer ou
+  de fabriquer une vidéo, lire `marketing/strategie.md` (règles : pas de pub, Vini dans chaque vidéo, trois piliers,
+  façon de travailler), `marketing/idees.md` (**toutes les idées déjà proposées : ne jamais en reproposer une**),
+  `marketing/veille.md` (tendances datées, à refaire à chaque fois) et `marketing/journal.md` (vidéos postées et leurs
+  chiffres à 48 h et 7 jours). Hors Git comme tout `marketing/`. Le compte s'appelle **@djingoood** (trois « o »), il est
+  **personnel** (tous les sons à la mode sont permis). Le Spot est sa première vidéo : 10 400 vues, 346 j'aime,
+  177 enregistrements à 48 h.
 - **Lots 43 et 44 PUBLIÉS le 23 oct. 2026** (commit `09b2312` sur `main`, envoyé avec l'accord explicite de l'utilisateur,
   **sans attendre l'essai sur la vraie table**, à sa demande). Production vérifiée sur djingood.fr : `js/set.js` servi, sept
   chapitres dont « Le set », la démo du niveau 1 démarre (morceau 1 sur 3, note 100), aucune erreur dans la console.
@@ -223,6 +243,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   → `sortie/djingood-spot-ecran.mp4` (et `-sans-son`), **environ 14 min de rendu**. `rendu.js` sait faire de l'horizontal
   (`window.TAILLE`, sortie « -ecran ») ; nouveau `apercu.js` (images fixes à des instants donnés, dans `apercu/`).
   En attente : l'avis de l'utilisateur sur la v1, puis son tournage (il m'envoie le film, je remets le son propre dessus).
+  **Version 2 avec voix off (23 oct. 2026)** : voix ElevenLabs « Eric - Dynamic and Energetic » générée par l'utilisateur
+  (formule payante nécessaire pour un usage commercial). Les pauses demandées n'ont pas été respectées : `voix-spot.js`
+  coupe aux silences et pose chaque phrase sur sa scène → `son/spot-voix-calee.wav` (détail dans `texte-voix-spot.md`).
+  La vidéo passe à **21,12 s** (44 temps) pour finir la voix. `rendu.js` : `window.VOIX_REGLAGE` (baisse de la musique,
+  ici seuil .06 / ratio 3, la musique reste ~15 dB sous la voix) et **`--son-seul`** (refait le son en 6 s sans refaire
+  les images). Je n'ai pas écouté le résultat : l'ordre des phrases est déduit de leurs durées.
+  **Profil TikTok** (même jour) : `marketing/profil/profil-sombre.png` et `profil-orange.png` (Vini, 1080 × 1080, orange
+  conseillé), fabriqués par `marketing/profil/profil.js`. Bio et description du post proposées dans la conversation.
+  **Décision de l'utilisateur : le compte TikTok @djingoood vise les gens qui s'intéressent au DJ** (débutants avec une
+  table), **pas l'audience IA / Claude** : textes, descriptions et hashtags parlent aux DJ, sans #claude ni #ia.
+  **Postée sur TikTok par l'utilisateur le 23 oct. 2026** (la version avec voix). Il aime beaucoup ce format (pub motion
+  design premium + voix off) : à reprendre pour les prochaines vidéos, « on verra plus tard pour en refaire ».
 - **Lot 40 « Le calage » (chapitre 5) publié le 21 oct. 2026** (voir l'entrée « Lot 40 »). **Ensuite : le chapitre 6 « Hot cues
   et boucles »**, plan validé par l'utilisateur le 21 oct. : 7 niveaux (poser un repère, lancer depuis le repère, B attend en
   boucle, prolonger l'outro, la montée 16 → 8 → 4, le double drop, sans filet), note en millisecondes, **Quantize allumé
@@ -1171,6 +1203,41 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   jeu ne change. 461 tests verts, gardien : feu orange (seulement cette ligne manquante). Le domaine des e-mails est en
   cours côté utilisateur : il en était à la page du modèle « Réinitialisation du mot de passe », avant « Personnaliser
   le domaine ». Une fois les lignes DNS de Firebase recopiées chez OVH, vérifier sur `ns103.ovh.net` qu'il n'y a qu'un `v=spf1`.
+- **Lot 45 « Stats et retours » (25 oct. 2026)** : branche `lot-45-stats`, non publiée. Deux trous bouchés : le site ne comptait
+  aucune visite, et « Mon avis » / « C'était clair ? » restaient dans le navigateur du joueur (jamais lus par l'équipe).
+  - `js/stats.js` (nouveau, **chargé juste après `erreurs`**, ne dépend d'aucun autre fichier ; aussi chargé seul par
+    `presentation.html` et `confidentialite.html`) : Umami Cloud (`STATS_SRC` = `https://cloud.umami.is/script.js`,
+    `STATS_ID` **vide tant que l'utilisateur ne l'a pas donné** → rien n'est chargé). Chargé seulement sur `STATS_DOMAINES`
+    (djingood.fr, www, coach-bass-swap.vercel.app), jamais en local ni dans les tests ; `data-domains` en plus ;
+    `data-exclude-hash` (les onglets `#…` ne font pas une page vue chacun). `stat(nom, données)` envoie (file d'attente avant
+    l'arrivée du script) ; `stat1(nom)` = une étape **une seule fois par navigateur**, liste `STATS_ETAPES`, gardée dans
+    `coach-stats`, et marquée seulement si elle part vraiment (`statsActif`). Refus : `umami.disabled` dans localStorage
+    (réglage prévu par Umami), bouton de `confidentialite.html` (`statsRefuser`). Les tests posent un faux `window.umami`.
+  - Étapes appelées depuis : `midi.js` (`sans-midi`, `table-branchee` avec le nom), `premiers.js` (`premiers-pas-fin` avec
+    parcours et table oui/non, `premiers-pas-passes`), `niveaux.js` (`premiere-partie` dans `startRun` hors démo ;
+    `premiere-reussite` et `chapitre-N` dans `finish` à 2 étoiles ou plus, hors entraînement et test), `compte.js` (`compte`),
+    `rekordbox.js` (`rekordbox`), `avis.js` (`revenu` à 2 jours différents, `jours-7`). À chaque fois : `clair` (niveau +
+    réponse, quand la réponse change) et `avis` (la note). `coach-stats` est dans `CPT_LOCAL` et **gardée par « Tout
+    recommencer à zéro »** (un testeur qui recommence ne doit pas compter deux fois).
+  - **Avis envoyés** (`js/avis.js`) : « Enregistrer mon avis » devient « Envoyer mon avis ». Sur le vrai site
+    (`avisEnLigne` : config Firebase + domaine du site, ou `window.DJINGO_FIREBASE` des tests), l'avis part dans la collection
+    Firestore **`avis`** (`avisDoc` : v, quand = heure du serveur, jour, écran, note, bloqué, plu, parcours, table, navigateur,
+    et `uid` si connecté ; **jamais l'e-mail ni le prénom**), en chargeant Firebase à ce moment-là (`cptSdkDb`). 8 s sans
+    réponse (`AVIS_LENT`, hors ligne) = pas parti : gardé avec `p: 0` et renvoyé tout seul 10 s après le chargement suivant
+    (`avisEnCours` évite un double envoi). `p: 1` = parti. **Les avis écrits avant ce lot n'ont pas de `p` et ne partent
+    jamais** (on avait promis « rien n'est envoyé sans toi »). En local, comportement d'avant. Le rapport des testeurs ne change pas.
+  - `firestore.rules` : nouvelle collection `avis`, **création seulement** (`avisOk` : champs autorisés, longueurs, `uid` =
+    celui du compte connecté), jamais relue depuis le site. **À publier par l'utilisateur avant la mise en ligne** (sinon
+    l'avis reste en attente et repart plus tard, rien ne casse). Un test compare la liste `hasOnly` aux champs envoyés.
+    Risque connu : n'importe qui peut déposer des avis (spam), limité par les règles et le quota gratuit de Firebase.
+  - `confidentialite.html` (nouveau) : « Ce que DJingood garde sur toi » (ordinateur, compte, statistiques avec le bouton de
+    refus, avis, contact par « Mon avis » faute d'adresse choisie). Liens depuis « Mon avis », la fenêtre du compte, la
+    présentation (question « Qu'est-ce que DJingood sait de moi ? » + pied de page) et la fiche des testeurs (dont le texte
+    « Rien n'est envoyé tout seul » est corrigé). Classes `.avlien`, `.pres-pied` à la fin de `styles.css`.
+  - `STATISTIQUES.md` : la marche à suivre de l'utilisateur (compte Umami, règles, exclure ses visites, lien TikTok, où lire quoi).
+  - Tests : `tests/stats.spec.js` (19 tests). Captures : `captures/lot45/` (hors Git, `node captures/lot45/captures.js`).
+  **Pas fait, à décider avec l'utilisateur** : une vraie adresse de contact (aujourd'hui « écris-nous avec Mon avis ») ;
+  mentions légales.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -1189,7 +1256,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `styles.css` — toute l'apparence (thème sombre « Cabine »).
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
-  `erreurs` (bandeau d'erreur) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
+  `erreurs` (bandeau d'erreur) → `stats` (statistiques Umami, lot 45) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `set` (chapitre 7 « Le set », lot 44) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
@@ -1198,6 +1265,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
   dans un fichier chargé avant ; `function stop` remplace `window.stop` (sans effet connu).
   Étape suivante possible, non commencée : de vrais modules avec import/export.
+- `confidentialite.html` — « Ce que DJingood garde sur toi » (lot 45), avec le bouton qui refuse les statistiques.
+- `STATISTIQUES.md` — marche à suivre de l'utilisateur pour Umami et pour lire les avis (lot 45).
 - `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap), retiré du site : la page renvoie
   vers `index.html#vrai`. Son code sert de base à « Passer au vrai » ; `coach.html?ancien=1` l'affiche encore.
 - `tests/` — scripts Playwright (Python) : `tdz.py`, `robust.py`, `clar.py`, `play.py`, `play2.py`, `user.py`.
@@ -1280,7 +1349,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 45 ; gardée par « Tout recommencer à zéro », ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -1294,7 +1363,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/stats.spec.js` : statistiques et avis envoyés (lot 45, faux Umami et faux Firebase). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

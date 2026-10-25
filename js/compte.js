@@ -43,8 +43,9 @@ const CPT_MAX = 400000;                       // au-delà, on n'envoie pas (gard
      envoi toutes les 15 secondes par onglet ouvert, pour rien. Le rapport se copie depuis l'appareil de toute façon.
    - `coach-ordre` : ce n'est pas de la progression mais le **format** des données de ce navigateur (lot 26, nouvel
      ordre du chapitre 1). Il est posé à chaque chargement par `ordreMigre`. S'il voyageait et revenait absent d'un
-     paquet, les étoiles seraient déplacées une deuxième fois, donc fausses. */
-const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', CPT_KEY];
+     paquet, les étoiles seraient déplacées une deuxième fois, donc fausses.
+   - `coach-stats` : les étapes déjà comptées par les statistiques sur ce navigateur (stats.js). */
+const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', 'coach-stats', CPT_KEY];
 const cptOn = () => !!(CPT_CFG && CPT_CFG.apiKey && CPT_CFG.projectId && CPT_CFG.appId);
 const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_LOCAL.includes(k);
 
@@ -198,6 +199,7 @@ function cptChange(u){
   if (!u){ const avait = !!cpt; cpt = null; cptBloque = true; cptAttente = null;
     if (avait){ cptPas = 'accueil'; cptFait = ''; try { cptBrut.del(CPT_KEY); } catch (e) {} } cptEtat(); return; }
   cpt = { uid: u.uid, prenom: (u.displayName || '').trim().split(/\s+/)[0] || 'toi' };
+  stat1('compte');   // la première connexion sur ce navigateur (stats.js)
   if (!cptSauve || cptSauve.uid !== cpt.uid){ cptMaj = 0; cptSale = false; }   // un autre compte que la dernière fois
   cptNote(); cptEtat();
   if (cptFait !== cpt.uid){ cptFait = cpt.uid; cptSync().catch(e => { cptBloque = true; cptDit(cptErreur(e)); cptEtat(); }); }
