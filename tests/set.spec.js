@@ -25,7 +25,7 @@ test.describe('Le chapitre', () => {
     await ch7(page, 0);
     await expect(page.locator('.node')).toHaveCount(7);
     await expect(page.locator('#ltitle')).toHaveText('Premier enchaînement');
-    await expect(page.locator('#starTot')).toHaveText(/\/129$/);
+    await expect(page.locator('#starTot')).toHaveText(/\/150$/);
     // la feuille de route : trois morceaux, A puis B puis A
     await expect(page.locator('#setRoute')).toBeVisible();
     await expect(page.locator('#setRouteList li:not(.sep)')).toHaveText([/«\sNéon\s»/, /«\sMinuit\s»/, /«\sVelours\s»/]);   // espaces insécables dans les guillemets

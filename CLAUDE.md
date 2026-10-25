@@ -32,24 +32,47 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 25 oct. 2026)
-- **Lot 49 « Set plus court » (25 oct. 2026, branche `lot-49-set-plus-court`, copie `Documents\coach-dj-lot47`, NON PUBLIÉ).**
-  Au chapitre 7, le drop de chaque morceau dure 16 temps au lieu de 32 : l'attente entre deux transitions passe d'environ
-  15 s à environ 7 s (demande de l'utilisateur après le lot 47). Numéroté 49 parce qu'une autre session fait le lot 48
-  (`lot-48-comprendre`). Voir l'entrée « Lot 49 » à la fin de « Où on en est ». Avant de publier : gardien, puis son accord.
-- **Lot 47 « Niveaux plus courts » : PUBLIÉ le 25 oct. 2026 au soir** (commit `4dff949`, « Oui, publie le lot 47 malgré le feu
-  orange »). Niveaux écourtés (plus d'attente après le seul geste) et voix fabriquée du chapitre 3 supprimée. Production
-  vérifiée (nouveaux fichiers servis, plus de voix, aucune erreur). Voir l'entrée « Lot 47 » à la fin de « Où on en est ».
-  Reste : l'essai sur la vraie FLX4. (L'attente entre deux transitions du chapitre 7 : lot 49, juste au-dessus.)
-- **Lot 46 « Stats et retours » (25 oct. 2026, branche `lot-46-stats`, NON PUBLIÉ).** Contexte donné par l'utilisateur : la
+- **Lot 48 « Comprendre » (25 oct. 2026, branche `lot-48-comprendre`, FAIT, NON PUBLIÉ).** Maquette validée par l'utilisateur
+  (« OK vas-y, on part là-dessus ») avec les trois choix : les 7 leçons dans cet ordre ; sur un téléphone, après les questions
+  de Vini, on va à Comprendre ; sur ordinateur rien n'est imposé, étoiles dans le total (129 → 150), 10 XP par étoile.
+  Détail dans l'entrée « Lot 48 » de « Où on en est ». Maquette et captures d'avant (hors Git) : `captures/maquette-comprendre/`.
+  **Gardien : feu rouge puis feu orange (second passage, aucun blocage)** ; lot 47 publié fusionné dedans (commit `b4c9379`) ;
+  **543 tests verts** sur la version fusionnée (26 oct. 2026). Captures montrées à l'utilisateur. **Reste : son accord pour publier.** **Jamais écouté par un humain** : les
+  sons sont fabriqués par le site (boîte à rythmes de `js/comprendre.js`), à faire écouter à l'utilisateur sur son téléphone.
+  Même jour, question de l'utilisateur « faut-il forcer la création d'un compte ? » : conseillé **non** (modèle Duolingo : on
+  joue d'abord, le compte est proposé juste après une réussite, avec une vraie raison ; obligatoire seulement plus tard, au
+  moment de payer). C'est ce que fait la fin de leçon sur téléphone. À mesurer avec l'étape `compte` d'Umami.
+  Piège rencontré : les heredocs de Git Bash mangent les antislashs (`\1` devenu un caractère de contrôle) ; écrire les
+  scripts avec l'outil d'écriture, et l'outil d'écriture transforme les `\u00a0` en vrais caractères (sans gêne en JS).
+- **Lot 47 « Niveaux plus courts » : PUBLIÉ le 25 oct. 2026 au soir** (commit `4dff949` sur `main`, « Oui, publie le lot 47
+  malgré le feu orange » ; fait dans la copie `Documents\coach-dj-lot47`, branche `lot-47-plus-court`, fusionnée avec le
+  lot 46 avant l'envoi). Gardien : feu orange sans blocage, 520 tests sur 521 (l'échec : `vini-sons.spec.js` calcule « hier »
+  en retirant 24 h, faux la nuit du passage à l'heure d'hiver ; il échoue aussi sur l'ancienne version, le site n'a pas ce
+  défaut). Production vérifiée : nouveaux `js/niveaux.js` et `js/morceaux.js` servis, plus de voix, « Une seule mélodie à la
+  fois », aucune erreur. Demandes de l'utilisateur : plus d'attente après le seul geste d'un niveau (une partie commence au
+  plus 16 temps avant le premier geste, finit au plus 12 temps après le dernier), et la voix fabriquée de « Une seule voix à
+  la fois » supprimée partout (« je veux plus jamais l'entendre ») : **ne jamais remettre de voix fabriquée par le site**.
+  Détail dans l'entrée « Lot 47 » de « Où on en est » (sur `main`). **Pour la branche `lot-48-comprendre`** : fusionner
+  `origin/main` avant de publier (le lot 47 touche aussi `js/parcours.js`, ligne de l'étape ch3, et CLAUDE.md).
+- **Lot 49 « Set plus court » (25-26 oct. 2026, NON PUBLIÉ) : branche `lot-49-set-plus-court`, dans la copie
+  `Documents\coach-dj-lot47`** (lot 48 publié fusionné dedans). Demande de l'utilisateur : raccourcir l'attente entre deux
+  transitions au chapitre 7. Le drop de chaque morceau du set dure 16 temps au lieu de 32 (≈ 7 s seul au lieu de 15) ; la note
+  « phrase » vérifie que le drop du morceau qui entre tombe pile à la fin de celui qui sort ; la démo de « La montée » ramène
+  enfin le tempo (défaut ancien). Gardien, premier passage : feu orange, mais les pièges du break et de l'intro courte ne
+  coûtaient plus rien : corrigé (ils coûtent de nouveau 8 points, Vini prévient pendant un break). Détail dans l'entrée
+  « Lot 49 » de « Où on en est ». L'utilisateur : « si c'est vert ou orange sans blocage, publie le lot 49 ».
+- **Lot 46 « Stats et retours » : PUBLIÉ le 25 oct. 2026** (commit `462c377`, « Oui, publie le lot 46 », règles
+  `firestore.rules` publiées par l'utilisateur juste avant). Production vérifiée : `js/stats.js` servi avec l'identifiant,
+  `confidentialite.html` en ligne, `avisEnvoie` servi. **À faire par l'utilisateur** : voir sa visite dans « Realtime »
+  d'Umami, puis « Ne plus compter mes visites » sur ses appareils ; envoyer un avis de test et le voir dans Firestore
+  (`avis`) ; choisir une adresse de contact pour la page de confidentialité (le RGPD demande qui gère le site). Contexte donné par l'utilisateur : la
   première vidéo TikTok a fait 10 000 vues, 350 likes et beaucoup d'enregistrements ; 5 comptes créés (vus dans Firebase) ;
   des retours « le concept est cool » mais aucun retour détaillé. Pour lui, la priorité est d'être actif sur TikTok ; il
   voulait suivre les stats « avec Google Analytics ». **Choix de l'utilisateur : Umami** (GA demande un bandeau de cookies
   en France ; le compteur gratuit de Vercel ne compte pas les étapes du jeu). Détail dans l'entrée « Lot 46 » plus bas et
   dans `STATISTIQUES.md` (marche à suivre pour lui). Numéroté 45 au départ, **renommé 46** parce qu'une session cloud avait
   publié un autre « lot 45 » le 24 oct. ; fusionné avec `origin/main` le 25 oct. **`STATS_ID` est rempli** (commit
-  `14e7423`, identifiant Umami de djingood.fr). **Avant de publier** : 1. l'utilisateur publie `firestore.rules` dans la
-  console Firebase ; 2. gardien, puis son accord pour le push. Ensuite : lui dire de cliquer « Ne plus compter mes visites »
-  sur ses appareils (`djingood.fr/confidentialite.html`).
+  `14e7423`, identifiant Umami de djingood.fr ; le script `cloud.umami.is/script.js` envoie à `gateway.umami.is`).
   **Lien en bio TikTok pas cliquable** (compte personnel, 44 abonnés, il en faut 1 000 ; passer en compte Entreprise :
   « trop compliqué pour le moment ») : pas de lien `?utm_source=tiktok`. Conseillé : l'adresse bien visible et dite dans
   chaque vidéo, un commentaire épinglé « 👉 djingood.fr », et lire les visites « Direct » d'Umami comme venant de TikTok.
@@ -1271,7 +1294,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     AlphaTheta « DDJ-FLX2 / XDJ-AZ MIDI-compatible software »). Bloquées par le réseau de la session : il faut que l'utilisateur
     autorise ces sites dans les réglages de l'environnement. L'XDJ-AZ a sa propre table de mixage : ce que devient le son du
     site s'il sort par sa carte son n'a jamais été essayé. Sur Windows, elle demande son pilote.
-- **Lot 46 « Stats et retours » (25 oct. 2026)** : branche `lot-46-stats`, non publiée (numérotée 45 au départ). Deux trous bouchés : le site ne comptait
+- **Lot 46 « Stats et retours » (25 oct. 2026)** : branche `lot-46-stats`, **publié le 25 oct. 2026** (commit `462c377` ; gardien :
+  feu orange, 509 tests verts, remarques corrigées : page de confidentialité exacte, « autre table », avis en double). Numéroté 45 au départ. Deux trous bouchés : le site ne comptait
   aucune visite, et « Mon avis » / « C'était clair ? » restaient dans le navigateur du joueur (jamais lus par l'équipe).
   - `js/stats.js` (nouveau, **chargé juste après `erreurs`**, ne dépend d'aucun autre fichier ; aussi chargé seul par
     `presentation.html` et `confidentialite.html`) : Umami Cloud (`STATS_SRC` = `https://cloud.umami.is/script.js`,
@@ -1346,6 +1370,54 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     « B arrive tout seul » devenus « B joue déjà » ; fiche du MID « les voix et les mélodies ». Laissé, à faire essayer à
     l'utilisateur : au chapitre 2 et en Expert, il ne reste que 16 temps (8 à 16 en Expert) pour sentir la phrase au filtre
     et au swap ; au chapitre 3, on n'entend plus le drop de B tomber.
+- **Lot 48 « Comprendre » (25 oct. 2026)** : branche `lot-48-comprendre`, non publiée. Sept petites leçons de théorie sans table,
+  au doigt sur un téléphone (souris ou Espace sur ordinateur), pour les visiteurs de TikTok. `js/comprendre.js` (chargé après
+  `quetes`, avant `table`) :
+  - `CP_LECONS` : 1. Le temps · 2. Compter jusqu'à 4 · 3. La vitesse · 4. La phrase · 5. Les parties d'un morceau · 6. Grave,
+    médium, aigu · 7. La transition ; chaque leçon = cartes `explique` (bulle de Vini + « Écouter », ronds ou cases qui
+    s'allument), `tape` (modes `temps` : 8 temps, réussi à 6 ; `un` : le « 1 » de 4 mesures, réussi à 3 et au plus une frappe
+    ailleurs ; `change` : le début de la phrase suivante, de −0,25 s à +0,4 s ; « pile » à 0,11 s, « presque » à 0,2 s ; 4 temps
+    pour se caler ; un « Réessayer » puis « Passer »), `choix` (texte, ou un son par option : deux options sonores côte à
+    côte), `ordre`. Constructeurs `cpE`, `cpT`, `cpC`, `cpO`, motifs `cpM`. Fin : `retenir`, étoiles (tout juste du premier
+    coup = 3, 60 % = 2, sinon 1), `+N XP`, « Leçon suivante » / « Rejouer », et sur téléphone sans compte « crée ton compte »
+    (ouvre la fenêtre du compte sur « Créer »).
+  - Sons : boîte à rythmes `cpJoue(motif ou liste)` dans l'AudioContext du site (`master`) : grosse caisse, charleston, clap,
+    basse, `basse2` (une basse qui ne va pas avec), `basseB`, accords, nappe, cymbale (`cymbale1` sur chaque « 1 », `cymbale: k`),
+    `irregulier`, `coupe: [k, 'basses' | 'aigus']` (lowshelf / highshelf à −40 dB). Instant entendu `cpEntendu()` ; les tests
+    appellent `cpFrappe(t)` avec l'instant voulu.
+  - Fenêtre `#cp` (index.html) dans le cadre des Premiers pas (classes `pp-…`, bouton du bas orange), bandeau de correction
+    `#cpVerdict` en bas (vert / rouge). Échap ferme ; Espace tape (et ne lance plus de partie derrière).
+  - Branchements : `cpMobile()` = pas de Web MIDI (`midiEtat === 'absent'`) ou écran tactile de moins de 900 px ; `cpEtape()`
+    = `cpMobile()`. `parcoursEtapes(p)` (parcours.js) met `comprendre` en tête sur un téléphone (sans toucher à `PARCOURS`) ;
+    `STAGES.comprendre` est posé par comprendre.js. Premiers pas (`ppFin`) : sur téléphone, `STAGES[nextStage()].go()` ouvre la
+    leçon. Le guide ne s'ouvre pas tout seul sur téléphone (demarrage.js). Accueil : `#homeLien` « M'envoyer le lien »
+    (`navigator.share`, sinon le lien copié) sur téléphone. « Apprendre » : `#cpBloc` en haut (replié sur ordinateur, ouvert
+    sur téléphone, décidé à la première ouverture de l'onglet), `cpRendChemin` appelé par `renderHud`. Leçon N ouverte quand
+    la N−1 est finie (toutes pour Apprenti DJ et DJ confirmé, ou `?tout=1`).
+  - Étoiles `coach-comprendre` (`cpStars`, validées par `cleanBank`), 10 XP par étoile (`cpXp` dans `xpTotal`), total « /150 »
+    (`renderHud`), « Mes progrès » (ligne Comprendre en tête), rapport des testeurs, `cptPoids` et `cptResume` (sinon une
+    progression faite seulement dans Comprendre sur un téléphone serait vue comme vide par le compte, et perdue).
+    `goalAdd` (objectif du jour). Statistiques : `comprendre-1`, `comprendre-fin`.
+  - Tests : `tests/comprendre.spec.js` (22) ; « Mes progrès » a une ligne de plus (`rangement.spec.js`) ; « /129 » → « /150 » dans `combos`, `hotcues`, `set`, `site` ; ordre des fichiers
+    dans `site.spec.js` ; ligne du rapport dans `avis.spec.js`. Essai et captures : `captures/lot48/` (hors Git).
+  - **Gardien, premier passage : feu rouge** (525 tests verts), corrigé, un test chacun (« Corrections du gardien ») :
+    1. « Remets les parties dans l'ordre » refusait « intro, drop, break, outro », l'ordre que la leçon venait de présenter :
+       `cpO(…, aussi)` accepte les deux ordres du milieu (l'intro au début, l'outro à la fin) ; 2. l'écran de la série ne
+       s'affichait pas quand l'objectif du jour était atteint pendant une leçon (`goalFresh` → `openSerie`, comme le quiz) ;
+       l'écouteur du clavier de la leçon est sur `window` pour passer avant celui de la série (Échap ne ferme qu'elle).
+    Remarques reprises : un Mac avec Safari n'est pas un téléphone (`cpMobile` = pas de Web MIDI **et** `midiIos()`, ou écran
+    tactile) ; le rond compte 1, 2, 3, 4 ; textes de la leçon 1 (« le rond », « Encore, sans aide ») et 7 (« B entre », sans
+    « sur une phrase » : dans le son il entre au bout de 8 temps) ; « Tu n'entends rien ? » sur la première carte et
+    `navigator.audioSession.type = 'playback'` (iPhone en mode silencieux, Safari 17 et plus, jamais essayé) ; taper sans arrêt
+    ne réussit plus (une deuxième frappe sur un temps compte « ailleurs », au plus 2) ; frappes toutes en retard du même écart :
+    conseil des écouteurs sans fil (les AirPods ajoutent un retard que l'iPhone ne donne sans doute pas : à essayer) ; Espace
+    tenu enfoncé n'envoie plus de rafale ; le lien d'envoi se cache quand on rouvre le choix du parcours.
+    **À dire à l'utilisateur** : si son ordinateur a déjà sa propre progression avant la connexion, le site demande laquelle
+    garder (limite du lot 34) ; garder celle de l'ordinateur ferait perdre les étoiles de Comprendre gagnées sur le téléphone.
+  - **Test fragile repéré (pas lié au lot)** : `vini-sons.spec.js` « objectif atteint, série en cours… » échoue le soir du
+    passage à l'heure d'hiver (25 oct. 2026, dernière heure) : il prend « hier » = maintenant − 24 h, alors que ce jour-là dure
+    25 h. Échoue aussi sur `main` (vérifié dans une copie à part). Repasse tout seul le lendemain ; à corriger un jour (calculer hier
+    avec `setDate(getDate() - 1)`).
 - **Lot 49 « Set plus court » (25 oct. 2026)** : branche `lot-49-set-plus-court`, partie de `origin/main` après le lot 47,
   dans la copie `Documents\coach-dj-lot47` (tests : `DJ_PORT=8768 npx playwright test`). Demande de l'utilisateur : « raccourcis
   aussi l'attente entre deux transitions au chapitre 7 ».
@@ -1393,7 +1465,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `stats` (statistiques Umami, lot 46) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `set` (chapitre 7 « Le set », lot 44) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
-  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) →
+  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) → `comprendre` (leçons sans table, lot 48) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
   `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
@@ -1481,7 +1553,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   les étoiles non gagnées, volontairement estompées.
 
 ### Clés localStorage
-`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
+`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
@@ -1498,7 +1570,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

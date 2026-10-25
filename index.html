@@ -28,6 +28,18 @@
     <div class="pp-foot"><button type="button" class="pp-go" id="ppGo" disabled>Continuer</button></div>
   </div>
 </div>
+<!-- Comprendre (lot 48) : une leçon, dans le cadre des Premiers pas -->
+<div class="pp cp" id="cp" hidden role="dialog" aria-modal="true" aria-labelledby="cpTitre">
+  <div class="pp-col" id="cpCol" tabindex="-1">
+    <div class="pp-top">
+      <button type="button" class="pp-back" id="cpX" aria-label="Fermer la leçon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="pp-bar" id="cpBar" role="progressbar" aria-label="Avancement de la leçon" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="cpFill"></i></div>
+    </div>
+    <div class="pp-body cp-corps" id="cpCorps"></div>
+    <div class="cp-verdict" id="cpVerdict" hidden role="status"><h3 id="cpVTitre"></h3><p id="cpVTexte"></p><div class="cp-vboutons" id="cpVBoutons"></div></div>
+    <div class="pp-foot" id="cpPied"><button type="button" class="pp-go" id="cpGo">Continuer</button></div>
+  </div>
+</div>
 <div class="serie" id="serie" hidden role="dialog" aria-modal="true" aria-labelledby="serieNum serieTxt">
   <div class="serie-col">
     <p class="pp-bubble serie-bulle" id="serieDit"></p>
@@ -197,6 +209,7 @@
         <h1 id="homeTitle">Tu as une table et tu n'y connais rien ?</h1>
         <p class="lead" id="homeLead">En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.</p>
         <button type="button" class="cta" id="homeCta" hidden>Commencer</button>
+        <p class="homelien" id="homeLien" hidden><span>Ta table, ce sera sur ordinateur.</span> <button type="button" class="linkbtn" id="homeLienBtn">M’envoyer le lien</button></p>
         <div class="goalbox" id="homeGoal" hidden>
           <svg class="gring" viewBox="0 0 64 64" aria-hidden="true"><circle class="gtrack" cx="32" cy="32" r="27"/><circle class="gfill" id="goalFill" cx="32" cy="32" r="27"/></svg>
           <div class="gtxt"><strong id="goalTitle"></strong><span id="goalSub"></span></div>
@@ -340,6 +353,8 @@
   </div>
 
   <div class="view" id="vLearn" hidden>
+  <details class="cpbloc" id="cpBloc"><summary><span class="cpb-t"><b>Comprendre</b> · sans table</span><span class="cpb-n" id="cpBlocN">0/21 ★</span></summary>
+    <p class="cpb-sub">7 petites leçons pour entendre ce que fait un DJ. Juste ton doigt et le son.</p><ol class="cpchemin" id="cpChemin"></ol></details>
   <div class="chapsel"><button type="button" class="chapbtn" id="chapBtn" aria-expanded="false" aria-controls="chapters">Chapitre 1</button><nav class="chapters" id="chapters" aria-label="Chapitres" hidden></nav></div>
 
   <nav class="map" id="map" aria-label="Niveaux"><span class="prog" id="mapProg" style="width:0"></span></nav>
@@ -508,6 +523,7 @@
 <script src="js/vini.js"></script>
 <script src="js/premiers.js"></script>
 <script src="js/quetes.js"></script>
+<script src="js/comprendre.js"></script>
 <script src="js/table.js"></script>
 <script src="js/reglage.js"></script>
 <script src="js/verif.js"></script>

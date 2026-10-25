@@ -70,7 +70,8 @@ function ppFin(){
   ppSave({ niveau: r.niveau, table: r.table, modele: r.modele, min: r.min, fini: dayKey() });
   stat1('premiers-pas-fin', { parcours: r.niveau, table: r.table === 'table' ? 'oui' : 'non' });
   goalSet(r.min); ppClose(); setParcours(r.niveau);
-  if (r.niveau === 'debut') goLesson(1, 0); else STAGES[nextStage() || PARCOURS[r.niveau].stages[0]].go();
+  // sur un téléphone, « Comprendre » passe devant (lot 48) : nextStage la donne en premier
+  if (r.niveau === 'debut' && !cpEtape()) goLesson(1, 0); else STAGES[nextStage() || PARCOURS[r.niveau].stages[0]].go();
 }
 function ppPasser(){ ppSave({ passe: true, fini: dayKey() }); stat1('premiers-pas-passes'); ppClose(); renderHome(); }
 const ppPret = () => { const r = pp.rep, id = PP_ETAPES[pp.i];

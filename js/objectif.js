@@ -68,7 +68,9 @@ function openSerie(){
   if (!$('serieVini').firstChild) viniMettre($('serieVini'), 'danse'); else viniHumeur($('serieVini'), 'danse');
   $('serie').hidden = false; $('serieGo').focus({ preventScroll: true }); son('serie');
 }
-function closeSerie(){ $('serie').hidden = true; const r = $('retry'); if (!$('result').hidden && r && !r.hidden) r.focus({ preventScroll: true }); }
+// Après une leçon « Comprendre » (lot 48), le curseur revient sur « Leçon suivante », pas sur « Rejouer » d'une partie restée derrière
+function closeSerie(){ $('serie').hidden = true; const l = document.querySelector('#cp:not([hidden]) .cp-fin .cp-vgo'); if (l){ l.focus({ preventScroll: true }); return; }
+  const r = $('retry'); if (!$('result').hidden && r && !r.hidden) r.focus({ preventScroll: true }); }
 $('serieGo').addEventListener('click', closeSerie);
 // Échap ferme seulement l'écran de la série (écouté en premier, il ne ferme pas aussi la carte de résultat)
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('serie').hidden){ e.stopPropagation(); closeSerie(); } }, true);
