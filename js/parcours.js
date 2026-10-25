@@ -88,7 +88,9 @@ const STAGES = {
   vrai: { title: 'Passer au vrai', text: 'Avec ta musique : importe ta collection rekordbox, choisis une paire, et fais les missions sur ta table.',
     done: () => rbMis.total > 0, cta: () => 'Aller à Passer au vrai', go: () => { location.hash = '#vrai'; } }
 };
-const nextStage = () => parcours ? PARCOURS[parcours].stages.find(id => !STAGES[id].done()) || '' : '';
+// Les étapes de ce parcours : sur un téléphone, « Comprendre » passe devant (lot 48, cpEtape dans comprendre.js)
+const parcoursEtapes = p => (typeof cpEtape === 'function' && cpEtape() ? ['comprendre'] : []).concat(PARCOURS[p].stages);
+const nextStage = () => parcours ? parcoursEtapes(parcours).find(id => !STAGES[id].done()) || '' : '';
 function setParcours(p){ if (!PARCOURS[p]) return; parcours = p; parcoursPick = false; try { localStorage.setItem('coach-parcours', p); } catch (e) {} parcoursOuvre(); renderHome(); }
 function renderHome(){
   const choosing = !parcours || parcoursPick, cur = nextStage(), st = STAGES[cur];
@@ -102,10 +104,11 @@ function renderHome(){
   $('homeLead').textContent = st ? st.text : 'Garde la main : un défi par jour, et de nouvelles paires de morceaux dans rekordbox.';
   $('homeCta').textContent = st ? st.cta() : 'Faire le défi du jour';
   renderGoal(); homeVini();
-  const n = PARCOURS[parcours].stages.indexOf(cur); $('pathSum').textContent = cur ? `Voir tout mon parcours · étape ${n + 1} sur ${PARCOURS[parcours].stages.length}` : 'Voir tout mon parcours · terminé';
+  $('homeLien').hidden = !(typeof cpMobile === 'function' && cpMobile());   // lot 48 : sur un téléphone, s'envoyer le lien pour l'ordinateur
+  const etapes = parcoursEtapes(parcours), n = etapes.indexOf(cur); $('pathSum').textContent = cur ? `Voir tout mon parcours · étape ${n + 1} sur ${etapes.length}` : 'Voir tout mon parcours · terminé';
   $('homePathName').textContent = PARCOURS[parcours].name;
   const ol = $('homeStages'); ol.innerHTML = '';
-  PARCOURS[parcours].stages.forEach((id, n) => { const s = STAGES[id], done = s.done(), now = id === cur;
+  etapes.forEach((id, n) => { const s = STAGES[id], done = s.done(), now = id === cur;
     const liEl = document.createElement('li'), num = document.createElement('span'), box = document.createElement('div'), t = document.createElement('strong'), d = document.createElement('span'), tag = document.createElement('span');
     liEl.className = done ? 'done' : now ? 'now' : ''; if (now) liEl.setAttribute('aria-current', 'step');
     num.className = 'num'; num.textContent = done ? '✓' : String(n + 1); t.textContent = s.title; d.textContent = s.text;
@@ -158,6 +161,7 @@ function renderProgres(){
     ul.appendChild(liEl); };
   const ch = n => CHAPTERS.find(c => c.n === n).title, max1 = BASE_LESSONS.length * 3;
   const open = (n, bank, len) => row(`${n} · ${ch(n)}`, `${sumStars(bank)} ★ sur ${len * 3}`, sumStars(bank) / (len * 3), () => goLesson(n, firstTodo(bank, len)));
+  if (typeof cpEtoiles === 'function') row('Comprendre', `${cpEtoiles()} ★ sur ${CP_LECONS.length * 3}`, cpEtoiles() / (CP_LECONS.length * 3), () => { location.hash = '#apprendre'; setView('apprendre'); $('cpBloc').open = true; $('cpBloc').scrollIntoView({ block: 'start' }); });
   open(1, stars, BASE_LESSONS.length);
   // Le chapitre 6 n'apparaît ici que s'il est prêt (CH6_PRET dans js/hotcues.js) : sinon on l'annoncerait à un
   // joueur qui ne pourrait jamais l'ouvrir, et son bouton ne mènerait nulle part.

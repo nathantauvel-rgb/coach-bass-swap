@@ -71,8 +71,9 @@ test.describe('Mes progrès', () => {
     await expect(page.locator('#badgeCount')).toHaveText('2 sur 13');
     await expect(page.locator('#homeBadges li')).toHaveCount(13);
     await expect(page.locator('#homeBadges li.won strong')).toHaveText(['Premier pas', 'Bon timing']);   // les gagnées d'abord
-    await expect(page.locator('#pgChaps li').first()).toContainText('1 · Les bases');
-    await expect(page.locator('#pgChaps li').first()).toContainText('5 ★ sur 21');
+    await expect(page.locator('#pgChaps li').first()).toContainText('Comprendre');   // les leçons sans table (lot 48) d'abord
+    await expect(page.locator('#pgChaps li').nth(1)).toContainText('1 · Les bases');
+    await expect(page.locator('#pgChaps li').nth(1)).toContainText('5 ★ sur 21');
     await expect(page.locator('#pgChaps li.locked').first()).toContainText('encore 9 étoiles au chapitre 1');
     await expect(page.locator('.ptile')).toHaveCount(0);
     expect(erreurs).toEqual([]); await sansBandeau(page);
@@ -104,7 +105,7 @@ test.describe('Mes progrès', () => {
   });
   test('chapitres ouverts : une barre chacun, et un clic ouvre le chapitre', async ({ page }) => {
     await ouvrir(page, { onglet: 'progres', stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 2 }), 'coach-ch2': S({ 0: 2 }) } });
-    await expect(page.locator('#pgChaps li:not(.locked)')).toHaveCount(6);   // 1, 2, 4, 5 (le calage, lot 40), 6 (hot cues et boucles, lot 41) et 7 (le set, lot 44)
+    await expect(page.locator('#pgChaps li:not(.locked)')).toHaveCount(7);   // Comprendre (lot 48), 1, 2, 4, 5 (le calage, lot 40), 6 (hot cues et boucles, lot 41) et 7 (le set, lot 44)
     await expect(page.locator('#pgChaps li.locked')).toHaveText(['3 · Les vrais morceauxencore 8 étoiles au chapitre 2']);
     await page.locator('#pgChaps button', { hasText: '4 · Les combos' }).click();
     await expect(page.locator('#vLearn')).toBeVisible();

@@ -28,7 +28,7 @@ test.describe('Ouverture du chapitre 4', () => {
     await expect(page.locator('.node')).toHaveCount(4);
     await expect(page.locator('.node .t')).toHaveText(['Filtre et swap', 'La transition éclair', 'Écho et drop, sans filet', 'Le grand mix']);
     expect(await page.evaluate(() => TOL)).toBe(.5);
-    await expect(page.locator('#starTot')).toHaveText('14/129');
+    await expect(page.locator('#starTot')).toHaveText('14/150');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('un chapitre 4 mémorisé mais verrouillé ramène au chapitre 1', async ({ page }) => {

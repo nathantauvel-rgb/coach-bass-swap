@@ -74,6 +74,8 @@ Dans l'ordre où un joueur les rencontre :
 | `sans-midi` | Le navigateur ne peut pas parler à une table (iPhone, appli TikTok, Safari, Firefox) |
 | `premiers-pas-fin` | Il a répondu aux questions de Vini (avec son parcours et s'il a une table) |
 | `premiers-pas-passes` | Il a appuyé sur « Passer » |
+| `comprendre-1` | Il a fini sa première leçon « Comprendre » (lot 48) |
+| `comprendre-fin` | Il a fini les sept leçons « Comprendre » |
 | `table-branchee` | Une table est branchée (avec son nom) |
 | `premiere-partie` | Il a appuyé sur « Jouer » pour la première fois |
 | `premiere-reussite` | Premier niveau réussi (2 étoiles ou plus) |

@@ -38,7 +38,7 @@ test.describe('Le chapitre', () => {
     await ch6(page, 0);
     await expect(page.locator('.node')).toHaveCount(7);
     await expect(page.locator('#ltitle')).toHaveText('Poser un repère');
-    await expect(page.locator('#starTot')).toHaveText('0/129');
+    await expect(page.locator('#starTot')).toHaveText('0/150');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('chaque niveau allume seulement ses pads, et les faders ou les LOW quand il s\'en sert', async ({ page }) => {

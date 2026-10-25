@@ -190,11 +190,13 @@ function setChapter(n){
   const bank = bankOf(n), first = LESSONS.findIndex((_, i) => !(bank[i] >= 2)); selectLesson(first < 0 ? 0 : first);
 }
 // XP : 10 par étoile au chapitre 1, 15 au chapitre 2, 20 aux chapitres 3 et 4, 25 aux chapitres 5 et 6, 30 au chapitre 7, plus le quiz (un niveau tous les 30 XP)
-const xpTotal = () => sumStars(stars) * 10 + sumStars(ch2Stars) * 15 + sumStars(ch3Stars) * 20 + sumStars(ch4Stars) * 20 + sumStars(ch5Stars) * 25 + sumStars(ch6Stars) * 25 + sumStars(ch7Stars) * 30 + quizXp() + questXp();   // questXp : coffres des quêtes du jour (quetes.js)
+const xpTotal = () => sumStars(stars) * 10 + sumStars(ch2Stars) * 15 + sumStars(ch3Stars) * 20 + sumStars(ch4Stars) * 20 + sumStars(ch5Stars) * 25 + sumStars(ch6Stars) * 25 + sumStars(ch7Stars) * 30 + quizXp() + questXp() + (typeof cpXp === 'function' ? cpXp() : 0);   // questXp : coffres des quêtes du jour (quetes.js)
 function renderHud(){
   const t1 = sumStars(stars), t2 = sumStars(ch2Stars), t3 = sumStars(ch3Stars), t4 = sumStars(ch4Stars), t5 = sumStars(ch5Stars), t6 = sumStars(ch6Stars), t7 = sumStars(ch7Stars), xp = xpTotal();
   $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
-  $('starTot').textContent = (t1 + t2 + t3 + t4 + t5 + t6 + t7) + '/' + (BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3 + CH4_LESSONS.length * 3 + CH5_LESSONS.length * 3 + (CH6_PRET ? CH6_LESSONS.length * 3 : 0) + CH7_LESSONS.length * 3);
+  // + les leçons de « Comprendre » (lot 48, 7 leçons de 3 étoiles)
+  const tc = typeof cpEtoiles === 'function' ? cpEtoiles() : 0;
+  $('starTot').textContent = (t1 + t2 + t3 + t4 + t5 + t6 + t7 + tc) + '/' + (21 + BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3 + CH4_LESSONS.length * 3 + CH5_LESSONS.length * 3 + (CH6_PRET ? CH6_LESSONS.length * 3 : 0) + CH7_LESSONS.length * 3);
   const bank = bankOf(chapter), map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove()); map.style.setProperty('--n', LESSONS.length);
   let lastDone = -1;
   LESSONS.forEach((l, i) => { const st = bank[i] || 0; if (st) lastDone = i;
@@ -204,7 +206,7 @@ function renderHud(){
     b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${st} étoile(s) sur 3`);
     b.addEventListener('click', () => { if (!placement) selectLesson(i); }); map.appendChild(b); });
   $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * (100 - 100 / LESSONS.length)) + '%';
-  renderChapters();
+  renderChapters(); if (typeof cpRendChemin === 'function') cpRendChemin();
   const cur = map.querySelector('.node[aria-pressed="true"]'); if (cur && map.scrollWidth > map.clientWidth) map.scrollLeft = cur.offsetLeft - map.clientWidth / 2 + cur.offsetWidth / 2;
 }
 function styleLabel(){ if (chapter === 7) return encEtiquette(LESSONS[li]); if (chapter === 3) return 'House · 124 BPM'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
