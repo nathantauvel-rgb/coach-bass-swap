@@ -69,7 +69,7 @@ const STAGES = {
     done: () => ch3Open || sumStars(ch2Stars) >= 10, prog: () => `${sumStars(ch2Stars)} ★ sur 10`,
     cta: () => { const i = firstTodo(ch2Stars, BASE_LESSONS.length); return `Chapitre 2, niveau ${i + 1} : ${BASE_LESSONS[i].title}`; },
     go: () => goLesson(2, firstTodo(ch2Stars, BASE_LESSONS.length)) },
-  ch3: { title: 'Les vrais morceaux', text: 'Lire les formes d\'onde, éviter le piège du break, gérer les voix : comme dans rekordbox.',
+  ch3: { title: 'Les vrais morceaux', text: 'Lire les formes d\'onde, éviter le piège du break, une seule mélodie à la fois : comme dans rekordbox.',
     done: () => ch3Done() >= CH3_LESSONS.length, prog: () => `${ch3Done()} niveau${ch3Done() > 1 ? 'x' : ''} sur ${CH3_LESSONS.length}`,
     cta: () => { const i = firstTodo(ch3Stars, CH3_LESSONS.length); return `Chapitre 3, niveau ${i + 1} : ${CH3_LESSONS[i].title}`; },
     go: () => goLesson(3, firstTodo(ch3Stars, CH3_LESSONS.length)) },

@@ -84,13 +84,7 @@ function makeSong(style, role, seed, secs, o = {}){
     if (style === 'afro'){ const len = Math.round(.45 * SR); for (let n = 0; n < len; n++){ const t = n / SR; mus(s + n, (Math.sin(TAU * f * t) + .35 * Math.sin(TAU * 4 * f * t) * Math.exp(-t * 28)) * Math.exp(-t * 8) * Math.min(1, t / .002) * g, pan, .25, .3); } return; }
     if (style === 'techno'){ bassNote(b, .22, m - 12, 'acid', g * 1.4); return; }
     let ph = 0; svf(s, Math.round(.3 * SR), () => { ph += f / SR; if (ph >= 1) ph -= 1; return (2 * ph - 1) + (ph < .5 ? .3 : -.3); }, 5200, 600, .35, 24, g, pan, .25, .35, .002, .03); };
-  const voice = (b, m, dur, g, vowel) => { const s = at(b), len = at(dur), f0 = n2f(m); let ph = 0;
-    const F = vowel ? [[450, 1], [800, .55], [2830, .2]] : [[730, 1], [1090, .6], [2440, .22]];
-    const st = F.map(([fc]) => { const w = TAU * fc / SR, r = Math.exp(-Math.PI * 110 / SR); return { a1: -2 * r * Math.cos(w), a2: r * r, k: (1 - r) * 2, y1: 0, y2: 0 }; });
-    for (let n = 0; n < len; n++){ const t = n / SR, vib = 1 + .013 * Math.sin(TAU * 5.4 * t) * Math.min(1, t / .3); ph += f0 * vib / SR; if (ph >= 1) ph -= 1;
-      const x = 2 * ph - 1; let y = 0;
-      for (let j = 0; j < F.length; j++){ const q = st[j], ov = x - q.a1 * q.y1 - q.a2 * q.y2; q.y2 = q.y1; q.y1 = ov; y += ov * q.k * F[j][1]; }
-      mus(s + n, y * Math.min(1, t / .05) * Math.min(1, (len - n) / (.09 * SR)) * g, 0, .35, .2); } };
+  // (lot 47 : la « voix » fabriquée ici a été retirée, l'utilisateur la trouvait très désagréable : ne pas la remettre)
   const crash = (b, g = .22) => { const s = at(b); for (let n = 0; n < kit.crashL.length && s + n < N; n++){ ML[s + n] += kit.crashL[n] * g; MR[s + n] += kit.crashR[n] * g; S[s + n] += (kit.crashL[n] + kit.crashR[n]) * g * .2; } };
   const riser = (b0, b1, g = .12) => { const s = at(b0), len = at(b1 - b0); let lp = 0, bpv = 0;
     for (let n = 0; n < len; n++){ const u = n / len, fc = 300 + 7000 * u * u, f = 2 * Math.sin(Math.PI * fc / SR); lp += f * bpv; bpv += f * (rnd() - lp - .5 * bpv); mus(s + n, bpv * u * u * g, Math.sin(u * 12) * .4, .5); } };
@@ -136,7 +130,6 @@ function makeSong(style, role, seed, secs, o = {}){
       for (const st of motif){ if (!st.on) continue; const bt = b + st.t, cb = Math.floor(bt / 4), notes = chordOf(cb, tonic + 24);
         lead(bt, notes[(st.d + lift) % 4] + st.oct, .1, st.t % 1 ? .25 : -.25); }
     }
-    if (has(b, 'v') && b % 8 === 0) [[0, 0, 1.4], [2, 3, .9], [3, 5, 1.4], [5, 3, 2.2]].forEach(([t, m, d], j) => voice(b + t, tonic + (o.voice ?? 24) + m, d, .19, j % 2));
     // transitions : cymbale en début de phrase et montée avant chaque arrivée d'accords
     if (ph === 0 && b > 0 && has(b, 'k') && (has(b, 'c') || has(b, 'cl') || has(b, 'lead'))) crash(b);
     if (ph === 24 && b + 8 < total && (has(b + 8, 'c') || has(b + 8, 'lead')) && !has(b, 'c')) riser(b, b + 8);
@@ -207,7 +200,7 @@ async function prepareCh3(l){
   BPM = 124; P = 60 / BPM;
   const key = JSON.stringify([l.A, l.B]);
   if (!ch3Cache[key]){
-    const [A, B] = await Promise.all([renderSong('house', 'A', 11, l.A, { end: l.aEnd, tail: 4 }, 124), renderSong('house', 'B', 23, l.B, { voice: 24, tail: 2 }, 124)]);
+    const [A, B] = await Promise.all([renderSong('house', 'A', 11, l.A, { end: l.aEnd, tail: 4 }, 124), renderSong('house', 'B', 23, l.B, { tail: 2 }, 124)]);
     ch3Cache[key] = { A, B, envA: envOf(A), envB: envOf(B) };
   }
   return ch3Cache[key];

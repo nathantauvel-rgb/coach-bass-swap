@@ -1323,6 +1323,46 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - Tests : `tests/stats.spec.js` (21 tests). Captures : `captures/lot45/` (hors Git, `node captures/lot45/captures.js`).
   **Pas fait, à décider avec l'utilisateur** : une vraie adresse de contact (aujourd'hui « écris-nous avec Mon avis ») ;
   mentions légales.
+- **Lot 47 « Niveaux plus courts » (25 oct. 2026)** : branche `lot-47-plus-court`, partie de `origin/main` (pas du lot 46),
+  travaillée dans la copie à part `Documents\coach-dj-lot47` (git worktree, `node_modules` relié par jonction) ; tests depuis
+  cette copie : `DJ_PORT=8768 npx playwright test`. Deux demandes de l'utilisateur après avoir joué au chapitre 3, niveau 3 :
+  « tous les exercices où il n'y a qu'un geste, puis on attend 30 secondes que ça se termine » doivent être écourtés, et la
+  voix de « Une seule voix à la fois » : « super désagréable, tu me la retires de partout, je veux plus jamais l'entendre ».
+  - **Règle** : une partie commence au plus 16 temps avant le premier geste et s'arrête au plus 12 temps après le dernier
+    (chapitres 1, 3, 4 et 6, vérifié par `tests/plus-court.spec.js` ; seule exception, « Le piège du break », où le break
+    passe avant le bon moment). Comme le lot 13 l'avait fait pour la fin des niveaux du chapitre 1.
+  - Chapitre 1 (donc 2) : coupure et écho [48, 72], filtre [48, 100], swap [48, 72] (ils commençaient au temps 24 ou 40).
+    B, lancé tout seul au temps 32, est alors déjà en route au départ : `launchAt` le démarre plus loin dans son morceau
+    (`avance`), calé (test). Légendes de démo du filtre et du swap déplacées au temps 48.
+  - Chapitre 3 : **on n'attend plus le drop de B**, la note tombe dès le geste. Intro courte [16, 44] (était [0, 72]).
+    Piège du break resserré : A = break 16-32, 16 temps à fond, outro 48-80 ; B lancé au temps 48 ; partie [8, 60] (était
+    [0, 108]) ; « piégé » = lancé entre le temps 16 et 8 temps avant le bon moment (avant : toute avance, même de 2 temps).
+    Lecture express : 16 temps avant le bon moment, 12 après (avant : jusqu'à 52 temps d'attente).
+  - **« Une seule voix à la fois » devient « Une seule mélodie à la fois »** [32, 56] (était [16, 108]). La voix fabriquée
+    (`voice` dans `makeSong`, instrument `'v'`, option `voice`) est **supprimée du code** ; à la place, le « lead » des
+    morceaux du site sur A, puis sur B à partir du temps 48. Repère `MÉLODIE` (au lieu de `VOIX`), consignes, notes, quiz
+    `c2b` (identifiant inchangé), sous-titre du chapitre, étape du parcours. Couper le MID fait reculer la mélodie de plus de
+    10 dB (test). **Ne jamais remettre de voix fabriquée par le site** (l'essai de voix chantée resté dans `coach-dj-lot42`,
+    jamais présenté, ne doit pas être repris).
+  - Chapitre 4 : Filtre et swap [32, 72], Transition éclair [36, 72], Écho et drop [48, 72]. Chapitre 6 : Poser un repère
+    [36, 60], Lancer depuis le repère, B attend en boucle et Double drop [48, 72], Sans filet [72, 112].
+  - Chapitre 5 (geste continu, pas de règle stricte) : fins 64 (Pousser, freiner : même tempo, rien à faire une fois calé),
+    84 (les deux niveaux de vitesse), 80 (casque, lancer et caler, sans filet ; 16 temps après l'entrée ou le swap). Seuils
+    inchangés, mais la part du temps calé se mesure sur moins de temps : un peu plus dur, à regarder aux essais sur la FLX4.
+  - Pas touché : le quiz du chapitre 5 (il finit tout seul après 5 réponses) et le chapitre 7 (au set, entre deux
+    transitions, on écoute le drop du morceau, environ 15 s, comme en soirée : à proposer à l'utilisateur s'il trouve ça long).
+  - Schéma de fin (`drawCompare`) : repères de temps seulement dans la partie (tous les 16 temps si elle est courte).
+  - Tests : `tests/plus-court.spec.js` (nouveau : règle des durées, B déjà en route, voix disparue, MID efficace, chaque
+    niveau du chapitre 3 joué par un robot, piège du break) ; `rythme.spec.js` et `midi.spec.js` mis à jour.
+  - Fusionné avec `origin/main` (lot 46 déjà en ligne, commit `462c377`) le 25 oct. au soir : seul CLAUDE.md en conflit.
+  - **Gardien : feu orange, aucun blocage** (520 tests verts sur 521). L'échec est dans `tests/vini-sons.spec.js` (« objectif
+    atteint, série en cours… ») : la nuit du 25 au 26 oct. 2026 dure 25 h (heure d'hiver) et le test calcule « hier » en
+    retirant 24 h ; il échoue aussi sur `origin/main`, le site (`goalStreak`) n'a pas ce défaut. À corriger un jour dans le
+    test. Remarques corrigées : au filtre et au swap, B est à fond dès la position de départ (`init.faderB` = 1) et les
+    commandes tenues par le site prennent leur place avant que le son parte (`automate(START)` dans `startRun`) ; textes
+    « B arrive tout seul » devenus « B joue déjà » ; fiche du MID « les voix et les mélodies ». Laissé, à faire essayer à
+    l'utilisateur : au chapitre 2 et en Expert, il ne reste que 16 temps (8 à 16 en Expert) pour sentir la phrase au filtre
+    et au swap ; au chapitre 3, on n'entend plus le drop de B tomber.
 - **Lot 48 « Comprendre » (25 oct. 2026)** : branche `lot-48-comprendre`, non publiée. Sept petites leçons de théorie sans table,
   au doigt sur un téléphone (souris ou Espace sur ordinateur), pour les visiteurs de TikTok. `js/comprendre.js` (chargé après
   `quetes`, avant `table`) :
@@ -1496,7 +1536,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

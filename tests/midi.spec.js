@@ -75,7 +75,7 @@ test.describe('Contrôles par défaut', () => {
   test('potard MID A (chapitre 3)', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true }, stockage: CH3 });
     await niveau(page, 2);
-    await expect(page.locator('#ltitle')).toHaveText('Une seule voix à la fois');
+    await expect(page.locator('#ltitle')).toHaveText('Une seule mélodie à la fois');
     await envoyer(page, 0xB0, 11, 0);
     expect((await miseEnPlace(page))[0]).toMatch(/^wrong .*MID de A/);
     await envoyer(page, 0xB0, 11, 64);
