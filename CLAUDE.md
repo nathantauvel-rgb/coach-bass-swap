@@ -60,12 +60,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la fois » supprimée partout (« je veux plus jamais l'entendre ») : **ne jamais remettre de voix fabriquée par le site**.
   Détail dans l'entrée « Lot 47 » de « Où on en est » (sur `main`). **Pour la branche `lot-48-comprendre`** : fusionner
   `origin/main` avant de publier (le lot 47 touche aussi `js/parcours.js`, ligne de l'étape ch3, et CLAUDE.md).
-- **Lot 49 « Set plus court » (25-26 oct. 2026, NON PUBLIÉ) : branche `lot-49-set-plus-court` (commit `c8f451f`, partie de
-  `origin/main` après le lot 47), dans la copie `Documents\coach-dj-lot47`.** Demande de l'utilisateur : raccourcir l'attente
-  entre deux transitions au chapitre 7. Le drop de chaque morceau du set dure 16 temps au lieu de 32 (≈ 7 s seul au lieu de
-  15), phrases de 16 temps au set, et la démo de « La montée » ramène enfin le tempo (défaut ancien). 523 tests verts. Détail
-  dans l'entrée « Lot 49 » du CLAUDE.md de cette branche. Avant de publier : gardien, puis l'accord de l'utilisateur.
-  Numéroté 49 parce que ce dossier fait le lot 48.
+- **Lot 49 « Set plus court » (25-26 oct. 2026, NON PUBLIÉ) : branche `lot-49-set-plus-court`, dans la copie
+  `Documents\coach-dj-lot47`** (lot 48 publié fusionné dedans). Demande de l'utilisateur : raccourcir l'attente entre deux
+  transitions au chapitre 7. Le drop de chaque morceau du set dure 16 temps au lieu de 32 (≈ 7 s seul au lieu de 15) ; la note
+  « phrase » vérifie que le drop du morceau qui entre tombe pile à la fin de celui qui sort ; la démo de « La montée » ramène
+  enfin le tempo (défaut ancien). Gardien, premier passage : feu orange, mais les pièges du break et de l'intro courte ne
+  coûtaient plus rien : corrigé (ils coûtent de nouveau 8 points, Vini prévient pendant un break). Détail dans l'entrée
+  « Lot 49 » de « Où on en est ». L'utilisateur : « si c'est vert ou orange sans blocage, publie le lot 49 ».
 - **Lot 46 « Stats et retours » : PUBLIÉ le 25 oct. 2026** (commit `462c377`, « Oui, publie le lot 46 », règles
   `firestore.rules` publiées par l'utilisateur juste avant). Production vérifiée : `js/stats.js` servi avec l'identifiant,
   `confidentialite.html` en ligne, `avisEnvoie` servi. **À faire par l'utilisateur** : voir sa visite dans « Realtime »
@@ -1423,11 +1424,44 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     passage à l'heure d'hiver (25 oct. 2026, dernière heure) : il prend « hier » = maintenant − 24 h, alors que ce jour-là dure
     25 h. Échoue aussi sur `main` (vérifié dans une copie à part). Repasse tout seul le lendemain ; à corriger un jour (calculer hier
     avec `setDate(getDate() - 1)`).
-- **Lot 50 « SEO » (26 oct. 2026)** : branche `lot-50-seo`, partie de `origin/main` (lot 48 publié), non publiée. Ce que
+- **Lot 49 « Set plus court » (25 oct. 2026)** : branche `lot-49-set-plus-court`, partie de `origin/main` après le lot 47,
+  dans la copie `Documents\coach-dj-lot47` (tests : `DJ_PORT=8768 npx playwright test`). Demande de l'utilisateur : « raccourcis
+  aussi l'attente entre deux transitions au chapitre 7 ».
+  - `js/set.js` : **le drop de chaque forme dure 16 temps** (`ENC_FORMES` : normal et basse = intro 0-32, drop 32-48, outro
+    48-80 ; court = 0-16, 16-32, 32-64 ; break : voir plus bas, drop 32-40, break 40-48, drop 48-64, outro 64-96). Entre deux
+    transitions, le morceau joue seul environ 14 temps (7 s) au lieu de 30 (15 s). Le set commence toujours au drop du premier
+    morceau (16 temps avant de lancer le suivant, au lieu de 32) et finit `ENC_SOLO` = 16 temps après le drop du dernier.
+  - **Gardien, premier passage : feu orange, mais un vrai recul**, corrigé avant de publier : avec des phrases de 16 temps
+    (première version), les deux pièges ne coûtaient plus rien (lancer pendant le break au niveau 4, lancer une intro courte
+    comme une intro normale au niveau 7) et Vini disait de lancer « sur une ligne PHRASE » en plein break. Maintenant :
+    1. **la note « phrase » vérifie que le drop du morceau qui entre tombe pile à la fin de celui qui sort** (`tombe`, dans
+    `encFrame` ; 8 points au plus, comme avant) ; 2. **les lignes PHRASE (32 temps, `ENC_PHRASE`) se comptent depuis la fin du
+    morceau qui joue** (`encPhrase`) : une au début de son outro (le moment de lancer une intro de 32 temps), une à sa fin ;
+    3. le break est resserré : drop 32-40, break 40-48, drop 48-64, outro 64-96 (seul ~30 temps au lieu de ~46 avec la
+    première version), et sa musique se vide hors d'une ligne PHRASE, comme avant le lot ; 4. Vini, pendant un break : « ce
+    n'est pas la fin, il va repartir » ; ses conseils et la carte de fin disent « pour que son drop tombe pile à la fin ».
+    Le swap reste mesuré sur des phrases de 16 temps. Le lexique (`LEX`) est revenu à « 32 temps ».
+  - **Gardien, second passage : feu orange, aucun blocage, 548 tests verts** (un faux joueur : fader monté tard, tempos
+    différents, piège évité, niveau 7 tiré au hasard à 100/100). Corrigé avant de publier : lancé pile sur la ligne PHRASE de
+    la fin, c'était −8 ou 0 à quelques millisecondes près ; maintenant un drop qui tombe une phrase (32 temps) après la fin
+    est juste aussi (`e0 - 32`), et la carte dit « N temps trop tôt / trop tard ». Test « lancé pile sur la ligne PHRASE de
+    la fin ». Laissé : avec 4 BPM d'écart non réglés et le fader monté très tard, 1 point « phrase » peut s'ajouter au calage.
+  - Durées d'un set joué proprement : niveau 1 et 2 de 77 à 54 s, niveau 3 de 108 à 77 s, niveau 4 de 123 à 85 s, niveau 5
+    de 109 à 78 s, niveau 6 de 139 à 100 s. L'étiquette dit « environ 50 s » sous la minute (`encMinutes`, avant « 0 min 50 »).
+  - **Défaut ancien corrigé** : à « La montée » (niveau 6), la démo (et le robot des tests) ne ramenait jamais le tempo du
+    morceau à son vrai tempo une fois seul : le pas par image était plus petit que le seuil de `met`, le tempo ne bougeait pas
+    et la soirée finissait à 120 BPM (−5). Le tempo est maintenant changé directement, un peu plus vite (`.01` par temps).
+  - Tests : dans `tests/set.spec.js`, « entre deux transitions, un morceau joue seul la moitié moins longtemps » (durées,
+    lignes PHRASE), des sets entiers de « La montée » et de « Morceaux pièges » joués par le robot (note 90 ou plus), et les
+    deux pièges (lancer pendant le break : des points perdus et Vini qui prévient ; intro courte lancée trop tôt : −8).
+  - **À essayer par l'utilisateur** : avec 7 s seul, il reste moins de temps pour préparer le morceau suivant (tempo, LOW,
+    casque) avant de le lancer ; on peut aussi le préparer une fois lancé, fader en bas.
+- **Lot 50 « SEO » (26 oct. 2026)** : branche `lot-50-seo`, partie de `origin/main` (lot 48 publié), puis `origin/main` fusionnée dedans (lot 49 publié par l'autre session le 26 oct. au matin ; seul CLAUDE.md était en conflit), non publiée. Ce que
   Google, les IA et les liens partagés voient du site. **Aucun changement dans le jeu**, sauf une ligne en bas de l'accueil.
   - `index.html` : titre « DJingood · Apprends à mixer sur ta table DJ, en jouant », `meta description`, `canonical`
     (https://djingood.fr/ : www.djingood.fr et coach-bass-swap.vercel.app servent la même page sans redirection),
-    Open Graph (aperçu des liens partagés, `img/partage.jpg` 1200 × 630, aussi pour « M'envoyer le lien » du lot 48),
+    Open Graph (aperçu des liens partagés, `img/partage.jpg` 1200 × 630, aussi pour « M'envoyer le lien » du lot 48 et pour la présentation),
+    description qui finit par « Gratuit pendant la phase de test » (même mot que la présentation),
     données structurées `WebSite` (nom « DJingood » : Google écrivait « Djingood ») et `Organization` (logo).
     Icônes : `favicon.ico` (16, 32, 48), `img/icone-192.png` (celle des résultats de Google, multiple de 48),
     `img/icone-180.png` (écran d'accueil d'un iPhone, fond plein), le SVG en plus. Toutes fabriquées par
@@ -1442,10 +1476,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     `noindex`. Icônes sur les quatre pages. Vercel ne sert pas `/presentation` sans `.html` : les adresses gardent `.html`.
   - `robots.txt` et `sitemap.xml` (accueil, présentation, confidentialité) à la racine.
   - **`.vercelignore`** : avant, Vercel publiait tout le dépôt (`djingood.fr/CLAUDE.md`, `/tests/`, `/.claude/` répondaient
-    200). Retirés : `tests`, `.claude`, `*.md`, `playwright.config.js`, `firestore.rules`. Un test vérifie qu'aucun fichier
+    200). Retirés : `tests`, `.claude`, `*.md`, `playwright.config.js`, `firestore.rules` (et `captures`, `audio-essai`, `marketing`, jamais dans le dépôt, au cas où quelqu'un publierait un jour avec l'outil Vercel depuis ce PC). Un test vérifie qu'aucun fichier
     chargé par les pages n'est retiré ; **ne jamais y ajouter `js/`, `img/`, `musique/` ni les pages**. Le dépôt GitHub est
     public : ces fichiers restent lisibles là-bas (sujet à part, à décider avec l'utilisateur). Après la mise en ligne,
     vérifier avec `curl` que `djingood.fr/CLAUDE.md` répond 404 et que le site marche.
+  - Gardien : feu orange, aucun blocage, 553 tests verts ; remarques reprises (le mot « gratuit », l'aperçu de la présentation, les dossiers de travail).
   - `tests/serveur.js` sert les `.txt`. Tests : `tests/seo.spec.js` (nouveau, 10 tests).
   - Pas fait, proposé ensuite : rediriger www.djingood.fr vers djingood.fr dans Vercel (réglage de l'utilisateur) ; le GEO
     (pages de questions-réponses, faire parler de DJingood ailleurs).
