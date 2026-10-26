@@ -105,7 +105,7 @@ test.describe('SEO : fichiers retirés de la mise en ligne', () => {
     const charges = new Set();
     page.on('request', r => { const u = new URL(r.url()); if (u.hostname === 'localhost') charges.add(decodeURIComponent(u.pathname).replace(/^\//, '')); });
     await ouvrir(page, { onglet: 'apprendre' });
-    for (const p of ['presentation.html', 'confidentialite.html', 'testeurs.html']) await page.goto('/' + p);
+    for (const p of ['presentation.html', 'confidentialite.html', 'testeurs.html', 'guide/', 'guide/caler-sans-sync.html']) await page.goto('/' + p);
     for (const f of ['favicon.ico', 'robots.txt', 'sitemap.xml', 'package.json', 'img/partage.jpg', 'img/icone-180.png', 'musique']) charges.add(f);
     expect(charges.size).toBeGreaterThan(40);
     expect([...charges].filter(exclu)).toEqual([]);

@@ -32,6 +32,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 25 oct. 2026)
+- **Lot 51 « Guide du débutant » (27 oct. 2026, branche `lot-51-questions`, FAIT, NON PUBLIÉ)**, depuis la session
+  « marketing » comme le lot 50, dans `Documents\coach-dj-seo`. Le GEO (être cité par les IA) : cinq pages de questions
+  de débutant choisies par l'utilisateur (« go les 5 questions »), une page d'entrée, signées **« Nathan, créateur de
+  DJingood »** (son choix : « signe de mon vrai prénom Nathan »). Modèle validé par l'utilisateur (« OUI TRES bien »).
+  Détail dans l'entrée « Lot 51 » de « Où on en est ». **Bing Webmaster Tools : fait par l'utilisateur le 26 oct. 2026**
+  (import depuis Search Console, `/` et `/presentation.html` envoyés ; un sitemap tapé avec un point en trop, à supprimer) ;
+  son menu « AI Performance » montrera quand Copilot cite le site.
 - **Lot 50 « SEO » : PUBLIÉ le 26 oct. 2026** (commit `5045bcf` sur `main`, « oui »), fait depuis la session « marketing » (l'autre compte
   Claude de l'utilisateur), dans la copie à part `Documents\coach-dj-seo` (tests : `DJ_PORT=8769 npx playwright test`).
   Demande de l'utilisateur : « quand j'écris djingood sur Google je ne le retrouve pas ». Google l'avait trouvé, mais
@@ -1487,6 +1494,34 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - `tests/serveur.js` sert les `.txt`. Tests : `tests/seo.spec.js` (nouveau, 10 tests).
   - Pas fait, proposé ensuite : rediriger www.djingood.fr vers djingood.fr dans Vercel (réglage de l'utilisateur) ; le GEO
     (pages de questions-réponses, faire parler de DJingood ailleurs).
+- **Lot 51 « Guide du débutant » (27 oct. 2026)** : branche `lot-51-questions`, partie de `lot-50-seo` (avec le commit de notes
+  « lot 50 publié », resté local). Des pages qui répondent aux questions des débutants, pour que Google et les IA (ChatGPT,
+  Copilot, Perplexity) citent DJingood. **Aucun changement dans le jeu**, sauf un lien en bas de l'accueil.
+  - `guide/` : `index.html` (page d'entrée, une carte par question, adresse officielle `https://djingood.fr/guide/`),
+    `apprendre-a-mixer.html`, `phrase-musicale-32-temps.html`, `premiere-transition-ddj-flx4.html`, `caler-sans-sync.html`,
+    `table-dj-non-detectee.html`. Chaque page : la question en titre, un encadré « En bref » (la réponse en 3 ou 4 phrases,
+    ce que les IA recopient), des étapes, les erreurs du débutant, un encadré vers le jeu, 4 questions fréquentes repliées,
+    les liens vers les autres questions. Signée « par Nathan, créateur de DJingood » avec la date (`<time>`).
+  - Données pour Google (`ld+json`) : `Article` (auteur `Person` Nathan), `BreadcrumbList`, `FAQPage`. **Les réponses du
+    `FAQPage` sont celles de la page, mot pour mot** (un test le vérifie) : changer l'une, c'est changer l'autre. La page
+    d'entrée : `CollectionPage`. Les pages mettent une espace insécable devant « : ; ? ! » (sinon « : » tombait seul en
+    début de ligne sur téléphone) ; les données pour Google, une espace simple.
+  - Dessins sans image : la ligne du temps de la transition (SVG, `.g-frise` : A en orange, B en bleu, traits fins = les
+    basses, gestes numérotés) et la grille de la phrase (`.g-grille`, 8 mesures de 4 temps, 4 par ligne sur téléphone).
+  - Textes vérifiés contre le jeu : les gestes de « La transition complète » (chapitre 1, niveau 7), les titres du chapitre 5,
+    les leçons « Comprendre », l'aide « Ta table n'apparaît pas ? » (`midiAide`, lot 45 : **garder les deux d'accord**).
+    Noms des commandes de la FLX4 vérifiés (TRIM, HI/MID/LOW, CFX, CUE casque, BEAT SYNC). La page sur la FLX4 conseille
+    BEAT SYNC pour une première transition (le jeu, lui, cale B tout seul au chapitre 1).
+  - Styles `.g-…` à la fin de `styles.css` (couleurs par les jetons de `:root` seulement). Pied de l'accueil : « Guide du
+    débutant » ; pied de la présentation : « Guide du DJ débutant ». `sitemap.xml` : les 6 pages.
+  - `presentation.html` : « Sur téléphone ? » ne dit plus « Pas pour l'instant » (les leçons « Comprendre » marchent sur
+    téléphone depuis le lot 48).
+  - `tests/serveur.js` : un dossier sert son `index.html`, comme Vercel (`/guide/`). **À vérifier en production après la
+    mise en ligne** : `curl -I https://djingood.fr/guide/` doit répondre 200 (Vercel sert l'`index.html` d'un dossier).
+  - Tests : `tests/guide.spec.js` (nouveau) ; `tests/seo.spec.js` (le guide dans la vérification des fichiers publiés).
+    Captures : `captures/lot51/` (hors Git, `node captures/lot51/captures.js [pages]` avec le serveur de test lancé).
+  - Après la mise en ligne : demander l'indexation des pages dans Search Console et les envoyer dans « URL Submission » de
+    Bing. Ensuite, le second volet du GEO : faire parler de DJingood ailleurs (Reddit, forums, YouTube), que les IA lisent.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -1515,6 +1550,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   dans un fichier chargé avant ; `function stop` remplace `window.stop` (sans effet connu).
   Étape suivante possible, non commencée : de vrais modules avec import/export.
 - `confidentialite.html` — « Ce que DJingood garde sur toi » (lot 46), avec le bouton qui refuse les statistiques.
+- `guide/` — le guide du débutant (lot 51) : une page d'entrée et cinq pages de questions, pour Google et les IA.
 - `STATISTIQUES.md` — marche à suivre de l'utilisateur pour Umami et pour lire les avis (lot 46).
 - `robots.txt`, `sitemap.xml`, `favicon.ico`, `.vercelignore` — pour Google et pour ce que Vercel publie (lot 50).
 - `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap), retiré du site : la page renvoie
@@ -1613,7 +1649,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

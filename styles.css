@@ -1639,3 +1639,75 @@ html.pp-open,html.pp-open body{overflow:hidden}
 @media (min-width:700px){ .cpchemin{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))} }
 /* Lot 50 : en bas de l'accueil, le lien vers la présentation (pour Google, qui ne la trouvait pas) et la confidentialité */
 .accueil-pied{text-align:center;font-size:14px;margin-top:28px}
+/* Lot 51 : les pages du guide du débutant (guide/*.html), écrites pour Google et pour les IA. Même habillage que la
+   présentation ; l'orange et le bleu n'y servent qu'à A et B, comme dans le jeu. */
+.g-article{display:flex;flex-direction:column;gap:inherit}
+.guide .page h1{max-width:24ch}
+.g-date{margin:10px 0 0;font-size:14px;color:var(--muted)}
+.g-bref{margin-top:20px;background:var(--brand-soft);border:1px solid var(--brand-line);border-radius:18px;padding:16px 18px;max-width:68ch}
+.g-bref strong{color:var(--brand-light);font-size:14px;letter-spacing:.04em;text-transform:uppercase}
+.g-bref p{margin:6px 0 0;font-size:17px;line-height:1.5}
+.g-p{margin:0 0 12px;max-width:68ch}
+.g-tablo{overflow-x:auto}
+.g-depart{border-collapse:collapse;font-size:15px}
+.g-depart th,.g-depart td{padding:9px 14px;border-bottom:1px solid var(--line);text-align:left}
+.g-depart thead th{font-size:13px;color:var(--muted);font-weight:700}
+.g-depart thead .g-ca{color:var(--a)}
+.g-depart thead .g-cb{color:var(--b)}
+.g-depart tbody th{font-weight:700}
+.g-depart td{color:var(--muted)}
+.g-depart td b{color:var(--fg)}
+.g-fig{margin:0 0 20px;background:var(--panel-2);border-radius:18px;padding:16px}
+.g-frise{display:block;width:100%;max-width:640px;height:auto;margin:0 auto}
+.g-frise text{font-family:var(--sans)}
+.g-axe text{fill:var(--muted);font-size:16px;text-anchor:middle}
+.g-axe .g-fin{text-anchor:end}
+.g-phrases line{stroke:var(--line);stroke-width:1.5;stroke-dasharray:4 5}
+.g-nom{font-size:24px;font-weight:900;text-anchor:middle}
+.g-na{fill:var(--a)}
+.g-nb{fill:var(--b)}
+.g-ra{fill:var(--a)}
+.g-rb{fill:var(--b)}
+.g-sa{stop-color:var(--a)}
+.g-sb{stop-color:var(--b)}
+.g-basse{opacity:.55}
+.g-gestes-svg line{stroke:var(--brand-light);stroke-width:2}
+.g-gestes-svg circle{fill:var(--brand)}
+.g-gestes-svg text{fill:var(--on-brand);font-size:16px;font-weight:800;text-anchor:middle}
+.g-legende{fill:var(--muted);font-size:13px;text-anchor:end}
+.g-fig figcaption{margin-top:10px;font-size:14px;color:var(--muted);text-align:center}
+.g-gestes{margin:0;padding:0;list-style:none;counter-reset:geste;display:flex;flex-direction:column;gap:14px;max-width:68ch}
+.g-gestes li{counter-increment:geste;position:relative;padding-left:46px;color:var(--muted)}
+.g-gestes li::before{content:counter(geste);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:50%;background:var(--brand);color:var(--on-brand);font-weight:800;display:grid;place-items:center}
+.g-gestes strong,.g-erreurs strong{color:var(--fg)}
+.g-gestes b{color:var(--fg)}
+.g-erreurs{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;max-width:68ch;color:var(--muted)}
+.g-essai .g-p{color:var(--muted)}
+.g-autres .howlist{margin:8px 0 0}
+.g-autres a{color:var(--brand-light);font-weight:700}
+.g-autres a:hover{color:var(--fg)}
+@media (max-width:600px){.g-fig{padding:10px}.g-bref p{font-size:16px}.g-depart{font-size:14px}.g-depart th,.g-depart td{padding:8px 6px}}
+.g-tete .lnum a{color:inherit;text-decoration:none}
+.g-tete .lnum a:hover{text-decoration:underline}
+.g-tout{margin:14px 0 0;font-size:15px}
+.g-gestes a,.g-lien{color:var(--brand-light);font-weight:700;white-space:nowrap}
+.g-gestes a:hover,.g-lien:hover{color:var(--fg)}
+.g-apres{margin:16px 0 0}
+.g-intro{margin:12px 0 0;font-size:17px;color:var(--muted)}
+.pres-end .g-intro{margin:0 auto 18px}
+/* La phrase de 32 temps : 8 mesures de 4 temps (4 mesures par ligne sur téléphone) */
+.g-fig-grille{margin:18px 0 0}
+.g-grille{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
+.g-mes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
+.g-mes small{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
+.g-t{aspect-ratio:1;border-radius:6px;background:var(--slot);display:grid;place-items:center;font-size:12px;color:var(--muted)}
+.g-t1{background:var(--xp-bg-2);color:var(--fg);font-weight:800}
+.g-t0{background:var(--brand);color:var(--on-brand)}
+@media (max-width:600px){.g-grille{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:14px}.g-t{font-size:11px}}
+/* La page d'entrée du guide : une carte par question */
+.g-liste{display:flex;flex-direction:column;gap:12px}
+.g-liste .card{display:grid;grid-template-columns:auto 1fr;column-gap:16px;align-items:start;transition:box-shadow .15s}
+.g-liste .card:hover{box-shadow:inset 0 0 0 2px var(--brand-light)}
+.g-liste .card strong{font-size:19px}
+.g-liste .card p{grid-column:2}
+.g-num{grid-row:span 2;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--brand);color:var(--on-brand);font-weight:800}
