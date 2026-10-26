@@ -1,0 +1,9 @@
+# Fichiers de travail qui n'ont rien à faire sur djingood.fr (lot 50) : avant, Vercel publiait tout le dépôt, notes du
+# projet et tests compris, et Google aurait pu les montrer dans ses résultats. Le site n'en charge aucun.
+# Ne jamais ajouter ici js/, img/, musique/, les pages .html, favicon.ico, robots.txt ni sitemap.xml.
+# package.json et package-lock.json restent : Vercel peut les lire pour préparer la mise en ligne.
+tests
+.claude
+*.md
+playwright.config.js
+firestore.rules

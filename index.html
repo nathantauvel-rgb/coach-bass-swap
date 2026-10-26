@@ -3,17 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>DJingood</title>
+<title>DJingood · Apprends à mixer sur ta table DJ, en jouant</title>
+<!-- Ce que Google et les liens partagés montrent du site (lot 50). La seule adresse officielle est djingood.fr :
+     www.djingood.fr et coach-bass-swap.vercel.app affichent la même page, « canonical » dit à Google laquelle garder.
+     Les icônes et img/partage.jpg sont fabriquées par node tests/icones.js. -->
+<meta name="description" content="Tu as une table DJ et tu n'y connais rien ? DJingood t'apprend à mixer en jouant : le site écoute ta table et note chaque geste. Gratuit pendant la bêta.">
+<link rel="canonical" href="https://djingood.fr/">
+<meta property="og:site_name" content="DJingood">
+<meta property="og:title" content="DJingood · Apprends à mixer sur ta table DJ, en jouant">
+<meta property="og:description" content="Branche ta table : le site écoute tes gestes et te note au temps près. En deux semaines, tes premières vraies transitions propres.">
+<meta property="og:url" content="https://djingood.fr/">
+<meta property="og:image" content="https://djingood.fr/img/partage.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Vini, la mascotte de DJingood : Apprends à mixer sur ta table DJ, en jouant.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+  {"@type":"WebSite","name":"DJingood","alternateName":"DJingood.fr","url":"https://djingood.fr/","inLanguage":"fr"},
+  {"@type":"Organization","name":"DJingood","url":"https://djingood.fr/","logo":"https://djingood.fr/img/icone-192.png"}
+]}
+</script>
 <meta name="theme-color" content="#0B0E16">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="img/icone-192.png" type="image/png" sizes="192x192">
 <link rel="icon" href="img/vini-icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/icone-180.png">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <canvas id="confetti" aria-hidden="true"></canvas>
-<div class="pp" id="pp" hidden role="dialog" aria-modal="true" aria-labelledby="ppAsk">
+<!-- data-nosnippet : Google lit ces fenêtres cachées avant l'accueil et en citait les boutons dans ses résultats
+     (« Continuer 1 Continuer PLATINE A… »). Ce réglage lui interdit de s'en servir pour décrire le site (lot 50). -->
+<div data-nosnippet class="pp" id="pp" hidden role="dialog" aria-modal="true" aria-labelledby="ppAsk">
   <div class="pp-col" id="ppCol" tabindex="-1">
     <div class="pp-top">
       <button type="button" class="pp-back" id="ppBack" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
@@ -29,7 +56,7 @@
   </div>
 </div>
 <!-- Comprendre (lot 48) : une leçon, dans le cadre des Premiers pas -->
-<div class="pp cp" id="cp" hidden role="dialog" aria-modal="true" aria-labelledby="cpTitre">
+<div data-nosnippet class="pp cp" id="cp" hidden role="dialog" aria-modal="true" aria-labelledby="cpTitre">
   <div class="pp-col" id="cpCol" tabindex="-1">
     <div class="pp-top">
       <button type="button" class="pp-back" id="cpX" aria-label="Fermer la leçon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -40,7 +67,7 @@
     <div class="pp-foot" id="cpPied"><button type="button" class="pp-go" id="cpGo">Continuer</button></div>
   </div>
 </div>
-<div class="serie" id="serie" hidden role="dialog" aria-modal="true" aria-labelledby="serieNum serieTxt">
+<div data-nosnippet class="serie" id="serie" hidden role="dialog" aria-modal="true" aria-labelledby="serieNum serieTxt">
   <div class="serie-col">
     <p class="pp-bubble serie-bulle" id="serieDit"></p>
     <div class="serie-scene">
@@ -53,7 +80,7 @@
     <button type="button" class="pp-go" id="serieGo">Continuer</button>
   </div>
 </div>
-<div class="onb" id="onb" hidden role="dialog" aria-modal="true" aria-labelledby="onbTitle">
+<div data-nosnippet class="onb" id="onb" hidden role="dialog" aria-modal="true" aria-labelledby="onbTitle">
   <div class="onb-card">
     <div class="onb-dots" id="onbDots"></div>
     <h2 id="onbTitle"></h2>
@@ -81,7 +108,7 @@
     </div>
   </div>
 </div>
-<div class="quiz" id="quiz" hidden role="dialog" aria-modal="true" aria-labelledby="qText">
+<div data-nosnippet class="quiz" id="quiz" hidden role="dialog" aria-modal="true" aria-labelledby="qText">
   <div class="qcard">
     <button type="button" class="rclose" id="qClose" aria-label="Fermer">×</button>
     <span class="lnum" id="qKick"></span>
@@ -92,7 +119,7 @@
     <button type="button" class="rbtn go" id="qNext" hidden>Continuer</button>
   </div>
 </div>
-<div class="quiz" id="avis" hidden role="dialog" aria-modal="true" aria-labelledby="avTitle">
+<div data-nosnippet class="quiz" id="avis" hidden role="dialog" aria-modal="true" aria-labelledby="avTitle">
   <div class="qcard">
     <button type="button" class="rclose" id="avClose" aria-label="Fermer">×</button>
     <span class="lnum">DJingood est en test</span>
@@ -110,7 +137,7 @@
     <details class="avreset"><summary>Tout recommencer à zéro</summary><p class="avsmall">Efface ta progression, tes étoiles, tes badges, tes réponses au quiz et tes avis sur cet ordinateur, et aussi sur ton compte si tu es connecté. Les réglages et la vérification de ta table sont gardés.</p><button type="button" class="rbtn" id="avReset">Oui, tout effacer</button></details>
   </div>
 </div>
-<div class="quiz" id="verif" hidden role="dialog" aria-modal="true" aria-labelledby="vfTitle">
+<div data-nosnippet class="quiz" id="verif" hidden role="dialog" aria-modal="true" aria-labelledby="vfTitle">
   <div class="qcard vfcard">
     <button type="button" class="rclose" id="vfClose" aria-label="Fermer">×</button>
     <div class="vfbar" aria-hidden="true"><i id="vfFill"></i></div>
@@ -126,7 +153,7 @@
     <div class="rbrow"><button type="button" class="ghost" id="vfBack">Retour</button><button type="button" class="ghost" id="vfKo">Ça ne marche pas</button><button type="button" class="ghost" id="vfSkip">Passer</button><button type="button" class="rbtn go" id="vfNext">Continuer</button><button type="button" class="rbtn go" id="vfCopy" hidden>Copier le rapport</button><button type="button" class="ghost" id="vfRestart" hidden>Recommencer</button></div>
   </div>
 </div>
-<div class="quiz" id="compte" hidden role="dialog" aria-modal="true" aria-labelledby="cptTitle">
+<div data-nosnippet class="quiz" id="compte" hidden role="dialog" aria-modal="true" aria-labelledby="cptTitle">
   <div class="qcard cptcard">
     <button type="button" class="rclose" id="cptClose" aria-label="Fermer">×</button>
     <div class="cpthead">
@@ -166,7 +193,7 @@
     <p class="avsmall"><a class="avlien" href="confidentialite.html" target="_blank" rel="noopener">Ce que DJingood garde sur toi</a></p>
   </div>
 </div>
-<div class="quiz" id="reg" hidden role="dialog" aria-modal="true" aria-labelledby="regTitle">
+<div data-nosnippet class="quiz" id="reg" hidden role="dialog" aria-modal="true" aria-labelledby="regTitle">
   <div class="qcard">
     <button type="button" class="rclose" id="regClose" aria-label="Fermer">×</button>
     <span class="lnum" id="regKick">Régler ma table</span>
@@ -235,6 +262,7 @@
       </details>
       <a class="ghost" href="#progres">Mes progrès et mes badges</a>
     </section>
+    <p class="page-note accueil-pied"><a href="presentation.html">Comment marche DJingood ?</a> · <a href="confidentialite.html">Confidentialité</a></p>
   </div>
 
   <div class="view" id="vTrain" hidden>

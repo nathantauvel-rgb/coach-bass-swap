@@ -32,6 +32,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 25 oct. 2026)
+- **Lot 50 « SEO » (26 oct. 2026, branche `lot-50-seo`, NON PUBLIÉ)**, fait depuis la session « marketing » (l'autre compte
+  Claude de l'utilisateur), dans la copie à part `Documents\coach-dj-seo` (tests : `DJ_PORT=8769 npx playwright test`).
+  Demande de l'utilisateur : « quand j'écris djingood sur Google je ne le retrouve pas ». Google l'avait trouvé, mais
+  l'affichait mal (titre « DJingood » seul, nom « Djingood », globe gris, extrait « Continuer 1 Continuer PLATINE A… »).
+  Détail dans l'entrée « Lot 50 » de « Où on en est ». **À faire par l'utilisateur, guidé** : Google Search Console
+  (propriété « domaine », ligne TXT chez OVH, envoyer `sitemap.xml`), puis Bing Webmaster Tools (import depuis Google).
 - **Lot 48 « Comprendre » (25 oct. 2026, branche `lot-48-comprendre`, FAIT, NON PUBLIÉ).** Maquette validée par l'utilisateur
   (« OK vas-y, on part là-dessus ») avec les trois choix : les 7 leçons dans cet ordre ; sur un téléphone, après les questions
   de Vini, on va à Comprendre ; sur ordinateur rien n'est imposé, étoiles dans le total (129 → 150), 10 XP par étoile.
@@ -1417,6 +1423,32 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     passage à l'heure d'hiver (25 oct. 2026, dernière heure) : il prend « hier » = maintenant − 24 h, alors que ce jour-là dure
     25 h. Échoue aussi sur `main` (vérifié dans une copie à part). Repasse tout seul le lendemain ; à corriger un jour (calculer hier
     avec `setDate(getDate() - 1)`).
+- **Lot 50 « SEO » (26 oct. 2026)** : branche `lot-50-seo`, partie de `origin/main` (lot 48 publié), non publiée. Ce que
+  Google, les IA et les liens partagés voient du site. **Aucun changement dans le jeu**, sauf une ligne en bas de l'accueil.
+  - `index.html` : titre « DJingood · Apprends à mixer sur ta table DJ, en jouant », `meta description`, `canonical`
+    (https://djingood.fr/ : www.djingood.fr et coach-bass-swap.vercel.app servent la même page sans redirection),
+    Open Graph (aperçu des liens partagés, `img/partage.jpg` 1200 × 630, aussi pour « M'envoyer le lien » du lot 48),
+    données structurées `WebSite` (nom « DJingood » : Google écrivait « Djingood ») et `Organization` (logo).
+    Icônes : `favicon.ico` (16, 32, 48), `img/icone-192.png` (celle des résultats de Google, multiple de 48),
+    `img/icone-180.png` (écran d'accueil d'un iPhone, fond plein), le SVG en plus. Toutes fabriquées par
+    `node tests/icones.js` (à relancer si Vini ou le titre changent).
+  - **`data-nosnippet` sur les 9 fenêtres** (`#pp`, `#cp`, `#serie`, `#onb`, `#quiz`, `#avis`, `#verif`, `#compte`, `#reg`) :
+    elles sont écrites avant l'accueil et Google en citait les boutons. Une nouvelle fenêtre `role="dialog"` doit l'avoir
+    aussi (un test le vérifie).
+  - Bas de l'accueil (`.accueil-pied`, toujours visible) : « Comment marche DJingood ? » et « Confidentialité ». Avant,
+    **aucune page ne menait à `presentation.html`**, que Google ne pouvait donc pas trouver.
+  - `presentation.html` : titre « Apprendre à mixer quand on débute · Comment marche DJingood » (pour ne pas doubler celui de
+    l'accueil), `canonical`, `og:url`. `confidentialite.html` : description, `canonical`. `testeurs.html` et `coach.html` :
+    `noindex`. Icônes sur les quatre pages. Vercel ne sert pas `/presentation` sans `.html` : les adresses gardent `.html`.
+  - `robots.txt` et `sitemap.xml` (accueil, présentation, confidentialité) à la racine.
+  - **`.vercelignore`** : avant, Vercel publiait tout le dépôt (`djingood.fr/CLAUDE.md`, `/tests/`, `/.claude/` répondaient
+    200). Retirés : `tests`, `.claude`, `*.md`, `playwright.config.js`, `firestore.rules`. Un test vérifie qu'aucun fichier
+    chargé par les pages n'est retiré ; **ne jamais y ajouter `js/`, `img/`, `musique/` ni les pages**. Le dépôt GitHub est
+    public : ces fichiers restent lisibles là-bas (sujet à part, à décider avec l'utilisateur). Après la mise en ligne,
+    vérifier avec `curl` que `djingood.fr/CLAUDE.md` répond 404 et que le site marche.
+  - `tests/serveur.js` sert les `.txt`. Tests : `tests/seo.spec.js` (nouveau, 10 tests).
+  - Pas fait, proposé ensuite : rediriger www.djingood.fr vers djingood.fr dans Vercel (réglage de l'utilisateur) ; le GEO
+    (pages de questions-réponses, faire parler de DJingood ailleurs).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -1446,6 +1478,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   Étape suivante possible, non commencée : de vrais modules avec import/export.
 - `confidentialite.html` — « Ce que DJingood garde sur toi » (lot 46), avec le bouton qui refuse les statistiques.
 - `STATISTIQUES.md` — marche à suivre de l'utilisateur pour Umami et pour lire les avis (lot 46).
+- `robots.txt`, `sitemap.xml`, `favicon.ico`, `.vercelignore` — pour Google et pour ce que Vercel publie (lot 50).
 - `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap), retiré du site : la page renvoie
   vers `index.html#vrai`. Son code sert de base à « Passer au vrai » ; `coach.html?ancien=1` l'affiche encore.
 - `tests/` — scripts Playwright (Python) : `tdz.py`, `robust.py`, `clar.py`, `play.py`, `play2.py`, `user.py`.
@@ -1542,7 +1575,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

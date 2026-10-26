@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Les pages que Google doit connaître (lot 50). Le jeu est une seule page : ses onglets (#apprendre, #vrai…)
+     n'y figurent pas. La fiche des testeurs et l'ancien mode libre sont exclus (noindex). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://djingood.fr/</loc></url>
+  <url><loc>https://djingood.fr/presentation.html</loc></url>
+  <url><loc>https://djingood.fr/confidentialite.html</loc></url>
+</urlset>

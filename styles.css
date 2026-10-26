@@ -1637,3 +1637,5 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .homelien .linkbtn{color:var(--brand-light);font-weight:800;font-size:15px}
 @media (max-width:699px){ .cp-lc:nth-child(4n+2){padding-left:32px} .cp-lc:nth-child(4n+3){padding-left:64px} .cp-lc:nth-child(4n){padding-left:32px} }
 @media (min-width:700px){ .cpchemin{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))} }
+/* Lot 50 : en bas de l'accueil, le lien vers la présentation (pour Google, qui ne la trouvait pas) et la confidentialité */
+.accueil-pied{text-align:center;font-size:14px;margin-top:28px}

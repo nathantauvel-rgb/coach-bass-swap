@@ -24,7 +24,10 @@ test.describe('Fichiers du site', () => {
       page.on('response', r => { if (r.url().startsWith('http://localhost') && r.status() >= 400) rates.push(r.url()); });
       await page.goto(url);
       await expect(page.locator(ancre).first()).toBeVisible();
-      await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', 'img/vini-icone.svg');
+      await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', 'img/vini-icone.svg');
+      // lot 50 : les mêmes icônes en PNG et en .ico, pour Google et les iPhone, sur chaque page
+      await expect(page.locator('link[rel="icon"][href="favicon.ico"]')).toHaveCount(1);
+      await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'img/icone-180.png');
       await expect(page.locator('.brand .blogo')).toHaveAttribute('src', 'img/vini-logo.svg');
       // l'image est vraiment chargée, pas seulement présente dans la page
       expect(await page.locator('.brand .blogo').evaluate(i => i.naturalWidth > 0)).toBe(true);

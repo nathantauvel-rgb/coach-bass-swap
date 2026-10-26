@@ -1,0 +1,8 @@
+# DJingood (lot 50). Tout le site peut être lu par les moteurs de recherche et les IA, sauf les fichiers de travail
+# (déjà retirés de la mise en ligne par .vercelignore ; ces lignes servent si un jour ils y reviennent).
+User-agent: *
+Disallow: /tests/
+Disallow: /.claude/
+Disallow: /*.md$
+
+Sitemap: https://djingood.fr/sitemap.xml
