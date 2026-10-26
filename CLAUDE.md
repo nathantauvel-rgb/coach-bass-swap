@@ -32,10 +32,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 25 oct. 2026)
-- **Lot 50 « SEO » (26 oct. 2026, branche `lot-50-seo`, NON PUBLIÉ)**, fait depuis la session « marketing » (l'autre compte
+- **Lot 50 « SEO » : PUBLIÉ le 26 oct. 2026** (commit `5045bcf` sur `main`, « oui »), fait depuis la session « marketing » (l'autre compte
   Claude de l'utilisateur), dans la copie à part `Documents\coach-dj-seo` (tests : `DJ_PORT=8769 npx playwright test`).
   Demande de l'utilisateur : « quand j'écris djingood sur Google je ne le retrouve pas ». Google l'avait trouvé, mais
   l'affichait mal (titre « DJingood » seul, nom « Djingood », globe gris, extrait « Continuer 1 Continuer PLATINE A… »).
+  Production vérifiée : nouveau titre et description servis, `robots.txt`, `sitemap.xml`, `favicon.ico`, icônes et
+  `img/partage.jpg` en ligne, **`djingood.fr/CLAUDE.md`, `/tests/`, `/.claude/`, `firestore.rules` répondent 404**
+  (Vercel respecte bien `.vercelignore` en publiant depuis GitHub), une démo jouée avec la vraie musique, aucune erreur.
   Détail dans l'entrée « Lot 50 » de « Où on en est ». **À faire par l'utilisateur, guidé** : Google Search Console
   (propriété « domaine », ligne TXT chez OVH, envoyer `sitemap.xml`), puis Bing Webmaster Tools (import depuis Google).
 - **Lot 48 « Comprendre » (25 oct. 2026, branche `lot-48-comprendre`, FAIT, NON PUBLIÉ).** Maquette validée par l'utilisateur
@@ -1456,7 +1459,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     deux pièges (lancer pendant le break : des points perdus et Vini qui prévient ; intro courte lancée trop tôt : −8).
   - **À essayer par l'utilisateur** : avec 7 s seul, il reste moins de temps pour préparer le morceau suivant (tempo, LOW,
     casque) avant de le lancer ; on peut aussi le préparer une fois lancé, fader en bas.
-- **Lot 50 « SEO » (26 oct. 2026)** : branche `lot-50-seo`, partie de `origin/main` (lot 48 publié), puis `origin/main` fusionnée dedans (lot 49 publié par l'autre session le 26 oct. au matin ; seul CLAUDE.md était en conflit), non publiée. Ce que
+- **Lot 50 « SEO » (26 oct. 2026)** : branche `lot-50-seo`, partie de `origin/main` (lot 48 publié), puis `origin/main` fusionnée dedans (lot 49 publié par l'autre session le 26 oct. au matin ; seul CLAUDE.md était en conflit), **publiée le 26 oct. 2026** (559 tests verts sur la version fusionnée). Ce que
   Google, les IA et les liens partagés voient du site. **Aucun changement dans le jeu**, sauf une ligne en bas de l'accueil.
   - `index.html` : titre « DJingood · Apprends à mixer sur ta table DJ, en jouant », `meta description`, `canonical`
     (https://djingood.fr/ : www.djingood.fr et coach-bass-swap.vercel.app servent la même page sans redirection),
