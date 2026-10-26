@@ -1422,7 +1422,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   dans la copie `Documents\coach-dj-lot47` (tests : `DJ_PORT=8768 npx playwright test`). Demande de l'utilisateur : « raccourcis
   aussi l'attente entre deux transitions au chapitre 7 ».
   - `js/set.js` : **le drop de chaque forme dure 16 temps** (`ENC_FORMES` : normal et basse = intro 0-32, drop 32-48, outro
-    48-80 ; court = 0-16, 16-32, 32-64 ; break = intro, drop 32-48, break 48-64, drop 64-80, outro 80-112). Entre deux
+    48-80 ; court = 0-16, 16-32, 32-64 ; break : voir plus bas, drop 32-40, break 40-48, drop 48-64, outro 64-96). Entre deux
     transitions, le morceau joue seul environ 14 temps (7 s) au lieu de 30 (15 s). Le set commence toujours au drop du premier
     morceau (16 temps avant de lancer le suivant, au lieu de 32) et finit `ENC_SOLO` = 16 temps après le drop du dernier.
   - **Gardien, premier passage : feu orange, mais un vrai recul**, corrigé avant de publier : avec des phrases de 16 temps
@@ -1434,7 +1434,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     3. le break est resserré : drop 32-40, break 40-48, drop 48-64, outro 64-96 (seul ~30 temps au lieu de ~46 avec la
     première version), et sa musique se vide hors d'une ligne PHRASE, comme avant le lot ; 4. Vini, pendant un break : « ce
     n'est pas la fin, il va repartir » ; ses conseils et la carte de fin disent « pour que son drop tombe pile à la fin ».
-    Le swap reste mesuré sur des phrases de 16 temps. Le lexique dit « 32 temps (parfois 16, comme au set) ».
+    Le swap reste mesuré sur des phrases de 16 temps. Le lexique (`LEX`) est revenu à « 32 temps ».
+  - **Gardien, second passage : feu orange, aucun blocage, 548 tests verts** (un faux joueur : fader monté tard, tempos
+    différents, piège évité, niveau 7 tiré au hasard à 100/100). Corrigé avant de publier : lancé pile sur la ligne PHRASE de
+    la fin, c'était −8 ou 0 à quelques millisecondes près ; maintenant un drop qui tombe une phrase (32 temps) après la fin
+    est juste aussi (`e0 - 32`), et la carte dit « N temps trop tôt / trop tard ». Test « lancé pile sur la ligne PHRASE de
+    la fin ». Laissé : avec 4 BPM d'écart non réglés et le fader monté très tard, 1 point « phrase » peut s'ajouter au calage.
   - Durées d'un set joué proprement : niveau 1 et 2 de 77 à 54 s, niveau 3 de 108 à 77 s, niveau 4 de 123 à 85 s, niveau 5
     de 109 à 78 s, niveau 6 de 139 à 100 s. L'étiquette dit « environ 50 s » sous la minute (`encMinutes`, avant « 0 min 50 »).
   - **Défaut ancien corrigé** : à « La montée » (niveau 6), la démo (et le robot des tests) ne ramenait jamais le tempo du

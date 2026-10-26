@@ -268,10 +268,12 @@ function encFrame(){
     // Phrase : le morceau qui entre est-il parti au bon moment ? Son drop doit tomber à la fin du morceau qui sort (mesuré quand
     // on commence à l'entendre). Lot 49 : c'est ce qui punit les deux pièges (lancer pendant le break, ou lancer une intro
     // courte comme une intro normale), depuis que les parties des morceaux du set ne tombent plus sur des phrases de 32 temps.
+    // Lancé pile à la fin (la dernière ligne PHRASE), son drop tombe une phrase après : c'est juste aussi (avant, lancé un
+    // dixième de temps avant la fin, c'était −8, et un vingtième après, 0 : gardien du lot 49).
     if (!tr.entre && an){
-      if (vm.joue){ const tombe = vm.x + ENC_FORMES[vn.s.forme].drop - vn.x, e = tombe - encFin(vm.f), d = Math.abs(e);
+      if (vm.joue){ const tombe = vm.x + ENC_FORMES[vn.s.forme].drop - vn.x, e0 = tombe - encFin(vm.f), e = Math.abs(e0 - 32) < Math.abs(e0) ? e0 - 32 : e0, d = Math.abs(e);
         tr.entre = { d }; tr.avait = vm.basse;
-        if (d >= .5) encPerte(S, 'entree', n, Math.min(8, Math.round(d)), { d: Math.round(d), sens: e > 0 ? 'après' : 'avant' }, `« ${vn.s.nom} » n’est pas parti au bon moment`); }
+        if (d >= .5) encPerte(S, 'entree', n, Math.min(8, Math.round(d)), { d: Math.round(d), sens: e > 0 ? 'trop tard' : 'trop tôt' }, `« ${vn.s.nom} » n’est pas parti au bon moment`); }
       else tr.entre = { d: 0 };
     }
     if (tr.entre){
@@ -449,7 +451,7 @@ function encTexte(S, p){
     case 'basses': return [`Deux basses en même temps pendant ${Math.round(q.temps)} temps, entre « ${a} » et « ${b} ».`, 'Coupe les basses du morceau qui entre (LOW à gauche) tant que l’autre a les siennes.'];
     case 'volume': return [q.seul ? `Le son de « ${q.nom} » a baissé pendant ${Math.round(q.temps)} temps.` : `Le son a baissé pendant ${Math.round(q.temps)} temps, entre « ${a} » et « ${b} ».`, 'Monte le morceau qui entre avant de baisser celui qui sort.'];
     case 'blanc': return [`La musique s’est arrêtée après « ${q.nom || a} ».`, 'Lance le morceau suivant avant la fin de celui qui joue : regarde où finit son outro sur la piste.'];
-    case 'entree': return [`« ${b} » n’est pas parti au bon moment : son drop est tombé ${q.d} temps ${q.sens} la fin de « ${a} ».`, l.set.aides.phrases ? 'Lance le morceau suivant pour que son drop tombe pile à la fin de celui qui joue : regarde où il tomberait, en pointillé sur la piste. Attention aux intros courtes et aux breaks.' : 'Compte les mesures : lance le morceau suivant pour que son drop tombe pile à la fin de celui qui joue (une intro courte part plus tard).'];
+    case 'entree': return [`« ${b} » n’est pas parti au bon moment (${q.d} temps ${q.sens}) : son drop doit tomber pile à la fin de « ${a} ».`, l.set.aides.phrases ? 'Lance le morceau suivant pour que son drop tombe pile à la fin de celui qui joue : regarde où il tomberait, en pointillé sur la piste. Attention aux intros courtes et aux breaks.' : 'Compte les mesures : lance le morceau suivant pour que son drop tombe pile à la fin de celui qui joue (une intro courte part plus tard).'];
     case 'swap': return [`Les basses sont passées de « ${a} » à « ${b} » ${q.d} temps à côté d’une phrase.`, 'Échange les basses au début d’une phrase.'];
     case 'consigne': return [`Entre « ${a} » et « ${b} », il fallait ${ENC_TECH[q.tech]}.`, ENC_TECH_COMMENT[q.tech]];
     case 'casque': return [`« ${b} » est entré sans avoir été écouté au casque.`, 'Allume CUE 🎧 du morceau qui entre, et cale-le avant de monter son fader.'];

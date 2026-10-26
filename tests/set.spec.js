@@ -219,7 +219,19 @@ test.describe('Des sets entiers', () => {
     await page.evaluate(() => { run.set.robot = false; ctrl.faderB = 1; applyCtrl(); plLecture('B'); });
     await page.waitForFunction(() => run && run.set && run.set.tr[1].entre, null, { timeout: 10000 });
     const p = await page.evaluate(() => { const x = run.set.pertes.get('entree:1'); return x ? [Math.round(x.pts), x.q.sens] : null; });
-    expect(p).toEqual([8, 'avant']);
+    expect(p).toEqual([8, 'trop tôt']);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('lancé pile sur la ligne PHRASE de la fin : rien de perdu, un peu avant comme un peu après (gardien du lot 49)', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: OUVERT, avant: ROBOT });
+    await ch7(page, 0); await jouer(page);
+    // le joueur laisse passer le bon moment (début de l'outro), puis lance le suivant juste avant la fin du premier
+    await page.waitForFunction(() => run && run.set && plPos('A') / deck.A.per >= 40, null, { timeout: 60000, polling: 'raf' });
+    await page.evaluate(() => { run.set.robot = false; });
+    await page.waitForFunction(() => plPos('A') / deck.A.per >= 79.6, null, { timeout: 60000, polling: 'raf' });
+    await page.evaluate(() => { ctrl.faderB = 1; applyCtrl(); plLecture('B'); });
+    await page.waitForFunction(() => run && run.set && run.set.tr[1].entre, null, { timeout: 10000 });
+    expect(await page.evaluate(() => [run.set.tr[1].entre.d < .5, run.set.pertes.has('entree:1')])).toEqual([true, false]);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('sans rien toucher : la musique s\'arrête, les morceaux pas joués coûtent cher', async ({ page }) => {
