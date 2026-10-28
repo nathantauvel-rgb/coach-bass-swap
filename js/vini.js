@@ -67,4 +67,5 @@ function viniReagit(kind){
   viniHumeur(el, kind === 'ok' ? 'parfait' : 'rate'); clearTimeout(el._vn);
   el._vn = setTimeout(viniCale, kind === 'ok' ? 2 * P * 1000 : 1400);
 }
-viniMettre($('lvlVini'), 'calme');
+// Le guide du débutant (guide/guide.js) charge aussi ce fichier pour dessiner Vini : il n'y a pas de #lvlVini ni de $ là-bas
+if (document.getElementById('lvlVini')) viniMettre($('lvlVini'), 'calme');

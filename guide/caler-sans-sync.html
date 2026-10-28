@@ -36,7 +36,7 @@
       "description": "Le beatmatching à l'oreille, pas à pas : le curseur de tempo pour la vitesse, la molette pour pousser ou freiner, et les grosses caisses pour savoir si c'est calé.",
       "inLanguage": "fr",
       "datePublished": "2026-10-27",
-      "dateModified": "2026-10-27",
+      "dateModified": "2026-10-28",
       "image": "https://djingood.fr/img/partage.jpg",
       "mainEntityOfPage": "https://djingood.fr/guide/caler-sans-sync.html",
       "author": { "@type": "Person", "name": "Nathan", "jobTitle": "Créateur de DJingood", "worksFor": { "@type": "Organization", "name": "DJingood", "url": "https://djingood.fr/" } },
@@ -68,61 +68,89 @@
 </script>
 </head>
 <body class="pres guide">
+<div class="vr-lecture" aria-hidden="true"></div>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="../presentation.html"><img class="blogo" src="../img/vini-logo.svg" alt="" width="40" height="40"><div><div class="brand-name"><span class="dj">DJ</span>ingood</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
     <a class="ghost" href="../index.html">Ouvrir le site</a>
   </header>
 
-  <article class="g-article">
-    <section class="page g-tete">
-      <span class="lnum"><a href="./">Guide du débutant</a> · Le calage</span>
-      <h1>Comment caler deux morceaux sans le bouton SYNC ?</h1>
-      <p class="g-date">Mis à jour le <time datetime="2026-10-27">27 octobre 2026</time> · par Nathan, créateur de DJingood</p>
-      <div class="g-bref">
-        <strong>En bref</strong>
-        <p>Caler sans SYNC (le « beatmatching »), c'est faire jouer le morceau B exactement à la même vitesse que A, temps contre temps. Deux gestes : le curseur de tempo de B pour la vitesse, et la molette pour le pousser ou le freiner quand ses temps sont en avance ou en retard. Écoute les grosses caisses : un seul « boum », c'est calé ; un « ba-boum », c'est décalé. Si tu dois pousser B sans arrêt, il est trop lent : accélère un peu son tempo, et inversement.</p>
-      </div>
-    </section>
-
-    <section class="page">
-      <span class="lnum">La méthode</span>
-      <h2 class="pres-h2">Cinq étapes.</h2>
-      <ol class="g-gestes">
-        <li><strong>Mets B au même BPM que A.</strong> Lis le tempo de A dans ton logiciel, en BPM, et bouge le curseur TEMPO de B jusqu'au même nombre. Plus tard, tu le feras à l'oreille, sans regarder.</li>
-        <li><strong>Lance B sur un « 1 », et écoute-le au casque.</strong> Appuie sur le bouton CUE casque de sa voie et laisse son fader en bas. Mets le casque sur une seule oreille : l'autre écoute les enceintes.</li>
-        <li><strong>Écoute les grosses caisses.</strong> Un seul « boum » à chaque temps : c'est calé. Deux coups rapprochés, « ba-boum » : B est en avance ou en retard.</li>
-        <li><strong>Pousse ou freine avec la molette.</strong> Tourne le bord de la molette de B (pas le dessus, qui sert à scratcher) : dans le sens des aiguilles d'une montre pour le pousser, dans l'autre sens pour le freiner. Tu ne sais pas lequel est en avance ? Essaie un sens : si le « ba-boum » s'aggrave, c'est l'autre.</li>
-        <li><strong>Corrige le tempo, pas seulement la molette.</strong> Si B se décale de nouveau après quelques mesures, les vitesses ne sont pas tout à fait égales. Tu devais le pousser ? Il est trop lent : accélère-le un tout petit peu avec le curseur. Tu devais le freiner ? Ralentis-le.</li>
-      </ol>
-      <figure class="g-fig g-sons">
-        <p class="g-sons-titre">Écoute la différence</p>
-        <div class="g-paire">
-          <div class="g-son"><button type="button" class="g-ecoute" data-son="cale" aria-pressed="false"><span class="g-ic" aria-hidden="true">▶</span> Calé</button><p>Un seul « boum » à chaque temps : les grosses caisses de A et de B tombent ensemble.</p></div>
-          <div class="g-son"><button type="button" class="g-ecoute" data-son="decale" aria-pressed="false"><span class="g-ic" aria-hidden="true">▶</span> Décalé</button><p>« Ba-boum » : la grosse caisse de B arrive un tout petit peu trop tard (60 millisecondes).</p></div>
-        </div>
-        <figcaption>Deux morceaux joués ensemble, au même tempo. Écoute seulement les grosses caisses.<span class="g-credit">Musique : Play House, libre de droits (CC0).</span></figcaption>
-      </figure>
-    </section>
-
-    <section class="page">
-      <span class="lnum">Les pièges</span>
-      <h2 class="pres-h2">Les trois erreurs du débutant.</h2>
-      <ul class="g-erreurs">
-        <li><strong>Tout corriger à la molette.</strong> Si les tempos ne sont pas égaux, B se redécale sans arrêt. La molette rattrape un décalage, le curseur règle la vitesse.</li>
-        <li><strong>Des gestes trop grands.</strong> De tout petits coups de molette suffisent, et le curseur de tempo se bouge de quelques millimètres à la fois.</li>
-        <li><strong>Écouter la mélodie.</strong> Ce sont les grosses caisses et les claps qui disent si c'est calé, pas les voix ni les nappes.</li>
-      </ul>
-      <p class="g-p g-apres">Pourquoi apprendre sans SYNC ? SYNC cale à partir de la grille de chaque morceau, que ton logiciel a calculée. Si elle est fausse (morceau ancien, joué par de vrais musiciens, ou mal analysé), il cale à côté. Et caler à l'oreille forme l'oreille dont tu as besoin pour tout le reste.</p>
-    </section>
-
-    <section class="hero g-essai">
+  <article class="vr">
+    <section class="vr-sc vr-tete g-tete">
       <div>
-        <h2 class="pres-h2">Entraîne-toi avec un compteur en millisecondes.</h2>
-        <p class="g-p">Au chapitre « Le calage », DJingood mesure le décalage entre tes deux morceaux pendant toute la partie, en millisecondes, et te dit si B est en avance ou en retard. Sept niveaux, d'« Entendre le décalage » à « Sans filet » : sans BPM affiché, sans compteur, comme en soirée.</p>
-        <div class="rbrow"><a class="cta" href="../index.html">Essayer gratuitement</a></div>
-        <p class="need">Gratuit pendant la phase de test · sur ordinateur, avec Chrome ou Edge et ta table branchée</p>
+        <span class="lnum"><a href="./">Guide du débutant</a> · Le calage</span>
+        <h1>Comment caler deux morceaux sans le bouton SYNC ?</h1>
+        <p class="g-date">Mis à jour le <time datetime="2026-10-28">28 octobre 2026</time> · par Nathan, créateur de DJingood</p>
       </div>
+      <div class="vr-dit">
+        <div data-vini="danse"></div>
+        <div class="vr-bul g-bref">
+          <strong>En bref</strong>
+          <p>Caler sans SYNC (le «&nbsp;beatmatching&nbsp;»), c'est faire jouer le morceau B exactement à la même vitesse que A, temps contre temps. Deux gestes&nbsp;: le curseur de tempo de B pour la vitesse, et la molette pour le pousser ou le freiner quand ses temps sont en avance ou en retard. Écoute les grosses caisses&nbsp;: un seul «&nbsp;boum&nbsp;», c'est calé&nbsp;; un «&nbsp;ba-boum&nbsp;», c'est décalé. Si tu dois pousser B sans arrêt, il est trop lent&nbsp;: accélère un peu son tempo, et inversement.</p>
+        </div>
+      </div>
+      <div class="vr-descends" aria-hidden="true">Descends, je te montre<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div>
+    </section>
+
+    <section class="vr-sc">
+      <h2>1 · Calé ou décalé&nbsp;?</h2>
+      <div class="vr-dit">
+        <div data-vini="calme"></div>
+        <p class="vr-bul">D'abord, entends la différence. Écoute seulement les grosses caisses.</p>
+      </div>
+      <div class="vr-kicks" aria-hidden="true"><span class="vr-kick a">A</span><span class="vr-kick b">B</span></div>
+      <div class="g-paire">
+        <div class="g-son"><button type="button" class="g-ecoute" data-son="cale" data-humeur="parfait" aria-pressed="false"><span class="g-ic" aria-hidden="true">▶</span> Calé</button><p>Un seul «&nbsp;boum&nbsp;» à chaque temps&nbsp;: les grosses caisses de A et de B tombent ensemble.</p></div>
+        <div class="g-son"><button type="button" class="g-ecoute" data-son="decale" data-humeur="rate" aria-pressed="false"><span class="g-ic" aria-hidden="true">▶</span> Décalé</button><p>«&nbsp;Ba-boum&nbsp;»&nbsp;: la grosse caisse de B arrive un tout petit peu trop tard (60 millisecondes).</p></div>
+      </div>
+      <p class="vr-note">Deux morceaux joués ensemble, au même tempo. Musique&nbsp;: Play House, libre de droits (CC0).</p>
+    </section>
+
+    <section class="vr-sc">
+      <h2>2 · La méthode, en cinq étapes</h2>
+      <div class="vr-dit droite">
+        <div data-vini="calme"></div>
+        <p class="vr-bul">Cinq étapes, toujours dans cet ordre. Touche «&nbsp;Suivant&nbsp;» pour avancer avec moi.</p>
+      </div>
+      <div class="vr-pas" data-pas data-fete>
+        <ol>
+          <li><button type="button" class="vr-pas-t">Mets B au même BPM que A</button><span>Lis le tempo de A dans ton logiciel, en BPM, et bouge le curseur TEMPO de B jusqu'au même nombre. Plus tard, tu le feras à l'oreille, sans regarder.</span></li>
+          <li><button type="button" class="vr-pas-t">Lance B sur un «&nbsp;1&nbsp;», et écoute-le au casque</button><span>Appuie sur le bouton CUE casque de sa voie et laisse son fader en bas. Mets le casque sur une seule oreille&nbsp;: l'autre écoute les enceintes.</span></li>
+          <li><button type="button" class="vr-pas-t">Écoute les grosses caisses</button><span>Un seul «&nbsp;boum&nbsp;» à chaque temps&nbsp;: c'est calé. Deux coups rapprochés, «&nbsp;ba-boum&nbsp;»&nbsp;: B est en avance ou en retard.</span></li>
+          <li><button type="button" class="vr-pas-t">Pousse ou freine avec la molette</button><span>Tourne le bord de la molette de B (pas le dessus, qui sert à scratcher)&nbsp;: dans le sens des aiguilles d'une montre pour le pousser, dans l'autre sens pour le freiner. Tu ne sais pas lequel est en avance&nbsp;? Essaie un sens&nbsp;: si le «&nbsp;ba-boum&nbsp;» s'aggrave, c'est l'autre.</span></li>
+          <li><button type="button" class="vr-pas-t">Corrige le tempo, pas seulement la molette</button><span>Si B se décale de nouveau après quelques mesures, les vitesses ne sont pas tout à fait égales. Tu devais le pousser&nbsp;? Il est trop lent&nbsp;: accélère-le un tout petit peu avec le curseur. Tu devais le freiner&nbsp;? Ralentis-le.</span></li>
+        </ol>
+        <div class="vr-pas-nav"><button type="button" class="g-ecoute" data-prec aria-label="Étape précédente">◀</button><span class="vr-pas-n"></span><button type="button" class="g-ecoute" data-suiv><span class="g-ic" aria-hidden="true">▶</span> Suivant</button></div>
+      </div>
+    </section>
+
+    <section class="vr-sc">
+      <h2>3 · Les trois erreurs du débutant</h2>
+      <div class="vr-dit">
+        <div data-vini="rate"></div>
+        <p class="vr-bul">Je les ai toutes faites. Touche une carte pour voir comment les éviter.</p>
+      </div>
+      <div class="vr-pieges">
+        <button type="button" class="vr-piege" aria-pressed="false" style="--i:0"><span class="vr-face"><i>✗</i><b>Tout corriger à la molette</b><span>Si les tempos ne sont pas égaux, B se redécale sans arrêt.</span><em>Voir la solution</em></span><span class="vr-dos"><i>✓</i><b>Chacun son rôle</b>La molette rattrape un décalage, le curseur règle la vitesse.</span></button>
+        <button type="button" class="vr-piege" aria-pressed="false" style="--i:1"><span class="vr-face"><i>✗</i><b>Des gestes trop grands</b><span>Un grand coup de molette décale encore plus.</span><em>Voir la solution</em></span><span class="vr-dos"><i>✓</i><b>Tout petit</b>De tout petits coups de molette, et le curseur de tempo de quelques millimètres à la fois.</span></button>
+        <button type="button" class="vr-piege" aria-pressed="false" style="--i:2"><span class="vr-face"><i>✗</i><b>Écouter la mélodie</b><span>Les voix et les nappes ne disent pas si c'est calé.</span><em>Voir la solution</em></span><span class="vr-dos"><i>✓</i><b>Écoute le rythme</b>Ce sont les grosses caisses et les claps qui disent si c'est calé.</span></button>
+      </div>
+    </section>
+
+    <section class="vr-sc">
+      <h2>4 · Pourquoi apprendre sans SYNC&nbsp;?</h2>
+      <div class="vr-dit droite">
+        <div data-vini="calme"></div>
+        <p class="vr-bul">Parce que SYNC se trompe parfois, et que ton oreille, elle, ne te lâche jamais.<small>SYNC cale à partir de la grille de chaque morceau, que ton logiciel a calculée. Si elle est fausse (morceau ancien, joué par de vrais musiciens, ou mal analysé), il cale à côté. Et caler à l'oreille forme l'oreille dont tu as besoin pour tout le reste.</small></p>
+      </div>
+    </section>
+
+    <section class="vr-sc vr-fin g-essai">
+      <div data-vini="danse"></div>
+      <h2>Entraîne-toi avec un compteur en millisecondes.</h2>
+      <p>Au chapitre «&nbsp;Le calage&nbsp;», DJingood mesure le décalage entre tes deux morceaux pendant toute la partie, en millisecondes, et te dit si B est en avance ou en retard. Sept niveaux, d'«&nbsp;Entendre le décalage&nbsp;» à «&nbsp;Sans filet&nbsp;»&nbsp;: sans BPM affiché, sans compteur, comme en soirée.</p>
+      <a class="cta" href="../index.html">Essayer gratuitement</a>
+      <small>Gratuit pendant la phase de test · sur ordinateur, avec Chrome ou Edge et ta table branchée</small>
     </section>
 
     <section class="page">
@@ -149,6 +177,7 @@
   <p class="page-note pres-pied"><a href="../presentation.html">Comment marche DJingood ?</a> · <a href="../confidentialite.html">Confidentialité</a></p>
 </div>
 <script src="../js/stats.js"></script>
-<script src="ecoute.js"></script>
+<script src="../js/vini.js"></script>
+<script src="guide.js"></script>
 </body>
 </html>

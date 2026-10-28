@@ -37,7 +37,7 @@
       "description": "Les vérifications dans l'ordre quand une table DJ n'apparaît pas dans un logiciel ou sur un site : autre logiciel ouvert, câble, mode ordinateur, pilote, navigateur.",
       "inLanguage": "fr",
       "datePublished": "2026-10-27",
-      "dateModified": "2026-10-27",
+      "dateModified": "2026-10-28",
       "image": "https://djingood.fr/img/partage.jpg",
       "mainEntityOfPage": "https://djingood.fr/guide/table-dj-non-detectee.html",
       "author": { "@type": "Person", "name": "Nathan", "jobTitle": "Créateur de DJingood", "worksFor": { "@type": "Organization", "name": "DJingood", "url": "https://djingood.fr/" } },
@@ -69,54 +69,70 @@
 </script>
 </head>
 <body class="pres guide">
+<div class="vr-lecture" aria-hidden="true"></div>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="../presentation.html"><img class="blogo" src="../img/vini-logo.svg" alt="" width="40" height="40"><div><div class="brand-name"><span class="dj">DJ</span>ingood</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
     <a class="ghost" href="../index.html">Ouvrir le site</a>
   </header>
 
-  <article class="g-article">
-    <section class="page g-tete">
-      <span class="lnum"><a href="./">Guide du débutant</a> · Dépannage</span>
-      <h1>Ma table DJ n'est pas détectée par l'ordinateur : que faire ?</h1>
-      <p class="g-date">Mis à jour le <time datetime="2026-10-27">27 octobre 2026</time> · par Nathan, créateur de DJingood</p>
-      <div class="g-bref">
-        <strong>En bref</strong>
-        <p>Vérifie dans l'ordre : ferme les autres logiciels DJ (sur Windows, une table ne parle qu'à un seul logiciel à la fois), puis branche la table directement sur l'ordinateur, avec le câble livré avec, sans hub. Une table tout-en-un, avec un écran, doit être passée en mode ordinateur, et sur Windows certaines tables demandent leur pilote. Sur un site web comme DJingood, il faut en plus Chrome ou Edge, et autoriser l'accès aux appareils MIDI.</p>
-      </div>
-    </section>
-
-    <section class="page">
-      <span class="lnum">Dans l'ordre</span>
-      <h2 class="pres-h2">Six vérifications.</h2>
-      <ol class="g-gestes">
-        <li><strong>Ferme les autres logiciels DJ.</strong> rekordbox, Serato, djay, VirtualDJ… Sur Windows, une table ne parle qu'à un seul logiciel à la fois : si un autre l'a prise, elle reste invisible pour le suivant, même ouvert en arrière-plan.</li>
-        <li><strong>Le câble et le port.</strong> Branche la table directement sur l'ordinateur, sans hub ni rallonge, avec le câble livré avec : certains câbles USB ne font que charger, sans transporter de données. Essaie aussi un autre port.</li>
-        <li><strong>Allume-la.</strong> Si ta table a une prise de courant ou un interrupteur, vérifie qu'elle est branchée et allumée.</li>
-        <li><strong>Le mode ordinateur.</strong> Une table tout-en-un, avec un écran (XDJ-AZ, XDJ-RX3, XDJ-XZ…), joue aussi sans ordinateur : il faut la passer en mode ordinateur, ou « contrôle par logiciel ». Son manuel dit comment.</li>
-        <li><strong>Le pilote, sur Windows.</strong> Certaines tables demandent d'installer leur pilote, sur la page d'assistance de la marque. La DDJ-FLX4 et la plupart des petites tables n'en ont pas besoin. Dans le Gestionnaire de périphériques de Windows, un point d'exclamation jaune à côté de ta table signale un souci de pilote.</li>
-        <li><strong>Débranche, rebranche, relance.</strong> Débranche la table, rebranche-la, puis relance le logiciel. Vérifie dans ses réglages que ta table est bien choisie. En dernier recours, redémarre l'ordinateur, table branchée.</li>
-      </ol>
-    </section>
-
-    <section class="page">
-      <span class="lnum">Sur un site web</span>
-      <h2 class="pres-h2">Ce qu'il faut en plus dans un navigateur.</h2>
-      <ul class="g-erreurs">
-        <li><strong>Chrome ou Edge, sur un ordinateur.</strong> Safari ne sait pas parler aux tables DJ, et aucun navigateur d'iPhone ou d'iPad non plus.</li>
-        <li><strong>Autorise l'accès.</strong> La première fois, le navigateur demande si le site peut utiliser tes « appareils MIDI » : c'est ta table. Clique sur « Autoriser ».</li>
-        <li><strong>Déjà refusé ?</strong> Clique sur l'icône à gauche de l'adresse du site, mets « Appareils MIDI » sur « Autoriser », puis recharge la page.</li>
-        <li><strong>Sur Windows, ferme rekordbox</strong> avant d'ouvrir le site : la table ne peut pas parler aux deux en même temps.</li>
-      </ul>
-    </section>
-
-    <section class="hero g-essai">
+  <article class="vr">
+    <section class="vr-sc vr-tete g-tete">
       <div>
-        <h2 class="pres-h2">DJingood te dit ce qui coince.</h2>
-        <p class="g-p">Ouvre DJingood dans Chrome : en haut de la page, une pastille donne le nom de ta table dès qu'elle est vue, ou ce qui l'en empêche (« Table non autorisée », « Prends Chrome ou Edge »…). La page « Ma table » te dit quoi vérifier. Une quinzaine de tables de débutant sont reconnues toutes seules ; les autres se règlent pas à pas, en une minute.</p>
-        <div class="rbrow"><a class="cta" href="../index.html">Ouvrir DJingood</a></div>
-        <p class="need">Gratuit pendant la phase de test · sur ordinateur, avec Chrome ou Edge</p>
+        <span class="lnum"><a href="./">Guide du débutant</a> · Dépannage</span>
+        <h1>Ma table DJ n'est pas détectée par l'ordinateur : que faire ?</h1>
+        <p class="g-date">Mis à jour le <time datetime="2026-10-28">28 octobre 2026</time> · par Nathan, créateur de DJingood</p>
       </div>
+      <div class="vr-dit">
+        <div data-vini="calme"></div>
+        <div class="vr-bul g-bref">
+          <strong>En bref</strong>
+          <p>Vérifie dans l'ordre&nbsp;: ferme les autres logiciels DJ (sur Windows, une table ne parle qu'à un seul logiciel à la fois), puis branche la table directement sur l'ordinateur, avec le câble livré avec, sans hub. Une table tout-en-un, avec un écran, doit être passée en mode ordinateur, et sur Windows certaines tables demandent leur pilote. Sur un site web comme DJingood, il faut en plus Chrome ou Edge, et autoriser l'accès aux appareils MIDI.</p>
+        </div>
+      </div>
+      <div class="vr-descends" aria-hidden="true">Descends, je te montre<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div>
+    </section>
+
+    <section class="vr-sc">
+      <h2>1 · L'enquête, indice par indice</h2>
+      <div class="vr-dit">
+        <div data-vini="calme"></div>
+        <p class="vr-bul">On enquête ensemble&nbsp;! Vérifie ces six indices dans l'ordre. Dès que ta table apparaît, dis-le-moi.</p>
+      </div>
+      <div class="vr-pas" data-pas>
+        <ol>
+          <li><button type="button" class="vr-pas-t">Ferme les autres logiciels DJ</button><span>rekordbox, Serato, djay, VirtualDJ… Sur Windows, une table ne parle qu'à un seul logiciel à la fois&nbsp;: si un autre l'a prise, elle reste invisible pour le suivant, même ouvert en arrière-plan.</span></li>
+          <li><button type="button" class="vr-pas-t">Le câble et le port</button><span>Branche la table directement sur l'ordinateur, sans hub ni rallonge, avec le câble livré avec&nbsp;: certains câbles USB ne font que charger, sans transporter de données. Essaie aussi un autre port.</span></li>
+          <li><button type="button" class="vr-pas-t">Allume-la</button><span>Si ta table a une prise de courant ou un interrupteur, vérifie qu'elle est branchée et allumée.</span></li>
+          <li><button type="button" class="vr-pas-t">Le mode ordinateur</button><span>Une table tout-en-un, avec un écran (XDJ-AZ, XDJ-RX3, XDJ-XZ…), joue aussi sans ordinateur&nbsp;: il faut la passer en mode ordinateur, ou «&nbsp;contrôle par logiciel&nbsp;». Son manuel dit comment.</span></li>
+          <li><button type="button" class="vr-pas-t">Le pilote, sur Windows</button><span>Certaines tables demandent d'installer leur pilote, sur la page d'assistance de la marque. La DDJ-FLX4 et la plupart des petites tables n'en ont pas besoin. Dans le Gestionnaire de périphériques de Windows, un point d'exclamation jaune à côté de ta table signale un souci de pilote.</span></li>
+          <li><button type="button" class="vr-pas-t">Débranche, rebranche, relance</button><span>Débranche la table, rebranche-la, puis relance le logiciel. Vérifie dans ses réglages que ta table est bien choisie. En dernier recours, redémarre l'ordinateur, table branchée.</span></li>
+        </ol>
+        <div class="vr-pas-nav"><button type="button" class="g-ecoute" data-prec aria-label="Indice précédent">◀</button><span class="vr-pas-n"></span><button type="button" class="g-ecoute" data-oui data-message="Bravo, enquête résolue&nbsp;! Si ta table disparaît encore un jour, reviens ici.">C'était ça&nbsp;!</button><button type="button" class="g-ecoute" data-suiv="Indice suivant"><span class="g-ic" aria-hidden="true">▶</span> Indice suivant</button></div>
+        <p class="vr-pas-msg" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="vr-sc">
+      <h2>2 · Sur un site web, en plus</h2>
+      <div class="vr-dit droite">
+        <div data-vini="calme"></div>
+        <p class="vr-bul">Pour un site comme DJingood, il y a quatre choses en plus.</p>
+      </div>
+      <div class="vr-cartes">
+        <div class="vr-carte" style="--i:0"><div class="vr-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></div><div><h3>Chrome ou Edge, sur un ordinateur</h3><p>Safari ne sait pas parler aux tables DJ, et aucun navigateur d'iPhone ou d'iPad non plus.</p></div></div>
+        <div class="vr-carte" style="--i:1"><div class="vr-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></div><div><h3>Autorise l'accès</h3><p>La première fois, le navigateur demande si le site peut utiliser tes «&nbsp;appareils MIDI&nbsp;»&nbsp;: c'est ta table. Clique sur «&nbsp;Autoriser&nbsp;».</p></div></div>
+        <div class="vr-carte" style="--i:2"><div class="vr-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><div><h3>Déjà refusé&nbsp;?</h3><p>Clique sur l'icône à gauche de l'adresse du site, mets «&nbsp;Appareils MIDI&nbsp;» sur «&nbsp;Autoriser&nbsp;», puis recharge la page.</p></div></div>
+        <div class="vr-carte" style="--i:3"><div class="vr-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></div><div><h3>Sur Windows, ferme rekordbox</h3><p>Avant d'ouvrir le site&nbsp;: la table ne peut pas parler aux deux en même temps.</p></div></div>
+      </div>
+    </section>
+
+    <section class="vr-sc vr-fin g-essai">
+      <div data-vini="danse"></div>
+      <h2>DJingood te dit ce qui coince.</h2>
+      <p>Ouvre DJingood dans Chrome&nbsp;: en haut de la page, une pastille donne le nom de ta table dès qu'elle est vue, ou ce qui l'en empêche («&nbsp;Table non autorisée&nbsp;», «&nbsp;Prends Chrome ou Edge&nbsp;»…). La page «&nbsp;Ma table&nbsp;» te dit quoi vérifier. Une quinzaine de tables de débutant sont reconnues toutes seules&nbsp;; les autres se règlent pas à pas, en une minute.</p>
+      <a class="cta" href="../index.html">Ouvrir DJingood</a>
+      <small>Gratuit pendant la phase de test · sur ordinateur, avec Chrome ou Edge</small>
     </section>
 
     <section class="page">
@@ -143,5 +159,7 @@
   <p class="page-note pres-pied"><a href="../presentation.html">Comment marche DJingood ?</a> · <a href="../confidentialite.html">Confidentialité</a></p>
 </div>
 <script src="../js/stats.js"></script>
+<script src="../js/vini.js"></script>
+<script src="guide.js"></script>
 </body>
 </html>

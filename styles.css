@@ -1748,3 +1748,202 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .g-voie{font-size:30px;font-weight:900}
 .g-pastille circle{fill:var(--brand);stroke:var(--panel);stroke-width:5}
 .g-pastille text{fill:var(--on-brand);font-size:36px;font-weight:900}
+/* Le dessin bouge avec le pas à pas de sa scène (data-etape : 0 = position de départ, puis les gestes 1 à 4) */
+.g-fdr,.g-low,.g-pastille{transform-box:fill-box;transform-origin:50% 50%;transition:transform .9s cubic-bezier(.4,0,.2,1),opacity .3s}
+.g-jog-b{transform-box:fill-box;transform-origin:50% 50%}
+.g-repere{fill:var(--line)}
+.g-fdr-b{transform:translateY(106px)}
+.g-low-b{transform:rotate(-135deg)}
+[data-etape="2"] .g-fdr-b,[data-etape="3"] .g-fdr-b,[data-etape="4"] .g-fdr-b{transform:none}
+[data-etape="3"] .g-low-a,[data-etape="4"] .g-low-a{transform:rotate(-135deg)}
+[data-etape="3"] .g-low-b,[data-etape="4"] .g-low-b{transform:none}
+[data-etape="4"] .g-fdr-a{transform:translateY(106px)}
+[data-etape="1"] .g-jog-b,[data-etape="2"] .g-jog-b,[data-etape="3"] .g-jog-b,[data-etape="4"] .g-jog-b{animation:vr-tourne 1.8s linear infinite}
+[data-etape="1"] .g-jog-b .g-repere,[data-etape="2"] .g-jog-b .g-repere,[data-etape="3"] .g-jog-b .g-repere,[data-etape="4"] .g-jog-b .g-repere{fill:var(--b)}
+@keyframes vr-tourne{to{transform:rotate(360deg)}}
+[data-etape="1"] .g-play{transform-box:fill-box;transform-origin:50% 50%;animation:vr-appui .5s 2 ease-in-out}
+@keyframes vr-appui{50%{transform:scale(.82)}}
+[data-etape="1"] .g-pastille,[data-etape="2"] .g-pastille,[data-etape="3"] .g-pastille,[data-etape="4"] .g-pastille{opacity:.35}
+[data-etape="1"] .g-pastille[data-n="1"],[data-etape="2"] .g-pastille[data-n="2"],[data-etape="3"] .g-pastille[data-n="3"],[data-etape="4"] .g-pastille[data-n="4"]{opacity:1;transform:scale(1.3)}
+[data-etape] .g-frise [data-geste] circle{transition:fill .3s}
+[data-etape="1"] .g-frise [data-geste="1"] circle,[data-etape="2"] .g-frise [data-geste="2"] circle,[data-etape="3"] .g-frise [data-geste="3"] circle,[data-etape="4"] .g-frise [data-geste="4"] circle{fill:var(--brand-light)}
+
+/* ---------- Le guide en scènes, avec Vini (maquette validée par l'utilisateur le 28 oct. 2026) ----------
+   Une page = des scènes (.vr-sc) qui apparaissent quand on descend ; dans chacune, Vini dit une ou deux phrases dans sa bulle,
+   puis une animation, un son ou un petit jeu. Le texte reste dans la page pour Google et les IA (guide/guide.js ne fait que l'animer). */
+.vr-lecture{position:fixed;top:0;left:0;right:0;height:4px;z-index:40;background:linear-gradient(90deg,var(--brand),var(--brand-light));transform-origin:0 50%;transform:scaleX(0)}
+.vr{display:flex;flex-direction:column;gap:26px}
+.vr-sc{background:var(--panel);border:1px solid var(--line);border-radius:28px;padding:30px;display:flex;flex-direction:column;gap:24px;overflow:hidden}
+.vr-sc h2{margin:0;font-size:14px;letter-spacing:.07em;text-transform:uppercase;color:var(--brand-light);font-weight:900}
+.vr-dit{display:flex;align-items:flex-start;gap:16px}
+.vr-dit.droite{flex-direction:row-reverse}
+.vr-dit .vini{width:104px;height:113px;cursor:pointer}
+.vr-bul{position:relative;flex:1;margin:6px 0 0;background:var(--panel-2);border:2px solid var(--line);border-radius:22px;padding:16px 20px;font-size:21px;font-weight:800;line-height:1.38;max-width:36ch}
+.vr-bul::before{content:"";position:absolute;left:-10px;top:30px;width:16px;height:16px;background:var(--panel-2);border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg)}
+.vr-dit.droite .vr-bul::before{left:auto;right:-10px;transform:rotate(225deg)}
+.vr-dit.droite .vr-bul{margin-left:auto}
+.vr-bul small{display:block;margin-top:8px;font-size:15px;font-weight:600;color:var(--muted)}
+.vr-bul.change{animation:vr-change .45s cubic-bezier(.3,1.5,.5,1)}
+@keyframes vr-change{from{transform:scale(.92);opacity:.4}}
+.vr-tete{padding-top:36px}
+.vr-tete h1{margin:6px 0 0;font-size:40px;line-height:1.12;max-width:22ch}
+.vr-tete .lnum a{color:inherit;text-decoration:none}
+.vr-tete .lnum a:hover{text-decoration:underline}
+.vr-tete .vr-dit .vini{width:150px;height:163px}
+.vr-tete .vr-bul.g-bref{margin:6px 0 0;max-width:46ch;background:var(--brand-soft);border:2px solid var(--brand-line);border-radius:22px;padding:16px 20px}
+.vr-tete .vr-bul.g-bref::before{background:var(--brand-soft);border-color:var(--brand-line)}
+.vr-tete .g-bref strong{display:block;margin-bottom:6px;font-size:13px;letter-spacing:.07em}
+.vr-tete .g-bref p{margin:0;font-size:19px;font-weight:800;line-height:1.4}
+.vr-descends{align-self:center;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);font-weight:800;font-size:15px}
+.vr-descends svg{width:26px;height:26px;stroke:var(--brand-light);stroke-width:3;fill:none;animation:vr-fleche 1.4s infinite ease-in-out}
+@keyframes vr-fleche{50%{transform:translateY(7px)}}
+.js .vr-sc:not(.vr-tete){opacity:0;transform:translateY(36px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.9,.3,1)}
+.js .vr-sc.vue{opacity:1;transform:none}
+.js .vr-sc:not(.vr-tete) .vr-dit .vini,.js .vr-fin > .vini{transform:scale(.4) rotate(-18deg);opacity:0;transition:transform .55s cubic-bezier(.3,1.6,.5,1) .2s,opacity .3s .2s}
+.js .vr-sc.vue .vr-dit .vini,.js .vr-sc.vue.vr-fin > .vini{transform:none;opacity:1}
+.vr-sc:not(.vue) .vr-anim,.vr-sc:not(.vue) .vr-anim *{animation-play-state:paused!important}
+.vr-centre{align-self:center;display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.vr-note{margin:0;text-align:center;color:var(--muted);font-size:15px}
+.vr-note a{color:var(--brand-light);font-weight:800}
+/* Le temps : le boum ; la mesure : 1, 2, 3, 4 */
+.vr-boum{align-self:center;display:grid;place-items:center;width:150px;height:150px;border-radius:50%;background:var(--brand-soft);border:3px solid var(--brand-line)}
+.vr-boum i{display:grid;place-items:center;width:84px;height:84px;border-radius:50%;background:var(--brand);color:var(--on-brand);font-style:normal;font-weight:900;font-size:20px;animation:vr-boum var(--vini-beat) infinite cubic-bezier(.2,.8,.3,1)}
+@keyframes vr-boum{0%{transform:scale(1.32);box-shadow:0 0 0 14px var(--brand-line)}60%,100%{transform:scale(1);box-shadow:0 0 0 0 var(--brand-line)}}
+.vr-4{align-self:center;display:flex;gap:14px}
+.vr-4 span{display:grid;place-items:center;width:70px;height:70px;border-radius:16px;background:var(--slot);color:var(--muted);font-weight:900;font-size:28px;animation:vr-temps calc(var(--vini-beat)*4) infinite steps(1,end);animation-delay:calc(var(--vini-beat)*var(--k))}
+.vr-4 span:first-child{box-shadow:inset 0 0 0 3px var(--brand);animation-name:vr-temps1}
+@keyframes vr-temps{0%{background:var(--fg);color:var(--on-fg);transform:scale(1.14)}25%,100%{background:var(--slot);color:var(--muted);transform:none}}
+@keyframes vr-temps1{0%{background:var(--brand);color:var(--on-brand);transform:scale(1.22)}25%,100%{background:var(--slot);color:var(--brand-light);transform:none}}
+/* La phrase : la grille se construit, puis on l'écoute */
+.vr-chiffre{align-self:center;display:flex;gap:10px;align-items:baseline;font-weight:900}
+.vr-chiffre b{font-size:46px}
+.vr-chiffre span{font-size:18px;color:var(--muted)}
+.js .vr-sc .g-grille .g-mes{opacity:0;transform:translateY(12px) scale(.9)}
+.js .vr-sc.vue .g-grille .g-mes{animation:vr-pop .45s cubic-bezier(.3,1.5,.5,1) forwards;animation-delay:calc(.15s * var(--i) + .3s)}
+@keyframes vr-pop{to{opacity:1;transform:none}}
+.vr-sc .g-ecoute{font-size:17px;padding:12px 22px}
+.vr-sc .g-statut{margin:0}
+/* « À toi » : le gros bouton */
+.vr-jeu{display:flex;flex-direction:column;align-items:center;gap:18px}
+.vr-mesures{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;width:100%;max-width:520px}
+.vr-mesures i{height:16px;border-radius:6px;background:var(--slot);transition:background .1s}
+.vr-mesures i.plein{background:var(--brand-light)}
+.vr-mesures i.neuf{background:var(--ok)}
+.vr-mes-lab{display:flex;justify-content:space-between;width:100%;max-width:520px;margin-top:-10px;font-size:13px;color:var(--muted);font-weight:700}
+.vr-pad{width:170px;height:170px;border-radius:50%;border:none;background:radial-gradient(circle at 35% 30%,var(--brand-light),var(--brand) 60%,var(--vini-700));color:var(--on-brand);font:inherit;font-size:26px;font-weight:900;box-shadow:0 10px 0 var(--vini-700),0 0 0 8px var(--brand-soft);cursor:pointer;touch-action:manipulation;transition:transform .06s,box-shadow .06s}
+.vr-pad:disabled{opacity:.35;cursor:default}
+.vr-pad.appui{transform:translateY(8px);box-shadow:0 2px 0 var(--vini-700),0 0 0 14px var(--brand-line)}
+.vr-msg{min-height:1.5em;margin:0;text-align:center;font-weight:900;font-size:20px}
+.vr-msg.ok{color:var(--ok)} .vr-msg.presque{color:var(--mid)} .vr-msg.non{color:var(--bad)}
+/* A et B sur la ligne du temps */
+.vr-choix{align-self:center;display:inline-flex;padding:4px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line)}
+.vr-choix button{font:inherit;font-weight:800;font-size:15px;color:var(--muted);background:none;border:none;border-radius:999px;padding:9px 16px;cursor:pointer;min-height:40px}
+.vr-choix button[aria-pressed="true"]{background:var(--brand);color:var(--on-brand)}
+.vr-pistes{position:relative;padding:28px 0 0 34px;overflow:hidden}
+.vr-ligne{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed var(--line)}
+.vr-ligne span{position:absolute;top:0;left:4px;font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap}
+.vr-piste{position:relative;height:46px;margin-bottom:12px}
+.vr-piste > b{position:absolute;left:-30px;top:10px;font-size:20px;font-weight:900}
+.vr-bloc{position:absolute;top:0;bottom:0;display:flex;gap:4px;transition:left .8s cubic-bezier(.3,1.35,.5,1)}
+.vr-bloc span{flex:1;border-radius:10px;position:relative}
+.vr-bloc span::before{content:"";position:absolute;left:6px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--on-fg);opacity:.55}
+.vr-a span{background:var(--a)} .vr-b span{background:var(--b)}
+.vr-pistes.bon .vr-b{left:50%} .vr-pistes.mal .vr-b{left:59.4%}
+.vr-marques{position:relative;height:34px}
+.vr-marque{position:absolute;top:2px;width:30px;height:30px;margin-left:-15px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:16px;opacity:0;transform:scale(.3);transition:opacity .3s .7s,transform .4s cubic-bezier(.3,1.6,.5,1) .7s}
+.vr-marque.oui{background:var(--ok);color:var(--on-fg)} .vr-marque.non{background:var(--bad);color:var(--on-fg)}
+.vr-pistes.bon .vr-marque.oui,.vr-pistes.mal .vr-marque.non{opacity:1;transform:none}
+/* Cartes à icône (astuces, matériel, indices) */
+.vr-cartes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.vr-carte{background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:18px;display:flex;gap:14px;align-items:flex-start}
+.js .vr-carte,.js .vr-piege{opacity:0;transform:translateY(16px)}
+.js .vr-sc.vue .vr-carte,.js .vr-sc.vue .vr-piege{animation:vr-pop .5s cubic-bezier(.3,1.4,.5,1) forwards;animation-delay:calc(.15s * var(--i, 0) + .4s)}
+.vr-ico{flex-shrink:0;display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:var(--brand-soft);border:2px solid var(--brand-line)}
+.vr-ico svg{width:28px;height:28px;fill:none;stroke:var(--brand-light);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.vr-ico b{color:var(--brand-light);font-size:13px;font-weight:900;letter-spacing:-.02em}
+.vr-carte h3{margin:2px 0 6px;font-size:18px}
+.vr-carte p{margin:0;color:var(--muted);font-size:15px;line-height:1.45}
+/* Le pas à pas : une étape ouverte à la fois (toutes ouvertes sans guide.js) */
+.vr-pas ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:pas}
+.vr-pas li{counter-increment:pas;position:relative;padding:12px 16px 12px 62px;border-radius:18px;background:var(--panel-2);border:2px solid transparent;transition:border-color .2s,background-color .2s}
+.vr-pas li::before{content:counter(pas);position:absolute;left:14px;top:9px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--slot);color:var(--muted);font-weight:900;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.vr-pas-t{display:block;width:100%;padding:5px 0;border:none;background:none;color:var(--fg);font:inherit;font-size:17px;font-weight:800;text-align:left;cursor:pointer}
+.vr-pas li > span{display:block;margin:4px 0 4px;color:var(--muted);font-size:16px;line-height:1.5}
+.vr-pas li > span a{color:var(--brand-light);font-weight:800}
+.js .vr-pas li:not(.actif) > span{display:none}
+.vr-pas li.actif{border-color:var(--brand);background:var(--brand-soft)}
+.vr-pas li.actif::before{background:var(--brand);color:var(--on-brand);transform:scale(1.12)}
+.vr-pas li.actif > span{animation:vr-change .4s ease}
+.vr-pas li.fait::before{content:"✓";background:var(--ok);color:var(--on-fg)}
+.vr-pas li.plus-tard{opacity:.6}
+.vr-pas-nav{display:none;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:16px}
+.js .vr-pas-nav{display:flex}
+.vr-pas-n{min-width:7ch;text-align:center;color:var(--muted);font-weight:800;font-size:14px}
+.vr-pas-nav .g-ecoute:disabled{opacity:.35;cursor:default}
+.vr-pas-msg{margin:10px 0 0;min-height:1.4em;text-align:center;font-weight:900;color:var(--ok)}
+/* Les cartes à retourner : l'erreur d'un côté, la solution de l'autre (les deux faces visibles sans guide.js) */
+.vr-pieges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.vr-piege{display:flex;flex-direction:column;gap:10px;padding:0;border:none;background:none;color:var(--fg);font:inherit;text-align:left;cursor:pointer;perspective:1000px}
+.vr-piege > span{display:flex;flex-direction:column;gap:8px;padding:18px;border-radius:20px;font-size:15px;line-height:1.45}
+.vr-face{background:var(--panel-2);border:2px solid var(--line)}
+.vr-dos{background:var(--ok-bg);border:2px solid var(--ok);color:var(--ok-ink)}
+.vr-face i,.vr-dos i{font-style:normal;font-weight:900;font-size:22px;line-height:1}
+.vr-face i{color:var(--bad)} .vr-dos i{color:var(--ok)}
+.vr-face b,.vr-dos b{font-size:17px;color:var(--fg)}
+.vr-face span{color:var(--muted)}
+.vr-face em{display:none;margin-top:auto;font-style:normal;font-size:13px;font-weight:800;color:var(--brand-light)}
+.js .vr-piege{display:grid;min-height:200px}
+.js .vr-piege > span{grid-area:1/1;backface-visibility:hidden;transition:transform .6s cubic-bezier(.3,1.2,.5,1)}
+.js .vr-face em{display:block}
+.js .vr-dos{transform:rotateY(180deg)}
+.js .vr-piege[aria-pressed="true"] .vr-face{transform:rotateY(-180deg)}
+.js .vr-piege[aria-pressed="true"] .vr-dos{transform:none}
+.vr-piege:focus-visible{outline:3px solid var(--brand-light);outline-offset:3px;border-radius:20px}
+/* Calé ou décalé : deux grosses caisses */
+.vr-kicks{align-self:center;display:flex;gap:28px}
+.vr-kick{display:grid;place-items:center;width:80px;height:80px;border-radius:50%;font-weight:900;font-size:26px;color:var(--on-fg)}
+.vr-kick.a{background:var(--a)} .vr-kick.b{background:var(--b)}
+[data-joue="cale"] .vr-kick,[data-joue="decale"] .vr-kick{animation:vr-kick var(--vini-beat) infinite cubic-bezier(.2,.8,.3,1)}
+[data-joue="decale"] .vr-kick.b{animation-delay:.13s}
+@keyframes vr-kick{0%{transform:scale(1.3)}60%,100%{transform:scale(1)}}
+/* La dernière scène : à toi de jouer */
+.vr-fin{background:radial-gradient(circle at 50% 0%,var(--brand-soft),var(--panel) 70%);text-align:center;align-items:center}
+.vr-fin > .vini{width:170px;height:184px}
+.vr-fin h2{font-size:30px;letter-spacing:0;text-transform:none;color:var(--fg)}
+.vr-fin p{margin:0;max-width:42ch;color:var(--muted);font-size:17px}
+.vr-fin .cta{font-size:18px}
+.vr-fin small{color:var(--muted)}
+.vr-fig{margin:0}
+.vr-fig figcaption{margin-top:10px;font-size:14px;color:var(--muted);text-align:center}
+.vr-details{align-self:stretch}
+.vr-details summary{cursor:pointer;color:var(--brand-light);font-weight:800;font-size:15px;text-align:center}
+.vr-details .g-tablo{margin-top:12px}
+.vr-pieges.quatre{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* La page d'entrée : les cartes des questions arrivent l'une après l'autre */
+.js .vr-sc .g-liste .card{opacity:0;transform:translateY(16px)}
+.js .vr-sc.vue .g-liste .card{animation:vr-pop .5s cubic-bezier(.3,1.4,.5,1) forwards;animation-delay:calc(.12s * var(--i, 0) + .2s)}
+@media (max-width:800px){.vr-pieges,.vr-pieges.quatre{grid-template-columns:1fr}.js .vr-piege{min-height:150px}}
+@media (prefers-reduced-motion:reduce){.js .vr-sc .g-liste .card{opacity:1;transform:none;animation:none}}
+@media (max-width:640px){
+  .vr-sc{padding:22px 18px;border-radius:22px;gap:20px}
+  .vr-tete h1{font-size:28px}
+  .vr-dit{gap:10px}
+  .vr-dit .vini{width:66px;height:72px}
+  .vr-tete .vr-dit{flex-direction:column;align-items:center}
+  .vr-tete .vr-dit .vini{width:116px;height:126px}
+  .vr-tete .vr-bul.g-bref::before{left:50%;top:-10px;margin-left:-8px;transform:rotate(135deg)}
+  .vr-bul{font-size:17px;padding:13px 15px;border-radius:18px}
+  .vr-bul::before{top:22px}
+  .vr-tete .g-bref p{font-size:16px}
+  .vr-4{gap:9px} .vr-4 span{width:58px;height:58px;font-size:24px}
+  .vr-cartes{grid-template-columns:1fr}
+  .vr-pad{width:150px;height:150px}
+  .vr-choix button{padding:8px 12px;font-size:14px}
+  .vr-pas li{padding-left:56px}
+  .vr-fin h2{font-size:25px}
+}
+@media (prefers-reduced-motion:reduce){
+  .js .vr-sc:not(.vr-tete),.js .vr-sc .vini,.js .vr-sc .g-mes,.js .vr-carte,.js .vr-piege{opacity:1!important;transform:none!important;transition:none!important;animation:none!important}
+  .vr-boum i,.vr-4 span,.vr-descends svg,.g-jog-b,.g-play,.vr-kick{animation:none!important}
+  .g-fdr,.g-low,.vr-bloc{transition:none}
+}

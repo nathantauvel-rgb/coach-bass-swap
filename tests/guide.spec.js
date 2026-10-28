@@ -113,6 +113,90 @@ test.describe('Guide du débutant', () => {
   });
 });
 
+// Les pages en scènes, avec Vini (guide/guide.js, maquette validée par l'utilisateur le 28 oct. 2026)
+test.describe('Guide du débutant en scènes', () => {
+  test('Vini est sur chaque page, et chaque scène apparaît quand on descend', async ({ page }) => {
+    for (const f of GUIDE) {
+      await page.goto('/guide/' + f);
+      expect(await page.locator('[data-vini] svg').count(), f).toBeGreaterThan(1);
+      const derniere = page.locator('.vr-sc').last();
+      await derniere.scrollIntoViewIfNeeded();
+      await expect(derniere, f).toHaveClass(/vue/);
+    }
+  });
+
+  test('sans les animations, tout le texte reste dans la page et lisible', async ({ browser }) => {
+    const ctx = await browser.newContext({ javaScriptEnabled: false }), page = await ctx.newPage();
+    await page.goto('/guide/premiere-transition-ddj-flx4.html');
+    for (const s of await page.locator('.vr-pas li > span').all()) await expect(s).toBeVisible();
+    await expect(page.locator('.vr-sc').nth(1)).toBeVisible();
+    await expect(page.locator('.vr-dos').first()).toBeVisible();   // la solution des cartes à retourner
+    await ctx.close();
+  });
+
+  test('première transition : les quatre gestes, un par un, sur le dessin de la FLX4', async ({ page }) => {
+    await page.goto('/guide/premiere-transition-ddj-flx4.html');
+    const sc = page.locator('section[data-etape]'), suiv = sc.locator('[data-suiv]');
+    await expect(sc).toHaveAttribute('data-etape', '0');
+    await expect(sc.locator('.vr-pas li.actif')).toHaveCount(0);
+    for (const n of ['1', '2', '3', '4']) {
+      await suiv.click();
+      await expect(sc).toHaveAttribute('data-etape', n);
+      await expect(sc.locator('.vr-pas li.actif')).toHaveCount(1);
+    }
+    await expect(suiv).toContainText('Recommencer');
+    await expect(sc.locator('.vini')).toHaveClass(/vn-parfait/);
+    // le dessin suit : au geste 4, le fader de A est descendu
+    expect(await sc.locator('.g-fdr-a').evaluate(e => getComputedStyle(e).transform)).not.toBe('none');
+    await suiv.click();
+    await expect(sc).toHaveAttribute('data-etape', '0');
+  });
+
+  test('les cartes à retourner montrent la solution', async ({ page }) => {
+    await page.goto('/guide/caler-sans-sync.html');
+    const c = page.locator('.vr-piege').first();
+    await c.scrollIntoViewIfNeeded();
+    await c.click();
+    await expect(c).toHaveAttribute('aria-pressed', 'true');
+    await c.click();
+    await expect(c).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('table non détectée : l\'enquête, indice par indice, et « C\'était ça ! »', async ({ page }) => {
+    await page.goto('/guide/table-dj-non-detectee.html');
+    const box = page.locator('[data-pas]');
+    await expect(box.locator('.vr-pas-n')).toHaveText('1 sur 6');
+    await box.locator('[data-suiv]').click();
+    await expect(box.locator('.vr-pas-n')).toHaveText('2 sur 6');
+    await box.locator('[data-oui]').click();
+    await expect(box.locator('.vr-pas-msg')).toContainText('enquête résolue');
+  });
+
+  test('la phrase : B sur le « 1 » ou n\'importe quand', async ({ page }) => {
+    await page.goto('/guide/phrase-musicale-32-temps.html');
+    const pistes = page.locator('[data-pistes]'), [bon, mal] = [page.locator('.vr-choix button').first(), page.locator('.vr-choix button').last()];
+    await mal.click();
+    await expect(pistes).toHaveClass(/mal/);
+    await expect(mal).toHaveAttribute('aria-pressed', 'true');
+    await bon.click();
+    await expect(pistes).toHaveClass(/bon/);
+  });
+
+  test('la phrase, « À toi » : toucher le bouton sur le « 1 » de la phrase suivante', async ({ page }) => {
+    await page.goto('/guide/phrase-musicale-32-temps.html');
+    const jeu = page.locator('[data-jeu]');
+    await jeu.locator('.vr-go').click();
+    await expect(jeu.locator('.vr-pad')).toBeEnabled();
+    // trop tôt, avant la moitié de la phrase : on ne compte pas, il faut attendre
+    await jeu.locator('.vr-pad').dispatchEvent('pointerdown');
+    await expect(jeu.locator('.vr-msg')).toContainText('Pas encore');
+    // au temps 32 (15,48 s), la barre passe au vert : on touche tout de suite
+    await page.waitForFunction(() => document.querySelector('.vr-mesures i.neuf'), null, { timeout: 25000, polling: 'raf' });
+    await jeu.locator('.vr-pad').dispatchEvent('pointerdown');
+    await expect(jeu.locator('.vr-msg')).toHaveText(/Pile|Presque/);
+  });
+});
+
 test.describe('Guide du débutant sur téléphone', () => {
   test.use({ viewport: { width: 390, height: 844 } });
   test('aucune page ne déborde en largeur', async ({ page }) => {

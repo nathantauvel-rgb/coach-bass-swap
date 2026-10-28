@@ -36,7 +36,7 @@
       "description": "Débuter le DJing dans le bon ordre : compter la musique, lancer au bon moment, les faders, les basses, les effets, puis caler sans SYNC.",
       "inLanguage": "fr",
       "datePublished": "2026-10-27",
-      "dateModified": "2026-10-27",
+      "dateModified": "2026-10-28",
       "image": "https://djingood.fr/img/partage.jpg",
       "mainEntityOfPage": "https://djingood.fr/guide/apprendre-a-mixer.html",
       "author": { "@type": "Person", "name": "Nathan", "jobTitle": "Créateur de DJingood", "worksFor": { "@type": "Organization", "name": "DJingood", "url": "https://djingood.fr/" } },
@@ -68,65 +68,83 @@
 </script>
 </head>
 <body class="pres guide">
+<div class="vr-lecture" aria-hidden="true"></div>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="../presentation.html"><img class="blogo" src="../img/vini-logo.svg" alt="" width="40" height="40"><div><div class="brand-name"><span class="dj">DJ</span>ingood</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
     <a class="ghost" href="../index.html">Ouvrir le site</a>
   </header>
 
-  <article class="g-article">
-    <section class="page g-tete">
-      <span class="lnum"><a href="./">Guide du débutant</a> · Débuter</span>
-      <h1>Par où commencer pour apprendre à mixer ?</h1>
-      <p class="g-date">Mis à jour le <time datetime="2026-10-27">27 octobre 2026</time> · par Nathan, créateur de DJingood</p>
-      <div class="g-bref">
-        <strong>En bref</strong>
-        <p>Commence par l'oreille, pas par les boutons : apprends à compter les temps et à repérer les phrases de 32 temps. Puis apprends les gestes un par un, dans cet ordre : lancer un morceau au bon moment, les faders, l'échange des basses, le filtre et l'écho. Le calage à l'oreille, sans SYNC, vient ensuite. Dix minutes par jour valent mieux qu'un après-midi par semaine.</p>
-      </div>
-    </section>
-
-    <section class="page">
-      <span class="lnum">Le matériel</span>
-      <h2 class="pres-h2">Ce qu'il te faut, vraiment.</h2>
-      <ul class="howlist">
-        <li><b>Une table DJ à deux voies</b> (un contrôleur), branchée en USB à un ordinateur. Pas besoin d'une table chère : tous les gestes de base se font sur une table de débutant.</li>
-        <li><b>Un logiciel DJ</b> : rekordbox et Serato DJ Lite ont une version gratuite.</li>
-        <li><b>Un casque</b>, pour écouter le morceau suivant avant de le faire entendre.</li>
-        <li><b>Des morceaux que tu aimes</b>, en fichiers sur ton ordinateur : c'est le plus simple pour commencer.</li>
-      </ul>
-    </section>
-
-    <section class="page">
-      <span class="lnum">L'ordre</span>
-      <h2 class="pres-h2">Cinq étapes, une à la fois.</h2>
-      <ol class="g-gestes">
-        <li><strong>Compter la musique.</strong> Tape du pied sur les temps, compte 1, 2, 3, 4, et repère quand la musique change : en général toutes les 32 temps, au début d'une phrase. C'est la base de tout le reste. <a href="phrase-musicale-32-temps.html">C'est quoi une phrase ?</a></li>
-        <li><strong>Lancer au bon moment.</strong> Lance le morceau suivant pile au début d'une phrase du morceau en cours. Rien d'autre : juste le bon moment.</li>
-        <li><strong>Les faders et les basses.</strong> Fais entrer le morceau suivant avec son fader, puis échange les basses des deux morceaux d'un seul geste : c'est ta première vraie transition. <a href="premiere-transition-ddj-flx4.html">La transition pas à pas</a></li>
-        <li><strong>Le filtre et l'écho.</strong> Deux effets simples pour faire disparaître un morceau proprement, en douceur ou d'un coup.</li>
-        <li><strong>Caler à l'oreille.</strong> Mettre deux morceaux à la même vitesse sans le bouton SYNC, avec le curseur de tempo et la molette. <a href="caler-sans-sync.html">Caler sans SYNC</a></li>
-      </ol>
-      <p class="g-p g-apres">Plus tard : les hot cues et les boucles, puis enchaîner plusieurs morceaux d'affilée, comme dans un vrai set.</p>
-    </section>
-
-    <section class="page">
-      <span class="lnum">Les pièges</span>
-      <h2 class="pres-h2">Ce qui fait perdre du temps.</h2>
-      <ul class="g-erreurs">
-        <li><strong>Apprendre tous les boutons d'un coup.</strong> Pads, effets, sampler… Une table a des dizaines de commandes, une transition propre en demande quatre. Le reste viendra.</li>
-        <li><strong>Tout faire en SYNC sans écouter.</strong> SYNC cale le tempo, pas le bon moment. Si tu ne comptes pas les phrases, tes transitions tomberont à côté, même calées.</li>
-        <li><strong>S'entraîner sans savoir si c'est juste.</strong> Seul, on répète souvent la même erreur sans l'entendre. Enregistre-toi et réécoute, ou fais-toi corriger.</li>
-        <li><strong>Acheter du matériel cher avant de savoir mixer.</strong> Une table de débutant suffit largement pour la première année.</li>
-      </ul>
-    </section>
-
-    <section class="hero g-essai">
+  <article class="vr">
+    <section class="vr-sc vr-tete g-tete">
       <div>
-        <h2 class="pres-h2">Apprends ces étapes en jouant.</h2>
-        <p class="g-p">DJingood suit ce chemin : on apprend à compter, puis un geste par niveau. Branche ta table : le site écoute ce que tu fais et te dit, au temps près, ce qui cloche. Sur téléphone, il commence par sept petites leçons sans table pour apprendre à compter la musique.</p>
-        <div class="rbrow"><a class="cta" href="../index.html">Essayer gratuitement</a></div>
-        <p class="need">Gratuit pendant la phase de test · les gestes sur ordinateur, avec Chrome ou Edge · pas encore de table ? Essaie à la souris</p>
+        <span class="lnum"><a href="./">Guide du débutant</a> · Débuter</span>
+        <h1>Par où commencer pour apprendre à mixer ?</h1>
+        <p class="g-date">Mis à jour le <time datetime="2026-10-28">28 octobre 2026</time> · par Nathan, créateur de DJingood</p>
       </div>
+      <div class="vr-dit">
+        <div data-vini="danse"></div>
+        <div class="vr-bul g-bref">
+          <strong>En bref</strong>
+          <p>Commence par l'oreille, pas par les boutons&nbsp;: apprends à compter les temps et à repérer les phrases de 32 temps. Puis apprends les gestes un par un&nbsp;: lancer un morceau au bon moment, les faders, l'échange des basses, le filtre et l'écho. Le calage à l'oreille, sans SYNC, vient ensuite. Dix minutes par jour valent mieux qu'un après-midi par semaine.</p>
+        </div>
+      </div>
+      <div class="vr-descends" aria-hidden="true">Descends, je te montre<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div>
+    </section>
+
+    <section class="vr-sc">
+      <h2>1 · Ce qu'il te faut, vraiment</h2>
+      <div class="vr-dit">
+        <div data-vini="calme"></div>
+        <p class="vr-bul">Bonne nouvelle&nbsp;: il te faut très peu de choses.</p>
+      </div>
+      <div class="vr-cartes">
+        <div class="vr-carte" style="--i:0"><div class="vr-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><path d="M12 9v6"/></svg></div><div><h3>Une table DJ à deux voies</h3><p>Un contrôleur, branché en USB à un ordinateur. Pas besoin d'une table chère&nbsp;: tous les gestes de base se font sur une table de débutant.</p></div></div>
+        <div class="vr-carte" style="--i:1"><div class="vr-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg></div><div><h3>Un logiciel DJ</h3><p>rekordbox et Serato DJ Lite ont une version gratuite.</p></div></div>
+        <div class="vr-carte" style="--i:2"><div class="vr-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 14v-2a9 9 0 0 1 18 0v2"/><rect x="2" y="14" width="5" height="7" rx="2"/><rect x="17" y="14" width="5" height="7" rx="2"/></svg></div><div><h3>Un casque</h3><p>Pour écouter le morceau suivant avant de le faire entendre.</p></div></div>
+        <div class="vr-carte" style="--i:3"><div class="vr-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div><h3>Des morceaux que tu aimes</h3><p>En fichiers sur ton ordinateur&nbsp;: c'est le plus simple pour commencer.</p></div></div>
+      </div>
+    </section>
+
+    <section class="vr-sc">
+      <h2>2 · Cinq étapes, une à la fois</h2>
+      <div class="vr-dit droite">
+        <div data-vini="calme"></div>
+        <p class="vr-bul">Voici le chemin, dans l'ordre. Touche «&nbsp;Suivant&nbsp;» pour avancer avec moi.</p>
+      </div>
+      <div class="vr-pas" data-pas data-fete>
+        <ol>
+          <li><button type="button" class="vr-pas-t">Compter la musique</button><span>Tape du pied sur les temps, compte 1, 2, 3, 4, et repère quand la musique change&nbsp;: en général toutes les 32 temps, au début d'une phrase. C'est la base de tout le reste. <a href="phrase-musicale-32-temps.html">C'est quoi une phrase&nbsp;?</a></span></li>
+          <li><button type="button" class="vr-pas-t">Lancer au bon moment</button><span>Lance le morceau suivant pile au début d'une phrase du morceau en cours. Rien d'autre&nbsp;: juste le bon moment.</span></li>
+          <li><button type="button" class="vr-pas-t">Les faders et les basses</button><span>Fais entrer le morceau suivant avec son fader, puis échange les basses des deux morceaux d'un seul geste&nbsp;: c'est ta première vraie transition. <a href="premiere-transition-ddj-flx4.html">La transition pas à pas</a></span></li>
+          <li><button type="button" class="vr-pas-t">Le filtre et l'écho</button><span>Deux effets simples pour faire disparaître un morceau proprement, en douceur ou d'un coup.</span></li>
+          <li><button type="button" class="vr-pas-t">Caler à l'oreille</button><span>Mettre deux morceaux à la même vitesse sans le bouton SYNC, avec le curseur de tempo et la molette. <a href="caler-sans-sync.html">Caler sans SYNC</a></span></li>
+        </ol>
+        <div class="vr-pas-nav"><button type="button" class="g-ecoute" data-prec aria-label="Étape précédente">◀</button><span class="vr-pas-n"></span><button type="button" class="g-ecoute" data-suiv><span class="g-ic" aria-hidden="true">▶</span> Suivant</button></div>
+      </div>
+      <p class="vr-note">Plus tard&nbsp;: les hot cues et les boucles, puis enchaîner plusieurs morceaux d'affilée, comme dans un vrai set.</p>
+    </section>
+
+    <section class="vr-sc">
+      <h2>3 · Ce qui fait perdre du temps</h2>
+      <div class="vr-dit">
+        <div data-vini="rate"></div>
+        <p class="vr-bul">Quatre pièges de débutant. Touche une carte pour voir la solution.</p>
+      </div>
+      <div class="vr-pieges quatre">
+        <button type="button" class="vr-piege" aria-pressed="false" style="--i:0"><span class="vr-face"><i>✗</i><b>Apprendre tous les boutons d'un coup</b><span>Pads, effets, sampler… Une table a des dizaines de commandes.</span><em>Voir la solution</em></span><span class="vr-dos"><i>✓</i><b>Quatre suffisent</b>Une transition propre demande quatre commandes. Le reste viendra.</span></button>
+        <button type="button" class="vr-piege" aria-pressed="false" style="--i:1"><span class="vr-face"><i>✗</i><b>Tout faire en SYNC sans écouter</b><span>SYNC cale le tempo, pas le bon moment.</span><em>Voir la solution</em></span><span class="vr-dos"><i>✓</i><b>Compte les phrases</b>Sinon, tes transitions tomberont à côté, même calées.</span></button>
+        <button type="button" class="vr-piege" aria-pressed="false" style="--i:2"><span class="vr-face"><i>✗</i><b>S'entraîner sans savoir si c'est juste</b><span>Seul, on répète souvent la même erreur sans l'entendre.</span><em>Voir la solution</em></span><span class="vr-dos"><i>✓</i><b>Fais-toi corriger</b>Enregistre-toi et réécoute, ou entraîne-toi avec un outil qui te corrige.</span></button>
+        <button type="button" class="vr-piege" aria-pressed="false" style="--i:3"><span class="vr-face"><i>✗</i><b>Acheter du matériel cher trop tôt</b><span>Avant même de savoir mixer.</span><em>Voir la solution</em></span><span class="vr-dos"><i>✓</i><b>Une table de débutant suffit</b>Largement, pour toute la première année.</span></button>
+      </div>
+    </section>
+
+    <section class="vr-sc vr-fin g-essai">
+      <div data-vini="danse"></div>
+      <h2>Apprends ces étapes en jouant.</h2>
+      <p>DJingood suit ce chemin&nbsp;: on apprend à compter, puis un geste par niveau. Branche ta table&nbsp;: le site écoute ce que tu fais et te dit, au temps près, ce qui cloche. Sur téléphone, il commence par sept petites leçons sans table pour apprendre à compter la musique.</p>
+      <a class="cta" href="../index.html">Essayer gratuitement</a>
+      <small>Gratuit pendant la phase de test · les gestes sur ordinateur, avec Chrome ou Edge · pas encore de table&nbsp;? Essaie à la souris</small>
     </section>
 
     <section class="page">
@@ -153,5 +171,7 @@
   <p class="page-note pres-pied"><a href="../presentation.html">Comment marche DJingood ?</a> · <a href="../confidentialite.html">Confidentialité</a></p>
 </div>
 <script src="../js/stats.js"></script>
+<script src="../js/vini.js"></script>
+<script src="guide.js"></script>
 </body>
 </html>
