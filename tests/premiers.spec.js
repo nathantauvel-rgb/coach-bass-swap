@@ -20,7 +20,9 @@ test.describe('Premiers pas', () => {
     const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU });
     await expect(page.locator('#pp')).toBeVisible();
     await expect(page.locator('#ppAsk')).toHaveText(/^Salut, moi c’est Vini/);
-    await expect(page.locator('#ppVini svg')).toBeVisible();
+    // lot 52 : au premier écran, Vini est derrière sa table dessinée ; celui du coin attend les questions
+    await expect(page.locator('#ppScene .vini')).toBeVisible();
+    await expect(page.locator('#ppVini')).toBeHidden();
     await expect(page.locator('#ppVini')).toHaveClass(/vn-danse/);
     await expect(page.locator('#ppGo')).toBeEnabled();
     await expect(page.locator('#ppBack')).toBeHidden();

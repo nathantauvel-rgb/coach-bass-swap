@@ -31,7 +31,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   3. deux parcours · 4. interface sombre · 5. schéma interactif de la FLX4.
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
-## Pour reprendre (état au 25 oct. 2026)
+## Pour reprendre (état au 28 oct. 2026)
+- **Lot 52 « Premiers pas animés » (28 oct. 2026, branche `lot-52-vini-anime`, FAIT, NON PUBLIÉ)**, dans la copie à part
+  `Documents\coach-dj-lot52` (tests : `DJ_PORT=8770 npx playwright test`). Demande de l'utilisateur : les questions de Vini
+  étaient « timides » à côté de Duolingo, alors que c'est la première image du site ; son idée : « Vini qui sort des platines
+  et qui mixe ». Maquette (hors Git, `captures/maquette-vini/` du dossier principal, page privée
+  https://claude.ai/artifact/LMrZfmBHGKzktq5a1UJZSb), réponse de l'utilisateur : **« Oui, toutes »** (les sept idées). Détail
+  dans l'entrée « Lot 52 » de « Où on en est ». **Jamais écouté par un humain** (la musique étouffée et le drop sont
+  nouveaux), jamais essayé sur iPhone ni avec le casque de la FLX4. Une page vide « Premiers pas animés »
+  (https://claude.ai/artifact/BrgKMRRz9jryrN2UPrZgJx) a été créée par erreur pendant la maquette : à supprimer s'il le veut.
 - **Lot 51 « Guide du débutant » (27 oct. 2026, branche `lot-51-questions`, FAIT, NON PUBLIÉ)**, depuis la session
   « marketing » comme le lot 50, dans `Documents\coach-dj-seo`. Le GEO (être cité par les IA) : cinq pages de questions
   de débutant choisies par l'utilisateur (« go les 5 questions »), une page d'entrée, signées **« Nathan, créateur de
@@ -48,12 +56,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (Vercel respecte bien `.vercelignore` en publiant depuis GitHub), une démo jouée avec la vraie musique, aucune erreur.
   Détail dans l'entrée « Lot 50 » de « Où on en est ». **À faire par l'utilisateur, guidé** : Google Search Console
   (propriété « domaine », ligne TXT chez OVH, envoyer `sitemap.xml`), puis Bing Webmaster Tools (import depuis Google).
-- **Lot 48 « Comprendre » (25 oct. 2026, branche `lot-48-comprendre`, FAIT, NON PUBLIÉ).** Maquette validée par l'utilisateur
+- **Lot 48 « Comprendre » : PUBLIÉ le 26 oct. 2026** (commit `8546c74` sur `main`, « Oui, publie le lot 48 »). **Essayé par
+  l'utilisateur sur son téléphone le 26 oct. 2026 : « tout fonctionne très bien, aucun souci »** (sons compris). Reste : la
+  checklist FLX4, et la mesure dans Umami (`comprendre-1`, puis `compte`). Historique : maquette validée par l'utilisateur
   (« OK vas-y, on part là-dessus ») avec les trois choix : les 7 leçons dans cet ordre ; sur un téléphone, après les questions
   de Vini, on va à Comprendre ; sur ordinateur rien n'est imposé, étoiles dans le total (129 → 150), 10 XP par étoile.
   Détail dans l'entrée « Lot 48 » de « Où on en est ». Maquette et captures d'avant (hors Git) : `captures/maquette-comprendre/`.
   **Gardien : feu rouge puis feu orange (second passage, aucun blocage)** ; lot 47 publié fusionné dedans (commit `b4c9379`) ;
-  **543 tests verts** sur la version fusionnée (26 oct. 2026). Captures montrées à l'utilisateur. **Reste : son accord pour publier.** **Jamais écouté par un humain** : les
+  **543 tests verts** sur la version fusionnée (26 oct. 2026). Captures montrées à l'utilisateur, puis publié. **Jamais écouté par un humain** avant sa publication : les
   sons sont fabriqués par le site (boîte à rythmes de `js/comprendre.js`), à faire écouter à l'utilisateur sur son téléphone.
   Même jour, question de l'utilisateur « faut-il forcer la création d'un compte ? » : conseillé **non** (modèle Duolingo : on
   joue d'abord, le compte est proposé juste après une réussite, avec une vraie raison ; obligatoire seulement plus tard, au
@@ -70,7 +80,9 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la fois » supprimée partout (« je veux plus jamais l'entendre ») : **ne jamais remettre de voix fabriquée par le site**.
   Détail dans l'entrée « Lot 47 » de « Où on en est » (sur `main`). **Pour la branche `lot-48-comprendre`** : fusionner
   `origin/main` avant de publier (le lot 47 touche aussi `js/parcours.js`, ligne de l'étape ch3, et CLAUDE.md).
-- **Lot 49 « Set plus court » (25-26 oct. 2026, NON PUBLIÉ) : branche `lot-49-set-plus-court`, dans la copie
+- **Lot 49 « Set plus court » : PUBLIÉ le 26 oct. 2026** (commit `0f72ec4` sur `main`). **Essayé par l'utilisateur le 26 oct. 2026 :
+  « OK c'est bon très bien ça fonctionne »** (sans dire s'il avait sa FLX4 : les points 32 et 33 de la checklist restent à
+  cocher). Historique (25-26 oct. 2026) : branche `lot-49-set-plus-court`, dans la copie
   `Documents\coach-dj-lot47`** (lot 48 publié fusionné dedans). Demande de l'utilisateur : raccourcir l'attente entre deux
   transitions au chapitre 7. Le drop de chaque morceau du set dure 16 temps au lieu de 32 (≈ 7 s seul au lieu de 15) ; la note
   « phrase » vérifie que le drop du morceau qui entre tombe pile à la fin de celui qui sort ; la démo de « La montée » ramène
@@ -1386,7 +1398,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     « B arrive tout seul » devenus « B joue déjà » ; fiche du MID « les voix et les mélodies ». Laissé, à faire essayer à
     l'utilisateur : au chapitre 2 et en Expert, il ne reste que 16 temps (8 à 16 en Expert) pour sentir la phrase au filtre
     et au swap ; au chapitre 3, on n'entend plus le drop de B tomber.
-- **Lot 48 « Comprendre » (25 oct. 2026)** : branche `lot-48-comprendre`, non publiée. Sept petites leçons de théorie sans table,
+- **Lot 48 « Comprendre » (25 oct. 2026)** : branche `lot-48-comprendre`, **publié le 26 oct. 2026** (commit `8546c74`). Sept petites leçons de théorie sans table,
   au doigt sur un téléphone (souris ou Espace sur ordinateur), pour les visiteurs de TikTok. `js/comprendre.js` (chargé après
   `quetes`, avant `table`) :
   - `CP_LECONS` : 1. Le temps · 2. Compter jusqu'à 4 · 3. La vitesse · 4. La phrase · 5. Les parties d'un morceau · 6. Grave,
@@ -1434,7 +1446,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     passage à l'heure d'hiver (25 oct. 2026, dernière heure) : il prend « hier » = maintenant − 24 h, alors que ce jour-là dure
     25 h. Échoue aussi sur `main` (vérifié dans une copie à part). Repasse tout seul le lendemain ; à corriger un jour (calculer hier
     avec `setDate(getDate() - 1)`).
-- **Lot 49 « Set plus court » (25 oct. 2026)** : branche `lot-49-set-plus-court`, partie de `origin/main` après le lot 47,
+- **Lot 49 « Set plus court » (25 oct. 2026)** : **publié le 26 oct. 2026** (commit `0f72ec4`). Branche `lot-49-set-plus-court`, partie de `origin/main` après le lot 47,
   dans la copie `Documents\coach-dj-lot47` (tests : `DJ_PORT=8768 npx playwright test`). Demande de l'utilisateur : « raccourcis
   aussi l'attente entre deux transitions au chapitre 7 ».
   - `js/set.js` : **le drop de chaque forme dure 16 temps** (`ENC_FORMES` : normal et basse = intro 0-32, drop 32-48, outro
@@ -1553,6 +1565,58 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     ne voit pas les questions de Vini** (elles viendront à sa visite suivante), et le chapitre 5 est ouvert pour la visite.
     Statistique `guide-vers-jeu` (avec la page), et `guide-ecoute` pour les sons (`STATISTIQUES.md`). Tests « Du guide au jeu ».
   - Reste avant la mise en ligne : le gardien, puis l'accord de l'utilisateur.
+- **Lot 52 « Premiers pas animés » (28 oct. 2026)** : branche `lot-52-vini-anime`, partie de `origin/main` (lots 50 et 51 dedans),
+  dans la copie à part `Documents\coach-dj-lot52` (tests : `DJ_PORT=8770 npx playwright test`), non publiée. Demande de
+  l'utilisateur : « ça manque d'animation, c'est un petit peu vide comparé à Duolingo », alors que c'est la première image du
+  site ; son idée : « Vini qui sort des platines et qui mixe ». Maquette `captures/maquette-vini/` (dossier principal, hors Git),
+  réponse : « Oui, toutes ». Tout se passe dans `js/premiers.js` (fenêtre `#pp`) ; « Comprendre » (`#cp`) ne change pas.
+  - **Les poses de Vini** (`viniPose(el, pose)`, `viniParle(el, oui)` dans `js/vini.js`) : par-dessus l'humeur, `data-bras`
+    (bas, haut, pouce, oreille, souris, salut, ou aucun), `data-yeux` (ouverts, clin, fermes), `data-bouche` (sourire, ouverte)
+    et `data-fx` (notes, etoiles, ondes, ou '' pour aucun) remplacent la partie de l'humeur ; `vn-lunettes`, `vn-sueur` et
+    `vn-sourcils` ajoutent un accessoire ; `vn-r-lent`, `vn-r-rapide` et `vn-r-hoche` changent sa danse ; `vn-parle` fait
+    bouger sa bouche. Les parties sont dans `VINI_SVG` (classes `vn-pb-…`, `vn-py-…`, `vn-pm-…`, `vn-px-…`, `vn-pa-…`), cachées
+    tant qu'aucune pose ne les demande : **sans pose, Vini n'a pas changé** (accueil, niveaux, guide du lot 51, icônes).
+    Styles juste après la section « Vini » de `styles.css`.
+  - **Premier écran** (`ppSceneSvg`, `ppHero` ; styles `ps-…` à la fin de `styles.css`) : une table dessinée (platines aux
+    anneaux orange et violet, table de mixage, pads, « DJINGOOD » sur la tranche) avec son propre Vini (`#ppScene .vini`) ;
+    `#ppVini` (celui du coin) est caché sur cet écran. La première fois (`pp-intro` sur `#ppBody`), la table monte et s'allume,
+    Vini tourne sur la platine de gauche comme un disque, saute dehors en tournant (`ps-saut`), atterrit derrière la table
+    (`pp-derriere` : un `clipPath` cache le bas de son corps), dit bonjour pendant que sa bulle s'écrit (`pp-salue` : la main
+    gauche scratche, la droite salue), puis mixe (`pp-mixe` : main sur le casque, puis au crossfader, sur 16 temps). En
+    revenant au premier écran, l'entrée ne se rejoue pas (`pp.entree`).
+  - **« C'est parti »** (`ppQuitteHero`) : la musique démarre, la table s'en va (`pp-sort`), Vini saute en arc jusqu'au coin
+    (`ppVol` : animation du navigateur sur `#ppVini`, partie de sa place sur la table, `ppPlaceVh` ; au bout d'une seconde il
+    parle quand même si l'onglet retient l'animation), et sa bulle apparaît quand il a atterri (`pp.attente`).
+  - **La bulle s'écrit** (`ppBulle`, `ppTaper`, `ppTapeFin`) : la phrase entière est posée d'un coup, lettre par lettre en
+    `<span class="pp-c">` transparents (la bulle a sa taille, `#ppAsk` contient la phrase exacte pour les tests et les lecteurs
+    d'écran), puis les lettres apparaissent (26 ms, petites pauses après la ponctuation) pendant que Vini parle ; toucher la
+    bulle affiche tout.
+  - **Les réactions** (`PP_POSES`, `ppPose`, `ppSautille`) : Grand débutant = clin d'œil et pouce levé ; Apprenti DJ = main
+    sur le casque, yeux fermés, il hoche la tête ; DJ confirmé = des lunettes de soleil tombent ; « J'ai une table » pas encore
+    vue (ou « Autoriser » attendu) = il tend l'oreille, des ondes au-dessus de la tête ; pas de table = une souris en main ;
+    modèle choisi dans la liste = pouce ; table branchée = saut de joie, son « reussi » et des éclats autour de sa carte (une
+    petite table dessinée qui s'allume, `ppMiniTable`) ; 5 min = il se balance les yeux fermés ; 15 min = bras en l'air, sueur,
+    sourcils, il danse deux fois plus vite. Un petit saut à chaque choix ; les réponses arrivent l'une après l'autre
+    (`pp-entre`) ; leurs dessins bougent quand on les choisit (barres, platines, molette, disque de l'objectif `ppVinyle`).
+  - **La musique** (`ppSon`, `ppMusiqueLance`, `ppMusiqueEtape`, `ppMusiqueVitesse`, `ppMusiqueDrop`, `ppMusiqueArret`) :
+    « Dj » (`musique/dj-a.mp3`, CC0, téléchargé à l'ouverture des questions si les sons sont allumés) joue en boucle par
+    `master`, derrière un filtre passe-bas qui s'ouvre d'une question à l'autre (`PP_COUPURE` : 380, 820, puis 1 900 Hz) ;
+    l'objectif change sa vitesse comme le tempo d'une platine (`PP_VITESSE` : 0,94, 1 ou 1,07 ; Vini reste calé, `ppCale`) ;
+    « Commencer » ouvre le filtre en grand jusqu'au temps suivant : c'est le drop ; la musique s'éteint en 1,2 s quand la
+    première étape s'ouvre, et tout de suite avec « Passer ». Elle suit `coach-sons` ; bouton haut-parleur `#ppSon` à côté de
+    « Passer », à partir de la première question (même réglage que l'en-tête, dessin `sonsIcone` de `js/sons.js`).
+  - **Le drop** (`ppFin`, `ppDrop`, `ppEclats`) : les réponses sont gardées dès le clic (`coach-accueil`, statistique, objectif),
+    Vini se ramasse, et sur le temps suivant il saute, un éclair et une onde partent de lui, des notes, des étoiles et de petits
+    vinyles volent (canvas `#ppEclats`, dans `#pp`) ; 1,1 s plus tard, la première étape du parcours (`ppFinSuite`).
+  - **Ambiance** : deux faisceaux (violet, orange) qui balaient le fond (`.pp-lumieres`) ; la barre d'avancement est une forme
+    d'onde (`ppOndeSvg`, `#ppBar.pp-onde`) dont la tête de lecture avance (`PP_POS` : 5, 30, 52, 74 %, puis 100 % au drop) ;
+    un reflet passe sur le bouton du bas.
+  - Animations réduites (`REDUCED`) : ni entrée ni saut, la phrase entière tout de suite, « Commencer » mène aussitôt à la
+    première étape ; la musique reste (ce n'est pas un mouvement).
+  - Tests : `tests/premiers-anime.spec.js` (11) ; dans `premiers.spec.js`, au premier écran Vini est dans la scène. Captures :
+    `captures/lot52/` du dossier principal (hors Git).
+  - **Jamais écouté par un humain** (le filtre et le drop sont nouveaux), jamais essayé sur iPhone (Safari) ni avec le casque
+    de la FLX4.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -1680,7 +1744,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

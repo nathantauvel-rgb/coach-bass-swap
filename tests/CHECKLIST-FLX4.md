@@ -46,6 +46,7 @@ ci-dessous reste la version papier, utile pour noter à part ou pour vérifier s
 | 32 | Lot 44 : chapitre 7 « Le set », niveau 1, avec la table | La table dessinée est rangée pendant le set (bouton « Afficher la table » pour la ressortir) ; PLAY de gauche lance A, PLAY de droite lance B ; le troisième morceau arrive bien sur A une fois le premier sorti ; ON de l'effet met l'écho sur le morceau en cours, même quand il est sur B | |
 | 33 | Lot 44 : la note du set | Un set joué « proprement » à l'oreille donne-t-il 90 ou plus (★★★) ? Noter ce qui coûte des points sans raison (calage, basses, volume, phrase) : les seuils sont en haut de `js/set.js` (ENC_OK 15 ms, ★★★ à 90, ★★ à 75) | |
 | 34 | Lot 44 : niveau 5 « Au casque », avec un casque sur la table | Avec CUE casque du morceau qui entre, on l'entend au casque et pas dans les enceintes, qu'il soit sur A ou sur B | |
+| 35 | Lot 52 : les Premiers pas animés, en nouveau venu (fenêtre de navigation privée), la table branchée | Après « C'est parti », la musique s'entend étouffée, au casque comme dans les enceintes, et s'ouvre à chaque question ; à l'écran de la table, Vini saute de joie quand la table est reconnue ; « Commencer » fait le drop sur un temps, puis la musique s'éteint quand le niveau s'ouvre | |
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 
 Dernière vérification complète : jamais faite depuis l'ajout des onglets (12 oct. 2026).

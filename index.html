@@ -41,19 +41,24 @@
 <!-- data-nosnippet : Google lit ces fenêtres cachées avant l'accueil et en citait les boutons dans ses résultats
      (« Continuer 1 Continuer PLATINE A… »). Ce réglage lui interdit de s'en servir pour décrire le site (lot 50). -->
 <div data-nosnippet class="pp" id="pp" hidden role="dialog" aria-modal="true" aria-labelledby="ppAsk">
+  <!-- Lot 52 : les lumières de la salle derrière les questions, et le calque des éclats du drop -->
+  <div class="pp-lumieres" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="pp-col" id="ppCol" tabindex="-1">
     <div class="pp-top">
       <button type="button" class="pp-back" id="ppBack" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
-      <div class="pp-bar" id="ppBar" role="progressbar" aria-label="Avancement" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="ppFill"></i></div>
+      <div class="pp-bar pp-onde" id="ppBar" role="progressbar" aria-label="Avancement" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="ppFill"></i></div>
+      <button type="button" class="pp-son" id="ppSon" hidden></button>
       <button type="button" class="pp-skip" id="ppSkip">Passer</button>
     </div>
     <div class="pp-body" id="ppBody">
       <div class="pp-head"><div id="ppVini"></div><p class="pp-bubble" id="ppAsk" aria-live="polite"></p></div>
+      <div class="pp-scene" id="ppScene" hidden></div>
       <div class="pp-opts" id="ppOpts"></div>
       <p class="pp-note" id="ppNote" hidden></p>
     </div>
     <div class="pp-foot"><button type="button" class="pp-go" id="ppGo" disabled>Continuer</button></div>
   </div>
+  <canvas class="pp-eclats" id="ppEclats" aria-hidden="true"></canvas>
 </div>
 <!-- Comprendre (lot 48) : une leçon, dans le cadre des Premiers pas -->
 <div data-nosnippet class="pp cp" id="cp" hidden role="dialog" aria-modal="true" aria-labelledby="cpTitre">

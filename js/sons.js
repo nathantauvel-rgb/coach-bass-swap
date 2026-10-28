@@ -27,12 +27,13 @@ function son(nom, ...arg){
   if (!sonsOn || !SONS[nom]) return;
   try { ensureAudio(); if (ac.state !== 'running') ac.resume(); SONS[nom](...arg); } catch (e) {}
 }
-// Le bouton de l'en-tête : un haut-parleur, avec ou sans ondes
+// Le bouton de l'en-tête : un haut-parleur, avec ou sans ondes (le même dessin sert à la musique des Premiers pas, lot 52)
+const sonsIcone = on => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/>'
+  + (on ? '<path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>' : '<path d="M16 9.5l5 5M21 9.5l-5 5"/>') + '</svg>';
 function renderSons(){
   const b = $('sonsBtn'); b.setAttribute('aria-pressed', String(sonsOn)); b.title = sonsOn ? 'Couper les sons du jeu' : 'Remettre les sons du jeu';
   b.setAttribute('aria-label', sonsOn ? 'Sons du jeu : activés' : 'Sons du jeu : coupés');
-  b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/>'
-    + (sonsOn ? '<path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>' : '<path d="M16 9.5l5 5M21 9.5l-5 5"/>') + '</svg>';
+  b.innerHTML = sonsIcone(sonsOn);
 }
 $('sonsBtn').addEventListener('click', () => { sonsOn = !sonsOn; try { localStorage.setItem('coach-sons', sonsOn ? '1' : '0'); } catch (e) {} renderSons(); son('clic'); });
 renderSons();
