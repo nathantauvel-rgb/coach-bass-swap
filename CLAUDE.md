@@ -1543,8 +1543,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     - Dessin de la FLX4 (table de mixage + platine de droite) relevé sur le plan du manuel de Mixxx ; à faire vérifier par
       l'utilisateur sur sa table. Photos de sa FLX4 : « plus tard ».
     - Tests : `tests/guide.spec.js` (19 tests, dont 7 pour les scènes).
-  - **Pas encore fait** : le lien direct de chaque page vers le bon exercice du jeu (`?guide=…`), proposé à l'utilisateur
-    avec deux questions (sauter les questions de Vini pour ce visiteur ; ouvrir le niveau 1 du chapitre 5 pour la visite).
+  - **Du guide au jeu (28 oct. 2026)** : le bouton de la dernière scène de chaque page mène à `index.html?guide=<clé>`, lu à la
+    fin de `js/demarrage.js` (`GUIDE_VERS`) puis retiré de l'adresse : `apprendre` → leçon « Comprendre » 1 ; `phrase` → leçon 4
+    (`cpGuide` l'ouvre même si la 3 n'est pas faite) ; `transition` → chapitre 1, niveau 7 (sur téléphone, `cpMobile()` : leçon 7) ;
+    `caler` → chapitre 5, niveau 1, **ouvert pour la visite seulement** (`niveauVisite` dans `js/niveaux.js` n'écrit pas
+    `coach-chapitre`) (sur téléphone : leçon 3 « La vitesse ») ; `table` → « Ma table ». **Choix de l'utilisateur : ce visiteur
+    ne voit pas les questions de Vini** (elles viendront à sa visite suivante), et le chapitre 5 est ouvert pour la visite.
+    Statistique `guide-vers-jeu` (avec la page), et `guide-ecoute` pour les sons (`STATISTIQUES.md`). Tests « Du guide au jeu ».
+  - Reste avant la mise en ligne : le gardien, puis l'accord de l'utilisateur.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
