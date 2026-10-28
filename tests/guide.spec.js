@@ -45,7 +45,8 @@ test.describe('Guide du débutant', () => {
       // les quatre autres questions, et le bouton qui mène au jeu
       const autres = await page.locator('.g-autres li a').evaluateAll(as => as.map(a => a.getAttribute('href')));
       expect(autres.sort()).toEqual(QUESTIONS.filter(q => q !== f));
-      await expect(page.locator('.g-essai a.cta')).toHaveAttribute('href', '../index.html');
+      // le bouton de la dernière scène ouvre le bon exercice du jeu (voir « Du guide au jeu » plus bas)
+      await expect(page.locator('.g-essai a.cta')).toHaveAttribute('href', /^\.\.\/index\.html\?guide=(apprendre|phrase|transition|caler|table)$/);
       expect(await page.locator('script[src="../js/stats.js"]').count()).toBe(1);
       expect(erreurs).toEqual([]);
     });
@@ -194,6 +195,68 @@ test.describe('Guide du débutant en scènes', () => {
     await page.waitForFunction(() => document.querySelector('.vr-mesures i.neuf'), null, { timeout: 25000, polling: 'raf' });
     await jeu.locator('.vr-pad').dispatchEvent('pointerdown');
     await expect(jeu.locator('.vr-msg')).toHaveText(/Pile|Presque/);
+  });
+});
+
+// Du guide au jeu (lot 51) : ?guide=… ouvre l'exercice qui va avec la page, sans les questions de Vini (choix de l'utilisateur)
+test.describe('Du guide au jeu', () => {
+  const arrive = async (page, cle) => {
+    const erreurs = []; page.on('pageerror', e => erreurs.push(e.message));
+    await page.goto('/index.html?guide=' + cle);
+    await expect(page).not.toHaveURL(/guide=/);   // le paramètre est retiré de l'adresse
+    return erreurs;
+  };
+
+  test('la phrase : la leçon « La phrase » s\'ouvre tout de suite, sans les questions de Vini', async ({ page }) => {
+    const erreurs = await arrive(page, 'phrase');
+    await expect(page.locator('#cp')).toBeVisible();
+    expect(await page.evaluate(() => cp.l)).toBe(3);
+    await expect(page.locator('#pp')).toBeHidden();
+    expect(erreurs).toEqual([]);
+  });
+
+  test('par où commencer : la première leçon « Comprendre »', async ({ page }) => {
+    await arrive(page, 'apprendre');
+    await expect(page.locator('#cp')).toBeVisible();
+    expect(await page.evaluate(() => cp.l)).toBe(0);
+  });
+
+  test('première transition, sur ordinateur : le niveau « La transition complète »', async ({ page }) => {
+    await arrive(page, 'transition');
+    await expect(page.locator('#vLearn')).toBeVisible();
+    await expect(page.locator('#ltitle')).toHaveText('La transition complète');
+    expect(await page.evaluate(() => [chapter, li])).toEqual([1, 6]);
+  });
+
+  test('caler, sur ordinateur : le niveau 1 du chapitre 5, ouvert pour la visite seulement', async ({ page }) => {
+    const erreurs = await arrive(page, 'caler');
+    await expect(page.locator('#vLearn')).toBeVisible();
+    expect(await page.evaluate(() => [chapter, li, ch5Unlocked()])).toEqual([5, 0, false]);
+    expect(await page.evaluate(() => localStorage.getItem('coach-chapitre'))).not.toBe('5');
+    await page.reload();
+    await expect(page.locator('#vLearn')).toBeVisible();
+    expect(await page.evaluate(() => chapter)).toBe(1);   // au rechargement, on revient où on en était
+    expect(erreurs).toEqual([]);
+  });
+
+  test('table non détectée : la page « Ma table »', async ({ page }) => {
+    await arrive(page, 'table');
+    await expect(page.locator('#vTable')).toBeVisible();
+  });
+
+  test('un paramètre inconnu ne change rien : les questions de Vini s\'ouvrent comme d\'habitude', async ({ page }) => {
+    await page.goto('/index.html?guide=constructor');
+    await expect(page.locator('#pp')).toBeVisible();
+  });
+
+  test('sur un téléphone, une leçon « Comprendre » à la place d\'un niveau qui demande une table', async ({ browser }) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }), page = await ctx.newPage();
+    await arrive(page, 'caler');
+    await expect(page.locator('#cp')).toBeVisible();
+    expect(await page.evaluate(() => cp.l)).toBe(2);
+    await arrive(page, 'transition');
+    expect(await page.evaluate(() => cp.l)).toBe(6);
+    await ctx.close();
   });
 });
 

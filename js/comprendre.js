@@ -122,7 +122,9 @@ const CP_LECONS = [
       cpC('Combien de basses à la fois ?', ['Une seule', 'Deux', 'Aucune'], 0, 'Oui, une seule. Tu as tout compris : la suite se passe avec ta table.', 'Une seule : deux basses ensemble, c’est la bouillie.')
     ] }
 ];
-const cpOuverte = i => i === 0 || cpFaite(i - 1) || parcoursOuvert || /[?&]tout=1/.test(location.search);
+// cpGuide : la leçon ouverte par le lien d'une page du guide (lot 51, demarrage.js), ouverte même si la précédente n'est pas faite
+let cpGuide = -1;
+const cpOuverte = i => i === 0 || cpFaite(i - 1) || parcoursOuvert || i === cpGuide || /[?&]tout=1/.test(location.search);
 const cpProchaine = () => { const i = CP_LECONS.findIndex((_, k) => !cpFaite(k)); return i < 0 ? 0 : i; };
 const cpNbFaites = () => CP_LECONS.filter((_, k) => cpFaite(k)).length;
 

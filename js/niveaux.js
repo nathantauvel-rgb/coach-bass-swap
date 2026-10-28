@@ -197,6 +197,9 @@ function setChapter(n){
   chapter = n; try { localStorage.setItem('coach-chapitre', String(n)); } catch (e) {}
   const bank = bankOf(n), first = LESSONS.findIndex((_, i) => !(bank[i] >= 2)); selectLesson(first < 0 ? 0 : first);
 }
+// Lien d'une page du guide (lot 51, demarrage.js) : ouvre un niveau, même si son chapitre n'est pas encore débloqué, le temps
+// de la visite. Rien n'est enregistré (coach-chapitre garde le chapitre d'avant) : au rechargement, on revient où on en était.
+function niveauVisite(n, i){ if (run || !lessonsOf(n)[i]) return; LESSONS = lessonsOf(n); chapter = n; selectLesson(i); }
 // XP : 10 par étoile au chapitre 1, 15 au chapitre 2, 20 aux chapitres 3 et 4, 25 aux chapitres 5 et 6, 30 au chapitre 7, plus le quiz (un niveau tous les 30 XP)
 const xpTotal = () => sumStars(stars) * 10 + sumStars(ch2Stars) * 15 + sumStars(ch3Stars) * 20 + sumStars(ch4Stars) * 20 + sumStars(ch5Stars) * 25 + sumStars(ch6Stars) * 25 + sumStars(ch7Stars) * 30 + quizXp() + questXp() + (typeof cpXp === 'function' ? cpXp() : 0);   // questXp : coffres des quêtes du jour (quetes.js)
 function renderHud(){

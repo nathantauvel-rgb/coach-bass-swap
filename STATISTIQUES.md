@@ -87,5 +87,9 @@ Dans l'ordre où un joueur les rencontre :
 
 Et à chaque fois : `avis` (un avis envoyé, avec sa note) et `clair` (une réponse à « C'était clair ? »).
 
+Le guide du débutant (lot 51), à chaque fois aussi : `guide-ecoute` (un son d'exemple écouté, avec son nom) et
+`guide-vers-jeu` (un lecteur a cliqué sur le bouton de fin d'une page du guide et arrive dans le jeu, avec le nom de la
+page : `apprendre`, `phrase`, `transition`, `caler` ou `table`). C'est le chiffre qui dit si le guide amène des joueurs.
+
 La formule gratuite d'Umami garde 6 mois d'historique. Le nombre de visites et d'étapes qu'elle compte
 par mois est indiqué sur https://umami.is/pricing (environ 100 000 d'après un comparatif, le 25 oct. 2026).

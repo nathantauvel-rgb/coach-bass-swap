@@ -1522,6 +1522,29 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     Captures : `captures/lot51/` (hors Git, `node captures/lot51/captures.js [pages]` avec le serveur de test lancé).
   - Après la mise en ligne : demander l'indexation des pages dans Search Console et les envoyer dans « URL Submission » de
     Bing. Ensuite, le second volet du GEO : faire parler de DJingood ailleurs (Reddit, forums, YouTube), que les IA lisent.
+  - **Gardien (28 oct. 2026) : feu orange, 569 tests verts.** Corrigé : la pastille de la table est « en haut de la page »
+    (pas « à droite ») ; les cartes de la page d'entrée ont des liens absolus (`/guide/…`), pour marcher aussi depuis
+    `djingood.fr/guide` sans barre finale.
+  - **Le guide en scènes, avec Vini (28 oct. 2026)**, demande de l'utilisateur : « beaucoup trop de texte, pas très beau,
+    ça ne donne pas envie de lire ». Maquette de la page « phrase » validée (`captures/maquette-guide/`, hors Git), puis les
+    six pages refaites : **« c'est nickel comme ça j'adore »**. Règle : peu de texte visible à la fois, Vini guide chaque
+    scène (une bulle d'une ou deux phrases), une animation, un son ou un petit jeu par scène ; **tout le texte reste dans
+    la page** (un test le vérifie sans JavaScript) : c'est lui que lisent Google et les IA.
+    - `guide/guide.js` (remplace `ecoute.js`) : scènes qui apparaissent au défilement (`.vr-sc` → `vue`), barre de lecture,
+      Vini (`[data-vini]`, dessiné par `js/vini.js`, dont la dernière ligne ne dessine plus `#lvlVini` s'il n'existe pas),
+      sons (`button[data-son]`, une balise `<audio>` : sur iPhone elle joue même en mode silencieux ; `data-humeur`),
+      grille de la phrase (`[data-grille]`, `[data-statut]` avec `data-tN`, `[data-bulle-apres]`), pas à pas (`[data-pas]`,
+      `data-depart`, `data-fete`, `data-oui`, `data-suiv` ; la scène reçoit `data-etape` et le dessin de la FLX4 suit),
+      cartes à retourner (`.vr-piege`), petit jeu « touche le 1 » (`[data-jeu]`), A et B sur la ligne du temps (`[data-pistes]`).
+    - Styles `.vr-…` et états du dessin (`[data-etape] .g-fdr-…`, `.g-low-…`, `.g-jog-b`) à la fin de `styles.css`.
+    - Sons d'exemple `guide/sons/*.mp3` (phrase, calé, décalé, deux basses, swap), fabriqués par `node tests/sons-guide.js`
+      depuis `musique/` (Play House, CC0) ; la basse arrive au temps 64 de `dj-b` (mesuré, pas écouté). Même volume pour
+      les deux sons d'une comparaison.
+    - Dessin de la FLX4 (table de mixage + platine de droite) relevé sur le plan du manuel de Mixxx ; à faire vérifier par
+      l'utilisateur sur sa table. Photos de sa FLX4 : « plus tard ».
+    - Tests : `tests/guide.spec.js` (19 tests, dont 7 pour les scènes).
+  - **Pas encore fait** : le lien direct de chaque page vers le bon exercice du jeu (`?guide=…`), proposé à l'utilisateur
+    avec deux questions (sauter les questions de Vini pour ce visiteur ; ouvrir le niveau 1 du chapitre 5 pour la visite).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

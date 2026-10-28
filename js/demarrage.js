@@ -62,5 +62,22 @@ function setView(v){
 document.querySelectorAll('#tabs a').forEach(a => a.addEventListener('click', () => { if (prac && a.dataset.view === view) quitPrac(); }));
 window.addEventListener('hashchange', () => setView(location.hash.slice(1)));
 setView(location.hash.slice(1));
+// Lien d'une page du guide (lot 51) : ?guide=… ouvre tout de suite l'exercice qui va avec la page qu'on vient de lire, sans les
+// questions de Vini (choix de l'utilisateur, 28 oct. 2026 : elles viendront à la visite suivante). Sur un téléphone, une leçon
+// « Comprendre » à la place d'un niveau qui demande une table. Le paramètre est retiré de l'adresse.
+const GUIDE_VERS = {
+  apprendre: () => cpLecon(0),
+  phrase: () => { cpGuide = 3; cpLecon(3); },
+  transition: () => { if (cpMobile()){ cpGuide = 6; cpLecon(6); } else goLesson(1, 6); },
+  // le chapitre 5 est ouvert pour la visite seulement (choix de l'utilisateur) : « Entendre le décalage » se fait sans table
+  caler: () => { if (cpMobile()){ cpGuide = 2; cpLecon(2); } else { location.hash = '#apprendre'; setView('apprendre'); niveauVisite(5, 0); } },
+  table: () => { location.hash = '#table'; setView('table'); }
+};
+const guideVers = (() => { try { return new URLSearchParams(location.search).get('guide'); } catch (e) { return null; } })();
+if (Object.prototype.hasOwnProperty.call(GUIDE_VERS, guideVers)){
+  try { const u = new URL(location.href); u.searchParams.delete('guide'); history.replaceState(null, '', u.pathname + u.search + u.hash); } catch (e) {}
+  GUIDE_VERS[guideVers]();
+  stat('guide-vers-jeu', { page: guideVers });
+}
 // Premiers pas (lot 28) : un nouveau venu répond d'abord aux questions de Vini
-if (ppAOuvrir()) openPremiers();
+else if (ppAOuvrir()) openPremiers();
