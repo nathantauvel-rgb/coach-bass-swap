@@ -61,6 +61,40 @@ test.describe('Guide du débutant', () => {
     }
   });
 
+  // Les sons d'exemple (guide/ecoute.js, fabriqués par tests/sons-guide.js) : un bouton par son, un seul son à la fois
+  test('chaque bouton « Écouter » a son son, et un seul son joue à la fois', async ({ page, request }) => {
+    const vus = [];
+    for (const f of QUESTIONS) {
+      await page.goto('/guide/' + f);
+      for (const nom of await page.locator('button[data-son]').evaluateAll(bs => bs.map(b => b.dataset.son))) {
+        expect((await request.get('/guide/sons/' + nom + '.mp3')).status(), `${f} → ${nom}`).toBe(200);
+        vus.push(nom);
+      }
+    }
+    expect(vus.sort()).toEqual(['cale', 'decale', 'deux-basses', 'phrase', 'swap']);
+    await page.goto('/guide/premiere-transition-ddj-flx4.html');
+    const [deux, swap] = [page.locator('button[data-son="deux-basses"]'), page.locator('button[data-son="swap"]')];
+    await deux.click();
+    await expect(deux).toHaveAttribute('aria-pressed', 'true');
+    await swap.click();
+    await expect(swap).toHaveAttribute('aria-pressed', 'true');
+    await expect(deux).toHaveAttribute('aria-pressed', 'false');
+    await swap.click();
+    await expect(swap).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('la grille de la phrase s\'allume au rythme du son, puis repart sur la phrase suivante', async ({ page }) => {
+    await page.goto('/guide/phrase-musicale-32-temps.html');
+    await page.locator('button[data-son="phrase"]').click();
+    const allumee = () => page.evaluate(() => [...document.querySelectorAll('[data-grille] .g-t')].findIndex(e => e.classList.contains('g-on')));
+    await expect.poll(allumee, { timeout: 5000 }).toBeGreaterThan(1);
+    await expect(page.locator('[data-statut]')).toContainText('Mesure');
+    // au temps 32, la basse arrive : la grille repart du premier « 1 », dans une autre couleur
+    await page.waitForFunction(() => document.querySelector('[data-grille] .g-t.g-neuf'), null, { timeout: 25000 });
+    await expect(page.locator('[data-statut]')).toContainText('Nouvelle phrase');
+    await expect(page.locator('[data-grille] .g-t.g-neuf')).toHaveCount(1);
+  });
+
   test('l\'accueil et la présentation mènent au guide', async ({ page }) => {
     await ouvrir(page, { onglet: 'accueil' });
     const lien = page.locator('#vHome a[href="guide/"]');

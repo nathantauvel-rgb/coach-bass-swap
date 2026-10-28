@@ -94,7 +94,8 @@
         <li><strong>La phrase</strong> : 8 mesures, soit 32 temps. Environ 15 secondes à 124 BPM.</li>
       </ul>
       <figure class="g-fig g-fig-grille">
-        <div class="g-grille" role="img" aria-label="Une phrase : 8 mesures de 4 temps, soit 32 temps. Le premier temps de chaque mesure est un « 1 » ; le tout premier est le début de la phrase.">
+        <div class="g-ecoute-ligne"><button type="button" class="g-ecoute" data-son="phrase" aria-pressed="false"><span class="g-ic" aria-hidden="true">▶</span> Écouter une phrase</button></div>
+        <div class="g-grille" data-grille="phrase" role="img" aria-label="Une phrase : 8 mesures de 4 temps, soit 32 temps. Le premier temps de chaque mesure est un « 1 » ; le tout premier est le début de la phrase.">
           <div class="g-mes"><span class="g-t g-t1 g-t0">1</span><span class="g-t">2</span><span class="g-t">3</span><span class="g-t">4</span><small>mesure 1</small></div>
           <div class="g-mes"><span class="g-t g-t1">1</span><span class="g-t">2</span><span class="g-t">3</span><span class="g-t">4</span><small>2</small></div>
           <div class="g-mes"><span class="g-t g-t1">1</span><span class="g-t">2</span><span class="g-t">3</span><span class="g-t">4</span><small>3</small></div>
@@ -104,7 +105,8 @@
           <div class="g-mes"><span class="g-t g-t1">1</span><span class="g-t">2</span><span class="g-t">3</span><span class="g-t">4</span><small>7</small></div>
           <div class="g-mes"><span class="g-t g-t1">1</span><span class="g-t">2</span><span class="g-t">3</span><span class="g-t">4</span><small>8</small></div>
         </div>
-        <figcaption>4 temps font une mesure, 8 mesures font une phrase. Le tout premier « 1 », en violet, est le début de la phrase : c'est là que la musique change.</figcaption>
+        <p class="g-statut" data-statut data-t0="Mesure 1 sur 8 : le début de la phrase. Compte 1, 2, 3, 4…" data-t4="Mesure 2 sur 8" data-t8="Mesure 3 sur 8" data-t12="Mesure 4 sur 8 : la moitié de la phrase" data-t16="Mesure 5 sur 8" data-t20="Mesure 6 sur 8" data-t24="Mesure 7 sur 8" data-t28="Mesure 8 sur 8 : la phrase se termine…" data-t32="1 ! Nouvelle phrase : la basse arrive.">Appuie sur « Écouter », puis compte avec la musique.</p>
+        <figcaption>4 temps font une mesure, 8 mesures font une phrase ; le « 1 » en violet en est le début. Appuie sur « Écouter » : les cases s'allument avec la musique, et au bout des 32 temps, la basse arrive pile sur le « 1 » de la phrase suivante.<span class="g-credit">Musique : Play House, libre de droits (CC0).</span></figcaption>
       </figure>
     </section>
 
@@ -159,5 +161,6 @@
   <p class="page-note pres-pied"><a href="../presentation.html">Comment marche DJingood ?</a> · <a href="../confidentialite.html">Confidentialité</a></p>
 </div>
 <script src="../js/stats.js"></script>
+<script src="ecoute.js"></script>
 </body>
 </html>
