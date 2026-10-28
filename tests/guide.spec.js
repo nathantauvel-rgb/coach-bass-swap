@@ -18,7 +18,8 @@ test.describe('Guide du débutant', () => {
     await page.goto('/guide/');
     await expect(page.locator('h1')).toHaveText('Le guide du DJ débutant');
     const cartes = await page.locator('.g-liste a.card').evaluateAll(as => as.map(a => a.getAttribute('href')));
-    expect(cartes.sort()).toEqual(QUESTIONS);
+    // En absolu : si Vercel sert /guide sans barre finale, des liens relatifs mèneraient hors du dossier.
+    expect(cartes.sort()).toEqual(QUESTIONS.map(f => '/guide/' + f));
   });
 
   for (const f of QUESTIONS)
