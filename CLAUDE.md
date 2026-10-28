@@ -1540,8 +1540,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     - Sons d'exemple `guide/sons/*.mp3` (phrase, calé, décalé, deux basses, swap), fabriqués par `node tests/sons-guide.js`
       depuis `musique/` (Play House, CC0) ; la basse arrive au temps 64 de `dj-b` (mesuré, pas écouté). Même volume pour
       les deux sons d'une comparaison.
-    - Dessin de la FLX4 (table de mixage + platine de droite) relevé sur le plan du manuel de Mixxx ; à faire vérifier par
-      l'utilisateur sur sa table. Photos de sa FLX4 : « plus tard ».
+    - Dessin de la FLX4 (table de mixage + platine de droite) relevé sur le plan du manuel de Mixxx ; **comparé par
+      l'utilisateur à sa vraie table le 28 oct. 2026 : « tout est bien fait par rapport à la vraie »**. Photos de sa FLX4 : « plus tard ».
+    - Gardien, second passage (28 oct. 2026) : 585 tests verts, feu rouge pour la seule règle des MP3 (les 5 sons de
+      `guide/sons/` demandent l'accord explicite de l'utilisateur, comme au lot 26) ; remarques corrigées (commit `5f1f211`).
     - Tests : `tests/guide.spec.js` (19 tests, dont 7 pour les scènes).
   - **Du guide au jeu (28 oct. 2026)** : le bouton de la dernière scène de chaque page mène à `index.html?guide=<clé>`, lu à la
     fin de `js/demarrage.js` (`GUIDE_VERS`) puis retiré de l'adresse : `apprendre` → leçon « Comprendre » 1 ; `phrase` → leçon 4
