@@ -1830,7 +1830,7 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .vr-mesures i.plein{background:var(--brand-light)}
 .vr-mesures i.neuf{background:var(--ok)}
 .vr-mes-lab{display:flex;justify-content:space-between;width:100%;max-width:520px;margin-top:-10px;font-size:13px;color:var(--muted);font-weight:700}
-.vr-pad{width:170px;height:170px;border-radius:50%;border:none;background:radial-gradient(circle at 35% 30%,var(--brand-light),var(--brand) 60%,var(--vini-700));color:var(--on-brand);font:inherit;font-size:26px;font-weight:900;box-shadow:0 10px 0 var(--vini-700),0 0 0 8px var(--brand-soft);cursor:pointer;touch-action:manipulation;transition:transform .06s,box-shadow .06s}
+.vr-pad{width:170px;height:170px;border-radius:50%;border:none;text-shadow:0 2px 0 var(--vini-700);background:radial-gradient(circle at 30% 25%,var(--brand-light),var(--brand) 25%,var(--vini-700));color:var(--on-brand);font:inherit;font-size:26px;font-weight:900;box-shadow:0 10px 0 var(--vini-700),0 0 0 8px var(--brand-soft);cursor:pointer;touch-action:manipulation;transition:transform .06s,box-shadow .06s}
 .vr-pad:disabled{opacity:.35;cursor:default}
 .vr-pad.appui{transform:translateY(8px);box-shadow:0 2px 0 var(--vini-700),0 0 0 14px var(--brand-line)}
 .vr-msg{min-height:1.5em;margin:0;text-align:center;font-weight:900;font-size:20px}

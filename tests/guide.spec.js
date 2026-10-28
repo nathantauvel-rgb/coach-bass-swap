@@ -140,10 +140,12 @@ test.describe('Guide du débutant en scènes', () => {
     const sc = page.locator('section[data-etape]'), suiv = sc.locator('[data-suiv]');
     await expect(sc).toHaveAttribute('data-etape', '0');
     await expect(sc.locator('.vr-pas li.actif')).toHaveCount(0);
+    await expect(sc.locator('.vr-bul')).toContainText('position de départ');
     for (const n of ['1', '2', '3', '4']) {
       await suiv.click();
       await expect(sc).toHaveAttribute('data-etape', n);
       await expect(sc.locator('.vr-pas li.actif')).toHaveCount(1);
+      await expect(sc.locator('.vr-bul')).toContainText('Geste ' + n);   // Vini commente chaque geste (gardien)
     }
     await expect(suiv).toContainText('Recommencer');
     await expect(sc.locator('.vini')).toHaveClass(/vn-parfait/);
@@ -237,6 +239,12 @@ test.describe('Du guide au jeu', () => {
     await expect(page.locator('#vLearn')).toBeVisible();
     expect(await page.evaluate(() => chapter)).toBe(1);   // au rechargement, on revient où on en était
     expect(erreurs).toEqual([]);
+  });
+
+  test('sans parcours choisi, Vini ne dit pas « Tu as tout fait » dans Mes progrès (gardien)', async ({ page }) => {
+    await arrive(page, 'phrase');
+    await page.evaluate(() => { cpFerme(); location.hash = '#progres'; });
+    await expect(page.locator('#progTip')).toContainText('Choisis ton parcours');
   });
 
   test('table non détectée : la page « Ma table »', async ({ page }) => {

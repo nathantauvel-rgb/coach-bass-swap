@@ -87,6 +87,8 @@
     const items = $$('li', box), sc = box.closest('.vr-sc'), v = viniDe(box);
     const prec = box.querySelector('[data-prec]'), suiv = box.querySelector('[data-suiv]'), oui = box.querySelector('[data-oui]'), num = box.querySelector('.vr-pas-n'), msg = box.querySelector('.vr-pas-msg');
     const depart = box.hasAttribute('data-depart');   // le dessin montre d'abord la position de départ, aucune étape ouverte
+    // une étape peut donner à Vini sa propre phrase (data-bulle) ; sans étape ouverte, il reprend sa première phrase
+    const bul = items.some(li => li.dataset.bulle) && sc ? sc.querySelector('.vr-bul') : null, bul0 = bul && bul.textContent;
     let i = depart ? -1 : 0;
     function va(k){
       i = Math.max(depart ? -1 : 0, Math.min(items.length - 1, k));
@@ -96,6 +98,7 @@
       if (prec) prec.disabled = i <= (depart ? -1 : 0);
       if (suiv) suiv.lastChild.textContent = ' ' + (i < 0 ? 'Commencer' : i === items.length - 1 ? 'Recommencer' : suiv.dataset.suiv || 'Suivant');
       if (msg) msg.textContent = '';
+      if (bul) bulle(bul, i < 0 ? bul0 : items[i].dataset.bulle || bul0);
       if (i === items.length - 1 && box.hasAttribute('data-fete')) humeur(v, 'parfait');
       else if (v && v._h === 'parfait') humeur(v, v.dataset.vini || 'calme');
     }
@@ -139,12 +142,18 @@
         if (etat === 'joue' && t > segs.length * 4 * P + 1.2){ etat = 'fini'; pad.disabled = true; humeur(v, 'rate');
           message('Le «' + NB + '1' + NB + '» est passé' + NB + ': touche le bouton dès que la basse arrive.', 'non'); }
       }, fin: () => {
+        const avait = document.activeElement === pad || document.activeElement === document.body;
         segs.forEach(s => s.classList.remove('plein', 'neuf')); pad.disabled = true; go.hidden = false; go.lastChild.textContent = ' Rejouer';
         if (etat === 'joue') message(''); etat = 'pret'; if (v && v._h === 'danse') humeur(v, 'calme');
+        if (avait) go.focus({ preventScroll: true });   // le clavier repart de « Rejouer »
       } });
     });
+    // l'instant compte : on lit l'appui (doigt, souris) ou la touche, pas le relâchement
+    let clavier = 0;
     pad.addEventListener('pointerdown', e => { e.preventDefault(); tape(); });
-    pad.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); if (!e.repeat) tape(); } });
+    pad.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); clavier = Date.now(); if (!e.repeat) tape(); } });
+    // un lecteur d'écran « clique » sans appui ni touche (detail = 0) : on le compte aussi, sauf juste après une touche
+    pad.addEventListener('click', e => { if (e.detail === 0 && Date.now() - clavier > 600) tape(); });
   });
 
   /* ---------- A et B sur la ligne du temps ---------- */

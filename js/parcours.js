@@ -131,7 +131,8 @@ function viniProgres(){
   const nb = badgeNext(), p = nb ? BADGE_PROG[nb[0]]() : null, st = STAGES[nextStage()];
   if (goalDone()) viniDit('prog', 'Objectif du jour atteint\u00a0: tu gères\u00a0!', 'danse');
   else if (p && p[1] > 1 && p[0] / p[1] >= .5) viniDit('prog', `Tu y es presque\u00a0: ${Math.min(p[0], p[1])} sur ${p[1]} pour le badge «\u00a0${nb[1]}\u00a0»\u00a0!`);
-  else viniDit('prog', st ? `Prochaine étape\u00a0: «\u00a0${st.cta()}\u00a0». À toi de jouer\u00a0!` : 'Tu as tout fait, bravo\u00a0! Garde la main avec le défi du jour.');
+  // sans parcours choisi (« Passer » aux Premiers pas, ou arrivé par le guide), il n'y a pas de prochaine étape : ce n'est pas « tout fait »
+  else viniDit('prog', st ? `Prochaine étape\u00a0: «\u00a0${st.cta()}\u00a0». À toi de jouer\u00a0!` : !parcours ? 'Choisis ton parcours sur l’accueil\u00a0: je te dirai par où continuer.' : 'Tu as tout fait, bravo\u00a0! Garde la main avec le défi du jour.');
 }
 $('homeCta').addEventListener('click', () => { const st = STAGES[nextStage()]; if (st) st.go(); else location.hash = '#entrainer'; });
 $('homeChange').addEventListener('click', () => { parcoursPick = true; renderHome(); });
