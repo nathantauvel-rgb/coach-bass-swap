@@ -85,7 +85,10 @@ function trFrancais(cle){
   return true;
 }
 function tr(s){
-  if (LANGUE !== 'en' || typeof s !== 'string' || !/[A-Za-zÀ-ÿ]/.test(s)) return s;
+  if (LANGUE !== 'en' || typeof s !== 'string') return s;
+  // un pourcentage à la française (« 0,0 % », le tempo d'une platine) : « 0.0% »
+  if (/^\s*[-+−]?\d+,\d+\s?%\s*$/.test(s)) return s.replace(',', '.').replace(/\s?%/, '%');
+  if (!/[A-Za-zÀ-ÿ]/.test(s)) return s;
   const c = EN_CACHE.get(s); if (c !== undefined) return c;
   const m = s.match(/^([\s  ]*)([\s\S]*?)([\s  ]*)$/), cle = trCle(m[2]);
   let t = trTrouve(cle);
