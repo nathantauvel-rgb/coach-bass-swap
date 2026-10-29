@@ -1,0 +1,50 @@
+<!--
+  Mail 1 : le jour même (lot 54). À coller dans Brevo : Modèles → Nouveau modèle → « Coller votre code ».
+  Objet : Bienvenue sur DJingood, c'est Vini !
+  Texte d'aperçu : Ton compte est prêt. Ta prochaine étape t'attend.
+  Variables remplies par le site : contact.PRENOM (peut être vide), contact.NIVEAU (la prochaine étape, peut être vide).
+-->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bienvenue sur DJingood</title>
+</head>
+<body style="margin:0;padding:0;background:#eef0f5;">
+<span style="display:none;max-height:0;overflow:hidden;opacity:0;">Ton compte est prêt. Ta prochaine étape t'attend.</span>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#eef0f5;">
+  <tr><td align="center" style="padding:24px 12px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:#ffffff;border-radius:18px;overflow:hidden;font-family:Nunito,'Segoe UI',Arial,sans-serif;color:#1b1e27;">
+      <tr><td style="background:#0B0E16;padding:16px 24px;">
+        <img src="https://djingood.fr/img/vini-mail.png" width="40" height="40" alt="Vini" style="vertical-align:middle;border:0;">
+        <span style="vertical-align:middle;margin-left:8px;font-size:20px;font-weight:900;color:#f2f3f5;"><span style="color:#B89BFF;">DJ</span>ingood</span>
+      </td></tr>
+      <tr><td style="padding:26px 24px 8px;font-size:16px;line-height:1.55;">
+        <p style="margin:0 0 12px;font-size:22px;font-weight:900;">Salut{% if contact.PRENOM %} {{ contact.PRENOM }}{% endif %}&nbsp;!</p>
+        <p style="margin:0 0 16px;">C'est Vini. Ton compte est prêt : tes étoiles et ta série te suivent maintenant partout, sur ton ordinateur comme sur ton téléphone.</p>
+        {% if contact.NIVEAU %}
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f3effe;border-radius:14px;margin:0 0 18px;">
+          <tr><td style="padding:14px 16px;">
+            <div style="font-size:13px;font-weight:800;color:#5b3fd6;text-transform:uppercase;letter-spacing:.05em;">Ta prochaine étape</div>
+            <div style="font-size:18px;font-weight:900;margin-top:2px;">{{ contact.NIVEAU }}</div>
+            <div style="font-size:14px;color:#6b7080;margin-top:2px;">Deux minutes, avec ta table ou à la souris.</div>
+          </td></tr>
+        </table>
+        {% endif %}
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+          <tr><td align="center" style="background:#ff7a45;border-radius:99px;border-bottom:4px solid #C0522A;">
+            <a href="https://djingood.fr/?utm_source=brevo&amp;utm_medium=email&amp;utm_campaign=bienvenue" style="display:block;padding:13px 20px;font-size:17px;font-weight:900;color:#0B0E16;text-decoration:none;">Jouer maintenant</a>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 20px;color:#4a4f5e;">À tout de suite derrière les platines,<br>Vini</p>
+      </td></tr>
+      <tr><td style="border-top:1px solid #ececf2;padding:14px 24px 18px;font-size:12px;line-height:1.5;color:#8a8f9d;">
+        Tu reçois ce mail parce que tu as dit oui à « Vini peut m'écrire » sur DJingood. <a href="{{ unsubscribe }}" style="color:#5b3fd6;">Ne plus recevoir les mails de Vini</a><br>
+        DJingood · <a href="https://djingood.fr" style="color:#8a8f9d;">djingood.fr</a>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>

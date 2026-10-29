@@ -44,8 +44,10 @@ const CPT_MAX = 400000;                       // au-delà, on n'envoie pas (gard
    - `coach-ordre` : ce n'est pas de la progression mais le **format** des données de ce navigateur (lot 26, nouvel
      ordre du chapitre 1). Il est posé à chaque chargement par `ordreMigre`. S'il voyageait et revenait absent d'un
      paquet, les étoiles seraient déplacées une deuxième fois, donc fausses.
-   - `coach-stats` : les étapes déjà comptées par les statistiques sur ce navigateur (stats.js). */
-const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', 'coach-stats', CPT_KEY];
+   - `coach-stats` : les étapes déjà comptées par les statistiques sur ce navigateur (stats.js).
+   - `coach-compte-propose` : le jour où la carte de fin a proposé le compte (mails.js) ; ne sert qu'avant d'en avoir un.
+   `coach-mails` (la réponse « Vini peut m'écrire », lot 54), elle, suit le compte : on ne repose pas la question ailleurs. */
+const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', 'coach-stats', ML_PROPOSE, CPT_KEY];
 const cptOn = () => !!(CPT_CFG && CPT_CFG.apiKey && CPT_CFG.projectId && CPT_CFG.appId);
 const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_LOCAL.includes(k);
 
@@ -147,6 +149,8 @@ function cptReprend(d, maj){
       : 'Ta progression est revenue. Ce navigateur ne sait pas la retenir : recharge la page toi-même pour la voir.';
     cptEtat(); return;
   }
+  // le bandeau de bienvenue attend le chargement suivant
+  if (cptDemande) try { sessionStorage.setItem(CPT_BONJOUR, JSON.stringify([cptRevoir(), 'Ta progression est revenue.'])); } catch (e) {}
   location.reload();
 }
 // Un résumé en une ligne, pour que le joueur sache ce qu'il choisit
@@ -197,7 +201,7 @@ function cptChange(u){
   // remet l'écran à l'accueil que si on vient vraiment de se déconnecter, sinon le formulaire qu'on est en
   // train de remplir disparaîtrait tout seul.
   if (!u){ const avait = !!cpt; cpt = null; cptBloque = true; cptAttente = null;
-    if (avait){ cptPas = 'accueil'; cptFait = ''; try { cptBrut.del(CPT_KEY); } catch (e) {} } cptEtat(); return; }
+    if (avait){ cptPas = 'accueil'; cptFait = ''; cptDemande = false; mlVu = ''; mlQCache(); try { cptBrut.del(CPT_KEY); } catch (e) {} } cptEtat(); return; }
   cpt = { uid: u.uid, prenom: (u.displayName || '').trim().split(/\s+/)[0] || 'toi' };
   stat1('compte');   // la première connexion sur ce navigateur (stats.js)
   if (!cptSauve || cptSauve.uid !== cpt.uid){ cptMaj = 0; cptSale = false; }   // un autre compte que la dernière fois
@@ -217,10 +221,12 @@ function cptSync(){
     // (Ce deuxième cas évite aussi de « reprendre » un document vide en boucle s'il n'a pas de `maj` utilisable.)
     if (!d || !cptPoids(d)){
       cptBloque = false; cptSale = true;
-      return cptPousse().then(() => { cptDit(`Bienvenue ${cpt.prenom} ! Ton compte est créé. À partir de maintenant, ta progression est enregistrée dessus.`); });
+      return cptPousse().then(ok => {
+        if (!ok){ cptDemande = false; return; }   // l'envoi a été refusé : cptPousse a déjà dit pourquoi, la fenêtre reste ouverte
+        cptDit(`Bienvenue ${cpt.prenom} ! Ton compte est créé. À partir de maintenant, ta progression est enregistrée dessus.`); cptFini(cptBienvenue(), 'Ton compte est créé\u00a0: ta progression est enregistrée.'); });
     }
     if (maj && maj === cptMaj){                                           // personne n'a avancé ailleurs
-      cptBloque = false; cptEtat(); if (cptSale) cptBientot(); return;
+      cptBloque = false; cptEtat(); if (cptSale) cptBientot(); cptFini(cptRevoir(), 'Ta progression est enregistrée sur ton compte.'); return;
     }
     if (cptVide()) return cptReprend(d, maj);                             // rien de gagné ici : on prend celle du compte
     if (cptMaj && !cptSale) return cptReprend(d, maj);                    // on était à jour : c'est un autre appareil qui a avancé
@@ -228,11 +234,11 @@ function cptSync(){
     // (Clés triées : Firestore ne les rend pas dans le même ordre que le navigateur.)
     const pareil = o => JSON.stringify(Object.keys(o).sort().map(k => [k, o[k]]));
     if (pareil(d) === pareil(cptDonnees())){
-      cptMaj = maj; cptSale = false; cptNote(); cptBloque = false; cptEtat(); return;
+      cptMaj = maj; cptSale = false; cptNote(); cptBloque = false; cptEtat(); cptFini(cptRevoir(), 'Ta progression est enregistrée sur ton compte.'); return;
     }
     // On n'arrive ici que si les deux côtés ont vraiment gagné quelque chose, et qu'ils diffèrent : aucun des
     // deux choix ne peut remplacer une vraie progression par du vide.
-    cptAttente = { d, maj }; cptEtat();
+    cptAttente = { d, maj }; cptDit(''); cptEtat();
   }, e => {
     // Pas de réseau au chargement : on reste bloqué (rien ne doit partir avant d'avoir comparé), on le dit,
     // et on réessaie dès que la connexion revient.
@@ -246,31 +252,35 @@ function cptGarde(quoi){
   const a = cptAttente; cptAttente = null;
   if (quoi === 'compte' && a) return cptReprend(a.d, a.maj);
   cptBloque = false; cptSale = true; cptNote(); cptEtat();
-  cptPousse().then(() => cptDit('C\'est la progression de cet ordinateur qui est gardée, et elle est maintenant enregistrée sur ton compte.'));
+  cptPousse().then(ok => { if (!ok){ cptDemande = false; return; }
+    cptDit('C\'est la progression de cet ordinateur qui est gardée, et elle est maintenant enregistrée sur ton compte.');
+    cptFini('C’est noté\u00a0!', 'La progression de cet ordinateur est maintenant sur ton compte.'); });
 }
 
 /* ---------- Se connecter ---------- */
 function cptEntrer(){
   if (!cptOn()) return;
-  cptDit('Connexion en cours…'); cptBoutons(true);
+  mlChoix();   // « Continuer avec Google » depuis « Créer mon compte » : la case compte aussi (mails.js)
+  cptDemande = true; cptDit('Connexion en cours…'); cptBoutons(true);
   cptSdkAuth()
     .then(() => cptFb.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()))
     .then(() => { cptBoutons(false); })                                   // la suite est faite par cptChange → cptSync
-    .catch(e => { cptDit(cptErreur(e)); cptBoutons(false); });
+    .catch(e => { cptDemande = false; cptDit(cptErreur(e)); cptBoutons(false); });
 }
 
 /* ---------- Envoyer la progression ---------- */
+// Rend vrai si la progression est vraiment partie, faux sinon (refus de Firebase, trop grosse, pas le moment).
 function cptPousse(){
-  if (!cpt || !cptFb || !cptFb.db || cptAttente || cptStop || cptBloque) return Promise.resolve();
+  if (!cpt || !cptFb || !cptFb.db || cptAttente || cptStop || cptBloque) return Promise.resolve(false);
   const d = cptDonnees();
-  if (JSON.stringify(d).length > CPT_MAX){ cptDit('Ta progression est trop grosse pour être enregistrée en ligne. Préviens-moi : c\'est un défaut du site.'); return Promise.resolve(); }
+  if (JSON.stringify(d).length > CPT_MAX){ cptDit('Ta progression est trop grosse pour être enregistrée en ligne. Préviens-moi : c\'est un défaut du site.'); return Promise.resolve(false); }
   const maj = Date.now();
   cptEnvoi = true; cptLent = false; cptEtat();
   const lent = setTimeout(() => { if (cptEnvoi){ cptLent = true; cptEtat(); } }, CPT_LENT);
   return cptFb.db.collection(CPT_DOC).doc(cpt.uid).set({ v: 1, prenom: cpt.prenom, maj, donnees: d })
-    .then(() => { cptMaj = maj; cptSale = false; cptNote(); cptHeure = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); },
-          e => { cptDit(cptErreur(e)); })
-    .then(() => { clearTimeout(lent); cptEnvoi = false; cptLent = false; cptEtat(); });
+    .then(() => { cptMaj = maj; cptSale = false; cptNote(); cptHeure = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); return true; },
+          e => { cptDit(cptErreur(e)); return false; })
+    .then(ok => { clearTimeout(lent); cptEnvoi = false; cptLent = false; cptEtat(); return ok; });
 }
 // Avant de fermer l'onglet, on n'attend pas les 2,5 s
 function cptVite(){ if (cpt){ clearTimeout(cptT); cptPousse(); } }
@@ -321,7 +331,7 @@ const CPT_MDP_MIN = 6;                        // minimum imposé par Firebase
 const cptMailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
 
 function cptCreer(prenom, mail, mdp){
-  cptDit('Création de ton compte…'); cptBoutons(true);
+  cptDemande = true; cptDit('Création de ton compte…'); cptBoutons(true);
   cptSdkAuth()
     .then(() => cptFb.auth.createUserWithEmailAndPassword(mail, mdp))
     .then(r => {
@@ -329,15 +339,15 @@ function cptCreer(prenom, mail, mdp){
       cpt = { uid: r.user.uid, prenom }; cptNote(); cptEtat();
       return r.user.updateProfile({ displayName: prenom }).catch(() => {});
     })
-    .then(() => { cptDit(''); cptBoutons(false); })
-    .catch(e => { cptDit(cptErreur(e)); cptBoutons(false); });
+    .then(() => { cptBoutons(false); })
+    .catch(e => { cptDemande = false; cptDit(cptErreur(e)); cptBoutons(false); });
 }
 function cptEntrerMail(mail, mdp){
-  cptDit('Connexion en cours…'); cptBoutons(true);
+  cptDemande = true; cptDit('Connexion en cours…'); cptBoutons(true);
   cptSdkAuth()
     .then(() => cptFb.auth.signInWithEmailAndPassword(mail, mdp))
-    .then(() => { cptDit(''); cptBoutons(false); })          // la suite est faite par cptChange → cptSync
-    .catch(e => { cptDit(cptErreur(e)); cptBoutons(false); });
+    .then(() => { cptBoutons(false); })                       // la suite est faite par cptChange → cptSync
+    .catch(e => { cptDemande = false; cptDit(cptErreur(e)); cptBoutons(false); });
 }
 function cptOubliMdp(mail){
   cptDit('Envoi en cours…'); cptBoutons(true);
@@ -366,66 +376,114 @@ function cptErreur(e){
   return 'Ça n’a pas marché : ' + ((e && e.message) || 'erreur inconnue');
 }
 function cptDit(t){ const m = $('cptMsg'); if (!m) return; m.textContent = t || ''; m.hidden = !t; }
-function cptBoutons(off){ for (const id of ['cptGo', 'cptIn', 'cptOut', 'cptVersCreer', 'cptVersEntrer', 'cptOubli', 'cptBascule']){ const b = $(id); if (b) b.disabled = !!off; } }
-// La pastille de l'en-tête
+function cptBoutons(off){ for (const id of ['cptGo', 'cptIn', 'cptOut', 'cptVersCreer', 'cptVersEntrer', 'cptOubli', 'cptBascule', 'cptRetour']){ const b = $(id); if (b) b.disabled = !!off; } }
+// Le bouton du compte, en haut à droite de l'en-tête : « Se connecter », ou l'initiale et le prénom. L'initiale est
+// dessinée par la feuille de style (data-initiale), pour que le texte du bouton reste le prénom.
+const cptInitiale = () => (Array.from((cpt && cpt.prenom !== 'toi' && cpt.prenom) || '?')[0] || '?').toUpperCase();
 function cptEtat(){
   const b = $('cptBtn'); if (!b) return;
   b.hidden = !cptOn();
-  b.textContent = cpt ? cpt.prenom + (cptAttente ? ' ·' : '') : 'Se connecter';
+  $('cptNom').textContent = cpt ? cpt.prenom + (cptAttente ? ' ·' : '') : 'Se connecter';
+  b.dataset.initiale = cpt ? cptInitiale() : '';
   b.classList.toggle('on', !!cpt);
   b.title = cptAttente ? 'Choisis quelle progression garder' : cpt ? 'Mon compte DJingood' : 'Se connecter pour garder ta progression';
   if ($('compte') && !$('compte').hidden) cptRend();
+  mlPret();   // la réponse « Vini peut m'écrire », une fois la progression comparée (mails.js)
 }
 
-/* Les écrans de la fenêtre : `accueil` (les deux chemins), `creer`, `entrer`, `oubli`.
-   Quand on est connecté, ils laissent la place à l'état du compte. */
+/* Les écrans de la fenêtre : `accueil` (Google, ou un compte avec son e-mail), `creer`, `entrer`, `oubli`.
+   Quand on est connecté, ils laissent la place au compte : qui est connecté (initiale, prénom, adresse) et son état.
+   Refaite le 29 oct. 2026 à la demande de l'utilisateur (« Nathan » grisé dans le prénom, « Se connecter » et Google
+   pas assez visibles) : Google en premier et en grand, des cases vides, « ← Retour ». */
 let cptPas = 'accueil';
+const CPT_TITRES = { accueil: 'Garde ta progression', creer: 'Créer mon compte', entrer: 'Content de te revoir\u00a0!', oubli: 'Mot de passe oublié' };
 function cptVa(pas){
-  cptPas = pas; cptDit(''); cptRend();
+  cptPas = pas; mlVoulu = null; cptDit(''); cptRend();
   const f = $(pas === 'creer' ? 'cptPrenom' : pas === 'entrer' || pas === 'oubli' ? 'cptMail' : 'cptTitle');
   if (f) f.focus({ preventScroll: true });
 }
 function cptRend(){
   const form = cptPas === 'creer' || cptPas === 'entrer' || cptPas === 'oubli';
-  const dehors = !cpt && !cptAttente;
+  const dehors = !cpt && !cptAttente, google = dehors && (cptPas === 'accueil' || cptPas === 'entrer');
   $('cptChoix').hidden = !cptAttente;
   $('cptAccueil').hidden = !(dehors && cptPas === 'accueil');
   $('cptForm').hidden = !(dehors && form);
   $('cptConnecte').hidden = !cpt;
+  $('cptRetour').hidden = !(dehors && form);
+  $('cptIn').hidden = !google; $('cptOu').hidden = !google;
+  $('cptOuTxt').textContent = cptPas === 'entrer' ? 'ou avec ton e-mail' : 'ou';
   if (cptAttente) $('cptChoixTxt').textContent = 'Ton compte a déjà une progression (' + cptResume(cptAttente.d) + '), et cet ordinateur en a une autre (' + cptResume(cptDonnees()) + '). Laquelle tu gardes ? L’autre sera remplacée. Rien n’est enregistré tant que tu n’as pas choisi.';
 
   if (dehors && form){
     $('cptChPrenom').hidden = cptPas !== 'creer';
     $('cptChMdp').hidden = cptPas === 'oubli';
+    $('cptMdpLab').textContent = cptPas === 'creer' ? 'Choisis un mot de passe' : 'Ton mot de passe';
     $('cptOubli').hidden = cptPas !== 'entrer';
-    $('cptOu').hidden = cptPas === 'oubli';
-    $('cptIn').hidden = cptPas === 'oubli';
     $('cptGo').textContent = cptPas === 'creer' ? 'Créer mon compte' : cptPas === 'entrer' ? 'Me connecter' : 'Envoyer le lien';
-    $('cptAide').textContent = cptPas === 'creer' ? 'Au moins ' + CPT_MDP_MIN + ' caractères.' : cptPas === 'oubli' ? 'On t’envoie un lien pour en choisir un nouveau.' : '';
-    $('cptAide').hidden = !$('cptAide').textContent;
-    $('cptBascule').textContent = cptPas === 'creer' ? 'J’ai déjà un compte' : cptPas === 'entrer' ? 'Je n’ai pas encore de compte' : 'Revenir à la connexion';
+    $('cptAide').textContent = cptPas === 'creer' ? CPT_MDP_MIN + ' caractères minimum' : cptPas === 'oubli' ? 'On t’envoie un lien pour en choisir un nouveau.' : '';
+    $('cptBasTxt').textContent = cptPas === 'creer' ? 'Déjà un compte\u00a0?' : cptPas === 'entrer' ? 'Pas encore de compte\u00a0?' : '';
+    $('cptBascule').textContent = cptPas === 'creer' ? 'Se connecter' : cptPas === 'entrer' ? 'Créer un compte' : 'Revenir à la connexion';
   }
 
-  $('cptTitle').textContent = cpt ? 'Mon compte'
-    : cptPas === 'creer' ? 'Créer mon compte'
-    : cptPas === 'entrer' ? 'Me connecter'
-    : cptPas === 'oubli' ? 'Mot de passe oublié' : 'Garde ta progression';
-  $('cptKick').textContent = cpt ? 'Ta progression' : 'DJingood';
-  $('cptEtatTxt').textContent = cpt
-    ? (cptAttente ? 'Choisis quelle progression garder, juste en dessous.'
-      : cptSouci ? cptSouci
-      : cptLent ? 'Pas de réseau : ta progression sera enregistrée dès que tu seras en ligne.'
-      : cptEnvoi ? 'Enregistrement en cours…'
-      : cptBloque ? 'Vérification de ta progression…'
-      : cptHeure ? 'Salut ' + cpt.prenom + ' ! Progression enregistrée à ' + cptHeure + '.'
-      : 'Salut ' + cpt.prenom + ' ! Ta progression est enregistrée au fur et à mesure.')
-    : cptPas === 'accueil' ? 'Sans compte, ta progression reste sur cet ordinateur et disparaît si tu changes de navigateur.'
-    : cptPas === 'oubli' ? 'Écris l’adresse de ton compte.' : '';
+  $('cptTitle').textContent = cpt ? 'Mon compte' : CPT_TITRES[cptPas] || CPT_TITRES.accueil;
+  const sous = cpt ? '' : cptPas === 'accueil' ? 'Tes étoiles et ta série te suivent sur tous tes appareils.' : cptPas === 'oubli' ? 'Écris l’adresse de ton compte.' : '';
+  $('cptSous').textContent = sous; $('cptSous').hidden = !sous;
+  $('cptVini').hidden = !!cpt || cptPas === 'creer' || cptPas === 'oubli';
+  // qui est connecté : l'adresse vient de Firebase (elle n'est pas dans le document de progression)
+  $('cptMoi').hidden = !cpt;
+  if (cpt){
+    const u = cptFb && cptFb.auth && cptFb.auth.currentUser, mail = (u && u.email) || '';
+    $('cptAvatar').textContent = cptInitiale();
+    $('cptMoiNom').textContent = cpt.prenom === 'toi' ? 'Toi' : cpt.prenom;
+    $('cptMoiMail').textContent = mail; $('cptMoiMail').hidden = !mail;
+  }
+  const bien = !!cpt && !cptAttente && !cptSouci && !cptLent && !cptEnvoi && !cptBloque;
+  $('cptEtatTxt').textContent = !cpt ? ''
+    : cptAttente ? 'Choisis quelle progression garder, juste en dessous.'
+    : cptSouci ? cptSouci
+    : cptLent ? 'Pas de réseau : ta progression sera enregistrée dès que tu seras en ligne.'
+    : cptEnvoi ? 'Enregistrement en cours…'
+    : cptBloque ? 'Vérification de ta progression…'
+    : cptHeure ? 'Progression enregistrée à ' + cptHeure
+    : 'Ta progression est enregistrée au fur et à mesure.';
+  $('cptEtatTxt').classList.toggle('ok', bien);
   $('cptEtatTxt').hidden = !$('cptEtatTxt').textContent;
-  $('cptNote').textContent = cpt
-    ? 'Les réglages de ta table restent sur cet ordinateur : ils ne servent qu’ici.'
+  $('cptNote').textContent = cpt ? 'Les réglages de ta table restent sur cet ordinateur : ils ne servent qu’ici.'
+    : cptPas !== 'creer' ? ''
+    : mlActif() ? 'DJingood enregistre ton prénom, ton adresse et ta progression. Ton adresse ne sert à t’écrire que si tu coches la case.'
     : 'DJingood enregistre ton prénom, ton adresse et ta progression. Rien d’autre, et rien n’est partagé.';
-  viniMettre($('cptVini'), cpt && !cptAttente && !cptBloque ? 'parfait' : 'calme');
+  $('cptNote').hidden = !$('cptNote').textContent;
+  mlRend();
+  viniMettre($('cptVini'), 'calme');
+}
+
+/* ---------- Après la connexion : la fenêtre se ferme toute seule ----------
+   Demande de l'utilisateur (29 oct. 2026) : « dès que j'ai créé un compte, je dois fermer une page ». Quand le joueur
+   vient de créer son compte ou de se connecter DANS cette page (`cptDemande`), et que la comparaison est finie sans
+   question à lui poser, la fenêtre se ferme et un bandeau de Vini dit bienvenue (`cptToast`, 4,5 s). Jamais à la
+   reprise d'une session au chargement : on ne dit pas bonjour à chaque page. S'il faut choisir entre deux
+   progressions, la fenêtre reste ouverte jusqu'au choix. Si la page se recharge (progression du compte reprise), le
+   bandeau passe par sessionStorage (`CPT_BONJOUR`) et s'affiche au chargement suivant. */
+let cptDemande = false;
+const CPT_BONJOUR = '__djingood-bonjour';
+let cptToastT = 0;
+const cptPrenomVu = () => (cpt && cpt.prenom !== 'toi' ? cpt.prenom : '');
+const cptBienvenue = () => 'Bienvenue' + (cptPrenomVu() ? ' ' + cptPrenomVu() : '') + '\u00a0!';
+const cptRevoir = () => 'Content de te revoir' + (cptPrenomVu() ? ', ' + cptPrenomVu() : '') + '\u00a0!';
+function cptToast(titre, txt){
+  const t = $('cptToast'); if (!t || !titre) return;
+  $('cptToastTitre').textContent = titre; $('cptToastTxt').textContent = txt || ''; $('cptToastTxt').hidden = !txt;
+  t.hidden = false; clearTimeout(cptToastT); cptToastT = setTimeout(() => { t.hidden = true; }, 4500);
+}
+function cptFini(titre, txt){
+  if (!cptDemande || !cpt || cptBloque || cptAttente) return;
+  cptDemande = false;
+  if ($('compte').hidden){ mlLienPart = false; return; }   // fenêtre déjà fermée par le joueur : pas de bandeau qui tombe plus tard, en pleine partie
+  closeCompte();
+  // la case « Vini peut m'écrire » cochée avec une adresse à confirmer : on le dit tout de suite (mails.js)
+  const plus = mlLienPart ? ' Pour les mails de Vini, clique sur le lien qu’on vient de t’envoyer.' : '';
+  mlLienPart = false;
+  cptToast(titre, txt + plus);
 }
 
 // Le formulaire, quel que soit l'écran : on vérifie ici avant d'embêter Firebase, les messages sont plus clairs.
@@ -438,6 +496,7 @@ function cptEnvoyer(e){
   if (cptPas === 'entrer'){ cptEntrerMail(mail, mdp); return; }
   if (!prenom){ cptDit('Écris ton prénom : c’est comme ça que Vini t’appellera.'); $('cptPrenom').focus(); return; }
   if (mdp.length < CPT_MDP_MIN){ cptDit('Ton mot de passe est trop court : il en faut au moins ' + CPT_MDP_MIN + ' caractères.'); $('cptMdp').focus(); return; }
+  mlChoix();
   cptCreer(prenom, mail, mdp);
 }
 
@@ -451,10 +510,11 @@ function openCompte(){
   if (!cptOn()) return;
   if (quiz) closeQuiz(); if (run) stopRun();
   cptDit(''); cptBoutons(false);
-  $('cptPrenom').value = ''; $('cptMail').value = ''; $('cptMdp').value = ''; cptOeil(false);
+  $('cptPrenom').value = ''; $('cptMail').value = ''; $('cptMdp').value = ''; $('cptMails').checked = false; cptOeil(false);
   cptPas = 'accueil';
   $('compte').hidden = false; cptRend();   // cptSouci, lui, reste affiché par cptRend
   cptSdkAuth().then(cptRend, e => cptDit(cptErreur(e)));
+  mlEtat();   // le joueur a pu se désinscrire depuis un mail : l'interrupteur dit ce que Brevo sait (mails.js)
   $('cptTitle').focus({ preventScroll: true });
 }
 function closeCompte(){
@@ -470,6 +530,7 @@ $('cptVersCreer').addEventListener('click', () => cptVa('creer'));
 $('cptVersEntrer').addEventListener('click', () => cptVa('entrer'));
 $('cptBascule').addEventListener('click', () => cptVa(cptPas === 'entrer' ? 'creer' : 'entrer'));
 $('cptOubli').addEventListener('click', () => cptVa('oubli'));
+$('cptRetour').addEventListener('click', () => cptVa(cptPas === 'oubli' ? 'entrer' : 'accueil'));
 $('cptForm').addEventListener('submit', cptEnvoyer);
 $('cptOeil').addEventListener('click', () => cptOeil($('cptMdp').type === 'password'));
 $('cptIn').addEventListener('click', cptEntrer);
@@ -485,6 +546,8 @@ document.addEventListener('keydown', e => {
 
 /* ---------- Au chargement ---------- */
 cptEtat();
+try { const b = JSON.parse(sessionStorage.getItem(CPT_BONJOUR) || 'null'); sessionStorage.removeItem(CPT_BONJOUR);
+  if (Array.isArray(b)) setTimeout(() => cptToast(String(b[0] || ''), String(b[1] || '')), 600); } catch (e) {}
 if (cptOn()){
   // Déjà connecté la dernière fois : on reprend la session tout de suite (cptSync comparera ensuite).
   // Sinon, on prépare quand même la connexion une fois la page tranquille, pour que le clic soit immédiat.

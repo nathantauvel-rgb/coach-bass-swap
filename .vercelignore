@@ -1,12 +1,15 @@
 # Fichiers de travail qui n'ont rien à faire sur djingood.fr (lot 50) : avant, Vercel publiait tout le dépôt, notes du
 # projet et tests compris, et Google aurait pu les montrer dans ses résultats. Le site n'en charge aucun.
 # Ne jamais ajouter ici js/, img/, musique/, les pages .html, favicon.ico, robots.txt ni sitemap.xml.
+# Ni api/ : c'est la fonction qui parle à Brevo pour les mails de Vini (lot 54) ; img/vini-mail.png sert aux mails.
 # package.json et package-lock.json restent : Vercel peut les lire pour préparer la mise en ligne.
 tests
 .claude
 *.md
 playwright.config.js
 firestore.rules
+# Les modèles des mails de Vini (lot 54) : ils se collent dans Brevo, le site ne s'en sert pas
+mails
 # Jamais dans le dépôt GitHub, mais à exclure si quelqu'un publiait un jour avec l'outil Vercel depuis ce PC (marketing/ : 366 Mo)
 captures
 audio-essai

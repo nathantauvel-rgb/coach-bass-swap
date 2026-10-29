@@ -68,11 +68,12 @@ test.describe('Statistiques de visite', () => {
     const erreurs = await ouvrir(page, { avant: FAUX_UMAMI });
     await bonMoment(page);
     await expect(page.locator('#rStars span.on')).toHaveCount(3);
-    expect(await noms(page)).toEqual(['premiere-partie', 'premiere-reussite', 'chapitre-1']);
+    // sans compte, la carte de fin propose d'en créer un (lot 54) : c'est compté aussi
+    expect(await noms(page)).toEqual(['premiere-partie', 'premiere-reussite', 'chapitre-1', 'compte-propose']);
     await page.locator('#clairRow [data-clair="bof"]').click();
     await page.locator('#clairRow [data-clair="bof"]').click();   // même réponse : rien de plus
     await page.locator('#clairRow [data-clair="oui"]').click();
-    expect((await envois(page)).slice(3)).toEqual([['clair', { niveau: 'Ch. 1 · 1. Le bon moment', reponse: 'bof' }], ['clair', { niveau: 'Ch. 1 · 1. Le bon moment', reponse: 'oui' }]]);
+    expect((await envois(page)).slice(4)).toEqual([['clair', { niveau: 'Ch. 1 · 1. Le bon moment', reponse: 'bof' }], ['clair', { niveau: 'Ch. 1 · 1. Le bon moment', reponse: 'oui' }]]);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('une partie sans réussite ne compte pas de réussite', async ({ page }) => {
@@ -221,7 +222,7 @@ test.describe('Ce que DJingood garde sur toi', () => {
     const erreurs = []; page.on('pageerror', e => erreurs.push(String(e)));
     await page.goto('/confidentialite.html');
     await expect(page.locator('h1')).toHaveText('Ce que DJingood garde sur toi');
-    await expect(page.locator('h2.sub')).toHaveText(['Sur ton ordinateur', 'Si tu crées un compte', 'Les statistiques de visite', 'Quand tu envoies ton avis', 'Une question ?']);
+    await expect(page.locator('h2.sub')).toHaveText(['Sur ton ordinateur', 'Si tu crées un compte', 'Les mails de Vini', 'Les statistiques de visite', 'Quand tu envoies ton avis', 'Une question ?']);
     const btn = page.locator('#statsBtn');
     await expect(btn).toHaveText('Ne plus compter mes visites');
     await btn.click();

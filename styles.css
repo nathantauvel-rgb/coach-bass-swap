@@ -34,6 +34,10 @@
   --hi:#232942;
   --ok-bg:#12301f;
   --ok-ink:#7ee2a8;
+  --google-fond:#ffffff;   /* le bouton « Continuer avec Google », aux couleurs que Google demande (lot 54) */
+  --google-texte:#1f1f1f;
+  --google-bord:#c9ccd6;
+  --toast-ombre:rgba(0,0,0,.5);
   --xp-bg:#242A3C;
   --xp-bg-2:#2B3145;
   --xp-line:#434A63;
@@ -2157,3 +2161,109 @@ html.pp-open,html.pp-open body{overflow:hidden}
   .pp-lumieres i,.ps,.ps *,.ps-mini *,.pp-opt *,.pp-note *,#ppAsk,#ppAsk .pp-c,.pp-tete,#ppGo::after{animation:none!important;transition:none!important}
   .ps-bfader{display:none!important}   /* sans mouvement, la main droite reste sur le casque */
 }
+
+/* ---------- Les mails de Vini (lot 54) ----------
+   La case « Vini peut m'écrire » en créant son compte, l'interrupteur de « Mon compte », la question posée aux comptes
+   créés avant, et l'encadré de la carte de fin qui propose le compte. */
+.cptaccord{display:flex;gap:12px;align-items:flex-start;margin:2px 0 4px;padding:12px 14px;border-radius:14px;background:var(--brand-soft);border:1px solid var(--brand-line);cursor:pointer;text-align:left}
+.cptaccord[hidden]{display:none}
+.cptaccord input{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:22px;height:22px;margin:1px 0 0;border-radius:7px;border:2px solid var(--brand-light);background:var(--bg);display:grid;place-items:center;cursor:pointer}
+.cptaccord input:checked{background:var(--brand);border-color:var(--brand)}
+.cptaccord input:checked::after{content:'';width:6px;height:11px;border:solid var(--on-brand);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.cptaccord input:focus-visible{outline:2px solid var(--brand-light);outline-offset:2px}
+.cptaccord b{display:block;font-size:15px;font-weight:900;color:var(--fg)}
+.cptaccord small{display:block;margin-top:2px;color:var(--muted);font-size:13px;font-weight:600;line-height:1.45}
+.cptmails{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);text-align:left}
+.cptmails[hidden]{display:none}
+.cptmails>span{flex:1}
+.cptmails b{display:block;font-size:15px;font-weight:900}
+.cptmails small{display:block;margin-top:2px;color:var(--muted);font-size:13px;line-height:1.45}
+.inter{position:relative;flex:0 0 auto;width:54px;height:30px;padding:0;border:0;border-radius:99px;background:var(--line);cursor:pointer;transition:background .15s}
+.inter::after{content:'';position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:50%;background:var(--fg);transition:left .15s}
+.inter[aria-checked="true"]{background:var(--brand)}
+.inter[aria-checked="true"]::after{left:28px;background:var(--on-brand)}
+.inter:disabled{opacity:.6;cursor:wait}
+.inter:focus-visible{outline:2px solid var(--brand-light);outline-offset:3px}
+#mlTitre:focus{outline:none}   /* titre visé à l'ouverture, comme #cptTitle : pas de cadre */
+#mlQ .rbtn{width:100%}
+#mlQ .cptmain{background:var(--brand);color:var(--on-brand);box-shadow:0 4px 0 var(--brand-edge)}
+#mlQ .cptmain:hover{filter:brightness(1.07)}
+.mltexte{margin:4px 0 16px;font-size:16px;line-height:1.5}
+.rcompte{display:flex;align-items:center;gap:12px;margin:14px 0 0;padding:12px 14px;border-radius:16px;background:var(--brand-soft);border:1px solid var(--brand-line);text-align:left}
+.rcompte[hidden]{display:none}
+.rcompte img{flex:0 0 auto;width:40px;height:40px}
+.rcompte p{flex:1;margin:0;font-size:14px;line-height:1.45;color:var(--fg)}
+.rcompte p b{display:block;font-size:15px;font-weight:900}
+.rcompte .rbtn{flex:0 0 auto;width:auto;padding:9px 14px;font-size:14px;background:var(--brand);color:var(--on-brand);box-shadow:0 4px 0 var(--brand-edge)}
+@media (max-width:560px){.rcompte{flex-wrap:wrap}.rcompte .rbtn{width:100%}}
+
+/* ---------- Le compte refait (lot 54, maquette validée le 29 oct. 2026) ----------
+   Demande de l'utilisateur : « Se connecter » et Google pas assez visibles, « Nathan » grisé dans le prénom, la fenêtre
+   à fermer soi-même après la création. Le bouton du compte quitte les petites pastilles pour le haut à droite ;
+   la fenêtre met Google en premier ; un bandeau de bienvenue remplace la fenêtre restée ouverte. */
+.top > .cptbtn{order:2;display:inline-flex;align-items:center;gap:8px;max-width:200px;border:0;border-radius:999px;padding:9px 16px;
+  background:var(--brand);color:var(--on-brand);font:inherit;font-size:15px;font-weight:900;box-shadow:0 3px 0 var(--brand-edge);cursor:pointer;white-space:nowrap}
+.top > .cptbtn[hidden]{display:none}
+.top > .cptbtn:hover{filter:brightness(1.08)}
+.cptbtn .cptico{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+.cptbtn #cptNom{overflow:hidden;text-overflow:ellipsis;max-width:11ch}
+.top > .cptbtn.on{background:var(--panel-2);color:var(--fg);box-shadow:none;border:1px solid var(--brand-line);padding:4px 14px 4px 4px}
+.top > .cptbtn.on .cptico{display:none}
+.top > .cptbtn.on::before{content:attr(data-initiale);content:attr(data-initiale) / "";flex:none;width:30px;height:30px;border-radius:50%;background:var(--brand);color:var(--on-brand);display:grid;place-items:center;font-size:15px;font-weight:900}
+/* sur ordinateur, les onglets se resserrent un peu pour laisser la place au bouton, même avec un prénom long */
+@media (min-width:1101px){.top .tabs a{padding-left:14px;padding-right:14px}}
+@media (max-width:1100px){
+  .top{flex-wrap:wrap}
+  .top .tabs{order:3;flex:1 1 100%}
+  .top .hud{order:2;flex:1 1 100%}
+  .top > .cptbtn{order:1;margin-left:auto}
+}
+@media (max-width:420px){.top > .cptbtn{font-size:14px;padding:7px 12px}.top > .cptbtn.on{padding:3px 12px 3px 3px}}
+
+#compte .cptcard{max-width:440px;position:relative}
+#compte .cpthead{flex-direction:column;align-items:center;text-align:center;gap:4px;margin:4px 0 16px}
+#compte .cptvini{width:72px;height:72px}
+#compte .cptvini[hidden]{display:none}
+#compte .cpthead h2{margin:0;font-size:25px}
+.cptsous{margin:2px 0 0;color:var(--muted);font-size:15px;line-height:1.45}
+.cptretour{position:absolute;top:16px;left:16px;background:none;border:0;color:var(--muted);font:inherit;font-size:14px;font-weight:800;padding:6px 8px;border-radius:8px;cursor:pointer}
+.cptretour[hidden]{display:none}
+.cptretour:hover{color:var(--fg)}
+#compte .cptretour:not([hidden]) ~ .cpthead{margin-top:32px}
+#compte .cptgoogle{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;border-radius:14px;padding:13px 16px;
+  background:var(--google-fond);color:var(--google-texte);font:inherit;font-size:17px;font-weight:900;box-shadow:0 3px 0 var(--google-bord);cursor:pointer}
+#compte .cptgoogle[hidden]{display:none}
+#compte .cptgoogle:hover{filter:brightness(.96)}
+#compte .cptgoogle:disabled{opacity:.6;cursor:wait}
+#compte .cptgoogle img{width:22px;height:22px;flex:none}
+#compte .cptou{margin:14px 0}
+#compte .cptou[hidden]{display:none}
+.cptbas{margin:6px 0 0;text-align:center;color:var(--muted);font-size:15px}
+.cptbas .cptlien{font-size:15px;font-weight:900;padding:4px 2px}
+.cptsousmdp{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:-4px 0 2px}
+.cptsousmdp .cptaide{margin:0}
+.cptsousmdp .cptlien{margin-left:auto;padding:4px 0}
+.cptsousmdp .cptlien[hidden]{display:none}
+.cptmoi{display:flex;align-items:center;gap:14px;background:var(--panel-2);border-radius:16px;padding:14px;margin:0 0 12px;text-align:left}
+.cptmoi[hidden]{display:none}
+.cptavatar{flex:none;width:46px;height:46px;border-radius:50%;background:var(--brand);color:var(--on-brand);display:grid;place-items:center;font-size:21px;font-weight:900}
+.cptmoi b{display:block;font-size:18px;font-weight:900}
+.cptmoi small{display:block;color:var(--muted);font-size:14px;overflow-wrap:anywhere}
+.cptmoi small[hidden]{display:none}
+#compte .cptetat.ok{display:flex;align-items:center;gap:8px;color:var(--ok-ink)}
+#compte .cptetat.ok::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--ok);flex:none}
+#compte .cptsortir{align-self:center;color:var(--muted)}
+#compte .cptconf{text-align:center}
+#compte #cptNote[hidden]{display:none}
+
+/* Le bandeau de bienvenue, juste après la création du compte ou la connexion */
+.cpttoast{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:45;display:flex;align-items:center;gap:12px;width:max-content;
+  max-width:min(560px,calc(100vw - 32px));padding:12px 18px 12px 12px;border-radius:16px;background:var(--ok-bg);border:1px solid var(--ok);
+  box-shadow:0 14px 40px var(--toast-ombre);animation:cpt-toast .35s ease-out;pointer-events:none}
+.cpttoast[hidden]{display:none}
+.cpttoast img{width:40px;height:40px;flex:none}
+.cpttoast b{display:block;font-size:16px;font-weight:900;color:var(--fg)}
+.cpttoast span span{display:block;color:var(--ok-ink);font-size:14px;line-height:1.4}
+.cpttoast span span[hidden]{display:none}
+@keyframes cpt-toast{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
+@media (prefers-reduced-motion:reduce){.cpttoast{animation:none}}

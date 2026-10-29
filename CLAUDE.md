@@ -32,6 +32,54 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 54 « Vini t'écrit » (mails de relance) : CODÉ le 29 oct. 2026, NON PUBLIÉ, mails ÉTEINTS (`ML_PRET = false`).**
+  Branche `lot-54-vini-ecrit`, dans la copie à part `Documents\coach-dj-lot54` (git worktree, `node_modules` relié par
+  jonction ; tests : `DJ_PORT=8770 npx playwright test`). Question de l'utilisateur : relancer par mail les gens qui ont un
+  compte (rétention). Répondu : **pas avec les comptes déjà créés tels quels** (la page de confidentialité promettait que
+  l'adresse servait « seulement à retrouver ta progression », et la CNIL demande un accord par case non cochée ; on ne peut
+  pas non plus leur écrire pour demander l'accord). Maquette (hors Git, dossier principal : `captures/maquette-mails/`)
+  validée : « Oui mais par contre enlève le truc nouveau en jaune » (l'étiquette « NOUVEAU » n'était qu'un repère de maquette).
+  **Gardien, premier passage : feu rouge** (624 tests verts, mais une faille : Firebase laisse créer un compte avec
+  l'adresse de n'importe qui, donc on pouvait faire envoyer nos mails à un inconnu, avec un prénom ou une « prochaine
+  étape » choisis par l'attaquant). Corrigé : on n'écrit qu'à une adresse confirmée, rien de libre dans un mail, textes de
+  l'accord alignés sur les vrais mails, « non » ne supprime plus le contact (voir l'entrée « Lot 54 »).
+  Gardien, second passage : feu rouge pour un seul défaut (l'écouteur `focus` de `js/mails.js` lisait `cpt` avant que
+  `compte.js` soit chargé : bandeau d'erreur), corrigé avec son test ; tout « non » part aussi chez Brevo ; « DJingood vient
+  de t'envoyer un mail » (le lien vient de Firebase). **Troisième passage (mails + fenêtre refaite) : feu orange, aucun
+  blocage** ; ses sept remarques corrigées, chacune avec son test quand c'est possible : prénom long (le nom est coupé à
+  11 caractères, les onglets se resserrent au-dessus de 1100 px, et entre 981 et 1100 px les onglets passent sur leur
+  propre ligne comme sous 980) ; « Connexion en cours… » effacé quand la question des deux progressions apparaît ; pas de
+  bandeau si le joueur a déjà fermé la fenêtre (`cptFini`) ; bandeau en `pointer-events:none` ; initiale lue seule par
+  les lecteurs d'écran (`content: attr(data-initiale) / ""`) ; espace insécable du titre de `#mlQ` ; un envoi refusé ne
+  ferme plus la fenêtre sur « enregistrée » (`cptPousse` rend vrai ou faux). À dire à l'utilisateur : la carte de fin
+  touche `js/niveaux.js` (une ligne) → checklist FLX4 ; sur téléphone, la rangée de pastilles est coupée à gauche
+  (« v. 1 » : défaut déjà en ligne, sans lien avec ce lot).
+  **Fenêtre de compte refaite, CODÉE dans ce lot** (maquette validée : « Oui, code-la » ; demande de l'utilisateur : « Nathan »
+  grisé dans le prénom, fenêtre à fermer soi-même après la création, « Se connecter » et Google pas assez visibles,
+  « tout est assez mal fait ») : `captures/maquette-compte/` du dossier principal (hors Git, 6 écrans). Proposé :
+  « Se connecter » en haut à droite, violet plein (connecté : rond avec l'initiale + prénom) ; premier écran = Google en
+  premier (bouton blanc avec son logo), « Créer un compte avec mon e-mail », « Déjà un compte ? Se connecter » ; cases
+  vides (plus de « Nathan ») et « ← Retour » ; « Content de te revoir ! » avec Google en haut ; la fenêtre se ferme toute
+  seule après la création ou la connexion, bandeau « Bienvenue Léa ! » 4 s (sauf s'il faut choisir entre deux
+  progressions) ; « Mon compte » montre initiale, prénom, adresse, « Progression enregistrée à… », « Se déconnecter » en lien.
+  Code : `#cptBtn` sort de `.hud` pour `header.top` (ordre 2 après les onglets, ordre 1 à droite du logo sous 980 px ;
+  texte dans `#cptNom`, initiale dessinée par la feuille de style depuis `data-initiale`, pour que le texte du bouton reste
+  le prénom) ; fenêtre : `#cptRetour`, `#cptSous`, `#cptIn` (bouton blanc, `img/google.svg`, couleurs `--google-*`) sur
+  les écrans `accueil` et `entrer` seulement, `#cptMoi` (avatar, prénom, adresse de `currentUser.email`), `#cptEtatTxt.ok`
+  (point vert), `#cptOut` en lien, plus de `placeholder` ni de `#cptKick`. Fermeture : `cptDemande` (vrai quand le joueur
+  se connecte ou crée son compte dans la page), `cptFini(titre, txt)` appelée là où `cptSync` se termine sans question
+  (compte neuf, rien n'a bougé, paquets identiques, « Garder celle de cet ordinateur ») ; reprise avec rechargement : le
+  bandeau passe par `sessionStorage` (`CPT_BONJOUR`) ; bandeau `#cptToast` (`cptToast`, 4,5 s, couleurs `--ok-*`), qui
+  ajoute « clique sur le lien » si la case des mails a été cochée avec une adresse à confirmer (`mlLienPart`). Avec Google,
+  pas de case à la création : la question de Vini vient juste après, sur l'accueil. Tests : `seConnecter` clique Google sur
+  le premier écran, `rouvrirCompte` attend la fermeture automatique (`tests/faux-firebase.js`) ; 7 tests « La fenêtre
+  refaite » dans `compte.spec.js`. Captures : `captures/lot54/apres/` (`node captures/lot54/apres-compte.js`).
+  Détail dans l'entrée « Lot 54 » de « Où on en est ». **À faire par l'utilisateur avant d'allumer** : tout `MAILS.md`
+  (compte Brevo, domaine `djingood.fr` authentifié chez OVH avec un seul `v=spf1`, expéditeur « Vini de DJingood »
+  `vini@djingood.fr` et redirection vers sa boîte, liste « Mails de Vini », attributs, clé d'API dans Vercel, les trois
+  modèles de `mails/`, l'automatisation). Ensuite : `ML_PRET = true`, essai sur son propre compte, puis publication avec
+  son accord. **Questions posées, sans réponse** : son prénom « Nathan » dans le mail du 7e jour ; l'adresse qui reçoit les
+  réponses ; le rythme (un mail par semaine au plus).
 - **Lot 52 « Premiers pas animés » : PUBLIÉ le 29 oct. 2026** (commit `1f6b4a5` sur `main`, « Oui : si le gardien est vert ou
   orange sans blocage, publie le lot 52 » ; branche `lot-52-vini-anime`, faite dans la copie à part `Documents\coach-dj-lot52`,
   tests : `DJ_PORT=8770 npx playwright test`). **Production vérifiée** en nouveau visiteur, Umami bloqué, sur ordinateur et
@@ -1671,6 +1719,57 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     parti » (plus à l'ouverture) et `ppSon.pret` vidé à la fermeture ; musique muette quand l'onglet est caché
     (`visibilitychange`) ; plus de `navigator.audioSession` (mode silencieux de l'iPhone respecté) ; l'onde de la carte de la
     table reconnue n'est plus coupée (`pp-entre` retiré à la fin de `pp-branche`).
+- **Lot 54 « Vini t'écrit » (29 oct. 2026)** : branche `lot-54-vini-ecrit`, partie de `origin/main`, non publiée.
+  - **On n'écrit qu'à ceux qui ont dit oui.** Trois façons (`js/mails.js`, chargé **juste avant** `compte`, qui appelle
+    `mlRend`, `mlPret`, `mlChoix` et `mlEtat`) : la case « Vini peut m'écrire » de « Créer mon compte »
+    (`#cptAccord`, jamais cochée d'avance, vaut aussi pour « Continuer avec Google » depuis cet écran, `ou: creation`) ;
+    pour les comptes sans réponse, la question « Prénom, je peux t'écrire ? » (`#mlQ`), une seule fois, **sur l'accueil
+    seulement**, quand aucune fenêtre n'est ouverte et qu'aucune partie ne tourne (`question` ; fermer, Échap ou clic à
+    côté = non ; si le « oui » n'a pas pu partir, fermer ne vaut pas non) ; l'interrupteur « Les mails de Vini » de « Mon
+    compte » (`#cptMailsInter`, `compte`). Ouvrir « Mon compte » relit l'état chez Brevo (`mlEtat`) : un joueur désinscrit
+    depuis un mail voit l'interrupteur éteint.
+  - `coach-mails` = `{ uid, rep: 'oui' | 'non' | 'attente', le, ou }` : **suit le compte** (on ne repose pas la question sur un autre
+    appareil), `uid` pour qu'une réponse d'un autre compte sur le même navigateur ne compte pas, **gardée par « Tout
+    recommencer à zéro »** (sinon l'interrupteur contredirait Brevo). `mlPret` n'agit qu'une fois la progression comparée
+    (`cptBloque` et `cptAttente` faux), une fois par compte et par page.
+  - **On n'écrit qu'à une adresse confirmée** (feu rouge du gardien) : compte Google = confirmé ; compte par e-mail = le
+    site fait envoyer par Firebase le lien de confirmation (`mlVeut` → `sendEmailVerification`, retour sur le site),
+    `rep: 'attente'`, l'interrupteur allumé avec « Presque fini : clique sur le lien… » ; quand le joueur revient
+    (chargement, ouverture de « Mon compte », retour sur l'onglet), `mlConfirme` relit le compte (`reload`), et si
+    l'adresse est confirmée, rafraîchit le jeton (`getIdToken(true)`) et dit oui à Brevo. L'écouteur `focus` de `js/mails.js`
+    commence par `typeof cpt === 'undefined'` : il existe avant que `compte.js` soit chargé (bandeau d'erreur trouvé au
+    second passage du gardien, même piège que `view` au lot 45). Les messages disent « DJingood vient de t'envoyer un
+    mail » (c'est Firebase qui l'envoie) ; lien pas reçu : couper puis rallumer l'interrupteur. Ce lien part de
+    `noreply@djingo-1e1f4.firebaseapp.com` tant que la section « Envoyer les e-mails depuis djingood.fr » de
+    `COMPTE-FIREBASE.md` n'est pas faite (étape 0 de `MAILS.md`).
+  - Textes de l'accord (case, question, interrupteur, confidentialité) : « des astuces pour progresser et les nouveautés »,
+    ce que disent vraiment les trois mails (plus de « rappel de série », qui n'existe pas encore). La carte de fin ne promet
+    plus de mails (« Garde ta progression. Crée ton compte : tes étoiles et ta série te suivent sur tous tes appareils. »).
+  - **Le site ne parle jamais à Brevo** : `api/mails.js`, fonction Vercel (première du projet, sans dépendance), vérifie le
+    jeton Firebase (signature RS256 avec les clés publiques de Google, `aud`/`iss` = `djingo-1e1f4`, expiration) et **prend
+    l'adresse dans le jeton**. Actions : `oui` (contact créé ou mis à jour, liste `BREVO_LISTE`, attributs `PRENOM`,
+    `NIVEAU` = prochaine étape (`mlNiveau`), `ACCORD_LE`, `ACCORD_OU`, `emailBlacklisted: false`), `non` (« ne plus
+    écrire », voir juste après), `etat`. Tout « non » du site part chez Brevo (case décochée, « Non merci », interrupteur). `oui` refuse une adresse pas confirmée (`email_verified`, 403) ; le prénom ne garde que des lettres (au plus un
+    espace, tiret ou apostrophe) et `NIVEAU` doit être dans la liste `NIVEAUX` (titres du site ; un test vérifie qu'il
+    n'en manque aucun) : rien de libre n'arrive dans un mail. `non` ne supprime pas le contact : il le marque « ne plus
+    écrire » et le sort de la liste (supprimé puis recréé, il recevrait de nouveau la bienvenue) ; dans Brevo, le scénario
+    ne laisse entrer un contact qu'une fois. Réglages Vercel : `BREVO_CLE`, `BREVO_LISTE` ; sans eux, 503. **Jamais essayée contre le vrai Brevo** (seulement
+    contre un faux `fetch`) : les noms d'attributs doivent exister dans Brevo (`MAILS.md`, étape 4).
+  - **La carte de fin propose le compte** (`#rCompte`, `mlPropose` appelé par `finish`) : partie réussie (2 étoiles ou
+    plus), sur ordinateur (`!cpMobile()`), sans compte, au plus une fois par jour (`coach-compte-propose`, reste sur
+    l'ordinateur). Marche même mails éteints, avec un texte sans mail (« Garde ta progression. »).
+  - **`ML_PRET = false`** (haut de `js/mails.js`) : ni case, ni question, ni interrupteur tant que Brevo n'est pas réglé.
+    Les tests allument avec `window.DJINGO_MAILS = true`.
+  - Mails : `mails/1-bienvenue.html` (le jour même, prochaine étape), `2-astuce-32.html` (2 jours après), `3-une-question.html`
+    (7 jours après, « réponds à ce mail », signé « Vini (et Nathan) »), variables Brevo `{{ contact.PRENOM }}`,
+    `{{ contact.NIVEAU }}`, `{{ unsubscribe }}` ; image `img/vini-mail.png` (le SVG ne s'affiche pas dans Gmail). `mails/` est
+    dans `.vercelignore`. Le rappel de série est pour plus tard (il faudrait dire chaque jour à Brevo qui a joué).
+  - Aussi : `confidentialite.html` (section « Les mails de Vini », Brevo nommé), note de la fenêtre de création, étapes
+    Umami `compte-propose` et `mails-question` (+ événements `compte-propose-clic`, `mails-oui`, `mails-non`).
+  - Tests : `tests/mails.spec.js` (29, dont 9 sur la fonction, côté Node, avec une clé RSA fabriquée) ; le faux Firebase est
+    sorti de `compte.spec.js` dans `tests/faux-firebase.js` (avec `currentUser` : `getIdToken`, `emailVerified`,
+    `sendEmailVerification`, `reload` ; `lienClique(page, mail)` = le joueur a cliqué le lien de confirmation). Captures : `captures/lot54/`
+    du dossier principal (hors Git, `node captures/lot54/captures.js`).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -1692,7 +1791,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `erreurs` (bandeau d'erreur) → `stats` (statistiques Umami, lot 46) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `set` (chapitre 7 « Le set », lot 44) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) → `comprendre` (leçons sans table, lot 48) →
-  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
+  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `mails` (les mails de Vini, lot 54) → `compte` (se connecter avec Google) →
   `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
@@ -1701,6 +1800,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `confidentialite.html` — « Ce que DJingood garde sur toi » (lot 46), avec le bouton qui refuse les statistiques.
 - `guide/` — le guide du débutant (lot 51) : une page d'entrée et cinq pages de questions, pour Google et les IA.
 - `STATISTIQUES.md` — marche à suivre de l'utilisateur pour Umami et pour lire les avis (lot 46).
+- `MAILS.md` — marche à suivre de l'utilisateur pour Brevo (mails de Vini, lot 54). `mails/` — les trois modèles à coller dans Brevo. `api/mails.js` — la fonction Vercel qui parle à Brevo (clé dans les réglages de Vercel, jamais dans le site).
 - `robots.txt`, `sitemap.xml`, `favicon.ico`, `.vercelignore` — pour Google et pour ce que Vercel publie (lot 50).
 - `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap), retiré du site : la page renvoie
   vers `index.html#vrai`. Son code sert de base à « Passer au vrai » ; `coach.html?ancien=1` l'affiche encore.
@@ -1784,7 +1884,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -1798,7 +1898,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/mails.spec.js` : les mails de Vini et la fonction `api/mails.js` (lot 54) ; `tests/faux-firebase.js` : le faux Firebase partagé. `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

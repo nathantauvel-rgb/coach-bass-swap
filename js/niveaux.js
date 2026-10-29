@@ -605,7 +605,7 @@ function finish(){
   if (prac) pracStep(st);
   questLigne(questNote({ st, expert: !!r.expert, ear: !!r.ear, ch: r.ch }));   // après pracStep : le défi du jour est à jour
   const fresh = goalFresh;
-  quizOffer(st); avisPartie(r.ch, st); goalNote(); slowOffer(st); resultatBoutons(st);
+  quizOffer(st); avisPartie(r.ch, st); goalNote(); slowOffer(st); resultatBoutons(st); mlPropose(st);   // le compte, après une réussite (mails.js)
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
   if (fresh) openSerie();   // objectif du jour atteint avec cette partie : l'écran de la série passe devant (avec son propre son)
   else if (st >= 2){ for (let i = 0; i < st; i++) setTimeout(() => son('etoile', i), 120 + i * 180); setTimeout(() => son('fin'), 160 + st * 180); }

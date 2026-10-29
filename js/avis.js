@@ -146,11 +146,13 @@ function avisMail(){
   location.href = 'mailto:' + AVIS_MAIL + '?subject=' + encodeURIComponent('Rapport DJingood') + '&body=' + encodeURIComponent(t);
 }
 // Remise à zéro : tout ce que le site a enregistré, sauf ce qui concerne la table (réglages, nom d'une autre table, vérification)
-// et les étapes déjà comptées par les statistiques (sinon un testeur qui recommence serait compté deux fois)
+// et les étapes déjà comptées par les statistiques (sinon un testeur qui recommence serait compté deux fois).
+// Garde aussi la réponse « Vini peut m'écrire » (lot 54) : recommencer efface la progression, pas l'accord des mails,
+// qui reste chez Brevo ; sans elle, l'interrupteur de « Mon compte » dirait le contraire de ce que Brevo sait.
 function avisReset(){
   jrOff = true;
   const efface = () => {
-    try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-stats'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+    try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-stats', 'coach-mails'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
     // replaceState ne déclenche pas hashchange : avec location.hash, l'accueil se réaffichait une fraction de seconde et
     // réécrivait les quêtes du jour juste après l'effacement (test instable, trouvé par le gardien du lot 44)
     history.replaceState(null, '', '#accueil'); location.reload();
