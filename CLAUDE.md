@@ -40,7 +40,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   Reste : que l'utilisateur l'essaie et l'écoute (sur téléphone, et avec la FLX4 : point 35 de la checklist).
   **Notion : un connecteur existe maintenant dans Claude Code (29 oct. 2026).** Le Journal de la page « Plan et suivi » est mis à
   jour directement, sans que l'utilisateur colle de texte : les lots 46 à 52 y ont été ajoutés le 29 oct., à sa demande (« Oui,
-  ajoute-les »). Pas touché : le titre de la page dit encore « DJingo », et ses liens donnent l'ancienne adresse vercel.app. Demande de l'utilisateur : les questions de Vini
+  ajoute-les »). Le même jour, à sa demande (« Oui, corrige-les ») : la page s'appelle « DJingood — Plan et suivi », et son lien
+  « Site en ligne » mène à djingood.fr (les anciennes lignes du Journal gardent l'adresse de l'époque, qui marche toujours). Demande de l'utilisateur : les questions de Vini
   étaient « timides » à côté de Duolingo, alors que c'est la première image du site ; son idée : « Vini qui sort des platines
   et qui mixe ». Maquette (hors Git, `captures/maquette-vini/` du dossier principal, page privée
   https://claude.ai/artifact/LMrZfmBHGKzktq5a1UJZSb), réponse de l'utilisateur : **« Oui, toutes »** (les sept idées). Détail
