@@ -32,7 +32,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 54 « Vini t'écrit » (mails de relance) : CODÉ le 29 oct. 2026, NON PUBLIÉ, mails ÉTEINTS (`ML_PRET = false`).**
+- **Lot 54 « Vini t'écrit » + fenêtre de compte refaite : PUBLIÉ le 29 oct. 2026** (commit `8dd1b63` sur `main`, « Oui, publie »),
+  **mails ÉTEINTS (`ML_PRET = false`)**. Production vérifiée (Umami bloqué) : `js/mails.js` servi avec `ML_PRET=false`,
+  « Se connecter » en haut à droite, Google en premier, prénom sans « Nathan », pas de case des mails (éteints),
+  `/api/mails` déployée (POST → 503 « pas-configure » tant que Brevo n'est pas dans Vercel, GET → 405), `mails/` et
+  `MAILS.md` pas publiés (404), `img/vini-mail.png` et `img/google.svg` servis, aucune erreur de la page. **Pas essayé par
+  l'utilisateur, ni sur sa vraie FLX4** (une ligne de `js/niveaux.js`). Prochaine étape : `MAILS.md` côté utilisateur, puis
+  `ML_PRET = true`, essai sur son propre compte, et nouvelle publication avec son accord.
   Branche `lot-54-vini-ecrit`, dans la copie à part `Documents\coach-dj-lot54` (git worktree, `node_modules` relié par
   jonction ; tests : `DJ_PORT=8770 npx playwright test`). Question de l'utilisateur : relancer par mail les gens qui ont un
   compte (rétention). Répondu : **pas avec les comptes déjà créés tels quels** (la page de confidentialité promettait que
