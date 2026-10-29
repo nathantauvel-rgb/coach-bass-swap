@@ -37,7 +37,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   tests : `DJ_PORT=8770 npx playwright test`). **Production vérifiée** en nouveau visiteur, Umami bloqué, sur ordinateur et
   sur téléphone : la table s'allume, Vini atterrit et salue, « C'est parti » mène à la première question avec la musique
   (filtre à 380 Hz), aucune erreur (le seul fichier non chargé était Umami, bloqué exprès). Captures `captures/lot52/prod-*`.
-  Reste : que l'utilisateur l'essaie et l'écoute (sur téléphone, et avec la FLX4 : point 35 de la checklist). Demande de l'utilisateur : les questions de Vini
+  Reste : que l'utilisateur l'essaie et l'écoute (sur téléphone, et avec la FLX4 : point 35 de la checklist).
+  **Notion : un connecteur existe maintenant dans Claude Code (29 oct. 2026).** Le Journal de la page « Plan et suivi » est mis à
+  jour directement, sans que l'utilisateur colle de texte : les lots 46 à 52 y ont été ajoutés le 29 oct., à sa demande (« Oui,
+  ajoute-les »). Pas touché : le titre de la page dit encore « DJingo », et ses liens donnent l'ancienne adresse vercel.app. Demande de l'utilisateur : les questions de Vini
   étaient « timides » à côté de Duolingo, alors que c'est la première image du site ; son idée : « Vini qui sort des platines
   et qui mixe ». Maquette (hors Git, `captures/maquette-vini/` du dossier principal, page privée
   https://claude.ai/artifact/LMrZfmBHGKzktq5a1UJZSb), réponse de l'utilisateur : **« Oui, toutes »** (les sept idées). Détail
