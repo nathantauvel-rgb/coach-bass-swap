@@ -45,7 +45,7 @@ const CPT_MAX = 400000;                       // au-delà, on n'envoie pas (gard
      ordre du chapitre 1). Il est posé à chaque chargement par `ordreMigre`. S'il voyageait et revenait absent d'un
      paquet, les étoiles seraient déplacées une deuxième fois, donc fausses.
    - `coach-stats` : les étapes déjà comptées par les statistiques sur ce navigateur (stats.js). */
-const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', 'coach-stats', CPT_KEY];
+const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-langue', CPT_KEY];
 const cptOn = () => !!(CPT_CFG && CPT_CFG.apiKey && CPT_CFG.projectId && CPT_CFG.appId);
 const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_LOCAL.includes(k);
 

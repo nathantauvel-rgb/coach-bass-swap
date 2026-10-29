@@ -25,12 +25,14 @@
 <link rel="icon" href="img/vini-icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="img/icone-180.png">
 <link rel="stylesheet" href="styles.css">
+<!-- Lot 53 : en anglais, la page reste cachée le temps que js/anglais.js la traduise (4 s au plus, si un fichier ne vient pas) -->
+<script>try{var l=(location.search.match(/[?&]lang=(en|fr)/)||[])[1]||localStorage.getItem('coach-langue');if(l==='en'){document.documentElement.classList.add('trad');setTimeout(function(){document.documentElement.classList.remove('trad')},4000)}}catch(e){}</script>
 </head>
 <body class="pres">
 <div class="wrap">
   <header class="top">
     <a class="brand" href="presentation.html"><img class="blogo" src="img/vini-logo.svg" alt="" width="40" height="40"><div><div class="brand-name"><span class="dj">DJ</span>ingood</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
-    <a class="ghost" href="index.html">Ouvrir le site</a>
+    <span class="pres-haut"><button type="button" class="ghost langbtn" id="langBtn"></button><a class="ghost" href="index.html">Ouvrir le site</a></span>
   </header>
 
   <section class="hero pres-hero">
@@ -104,6 +106,9 @@
   </section>
   <p class="page-note pres-pied"><a href="guide/">Guide du DJ débutant</a> · <a href="confidentialite.html">Confidentialité</a></p>
 </div>
+<script src="js/langue.js"></script>
+<!-- le dictionnaire anglais (lot 53) n'est téléchargé qu'en anglais : il s'exécute avant les fichiers suivants -->
+<script>if (LANGUE === 'en') document.write('<script src="js/anglais.js"><\/script>');</script>
 <script src="js/stats.js"></script>
 </body>
 </html>

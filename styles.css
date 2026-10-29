@@ -2157,3 +2157,21 @@ html.pp-open,html.pp-open body{overflow:hidden}
   .pp-lumieres i,.ps,.ps *,.ps-mini *,.pp-opt *,.pp-note *,#ppAsk,#ppAsk .pp-c,.pp-tete,#ppGo::after{animation:none!important;transition:none!important}
   .ps-bfader{display:none!important}   /* sans mouvement, la main droite reste sur le casque */
 }
+
+/* ---------- Lot 53 : le site en anglais ----------
+   La page reste cachée le temps de la traduire (classe posée dans le <head>, retirée par trPage). Le bouton FR / EN
+   montre l'autre langue ; la carte « Switch to English » passe au-dessus de tout, Premiers pas compris. */
+.trad body{visibility:hidden}
+.langbtn{font-weight:800;letter-spacing:.06em;cursor:pointer;color:var(--fg)}
+.langbtn:empty{display:none}
+.pp-lang{flex-shrink:0;min-height:44px;padding:0 6px;border:0;background:none;color:var(--muted);font:inherit;font-weight:800;letter-spacing:.06em;cursor:pointer}
+.pp-lang:hover{color:var(--fg)}
+.pp-lang:focus-visible,.langoffre button:focus-visible{outline:3px solid var(--brand-light);outline-offset:3px}
+.langoffre{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:60;width:min(420px,calc(100% - 32px));
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.langoffre p{margin:0 0 10px;font-size:15px}
+.langoffre div{display:flex;gap:8px;flex-wrap:wrap}
+.langoffre button{flex:1 1 auto;min-height:44px;border-radius:12px;font:inherit;font-weight:800;cursor:pointer;border:1px solid var(--line);background:none;color:var(--fg)}
+.langoffre .langoui{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+:root[lang="en"] .mx [data-k^="cfx"]::before{content:"FILTER"}
+.pres-haut{display:flex;gap:8px;align-items:center}

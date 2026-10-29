@@ -406,7 +406,7 @@ function encAutomate(S, dt){
    chargé mais pas lancé est dessiné en pointillé là où il tomberait si on le lançait maintenant. */
 function encDessine(g, w, h, hitX, ppb, yA, yB, H){
   const l = LESSONS[li], A = l.set.aides, S = run && run.set, sp = S ? S.sp : encSpecs(l), Y = { A: yA, B: yB };
-  const fit = (t, max) => { if (g.measureText(t).width <= max) return t; while (t.length > 1 && g.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; };
+  const fit = (t, max) => { t = tr(t); if (g.measureText(t).width <= max) return t; while (t.length > 1 && g.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; };
   let km = 'A', xm = ENC_FORMES[sp[0].forme].drop, perM = 60 / sp[0].bpm, off = encPhrase(sp[0]);
   if (S){ km = encDeck(S.cur); const d = deck[km]; if (d.buf){ xm = plPos(km) / d.per; perM = d.per / (d.rate || 1); } off = encPhrase(S.sp[S.cur]); }
   // une ligne par mesure, une plus forte par phrase (ENC_PHRASE temps, comptés depuis la fin du morceau en cours)

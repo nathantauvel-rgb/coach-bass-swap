@@ -31,7 +31,50 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   3. deux parcours · 4. interface sombre · 5. schéma interactif de la FLX4.
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
-## Pour reprendre (état au 28 oct. 2026)
+## Pour reprendre (état au 29 oct. 2026)
+- **Lot 53 « Le site en anglais » (29 oct. 2026), premier des deux lots : EN COURS, NON PUBLIÉ.** Branche `lot-53-anglais`,
+  faite **sur le compte « marketing »** (`.claude-compte2`, à la demande de l'utilisateur : « Oui, fais-le ici, en deux lots »)
+  dans la copie à part `Documents\coach-dj-anglais` (git worktree, `node_modules` relié par jonction) ; tests :
+  `DJ_PORT=8771 npx playwright test`. Contexte : un post Reddit pour r/Beatmatch (anglophone) se prépare
+  (`marketing/reddit-post.md`), et la traduction automatique de Chrome traduirait mal (« 8 times too early », « sentence » pour
+  « phrase », la piste dessinée resterait en français). **Lot 1 = ce qu'un visiteur voit pendant ses 20 premières minutes** :
+  Premiers pas, guide et fiches, chapitre 1 (et le chapitre 3, écrit dans le même fichier), carte de fin, quiz et badges,
+  accueil, Mes progrès, Ma table, l'aide « Ta table n'apparaît pas ? », S'entraîner, Passer au vrai, le compte, Mon avis, les
+  sept leçons « Comprendre » (le téléphone) et `presentation.html`. **Lot 2 = le reste** : chapitres 4 à 7 (`combos`,
+  `calage`, `hotcues`, `set`), Vérifier ma table, Régler ma table, `confidentialite.html`, `testeurs.html`, le guide SEO
+  (`guide/`), les images de la présentation (`img/*.jpg`, captures en français), une adresse anglaise propre pour Google.
+  - **Principe : aucun fichier du jeu n'est réécrit.** `js/langue.js` (chargé juste après `erreurs`) choisit la langue et,
+    en anglais seulement, fait passer par `tr()` tout ce qui écrit du texte : `textContent`, `innerHTML`, `innerText`,
+    `title`, `setAttribute` (title, aria-label, placeholder, alt), `insertAdjacentHTML`, `append` / `prepend`,
+    `createTextNode`, et `fillText` / `strokeText` / `measureText` du canvas (la piste). `js/anglais.js` (juste après) est le
+    dictionnaire : `EN` (phrase française → anglaise, espaces insécables et apostrophes courbes ramenés à une forme unique par
+    `trCle`), `enMotif('Dans {#n} temps : {x}', …)` pour les phrases avec un nombre (`{#n}`), un texte traduit à son tour
+    (`{x}`) ou un nom gardé (`{=x}`), `{n:beat:beats}` pour le pluriel ; une fonction de motif qui renvoie null laisse la
+    place aux suivants ; `enMotifFin` pour les motifs très larges (liste « a · b », liste de noms connus, mots du DJ). `trExact`
+    accepte l'autre casse en tête et un point final. Le texte statique est traduit d'un coup par `trPage()` (fin
+    d'`anglais.js`), la page étant cachée jusque-là (classe `trad` posée par un petit script du `<head>`, 4 s au plus).
+    **En français, rien de tout ça ne s'active** (test : les fonctions du navigateur restent d'origine).
+  - Une phrase absente reste en français et va dans `window.__enManque` (`__enManqueHtml` pour du HTML) : c'est ce que lisent
+    les tests et le robot `parcours-en.js` (dossier de travail de la session, hors Git : il joue Premiers pas, guide, niveau 1,
+    les 7 démos du chapitre 1, un niveau raté, les onglets, et les 7 leçons « Comprendre » sur un iPhone simulé).
+  - **Pièges trouvés** : le code qui relit son propre texte affiché (corrigé avec `tr()` : `btn.textContent !== 'Préparation…'`
+    dans midi.js, la bonne réponse du quiz dans quiz.js, `say` dans piste.js) ; la bulle de Vini des Premiers pas, coupée en
+    une lettre par élément (`ppBulle` traduit avant de couper) ; `fit()` de piste.js et set.js (traduit avant de raccourcir) ;
+    le partage du lien (`navigator.share`) ; « LOW de B : coupé » dont l'espace avant « : » était un morceau de texte à part
+    (midi.js : le texte va dans un seul morceau, et `tr` retire l'espace avant « : » en anglais) ; un motif trop large
+    (« {x} et {y} ») qui découpait des phrases entières : ne jamais écrire de motif générique hors `enMotifFin`, et toujours
+    sur du texte sans balise. Pour retrouver une phrase : le robot, ou `node phrases.js fichier.js` (liste les chaînes).
+  - **Choix de la langue** : `?lang=en` / `?lang=fr` (gardé dans `coach-langue`), sinon `coach-langue`, sinon le français.
+    **Jamais de bascule automatique** : Google lit le site avec un navigateur en anglais et doit continuer à voir le français
+    (lot 50). Un navigateur qui n'est pas en français voit une carte « DJingood is in French. Want it in English? »
+    (`langueOffre`), une seule fois. Bouton FR / EN (`.langbtn`) dans l'en-tête, les Premiers pas et la présentation.
+    `coach-langue` ne suit pas le compte (`CPT_LOCAL`) et reste après « Tout recommencer à zéro ». Étape Umami `anglais`
+    (une fois par navigateur, à l'arrivée en anglais). **Les tests tournent avec un navigateur en français**
+    (`locale: 'fr-FR'` dans `playwright.config.js`), sinon la carte s'afficherait partout.
+  - Vocabulaire choisi : table = controller, platine = deck, potard = knob, temps = beat, mesure = bar, « normal » / « coupé »
+    = normal / cut, « LANCE B » = START B, « Jouer » = Play, Grand débutant / Apprenti DJ / DJ confirmé = Total beginner /
+    Apprentice DJ / Experienced DJ. **L'anglais n'a jamais été relu par un anglophone** : à faire relire (r/Beatmatch).
+  - Tests : `tests/anglais.spec.js`.
 - **Lot 52 « Premiers pas animés » : PUBLIÉ le 29 oct. 2026** (commit `1f6b4a5` sur `main`, « Oui : si le gardien est vert ou
   orange sans blocage, publie le lot 52 » ; branche `lot-52-vini-anime`, faite dans la copie à part `Documents\coach-dj-lot52`,
   tests : `DJ_PORT=8770 npx playwright test`). **Production vérifiée** en nouveau visiteur, Umami bloqué, sur ordinateur et
@@ -1689,7 +1732,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `styles.css` — toute l'apparence (thème sombre « Cabine »).
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
-  `erreurs` (bandeau d'erreur) → `stats` (statistiques Umami, lot 46) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
+  `erreurs` (bandeau d'erreur) → `langue` (français ou anglais, lot 53) → `anglais` (le dictionnaire anglais) → `stats` (statistiques Umami, lot 46) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `set` (chapitre 7 « Le set », lot 44) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) → `comprendre` (leçons sans table, lot 48) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `compte` (se connecter avec Google) →
@@ -1781,7 +1824,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   les étoiles non gagnées, volontairement estompées.
 
 ### Clés localStorage
-`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
+`coach-langue` (`en` ou `fr` : langue choisie, lot 53 ; ne suit pas le compte, gardée par « Tout recommencer à zéro »), `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
@@ -1798,7 +1841,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/anglais.spec.js` : le site en anglais (lot 53). `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

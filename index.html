@@ -35,6 +35,8 @@
 <link rel="icon" href="img/vini-icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="img/icone-180.png">
 <link rel="stylesheet" href="styles.css">
+<!-- Lot 53 : en anglais, la page reste cachée le temps que js/anglais.js la traduise (4 s au plus, si un fichier ne vient pas) -->
+<script>try{var l=(location.search.match(/[?&]lang=(en|fr)/)||[])[1]||localStorage.getItem('coach-langue');if(l==='en'){document.documentElement.classList.add('trad');setTimeout(function(){document.documentElement.classList.remove('trad')},4000)}}catch(e){}</script>
 </head>
 <body>
 <canvas id="confetti" aria-hidden="true"></canvas>
@@ -48,6 +50,7 @@
       <button type="button" class="pp-back" id="ppBack" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
       <div class="pp-bar pp-onde" id="ppBar" role="progressbar" aria-label="Avancement" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="ppFill"></i></div>
       <button type="button" class="pp-son" id="ppSon" hidden></button>
+      <button type="button" class="pp-lang langbtn" id="ppLang"></button>
       <button type="button" class="pp-skip" id="ppSkip">Passer</button>
     </div>
     <div class="pp-body" id="ppBody">
@@ -224,6 +227,7 @@
       <a class="chip status" id="midiPill" href="#table" title="Ma table : le schéma et les réglages"><i></i><span>Table…</span></a>
       <button type="button" class="chip" id="guideBtn" hidden>Guide</button>
       <button type="button" class="chip sonsbtn" id="sonsBtn"></button>
+      <button type="button" class="chip langbtn" id="langBtn"></button>
       <button type="button" class="chip cptbtn" id="cptBtn" hidden>Se connecter</button>
       <button type="button" class="chip avbtn" id="avisBtn">Mon avis</button>
     </div>
@@ -529,6 +533,9 @@
 </div>
 
 <script src="js/erreurs.js"></script>
+<script src="js/langue.js"></script>
+<!-- le dictionnaire anglais (lot 53) n'est téléchargé qu'en anglais : il s'exécute avant les fichiers suivants -->
+<script>if (LANGUE === 'en') document.write('<script src="js/anglais.js"><\/script>');</script>
 <script src="js/stats.js"></script>
 <script src="js/morceaux.js"></script>
 <script src="js/audio.js"></script>
