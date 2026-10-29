@@ -40,7 +40,45 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   dans l'entrée « Lot 52 » de « Où on en est ». **Jamais écouté par un humain** (la musique étouffée et le drop sont
   nouveaux), jamais essayé sur iPhone ni avec le casque de la FLX4. Une page vide « Premiers pas animés »
   (https://claude.ai/artifact/BrgKMRRz9jryrN2UPrZgJx) a été créée par erreur pendant la maquette : à supprimer s'il le veut.
-- **Lot 51 « Guide du débutant » (27 oct. 2026, branche `lot-51-questions`, FAIT, NON PUBLIÉ)**, depuis la session
+  **Gardien (29 oct. 2026, second lancement, le premier coupé par l'arrêt de la session) : feu orange, aucun blocage, 597 tests
+  verts.** Accord de l'utilisateur : « si le gardien est vert ou orange sans blocage, publie le lot 52 ». Corrigé avant la
+  mise en ligne (un test chacun, qui échoue sur l'ancien code) : « Passer » pendant le drop remplaçait les réponses (`ppPasser`
+  ne fait plus rien quand `pp.fini`) ; la musique se télécharge au clic sur « C'est parti » et non plus à l'ouverture, et le
+  morceau décodé (23 Mo) est rendu à la mémoire à la fermeture ; elle se tait quand l'onglet est caché ; plus de
+  `navigator.audioSession` (elle respecte le mode silencieux de l'iPhone et ne coupe pas la musique d'une autre appli) ; l'onde
+  autour de la table reconnue va jusqu'au bout. Laissé, à noter : le premier écran demande environ deux fois plus de travail
+  au processeur d'un téléphone (mesuré : 41 % contre 18 %, processeur ralenti 4 fois), et chaque lettre de la bulle est un
+  élément à part (un lecteur d'écran comme VoiceOver pourrait lire lettre par lettre ; pas vérifiable ici).
+- **Photo de profil TikTok d'Halloween (29 oct. 2026, demande de l'utilisateur) :** Vini en sorcier (le chapeau de la vidéo
+  « Minuit pile »), sourcils malins, il salue, devant une grande lune orange, chauves-souris, citrouilles.
+  `marketing/profil/profil-halloween-lune.png` (conseillée) et `profil-halloween-orange.png` (fond orange de la photo
+  actuelle), aperçu en rond `apercu-halloween.png`, fabriquées par `node marketing/profil/profil-halloween.js`.
+  **Et sa version de Noël, pour le 1er novembre** (demandée le 29 oct. : « Oui, fais-la ») : même Vini, même cadrage, bonnet
+  de Père Noël de la vidéo, sourire normal, la lune devient une couronne violette autour d'une lueur orange, neige, cadeaux à
+  la place des citrouilles. `marketing/profil/profil-noel-couronne.png` (conseillée, va avec la « lune ») et
+  `profil-noel-orange.png`, aperçu `apercu-noel.png` (31 oct. et 1er nov. côte à côte), par `node marketing/profil/profil-noel.js`.
+  Conseil donné : changer de photo le 1er nov. à minuit, en même temps que la sortie de « Minuit pile » ; la garder
+  jusqu'à Noël. (Entrée écrite par une autre session dans le CLAUDE.md non commité du dossier principal, reportée ici le 29 oct.)
+- **Vidéo TikTok « Minuit pile » FAITE le 28 oct. 2026 (demandée par l'utilisateur : « fais-moi cette vidéo ») et VALIDÉE
+  le 29 oct. (« elle est très bien »).** Idée du 28 oct. dans `marketing/idees.md` : « Le DJ, le 31 octobre », horloge 23:59:50 → 00:00:00, à minuit
+  pile le swap des basses fait basculer d'Halloween à Noël (le mème du 1er novembre). **À poster le 1er nov.** (programmée à
+  00:00 si TikTok Studio le permet, sinon le matin). Vidéos (hors Git) : `marketing/video/sortie/djingood-minuit-tiktok.mp4`
+  (18 s, avec notre musique, à poster telle quelle), `-halloween-seul.mp4` (silence après 10,0 s, pour poser un autre son
+  dans CapCut), `-sans-son.mp4`. Texte du post, hashtags, conseils : `marketing/video/minuit-post.md`. Fabrication :
+  `marketing/video/djingood-minuit.html` (l'image, `node marketing/video/rendu.js djingood-minuit`, environ 10 min),
+  `minuit-musique.js` + `minuit-son.js` (la musique, fabriquée hors ligne dans Chromium en 6 s → `son/minuit.wav` et,
+  avec `--halloween`, `son/minuit-halloween-seul.wav` ; ensuite `rendu.js djingood-minuit --son-seul` refait le son).
+  **La musique n'a jamais été écoutée par un humain** (vérifiée seulement par mesures : volume, spectre, silence à 9,75 s,
+  drop à 10,0 s) : l'utilisateur doit l'écouter avant de poster. Après la mise en ligne : chiffres à 48 h et 7 jours dans
+  `marketing/journal.md`. **Son choisi par défaut : notre propre musique, libre** (Toccata de Bach à l'orgue,
+  domaine public, puis « Jingle Bells », domaine public, en house à 120 BPM ; ré mineur → fa majeur, l'accord de septième
+  diminuée de la Toccata mène tout seul au fa) : aucun risque de vidéo muette, tout est calé au temps près. Mariah Carey
+  (« All I Want for Christmas Is You ») est protégée : jamais dans nos fichiers ; si l'utilisateur la veut, version
+  « halloween-seul » + il pose le son dans CapCut ou TikTok à 10,0 s. Le dessin de la FLX4 est celui du guide (sur
+  `origin/main`, `guide/premiere-transition-ddj-flx4.html`), avec la platine A en entier. (Entrée reportée ici le 29 oct.,
+  comme la précédente.)
+- **Lot 51 « Guide du débutant » (27 oct. 2026, branche `lot-51-questions`) : PUBLIÉ** (dans `origin/main` ; djingood.fr/guide/
+  répond, vérifié le 29 oct. 2026 ; la date exacte de la mise en ligne n'est pas notée), depuis la session
   « marketing » comme le lot 50, dans `Documents\coach-dj-seo`. Le GEO (être cité par les IA) : cinq pages de questions
   de débutant choisies par l'utilisateur (« go les 5 questions »), une page d'entrée, signées **« Nathan, créateur de
   DJingood »** (son choix : « signe de mon vrai prénom Nathan »). Modèle validé par l'utilisateur (« OUI TRES bien »).
@@ -1564,7 +1602,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     `coach-chapitre`) (sur téléphone : leçon 3 « La vitesse ») ; `table` → « Ma table ». **Choix de l'utilisateur : ce visiteur
     ne voit pas les questions de Vini** (elles viendront à sa visite suivante), et le chapitre 5 est ouvert pour la visite.
     Statistique `guide-vers-jeu` (avec la page), et `guide-ecoute` pour les sons (`STATISTIQUES.md`). Tests « Du guide au jeu ».
-  - Reste avant la mise en ligne : le gardien, puis l'accord de l'utilisateur.
+  - **Publié** : dans `origin/main`, et djingood.fr/guide/ répond (vérifié le 29 oct. 2026).
 - **Lot 52 « Premiers pas animés » (28 oct. 2026)** : branche `lot-52-vini-anime`, partie de `origin/main` (lots 50 et 51 dedans),
   dans la copie à part `Documents\coach-dj-lot52` (tests : `DJ_PORT=8770 npx playwright test`), non publiée. Demande de
   l'utilisateur : « ça manque d'animation, c'est un petit peu vide comparé à Duolingo », alors que c'est la première image du
@@ -1599,7 +1637,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     sourcils, il danse deux fois plus vite. Un petit saut à chaque choix ; les réponses arrivent l'une après l'autre
     (`pp-entre`) ; leurs dessins bougent quand on les choisit (barres, platines, molette, disque de l'objectif `ppVinyle`).
   - **La musique** (`ppSon`, `ppMusiqueLance`, `ppMusiqueEtape`, `ppMusiqueVitesse`, `ppMusiqueDrop`, `ppMusiqueArret`) :
-    « Dj » (`musique/dj-a.mp3`, CC0, téléchargé à l'ouverture des questions si les sons sont allumés) joue en boucle par
+    « Dj » (`musique/dj-a.mp3`, CC0, téléchargé au clic sur « C'est parti », rendu à la mémoire à la fermeture) joue en boucle par
     `master`, derrière un filtre passe-bas qui s'ouvre d'une question à l'autre (`PP_COUPURE` : 380, 820, puis 1 900 Hz) ;
     l'objectif change sa vitesse comme le tempo d'une platine (`PP_VITESSE` : 0,94, 1 ou 1,07 ; Vini reste calé, `ppCale`) ;
     « Commencer » ouvre le filtre en grand jusqu'au temps suivant : c'est le drop ; la musique s'éteint en 1,2 s quand la
@@ -1617,6 +1655,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     `captures/lot52/` du dossier principal (hors Git).
   - **Jamais écouté par un humain** (le filtre et le drop sont nouveaux), jamais essayé sur iPhone (Safari) ni avec le casque
     de la FLX4.
+  - **Gardien (29 oct. 2026) : feu orange, aucun blocage**, 597 tests verts ; « Comprendre » et le guide du lot 51 identiques
+    au pixel près, cas limites sans erreur (« C'est parti » pendant l'entrée, « Retour » pendant le saut, double clic sur
+    « Commencer », table branchée pendant le drop, écrans de 320 px). Corrigé ensuite, un test chacun dans « Corrections du
+    gardien » de `tests/premiers-anime.spec.js` : `ppPasser` ignoré pendant le drop ; musique téléchargée au clic sur « C'est
+    parti » (plus à l'ouverture) et `ppSon.pret` vidé à la fermeture ; musique muette quand l'onglet est caché
+    (`visibilitychange`) ; plus de `navigator.audioSession` (mode silencieux de l'iPhone respecté) ; l'onde de la carte de la
+    table reconnue n'est plus coupée (`pp-entre` retiré à la fin de `pp-branche`).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

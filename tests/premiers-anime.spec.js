@@ -161,6 +161,54 @@ test.describe('Premiers pas animés', () => {
   });
 });
 
+test.describe('Corrections du gardien (lot 52)', () => {
+  test('« Passer » pendant le drop ne fait rien : les réponses et le parcours restent', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
+    await suite(page); await choix(page, 'debut'); await suite(page); await choix(page, 'souris'); await suite(page); await choix(page, 10);
+    await suite(page);
+    await page.locator('#ppSkip').click();
+    await expect(page.locator('#pp')).toBeHidden({ timeout: 4000 });
+    expect(JSON.parse(await page.evaluate(() => localStorage.getItem('coach-accueil')))).toMatchObject({ niveau: 'debut', table: 'souris', min: 10 });
+    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('debut');
+    await expect(page.locator('#ltitle')).toHaveText('Le bon moment');
+  });
+  test('la musique ne se télécharge qu’au clic sur « C’est parti », et le morceau est rendu à la mémoire à la fin', async ({ page }) => {
+    const demandes = [];
+    page.on('request', r => { if (r.url().includes('dj-a.mp3')) demandes.push(r.url()); });
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
+    await page.waitForTimeout(800);
+    expect(demandes).toEqual([]);
+    await suite(page);
+    await expect.poll(() => musique(page).then(m => m.joue)).toBe(true);
+    expect(demandes.length).toBeGreaterThan(0);
+    await page.locator('#ppSkip').click();
+    await expect(page.locator('#pp')).toBeHidden();
+    expect(await page.evaluate(() => ppSon.pret)).toBeNull();
+  });
+  test('onglet caché : la musique se tait, puis revient', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
+    await suite(page);
+    await expect.poll(() => musique(page).then(m => m.joue)).toBe(true);
+    const volume = () => page.evaluate(() => ppSon.gain.gain.value);
+    const cache = oui => page.evaluate(o => { Object.defineProperty(document, 'hidden', { configurable: true, get: () => o }); document.dispatchEvent(new Event('visibilitychange')); }, oui);
+    await expect.poll(volume).toBeGreaterThan(.4);   // la musique a fini d'arriver
+    await cache(true);
+    await expect.poll(volume).toBeLessThan(.05);
+    await cache(false);
+    await expect.poll(volume).toBeGreaterThan(.4);
+  });
+  test('la table reconnue garde son onde jusqu’au bout', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: {} });
+    await suite(page); await choix(page, 'debut'); await suite(page);
+    await page.evaluate(() => window.__midi.brancher('DDJ-FLX4'));
+    const carte = page.locator('#ppOpts .pp-big');
+    await expect(carte).toBeVisible();
+    await page.waitForTimeout(1000);
+    await expect(carte).toHaveClass(/pp-entre/);   // avant la correction, l'onde s'arrêtait vers 0,6 s
+    await expect(carte).not.toHaveClass(/pp-entre/, { timeout: 3000 });
+  });
+});
+
 test.describe('Les poses de Vini, ailleurs', () => {
   test('sans pose, rien ne change : l’accueil garde son Vini habituel', async ({ page }) => {
     await ouvrir(page, { onglet: 'accueil', stockage: { 'coach-parcours': 'debut' } });

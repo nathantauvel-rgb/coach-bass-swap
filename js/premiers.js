@@ -100,13 +100,13 @@ function openPremiers(){
   if (!$('ppVini').firstChild) viniMettre($('ppVini'));
   if (!$('ppFill').firstChild) ppOndeInit();
   $('pp').hidden = false; document.documentElement.classList.add('pp-open');
-  if (sonsOn) ppMusiquePrepare();
   ppRender(0);
 }
 function ppClose(){
   ppAnnule(); ppTapeFin(); ppMusiqueArret();
   pp.on = false; $('pp').hidden = true; document.documentElement.classList.remove('pp-open');
   $('ppScene').textContent = ''; pp.vh = null;
+  ppSon.pret = null;   // le morceau décodé (23 Mo) est rendu à la mémoire (gardien du lot 52)
 }
 // « Commencer » : les réponses sont gardées tout de suite. Vini se ramasse, la musique s'ouvre jusqu'au temps suivant, et c'est
 // le drop (lot 52) : il saute, les notes et les vinyles volent. Puis la première étape du parcours qui va avec le niveau : le niveau 1
@@ -133,7 +133,8 @@ function ppFinSuite(){
   // sur un téléphone, « Comprendre » passe devant (lot 48) : nextStage la donne en premier
   if (r.niveau === 'debut' && !cpEtape()) goLesson(1, 0); else STAGES[nextStage() || PARCOURS[r.niveau].stages[0]].go();
 }
-function ppPasser(){ ppSave({ passe: true, fini: dayKey() }); stat1('premiers-pas-passes'); ppClose(); renderHome(); }
+// pendant le drop, les réponses sont déjà gardées : « Passer » ne doit plus les remplacer (gardien du lot 52)
+function ppPasser(){ if (pp.fini) return; ppSave({ passe: true, fini: dayKey() }); stat1('premiers-pas-passes'); ppClose(); renderHome(); }
 const ppPret = () => { const r = pp.rep, id = PP_ETAPES[pp.i];
   return id === 'salut' || (id === 'niveau' && r.niveau !== null) || (id === 'table' && r.table !== null) || (id === 'objectif' && r.min !== null); };
 /* L'écran de la table. Une table branchée est reconnue toute seule (ppMidi est appelé par initMidi à chaque branchement) ;
@@ -192,7 +193,9 @@ function ppOption(o, k){
   const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-opt' + (o.big ? ' pp-big' : '') + (REDUCED ? '' : ' pp-entre'); b.dataset.v = String(o.v);
   // les réponses arrivent l'une après l'autre (lot 52)
   b.style.setProperty('--d', (140 + k * 85) + 'ms');
-  b.addEventListener('animationend', e => { if (e.animationName === 'pp-entre') b.classList.remove('pp-entre'); });
+  // l'onde autour de la table reconnue dure plus longtemps que l'arrivée de la carte : on attend sa fin (gardien du lot 52)
+  const fin = o.big ? 'pp-branche' : 'pp-entre';
+  b.addEventListener('animationend', e => { if (e.animationName === fin) b.classList.remove('pp-entre'); });
   if (o.badge){ const g = document.createElement('span'); g.className = 'pp-badge'; g.textContent = o.badge; b.appendChild(g); }
   if (o.ic){ const ic = document.createElement('span'); ic.className = 'pp-ic'; ic.setAttribute('aria-hidden', 'true'); ic.innerHTML = o.ic; b.appendChild(ic); }
   const t = document.createElement('span'), m = document.createElement('span'); t.className = 'pp-txt'; m.textContent = o.txt; t.appendChild(m);
@@ -453,11 +456,12 @@ function ppMusiquePrepare(){
     .then(vraiDecode).catch(() => { ppSon.pret = null; return null; });
   return ppSon.pret;
 }
-// Appelée par un clic : le navigateur laisse alors le son partir
+// Appelée par un clic : le navigateur laisse alors le son partir. Le morceau n'est téléchargé qu'à ce moment (un visiteur qui
+// passe les questions ne télécharge rien). Pas de navigator.audioSession ici, contrairement aux leçons « Comprendre » : cette
+// musique est un décor, elle respecte le mode silencieux de l'iPhone et ne coupe pas celle d'une autre appli (gardien du lot 52).
 function ppMusiqueLance(){
   if (!sonsOn || ppSon.src || !pp.on) return;
   ensureAudio(); if (ac.state !== 'running') ac.resume();
-  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}   // iPhone : le son passe même en mode silencieux
   ppMusiquePrepare().then(buf => {
     if (!buf || ppSon.src || !pp.on || pp.fini || !sonsOn) return;
     const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(), t = ac.currentTime + .05;
@@ -467,6 +471,12 @@ function ppMusiqueLance(){
     if (PP_ETAPES[pp.i] === 'objectif' && pp.rep.min) ppMusiqueVitesse(pp.rep.min); else ppCale($('ppVini'));
   });
 }
+// Onglet caché : la musique des questions se tait, et revient quand on revient (gardien du lot 52)
+document.addEventListener('visibilitychange', () => {
+  if (!ppSon.src || pp.fini) return;
+  const g = ppSon.gain.gain, t = ac.currentTime;
+  g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.setTargetAtTime(document.hidden ? 0 : .55, t, .1);
+});
 // Où en est le morceau, en temps (sans musique : 0)
 const ppTemps = () => ppSon.src ? ppSon.pos0 + (ac.currentTime - ppSon.t0) * ppSon.vitesse / PP_TEMPS : 0;
 function ppMusiqueEtape(){ if (ppSon.src && !pp.fini) ppSon.filtre.frequency.setTargetAtTime(PP_COUPURE[PP_ETAPES[pp.i]], ac.currentTime, .4); }
