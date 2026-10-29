@@ -32,8 +32,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 52 « Premiers pas animés » (28 oct. 2026, branche `lot-52-vini-anime`, FAIT, NON PUBLIÉ)**, dans la copie à part
-  `Documents\coach-dj-lot52` (tests : `DJ_PORT=8770 npx playwright test`). Demande de l'utilisateur : les questions de Vini
+- **Lot 52 « Premiers pas animés » : PUBLIÉ le 29 oct. 2026** (commit `1f6b4a5` sur `main`, « Oui : si le gardien est vert ou
+  orange sans blocage, publie le lot 52 » ; branche `lot-52-vini-anime`, faite dans la copie à part `Documents\coach-dj-lot52`,
+  tests : `DJ_PORT=8770 npx playwright test`). **Production vérifiée** en nouveau visiteur, Umami bloqué, sur ordinateur et
+  sur téléphone : la table s'allume, Vini atterrit et salue, « C'est parti » mène à la première question avec la musique
+  (filtre à 380 Hz), aucune erreur (le seul fichier non chargé était Umami, bloqué exprès). Captures `captures/lot52/prod-*`.
+  Reste : que l'utilisateur l'essaie et l'écoute (sur téléphone, et avec la FLX4 : point 35 de la checklist). Demande de l'utilisateur : les questions de Vini
   étaient « timides » à côté de Duolingo, alors que c'est la première image du site ; son idée : « Vini qui sort des platines
   et qui mixe ». Maquette (hors Git, `captures/maquette-vini/` du dossier principal, page privée
   https://claude.ai/artifact/LMrZfmBHGKzktq5a1UJZSb), réponse de l'utilisateur : **« Oui, toutes »** (les sept idées). Détail
@@ -1604,7 +1608,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     Statistique `guide-vers-jeu` (avec la page), et `guide-ecoute` pour les sons (`STATISTIQUES.md`). Tests « Du guide au jeu ».
   - **Publié** : dans `origin/main`, et djingood.fr/guide/ répond (vérifié le 29 oct. 2026).
 - **Lot 52 « Premiers pas animés » (28 oct. 2026)** : branche `lot-52-vini-anime`, partie de `origin/main` (lots 50 et 51 dedans),
-  dans la copie à part `Documents\coach-dj-lot52` (tests : `DJ_PORT=8770 npx playwright test`), non publiée. Demande de
+  dans la copie à part `Documents\coach-dj-lot52` (tests : `DJ_PORT=8770 npx playwright test`), **publiée le 29 oct. 2026**
+  (commit `1f6b4a5`, production vérifiée). Demande de
   l'utilisateur : « ça manque d'animation, c'est un petit peu vide comparé à Duolingo », alors que c'est la première image du
   site ; son idée : « Vini qui sort des platines et qui mixe ». Maquette `captures/maquette-vini/` (dossier principal, hors Git),
   réponse : « Oui, toutes ». Tout se passe dans `js/premiers.js` (fenêtre `#pp`) ; « Comprendre » (`#cp`) ne change pas.
