@@ -107,9 +107,10 @@ function renderTable(){
 }
 // Le bouton du bas : la fiche de la table branchée (si les réglages en place sont ceux d'une table réglée à la main),
 // sinon les réglages d'origine de la table reconnue, sinon ceux de la DDJ-FLX4
-const tableResetModele = () => tableEtat() === 'connue' ? modeleDe(midiNames.find(modeleDe)) : tableCfg && tableCfg.modele ? modeleId(tableCfg.modele) : null;
+// (ou, lot 55, la fiche d'une table réglée à la main avant que DJingood la connaisse : ficheNouvelle dans midi.js)
+const tableResetModele = () => tableEtat() === 'connue' ? modeleDe(midiNames.find(modeleDe)) : ficheNouvelle() || (tableCfg && tableCfg.modele ? modeleId(tableCfg.modele) : null);
 function tableResetTxt(){ const fi = tableResetModele();
-  return tableEtat() === 'connue' ? `Prendre les réglages de la ${fi.nom}` : fi ? `Revenir aux réglages d'origine de la ${fi.nom}` : tableCfg ? 'Revenir aux réglages de la DDJ-FLX4' : 'Revenir aux réglages d\'origine'; }
+  return tableEtat() === 'connue' || ficheNouvelle() ? `Prendre les réglages de la ${fi.nom}` : fi ? `Revenir aux réglages d'origine de la ${fi.nom}` : tableCfg ? 'Revenir aux réglages de la DDJ-FLX4' : 'Revenir aux réglages d\'origine'; }
 function tableSelect(id){ if (!TKINDS[tKind(id)]) return; if (learnKey) learnKey = null; tableSel = id; tableReset = false; renderTable(); }
 // Une commande connue vient de bouger sur la table : on la montre et on l'allume un instant
 function tableSeen(key, txt){

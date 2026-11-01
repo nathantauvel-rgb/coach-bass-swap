@@ -29,11 +29,13 @@ test.describe('Les fiches', () => {
   test('les noms de port : variantes reconnues, MK2 et tables voisines non', async ({ page }) => {
     await ouvrir(page);
     const r = await page.evaluate(() => ['DDJ-400', '2- DDJ-400', 'PIONEER DDJ-SB3', 'DJControl Inpulse 200', 'DJControl Inpulse 200 MK2', 'DJControl Inpulse 500',
-      'MIXTRACK PLATINUM FX', 'Mixtrack Pro FX', 'Mixtrack Pro', 'Numark Party Mix', 'Party Mix MKII', 'DJ2GO2 Touch', 'DJ-505', 'Reloop Mixage IE', 'DDJ-FLX4', 'DDJ-2000']
+      'MIXTRACK PLATINUM FX', 'Mixtrack Pro FX', 'Mixtrack Pro', 'Numark Party Mix', 'Party Mix MKII', 'DJ2GO2 Touch', 'DJ-505', 'Reloop Mixage IE', 'DDJ-FLX4', 'DDJ-2000',
+      'XDJ-RR', '2- XDJ-RR', 'XDJ-RX2', 'XDJ-RX3']
       .map(n => [n, (modeleDe(n) || {}).id || null]));
     expect(Object.fromEntries(r)).toEqual({ 'DDJ-400': 'ddj400', '2- DDJ-400': 'ddj400', 'PIONEER DDJ-SB3': 'ddjsb3', 'DJControl Inpulse 200': 'inpulse200', 'DJControl Inpulse 200 MK2': null,
       'DJControl Inpulse 500': 'inpulse500', 'MIXTRACK PLATINUM FX': 'mixtrackplatinumfx', 'Mixtrack Pro FX': 'mixtrackprofx', 'Mixtrack Pro': null, 'Numark Party Mix': 'partymix',
-      'Party Mix MKII': null, 'DJ2GO2 Touch': 'dj2go2touch', 'DJ-505': 'dj505', 'Reloop Mixage IE': 'mixage', 'DDJ-FLX4': null, 'DDJ-2000': null });
+      'Party Mix MKII': null, 'DJ2GO2 Touch': 'dj2go2touch', 'DJ-505': 'dj505', 'Reloop Mixage IE': 'mixage', 'DDJ-FLX4': null, 'DDJ-2000': null,
+      'XDJ-RR': 'xdjrr', '2- XDJ-RR': 'xdjrr', 'XDJ-RX2': null, 'XDJ-RX3': null });
   });
 });
 
@@ -165,5 +167,60 @@ test.describe('Changer de table', () => {
     const erreurs = await ouvrir(page, { stockage: { 'coach-table': S({ nom: 'Truc', modele: 'nexistepas' }) } });
     expect(await page.evaluate(() => tableCfg)).toEqual({ nom: 'Truc' });
     expect(erreurs).toEqual([]);
+  });
+});
+
+// Lot 55 : retour d'un joueur avec une Pioneer XDJ-RR (« tout est inversé : je tourne les aigus et c'est le LOW qui bouge »).
+// Sa table de mixage est sur le canal 5 (0xB4), pas sur les canaux 1 et 2 comme la FLX4.
+test.describe('Pioneer XDJ-RR', () => {
+  // phys : la position de chaque commande de la table, telle que le site la comprend (retenue même si le niveau ne s'en sert pas)
+  const ctrlDe = page => page.evaluate(() => ({ lowA: phys.lowA, hiA: phys.hiA, midA: phys.midA, faderA: phys.faderA, lowB: phys.lowB }));
+  test('reconnue toute seule : chaque potard pilote le bon, les aigus ne touchent pas au LOW', async ({ page }) => {
+    const erreurs = await ouvrir(page, { midi: { branchee: 'XDJ-RR' } });
+    await expect(page.locator('#midiPill')).toHaveText('XDJ-RR');
+    await expect(page.locator('#midiPill')).toHaveClass(/\bon\b/);
+    await expect(page.locator('#tableBar')).toBeHidden();
+    expect(await stocke(page, 'coach-table')).toEqual({ nom: 'XDJ-RR', modele: 'xdjrr' });
+    await page.locator('.node').nth(5).click();   // le swap des basses
+    await envoyer(page, 0xB4, 4, 64);   // LOW de A à midi
+    await expect.poll(() => ctrlDe(page).then(c => c.lowA)).toBeCloseTo(64 / 127);
+    await envoyer(page, 0xB4, 2, 0);   // aigus de A coupés
+    await expect.poll(() => ctrlDe(page).then(c => c.hiA)).toBe(0);
+    expect((await ctrlDe(page)).lowA).toBeCloseTo(64 / 127);   // le LOW n'a pas bougé
+    await envoyer(page, 0xB4, 4, 127);   // LOW de A à fond
+    await expect.poll(() => ctrlDe(page).then(c => c.lowA)).toBe(1);
+    await envoyer(page, 0xB4, 9, 0);   // LOW de B coupé
+    await expect.poll(() => ctrlDe(page).then(c => c.lowB)).toBe(0);
+    await envoyer(page, 0xB4, 17, 0);   // fader de A en bas
+    await expect.poll(() => ctrlDe(page).then(c => c.faderA)).toBe(0);
+    expect(erreurs).toEqual([]);
+  });
+  test('réglée à la main avant sa fiche : elle pilote toujours, et le bandeau propose la fiche', async ({ page }) => {
+    // le réglage décalé du joueur : ses aigus pris pour le LOW
+    const decale = { faderA: { ch: 4, n: 4 }, faderB: { ch: 4, n: 17 }, lowA: { ch: 4, n: 2 } };
+    await ouvrir(page, { midi: { branchee: 'XDJ-RR' }, stockage: { 'coach-table': S({ nom: 'XDJ-RR' }), 'coach-midi-map': S(decale) } });
+    await expect(page.locator('#midiPill')).toHaveClass(/\bon\b/);
+    await expect(page.locator('#tableBar')).toBeVisible();
+    await expect(page.locator('#tbText')).toHaveText('DJingood connaît maintenant les réglages de la Pioneer XDJ-RR. On les prend à la place de ceux que tu as réglés à la main ?');
+    await expect(page.locator('#tbGo')).toHaveText('Prendre ses réglages');
+    await page.locator('#tbGo').click();
+    await expect(page.locator('#tableBar')).toBeHidden();
+    expect(await stocke(page, 'coach-table')).toEqual({ nom: 'XDJ-RR', modele: 'xdjrr' });
+    expect(await page.evaluate(() => [map.lowA, map.hiA, map.faderA])).toEqual([{ ch: 4, n: 4 }, { ch: 4, n: 2 }, { ch: 4, n: 17 }]);
+    await page.reload();
+    await expect(page.locator('#tableBar')).toBeHidden();
+  });
+  test('réglée à la main avant sa fiche : « Ma table » propose aussi la fiche', async ({ page }) => {
+    await ouvrir(page, { onglet: 'table', midi: { branchee: 'XDJ-RR' }, stockage: { 'coach-table': S({ nom: 'XDJ-RR' }), 'coach-midi-map': S({ lowA: { ch: 4, n: 2 } }) } });
+    await expect(page.locator('#tReset')).toHaveText('Prendre les réglages de la Pioneer XDJ-RR');
+    await page.locator('#tReset').click(); await page.locator('#tReset').click();
+    await expect(page.locator('#tNote')).toHaveText('Réglages de la Pioneer XDJ-RR en place.');
+    expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 4, n: 4 });
+    await expect(page.locator('#tReset')).toHaveText('Revenir aux réglages d\'origine de la Pioneer XDJ-RR');
+  });
+  test('une table réglée à la main qui n\'a pas de fiche : pas de bandeau', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: 'Controleur Mystere X1' }, stockage: { 'coach-table': S({ nom: 'Controleur Mystere X1' }), 'coach-midi-map': S({ faderA: { ch: 0, n: 8 } }) } });
+    await expect(page.locator('#midiPill')).toHaveClass(/\bon\b/);
+    await expect(page.locator('#tableBar')).toBeHidden();
   });
 });

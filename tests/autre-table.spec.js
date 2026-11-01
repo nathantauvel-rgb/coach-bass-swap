@@ -71,9 +71,9 @@ test.describe('Régler ma table pas à pas', () => {
     await bouge(page, 0xB1, 8, [10, 20, 30]);
     await expect(page.locator('#regTitle')).toHaveText('Le potard LOW de gauche');
     // LOW A : un potard « fin » envoie deux messages par position (numéro 3, puis 35) ; seul le premier compte
-    for (const v of [60, 61, 62]) { await envoyer(page, 0xB0, 3, v); await envoyer(page, 0xB0, 35, v); }
+    for (const v of [40, 60, 80]) { await envoyer(page, 0xB0, 3, v); await envoyer(page, 0xB0, 35, v); }
     await expect(page.locator('#regTitle')).toHaveText('Le potard LOW de droite');
-    await bouge(page, 0xB1, 3, [60, 61, 62]);
+    await bouge(page, 0xB1, 3, [40, 60, 80]);
     await expect(page.locator('#regTitle')).toHaveText('Le potard MID de gauche');
     await page.locator('#regSkip').click();
     await expect(page.locator('#regTitle')).toHaveText('Le filtre de gauche');
@@ -240,6 +240,22 @@ test.describe('Le schéma suit la table', () => {
     await expect(page.locator('#sv-lowA-n')).toHaveAttribute('transform', 'rotate(135.0 266 114)');
     await page.locator('#onbTry input').fill('0.5');
     await expect(page.locator('#sv-lowA-n')).toHaveAttribute('transform', 'rotate(0.0 266 114)');
+  });
+  // Lot 55 (une XDJ-RR, retour d'un joueur) : un potard usé qui tremble tout seul était pris pour la commande demandée,
+  // et toutes les suivantes se décalaient (le LOW ne marchait plus, les aigus faisaient bouger le LOW)
+  test('« Régler ma table » : un potard qui tremble tout seul n\'est pas pris pour la commande demandée', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: AUTRE } });
+    await page.locator('#tbGo').click();
+    await bouge(page, 0xB0, 3, [61, 62, 63, 62, 61, 63, 62]);   // le LOW de A tremble, personne n'y touche
+    await expect(page.locator('#regTitle')).toHaveText('Le fader de volume de gauche');
+    await expect(page.locator('#regState')).toHaveText('J’attends que tu le bouges sur ta table…');
+    await bouge(page, 0xB0, 8, [10, 40, 70]);   // le vrai fader A
+    await expect(page.locator('#regTitle')).toHaveText('Le fader de volume de droite');
+    await bouge(page, 0xB1, 8, [10, 40, 70]);
+    await expect(page.locator('#regTitle')).toHaveText('Le potard LOW de gauche');
+    await bouge(page, 0xB0, 3, [30, 60, 90]);   // tourné pour de bon, il est reconnu à sa place
+    await expect(page.locator('#regTitle')).toHaveText('Le potard LOW de droite');
+    expect(await page.evaluate(() => reg.got)).toEqual({ faderA: { ch: 0, n: 8 }, faderB: { ch: 1, n: 8 }, lowA: { ch: 0, n: 3 } });
   });
   test('« Régler ma table » : le fader dessiné suit le vrai, même déjà reconnu', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: AUTRE } });

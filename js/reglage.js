@@ -3,8 +3,10 @@
 'use strict';
 /* ---------- Régler ma table ----------
    Une commande par étape, avec le schéma allumé. Potard ou fader : reconnu quand il a envoyé 3 valeurs différentes
-   (un bouton appuyé par erreur ne suffit pas) ; le second message d'un potard « fin » (numéro + 32, envoyé juste après
-   le premier) est ignoré. Bouton : une note, ou un message de potard qui passe de 127 à 0 (appui puis relâche).
+   (un bouton appuyé par erreur ne suffit pas), éloignées d'au moins REG_ECART crans (lot 55 : un potard usé qui tremble
+   tout seul envoie 2 ou 3 valeurs voisines, et il était pris pour la commande demandée, ce qui décalait toutes les
+   suivantes) ; le second message d'un potard « fin » (numéro + 32, envoyé juste après le premier) est ignoré.
+   Bouton : une note, ou un message de potard qui passe de 127 à 0 (appui puis relâche).
    Une commande déjà reconnue à une autre étape est refusée. « Je n'ai pas cette commande » : elle se fera à l'écran.
    Rien n'est enregistré avant « Enregistrer » ; Échap ou la croix annulent. Le résultat : coach-midi-map (seulement les
    commandes reconnues) et coach-table (le nom de la table). */
@@ -19,6 +21,7 @@ const REG_STEPS = [
   { k: 'fxOn', name: 'le bouton de l’effet', text: 'Appuie sur le bouton qui allume les effets : ON, FX ON ou BEAT FX selon les tables. Pas de bouton d’effet ? À l’écran, le bouton ECHO ou la touche E font pareil.' }
 ];
 const reg = { active: false, i: 0, got: {}, seen: {}, last: {}, msg: '', wait: false, nom: '', timer: 0 };
+const REG_ECART = 12;   // sur 127 : environ un dixième de la course d'un potard ou d'un fader
 let tableLater = false;   // « Plus tard » : le bandeau ne revient qu'au prochain chargement de la page
 const capFirst = t => t.charAt(0).toUpperCase() + t.slice(1);
 // Le schéma est celui des fiches (même dessin, identifiants préfixés rg- pour ne pas les mélanger)
@@ -50,7 +53,8 @@ function regMidi(type, ch, d1, d2){
     else if (type === 0xB0){ if (d2 === 0 && reg.last[id] === 127) got = { ch, n: d1, cc: true }; reg.last[id] = d2; }
   } else if (type === 0xB0){
     if (d1 >= 32 && d1 < 64 && reg.seen[ch + ':' + (d1 - 32)]) return;   // second message d'un potard « fin »
-    (reg.seen[id] = reg.seen[id] || new Set()).add(d2); if (reg.seen[id].size >= 3) got = { ch, n: d1 };
+    const vus = (reg.seen[id] = reg.seen[id] || new Set()).add(d2);
+    if (vus.size >= 3 && Math.max(...vus) - Math.min(...vus) >= REG_ECART) got = { ch, n: d1 };
   }
   if (!got) return;
   const other = regOwner(st.k, got);
@@ -87,16 +91,18 @@ function regSave(){
 
 /* ---------- Le bandeau : une autre table vient d'être branchée ---------- */
 function renderTableBar(){
-  const bar = $('tableBar'), e = tableEtat(); bar.hidden = tableLater || reg.active || !['nouvelle', 'flx4', 'connue'].includes(e); if (bar.hidden) return;
+  const bar = $('tableBar'), e = tableEtat(), neuve = e === 'ok' ? ficheNouvelle() : null;
+  bar.hidden = tableLater || reg.active || !(neuve || ['nouvelle', 'flx4', 'connue'].includes(e)); if (bar.hidden) return;
   const fi = e === 'connue' ? modeleDe(midiNames.find(modeleDe)) : null;
   $('tbText').textContent = e === 'flx4' ? 'Tu as branché une DDJ-FLX4, mais les réglages sont ceux de ton autre table. On reprend ceux de la FLX4 ?'
+    : neuve ? `DJingood connaît maintenant les réglages de la ${neuve.nom}. On les prend à la place de ceux que tu as réglés à la main ?`
     : fi ? `Tu as branché une ${fi.nom} : DJingood connaît ses réglages. On les prend ?${tableCfg ? ' Ceux de ta table réglée à la main seront remplacés.' : ''}`
     : `Nouvelle table : « ${regName()} ». DJingood ne la connaît pas encore : règle-la en une minute, en bougeant chaque commande quand il te le demande.`;
-  $('tbGo').textContent = e === 'flx4' ? 'Reprendre les réglages de la FLX4' : fi ? 'Prendre ses réglages' : 'Régler ma table';
+  $('tbGo').textContent = e === 'flx4' ? 'Reprendre les réglages de la FLX4' : fi || neuve ? 'Prendre ses réglages' : 'Régler ma table';
 }
 // Prendre les réglages d'une table qui a sa fiche, à la place de ceux d'une table réglée à la main
 function modeleReprend(){ modeleApply(midiNames.find(modeleDe) || '', true); renderPill(); updateSetup(); renderTableBar(); if (view === 'table') renderTable(); }
-$('tbGo').addEventListener('click', () => { const e = tableEtat(); if (e === 'flx4'){ flx4Reprend(); if (view === 'table') renderTable(); } else if (e === 'connue') modeleReprend(); else openReg(); });
+$('tbGo').addEventListener('click', () => { const e = tableEtat(); if (e === 'flx4'){ flx4Reprend(); if (view === 'table') renderTable(); } else if (e === 'connue' || ficheNouvelle()) modeleReprend(); else openReg(); });
 $('tbLater').addEventListener('click', () => { tableLater = true; renderTableBar(); });
 $('regSkip').addEventListener('click', () => { if (reg.i < REG_STEPS.length){ delete reg.got[REG_STEPS[reg.i].k]; regGo(reg.i + 1); } });
 $('regBack').addEventListener('click', () => {

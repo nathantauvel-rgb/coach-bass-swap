@@ -32,6 +32,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 55 « XDJ-RR » (1er nov. 2026, session cloud, branche `claude/serene-hypatia-9rdmpy`) : FAIT, NON PUBLIÉ.** Retour d'un
+  joueur : « avec une XDJ-RR, elle est reconnue mais lors du mapping tout est inversé ; je tourne le HI et sur l'appli ça tourne
+  le LOW, et c'est le seul qui marche », réglage pas à pas compris. L'XDJ-RR n'avait pas de fiche. Fait : sa fiche (table de
+  mixage sur le canal 5), la fiche proposée à ceux qui l'avaient réglée à la main, et un réglage pas à pas qui ne prend plus
+  un potard qui tremble tout seul. Détail dans l'entrée « Lot 55 » de « Où on en est ». **À publier avec l'accord de
+  l'utilisateur**, puis demander au joueur de recharger la page, d'accepter le bandeau « Prendre ses réglages », et de faire
+  « Vérifier ma table » (son rapport fera passer la fiche à « testée »).
 - **Lot 54 « Vini t'écrit » + fenêtre de compte refaite : PUBLIÉ le 29 oct. 2026** (commit `8dd1b63` sur `main`, « Oui, publie »),
   **mails ÉTEINTS (`ML_PRET = false`)**. Production vérifiée (Umami bloqué) : `js/mails.js` servi avec `ML_PRET=false`,
   « Se connecter » en haut à droite, Google en premier, prénom sans « Nathan », pas de case des mails (éteints),
@@ -1776,6 +1783,38 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     sorti de `compte.spec.js` dans `tests/faux-firebase.js` (avec `currentUser` : `getIdToken`, `emailVerified`,
     `sendEmailVerification`, `reload` ; `lienClique(page, mail)` = le joueur a cliqué le lien de confirmation). Captures : `captures/lot54/`
     du dossier principal (hors Git, `node captures/lot54/captures.js`).
+- **Lot 55 « XDJ-RR » (1er nov. 2026)** : branche `claude/serene-hypatia-9rdmpy` (session cloud), non publiée. Retour d'un joueur
+  (message transmis par l'utilisateur) : avec une Pioneer XDJ-RR, le mapping est « inversé » : tourner le LOW ne fait rien,
+  tourner les aigus (HI) fait bouger le LOW de l'écran, « et c'est le seul qui fonctionne », réglage pas à pas compris.
+  - **Cause** : l'XDJ-RR n'avait pas de fiche (`tableEtat` = `nouvelle`, réglage pas à pas obligatoire), et elle n'a pas du
+    tout le plan de la FLX4 : toute sa table de mixage est sur le **canal 5** (`0xB4`). Le réglage pas à pas reconnaissait un
+    potard dès 3 valeurs différentes, même voisines : un potard usé qui tremble tout seul (61, 62, 63) était pris pour la
+    commande demandée, et toutes les suivantes se décalaient (reproduit par un test : le LOW qui tremble devenait le
+    fader A). C'est l'explication la plus probable de ce qu'a vu le joueur ; on n'a pas ses messages MIDI pour le prouver.
+  - **Fiche `xdjrr`** (`js/tables.js`, motif `/XDJ-?RR/i`) : canal 5 : HI / MID / LOW / COLOR de A = 2, 3, 4, 5 ; de B = 7, 8, 9,
+    10 ; crossfader 11 ; faders 17 et 18 ; PLAY = note 0 et CUE = note 1 sur les canaux 1 (A) et 2 (B). **Mixxx n'a pas cette
+    table** : numéros relevés dans deux projets libres indépendants qui concordent, Diyokee (`controllers/Pioneer DJ XDJ-RR.json`,
+    profil appris sur une vraie XDJ-RR ; ses `EventType` sont ceux de BASS : 10 = CC 0, 12 = CC 7, 13 = CC 10, 14 = CC 11,
+    20 = CC 5, 64 = autre CC) et Silverdaw (`backend/resources/midi-mappings/pioneer-xdj-modern.json`), plus la correspondance
+    de rekordbox (projet DJ-MIDI-Studio) pour PLAY et CUE. **Pas repris, une seule source** : TRIM, tempo (CC 0 des canaux 1
+    et 2 d'après Diyokee), CUE casque (CC 70 et 71 du canal 5, des boutons en messages de potard), bouton de l'effet (CC 64) :
+    à l'écran, ou à apprendre dans « Ma table ». Molettes et pads : seulement sur la FLX4 (`flx4Plus`), comme les autres
+    fiches. Silverdaw donne le même plan pour XDJ-RX2, XDJ-RX3, XDJ-XZ et OMNIS-DUO : une seule source, pas de fiche.
+  - **Table réglée à la main avant sa fiche** (le cas du joueur : `coach-table` = `{ nom: 'XDJ-RR' }` sans `modele`) :
+    `ficheNouvelle()` (midi.js). Son réglage reste et pilote toujours (pas de remplacement sans demander, règle du lot 38),
+    mais le bandeau dit « DJingood connaît maintenant les réglages de la Pioneer XDJ-RR. On les prend à la place de ceux que tu
+    as réglés à la main ? » (« Prendre ses réglages » → `modeleReprend`), et le bouton du bas de « Ma table » propose la fiche.
+    « Plus tard » ne cache le bandeau que jusqu'au rechargement.
+  - **Réglage pas à pas** (`js/reglage.js`) : un potard ou un fader doit avoir envoyé 3 valeurs différentes **éloignées d'au
+    moins `REG_ECART` = 12 crans** (sur 127). Pas fait : la même règle pour « Vérifier ma table » (relevés « capture ») et pour
+    « Apprendre » dans « Ma table » (premier message reçu).
+  - Textes : `presentation.html` (« Et si j'ai une autre table ? ») et `README.md` nomment l'XDJ-RR.
+  - Tests : `tests/tables.spec.js` (« Pioneer XDJ-RR », 4 tests, noms de port) ; `tests/autre-table.spec.js` (« un potard qui
+    tremble tout seul… », et le LOW du test du réglage tourné pour de bon, de 40 à 80). Les 4 nouveaux tests de comportement
+    échouent sur l'ancien code (vérifié).
+  - **Jamais essayée en vrai** (`teste` = false). À demander au joueur : recharger, accepter le bandeau, « Vérifier ma table ».
+    Jamais essayé non plus : le son du site quand il sort par l'XDJ-RR elle-même (sa table de mixage agit peut-être aussi sur
+    ce son, comme pour l'XDJ-AZ du lot 45), et le mode dans lequel elle doit être pour envoyer ses messages à l'ordinateur.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

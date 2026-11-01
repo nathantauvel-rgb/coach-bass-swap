@@ -18,4 +18,4 @@ Un compte n'est pas obligatoire : sans lui, la progression reste dans le navigat
 
 ## Utilisation
 
-Ouvre le site dans Chrome ou Edge, branche ta table en USB (logiciel DJ fermé), puis va dans « Apprendre ». Le site reconnaît tout seul une quinzaine de tables de débutant (Pioneer DDJ-FLX4, DDJ-400, DDJ-SB3 et DDJ-200, Hercules Inpulse 200, 300 et 500 et Starlight, Numark Mixtrack Platinum FX et Pro FX, Party Mix et DJ2GO2 Touch, Roland DJ-505, Reloop Mixage) ; une autre table se règle pas à pas au premier branchement. Sans table, tout se joue aussi à la souris.
+Ouvre le site dans Chrome ou Edge, branche ta table en USB (logiciel DJ fermé), puis va dans « Apprendre ». Le site reconnaît tout seul une quinzaine de tables de débutant (Pioneer DDJ-FLX4, DDJ-400, DDJ-SB3, DDJ-200 et XDJ-RR, Hercules Inpulse 200, 300 et 500 et Starlight, Numark Mixtrack Platinum FX et Pro FX, Party Mix et DJ2GO2 Touch, Roland DJ-505, Reloop Mixage) ; une autre table se règle pas à pas au premier branchement. Sans table, tout se joue aussi à la souris.

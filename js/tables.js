@@ -11,7 +11,8 @@
    reprises par modeleMap. Molettes et pads ne sont branchés que sur la FLX4 (flx4Plus dans midi.js) : à l'écran ailleurs.
    D'où viennent les numéros : des correspondances de la communauté du logiciel libre Mixxx (dossier res/controllers,
    relevées le 20 oct. 2026), recoupées entre tables d'une même marque. Ce sont des faits (quel bouton envoie quel
-   message), pas du code repris. **Aucune de ces tables n'a été essayée en vrai** : `teste` passe à true quand un joueur
+   message), pas du code repris. La Pioneer XDJ-RR (lot 55), absente de Mixxx, vient d'autres sources : voir sa fiche.
+   **Aucune de ces tables n'a été essayée en vrai** : `teste` passe à true quand un joueur
    l'a vérifiée avec « Vérifier ma table ». Sur les variantes « MK2 » ou « MKII », les numéros peuvent changer : elles ne
    sont pas reconnues (réglage pas à pas).
    La DDJ-FLX4 n'a pas de fiche ici : c'est la table de référence du site (DEFAULT_MAP dans midi.js), qui ne change pas. */
@@ -26,6 +27,15 @@ const MODELES = [
   { id: 'ddj200', nom: 'Pioneer DDJ-200', re: /DDJ-?200(?!\d)/i,
     cmd: { faderA: [0, 19], faderB: [1, 19], lowA: [0, 15], lowB: [1, 15], midA: [0, 11], midB: [1, 11], cfxA: [6, 23], playA: [0, 11], playB: [1, 11] },
     plus: { hiA: [0, 7], hiB: [1, 7], cfxB: [6, 24], xfader: [6, 31], tempoA: [0, 0], tempoB: [1, 0], cueA: [0, 12], cueB: [1, 12], pflA: [0, 84], pflB: [1, 84] } },
+  // Pioneer XDJ-RR (tout-en-un, lot 55) : PAS le plan de la FLX4. Toute la table de mixage est sur le canal 5 : aigus, médiums,
+  // basses et COLOR (son filtre) de A = 2 à 5, de B = 7 à 10, crossfader 11, faders 17 et 18 ; PLAY et CUE sont des notes sur
+  // les canaux 1 et 2. Mixxx n'a pas cette table : numéros relevés le 1er nov. 2026 dans deux projets libres indépendants qui
+  // concordent, Diyokee (profil appris sur une vraie XDJ-RR) et Silverdaw (correspondance « Pioneer modern standalone »),
+  // et pour PLAY et CUE aussi dans la correspondance de rekordbox (projet DJ-MIDI-Studio). Ce qu'une seule source donne
+  // (TRIM, tempo, CUE casque, bouton de l'effet) n'est pas repris : à l'écran, ou à apprendre dans « Ma table ».
+  { id: 'xdjrr', nom: 'Pioneer XDJ-RR', re: /XDJ-?RR/i,
+    cmd: { faderA: [4, 17], faderB: [4, 18], lowA: [4, 4], lowB: [4, 9], midA: [4, 3], midB: [4, 8], cfxA: [4, 5], playA: [0, 0], playB: [1, 0] },
+    plus: { hiA: [4, 2], hiB: [4, 7], cfxB: [4, 10], xfader: [4, 11], cueA: [0, 1], cueB: [1, 1] } },
   // Hercules : voie A sur le canal 2, voie B sur le canal 3. L'Inpulse 200 et la Starlight n'ont pas de MID.
   { id: 'inpulse200', nom: 'Hercules DJControl Inpulse 200', re: /Inpulse\s*200(?!\s*MK)/i,
     cmd: { faderA: [1, 0], faderB: [2, 0], lowA: [1, 2], lowB: [2, 2], cfxA: [1, 1], playA: [1, 7], playB: [2, 7] },

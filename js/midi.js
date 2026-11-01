@@ -82,6 +82,9 @@ function modeleApply(nom, garde = false){
   try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); localStorage.setItem('coach-table', JSON.stringify(tableCfg)); } catch (e) {}
 }
 const tableOn = () => tableEtat() === 'ok';
+// Une table réglée à la main avant que DJingood ait sa fiche (la Pioneer XDJ-RR, fiche ajoutée au lot 55) : son réglage reste
+// en place et pilote toujours le site, mais le bandeau et « Ma table » proposent ceux de la fiche. Renvoie la fiche, ou null.
+function ficheNouvelle(){ return tableCfg && !tableCfg.modele && midiNames.some(n => baseName(n) === baseName(tableCfg.nom)) ? modeleDe(tableCfg.nom) : null; }
 const ccDown = {};
 // Un bouton de la table : PLAY de B lance B, ON de l'effet allume l'écho ; table complète (lot 39) : PLAY de A, CUE et CUE casque,
 // seulement quand le niveau s'en sert. `relache` : le bouton vient d'être relâché (seul CUE s'en sert : on écoute tant qu'il est tenu).
