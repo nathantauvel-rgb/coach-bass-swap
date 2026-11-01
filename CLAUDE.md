@@ -1812,6 +1812,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - Tests : `tests/tables.spec.js` (« Pioneer XDJ-RR », 4 tests, noms de port) ; `tests/autre-table.spec.js` (« un potard qui
     tremble tout seul… », et le LOW du test du réglage tourné pour de bon, de 40 à 80). Les 4 nouveaux tests de comportement
     échouent sur l'ancien code (vérifié).
+  - **Gardien : feu orange, aucun blocage** (646 tests verts sur la suite complète, puis 158 relancés par lui). Corrigé
+    ensuite, avec son test : avec une autre table connue branchée avant l'XDJ-RR (une DDJ-400), « Prendre ses réglages »
+    prenait la fiche de la DDJ-400 alors que le bandeau annonçait l'XDJ-RR (`modeleReprend` prend maintenant `tableCfg.nom`
+    quand `ficheNouvelle()` ; `brancher(nom, id)` de `tests/outils.js` branche une seconde table). Signalé, laissé : un ancien
+    joueur qui avait réglé à la main, avant le lot 38, une table qui a maintenant sa fiche (une DDJ-400) verra aussi le
+    bandeau à chaque chargement, tant qu'il ne prend pas la fiche ou ne refait pas « Régler ma table » ; « Ma table » ne parle
+    de la fiche que dans son bouton du bas ; sans bouton d'effet dans la fiche, « Vérifier ma table » l'apprend au passage
+    (risque connu du lot 33).
   - **Jamais essayée en vrai** (`teste` = false). À demander au joueur : recharger, accepter le bandeau, « Vérifier ma table ».
     Jamais essayé non plus : le son du site quand il sort par l'XDJ-RR elle-même (sa table de mixage agit peut-être aussi sur
     ce son, comme pour l'XDJ-AZ du lot 45), et le mode dans lequel elle doit être pour envoyer ses messages à l'ordinateur.

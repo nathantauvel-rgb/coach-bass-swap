@@ -218,6 +218,15 @@ test.describe('Pioneer XDJ-RR', () => {
     expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 4, n: 4 });
     await expect(page.locator('#tReset')).toHaveText('Revenir aux réglages d\'origine de la Pioneer XDJ-RR');
   });
+  // Gardien du lot 55 : avec une DDJ-400 branchée avant elle, le bouton prenait la fiche de la DDJ-400
+  test('réglée à la main avant sa fiche, une autre table connue branchée avant elle : le bouton prend bien la fiche annoncée', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: 'DDJ-400' }, stockage: { 'coach-table': S({ nom: 'XDJ-RR' }), 'coach-midi-map': S({ lowA: { ch: 4, n: 2 } }) } });
+    await page.evaluate(() => window.__midi.brancher('XDJ-RR', '2'));
+    await expect(page.locator('#tbText')).toHaveText('DJingood connaît maintenant les réglages de la Pioneer XDJ-RR. On les prend à la place de ceux que tu as réglés à la main ?');
+    await page.locator('#tbGo').click();
+    expect(await stocke(page, 'coach-table')).toEqual({ nom: 'XDJ-RR', modele: 'xdjrr' });
+    expect(await page.evaluate(() => map.lowA)).toEqual({ ch: 4, n: 4 });
+  });
   test('une table réglée à la main qui n\'a pas de fiche : pas de bandeau', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: 'Controleur Mystere X1' }, stockage: { 'coach-table': S({ nom: 'Controleur Mystere X1' }), 'coach-midi-map': S({ faderA: { ch: 0, n: 8 } }) } });
     await expect(page.locator('#midiPill')).toHaveClass(/\bon\b/);

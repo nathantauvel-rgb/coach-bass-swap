@@ -100,8 +100,9 @@ function renderTableBar(){
     : `Nouvelle table : « ${regName()} ». DJingood ne la connaît pas encore : règle-la en une minute, en bougeant chaque commande quand il te le demande.`;
   $('tbGo').textContent = e === 'flx4' ? 'Reprendre les réglages de la FLX4' : fi || neuve ? 'Prendre ses réglages' : 'Régler ma table';
 }
-// Prendre les réglages d'une table qui a sa fiche, à la place de ceux d'une table réglée à la main
-function modeleReprend(){ modeleApply(midiNames.find(modeleDe) || '', true); renderPill(); updateSetup(); renderTableBar(); if (view === 'table') renderTable(); }
+// Prendre les réglages d'une table qui a sa fiche, à la place de ceux d'une table réglée à la main (lot 55 : celle qui avait
+// été réglée à la main avant d'avoir sa fiche, même si une autre table connue est branchée avant elle)
+function modeleReprend(){ modeleApply(ficheNouvelle() ? tableCfg.nom : midiNames.find(modeleDe) || '', true); renderPill(); updateSetup(); renderTableBar(); if (view === 'table') renderTable(); }
 $('tbGo').addEventListener('click', () => { const e = tableEtat(); if (e === 'flx4'){ flx4Reprend(); if (view === 'table') renderTable(); } else if (e === 'connue' || ficheNouvelle()) modeleReprend(); else openReg(); });
 $('tbLater').addEventListener('click', () => { tableLater = true; renderTableBar(); });
 $('regSkip').addEventListener('click', () => { if (reg.i < REG_STEPS.length){ delete reg.got[REG_STEPS[reg.i].k]; regGo(reg.i + 1); } });
