@@ -32,7 +32,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 55 « XDJ-RR » (1er nov. 2026, session cloud, branche `claude/serene-hypatia-9rdmpy`) : FAIT, NON PUBLIÉ.** Retour d'un
+- **Lot 55 « XDJ-RR » : PUBLIÉ le 2 nov. 2026** (commit `51532c2` sur `main`, avance rapide depuis la branche `claude/serene-hypatia-9rdmpy`
+  de la session cloud, à la demande de l'utilisateur : « Met le sur le main », après « ça ne fonctionne toujours pas pour lui »,
+  alors que le joueur essayait encore la version sans le lot 55). Les deux derniers ajouts (relevé, refus expliqué) sont partis
+  sans repasser par le gardien. **Production pas vérifiable depuis la session cloud** (réseau fermé à djingood.fr) : le code est
+  sur `main` dans GitHub, l'utilisateur recharge la page lui-même. Journal Notion à jour. Retour d'un
   joueur : « avec une XDJ-RR, elle est reconnue mais lors du mapping tout est inversé ; je tourne le HI et sur l'appli ça tourne
   le LOW, et c'est le seul qui marche », réglage pas à pas compris. L'XDJ-RR n'avait pas de fiche. Fait : sa fiche (table de
   mixage sur le canal 5), la fiche proposée à ceux qui l'avaient réglée à la main, et un réglage pas à pas qui ne prend plus
@@ -1785,7 +1789,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     sorti de `compte.spec.js` dans `tests/faux-firebase.js` (avec `currentUser` : `getIdToken`, `emailVerified`,
     `sendEmailVerification`, `reload` ; `lienClique(page, mail)` = le joueur a cliqué le lien de confirmation). Captures : `captures/lot54/`
     du dossier principal (hors Git, `node captures/lot54/captures.js`).
-- **Lot 55 « XDJ-RR » (1er nov. 2026)** : branche `claude/serene-hypatia-9rdmpy` (session cloud), non publiée. Retour d'un joueur
+- **Lot 55 « XDJ-RR » (1er nov. 2026)** : branche `claude/serene-hypatia-9rdmpy` (session cloud), **publiée le 2 nov. 2026** (commit `51532c2`). Retour d'un joueur
   (message transmis par l'utilisateur) : avec une Pioneer XDJ-RR, le mapping est « inversé » : tourner le LOW ne fait rien,
   tourner les aigus (HI) fait bouger le LOW de l'écran, « et c'est le seul qui fonctionne », réglage pas à pas compris.
   - **Cause** : l'XDJ-RR n'avait pas de fiche (`tableEtat` = `nouvelle`, réglage pas à pas obligatoire), et elle n'a pas du
