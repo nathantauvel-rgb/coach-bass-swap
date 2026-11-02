@@ -20,7 +20,9 @@ const REG_STEPS = [
   { k: 'playB', name: 'le bouton PLAY de droite', text: 'Appuie sur le bouton PLAY de la platine B (souvent marqué ▶).' },
   { k: 'fxOn', name: 'le bouton de l’effet', text: 'Appuie sur le bouton qui allume les effets : ON, FX ON ou BEAT FX selon les tables. Pas de bouton d’effet ? À l’écran, le bouton ECHO ou la touche E font pareil.' }
 ];
-const reg = { active: false, i: 0, got: {}, seen: {}, last: {}, msg: '', wait: false, nom: '', timer: 0 };
+// releve (lot 55) : tout ce que la table a envoyé pendant chaque étape, pour « Copier le relevé » à la fin. Un joueur dont la
+// table ne se règle pas bien nous l'envoie : on voit enfin ce que chaque commande envoie vraiment.
+const reg = { active: false, i: 0, got: {}, seen: {}, last: {}, msg: '', wait: false, nom: '', timer: 0, releve: {} };
 const REG_ECART = 12;   // sur 127 : environ un dixième de la course d'un potard ou d'un fader
 let tableLater = false;   // « Plus tard » : le bandeau ne revient qu'au prochain chargement de la page
 const capFirst = t => t.charAt(0).toUpperCase() + t.slice(1);
@@ -34,14 +36,40 @@ function regOwner(k, got){ const cc = regKind(k, got); return REG_STEPS.find(s =
 function openReg(){
   if (!midiCount || run || reg.active) return;
   learnKey = null;
-  Object.assign(reg, { active: true, i: 0, got: {}, seen: {}, last: {}, msg: '', wait: false, nom: regName() });
+  Object.assign(reg, { active: true, i: 0, got: {}, seen: {}, last: {}, msg: '', wait: false, nom: regName(), releve: {} });
   $('reg').hidden = false; renderTableBar(); renderReg(); setTimeout(() => $('regSkip').focus(), 30);
 }
 function closeReg(){ reg.active = false; clearTimeout(reg.timer); $('reg').hidden = true; renderTableBar(); }
-function regGo(i){ clearTimeout(reg.timer); Object.assign(reg, { i, seen: {}, last: {}, msg: '', wait: false }); renderReg(); }
+function regGo(i){ clearTimeout(reg.timer); Object.assign(reg, { i, seen: {}, last: {}, msg: '', wait: false }); if (REG_STEPS[i]) reg.releve[REG_STEPS[i].k] = {}; renderReg(); }
+// Le relevé : chaque message reçu pendant l'étape, regroupé par commande (type, canal, numéro), avec le nombre et les valeurs
+function regNote(type, ch, d1, d2){
+  const st = REG_STEPS[reg.i]; if (!st) return;
+  const genre = type === 0xB0 ? 'cc' : type === 0x90 || type === 0x80 ? 'note' : 'autre', id = genre + ':' + type + ':' + ch + ':' + d1;
+  const r = reg.releve[st.k] || (reg.releve[st.k] = {}); if (!r[id] && Object.keys(r).length >= 40) return;
+  const x = r[id] || (r[id] = { genre, type, ch, n: d1, nb: 0, min: 127, max: 0 });
+  x.nb++; x.min = Math.min(x.min, d2); x.max = Math.max(x.max, d2);
+}
+function regReleveTxt(){
+  const quoi = x => x.genre === 'cc' ? 'potard, fader ou bouton (CC)' : x.genre === 'note' ? 'bouton (note)' : `autre message (${x.type.toString(16).toUpperCase()})`;
+  const L = [`Relevé DJingood du ${dayKey()} (« Régler ma table »)`, `Table : ${reg.nom || midiNames.join(', ') || 'aucune branchée'}`, ''];
+  for (const s of REG_STEPS){
+    const g = reg.got[s.k], r = Object.values(reg.releve[s.k] || {}).sort((a, b) => b.nb - a.nb);
+    L.push(`${capFirst(s.name)} : ${g ? `reconnu, canal ${g.ch + 1}, numéro ${g.n}${g.cc ? ' (bouton en CC)' : ''}` : 'pas reconnu'}`);
+    if (!r.length) L.push('  rien reçu');
+    for (const x of r.slice(0, 6)) L.push(`  ${quoi(x)}, canal ${x.ch + 1}, numéro ${x.n} : ${x.nb} message${x.nb > 1 ? 's' : ''}, valeurs ${x.min} à ${x.max}`);
+    if (r.length > 6) L.push(`  et ${r.length - 6} autre${r.length > 7 ? 's' : ''}`);
+  }
+  return L.join('\n');
+}
+function regCopier(){
+  const t = regReleveTxt(), show = () => { const a = $('regOut'); a.value = t; a.hidden = false; a.focus(); a.select(); };
+  const ok = () => { const el = $('regState'); el.className = 'regstate ok'; el.textContent = 'Relevé copié ! Colle-le dans un message (Ctrl + V) et envoie-le-nous.'; };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, show); else show();
+}
 
 function regMidi(type, ch, d1, d2){
   const st = REG_STEPS[reg.i]; if (!st) return;
+  regNote(type, ch, d1, d2);
   const btn = MIDI_NOTE.includes(st.k), id = ch + ':' + d1, svg = $('regSvg'); let got = null;
   // Le schéma suit la table : une commande déjà reconnue bouge à sa place, sinon c'est celle qu'on attend qui bouge
   const own = type === 0xB0 || type === 0x90 ? REG_STEPS.find(s => reg.got[s.k] && regKind(s.k, reg.got[s.k]) === (type === 0xB0) && midiSame(reg.got[s.k], ch, d1)) : null;
@@ -67,11 +95,12 @@ function renderReg(){
   const st = REG_STEPS[reg.i], end = !st, n = Object.keys(reg.got).length;
   $('regKick').textContent = end ? `Régler ma table · ${reg.nom}` : `Régler ma table · ${reg.i + 1} sur ${REG_STEPS.length}`;
   $('regTitle').textContent = end ? (n ? 'Ta table est prête' : 'Rien n’a été reconnu') : capFirst(st.name);
-  $('regText').textContent = end ? (n ? 'Voici ce que le site a reconnu. Ce qui manque se fera à l’écran, à la souris. Tu pourras tout refaire depuis « Ma table ».' : 'Vérifie que ta table est bien branchée, puis recommence. Tu peux aussi jouer à la souris.') : st.text;
+  $('regText').textContent = end ? (n ? 'Voici ce que le site a reconnu. Ce qui manque se fera à l’écran, à la souris. Tu pourras tout refaire depuis « Ma table ».' : 'Vérifie que ta table est bien branchée, puis recommence. Tu peux aussi jouer à la souris.')
+    + ' Quelque chose cloche ? « Copier le relevé », et envoie-le-nous : on verra ce que ta table envoie.' : st.text;
   $('regSvg').style.display = end ? 'none' : ''; if (!end) onbHighlight(st.k, $('regSvg'), 'rg-');
   const ul = $('regList'); ul.innerHTML = ''; ul.hidden = !end;
   if (end) for (const s of REG_STEPS){ const ok = !!reg.got[s.k], x = document.createElement('li'); x.className = ok ? 'ok' : ''; x.textContent = `${ok ? '✓' : '•'} ${capFirst(s.name)} : ${ok ? 'reconnu' : 'à l’écran'}`; ul.appendChild(x); }
-  $('regSkip').hidden = end; $('regSave').hidden = !end || !n;
+  $('regSkip').hidden = end; $('regSave').hidden = !end || !n; $('regCopie').hidden = !end; $('regOut').hidden = true;
   $('regBack').hidden = !end && reg.i === 0; $('regBack').textContent = end ? 'Recommencer' : 'Retour';
   renderRegState();
 }
@@ -110,5 +139,6 @@ $('regBack').addEventListener('click', () => {
   if (reg.i >= REG_STEPS.length){ reg.got = {}; regGo(0); return; }
   if (reg.i > 0){ delete reg.got[REG_STEPS[reg.i].k]; delete reg.got[REG_STEPS[reg.i - 1].k]; regGo(reg.i - 1); } });
 $('regSave').addEventListener('click', regSave);
+$('regCopie').addEventListener('click', regCopier);
 $('regClose').addEventListener('click', closeReg);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && reg.active){ e.stopPropagation(); closeReg(); } }, true);

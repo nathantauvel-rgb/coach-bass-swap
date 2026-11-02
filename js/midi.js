@@ -124,10 +124,12 @@ function onMidi(e){
   if (reg.active){ regMidi(type, ch, d1, d2); return; }
   if (verif.on){ verifMidi(type, ch, d1, d2); return; }   // « Vérifier ma table » (verif.js) écoute la table
   if (learnKey){ const btn = MIDI_NOTE.includes(learnKey), want = btn ? (type === 0x90 && d2 > 0) : (type === 0xB0 && !msgFin(d1));
-    // un contrôle déjà utilisé par un autre réglage est refusé : on continue d'attendre le bon
-    const taken = (btn ? MIDI_NOTE : MIDI_CC).some(k => k !== learnKey && midiSame(map[k], ch, d1));
+    // un contrôle déjà utilisé par un autre réglage est refusé : on continue d'attendre le bon, et « Ma table » dit pourquoi
+    // (lot 55 : avant, le refus était muet, et un joueur dont le réglage était décalé croyait que le site ne voyait rien)
+    const pris = (btn ? MIDI_NOTE : MIDI_CC).find(k => k !== learnKey && midiSame(map[k], ch, d1)), taken = !!pris;
+    if (want && taken && view === 'table') tableDejaPris(pris);
     if (want && !taken){ map = Object.assign({}, map, { [learnKey]: { ch, n: d1 } }); try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); } catch (_) {}
-      if (type === 0xB0) phys[learnKey] = val; learnKey = null; updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); } return; }
+      if (type === 0xB0) phys[learnKey] = val; learnKey = null; updateSetup(); if (onb.active) renderOnb(); if (view === 'table'){ tableNote = ''; renderTable(); } } return; }
   // Page « Ma table » : on montre ce qui bouge, sans piloter les niveaux ni l'écho
   if (view === 'table'){ tableMidi(type, ch, d1, d2, val); return; }
   // Une table pas encore réglée ne pilote rien : ses numéros ne sont pas ceux de la FLX4

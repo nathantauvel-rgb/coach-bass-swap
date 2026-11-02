@@ -111,6 +111,10 @@ function renderTable(){
 const tableResetModele = () => tableEtat() === 'connue' ? modeleDe(midiNames.find(modeleDe)) : ficheNouvelle() || (tableCfg && tableCfg.modele ? modeleId(tableCfg.modele) : null);
 function tableResetTxt(){ const fi = tableResetModele();
   return tableEtat() === 'connue' || ficheNouvelle() ? `Prendre les réglages de la ${fi.nom}` : fi ? `Revenir aux réglages d'origine de la ${fi.nom}` : tableCfg ? 'Revenir aux réglages de la DDJ-FLX4' : 'Revenir aux réglages d\'origine'; }
+// « Apprendre » refuse une commande déjà réglée ailleurs (une commande de la table ne pilote qu'une chose) : il le dit (lot 55)
+function tableDejaPris(k){ const id = Object.keys(TKEY).find(x => TKEY[x] === k), nom = id ? tName(id) : k;
+  tableNote = `Ça, c'est déjà le réglage de « ${nom} » : une même commande de ta table ne peut pas servir à deux endroits. Bouge celle que tu veux régler, ou refais « Régler ma table pas à pas » pour tout remettre en ordre.`;
+  $('tNote').textContent = tableNote; }
 function tableSelect(id){ if (!TKINDS[tKind(id)]) return; if (learnKey) learnKey = null; tableSel = id; tableReset = false; renderTable(); }
 // Une commande connue vient de bouger sur la table : on la montre et on l'allume un instant
 function tableSeen(key, txt){

@@ -38,7 +38,9 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   mixage sur le canal 5), la fiche proposée à ceux qui l'avaient réglée à la main, et un réglage pas à pas qui ne prend plus
   un potard qui tremble tout seul. Détail dans l'entrée « Lot 55 » de « Où on en est ». **À publier avec l'accord de
   l'utilisateur**, puis demander au joueur de recharger la page, d'accepter le bandeau « Prendre ses réglages », et de faire
-  « Vérifier ma table » (son rapport fera passer la fiche à « testée »).
+  « Vérifier ma table » (son rapport fera passer la fiche à « testée »). Le 2 nov., le joueur (Léo) a réessayé la version en
+  ligne, **sans le lot 55** (« aucun bouton au bon endroit », « presque tous pas reconnus ») et parlait d'abandonner :
+  ajoutés au lot, « Copier le relevé » à la fin de « Régler ma table » et un message quand « Apprendre » refuse une commande.
 - **Lot 54 « Vini t'écrit » + fenêtre de compte refaite : PUBLIÉ le 29 oct. 2026** (commit `8dd1b63` sur `main`, « Oui, publie »),
   **mails ÉTEINTS (`ML_PRET = false`)**. Production vérifiée (Umami bloqué) : `js/mails.js` servi avec `ML_PRET=false`,
   « Se connecter » en haut à droite, Google en premier, prénom sans « Nathan », pas de case des mails (éteints),
@@ -1820,6 +1822,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     bandeau à chaque chargement, tant qu'il ne prend pas la fiche ou ne refait pas « Régler ma table » ; « Ma table » ne parle
     de la fiche que dans son bouton du bas ; sans bouton d'effet dans la fiche, « Vérifier ma table » l'apprend au passage
     (risque connu du lot 33).
+  - **Second retour du joueur (Léo, 1er nov. 2026 au soir, capture Instagram envoyée par l'utilisateur le 2 nov.)** : « y'a
+    marqué xdj rr mais y'a aucun bouton qui est au bon endroit encore ; quand je veux les mapper manuellement presque tous
+    sont même pas reconnus par le site, et c'est encore tout décalé ». **Il essayait la version en ligne, sans le lot 55**
+    (`origin/main` était encore au lot 54). « Pas reconnus » s'explique : après un réglage décalé, presque chaque commande
+    de sa table est déjà prise par une autre, et « Apprendre » dans « Ma table » refusait sans rien dire. Ajouté au lot :
+    `tableDejaPris` (table.js) dit « Ça, c'est déjà le réglage de « … » » et propose de refaire « Régler ma table » ; et
+    **« Copier le relevé »** à la fin de « Régler ma table » (`reg.releve`, `regNote`, `regReleveTxt`, `regCopier`, bouton
+    `#regCopie`, repli `#regOut`) : pour chaque étape, ce que la table a envoyé (type, canal, numéro, nombre de messages,
+    valeurs). Si la fiche ne suffit pas, le joueur fait le réglage jusqu'au bout et colle ce relevé dans un message : on
+    voit enfin ses vrais numéros. Tests dans `tests/table.spec.js` et `tests/autre-table.spec.js`.
   - **Jamais essayée en vrai** (`teste` = false). À demander au joueur : recharger, accepter le bandeau, « Vérifier ma table ».
     Jamais essayé non plus : le son du site quand il sort par l'XDJ-RR elle-même (sa table de mixage agit peut-être aussi sur
     ce son, comme pour l'XDJ-AZ du lot 45), et le mode dans lequel elle doit être pour envoyer ses messages à l'ordinateur.

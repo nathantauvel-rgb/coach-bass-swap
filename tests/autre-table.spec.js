@@ -257,6 +257,30 @@ test.describe('Le schéma suit la table', () => {
     await expect(page.locator('#regTitle')).toHaveText('Le potard LOW de droite');
     expect(await page.evaluate(() => reg.got)).toEqual({ faderA: { ch: 0, n: 8 }, faderB: { ch: 1, n: 8 }, lowA: { ch: 0, n: 3 } });
   });
+  // Lot 55 : un joueur dont la table se règle mal nous envoie ce qu'elle a envoyé à chaque étape
+  test('« Régler ma table » : à la fin, « Copier le relevé » donne ce que la table a envoyé à chaque étape', async ({ page }) => {
+    await ouvrir(page, { midi: { branchee: AUTRE } });
+    await page.evaluate(() => { navigator.clipboard.writeText = t => { window.__copie = t; return Promise.resolve(); }; });
+    await page.locator('#tbGo').click();
+    await expect(page.locator('#regCopie')).toBeHidden();
+    await bouge(page, 0xB0, 3, [61, 62, 63, 62, 61, 63, 62]);   // le LOW de A tremble pendant l'étape du fader A
+    await bouge(page, 0xB0, 8, [10, 40, 70]);
+    await expect(page.locator('#regTitle')).toHaveText('Le fader de volume de droite');
+    for (let i = 0; i < 7; i++) await page.locator('#regSkip').click();
+    await expect(page.locator('#regTitle')).toHaveText('Ta table est prête');
+    await expect(page.locator('#regText')).toContainText('« Copier le relevé », et envoie-le-nous');
+    await page.locator('#regCopie').click();
+    await expect(page.locator('#regState')).toHaveText('Relevé copié ! Colle-le dans un message (Ctrl + V) et envoie-le-nous.');
+    const t = await page.evaluate(() => window.__copie);
+    expect(t).toContain(`Table : ${AUTRE}`);
+    expect(t).toContain('Le fader de volume de gauche : reconnu, canal 1, numéro 8\n  potard, fader ou bouton (CC), canal 1, numéro 3 : 7 messages, valeurs 61 à 63\n  potard, fader ou bouton (CC), canal 1, numéro 8 : 3 messages, valeurs 10 à 70');
+    expect(t).toContain('Le potard MID de gauche : pas reconnu\n  rien reçu');
+    // sans presse-papiers : le relevé s'affiche, prêt à être copié à la main
+    await page.evaluate(() => { navigator.clipboard.writeText = () => Promise.reject(new Error('refusé')); });
+    await page.locator('#regCopie').click();
+    await expect(page.locator('#regOut')).toBeVisible();
+    expect(await page.locator('#regOut').inputValue()).toBe(t);
+  });
   test('« Régler ma table » : le fader dessiné suit le vrai, même déjà reconnu', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: AUTRE } });
     await page.locator('#tbGo').click();

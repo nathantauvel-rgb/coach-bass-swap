@@ -121,10 +121,13 @@ test.describe('Réglages', () => {
     await page.locator('#tLearn').click();
     await expect(page.locator('#tLearn')).toContainText('Bouge-la sur ta table');
     await envoyer(page, 0xB0, 19, 64);                 // le fader A, déjà attribué : refusé
+    // lot 55 : le refus n'est plus muet (un joueur à la table mal réglée croyait que le site ne voyait rien)
+    await expect(page.locator('#tNote')).toHaveText('Ça, c\'est déjà le réglage de « Fader de volume A » : une même commande de ta table ne peut pas servir à deux endroits. Bouge celle que tu veux régler, ou refais « Régler ma table pas à pas » pour tout remettre en ordre.');
     await envoyer(page, 0x96, 23, 127);                // un bouton : refusé pour un potard
     expect(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).toBeNull();
     await envoyer(page, 0xB6, 23, 64);
     expect((await carte(page)).cfxA).toEqual({ ch: 6, n: 23 });
+    await expect(page.locator('#tNote')).toHaveText('');
     await expect(page.locator('#tPanel .tmap')).toHaveText('Réglage : canal 7, numéro 23.');
     await expect(page.locator('#tLearn')).toHaveText('Réapprendre cette commande');
   });
