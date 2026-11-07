@@ -1924,6 +1924,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     première entrée des basses, à 0:31, n'est pas le drop). L'extrait de B part donc du break (mesure 32) : 64 temps sans
     basse (break puis montée), puis le vrai drop ; partie « montée de B », textes de Vini ajustés (« juste avant son drop »).
     Leçon : **le drop d'un morceau ne se déduit pas de l'arrivée des basses** ; demander à l'utilisateur où il l'entend.
+    Confirmé par l'utilisateur : le drop de « Fashion Diva House » est bien à 0:16 (là où l'extrait le met).
+  - **Pour reprendre (fin du 7 nov. 2026, l'utilisateur est allé dormir)** : tout est commité sur `lot-56-tutos` (copie
+    `Documents\coach-dj-lot56`), rien n'est poussé. Pour essayer : dans cette copie, `DJ_PORT=8771 node tests/serveur.js`,
+    puis http://localhost:8771/index.html?tutos=1#tutos. Prochaines étapes, dans l'ordre : 1. il réécoute les 4 tutos sur
+    la nouvelle musique et dit ce qui ne va pas ; 2. ses captures datées des 4 pages Pixabay ; 3. gardien, puis publication
+    (tutos toujours cachés, `TUTOS_PRET = false`) avec son accord ; 4. remplacer Play House dans « Vraie musique » (niveaux,
+    `js/vrais.js`, `tests/vrais-morceaux.js` qui change la hauteur : passer à `rubberband`) ; 5. lot 57 (familles Les effets,
+    Le volume et les basses) ; 6. lot 58 (Pro, paiement Stripe, conditions de vente), lancement visé début janvier.
     Plus tard : remplacer aussi Play House dans « Vraie musique » (niveaux) et dans les vidéos de `marketing/`.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
