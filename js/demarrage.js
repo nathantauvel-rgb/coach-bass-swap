@@ -39,14 +39,15 @@ initMidi();
 requestAnimationFrame(frame);
 
 /* ---------- Onglets : accueil, Apprendre, S'entraîner, Passer au vrai ---------- */
-const VIEWS = { accueil: 'vHome', apprendre: 'vLearn', entrainer: 'vTrain', vrai: 'vReal', table: 'vTable', progres: 'vProgres' };
+const VIEWS = { accueil: 'vHome', apprendre: 'vLearn', entrainer: 'vTrain', vrai: 'vReal', tutos: 'vTutos', table: 'vTable', progres: 'vProgres' };
 let view = '';
 // L'accueil (renderHome) est dans parcours.js, ses badges et le quiz dans quiz.js
 function setView(v){
-  if (!VIEWS[v]) v = 'accueil'; if (v === view) return;
+  if (!VIEWS[v] || (v === 'tutos' && !tutosOn())) v = 'accueil'; if (v === view) return;   // tutos : caché tant que TUTOS_PRET est faux (lot 56)
   closeQuiz(); closeAvis(); if (prac) quitPrac();
   if (view === 'apprendre'){ if (onb.active) closeOnb(); if (placement) quitPlacement(); stopRun(); $('result').hidden = true; }
   if (view === 'table') learnKey = null;   // un apprentissage commencé sur « Ma table » ne doit pas continuer ailleurs
+  if (view === 'tutos') tuFerme();         // un tuto qui joue s'arrête quand on change d'onglet
   view = v;
   for (const [k, id] of Object.entries(VIEWS)) $(id).hidden = k !== v;
   document.querySelectorAll('#tabs a').forEach(a => { if (a.dataset.view === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
@@ -55,6 +56,7 @@ function setView(v){
   else if (v === 'accueil') renderHome();
   else if (v === 'entrainer') renderTrain();
   else if (v === 'vrai') renderReal();
+  else if (v === 'tutos') renderTutos();
   else if (v === 'table') renderTable();
   else if (v === 'progres') renderProgres();
   window.scrollTo(0, 0);

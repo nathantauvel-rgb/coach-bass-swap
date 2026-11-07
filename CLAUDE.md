@@ -32,6 +32,22 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Abonnement « DJingood Pro » et lot 56 « Tutos » (6-7 nov. 2026).** Question de l'utilisateur : mettre en place un
+  abonnement, quelle plus-value, quel business model. Tout le fil (propositions, comparaisons de prix, chiffres) est dans
+  `marketing/abonnement.md` (hors Git, dossier principal). **Ses décisions** : il a déjà un statut pour encaisser ;
+  **rien de ce qui existe ne passe en Pro** ; Pro = du contenu nouveau ; **4,99 €/mois et 49,99 €/an** ; pas de test
+  d'intérêt, on lance Pro directement. Il a refusé des chapitres Pro faits d'exercices de gestes (« à chaque fois tu veux
+  juste apprendre à appuyer sur des boutons, c'est nul ») : **Pro = des tutos où Vini explique les différentes façons de
+  faire une transition** (réverbe, écho, monter le son…) **et les techniques de boucle** (IN, OUT, une boucle de 32 temps
+  laissée en fond…). Maquette d'un tuto validée le 7 nov. (« C SUPER ») : `captures/maquette-tutos/` (hors Git, dossier
+  principal). Plan accepté (« oui go ») : **lot 56** l'onglet « Tutos » et la famille Les boucles (4 tutos), **lot 57**
+  deux familles de plus (Les effets ; Le volume et les basses), **lot 58** le mode Pro (paiement Stripe, premier tuto de
+  chaque famille gratuit, conditions de vente, mentions légales), lancement visé début janvier. Les tutos restent cachés
+  sur le site en ligne jusqu'à son accord.
+  **Lot 56 fait le 7 nov. 2026, NON PUBLIÉ** : branche `lot-56-tutos`, copie à part `Documents\coach-dj-lot56` (git
+  worktree, `node_modules` relié par jonction ; tests : `DJ_PORT=8771 npx playwright test`). Voir l'entrée « Lot 56 » à la
+  fin de « Où on en est ». Captures : `captures/lot56/` (dossier principal, `node captures/lot56/captures.js` avec le
+  serveur de la copie lancé sur le port 8771).
 - **Lot 55 « XDJ-RR » : PUBLIÉ le 2 nov. 2026** (commit `51532c2` sur `main`, avance rapide depuis la branche `claude/serene-hypatia-9rdmpy`
   de la session cloud, à la demande de l'utilisateur : « Met le sur le main », après « ça ne fonctionne toujours pas pour lui »,
   alors que le joueur essayait encore la version sans le lot 55). Les deux derniers ajouts (relevé, refus expliqué) sont partis
@@ -1839,6 +1855,52 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - **Jamais essayée en vrai** (`teste` = false). À demander au joueur : recharger, accepter le bandeau, « Vérifier ma table ».
     Jamais essayé non plus : le son du site quand il sort par l'XDJ-RR elle-même (sa table de mixage agit peut-être aussi sur
     ce son, comme pour l'XDJ-AZ du lot 45), et le mode dans lequel elle doit être pour envoyer ses messages à l'ordinateur.
+- **Lot 56 « Tutos » (7 nov. 2026)** : branche `lot-56-tutos`, non publiée. Première partie de « DJingood Pro » (voir
+  « Pour reprendre »). Un nouvel onglet **« Tutos »** (5e, après Passer au vrai, `#tutos`, vue `vTutos`, lien `#tabTutos`),
+  **caché tant que `TUTOS_PRET` est faux** (en haut de `js/tutos.js`) : `#tutos` mène alors à l'accueil. Pour les essayer :
+  `?tutos=1` dans l'adresse (retenu pour l'onglet du navigateur, `sessionStorage` `djingood-tutos`) ; les tests posent
+  `window.DJINGOOD_TUTOS`. `js/tutos.js` (chargé après `comprendre`, préfixe `tu`) :
+  - **Catalogue** (`#tuCatalogue`, `renderTutos`) : Vini (`viniDit('tutos', …)`) conseille le prochain tuto, une famille
+    « Les boucles » (`TU_FAMILLES`), 4 cartes (`.tu-carte`, étiquette Gratuit / Pro / Vu). Pas encore de paiement : tout se
+    joue (lot 58). Tutos vus jusqu'au bout dans `coach-tutos` (`{ vus }`, suit le compte, hors de `cptPoids`).
+  - **Lecteur** (`#tuLecteur`, `tuOuvre`, `tuFerme`) : la maquette `captures/maquette-tutos` portée dans le site. Plans
+    (`plans` d'un tuto : `ch`, `dit`, `seg` [de, à, version], `etape`, `badge`, `focus`, `note`, `cibles`, `pose`,
+    `revele`, `fin`), 5 chapitres (`TU_CHAPITRES` : Écoute · Quand l'utiliser · Pas à pas · Les erreurs · À retenir),
+    Vini parle (lettre par lettre, `viniParle`) puis se tait pendant la musique (il danse, main sur le casque), lecteur en
+    bas (précédent, pause, suivant, chapitres, « Réécouter »), Espace / flèches. La clé de voûte est une **horloge à soi**
+    (`tu.horloge`, arrêtée par la pause) et `ac.suspend()` pour la musique. Changer d'onglet ou cacher l'onglet du navigateur
+    arrête ou met en pause (`setView` appelle `tuFerme`).
+  - **Ce que jouent les platines** : chaque version d'un tuto = deux scripts de platine (`tuA`, `tuB` : morceau, départ,
+    fin du morceau, événements IN / OUT / EXIT / ½X en temps de A, fader `niv`, `casque`). `tuJoue(script, xa, xb)` en tire
+    les morceaux de son (un nouveau départ à chaque saut de boucle, fondus de 3 ms) et l'état à un instant ; la même chose
+    sert au son (`tuSonJoue`, sortie `master` du site), à la piste (`tuVoie` : coupée aux parties du morceau, aux boucles,
+    au fader ; pointillés = au casque) et à la table dessinée (`tuTableSvg`, `tuMajTable` ; commandes repérées par `data-c`,
+    celles que le tuto n'utilise pas sont éteintes). Une platine « au casque » s'entend tout bas (`TU_CASQUE` = 0,26).
+    **Piège corrigé dans la maquette** : un EXIT pile à la fin d'un tour ne doit pas renvoyer au début de la boucle.
+  - Les 4 tutos (`TUTOS`), sur « Dj » (A) et « Like An Animal » (B, drop mesuré pile au temps 64) : **La boucle qui
+    attend** (B boucle 32 temps sur son intro, EXIT quand A finit ; erreurs : IN 2 temps trop tard, OUT un quart de temps
+    trop tard sans Quantize), **La boucle qui prolonge l'outro** (A boucle ses 16 derniers temps sous l'intro de B ; on
+    écoute d'abord sans boucle ; erreur : EXIT trop tôt), **La montée en boucle** (8, 4, 2, 1, ½ avec ½X, deux tours à
+    chaque fois, le drop pile au bout d'une phrase ; erreur : trop vite), **La boucle de secours** (B parti 8 temps en
+    retard, A répète sa dernière mesure deux fois ; erreur : la boucle déborde dans le silence).
+  - Tests : `tests/tutos.spec.js` (15 : onglet caché, `?tutos=1`, catalogue, ce que jouent les platines pour chaque
+    version, plans complets, lecteur, pause, pas à pas, erreurs, à retenir, changer d'onglet, les quatre jusqu'au bout,
+    le lecteur tient sur un écran de 1366 × 768). `tests/site.spec.js` : ordre des fichiers.
+  - **Jamais écouté par un humain** : les sons sont vérifiés par le calcul (morceaux joués, temps des sauts) et la mesure
+    du drop de B. À faire écouter à l'utilisateur. « Essaie-la sur ta table » n'existe pas encore (les boutons IN, OUT,
+    EXIT et ½X de la FLX4 ne sont pas branchés dans le site).
+  - **Écouté par l'utilisateur le 7 nov. : « ça sonne horriblement mal »**, puis : « il y a un vrai son et un son IA avec
+    des bruits ; il faudrait que je trouve plus de vrais sons libres de droit, ça améliorerait nettement la qualité du
+    site ». Mesuré avant sa précision : pas de saturation (extraits à −6 dB crête, sortie sous −2 dB), limiteur peu sollicité.
+    Le problème est donc la musique elle-même (un des deux extraits Play House, CC0, sonne « IA » pour lui) : **les tutos
+    ne partent pas en ligne avec ces morceaux**. Ajouté à sa demande : **volume du lecteur** (glissière `#tuVolume` et
+    haut-parleur `#tuMuet`, `vol` dans `coach-tutos`, au carré) et **le haut-parleur de l'en-tête coupe aussi les tutos**
+    (`sonsOn` ; remonter le volume du lecteur le rallume). 16 tests dans `tests/tutos.spec.js`.
+  - **Décision de l'utilisateur (7 nov.) : « le A est nul, je veux plus de ce genre de musique/sons sur mon site »** (A =
+    « Dj » de Play House, `dj-a` / `dj-b`, qui sert aussi à « Vraie musique » et à des vidéos de `marketing/`). Il a
+    demandé de lancer la recherche de vrais morceaux : agent `chercheur-morceaux` lancé (house, deep house, tech house,
+    afro house, 120 à 128 BPM, CC0 ou CC BY, pas NC ni ND, pas d'IA, structure pratique pour un DJ). Suite prévue : il
+    écoute la liste et choisit, puis on remplace les extraits (tutos d'abord, puis « Vraie musique »).
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -1859,7 +1921,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
   `erreurs` (bandeau d'erreur) → `stats` (statistiques Umami, lot 46) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `set` (chapitre 7 « Le set », lot 44) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
-  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) → `comprendre` (leçons sans table, lot 48) →
+  `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) → `comprendre` (leçons sans table, lot 48) → `tutos` (l'onglet « Tutos », lot 56) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `mails` (les mails de Vini, lot 54) → `compte` (se connecter avec Google) →
   `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
@@ -1950,7 +2012,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   les étoiles non gagnées, volontairement estompées.
 
 ### Clés localStorage
-`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
+`coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-tutos` (`{ vus: [identifiants] }`, les tutos vus jusqu'au bout, lot 56), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
 `coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
