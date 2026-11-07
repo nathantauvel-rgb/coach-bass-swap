@@ -22,7 +22,7 @@ const tuTypo = s => s.replace(/ ([!?:;»])/g, ' $1').replace(/« /g, '« ');
 // son : [début, fin, nom, 'fort' pour un drop]
 const TU_PARTIES = {
   'tuto-deep-a': [[0, 32, 'break de A'], [32, 96, 'A · « Deep House »'], [96, 128, 'dernière phrase de A'], [128, 148, 'fin de A']],
-  'tuto-instru-b': [[0, 64, 'intro de B · « Deep House Instrumental »'], [64, 136, 'DROP', 'fort']],
+  'tuto-instru-b': [[0, 64, 'montée de B · « Deep House Instrumental »'], [64, 136, 'DROP', 'fort']],
   'tuto-luxury-a': [[0, 32, 'A · « Luxury Life »'], [32, 64, 'break de A'], [64, 96, 'A · « Luxury Life »'], [96, 128, 'dernière phrase de A'], [128, 160, 'fin de A']],
   'tuto-diva-b': [[0, 32, 'intro de B · « Fashion Diva »'], [32, 96, 'DROP', 'fort']]
 };
@@ -37,7 +37,8 @@ const TU_MUSIQUE = {
    Un plan : ch (chapitre), dit (ce que dit Vini), seg ([de, à, version] : le passage qu'on écoute ensuite), etape, badge
    ('rate' ou 'ok'), focus ('boucle' ou 'phrases'), note, cibles (commandes à montrer), pose (de Vini), revele (jusqu'où la
    piste est déjà dessinée au début du plan), fin (le dernier plan : « À retenir »). */
-// Paire « deep » : A a ses basses du temps 32 au temps 128 puis sa fin ; B a 64 temps d'intro sans basse. Paire « luxury » :
+// Paire « deep » : A a ses basses du temps 32 au temps 128 puis sa fin ; B part de son break : 64 temps sans basse (le break,
+// puis la montée), puis son vrai drop (à 1:32 dans le morceau, dit par l'utilisateur). Paire « luxury » :
 // B (« Fashion Diva ») n'a que 32 temps d'intro, il part donc 32 temps plus tard pour que son drop tombe au même endroit.
 const tuA = (o = {}) => Object.assign({ m: 'tuto-deep-a', debut: 0, pos: 0, fin: 148, evts: [], niv: [[0, 1], [128, 1], [128.06, 0]], casque: [] }, o);
 const tuB = (o = {}) => Object.assign({ m: 'tuto-instru-b', debut: 32, pos: 0, fin: 136, evts: [], niv: [[0, 0]], casque: [] }, o);
@@ -55,7 +56,7 @@ const TU_ECOUTE = "Écoute d'abord la transition en entier. Je t'explique juste 
 const TUTOS = [
   {
     id: 'attend', famille: 'boucles', titre: 'La boucle qui attend', gratuit: true, duree: '3 min', musique: 'deep',
-    resume: 'B patiente en boucle sur son intro, puis part pile quand A se termine.',
+    resume: 'B patiente en boucle juste avant son drop, puis part pile quand A se termine.',
     vue: [24, 144], etat: 112,
     versions: {
       bon: { A: tuA(), B: tuB(TU_ATTEND_B) },
@@ -67,8 +68,8 @@ const TUTOS = [
       { ch: 0, dit: TU_ECOUTE },
       { ch: 0, dit: "Écoute… et suis le trait blanc sur la piste : c'est là où on en est.", seg: [80, 144] },
       { ch: 0, dit: "Tu as entendu ? B tournait en rond sous A, et son drop est parti pile quand A s'est arrêté. C'est ça, la boucle qui attend.", pose: { bras: 'pouce', yeux: 'clin' } },
-      { ch: 1, dit: "La boucle, c'est la salle d'attente de B : il tourne en rond sur son intro, et c'est toi qui choisis quand il part.", focus: 'boucle' },
-      { ch: 1, dit: "Elle te sauve quand l'intro de B est trop courte, ou quand A dure plus longtemps que prévu." },
+      { ch: 1, dit: "La boucle, c'est la salle d'attente de B : il tourne en rond juste avant son drop, et c'est toi qui choisis quand il part.", focus: 'boucle' },
+      { ch: 1, dit: "Elle te sauve quand B arrive trop vite à son drop, ou quand A dure plus longtemps que prévu." },
       { ch: 1, dit: "Le secret, c'est 32 temps : une phrase entière. Quand B sort de sa boucle, il retombe pile sur une phrase de A.", focus: 'phrases', note: '1 phrase = 32 temps = 8 mesures de 4 temps' },
       { ch: 2, dit: "Lance B au casque, pile sur le premier temps d'une phrase de A.", seg: [24, 40], revele: 32, cibles: ['playB', 'casqueB'] },
       { ch: 2, dit: 'Compte 32 temps. Au début de la phrase suivante, appuie sur IN.', seg: [56, 68], revele: 56, cibles: ['inB'] },
@@ -89,24 +90,24 @@ const TUTOS = [
     vue: [88, 168], etat: 140,
     versions: {
       bon: { A: tuA({ fin: 128, evts: [[112, 'in'], [128, 'out']], niv: tuCoupe(160) }), B: tuB(TU_PROLONGE_B) },
-      sans: { A: tuA({ fin: 128, niv: tuCoupe(160) }), B: tuB(TU_PROLONGE_B), alerte: [128, "↑ A est fini : il ne reste que l'intro de B"] },
+      sans: { A: tuA({ fin: 128, niv: tuCoupe(160) }), B: tuB(TU_PROLONGE_B), alerte: [128, '↑ A est fini : il ne reste que B, sans ses basses'] },
       tot: { A: tuA({ fin: 128, evts: [[112, 'in'], [128, 'out'], [136, 'exit']], niv: tuCoupe(160) }), B: tuB(TU_PROLONGE_B), alerte: [144, "↑ le trou : A s'est arrêté trop tôt"] }
     },
     plans: [
       { ch: 0, dit: TU_ECOUTE },
       { ch: 0, dit: 'Écoute… et suis le trait blanc sur la piste.', seg: [108, 168] },
       { ch: 0, dit: 'Tu as entendu ? A est arrivé au bout, mais il a continué à tourner sur ses 16 derniers temps, le temps que B arrive à son drop.', pose: { bras: 'pouce', yeux: 'clin' } },
-      { ch: 1, dit: "Le problème : l'intro de B est longue, et A se termine avant son drop. Écoute ce qui se passe sans boucle :", seg: [120, 160, 'sans'], badge: 'rate' },
-      { ch: 1, dit: "Tout retombe : pendant 32 temps, il ne reste que l'intro de B, toute maigre. La boucle qui prolonge l'outro bouche ce trou.", focus: 'boucle' },
+      { ch: 1, dit: "Le problème : B met longtemps à arriver à son drop, et A se termine avant. Écoute ce qui se passe sans boucle :", seg: [120, 160, 'sans'], badge: 'rate' },
+      { ch: 1, dit: "Tout retombe : pendant 32 temps, il ne reste que B, sans ses basses, tout maigre. La boucle qui prolonge l'outro bouche ce trou.", focus: 'boucle' },
       { ch: 2, dit: "Lance B au casque sur une phrase de A, puis monte son fader pendant la fin de A.", seg: [94, 124], revele: 94, cibles: ['playB', 'faderB'] },
       { ch: 2, dit: '16 temps avant la fin de A, appuie sur IN.', seg: [104, 116], revele: 104, cibles: ['inA'] },
-      { ch: 2, dit: "Sur la fin de A, appuie sur OUT : A repart 16 temps en arrière, et tourne en boucle sous l'intro de B.", seg: [120, 140], revele: 120, cibles: ['outA'] },
+      { ch: 2, dit: "Sur la fin de A, appuie sur OUT : A repart 16 temps en arrière, et tourne en boucle sous la montée de B.", seg: [120, 140], revele: 120, cibles: ['outA'] },
       { ch: 2, dit: "Pas besoin d'EXIT : quand le drop de B arrive, baisse A d'un coup.", seg: [148, 168], revele: 148, cibles: ['faderA'] },
       { ch: 3, etape: "L'erreur", dit: "Tu appuies sur EXIT trop tôt : A repart vers sa fin… et s'arrête avant le drop de B.", seg: [128, 164, 'tot'], badge: 'rate', pose: { sueur: true } },
       { ch: 3, etape: "L'erreur", dit: "Tu as entendu le trou ? Garde la boucle jusqu'au drop de B. La bonne :", seg: [128, 164], badge: 'ok' },
       { ch: 4, dit: 'Bravo ! Avec cette boucle, plus de trou entre deux morceaux.', fin: true }
     ],
-    retenir: ['Si A finit avant le drop de B, **boucle la fin de A**.', "**IN** 16 temps avant la fin, **OUT** sur la fin : A tourne sous l'intro de B.", "Pas d'EXIT : au drop de B, **baisse A** d'un coup."]
+    retenir: ['Si A finit avant le drop de B, **boucle la fin de A**.', "**IN** 16 temps avant la fin, **OUT** sur la fin : A tourne sous B jusqu'à son drop.", "Pas d'EXIT : au drop de B, **baisse A** d'un coup."]
   },
   {
     id: 'montee', famille: 'boucles', titre: 'La montée en boucle', duree: '3 min', musique: 'luxury',

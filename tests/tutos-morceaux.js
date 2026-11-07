@@ -13,14 +13,14 @@ const { execFileSync } = require('child_process'), fs = require('fs'), path = re
 const SRC = path.join(__dirname, '..', 'audio-essai', 'pixabay'), OUT = path.join(__dirname, '..', 'musique'), BPM = 124, SR = 44100;
 const TRACKS = {
   deep: { file: 'alexrockbeat-deep-house-590869.mp3', bpm: 128, t0: .2293, grosse: [32, 128] },
-  instru: { file: 'arnaud136-deep-house-instrumental-354596.mp3', bpm: 125, t0: .1981, grosse: [64, 120] },
+  instru: { file: 'arnaud136-deep-house-instrumental-354596.mp3', bpm: 125, t0: .1981, grosse: [192, 248] },   // calé sur le drop de 1:32, celui qu'on utilise
   luxury: { file: 'kulakovka-luxury-life-618587.mp3', bpm: 122, t0: .0849, grosse: [32, 160] },
   diva: { file: 'kulakovka-fashion-diva-house-614889.mp3', bpm: 120, t0: .1473, grosse: [32, 96] }
 };
-// A : la fin du morceau (break, la dernière partie avec basses, l'outro) ; B : depuis le début (intro sans basse, puis le drop)
+// A : la fin du morceau (break, la dernière partie avec basses, l'outro) ; B : 64 ou 32 temps sans basse, puis le drop
 const CUTS = {
   'tuto-deep-a': ['deep', 32, 148, [32, 128]],
-  'tuto-instru-b': ['instru', 0, 136, [64, 120]],
+  'tuto-instru-b': ['instru', 32, 136, [64, 120]],   // le break (mesures 32 à 48, sans basse) puis le vrai drop, à 1:32 (dit par l'utilisateur, 7 nov.)
   'tuto-luxury-a': ['luxury', 32, 160, [64, 128]],
   'tuto-diva-b': ['diva', 0, 96, [32, 96]]
 };

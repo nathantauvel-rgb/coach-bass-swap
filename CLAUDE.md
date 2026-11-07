@@ -1920,6 +1920,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     empile les graves de tous les temps et on cale le pic (convention : 12 ms après le temps). Trois extraits à 0,3 ms
     près ; « Fashion Diva » moins net (± 35 ms), sans conséquence (pas de grosse caisse dans son intro, A coupé à son drop).
     Crédit affiché sous le titre du tuto (`TU_MUSIQUE`, `#tuMusique`). 18 tests. **À faire écouter à l'utilisateur.**
+    **Correction de l'utilisateur (7 nov.) : « le drop du son deep house arnaud est à 1:32 »** (mesure 48 à 125 BPM ; la
+    première entrée des basses, à 0:31, n'est pas le drop). L'extrait de B part donc du break (mesure 32) : 64 temps sans
+    basse (break puis montée), puis le vrai drop ; partie « montée de B », textes de Vini ajustés (« juste avant son drop »).
+    Leçon : **le drop d'un morceau ne se déduit pas de l'arrivée des basses** ; demander à l'utilisateur où il l'entend.
     Plus tard : remplacer aussi Play House dans « Vraie musique » (niveaux) et dans les vidéos de `marketing/`.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
