@@ -73,7 +73,7 @@ test.describe('Tutos : ce que jouent les platines', () => {
     expect(a.reduce((s, p) => s + p[1] - p[0], 0)).toBeCloseTo(32, 6);
     expect(a.map(p => p[1] - p[0])).toEqual([8, 8, 4, 4, 2, 2, 1, 1, .5, .5, .5, .5]);
     expect(a.every(p => p[2] === 96)).toBe(true);   // chaque tour repart du début de la boucle
-    expect(await page.evaluate(() => tuJoue(TUTOS[2].versions.bon.B, 128, 128).b)).toBe(64);
+    expect(await page.evaluate(() => tuJoue(TUTOS[2].versions.bon.B, 128, 128).b)).toBe(32);   // « Fashion Diva » : 32 temps d'intro
     // trop vite : la boucle d'un demi-temps tourne pendant 18 temps
     const vite = await joue(page, 'montee', 'vite', 'A', 110, 128);
     expect(vite.every(p => p[1] - p[0] <= .5 + 1e-6)).toBe(true);
@@ -83,7 +83,7 @@ test.describe('Tutos : ce que jouent les platines', () => {
   test('la boucle de secours : A répète sa dernière mesure deux fois ; une boucle qui déborde fait des trous', async ({ page }) => {
     await ouvrirTutos(page);
     expect(await joue(page, 'secours', 'bon', 'A', 120, 136)).toEqual([[120, 124, 120, false], [124, 128, 124, false], [128, 132, 124, true], [132, 136, 124, true]]);
-    expect(await page.evaluate(() => tuJoue(TUTOS[3].versions.bon.B, 136, 136).b)).toBe(64);
+    expect(await page.evaluate(() => tuJoue(TUTOS[3].versions.bon.B, 136, 136).b)).toBe(32);
     const deborde = await joue(page, 'secours', 'deborde', 'A', 126, 136);
     expect(deborde.reduce((s, p) => s + p[1] - p[0], 0)).toBeCloseTo(6, 6);   // 10 temps, dont 4 de silence
   });
@@ -247,5 +247,27 @@ test.describe('Tutos : le volume', () => {
     await page.locator('#tuVolume').fill('0.5');   // remonter le volume du lecteur rallume les sons
     expect(await page.evaluate(() => sonsOn)).toBe(true);
     expect(await gain()).toBeCloseTo(.25, 2);
+  });
+});
+
+test.describe('Tutos : la musique', () => {
+  test('dans chaque bonne version, A est baissé pile quand B arrive au début de son drop', async ({ page }) => {
+    await ouvrirTutos(page);
+    const r = await page.evaluate(() => TUTOS.map(t => {
+      const v = t.versions.bon, coupe = v.A.niv[v.A.niv.length - 2][0], drop = TU_PARTIES[v.B.m].find(p => p[3] === 'fort')[0];
+      return [t.id, coupe, tuJoue(v.B, coupe, coupe).b === drop];
+    }));
+    expect(r).toEqual([['attend', 128, true], ['prolonge', 160, true], ['montee', 128, true], ['secours', 136, true]]);
+  });
+
+  test('les quatre extraits sont là, et chaque tuto dit d\'où vient sa musique', async ({ page }) => {
+    await ouvrirTutos(page);
+    for (const m of ['tuto-deep-a', 'tuto-instru-b', 'tuto-luxury-a', 'tuto-diva-b']){
+      const r = await page.request.get(`/musique/${m}.mp3`);
+      expect(r.status(), m).toBe(200);
+    }
+    expect(await page.evaluate(() => TUTOS.every(t => TU_PARTIES[t.versions.bon.A.m] && TU_PARTIES[t.versions.bon.B.m] && TU_MUSIQUE[t.musique]))).toBe(true);
+    await lancer(page, 'montee');
+    await expect(page.locator('#tuMusique')).toContainText('Luxury Life');
   });
 });

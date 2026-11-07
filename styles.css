@@ -2434,3 +2434,5 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .tu-vol .tu-lb svg{fill:none}
 .tu-vol input{width:96px;accent-color:var(--brand-light);cursor:pointer}
 @media (max-width:900px){.tu-vol input{width:64px}}
+.tu-musique{margin:2px 0 0;color:var(--muted);font-size:13px;font-weight:700}
+@media (max-width:600px){.tu-vol input{display:none}.tu-avance{min-width:60px}.tu-lecteur{gap:6px;padding:8px}}   /* sur un téléphone, ses boutons de volume suffisent */

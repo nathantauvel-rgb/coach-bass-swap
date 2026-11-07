@@ -15,10 +15,20 @@ const TU_BEAT = 60 / 124;   // les extraits de « Vraie musique » sont tous à 
 const TU_CASQUE = .26;      // une platine « au casque » : dans un tuto, on l'entend tout bas, pour suivre
 const TU_CHAPITRES = ['Écoute', "Quand l'utiliser", 'Pas à pas', 'Les erreurs', 'À retenir'];
 const tuTypo = s => s.replace(/ ([!?:;»])/g, ' $1').replace(/« /g, '« ');
-// Les parties de chaque morceau, en temps du morceau : [début, fin, nom, 'fort' pour un drop]
+// La musique (7 nov. 2026) : quatre morceaux de Pixabay choisis à l'oreille par l'utilisateur (Play House sonnait « IA »),
+// ramenés à 124 BPM sans changer leur hauteur par tests/tutos-morceaux.js. Deux paires de tonalités qui vont ensemble :
+// « Deep House » (alexrockbeat, fa majeur) et « Deep House Instrumental » (arnaud136, ré mineur), « Luxury Life » et
+// « Fashion Diva House » (kulakovka, la mineur). Les parties de chaque extrait, en temps de l'extrait, mesurées dans le
+// son : [début, fin, nom, 'fort' pour un drop]
 const TU_PARTIES = {
-  'dj-a': [[0, 96, 'A · « Dj »'], [96, 128, 'dernière phrase de A'], [128, 136, 'fin de A']],
-  'animal-b': [[0, 64, 'intro de B · « Like An Animal »'], [64, 136, 'DROP', 'fort']]
+  'tuto-deep-a': [[0, 32, 'break de A'], [32, 96, 'A · « Deep House »'], [96, 128, 'dernière phrase de A'], [128, 148, 'fin de A']],
+  'tuto-instru-b': [[0, 64, 'intro de B · « Deep House Instrumental »'], [64, 136, 'DROP', 'fort']],
+  'tuto-luxury-a': [[0, 32, 'A · « Luxury Life »'], [32, 64, 'break de A'], [64, 96, 'A · « Luxury Life »'], [96, 128, 'dernière phrase de A'], [128, 160, 'fin de A']],
+  'tuto-diva-b': [[0, 32, 'intro de B · « Fashion Diva »'], [32, 96, 'DROP', 'fort']]
+};
+const TU_MUSIQUE = {
+  deep: '« Deep House » (alexrockbeat) et « Deep House Instrumental » (arnaud136), sur Pixabay',
+  luxury: '« Luxury Life » et « Fashion Diva House » (kulakovka), sur Pixabay'
 };
 /* ---------- Les tutos ----------
    Une platine : m (le morceau, dans musique/), debut (temps de A où elle part), pos (où elle part dans son morceau), fin (après,
@@ -27,20 +37,24 @@ const TU_PARTIES = {
    Un plan : ch (chapitre), dit (ce que dit Vini), seg ([de, à, version] : le passage qu'on écoute ensuite), etape, badge
    ('rate' ou 'ok'), focus ('boucle' ou 'phrases'), note, cibles (commandes à montrer), pose (de Vini), revele (jusqu'où la
    piste est déjà dessinée au début du plan), fin (le dernier plan : « À retenir »). */
-const tuA = (o = {}) => Object.assign({ m: 'dj-a', debut: 0, pos: 0, fin: 136, evts: [], niv: [[0, 1], [128, 1], [128.06, 0]], casque: [] }, o);
-const tuB = (o = {}) => Object.assign({ m: 'animal-b', debut: 32, pos: 0, fin: 136, evts: [], niv: [[0, 0]], casque: [] }, o);
+// Paire « deep » : A a ses basses du temps 32 au temps 128 puis sa fin ; B a 64 temps d'intro sans basse. Paire « luxury » :
+// B (« Fashion Diva ») n'a que 32 temps d'intro, il part donc 32 temps plus tard pour que son drop tombe au même endroit.
+const tuA = (o = {}) => Object.assign({ m: 'tuto-deep-a', debut: 0, pos: 0, fin: 148, evts: [], niv: [[0, 1], [128, 1], [128.06, 0]], casque: [] }, o);
+const tuB = (o = {}) => Object.assign({ m: 'tuto-instru-b', debut: 32, pos: 0, fin: 136, evts: [], niv: [[0, 0]], casque: [] }, o);
+const tuLux = o => tuA(Object.assign({ m: 'tuto-luxury-a', fin: 160 }, o));
+const tuDiva = o => tuB(Object.assign({ m: 'tuto-diva-b', fin: 96 }, o));
 const tuCoupe = x => [[0, 1], [x, 1], [x + .06, 0]];   // A à fond, puis baissé d'un coup au temps x
 const TU_ATTEND_B = { evts: [[64, 'in'], [96, 'out'], [128, 'exit']], niv: [[0, 0], [100, 0], [112, .8], [128, .8], [128.06, 1]], casque: [[32, 100]] };
 const TU_ATTEND_FORT = { niv: [[0, 0], [80, 0], [80.06, .8], [128, .8], [128.06, 1]], casque: [[32, 80]] };   // B déjà monté : on entend bien la boucle
 const TU_PROLONGE_B = { debut: 96, niv: [[0, 0], [112, 0], [124, .8], [160, .8], [160.06, 1]], casque: [[96, 112]] };
-const TU_MONTEE_B = { debut: 64, niv: [[0, 0], [128, 0], [128.02, 1]], casque: [[64, 92]] };
-const TU_SECOURS_B = { debut: 72, niv: [[0, 0], [100, 0], [112, .8], [136, .8], [136.06, 1]], casque: [[72, 100]] };
+const TU_MONTEE_B = { debut: 96, niv: [[0, 0], [128, 0], [128.02, 1]], casque: [[96, 120]] };
+const TU_SECOURS_B = { debut: 104, niv: [[0, 0], [112, 0], [124, .8], [136, .8], [136.06, 1]], casque: [[104, 112]] };
 const TU_MONTEE_A = [[96, 'in'], [104, 'out'], [112, 'moitie'], [120, 'moitie'], [124, 'moitie'], [126, 'moitie']];
 const TU_ECOUTE = "Écoute d'abord la transition en entier. Je t'explique juste après.";
 
 const TUTOS = [
   {
-    id: 'attend', famille: 'boucles', titre: 'La boucle qui attend', gratuit: true, duree: '3 min',
+    id: 'attend', famille: 'boucles', titre: 'La boucle qui attend', gratuit: true, duree: '3 min', musique: 'deep',
     resume: 'B patiente en boucle sur son intro, puis part pile quand A se termine.',
     vue: [24, 144], etat: 112,
     versions: {
@@ -70,7 +84,7 @@ const TUTOS = [
     retenir: ["**32 temps**, c'est une phrase : ta boucle fait 32 temps, pas un de plus.", "**IN** au début d'une phrase de B, **OUT** juste avant son drop. Avec Quantize allumé.", '**EXIT** sur le 1 quand A se termine : le drop de B tombe pile.']
   },
   {
-    id: 'prolonge', famille: 'boucles', titre: "La boucle qui prolonge l'outro", duree: '3 min',
+    id: 'prolonge', famille: 'boucles', titre: "La boucle qui prolonge l'outro", duree: '3 min', musique: 'deep',
     resume: "A finit avant le drop de B ? Tu boucles la fin de A, le temps que B arrive.",
     vue: [88, 168], etat: 140,
     versions: {
@@ -95,12 +109,12 @@ const TUTOS = [
     retenir: ['Si A finit avant le drop de B, **boucle la fin de A**.', "**IN** 16 temps avant la fin, **OUT** sur la fin : A tourne sous l'intro de B.", "Pas d'EXIT : au drop de B, **baisse A** d'un coup."]
   },
   {
-    id: 'montee', famille: 'boucles', titre: 'La montée en boucle', duree: '3 min',
+    id: 'montee', famille: 'boucles', titre: 'La montée en boucle', duree: '3 min', musique: 'luxury',
     resume: 'Une boucle qui raccourcit (8, 4, 2, 1 temps) fait monter la tension avant le drop.',
     vue: [72, 144], etat: 118,
     versions: {
-      bon: { A: tuA({ evts: TU_MONTEE_A, niv: tuCoupe(128) }), B: tuB(TU_MONTEE_B) },
-      vite: { A: tuA({ evts: [[96, 'in'], [104, 'out'], [106, 'moitie'], [108, 'moitie'], [109, 'moitie'], [110, 'moitie']], niv: tuCoupe(128) }), B: tuB(TU_MONTEE_B), alerte: [110, '↑ trop vite : la boucle bégaie 18 temps'] }
+      bon: { A: tuLux({ evts: TU_MONTEE_A, niv: tuCoupe(128) }), B: tuDiva(TU_MONTEE_B) },
+      vite: { A: tuLux({ evts: [[96, 'in'], [104, 'out'], [106, 'moitie'], [108, 'moitie'], [109, 'moitie'], [110, 'moitie']], niv: tuCoupe(128) }), B: tuDiva(TU_MONTEE_B), alerte: [110, '↑ trop vite : la boucle bégaie 18 temps'] }
     },
     plans: [
       { ch: 0, dit: "Écoute d'abord la montée en entier. Je t'explique juste après." },
@@ -119,13 +133,13 @@ const TUTOS = [
     retenir: ['Une boucle de **8 temps** au début de la dernière phrase de A.', '**½X tous les deux tours** : 8, 4, 2, 1, un demi.', 'Le drop de B **pile sur le 1** de la phrase suivante.']
   },
   {
-    id: 'secours', famille: 'boucles', titre: 'La boucle de secours', duree: '3 min',
+    id: 'secours', famille: 'boucles', titre: 'La boucle de secours', duree: '3 min', musique: 'luxury',
     resume: 'B est parti en retard ? Une boucle de 4 temps sur A rattrape tout.',
-    vue: [56, 152], etat: 116,
+    vue: [72, 152], etat: 116,
     versions: {
-      bon: { A: tuA({ fin: 128, evts: [[124, 'in'], [128, 'out']], niv: tuCoupe(136) }), B: tuB(TU_SECOURS_B) },
-      sans: { A: tuA({ fin: 128, niv: tuCoupe(136) }), B: tuB(TU_SECOURS_B), alerte: [128, '↑ le trou : 8 temps sans A avant le drop'] },
-      deborde: { A: tuA({ fin: 128, evts: [[126, 'in'], [130, 'out']], niv: tuCoupe(136) }), B: tuB(TU_SECOURS_B), alerte: [130, '↑ la boucle déborde après la fin de A : un trou à chaque tour'] }
+      bon: { A: tuLux({ fin: 128, evts: [[124, 'in'], [128, 'out']], niv: tuCoupe(136) }), B: tuDiva(TU_SECOURS_B) },
+      sans: { A: tuLux({ fin: 128, niv: tuCoupe(136) }), B: tuDiva(TU_SECOURS_B), alerte: [128, '↑ le trou : 8 temps sans A avant le drop'] },
+      deborde: { A: tuLux({ fin: 128, evts: [[126, 'in'], [130, 'out']], niv: tuCoupe(136) }), B: tuDiva(TU_SECOURS_B), alerte: [130, '↑ la boucle déborde après la fin de A : un trou à chaque tour'] }
     },
     plans: [
       { ch: 0, dit: TU_ECOUTE },
@@ -133,7 +147,7 @@ const TUTOS = [
       { ch: 0, dit: "B était parti en retard, mais tu n'as rien entendu : A a répété sa dernière mesure, le temps que le drop de B arrive.", pose: { bras: 'pouce', yeux: 'clin' } },
       { ch: 1, dit: 'Tu as lancé B 8 temps trop tard ? Ça arrive à tout le monde. Son drop tombera 8 temps après la fin de A. Écoute :', seg: [112, 148, 'sans'], badge: 'rate' },
       { ch: 1, dit: "Tu entends le trou ? La boucle de secours gagne ces 8 temps, et personne ne s'en rend compte.", focus: 'boucle' },
-      { ch: 2, dit: "Oups : B part 8 temps après le début d'une phrase de A. Son drop arrivera en retard.", seg: [60, 80], revele: 60, cibles: ['playB'] },
+      { ch: 2, dit: "Oups : B part 8 temps après le début d'une phrase de A. Son drop arrivera en retard.", seg: [92, 112], revele: 92, cibles: ['playB'] },
       { ch: 2, dit: 'Sur la dernière mesure de A, 4 temps avant la fin, appuie sur IN.', seg: [116, 127], revele: 116, cibles: ['inA'] },
       { ch: 2, dit: 'Sur la fin de A, appuie sur OUT : A répète sa dernière mesure. Deux tours, et tu as gagné 8 temps.', seg: [122, 138], revele: 122, cibles: ['outA'] },
       { ch: 2, dit: "Au drop de B, baisse A d'un coup. Sauvé !", seg: [128, 148], revele: 128, cibles: ['faderA'] },
@@ -523,6 +537,7 @@ function tuOuvre(id){
   $('tuCatalogue').hidden = true; $('tuLecteur').hidden = false;
   const fam = TU_FAMILLES.find(f => f.id === t.famille), dans = TUTOS.filter(x => x.famille === t.famille);
   $('tuTitre').textContent = t.titre;
+  $('tuMusique').textContent = tuTypo('Musique : ' + TU_MUSIQUE[t.musique]);
   $('tuFam').textContent = `${fam.titre} · tuto ${dans.indexOf(t) + 1} sur ${dans.length}`;
   $('tuPro').textContent = t.gratuit ? 'GRATUIT' : 'PRO'; $('tuPro').classList.toggle('gratuit', !!t.gratuit);
   $('tuChaps').innerHTML = TU_CHAPITRES.map((c, k) => `<button type="button" data-c="${k}"><span class="tu-n">${k + 1}</span>${c}</button>`).join('');

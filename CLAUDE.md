@@ -1901,6 +1901,26 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     demandé de lancer la recherche de vrais morceaux : agent `chercheur-morceaux` lancé (house, deep house, tech house,
     afro house, 120 à 128 BPM, CC0 ou CC BY, pas NC ni ND, pas d'IA, structure pratique pour un DJ). Suite prévue : il
     écoute la liste et choisit, puis on remplace les extraits (tutos d'abord, puis « Vraie musique »).
+    **Résultat (7 nov.) : `marketing/morceaux-libres.md`** (hors Git, dossier principal). Pas d'afro house libre ;
+    le meilleur, ce sont les netlabels d'Internet Archive de 2009 à 2018 (Mehta chez Yarn Audio en CC BY 4.0, Sick Monkey
+    Records en CC0, Tranzmitter en CC BY 4.0) ; tempo jamais écrit, à mesurer. Liste envoyée à l'utilisateur, en attente
+    de son choix à l'oreille.
+  - **L'utilisateur a choisi lui-même 8 morceaux sur Pixabay** (copiés dans `audio-essai/pixabay/`, hors Git ; mesures
+    dans `marketing/morceaux-libres.md`) et accepté la licence Pixabay avec ses précautions (« oui et oui », 7 nov.) :
+    usage commercial sans crédit, mais pas de redistribution telle quelle ; ici, extraits coupés et au tempo changé, et
+    **il doit faire une capture datée de la page de chaque morceau** (et si possible écrire aux artistes). Deux paires de
+    tonalités compatibles : tutos 1 et 2 sur « Deep House » (alexrockbeat, 128 BPM, fa majeur) et « Deep House
+    Instrumental » (arnaud136, 125, ré mineur, 64 temps d'intro sans basse) ; tutos 3 et 4 sur « Luxury Life » (122) et
+    « Fashion Diva House » (120, 32 temps d'intro : B part 32 temps plus tard), kulakovka, la mineur.
+    **`tests/tutos-morceaux.js`** fabrique `musique/tuto-deep-a.mp3`, `tuto-instru-b.mp3`, `tuto-luxury-a.mp3`,
+    `tuto-diva-b.mp3` : 124 BPM **sans changer la hauteur** (ffmpeg, filtre `rubberband` ; le vieux `asetrate` de « Vraie
+    musique » change la hauteur et deux morceaux de même tonalité sonneraient faux), retard du filtre mesuré sur des clics
+    (moins de 2 ms), volume commun (−18,7 dB efficaces) plafonné à −2 dB en crête. **Calage** : la mesure temps par temps
+    de la grosse caisse est trop bruitée sur ces morceaux chargés (basses, charleys, petits coups avant le temps) ; on
+    empile les graves de tous les temps et on cale le pic (convention : 12 ms après le temps). Trois extraits à 0,3 ms
+    près ; « Fashion Diva » moins net (± 35 ms), sans conséquence (pas de grosse caisse dans son intro, A coupé à son drop).
+    Crédit affiché sous le titre du tuto (`TU_MUSIQUE`, `#tuMusique`). 18 tests. **À faire écouter à l'utilisateur.**
+    Plus tard : remplacer aussi Play House dans « Vraie musique » (niveaux) et dans les vidéos de `marketing/`.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
