@@ -190,7 +190,14 @@ test.describe('Tutos : le lecteur', () => {
     await expect(page.locator('[data-tu="attend"] .tu-etiq')).toHaveText('Vu');
     // Vini conseille le premier tuto pas encore vu, dans l'ordre du catalogue (lot 58 : les gestes de base d'abord)
     await expect(page.locator('#tutosTip')).toContainText('Le fondu au fader');
-    // le dernier tuto de la famille ne propose pas de suivant
+    // d'une famille à l'autre, dans l'ordre du catalogue : après « Le filtre qui ouvre », « La boucle qui attend » (gardien du lot 58)
+    await lancer(page, 'filtre');
+    await page.locator('#tuChaps button[data-c="4"]').click();
+    await expect(page.locator('#tuSuivant')).toContainText('La boucle qui attend');
+    await page.locator('#tuSuivant').click();
+    await page.waitForFunction(() => tu.phase !== 'charge' && tu.t.id === 'attend', null, { timeout: 30000 });
+    await page.locator('#tuRetour').click();
+    // le dernier tuto du catalogue ne propose pas de suivant
     await lancer(page, 'secours');
     await page.locator('#tuChaps button[data-c="4"]').click();
     await expect(page.locator('#tuSuivant')).toBeHidden();

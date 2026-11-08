@@ -2047,8 +2047,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - Tests (`tests/tutos.spec.js`) : catalogue à 11 cartes, les onze tutos jusqu'au bout, « jamais deux basses ensemble » à
     partir du drop de B dans chaque bonne version (et bien deux basses dans les versions ratées du swap et des 3 bandes),
     commandes allumées, table et piste qui suivent, son branché pour chaque nouveau tuto.
-  - Captures : `captures/lot58/` (dossier principal, hors Git), par un script de la session. 22 tests des tutos et 29 du site
-    verts sur la copie (8 nov.) ; suite complète et gardien : pas encore.
+  - Captures : `captures/lot58/` (dossier principal, hors Git), par un script de la session.
+  - **Gardien (8 nov.) : feu orange, aucun blocage**, 670 tests verts (20,6 min). Corrigé avant la mise en ligne : « Tuto
+    suivant » affichait l'ordre du catalogue mais le clic suivait l'ancien ordre (fin du « Filtre qui ouvre » : bouton sans
+    effet ; test ajouté) ; textes de Vini recalés sur le son (écho 3 mesures trop tôt et non 4 ; fondu : B monte en 24 temps,
+    pas sur une phrase entière ; filtre ouvert « sans attendre la fin de la phrase ») ; coupure sèche : B n'est plus au
+    casque pendant la dernière phrase (le trou d'une coupure trop tôt était adouci) ; écho out et réverbe : une étape « Lance
+    B au casque » qu'on voit et qu'on entend (piste élargie) ; la réverbe n'est fabriquée que si la version s'en sert ;
+    README (cinq morceaux servent aux tutos). **Laissé, à écouter ou à faire plus tard** : l'intro de « House - July » a des
+    coups environ 22 ms avant la grille, sous la fin de « Luxury Life » (temps 96 à 128 des tutos d'effets, et sous
+    « Filter House » au mélange 3 des niveaux) ; `tuto-diva-b.mp3` (tutos 3 et 4 des boucles) toujours 90 ms trop tôt ; sur
+    téléphone, la barre du lecteur dépasse de 21 px sur « L'écho out » et la table dessinée est minuscule (noms des potards
+    illisibles) ; le libellé « · filtré » est coupé sur « House - July ».
   - **Jamais écouté par un humain**, ni vu par l'utilisateur. À lui faire regarder et écouter avant toute publication. Pour
     essayer : dans la copie, `DJ_PORT=8772 node tests/serveur.js`, puis http://localhost:8772/index.html?tutos=1#tutos.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·

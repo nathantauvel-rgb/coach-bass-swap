@@ -12,7 +12,7 @@ Le site est rangé en trois onglets :
 
 Les morceaux d'entraînement sont produits dans le navigateur (moteur de production maison : grosse caisse, charleys métalliques, réverb, sidechain, accords, mélodies, montées, plusieurs variantes par style), calculés en tâche de fond.
 
-Dans les leçons, le choix « Vraie musique » fait jouer de courts extraits de vrais morceaux à la place : « Deep House » (alexrockbeat), « Deep House Instrumental » (arnaud136), « Ambient House », « Luxury Life » et « Fashion Diva House » (Kulakovka), « Filter House » (Aurec) et « House - July » (Easy_Eva), trouvés sur [Pixabay](https://pixabay.com/music/) (licence Pixabay). Quatre d’entre eux servent aussi aux tutos. Les extraits du dossier `musique/` sont coupés pile sur un temps et ramenés à 124 BPM sans changer leur hauteur par `tests/musique-pixabay.js`.
+Dans les leçons, le choix « Vraie musique » fait jouer de courts extraits de vrais morceaux à la place : « Deep House » (alexrockbeat), « Deep House Instrumental » (arnaud136), « Ambient House », « Luxury Life » et « Fashion Diva House » (Kulakovka), « Filter House » (Aurec) et « House - July » (Easy_Eva), trouvés sur [Pixabay](https://pixabay.com/music/) (licence Pixabay). Cinq d’entre eux servent aussi aux tutos. Les extraits du dossier `musique/` sont coupés pile sur un temps et ramenés à 124 BPM sans changer leur hauteur par `tests/musique-pixabay.js`.
 
 Un compte n'est pas obligatoire : sans lui, la progression reste dans le navigateur. Avec un compte (adresse e-mail ou Google), les étoiles, les XP, les badges et les quêtes suivent le joueur d'un appareil à l'autre.
 

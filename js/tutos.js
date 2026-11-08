@@ -69,7 +69,7 @@ const TU_SWAP_A = { eq: { low: [[0, 1], [96, 1], [96.02, 0]] }, marques: [[96, '
 const TU_SWAP_B = { niv: [[0, 0], [64, 0], [80, 1]], casque: [[32, 64]], eq: { low: [[0, 0], [96, 0], [96.02, 1]] }, marques: [[96, 'LOW ↑']] };
 const TU_BANDES_A = { eq: { hi: [[0, 1], [96, 1], [96.02, 0]], mid: [[0, 1], [104, 1], [104.02, 0]], low: [[0, 1], [112, 1], [112.02, 0]] }, marques: [[96, 'HI ↓'], [104, 'MID ↓'], [112, 'LOW ↓']] };
 const TU_BANDES_B = { niv: [[0, 0], [72, 0], [88, 1]], casque: [[32, 72]], eq: { hi: [[0, 0], [96, 0], [96.02, 1]], mid: [[0, 0], [104, 0], [104.02, 1]], low: [[0, 0], [112, 0], [112.02, 1]] }, marques: [[96, 'HI ↑'], [104, 'MID ↑'], [112, 'LOW ↑']] };
-const TU_COUPE_B = { debut: 64, niv: [[0, 0], [128, 0], [128.06, 1]], casque: [[64, 128]], marques: [[128, 'FADER ↑']] };
+const TU_COUPE_B = { debut: 64, niv: [[0, 0], [128, 0], [128.06, 1]], casque: [[64, 104]], marques: [[128, 'FADER ↑']] };   // casque fini avant la dernière phrase : le trou d'une coupure trop tôt s'entend
 const TU_EFFET_B = { debut: 64, niv: [[0, 0], [96, 0], [112, .8], [128, .8], [128.06, 1]], casque: [[64, 96]], marques: [[96, 'FADER ↑']] };
 const TU_ECHO_A = { fx: [[124, 136, 'echo']], marques: [[124, 'ÉCHO'], [128, 'FADER ↓']] };
 const TU_REVERBE_A = { fx: [[120, 140, 'reverb']], marques: [[120, 'RÉVERBE'], [128, 'FADER ↓']] };
@@ -196,17 +196,17 @@ const TUTOS = [
       { ch: 0, dit: "Écoute… et suis le trait blanc sur la piste : c'est là où on en est.", seg: [88, 144] },
       { ch: 0, dit: "Tu as entendu ? B est monté tout doucement pendant la fin de A, et on n'a pas entendu la couture. C'est le fondu au fader.", pose: { bras: 'pouce', yeux: 'clin' } },
       { ch: 1, dit: "C'est la transition la plus simple : un morceau monte pendant que l'autre descend, juste avec les faders." },
-      { ch: 1, dit: "Le secret : B monte pendant une phrase entière de A, et son drop tombe pile quand A s'arrête.", focus: 'phrases', note: '1 phrase = 32 temps = 8 mesures de 4 temps' },
+      { ch: 1, dit: "Le secret : B monte doucement pendant la dernière phrase de A, et son drop tombe pile quand A s'arrête.", focus: 'phrases', note: '1 phrase = 32 temps = 8 mesures de 4 temps' },
       { ch: 2, dit: "Lance B au casque, au début de l'avant-dernière phrase de A.", seg: [56, 72], revele: 64, cibles: ['playB', 'casqueB'] },
       { ch: 2, dit: 'Au début de la dernière phrase de A, monte le fader de B, tout doucement : en 24 temps.', seg: [92, 122], revele: 92, cibles: ['faderB'] },
       { ch: 2, dit: 'Sur les 8 derniers temps, baisse A. Le drop de B tombe pile quand A disparaît.', seg: [116, 140], revele: 116, cibles: ['faderA'] },
       { ch: 3, etape: 'Erreur n° 1', dit: "Tu montes B d'un coup. Écoute le début de la phrase :", seg: [88, 112, 'vite'], badge: 'rate', pose: { sueur: true } },
-      { ch: 3, etape: 'Erreur n° 1', dit: "Ça saute : tout le monde l'a entendu. Prends une phrase entière. La bonne :", seg: [88, 112], badge: 'ok' },
+      { ch: 3, etape: 'Erreur n° 1', dit: "Ça saute : tout le monde l'a entendu. Monte-le doucement, sur 24 temps. La bonne :", seg: [88, 112], badge: 'ok' },
       { ch: 3, etape: 'Erreur n° 2', dit: 'Tu baisses A trop tôt. Écoute la fin de la phrase :', seg: [96, 132, 'tot'], badge: 'rate', pose: { sueur: true } },
       { ch: 3, etape: 'Erreur n° 2', dit: "Il ne reste que la montée de B, toute maigre. Garde A jusqu'au drop de B. La bonne :", seg: [96, 132], badge: 'ok' },
       { ch: 4, dit: 'Bravo, tu connais le fondu au fader ! Garde ces trois lignes en tête.', fin: true }
     ],
-    retenir: ["B monte pendant **une phrase entière** de A, pas d'un coup.", '**A descend sur les 8 derniers temps**, pas avant.', 'Le **drop de B** tombe pile quand A disparaît.']
+    retenir: ["B monte **doucement**, pendant la dernière phrase de A : pas d'un coup.", '**A descend sur les 8 derniers temps**, pas avant.', 'Le **drop de B** tombe pile quand A disparaît.']
   },
   {
     id: 'swap', famille: 'volume', titre: 'Le swap des basses', duree: '3 min', musique: 'deep',
@@ -290,7 +290,7 @@ const TUTOS = [
   {
     id: 'echo', famille: 'effets', titre: "L'écho out", gratuit: true, duree: '3 min', musique: 'july',
     resume: 'La dernière mesure de A rebondit en échos, pendant que le drop de B arrive dessous.',
-    vue: [88, 144], etat: 126,
+    vue: [56, 144], etat: 126,
     versions: {
       bon: { A: tuLux(TU_ECHO_A), B: tuJuly(TU_EFFET_B) },
       sec: { A: tuLux({ marques: [[128, 'FADER ↓']] }), B: tuJuly(TU_EFFET_B), alerte: [128, "↑ A s'arrête net"] },
@@ -302,13 +302,14 @@ const TUTOS = [
       { ch: 0, dit: "Tu as entendu ? A ne s'est pas arrêté net : sa dernière mesure a rebondi en échos, et le drop de B est arrivé dessous. C'est l'écho out.", pose: { bras: 'pouce', yeux: 'clin' } },
       { ch: 1, dit: "L'écho répète le son, de plus en plus bas, comme dans la montagne. Il continue même quand le fader de A est en bas." },
       { ch: 1, dit: "L'écho out fait partir A en douceur, surtout quand B arrive avec un gros drop.", focus: 'phrases', note: "Sur la table : l'effet ECHO du BEAT FX, réglé sur 3/4 de temps" },
-      { ch: 2, dit: 'Lance B au casque, 64 temps avant la fin de A, et monte doucement son fader pendant la dernière phrase.', seg: [92, 116], revele: 92, cibles: ['playB', 'faderB'] },
+      { ch: 2, dit: 'Lance B au casque, 64 temps avant la fin de A : son drop tombera pile à la fin.', seg: [60, 72], revele: 64, cibles: ['playB', 'casqueB'] },
+      { ch: 2, dit: 'Au début de la dernière phrase de A, monte doucement le fader de B.', seg: [92, 116], revele: 92, cibles: ['faderB'] },
       { ch: 2, dit: "Sur la dernière mesure de A, allume l'écho : les 4 derniers temps rebondissent.", seg: [116, 128], revele: 116, cibles: ['echo'] },
       { ch: 2, dit: "Sur le 1, baisse A d'un coup. Laisse l'écho allumé : il continue tout seul, sous le drop de B.", seg: [120, 140], revele: 120, cibles: ['faderA'] },
       { ch: 2, dit: 'Quand les échos se sont éteints, tu peux éteindre l’effet.', revele: 140, cibles: ['echo'] },
       { ch: 3, etape: 'Erreur n° 1', dit: "Sans écho, A s'arrête net. Écoute :", seg: [116, 136, 'sec'], badge: 'rate', pose: { sueur: true } },
       { ch: 3, etape: 'Erreur n° 1', dit: "Ça coupe, c'est sec. Avec l'écho :", seg: [116, 136], badge: 'ok' },
-      { ch: 3, etape: 'Erreur n° 2', dit: "Tu allumes l'écho 4 mesures trop tôt. Écoute :", seg: [104, 136, 'tot'], badge: 'rate', pose: { sueur: true } },
+      { ch: 3, etape: 'Erreur n° 2', dit: "Tu allumes l'écho 3 mesures trop tôt. Écoute :", seg: [104, 136, 'tot'], badge: 'rate', pose: { sueur: true } },
       { ch: 3, etape: 'Erreur n° 2', dit: 'A se noie dans ses répétitions avant même la fin : c’est brouillon. Une seule mesure suffit. La bonne :', seg: [104, 136], badge: 'ok' },
       { ch: 4, dit: "Bravo, tu connais l'écho out !", fin: true }
     ],
@@ -317,7 +318,7 @@ const TUTOS = [
   {
     id: 'reverbe', famille: 'effets', titre: 'La sortie dans la réverbe', duree: '3 min', musique: 'july',
     resume: 'A s’envole dans un nuage de réverbe, et le drop de B arrive pendant qu’il s’éteint.',
-    vue: [88, 144], etat: 126,
+    vue: [56, 144], etat: 126,
     versions: {
       bon: { A: tuLux(TU_REVERBE_A), B: tuJuly(TU_EFFET_B) },
       eteint: { A: tuLux(Object.assign({}, TU_REVERBE_A, { fx: [[120, 128, 'reverb']], marques: [[120, 'RÉVERBE'], [128, 'FADER ↓'], [128, 'RÉVERBE off']] })), B: tuJuly(TU_EFFET_B), alerte: [128, "↑ la réverbe s'est coupée avec A"] },
@@ -329,7 +330,8 @@ const TUTOS = [
       { ch: 0, dit: "Tu as entendu ? A s'est envolé dans un nuage, comme dans une immense salle, pendant que B arrivait. C'est la sortie dans la réverbe.", pose: { bras: 'pouce', yeux: 'clin' } },
       { ch: 1, dit: "La réverbe, c'est le son d'une grande salle : il ne se répète pas comme l'écho, il s'étale et s'éteint doucement." },
       { ch: 1, dit: 'Elle fait disparaître A dans un souffle : parfait quand B commence par un gros drop.', note: "Sur la table : l'effet REVERB du BEAT FX" },
-      { ch: 2, dit: 'Lance B au casque, et monte doucement son fader pendant la dernière phrase de A.', seg: [92, 116], revele: 92, cibles: ['playB', 'faderB'] },
+      { ch: 2, dit: 'Lance B au casque, 64 temps avant la fin de A : son drop tombera pile à la fin.', seg: [60, 72], revele: 64, cibles: ['playB', 'casqueB'] },
+      { ch: 2, dit: 'Au début de la dernière phrase de A, monte doucement le fader de B.', seg: [92, 116], revele: 92, cibles: ['faderB'] },
       { ch: 2, dit: '2 mesures avant la fin de A, allume la réverbe.', seg: [112, 128], revele: 112, cibles: ['reverb'] },
       { ch: 2, dit: 'Sur le 1, baisse A. La réverbe continue de résonner : laisse-la allumée !', seg: [120, 142], revele: 120, cibles: ['faderA'] },
       { ch: 3, etape: 'Erreur n° 1', dit: 'Tu éteins la réverbe en même temps que tu baisses A. Écoute :', seg: [116, 138, 'eteint'], badge: 'rate', pose: { sueur: true } },
@@ -358,7 +360,7 @@ const TUTOS = [
       { ch: 2, dit: "Au début de la dernière phrase de A, monte le fader de B : on n'entend que ses aigus.", seg: [92, 108], revele: 92, cibles: ['faderB'] },
       { ch: 2, dit: 'Pendant toute la phrase, ramène doucement le filtre de B vers le milieu.', seg: [100, 124], revele: 100, cibles: ['filtreB'] },
       { ch: 2, dit: 'Sur les 16 derniers temps, tourne le filtre de A vers la gauche : il s’assourdit. Sur le 1, baisse-le.', seg: [110, 140], revele: 110, cibles: ['filtreA', 'faderA'] },
-      { ch: 3, etape: "L'erreur", dit: "Tu ouvres le filtre de B d'un coup, au milieu de la phrase. Écoute :", seg: [96, 124, 'coup'], badge: 'rate', pose: { sueur: true } },
+      { ch: 3, etape: "L'erreur", dit: "Tu ouvres le filtre de B d'un coup, sans attendre la fin de la phrase. Écoute :", seg: [96, 124, 'coup'], badge: 'rate', pose: { sueur: true } },
       { ch: 3, etape: "L'erreur", dit: 'B débarque en entier, trop tôt, et se bat avec A. Tourne doucement, sur toute la phrase. La bonne :', seg: [96, 124], badge: 'ok' },
       { ch: 4, dit: 'Bravo, tu sais faire entrer un morceau au filtre !', fin: true }
     ],
@@ -481,9 +483,11 @@ function tuSonJoue([de, a, vNom = 'bon']){
   const v = tu.t.versions[vNom], t0 = ac.currentTime + .1, T = x => t0 + (x - de) * TU_BEAT, nd = n => (tu.noeuds.push(n), n);
   tu.son = { de, a, v: vNom, t0, tFin: t0 + (a - de) * TU_BEAT };
   // les effets, partagés par les deux platines (un seul est allumé à la fois, comme le BEAT FX de la table)
-  const delay = nd(ac.createDelay(4)), fb = nd(ac.createGain()), echoSort = nd(ac.createGain()), rev = nd(tuReverbe()), revSort = nd(ac.createGain());
+  // la réverbe (une convolution de 3,2 s) n'est fabriquée que si la version s'en sert : sur un téléphone lent, elle coûte
+  const avecRev = [v.A, v.B].some(s => s.fx.some(f => f[2] === 'reverb'));
+  const delay = nd(ac.createDelay(4)), fb = nd(ac.createGain()), echoSort = nd(ac.createGain()), rev = avecRev ? nd(tuReverbe()) : null, revSort = nd(ac.createGain());
   delay.delayTime.value = TU_BEAT * .75; fb.gain.value = .58; echoSort.gain.value = .85; revSort.gain.value = 1;
-  delay.connect(fb); fb.connect(delay); delay.connect(echoSort); echoSort.connect(tu.sortie); rev.connect(revSort); revSort.connect(tu.sortie);
+  delay.connect(fb); fb.connect(delay); delay.connect(echoSort); echoSort.connect(tu.sortie); if (rev){ rev.connect(revSort); revSort.connect(tu.sortie); }
   const fxOn = (type, x) => tuFx(v.A, type, x) || tuFx(v.B, type, x);
   // une valeur par seizième de temps ; une commande qui ne bouge pas pendant le passage ne reçoit qu'une valeur
   const pas = (param, f) => {
@@ -498,7 +502,7 @@ function tuSonJoue([de, a, vNom = 'bon']){
     lo.type = 'lowshelf'; lo.frequency.value = 200; mi.type = 'peaking'; mi.frequency.value = 1000; mi.Q.value = .8; hi.type = 'highshelf'; hi.frequency.value = 3200;
     hp.type = 'highpass'; lp.type = 'lowpass'; hp.Q.value = .9; lp.Q.value = .9;
     g.connect(lo); lo.connect(mi); mi.connect(hi); hi.connect(hp); hp.connect(lp); lp.connect(tu.sortie);
-    lp.connect(envE); envE.connect(delay); lp.connect(envR); envR.connect(rev);
+    lp.connect(envE); envE.connect(delay); if (rev){ lp.connect(envR); envR.connect(rev); }
     // chaque saut de la boucle est un nouveau départ, au temps près, avec un fondu de 3 ms pour ne pas claquer
     for (const p of tuJoue(s, de, a).pieces){
       const src = ac.createBufferSource(), e = nd(ac.createGain()), t = T(p.x0), d = (p.x1 - p.x0) * TU_BEAT;
@@ -897,7 +901,7 @@ $('tuRejoue').addEventListener('click', () => {
   tuAller(k, { direct: true });
 });
 $('tuRevoir').addEventListener('click', () => tuAller(0));
-$('tuSuivant').addEventListener('click', () => { const k = TUTOS.indexOf(tu.t); if (TUTOS[k + 1]) tuOuvre(TUTOS[k + 1].id); });
+$('tuSuivant').addEventListener('click', () => { const ordre = tuDansLOrdre(), apres = ordre[ordre.indexOf(tu.t) + 1]; if (apres) tuOuvre(apres.id); });   // l'ordre du catalogue (gardien du lot 58)
 document.addEventListener('keydown', e => {
   if (tu.phase === 'ferme' || tu.phase === 'charge' || $('tuLecteur').hidden) return;
   if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target.closest('button')) return;
