@@ -49,11 +49,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   l'utilisateur ; gardien : feu orange sans blocage, 666 tests verts) : « Dj » de Play House remplacé partout par les
   morceaux Pixabay. Production vérifiée (Umami bloqué) : « « Deep House » puis « Ambient House » · Pixabay », les extraits
   servis, `dj-a.mp3` en 404, aucune erreur. Aperçus à écouter dans `audio-essai\apercus\` de la copie `coach-dj-lot56`.
-  **Lot 58 « Tutos : le volume et les effets » fait le 8 nov. 2026, NON PUBLIÉ** (branche `lot-58-tutos-effets`, copie
+  **Lot 58 « Tutos : le volume et les effets » PUBLIÉ le 8 nov. 2026, onglet toujours caché** (« publie 58 » ; commit
+  `ae938f6` ; production vérifiée : rien de neuf pour un joueur, 11 tutos avec `?tutos=1`, aucune erreur) (branche `lot-58-tutos-effets`, copie
   `Documents\coach-dj-lot58`) : 7 tutos de plus, moteur avec potards, filtre, écho et réverbe. Voir l'entrée « Lot 58 ».
-  Gardien orange sans blocage, remarques corrigées (commit `061b5e4`). **Pas publié : à « publie le lot 58 ? », l'utilisateur
-  a répondu « Non, » puis a parlé de sa micro-entreprise (le « Non » répondait peut-être à la question de la TVA)** : ne
-  pas pousser sans un « publie » clair. Le site du lot 58 tourne en local sur le port 8772.
+  Gardien orange sans blocage, remarques corrigées (commit `061b5e4`). Son « Non » répondait à la question de la TVA (il n'a jamais
+  facturé) ; puis « publie 58 ». Micro-entreprise ouverte sur le guichet unique de l'INPI, jamais utilisée : il vérifie
+  son SIRET et son état à l'URSSAF (détail dans `marketing/abonnement.md`). Lot 59 (Pro) : maquette faite
+  (`captures/maquette-pro/`, dossier principal), en attente de son avis et de ses informations légales. Le site du lot 58 tourne en local sur le port 8772.
   **Lot 56 PUBLIÉ le 8 nov. 2026, onglet « Tutos » toujours caché** (« ça sonne bien, tu peux la mettre en ligne » ;
   voir https://djingood.fr/?tutos=1#tutos) : branche `lot-56-tutos`, copie à part `Documents\coach-dj-lot56` (git
   worktree, `node_modules` relié par jonction ; tests : `DJ_PORT=8771 npx playwright test`). Voir l'entrée « Lot 56 » à la
