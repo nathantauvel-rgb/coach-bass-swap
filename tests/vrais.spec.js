@@ -104,8 +104,10 @@ test.describe('Les fichiers de musique', () => {
   test('chaque extrait cité existe, aucun fichier en trop, chacun pèse moins de 1,5 Mo', async ({ page }) => {
     await ouvrir(page);
     const cites = await page.evaluate(() => [...new Set(VRAIS.flatMap(v => Object.values(v)))].map(n => n + '.mp3').sort());
+    // Les extraits des tutos (lot 56) vivent dans le même dossier : ils sont cités par TU_PARTIES
+    const tutos = await page.evaluate(() => Object.keys(TU_PARTIES).map(n => n + '.mp3'));
     const dossier = path.join(__dirname, '..', 'musique'), presents = fs.readdirSync(dossier).filter(f => f.endsWith('.mp3')).sort();
-    expect(presents).toEqual(cites);
+    expect(presents).toEqual([...cites, ...tutos].sort());
     for (const f of presents) expect(fs.statSync(path.join(dossier, f)).size).toBeLessThan(1.5e6);
     expect(await page.evaluate(() => Object.keys(VRAIS_TITRES).sort())).toEqual(cites.map(f => f.replace('.mp3', '')));
   });
