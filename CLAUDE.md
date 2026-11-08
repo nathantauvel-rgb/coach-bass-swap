@@ -45,8 +45,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   chaque famille gratuit, conditions de vente, mentions légales), lancement visé début janvier (numéros décalés d'un cran
   le 8 nov. : le lot 57 est devenu le remplacement de Play House, voir l'entrée « Lot 57 »). Les tutos restent cachés
   sur le site en ligne jusqu'à son accord.
-  **Lot 57 « Nouvelle musique » fait le 8 nov. 2026, NON PUBLIÉ** (branche `lot-57-musique`, même copie) : « Dj » de Play
-  House remplacé partout par les morceaux Pixabay. Aperçus à écouter dans `audio-essai\apercus\` de la copie.
+  **Lot 57 « Nouvelle musique » PUBLIÉ le 8 nov. 2026** (commit `74602b7` sur `main`, « go enchaîne » puis « go » de
+  l'utilisateur ; gardien : feu orange sans blocage, 666 tests verts) : « Dj » de Play House remplacé partout par les
+  morceaux Pixabay. Production vérifiée (Umami bloqué) : « « Deep House » puis « Ambient House » · Pixabay », les extraits
+  servis, `dj-a.mp3` en 404, aucune erreur. Aperçus à écouter dans `audio-essai\apercus\` de la copie `coach-dj-lot56`.
   **Lot 58 « Tutos : le volume et les effets » fait le 8 nov. 2026, NON PUBLIÉ** (branche `lot-58-tutos-effets`, copie
   `Documents\coach-dj-lot58`) : 7 tutos de plus, moteur avec potards, filtre, écho et réverbe. Voir l'entrée « Lot 58 ».
   **Lot 56 PUBLIÉ le 8 nov. 2026, onglet « Tutos » toujours caché** (« ça sonne bien, tu peux la mettre en ligne » ;
@@ -1997,9 +1999,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - Captures datées (`marketing/licences/`, dossier principal) : les 7 morceaux utilisés sauf « House - July », dont il a
     capturé la page n° 605765 (2:35) alors que notre fichier est la version de 65 s, n° 605767. « Luxury Life » refaite au
     bon numéro (618587).
-  - **Pour reprendre** : 1. il écoute les aperçus 6 et 7 (mélange 3) ; 2. capture de la page de « House - July » 65 s
-    (n° 605767) ; 3. suite complète des tests et gardien ; 4. publication avec son accord ; 5. lot 58 (tutos Les effets,
-    Le volume et les basses), lot 59 (Pro, paiement).
+  - **Gardien (8 nov.) : feu orange, aucun blocage**, 666 tests verts (20,9 min) ; 18 parties jouées par un robot sur les
+    3 mélanges (chapitres 1 et 4), toutes à 3 étoiles ; un fichier qui manque ne fait passer que ce morceau à la house du
+    site. Remarques : le mélange 3 n'avait pas été écouté par l'utilisateur (il a dit « go » quand même) ; « Filter House »
+    (Content ID) est le A du mélange 3 : **pour filmer le jeu, forcer la house ou les mélanges 1 et 2** ; le README disait
+    que tous les morceaux servent aux tutos (corrigé : quatre) ; l'agent `chercheur-morceaux` ne cherche que du CC0 / CC BY
+    (il écarterait Pixabay ; pas modifié). Les sons du guide n'ont été écoutés par personne.
+  - **PUBLIÉ le 8 nov. 2026** (commit `74602b7`, avance rapide de `main`). **À faire par l'utilisateur** : écouter le
+    mélange 3 (aperçus 6 et 7) et les sons du guide (pages « Caler sans sync » et « Première transition ») ; capture de la
+    page de « House - July » 65 s (n° 605767) ; point 19 de la checklist FLX4 (la vraie musique au casque de la table).
+    Suite : lot 58 (tutos Le volume et les basses, Les effets), lot 59 (Pro, paiement).
     Plus tard : remplacer Play House dans les vidéos de `marketing/` et les maquettes de `captures/`.
 - **Lot 58 « Tutos : le volume et les effets » (8 nov. 2026)** : branche `lot-58-tutos-effets` (partie de `lot-57-musique`),
   copie à part `Documents\coach-dj-lot58` (git worktree, `node_modules` relié par jonction ; tests : `DJ_PORT=8772 npx playwright
