@@ -2023,9 +2023,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     table, éteindre l'effet coupe sa queue** (le BEAT FX) : c'est une erreur montrée dans « La sortie dans la réverbe ». Un
     graphe neuf à chaque passage (`tu.noeuds`, déconnectés par `tuSonStop`) : les queues d'avant s'arrêtent net. Une commande
     qui ne bouge pas pendant le passage ne reçoit qu'une valeur.
-  - **Table dessinée plus haute** (`viewBox` 960 × 300) : HI, MID, LOW et FILTRE sur chaque voie (aiguilles qui tournent,
-    `tuAiguille` ; le potard coupé ou filtré prend la couleur de sa platine, classes `coupe-a` / `coupe-b`), boutons ÉCHO et
-    RÉVERBE au milieu (allumés à la couleur de la platine). Les lettres A et B de la table de mixage ont la classe
+  - **Table dessinée refaite** (`viewBox` 960 × 320) : table de mixage plus large (328 au lieu de 248) ; HI, MID, LOW et
+    FILTRE sur chaque voie (aiguilles qui tournent, `tuAiguille` ; le potard coupé ou filtré prend la couleur de sa platine,
+    classes `coupe-a` / `coupe-b`), le BEAT FX (ÉCHO, RÉVERBE) à droite, comme sur la FLX4. Le curseur TEMPO des platines,
+    jamais utilisé dans un tuto, n'est plus dessiné (sur la première version, les potards faisaient quelques pixels : vu sur
+    capture). Deux repères proches sur la piste : « proche » dépend maintenant de la largeur de la piste (8,5 %). Les lettres A et B de la table de mixage ont la classe
     `tu-let-a` / `tu-let-b` (remarque du gardien du lot 56 : `tu-lb` servait aussi aux boutons du lecteur).
   - **Piste** : un morceau aux basses coupées est plus pâle et dit « · sans basses » (`maigre`), filtré il a un trait en
     pointillé en haut et dit « · filtré » ; après un effet, la queue (« écho… », « réverbe… ») est dessinée de la coupure du
@@ -2045,7 +2047,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - Tests (`tests/tutos.spec.js`) : catalogue à 11 cartes, les onze tutos jusqu'au bout, « jamais deux basses ensemble » à
     partir du drop de B dans chaque bonne version (et bien deux basses dans les versions ratées du swap et des 3 bandes),
     commandes allumées, table et piste qui suivent, son branché pour chaque nouveau tuto.
-  - **Jamais écouté par un humain**, ni vu par l'utilisateur. À lui faire regarder et écouter avant toute publication.
+  - Captures : `captures/lot58/` (dossier principal, hors Git), par un script de la session. 22 tests des tutos et 29 du site
+    verts sur la copie (8 nov.) ; suite complète et gardien : pas encore.
+  - **Jamais écouté par un humain**, ni vu par l'utilisateur. À lui faire regarder et écouter avant toute publication. Pour
+    essayer : dans la copie, `DJ_PORT=8772 node tests/serveur.js`, puis http://localhost:8772/index.html?tutos=1#tutos.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »

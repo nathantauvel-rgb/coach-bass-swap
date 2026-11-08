@@ -570,6 +570,7 @@ function tuVoie(k, s, revele){
 const TU_MARQUE = { in: 'IN', out: 'OUT', exit: 'EXIT', moitie: '½X' };
 function tuMarques(v, revele, pop){
   let h = '';
+  const proche = Math.max(3.5, (tu.X1 - tu.X0) * .085);   // une étiquette fait environ 8 % de la piste
   for (const k of ['A', 'B']){
     const s = v[k], liste = s.evts.map(([x, t]) => [x, TU_MARQUE[t]]).concat(s.marques.map(([x, t]) => [x, t]));
     if (s.debut > tu.X0) liste.push([s.debut, 'PLAY']);
@@ -577,7 +578,7 @@ function tuMarques(v, revele, pop){
     let der = -1e9, haut = false;
     for (const [x, t] of liste){
       if (x < tu.X0 || x > tu.X1 || x > revele + 1e-6) continue;
-      haut = x - der < 3.5 ? !haut : false; der = x;   // deux repères trop proches : le second monte d'un cran
+      haut = x - der < proche ? !haut : false; der = x;   // deux repères trop proches : le second monte d'un cran
       const cle = k + t + x, neuf = !tu.vues.has(cle); tu.vues.add(cle);
       h += `<span class="tu-mk tu-mk-${k.toLowerCase()}${haut ? ' haut' : ''}${neuf && pop ? ' pop' : ''}" style="left:${tuPc(x)}">${t}</span>`;
     }
@@ -603,27 +604,28 @@ function tuTableSvg(){
   const bouton = (c, x, y, w, txt) => `<g class="tu-c" data-c="${c}"><rect class="tu-cible" x="${x - 5}" y="${y - 5}" width="${w + 10}" height="34" rx="10"/><rect class="tu-forme" x="${x}" y="${y}" width="${w}" height="24" rx="6"/><text class="tu-lab" x="${x + w / 2}" y="${y + 13}">${txt}</text></g>`;
   const rond = (c, x, y, txt) => `<g class="tu-c" data-c="${c}"><circle class="tu-cible" cx="${x}" cy="${y}" r="25"/><circle class="tu-forme" cx="${x}" cy="${y}" r="19"/><text class="tu-lab" x="${x}" y="${y + 1}">${txt}</text></g>`;
   // un potard : son aiguille tourne (tuMajTable)
-  const potard = (c, x, y) => `<g class="tu-c" data-c="${c}"><circle class="tu-cible" cx="${x}" cy="${y}" r="17"/><circle class="tu-forme" cx="${x}" cy="${y}" r="11"/><g class="tu-aig"><line x1="${x}" y1="${y - 2}" x2="${x}" y2="${y - 10}"/></g></g>`;
-  const fader = (c, x) => `<g class="tu-c" data-c="${c}"><rect class="tu-cible" x="${x - 26}" y="206" width="52" height="86" rx="12"/><rect class="tu-rail" x="${x - 3}" y="214" width="6" height="70" rx="3"/><g class="tu-cap"><rect x="${x - 17}" y="-7" width="34" height="14" rx="3"/><line x1="${x - 12}" y1="0" x2="${x + 12}" y2="0"/></g></g>`;
-  const casque = (c, x) => `<g class="tu-c" data-c="${c}"><rect class="tu-cible" x="${x - 25}" y="171" width="50" height="30" rx="10"/><rect class="tu-forme" x="${x - 20}" y="176" width="40" height="20" rx="6"/><path class="tu-casque" d="M${x - 6} 190 v-2 a6 6 0 0 1 12 0 v2 M${x - 7} 188 v4 M${x + 7} 188 v4"/></g>`;
+  const potard = (c, x, y) => `<g class="tu-c" data-c="${c}"><circle class="tu-cible" cx="${x}" cy="${y}" r="20"/><circle class="tu-forme" cx="${x}" cy="${y}" r="14"/><g class="tu-aig"><line x1="${x}" y1="${y - 3}" x2="${x}" y2="${y - 13}"/></g></g>`;
+  const fader = (c, x) => `<g class="tu-c" data-c="${c}"><rect class="tu-cible" x="${x - 26}" y="230" width="52" height="82" rx="12"/><rect class="tu-rail" x="${x - 3}" y="238" width="6" height="64" rx="3"/><g class="tu-cap"><rect x="${x - 17}" y="-7" width="34" height="14" rx="3"/><line x1="${x - 12}" y1="0" x2="${x + 12}" y2="0"/></g></g>`;
+  const casque = (c, x) => `<g class="tu-c" data-c="${c}"><rect class="tu-cible" x="${x - 25}" y="199" width="50" height="30" rx="10"/><rect class="tu-forme" x="${x - 20}" y="204" width="40" height="20" rx="6"/><path class="tu-casque" d="M${x - 6} 218 v-2 a6 6 0 0 1 12 0 v2 M${x - 7} 216 v4 M${x + 7} 216 v4"/></g>`;
+  // une platine (le curseur TEMPO, jamais utilisé dans un tuto, n'est plus dessiné : sa place va à la table de mixage)
   const platine = (k, ox) => {
     let sillons = '';
     for (let r = 34; r <= 54; r += 7) sillons += `<circle class="tu-sillon" cx="172" cy="138" r="${r}"/>`;
-    return `<g transform="translate(${ox} 25)"><text class="tu-lettre tu-let-${k.toLowerCase()}" x="26" y="44">${k}</text><text class="tu-pet" x="186" y="20">LOOP</text>
+    return `<g transform="translate(${ox} 36)"><text class="tu-lettre tu-let-${k.toLowerCase()}" x="26" y="44">${k}</text><text class="tu-pet" x="186" y="20">LOOP</text>
   ${bouton('in' + k, 92, 28, 44, 'IN')}${bouton('out' + k, 140, 28, 44, 'OUT')}${bouton('exit' + k, 188, 28, 44, 'EXIT')}${bouton('moitie' + k, 236, 28, 44, '½X')}
   <g class="tu-c" data-c="jog${k}"><circle class="tu-jog" cx="172" cy="138" r="68"/><circle class="tu-anneau" cx="172" cy="138" r="62"/>${sillons}<circle class="tu-centre" cx="172" cy="138" r="22"/><g class="tu-rep"><line x1="172" y1="84" x2="172" y2="100"/></g></g>
-  <g class="tu-c tu-eteint"><text class="tu-pet" x="306" y="62">TEMPO</text><rect class="tu-rail" x="303" y="72" width="6" height="124" rx="3"/><rect class="tu-capt" x="293" y="128" width="26" height="12" rx="3"/></g>
   ${rond('cue' + k, 50, 214, 'CUE')}${rond('play' + k, 102, 214, '▶❙❙')}</g>`;
   };
-  // la table de mixage (lot 58) : HI, MID, LOW et FILTRE de chaque voie, les effets au milieu, le casque, les faders
-  const bandes = [['hi', 'HI', 62], ['mid', 'MID', 92], ['low', 'LOW', 122], ['filtre', 'FILTRE', 152]];
-  return `<svg viewBox="0 0 960 300" role="img" aria-label="La table DJ : platine A, table de mixage, platine B">
-<rect class="tu-corps-t" x="3" y="3" width="954" height="294" rx="26"/>${platine('A', 14)}
-<rect class="tu-zone" x="356" y="14" width="248" height="278" rx="16"/>
-<text class="tu-lettre tu-let-a" x="433" y="40" text-anchor="middle">A</text><text class="tu-lettre tu-let-b" x="527" y="40" text-anchor="middle">B</text>
-${bandes.map(([c, nom, y]) => `${potard(c + 'A', 433, y)}<text class="tu-pet" x="480" y="${y + 3}">${nom}</text>${potard(c + 'B', 527, y)}`).join('')}
-${bouton('echo', 453, 168, 54, 'ÉCHO')}${bouton('reverb', 449, 196, 62, 'RÉVERBE')}
-${casque('casqueA', 433)}${casque('casqueB', 527)}${fader('faderA', 433)}${fader('faderB', 527)}${platine('B', 606)}</svg>`;
+  // la table de mixage (lot 58) : HI, MID, LOW et FILTRE de chaque voie, le casque, les faders ; à droite le BEAT FX
+  // (ÉCHO, RÉVERBE), à sa place sur la DDJ-FLX4
+  const bandes = [['hi', 'HI', 66], ['mid', 'MID', 104], ['low', 'LOW', 142], ['filtre', 'FILTRE', 180]];
+  return `<svg viewBox="0 0 960 320" role="img" aria-label="La table DJ : platine A, table de mixage, platine B">
+<rect class="tu-corps-t" x="3" y="3" width="954" height="314" rx="26"/>${platine('A', 14)}
+<rect class="tu-zone" x="316" y="14" width="328" height="298" rx="16"/>
+<text class="tu-lettre tu-let-a" x="420" y="40" text-anchor="middle">A</text><text class="tu-lettre tu-let-b" x="530" y="40" text-anchor="middle">B</text>
+${bandes.map(([c, nom, y]) => `${potard(c + 'A', 420, y)}<text class="tu-pet tu-pet-m" x="475" y="${y + 4}">${nom}</text>${potard(c + 'B', 530, y)}`).join('')}
+<text class="tu-pet" x="600" y="62">BEAT FX</text>${bouton('echo', 568, 74, 64, 'ÉCHO')}${bouton('reverb', 568, 106, 64, 'RÉVERBE')}
+${casque('casqueA', 420)}${casque('casqueB', 530)}${fader('faderA', 420)}${fader('faderB', 530)}${platine('B', 652)}</svg>`;
 }
 // Les commandes dont ce tuto se sert ; les autres sont éteintes
 function tuCommandes(t){
@@ -657,7 +659,7 @@ function tuMajTable(x, vNom, live){
     for (const b of ['hi', 'mid', 'low']){ const u = tuEq(s, b, x); tuAiguille(b + k, -135 * (1 - u)); tuCl(b + k, 'coupe-' + l, u < .5); }
     const f = tuFiltre(s, x); tuAiguille('filtre' + k, 135 * f); tuCl('filtre' + k, 'coupe-' + l, Math.abs(f) > .15);
     const cap = tuCtl('fader' + k).querySelector('.tu-cap');
-    cap.setAttribute('transform', `translate(0 ${(284 - tuInterp(s.niv, x) * 70).toFixed(1)})`);
+    cap.setAttribute('transform', `translate(0 ${(302 - tuInterp(s.niv, x) * 64).toFixed(1)})`);
     if (joue) tu.angle[k] = e.b * TU_BEAT * 200;   // un disque à 33 tours ⅓ : 200 degrés par seconde
     tuCtl('jog' + k).querySelector('.tu-rep').setAttribute('transform', `rotate(${(tu.angle[k] % 360).toFixed(1)} 172 138)`);
   }

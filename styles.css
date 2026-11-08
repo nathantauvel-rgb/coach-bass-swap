@@ -2397,6 +2397,7 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .tu-c.on-a .tu-casque,.tu-c.on-b .tu-casque{stroke:var(--ink)}
 /* lot 58 : les potards (l'aiguille tourne) ; coupé ou filtré, le potard prend la couleur de sa platine */
 .tu-aig line{stroke:var(--fg);stroke-width:3;stroke-linecap:round}
+.tu-pet-m{font-size:11px;letter-spacing:.08em}   /* les noms des potards, au milieu de la table de mixage */
 .tu-c.coupe-a .tu-forme{stroke:var(--a);stroke-width:2.5} .tu-c.coupe-b .tu-forme{stroke:var(--b);stroke-width:2.5}
 /* « À retenir » */
 .tu-retenir{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:18px 22px;min-height:360px}
