@@ -6,9 +6,9 @@
 //   sans rien : tous les extraits ; « niv- » : seulement ceux des niveaux (les tutos, déjà publiés, ne bougent pas).
 //
 // Morceaux de Pixabay (licence Pixabay : usage commercial sans crédit, pas de redistribution telle quelle ; ici, extraits
-// coupés et au tempo changé), choisis à l'oreille par l'utilisateur les 7 et 8 nov. 2026, jamais un morceau marqué « AI
-// generated » sur sa page Pixabay (« House - July » et « Filter House » écartés pour ça le 8 nov.). Captures datées des pages
-// dans marketing/licences/ (hors Git). Tempo entier, mesuré ; le premier temps `t0` est affiné ici sur le coup de la grosse
+// coupés et au tempo changé), choisis à l'oreille par l'utilisateur les 7 et 8 nov. 2026, les morceaux marqués « AI
+// generated » sur sa page Pixabay compris : ce qui compte pour lui, c'est que le son soit beau (8 nov.). Captures
+// datées des pages dans marketing/licences/ (hors Git). Tempo mesuré (au centième quand il n'est pas rond) ; le premier temps `t0` est affiné ici sur le coup de la grosse
 // caisse, sur un passage `grosse` [premier temps, dernier temps] où elle est nette. Un extrait = [morceau, morceaux de grille
 // [premier temps, nombre de temps] mis bout à bout, passage où vérifier sa grille, en temps de l'extrait].
 const { execFileSync } = require('child_process'), fs = require('fs'), path = require('path');
@@ -19,6 +19,9 @@ const TRACKS = {
   luxury: { file: 'kulakovka-luxury-life-618587.mp3', bpm: 122, t0: .0849, grosse: [32, 160] },
   diva: { file: 'kulakovka-fashion-diva-house-614889.mp3', bpm: 120, t0: .1473, grosse: [32, 96] },
   ambient: { file: 'kulakovka-ambient-house-624653.mp3', bpm: 118, t0: .0998, grosse: [64, 180] },
+  // tempos pas ronds, mesurés au centième (netteté de la grosse caisse sur tout le passage utilisé)
+  filter: { file: 'aurec-filter-house-590524.mp3', bpm: 123.14, t0: .0775, grosse: [32, 168] },
+  july: { file: 'easy_eva-house-july_65sec-605767.mp3', bpm: 127.06, t0: .1042, grosse: [68, 100] },
   // le même morceau, calé sur la grosse caisse de son intro (elle commence 24 ms avant celle du drop : un autre son)
   instruIntro: { file: 'arnaud136-deep-house-instrumental-354596.mp3', bpm: 125, t0: .1981, grosse: [0, 64] }
 };
@@ -28,6 +31,9 @@ const TRACKS = {
 //   luxury  : 32-160, break 160-192, 192-256, puis l'outro
 //   diva    : intro 0-32, DROP à 32, 32-192, puis l'outro
 //   ambient : intro 0-64 (nappes, pas de grosse caisse nette), DROP à 64 (0:32), 64-192, creux 192-224, 224-…
+//   filter  : des basses partout (0-224), creux 224-272, 272-320, puis la fin
+//   july    : (la version de 65 s) une mesure presque muette, intro 4-64, une mesure sans rien, DROP à 68, 68-100, basse
+//             plus discrète 100-132, la fin
 // Tutos — A : la fin du morceau (break, la dernière partie avec basses, l'outro) ; B : 64 ou 32 temps sans basse, puis le drop.
 // Niveaux (js/vrais.js) — A : 136 temps avec des basses ; B0 : 64 temps sans basse puis le drop ; B1 : des basses dès le début.
 // Les raccords (deux morceaux de grille) tombent au début d'une phrase et sautent un break. Un 4e élément = un autre dossier.
@@ -42,6 +48,9 @@ const CUTS = {
   'niv-instru-b1': ['instru', [[192, 64], [192, 72]], [0, 136]],  // B1 : le drop de 1:32, joué deux fois (la dernière partie
                                                                   // du morceau a une grosse caisse qui tombe 20 ms plus tôt)
   'niv-diva-b1': ['diva', [[32, 136]], [0, 136]],                 // B1 : depuis le drop
+  'niv-filter-a': ['filter', [[32, 136]], [8, 136]],
+  'niv-july-b': ['july', [[4, 96], [68, 40]], [64, 136]],         // B0 : 64 temps d'intro, le drop au temps 64, puis le drop
+                                                                  // rejoué (le morceau ne dure que 65 s)
   // Pour les sons du guide seulement (tests/sons-guide.js), rangé hors de musique/ et jamais publié : la seule intro qui a
   // une grosse caisse nette sans basse (netteté 15, les autres moins de 2), la basse arrive au temps 64
   'guide-instru-intro': ['instruIntro', [[0, 80]], [0, 64], 'audio-essai/extraits']

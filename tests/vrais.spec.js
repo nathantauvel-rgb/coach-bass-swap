@@ -7,7 +7,7 @@ const { ouvrir, sansBandeau, jouer } = require('./outils');
 const S = o => JSON.stringify(o);
 const CH1_OK = S({ 0: 2, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 });
 const DUREE = 136 * 60 / 124;   // un extrait : 136 temps à 124 BPM
-const TITRES = /^« (Deep House|Luxury Life) » puis « (Ambient House|Deep House Instrumental|Fashion Diva House) » · Pixabay$/;
+const TITRES = /^« (Deep House|Luxury Life|Filter House) » puis « (Ambient House|Deep House Instrumental|Fashion Diva House|House - July) » · Pixabay$/;
 // Un « robot » qui fait exactement le geste idéal (comme dans combos.spec.js)
 const robot = page => page.evaluate(() => { const l = LESSONS[li];
   const tick = () => { if (!run) return; const b = beatNow();
