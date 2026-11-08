@@ -1958,19 +1958,23 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     Mélange 1 : A « Deep House » (alexrockbeat, fa majeur) · B0 « Ambient House » (Kulakovka, fa majeur, 64 temps de nappes
     puis le drop à 0:32) · B1 « Deep House Instrumental » (arnaud136, ré mineur, son drop de 1:32 joué deux fois). Mélange 2 :
     A « Luxury Life » (Kulakovka, la mineur) · B0 `tuto-instru-b` (le même fichier que les tutos : break puis drop de 1:32)
-    · B1 « Fashion Diva House » (Kulakovka, la mineur, depuis son drop). Étiquette : « « Deep House » puis « Ambient House »
-    · Pixabay ». Extraits `musique/niv-*.mp3` (5 × 1,05 Mo) ; les 5 extraits Play House (`dj-a`, `dj-b`, `animal-a`,
+    · B1 « Fashion Diva House » (Kulakovka, la mineur, depuis son drop). Mélange 3 (ajouté le soir même, commit `6933d69`) :
+    A « Filter House » (Aurec, la mineur, 123,14 BPM) · B0 « House - July » (Easy_Eva, la mineur, 127,06 BPM, la version de
+    65 s : intro de 64 temps, drop, puis le drop rejoué) · B1 « Fashion Diva House ». `VARIANTS` vaut 4 : le mélange 1 sort
+    deux fois plus souvent que les autres. Étiquette : « « Deep House » puis « Ambient House » · Pixabay ». Extraits
+    `musique/niv-*.mp3` (7 × 1,05 Mo) ; les 5 extraits Play House (`dj-a`, `dj-b`, `animal-a`,
     `animal-b`, `power-b`) et `tests/vrais-morceaux.js` sont supprimés.
   - **Premiers pas** (`js/premiers.js`, `PP_MUSIQUE`) : la musique derrière les questions de Vini devient `niv-deep-a`.
   - **Sons d'exemple du guide** (`guide/sons/`, `tests/sons-guide.js`) : phrase et calage sur l'intro de « Deep House
     Instrumental » (la seule intro avec une grosse caisse nette sans basse ; basse au temps 64, vérifiée dans le son
     « phrase » : pile au temps 32), deux basses et swap sur `niv-deep-a` + `niv-instru-b1`. Crédit des deux pages de guide,
     `presentation.html` (question « Avec quelle musique ? ») et `README.md` à jour.
-  - **Écartés parce que marqués « AI generated » sur leur page Pixabay** (vu sur les captures de l'utilisateur) : « House -
-    July » (Easy_Eva ; sa page est en plus le n° 605765 de 2:35, notre fichier le n° 605767 de 1:05) et « Filter House »
-    (Aurec, qui a en plus « Content ID Registered » : une vidéo qui l'utiliserait pourrait être bloquée). Aussi écartés :
-    « House Music » (Aurec, 100 BPM, trop lent) et « House » (PrettyJohn1, tonalité pas mesurable sûrement). **Règle : avant
-    d'utiliser un morceau Pixabay, regarder s'il porte la mention « AI generated ».**
+  - « House - July » et « Filter House » sont marqués « AI generated » sur leur page Pixabay. Je les avais d'abord écartés ;
+    **l'utilisateur l'a refusé** : « je m'en fiche que ce soit de l'IA, c'est juste que tu me fais des sons beaucoup trop
+    simples et moches ; si d'autres me plaisent en IA, c'est pas très grave ». Ce qu'il refuse, c'est le son pauvre (celui
+    que fabrique le site, « Dj »), pas l'IA. « Filter House » a aussi « Content ID Registered » : **ne pas le mettre dans
+    une vidéo TikTok** (elle pourrait être bloquée), sans souci sur le site. Écartés pour des raisons techniques : « House
+    Music » (Aurec, 100 BPM, trop lent) et « House » (PrettyJohn1, tonalité pas mesurable sûrement) ; à reprendre s'il les veut.
   - **Un seul programme** fabrique toute la musique : `tests/musique-pixabay.js` (ancien `tests/tutos-morceaux.js`, renommé ;
     `node tests/musique-pixabay.js niv-` ne refait que les niveaux, `guide-` l'intro du guide, rangée dans
     `audio-essai/extraits/`, jamais publiée). Un extrait peut être fait de plusieurs morceaux de grille raccordés au début
@@ -1984,13 +1988,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - Tests : `tests/vrais.spec.js` (titres, B1 différent de B0 dans chaque mélange, fichiers du dossier `musique/` sans
     doublon avec les tutos), `tests/premiers-anime.spec.js` (nom du fichier). 69 tests verts sur les fichiers touchés
     (vrais, premiers-anime, tutos, guide). Suite complète et gardien : pas encore.
-  - **Jamais écouté par un humain.** Aperçus fabriqués pour l'utilisateur (hors Git) :
-    `Documents\coach-dj-lot56\audio-essai\apercus\` (une transition par mélange, un swap par mélange, la musique des
-    Premiers pas), par un script de la session (pas dans le dépôt).
-  - **Pour reprendre** : 1. l'utilisateur écoute les aperçus et dit si les paires lui plaisent, et où il entend le drop
-    d'« Ambient House » (mesuré à 0:32) ; 2. sa capture datée de la bonne page de « Luxury Life » (n° 618587, 2:25 ; deux
-    fois il a envoyé la page n° 620531, de 2:44, un autre morceau du même nom) ; 3. suite complète des tests et gardien ;
-    4. publication avec son accord ; 5. lot 58 (tutos Les effets, Le volume et les basses), lot 59 (Pro, paiement).
+  - Aperçus fabriqués pour l'utilisateur (hors Git) : `Documents\coach-dj-lot56\audio-essai\apercus\` (une transition et un
+    swap par mélange, la musique des Premiers pas), par un script de la session (pas dans le dépôt). **Écoutés par
+    l'utilisateur le 8 nov. (mélanges 1 et 2) : « j'aime beaucoup, toutes les paires sont très bien ».** Le mélange 3
+    (aperçus 6 et 7) n'est pas encore écouté.
+  - Captures datées (`marketing/licences/`, dossier principal) : les 7 morceaux utilisés sauf « House - July », dont il a
+    capturé la page n° 605765 (2:35) alors que notre fichier est la version de 65 s, n° 605767. « Luxury Life » refaite au
+    bon numéro (618587).
+  - **Pour reprendre** : 1. il écoute les aperçus 6 et 7 (mélange 3) ; 2. capture de la page de « House - July » 65 s
+    (n° 605767) ; 3. suite complète des tests et gardien ; 4. publication avec son accord ; 5. lot 58 (tutos Les effets,
+    Le volume et les basses), lot 59 (Pro, paiement).
     Plus tard : remplacer Play House dans les vidéos de `marketing/` et les maquettes de `captures/`.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
