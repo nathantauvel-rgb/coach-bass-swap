@@ -1,31 +1,36 @@
-// Fabrique les sons d'exemple du guide du débutant (guide/sons/, publiés) à partir des extraits de musique/ (Play House, CC0).
-// Les extraits sont à 124 BPM et commencent pile sur un temps (voir tests/vrais-morceaux.js) : un temps = 60 / 124 s.
-// Usage : node tests/sons-guide.js        (il faut ffmpeg)
+// Fabrique les sons d'exemple du guide du débutant (guide/sons/, publiés) à partir des extraits de musique/ (morceaux de
+// Pixabay depuis le lot 57 ; Play House avant) et de audio-essai/extraits/guide-instru-intro.mp3 (hors Git).
+// Les extraits sont à 124 BPM et commencent pile sur un temps (voir tests/musique-pixabay.js, qui les fabrique tous) : un
+// temps = 60 / 124 s.
+// Usage : node tests/musique-pixabay.js guide- (une fois), puis node tests/sons-guide.js        (il faut ffmpeg)
 //
-// Repères mesurés le 28 oct. 2026 (énergie des graves mesure par mesure) : dans dj-b, la basse arrive au temps 64
-// (+12 dB dans les graves), au début d'une phrase ; les temps 0 à 63 n'ont que la grosse caisse et le reste du rythme.
+// Repères mesurés le 8 nov. 2026 (énergie des graves mesure par mesure) : dans guide-instru-intro (l'intro de « Deep House
+// Instrumental »), la basse arrive au temps 64, au début d'une phrase ; les temps 0 à 63 n'ont que la grosse caisse et le
+// reste du rythme. niv-deep-a (« Deep House ») et niv-instru-b1 (le drop de « Deep House Instrumental ») ont des basses
+// tout du long ; fa majeur et ré mineur : les deux vont ensemble.
 const { execFileSync } = require('child_process'), fs = require('fs'), path = require('path');
 const SRC = path.join(__dirname, '..', 'musique'), OUT = path.join(__dirname, '..', 'guide', 'sons'), P = 60 / 124, SR = 44100;
+const source = f => f.startsWith('guide-') ? path.join(__dirname, '..', 'audio-essai', 'extraits', f + '.mp3') : path.join(SRC, f + '.mp3');
 const TARGET_RMS = .17;   // même volume que la vraie musique du site
 const DECALE_MS = 60;     // « ba-boum » : un huitième de temps (le chapitre 5 décale de 40 à 90 ms)
 
 // Une piste = [extrait, premier temps, nombre de temps, options] ; un son = une ou deux pistes jouées ensemble.
 const SONS = {
   // la page « phrase » : une phrase entière (32 temps, la grille s'allume avec elle), puis 8 temps de la suivante
-  phrase: [['dj-b', 32, 40]],
+  phrase: [['guide-instru-intro', 32, 40]],
   // la page « caler » : A (avec ses basses) et l'intro de B (grosse caisse, sans basse), calés ou décalés
-  cale: [['animal-a', 0, 16], ['dj-b', 0, 16]],
-  decale: [['animal-a', 0, 16], ['dj-b', 0, 16, { retard: DECALE_MS }]],
+  cale: [['niv-deep-a', 0, 16], ['guide-instru-intro', 32, 16]],
+  decale: [['niv-deep-a', 0, 16], ['guide-instru-intro', 32, 16, { retard: DECALE_MS }]],
   // la page « première transition » : les deux basses ensemble, puis après le swap (LOW de A coupé)
-  'deux-basses': [['animal-a', 64, 16], ['dj-a', 64, 16]],
-  swap: [['animal-a', 64, 16, { basses: false }], ['dj-a', 64, 16]]
+  'deux-basses': [['niv-deep-a', 64, 16], ['niv-instru-b1', 64, 16]],
+  swap: [['niv-deep-a', 64, 16, { basses: false }], ['niv-instru-b1', 64, 16]]
 };
 
 fs.mkdirSync(OUT, { recursive: true });
 const tmp = fs.mkdtempSync(path.join(require('os').tmpdir(), 'sons-guide-'));
 for (const [nom, pistes] of Object.entries(SONS)){
   const duree = pistes[0][2] * P, wav = path.join(tmp, nom + '.wav');
-  const entrees = pistes.flatMap(([f]) => ['-i', path.join(SRC, f + '.mp3')]);
+  const entrees = pistes.flatMap(([f]) => ['-i', source(f)]);
   const chaines = pistes.map(([, debut, n, o = {}], i) => {
     let c = `[${i}:a]atrim=start=${(debut * P).toFixed(6)}:duration=${(n * P).toFixed(6)},asetpts=PTS-STARTPTS`;
     if (o.basses === false) c += ',lowshelf=g=-26:f=200,highpass=f=40';   // LOW tout à gauche, comme sur la table

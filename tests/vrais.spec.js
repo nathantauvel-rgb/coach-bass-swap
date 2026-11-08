@@ -1,4 +1,5 @@
-// Lot 25 : « Vraie musique », de vrais morceaux (Play House, CC0) à la place des morceaux fabriqués par le site.
+// Lot 25 : « Vraie musique », de vrais morceaux à la place des morceaux fabriqués par le site (Play House au départ,
+// des morceaux de Pixabay depuis le lot 57).
 const { test, expect } = require('@playwright/test');
 const fs = require('fs'), path = require('path');
 const { ouvrir, sansBandeau, jouer } = require('./outils');
@@ -6,7 +7,7 @@ const { ouvrir, sansBandeau, jouer } = require('./outils');
 const S = o => JSON.stringify(o);
 const CH1_OK = S({ 0: 2, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 });
 const DUREE = 136 * 60 / 124;   // un extrait : 136 temps à 124 BPM
-const TITRES = /^« (Dj|Like An Animal) » puis « (Dj|Like An Animal|The Power Of The Beat) » · Play House$/;
+const TITRES = /^« (Deep House|Luxury Life) » puis « (Ambient House|Deep House Instrumental|Fashion Diva House) » · Pixabay$/;
 // Un « robot » qui fait exactement le geste idéal (comme dans combos.spec.js)
 const robot = page => page.evaluate(() => { const l = LESSONS[li];
   const tick = () => { if (!run) return; const b = beatNow();
@@ -46,10 +47,14 @@ test.describe('Choisir la vraie musique', () => {
   });
   test('le niveau qui a des basses dans l\'intro de B prend un autre morceau B', async ({ page }) => {
     await ouvrir(page, { stockage: { 'coach-style': 'vrai' } });
-    await page.locator('.node').nth(5).click();
-    await expect(page.locator('#styleTag')).toHaveText(/puis « The Power Of The Beat »/);
-    await page.locator('.node').nth(0).click();
-    await expect(page.locator('#styleTag')).not.toHaveText(/Power/);
+    // dans chaque mélange, le B qui a des basses dès le début n'est pas celui qui a une intro sans basse
+    expect(await page.evaluate(() => VRAIS.every(v => v.B0 !== v.B1))).toBe(true);
+    for (const [n, bBass] of [[5, true], [0, false]]){
+      await page.locator('.node').nth(n).click();
+      const attendu = await page.evaluate(b => vraiTitres(sel.vr, b), bBass);
+      await expect(page.locator('#styleTag')).toHaveText(attendu);
+      expect(await page.evaluate(() => LESSONS[li].bBass ? true : false)).toBe(bBass);
+    }
   });
 });
 
@@ -107,7 +112,7 @@ test.describe('Les fichiers de musique', () => {
     // Les extraits des tutos (lot 56) vivent dans le même dossier : ils sont cités par TU_PARTIES
     const tutos = await page.evaluate(() => Object.keys(TU_PARTIES).map(n => n + '.mp3'));
     const dossier = path.join(__dirname, '..', 'musique'), presents = fs.readdirSync(dossier).filter(f => f.endsWith('.mp3')).sort();
-    expect(presents).toEqual([...cites, ...tutos].sort());
+    expect(presents).toEqual([...new Set([...cites, ...tutos])].sort());
     for (const f of presents) expect(fs.statSync(path.join(dossier, f)).size).toBeLessThan(1.5e6);
     expect(await page.evaluate(() => Object.keys(VRAIS_TITRES).sort())).toEqual(cites.map(f => f.replace('.mp3', '')));
   });

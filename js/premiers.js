@@ -442,11 +442,11 @@ function ppAvance(p){
 }
 
 /* ---------- La musique (lot 52) ----------
-   Après « C'est parti », « Dj » (Play House, CC0 : le morceau de la vraie musique, à 124 BPM, coupé pile sur un temps) joue en
-   boucle derrière un filtre : étouffé, comme entendu de la pièce d'à côté, il s'ouvre un peu plus à chaque question (PP_COUPURE) ;
+   Après « C'est parti », « Deep House » (alexrockbeat, Pixabay : le morceau A de la vraie musique, à 124 BPM, coupé pile sur
+   un temps ; « Dj » de Play House jusqu'au lot 57) joue en boucle derrière un filtre : étouffé, comme entendu de la pièce d'à côté, il s'ouvre un peu plus à chaque question (PP_COUPURE) ;
    l'objectif du jour le ralentit ou l'accélère, comme le tempo d'une platine ; « Commencer » est le drop : le filtre s'ouvre en grand
    sur le temps suivant. Elle suit le bouton des sons (coach-sons) et s'arrête quand les questions se ferment. */
-const PP_MUSIQUE = 'musique/dj-a.mp3';
+const PP_MUSIQUE = 'musique/niv-deep-a.mp3';
 const PP_TEMPS = 60 / 124;   // un temps du morceau, en secondes
 const PP_COUPURE = { salut: 380, niveau: 380, table: 820, objectif: 1900 };
 const PP_VITESSE = { 5: .94, 10: 1, 15: 1.07 };

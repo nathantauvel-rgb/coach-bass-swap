@@ -16,7 +16,7 @@ const TU_CASQUE = .26;      // une platine « au casque » : dans un tuto, on l'
 const TU_CHAPITRES = ['Écoute', "Quand l'utiliser", 'Pas à pas', 'Les erreurs', 'À retenir'];
 const tuTypo = s => s.replace(/ ([!?:;»])/g, ' $1').replace(/« /g, '« ');
 // La musique (7 nov. 2026) : quatre morceaux de Pixabay choisis à l'oreille par l'utilisateur (Play House sonnait « IA »),
-// ramenés à 124 BPM sans changer leur hauteur par tests/tutos-morceaux.js. Deux paires de tonalités qui vont ensemble :
+// ramenés à 124 BPM sans changer leur hauteur par tests/musique-pixabay.js. Deux paires de tonalités qui vont ensemble :
 // « Deep House » (alexrockbeat, fa majeur) et « Deep House Instrumental » (arnaud136, ré mineur), « Luxury Life » et
 // « Fashion Diva House » (kulakovka, la mineur). Les parties de chaque extrait, en temps de l'extrait, mesurées dans le
 // son : [début, fin, nom, 'fort' pour un drop]

@@ -174,7 +174,7 @@ test.describe('Corrections du gardien (lot 52)', () => {
   });
   test('la musique ne se télécharge qu’au clic sur « C’est parti », et le morceau est rendu à la mémoire à la fin', async ({ page }) => {
     const demandes = [];
-    page.on('request', r => { if (r.url().includes('dj-a.mp3')) demandes.push(r.url()); });
+    page.on('request', r => { if (r.url().includes('niv-deep-a.mp3')) demandes.push(r.url()); });
     await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
     await page.waitForTimeout(800);
     expect(demandes).toEqual([]);

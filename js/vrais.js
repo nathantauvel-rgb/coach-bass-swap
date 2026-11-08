@@ -1,16 +1,22 @@
 // Vraie musique (lot 25) : de courts extraits de vrais morceaux à la place des morceaux fabriqués par le site.
 // (Le bouton s'appelle « Vraie musique » : « Les vrais morceaux » est déjà le nom du chapitre 3.)
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
-// Les extraits (musique/*.mp3) sont fabriqués par tests/vrais-morceaux.js : coupés pile sur un temps, ramenés à 124 BPM,
-// même volume. A = 136 temps avec des basses ; B = 64 temps d'intro puis le drop (B0), ou une intro qui a des basses (B1).
-// Morceaux de Play House, dans le domaine public (CC0) : freemusicarchive.org/music/play-house
+// Les extraits (musique/*.mp3) sont fabriqués par tests/musique-pixabay.js : coupés pile sur un temps, ramenés à 124 BPM
+// sans changer leur hauteur, même volume. A = 136 temps avec des basses ; B = 64 temps d'intro puis le drop (B0), ou des
+// basses dès le début (B1). Morceaux de Pixabay choisis par l'utilisateur (lot 57, 8 nov. 2026, à la place de Play House,
+// « Dj » ne lui plaisait plus) ; chaque mélange reste dans des tonalités qui vont ensemble : fa majeur et ré mineur pour le
+// premier, la mineur et ré mineur pour le second. « Deep House Instrumental » sert de B0 au second mélange avec le même
+// extrait que les tutos (tuto-instru-b : son break, puis son drop de 1:32).
 'use strict';
 /* ---------- Vrais morceaux ---------- */
 const VRAIS = [
-  { A: 'dj-a', B0: 'animal-b', B1: 'power-b' },
-  { A: 'animal-a', B0: 'dj-b', B1: 'power-b' }
+  { A: 'niv-deep-a', B0: 'niv-ambient-b', B1: 'niv-instru-b1' },
+  { A: 'niv-luxury-a', B0: 'tuto-instru-b', B1: 'niv-diva-b1' }
 ];
-const VRAIS_TITRES = { 'dj-a': 'Dj', 'dj-b': 'Dj', 'animal-a': 'Like An Animal', 'animal-b': 'Like An Animal', 'power-b': 'The Power Of The Beat' };
+const VRAIS_TITRES = {
+  'niv-deep-a': 'Deep House', 'niv-ambient-b': 'Ambient House', 'niv-instru-b1': 'Deep House Instrumental',
+  'niv-luxury-a': 'Luxury Life', 'tuto-instru-b': 'Deep House Instrumental', 'niv-diva-b1': 'Fashion Diva House'
+};
 const vraiOf = (vr, part) => VRAIS[((vr % VRAIS.length) + VRAIS.length) % VRAIS.length][part];
 // Décodage sans attendre un clic : un contexte hors ligne suffit, le morceau décodé se joue ensuite dans le vrai
 let vraiCtx = null;
@@ -33,4 +39,4 @@ function vraiSong(vr, part, spd = 1){
     .catch(() => songSafe('house', vr, part, spd).then(s => ({ L: s.L, R: s.R, N: s.N, panne: true })));
 }
 // Ce qui passe sur les deux platines, pour l'étiquette du niveau
-const vraiTitres = (vr, bBass) => `« ${VRAIS_TITRES[vraiOf(vr, 'A')]} » puis « ${VRAIS_TITRES[vraiOf(vr, bBass ? 'B1' : 'B0')]} » · Play House`;
+const vraiTitres = (vr, bBass) => `« ${VRAIS_TITRES[vraiOf(vr, 'A')]} » puis « ${VRAIS_TITRES[vraiOf(vr, bBass ? 'B1' : 'B0')]} » · Pixabay`;
