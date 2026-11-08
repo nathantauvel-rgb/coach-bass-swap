@@ -2345,6 +2345,9 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .tu-blk.tu-a.boucle{background-image:repeating-linear-gradient(135deg,var(--tu-a-hachure) 0 6px,transparent 6px 12px)}
 .tu-blk.tu-b.boucle{background-image:repeating-linear-gradient(135deg,var(--tu-b-hachure) 0 6px,transparent 6px 12px)}
 .tu-blk.casque{background-color:transparent;box-shadow:none;border:1px dashed currentColor;opacity:.75}
+.tu-blk.maigre{opacity:.6}   /* basses coupées : le morceau est plus « maigre » */
+.tu-blk.filtre{border-top:2px dashed currentColor}   /* filtré : il manque une partie du son */
+.tu-blk.queue{background:transparent;box-shadow:none;border:1px dotted currentColor;font-style:italic;font-weight:800}
 .tu-lignes{position:absolute;inset:0;pointer-events:none}
 .tu-ph{position:absolute;top:16px;bottom:20px;width:2px;margin-left:-1px;background:var(--tu-phrase)}
 .tu-ms{position:absolute;top:18px;bottom:20px;width:1px;background:var(--tu-mesure)}
@@ -2367,7 +2370,7 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .tu-table svg{display:block;width:100%;height:auto}
 .tu-corps-t{fill:var(--ps-face);stroke:var(--ps-bord);stroke-width:2}
 .tu-zone{fill:var(--tu-zone);stroke:var(--ps-bord);stroke-width:1.5}
-.tu-lettre{font:900 20px var(--display)} .tu-la{fill:var(--a)} .tu-lb{fill:var(--b)}
+.tu-lettre{font:900 20px var(--display)} .tu-let-a{fill:var(--a)} .tu-let-b{fill:var(--b)}
 .tu-pet{font:900 9px var(--display);fill:var(--off-ink);letter-spacing:.16em;text-anchor:middle}
 .tu-forme{fill:var(--off);stroke:var(--off-edge);stroke-width:1.5}
 .tu-lab{fill:var(--muted);font:900 11px var(--display);text-anchor:middle;dominant-baseline:central;pointer-events:none}
@@ -2392,6 +2395,9 @@ html.pp-open,html.pp-open body{overflow:hidden}
 .tu-c.cible .tu-cap rect{fill:var(--brand-light)}
 .tu-casque{fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round}
 .tu-c.on-a .tu-casque,.tu-c.on-b .tu-casque{stroke:var(--ink)}
+/* lot 58 : les potards (l'aiguille tourne) ; coupé ou filtré, le potard prend la couleur de sa platine */
+.tu-aig line{stroke:var(--fg);stroke-width:3;stroke-linecap:round}
+.tu-c.coupe-a .tu-forme{stroke:var(--a);stroke-width:2.5} .tu-c.coupe-b .tu-forme{stroke:var(--b);stroke-width:2.5}
 /* « À retenir » */
 .tu-retenir{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:18px 22px;min-height:360px}
 .tu-retenir h2{margin:0;font-family:var(--display);font-size:26px;font-weight:900}

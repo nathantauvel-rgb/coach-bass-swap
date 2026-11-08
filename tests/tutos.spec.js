@@ -1,10 +1,13 @@
 // Lot 56 : l'onglet « Tutos » (js/tutos.js). Des tutos qui se regardent comme une vidéo : Vini explique, puis on écoute,
-// et la piste et la table dessinée bougent avec le son. Première famille : les boucles (4 tutos). L'onglet reste caché tant
-// que TUTOS_PRET est faux ; ?tutos=1 (ou window.DJINGOOD_TUTOS dans les tests) le montre.
+// et la piste et la table dessinée bougent avec le son. Trois familles depuis le lot 58 : le volume et les basses (4 tutos),
+// les effets (3), les boucles (4). L'onglet reste caché tant que TUTOS_PRET est faux ; ?tutos=1 (ou window.DJINGOOD_TUTOS
+// dans les tests) le montre.
 const { test, expect } = require('@playwright/test');
 const { ouvrir } = require('./outils');
 
 const AVEC = 'window.DJINGOOD_TUTOS = true;';
+const ORDRE = ['fondu', 'swap', 'bandes', 'coupe', 'echo', 'reverbe', 'filtre', 'attend', 'prolonge', 'montee', 'secours'];   // l'ordre du catalogue
+const BOUCLES = ['attend', 'prolonge', 'montee', 'secours'];
 const ouvrirTutos = (page, o = {}) => ouvrir(page, Object.assign({ onglet: 'tutos', avant: AVEC }, o));
 // Ouvre un tuto par sa carte (le clic lance le son), puis attend que la musique soit chargée
 async function lancer(page, id){
@@ -34,14 +37,16 @@ test.describe('Tutos : l\'onglet', () => {
     await expect(page.locator('#tabTutos')).toBeVisible();
   });
 
-  test('le catalogue : les boucles en quatre tutos, le premier gratuit, Vini conseille le premier', async ({ page }) => {
+  test('le catalogue : trois familles dans l\'ordre où on les apprend, le premier tuto de chacune gratuit', async ({ page }) => {
     const erreurs = await ouvrirTutos(page);
     await expect(page.locator('#tabTutos')).toHaveAttribute('aria-current', 'page');
-    await expect(page.locator('.tu-famille h2')).toHaveText('Les boucles');
-    await expect(page.locator('.tu-carte')).toHaveCount(4);
-    await expect(page.locator('.tu-carte strong')).toHaveText(['La boucle qui attend', "La boucle qui prolonge l'outro", 'La montée en boucle', 'La boucle de secours']);
-    await expect(page.locator('.tu-etiq')).toHaveText(['Gratuit', 'Pro', 'Pro', 'Pro']);
-    await expect(page.locator('#tutosTip')).toContainText('La boucle qui attend');
+    await expect(page.locator('.tu-famille h2')).toHaveText(['Le volume et les basses', 'Les effets', 'Les boucles']);
+    await expect(page.locator('.tu-carte')).toHaveCount(11);
+    expect(await page.locator('.tu-carte').evaluateAll(cs => cs.map(c => c.dataset.tu))).toEqual(ORDRE);
+    await expect(page.locator('.tu-carte strong')).toHaveText(['Le fondu au fader', 'Le swap des basses', 'Le mix aux 3 bandes', 'La coupure sèche',
+      "L'écho out", 'La sortie dans la réverbe', 'Le filtre qui ouvre', 'La boucle qui attend', "La boucle qui prolonge l'outro", 'La montée en boucle', 'La boucle de secours']);
+    await expect(page.locator('.tu-etiq')).toHaveText(['Gratuit', 'Pro', 'Pro', 'Pro', 'Gratuit', 'Pro', 'Pro', 'Gratuit', 'Pro', 'Pro', 'Pro']);
+    await expect(page.locator('#tutosTip')).toContainText('Le fondu au fader');
     expect(erreurs).toEqual([]);
   });
 });
@@ -182,8 +187,9 @@ test.describe('Tutos : le lecteur', () => {
     await expect(page.locator('#tuTitre')).toHaveText("La boucle qui prolonge l'outro");
     await page.locator('#tuRetour').click();
     await expect(page.locator('#tuCatalogue')).toBeVisible();
-    await expect(page.locator('.tu-etiq').first()).toHaveText('Vu');
-    await expect(page.locator('#tutosTip')).toContainText("La boucle qui prolonge l'outro");
+    await expect(page.locator('[data-tu="attend"] .tu-etiq')).toHaveText('Vu');
+    // Vini conseille le premier tuto pas encore vu, dans l'ordre du catalogue (lot 58 : les gestes de base d'abord)
+    await expect(page.locator('#tutosTip')).toContainText('Le fondu au fader');
     // le dernier tuto de la famille ne propose pas de suivant
     await lancer(page, 'secours');
     await page.locator('#tuChaps button[data-c="4"]').click();
@@ -203,16 +209,17 @@ test.describe('Tutos : le lecteur', () => {
     await expect(page.locator('#tuLecteur')).toBeHidden();
   });
 
-  test('les quatre tutos s\'ouvrent et vont jusqu\'au bout sans erreur', async ({ page }) => {
+  test('les onze tutos s\'ouvrent et vont jusqu\'au bout sans erreur', async ({ page }) => {
+    test.setTimeout(120000);
     const erreurs = await ouvrirTutos(page);
-    for (const id of ['attend', 'prolonge', 'montee', 'secours']){
+    for (const id of ORDRE){
       await lancer(page, id);
       const n = await page.evaluate(() => tu.t.plans.length);
       for (let i = 0; i < n; i++) await page.evaluate(i => tuAller(i, { direct: true }), i);
       await expect(page.locator('#tuRetenirListe li')).toHaveCount(3);
       await page.locator('#tuRetour').click();
     }
-    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('coach-tutos')).vus)).toEqual(['attend', 'prolonge', 'montee', 'secours']);
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('coach-tutos')).vus)).toEqual(ORDRE);
     await expect(page.locator('#tutosTip')).toContainText('tous les tutos');
     expect(erreurs).toEqual([]);
   });
@@ -253,21 +260,85 @@ test.describe('Tutos : le volume', () => {
 test.describe('Tutos : la musique', () => {
   test('dans chaque bonne version, A est baissé pile quand B arrive au début de son drop', async ({ page }) => {
     await ouvrirTutos(page);
-    const r = await page.evaluate(() => TUTOS.map(t => {
-      const v = t.versions.bon, coupe = v.A.niv[v.A.niv.length - 2][0], drop = TU_PARTIES[v.B.m].find(p => p[3] === 'fort')[0];
-      return [t.id, coupe, tuJoue(v.B, coupe, coupe).b === drop];
-    }));
+    const r = await page.evaluate(ids => ids.map(id => {
+      const v = TUTOS.find(t => t.id === id).versions.bon, coupe = v.A.niv[v.A.niv.length - 2][0], drop = TU_PARTIES[v.B.m].find(p => p[3] === 'fort')[0];
+      return [id, coupe, tuJoue(v.B, coupe, coupe).b === drop];
+    }), BOUCLES);
     expect(r).toEqual([['attend', 128, true], ['prolonge', 160, true], ['montee', 128, true], ['secours', 136, true]]);
+  });
+  test('lot 58 : à partir du drop de B, jamais deux basses ensemble, et B finit à fond avec ses basses', async ({ page }) => {
+    await ouvrirTutos(page);
+    const r = await page.evaluate(() => TUTOS.filter(t => t.famille !== 'boucles').map(t => {
+      const v = t.versions.bon, drop = TU_PARTIES[v.B.m].find(p => p[3] === 'fort')[0], xd = v.B.debut + drop - v.B.pos;
+      const basse = (s, x) => tuNiv(s, x) > .05 && tuEq(s, 'low', x) > .5;
+      let deux = 0; for (let x = xd + .1; x < xd + 32; x += .25) if (basse(v.A, x) && basse(v.B, x)) deux++;
+      return [t.id, xd, deux, tuNiv(v.B, xd + 20) > .9 && tuEq(v.B, 'low', xd + 20) > .9];
+    }));
+    expect(r).toEqual([['fondu', 128, 0, true], ['swap', 96, 0, true], ['bandes', 96, 0, true], ['coupe', 128, 0, true],
+      ['echo', 128, 0, true], ['reverbe', 128, 0, true], ['filtre', 128, 0, true]]);
+    // et les versions ratées du swap et des 3 bandes en ont bien
+    expect(await page.evaluate(() => [['swap', 'double'], ['swap', 'tard'], ['bandes', 'ensemble']].map(([id, n]) => {
+      const v = TUTOS.find(t => t.id === id).versions[n], basse = (s, x) => tuNiv(s, x) > .05 && tuEq(s, 'low', x) > .5;
+      return basse(v.A, 96.5) && basse(v.B, 96.5);
+    }))).toEqual([true, true, true]);
+    // aux 3 bandes, les basses de B arrivent en dernier : 16 temps après son drop
+    expect(await page.evaluate(() => { const v = TUTOS.find(t => t.id === 'bandes').versions.bon; return [tuEq(v.B, 'low', 111.9), tuEq(v.B, 'low', 112.1), tuEq(v.A, 'low', 112.1)]; })).toEqual([0, 1, 0]);
   });
 
   test('les quatre extraits sont là, et chaque tuto dit d\'où vient sa musique', async ({ page }) => {
     await ouvrirTutos(page);
-    for (const m of ['tuto-deep-a', 'tuto-instru-b', 'tuto-luxury-a', 'tuto-diva-b']){
+    for (const m of ['tuto-deep-a', 'tuto-instru-b', 'tuto-luxury-a', 'tuto-diva-b', 'niv-july-b']){
       const r = await page.request.get(`/musique/${m}.mp3`);
       expect(r.status(), m).toBe(200);
     }
     expect(await page.evaluate(() => TUTOS.every(t => TU_PARTIES[t.versions.bon.A.m] && TU_PARTIES[t.versions.bon.B.m] && TU_MUSIQUE[t.musique]))).toBe(true);
     await lancer(page, 'montee');
     await expect(page.locator('#tuMusique')).toContainText('Luxury Life');
+  });
+});
+
+test.describe('Tutos : les potards, le filtre et les effets (lot 58)', () => {
+  test('un tuto sans potards ne les allume pas ; le swap allume les LOW, l\'écho out le bouton ÉCHO', async ({ page }) => {
+    await ouvrirTutos(page);
+    const allumees = id => page.evaluate(id => { const t = TUTOS.find(x => x.id === id), c = tuCommandes(t); return ['lowA', 'lowB', 'hiB', 'filtreB', 'echo', 'reverb'].filter(x => c.has(x)); }, id);
+    expect(await allumees('attend')).toEqual([]);
+    expect(await allumees('swap')).toEqual(['lowA', 'lowB']);
+    expect(await allumees('bandes')).toEqual(['lowA', 'lowB', 'hiB']);
+    expect(await allumees('echo')).toEqual(['echo']);
+    expect(await allumees('reverbe')).toEqual(['reverb']);
+    expect(await allumees('filtre')).toEqual(['filtreB']);
+  });
+  test('la table dessinée suit : LOW coupé, ÉCHO allumé ; la piste montre « sans basses » et la queue de l\'écho', async ({ page }) => {
+    const erreurs = await ouvrirTutos(page);
+    await lancer(page, 'swap');
+    await page.evaluate(() => tuMajTable(90, 'bon', false));
+    await expect(page.locator('#tuTable [data-c="lowB"]')).toHaveClass(/coupe-b/);
+    await expect(page.locator('#tuTable [data-c="lowA"]')).not.toHaveClass(/coupe-a/);
+    await page.evaluate(() => tuMajTable(100, 'bon', false));
+    await expect(page.locator('#tuTable [data-c="lowA"]')).toHaveClass(/coupe-a/);
+    await expect(page.locator('#tuTable [data-c="lowB"]')).not.toHaveClass(/coupe-b/);
+    await expect(page.locator('#tuVoieA .tu-blk', { hasText: 'sans basses' }).first()).toBeAttached();
+    await page.locator('#tuRetour').click();
+    await lancer(page, 'echo');
+    await page.evaluate(() => tuMajTable(126, 'bon', false));
+    await expect(page.locator('#tuTable [data-c="echo"]')).toHaveClass(/on-a/);
+    await expect(page.locator('#tuVoieA .tu-blk.queue')).toHaveText('écho…');
+    await expect(page.locator('#tuMarques .tu-mk', { hasText: 'ÉCHO' })).toHaveCount(1);
+    expect(erreurs).toEqual([]);
+  });
+  test('le son : chaque nouveau tuto se joue (potards, filtre, effets branchés), et éteindre l\'effet coupe sa queue', async ({ page }) => {
+    const erreurs = await ouvrirTutos(page);
+    for (const id of ['swap', 'bandes', 'echo', 'reverbe', 'filtre']){
+      await lancer(page, id);
+      const r = await page.evaluate(() => { tuSonJoue([112, 136, 'bon']); return [tu.srcs.length > 0, tu.noeuds.length > 10]; });
+      expect(r, id).toEqual([true, true]);
+      await page.evaluate(() => tuSonStop());
+      expect(await page.evaluate(() => tu.noeuds.length)).toBe(0);
+      await page.locator('#tuRetour').click();
+    }
+    // la réverbe éteinte en même temps que le fader : plus de queue
+    expect(await page.evaluate(() => { const v = TUTOS.find(t => t.id === 'reverbe').versions;
+      return [tuFx(v.bon.A, 'reverb', 132), tuFx(v.eteint.A, 'reverb', 132)]; })).toEqual([true, false]);
+    expect(erreurs).toEqual([]);
   });
 });

@@ -47,6 +47,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   sur le site en ligne jusqu'à son accord.
   **Lot 57 « Nouvelle musique » fait le 8 nov. 2026, NON PUBLIÉ** (branche `lot-57-musique`, même copie) : « Dj » de Play
   House remplacé partout par les morceaux Pixabay. Aperçus à écouter dans `audio-essai\apercus\` de la copie.
+  **Lot 58 « Tutos : le volume et les effets » fait le 8 nov. 2026, NON PUBLIÉ** (branche `lot-58-tutos-effets`, copie
+  `Documents\coach-dj-lot58`) : 7 tutos de plus, moteur avec potards, filtre, écho et réverbe. Voir l'entrée « Lot 58 ».
   **Lot 56 PUBLIÉ le 8 nov. 2026, onglet « Tutos » toujours caché** (« ça sonne bien, tu peux la mettre en ligne » ;
   voir https://djingood.fr/?tutos=1#tutos) : branche `lot-56-tutos`, copie à part `Documents\coach-dj-lot56` (git
   worktree, `node_modules` relié par jonction ; tests : `DJ_PORT=8771 npx playwright test`). Voir l'entrée « Lot 56 » à la
@@ -1999,6 +2001,42 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     (n° 605767) ; 3. suite complète des tests et gardien ; 4. publication avec son accord ; 5. lot 58 (tutos Les effets,
     Le volume et les basses), lot 59 (Pro, paiement).
     Plus tard : remplacer Play House dans les vidéos de `marketing/` et les maquettes de `captures/`.
+- **Lot 58 « Tutos : le volume et les effets » (8 nov. 2026)** : branche `lot-58-tutos-effets` (partie de `lot-57-musique`),
+  copie à part `Documents\coach-dj-lot58` (git worktree, `node_modules` relié par jonction ; tests : `DJ_PORT=8772 npx playwright
+  test`), **non publiée**, onglet toujours caché (`TUTOS_PRET = false`). Lancé sur « go enchaîne » de l'utilisateur, d'après le
+  plan accepté le 7 nov. (deux familles de plus : Les effets ; Le volume et les basses).
+  - **Moteur des tutos agrandi** (`js/tutos.js`) : une platine peut maintenant avoir `eq` ({ low, mid, hi } : [temps, valeur]…,
+    1 = normal, 0 = coupé à -26 dB), `filtre` ([temps, valeur]…, 0 neutre, vers 1 passe-haut jusqu'à 8 kHz, vers -1 passe-bas
+    jusqu'à 100 Hz), `fx` ([de, à, 'echo' | 'reverb']… : effet allumé de… à) et `marques` ([temps, texte]… : les gestes écrits
+    sur la piste, comme IN et OUT). Son (`tuSonJoue`) : par platine fader → LOW (lowshelf 200 Hz) → MID (peaking 1 kHz) → HI
+    (highshelf 3,2 kHz) → passe-haut → passe-bas → sortie, et envois après le fader vers l'écho (3/4 de temps, réinjecté à 58 %,
+    comme les niveaux) et la réverbe (convolution, une salle de 3,2 s fabriquée par le site, `tuReverbe`). **Comme sur la
+    table, éteindre l'effet coupe sa queue** (le BEAT FX) : c'est une erreur montrée dans « La sortie dans la réverbe ». Un
+    graphe neuf à chaque passage (`tu.noeuds`, déconnectés par `tuSonStop`) : les queues d'avant s'arrêtent net. Une commande
+    qui ne bouge pas pendant le passage ne reçoit qu'une valeur.
+  - **Table dessinée plus haute** (`viewBox` 960 × 300) : HI, MID, LOW et FILTRE sur chaque voie (aiguilles qui tournent,
+    `tuAiguille` ; le potard coupé ou filtré prend la couleur de sa platine, classes `coupe-a` / `coupe-b`), boutons ÉCHO et
+    RÉVERBE au milieu (allumés à la couleur de la platine). Les lettres A et B de la table de mixage ont la classe
+    `tu-let-a` / `tu-let-b` (remarque du gardien du lot 56 : `tu-lb` servait aussi aux boutons du lecteur).
+  - **Piste** : un morceau aux basses coupées est plus pâle et dit « · sans basses » (`maigre`), filtré il a un trait en
+    pointillé en haut et dit « · filtré » ; après un effet, la queue (« écho… », « réverbe… ») est dessinée de la coupure du
+    fader jusqu'à l'extinction de l'effet.
+  - **7 nouveaux tutos** (même format que les boucles : Écoute · Quand l'utiliser · Pas à pas · Les erreurs · À retenir).
+    *Le volume et les basses* (« Deep House » puis « Deep House Instrumental ») : **Le fondu au fader** (gratuit ; erreurs : B
+    monté d'un coup, A baissé trop tôt), **Le swap des basses** (oubli du swap ; LOW de A coupé 2 temps trop tard), **Le mix aux
+    3 bandes** (HI à 96, MID à 104, LOW à 112 ; erreur : B ouvert en entier d'un coup), **La coupure sèche** (A coupé 2 temps
+    trop tôt : trou ; 2 temps trop tard : A mord sur le drop). *Les effets* (« Luxury Life » puis « House - July », l'extrait
+    des niveaux `niv-july-b`, ajouté à `TU_PARTIES`) : **L'écho out** (gratuit ; écho sur la dernière mesure, laissé allumé
+    après la coupure ; erreurs : sans écho, écho 4 mesures trop tôt), **La sortie dans la réverbe** (2 dernières mesures ;
+    erreurs : réverbe éteinte avec le fader, 4 mesures trop tôt), **Le filtre qui ouvre** (B filtré qui s'ouvre sur toute la
+    dernière phrase, A qui se referme ; erreur : B ouvert d'un coup).
+  - **Catalogue dans l'ordre où on apprend** (`TU_FAMILLES`, `tuDansLOrdre`) : Le volume et les basses, Les effets, Les
+    boucles ; le premier tuto de chaque famille est gratuit ; Vini conseille le premier tuto pas encore vu (« Le fondu au
+    fader » pour un nouveau venu). Ordre choisi par moi : à confirmer avec l'utilisateur.
+  - Tests (`tests/tutos.spec.js`) : catalogue à 11 cartes, les onze tutos jusqu'au bout, « jamais deux basses ensemble » à
+    partir du drop de B dans chaque bonne version (et bien deux basses dans les versions ratées du swap et des 3 bandes),
+    commandes allumées, table et piste qui suivent, son branché pour chaque nouveau tuto.
+  - **Jamais écouté par un humain**, ni vu par l'utilisateur. À lui faire regarder et écouter avant toute publication.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
