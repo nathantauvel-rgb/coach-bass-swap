@@ -40,10 +40,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   juste apprendre à appuyer sur des boutons, c'est nul ») : **Pro = des tutos où Vini explique les différentes façons de
   faire une transition** (réverbe, écho, monter le son…) **et les techniques de boucle** (IN, OUT, une boucle de 32 temps
   laissée en fond…). Maquette d'un tuto validée le 7 nov. (« C SUPER ») : `captures/maquette-tutos/` (hors Git, dossier
-  principal). Plan accepté (« oui go ») : **lot 56** l'onglet « Tutos » et la famille Les boucles (4 tutos), **lot 57**
-  deux familles de plus (Les effets ; Le volume et les basses), **lot 58** le mode Pro (paiement Stripe, premier tuto de
-  chaque famille gratuit, conditions de vente, mentions légales), lancement visé début janvier. Les tutos restent cachés
+  principal). Plan accepté (« oui go ») : **lot 56** l'onglet « Tutos » et la famille Les boucles (4 tutos), **lot 58**
+  deux familles de plus (Les effets ; Le volume et les basses), **lot 59** le mode Pro (paiement Stripe, premier tuto de
+  chaque famille gratuit, conditions de vente, mentions légales), lancement visé début janvier (numéros décalés d'un cran
+  le 8 nov. : le lot 57 est devenu le remplacement de Play House, voir l'entrée « Lot 57 »). Les tutos restent cachés
   sur le site en ligne jusqu'à son accord.
+  **Lot 57 « Nouvelle musique » fait le 8 nov. 2026, NON PUBLIÉ** (branche `lot-57-musique`, même copie) : « Dj » de Play
+  House remplacé partout par les morceaux Pixabay. Aperçus à écouter dans `audio-essai\apercus\` de la copie.
   **Lot 56 PUBLIÉ le 8 nov. 2026, onglet « Tutos » toujours caché** (« ça sonne bien, tu peux la mettre en ligne » ;
   voir https://djingood.fr/?tutos=1#tutos) : branche `lot-56-tutos`, copie à part `Documents\coach-dj-lot56` (git
   worktree, `node_modules` relié par jonction ; tests : `DJ_PORT=8771 npx playwright test`). Voir l'entrée « Lot 56 » à la
@@ -1937,14 +1940,58 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     **Les extraits sont téléchargeables sur djingood.fr/musique/ même onglet caché**, et l'ancienne version de
     `tuto-instru-b.mp3` (commit `1fe7d94`) est dans l'historique GitHub.
   - **PUBLIÉ le 8 nov. 2026, onglet caché** (`TUTOS_PRET = false`, avance rapide de `main` jusqu'à `lot-56-tutos`). Pour voir
-    les tutos sur le vrai site : https://djingood.fr/?tutos=1#tutos. **Pas encore fait par l'utilisateur** : les captures
-    datées des 4 pages Pixabay (rappelées le 8 nov.).
-  - **Pour reprendre** : prochaines étapes, dans l'ordre : 1. remplacer Play House dans « Vraie musique » (niveaux,
-    `js/vrais.js`, `tests/vrais-morceaux.js` qui change la hauteur : passer à `rubberband`) ; 2. lot 57 (familles Les effets,
-    Le volume et les basses) ; 3. lot 58 (Pro, paiement Stripe, conditions de vente), lancement visé début janvier ;
-    montrer l'onglet (`TUTOS_PRET = true`) seulement avec l'accord de l'utilisateur. Pour essayer en local : dans la copie
-    `Documents\coach-dj-lot56`, `DJ_PORT=8771 node tests/serveur.js`, puis http://localhost:8771/index.html?tutos=1#tutos.
-    Plus tard : remplacer aussi Play House dans « Vraie musique » (niveaux) et dans les vidéos de `marketing/`.
+    les tutos sur le vrai site : https://djingood.fr/?tutos=1#tutos. **Captures datées des pages Pixabay (8 nov.)** : 3 sur 4,
+    rangées dans `marketing/licences/` (dossier principal, hors Git). Celle de « Luxury Life » est la **mauvaise page**
+    (n° 620531, 2:44) : notre fichier est le n° 618587 (2:25) ; à refaire.
+  - Suite : le remplacement de Play House est devenu le lot 57 (entrée suivante) ; les familles de tutos Les effets et Le
+    volume et les basses deviennent le **lot 58**, le mode Pro (paiement) le **lot 59**. Montrer l'onglet
+    (`TUTOS_PRET = true`) seulement avec l'accord de l'utilisateur.
+  - **Défaut connu, laissé (8 nov.)** : `tuto-diva-b.mp3` (tutos 3 et 4) part environ 90 ms trop tôt par rapport à sa grille
+    (même cause que celle corrigée au lot 57 : grosse caisse longue). Sans conséquence entendue : l'intro de « Fashion Diva »
+    n'a pas de grosse caisse et A est coupé à son drop ; l'utilisateur a trouvé que les tutos « sonnent bien ».
+    `node tests/musique-pixabay.js tuto-diva` le refait avec la bonne mesure (à réécouter ensuite, et à republier).
+- **Lot 57 « Nouvelle musique » (8 nov. 2026)** : branche `lot-57-musique` (partie d'`origin/main` après le lot 56), dans la
+  copie `Documents\coach-dj-lot56` (commit `9bb7361`), **non publiée**. Demande de l'utilisateur : « la priorité c'est qu'on
+  retire le son DJ » (« Dj » de Play House, qu'il trouve « nul, son IA »), et exploiter tous les morceaux Pixabay qu'il a
+  téléchargés. « Dj » servait à **trois endroits**, tous remplacés :
+  - **Niveaux, « Vraie musique »** (`js/vrais.js`, chapitres 1 et 4) : deux mélanges dans des tonalités qui vont ensemble.
+    Mélange 1 : A « Deep House » (alexrockbeat, fa majeur) · B0 « Ambient House » (Kulakovka, fa majeur, 64 temps de nappes
+    puis le drop à 0:32) · B1 « Deep House Instrumental » (arnaud136, ré mineur, son drop de 1:32 joué deux fois). Mélange 2 :
+    A « Luxury Life » (Kulakovka, la mineur) · B0 `tuto-instru-b` (le même fichier que les tutos : break puis drop de 1:32)
+    · B1 « Fashion Diva House » (Kulakovka, la mineur, depuis son drop). Étiquette : « « Deep House » puis « Ambient House »
+    · Pixabay ». Extraits `musique/niv-*.mp3` (5 × 1,05 Mo) ; les 5 extraits Play House (`dj-a`, `dj-b`, `animal-a`,
+    `animal-b`, `power-b`) et `tests/vrais-morceaux.js` sont supprimés.
+  - **Premiers pas** (`js/premiers.js`, `PP_MUSIQUE`) : la musique derrière les questions de Vini devient `niv-deep-a`.
+  - **Sons d'exemple du guide** (`guide/sons/`, `tests/sons-guide.js`) : phrase et calage sur l'intro de « Deep House
+    Instrumental » (la seule intro avec une grosse caisse nette sans basse ; basse au temps 64, vérifiée dans le son
+    « phrase » : pile au temps 32), deux basses et swap sur `niv-deep-a` + `niv-instru-b1`. Crédit des deux pages de guide,
+    `presentation.html` (question « Avec quelle musique ? ») et `README.md` à jour.
+  - **Écartés parce que marqués « AI generated » sur leur page Pixabay** (vu sur les captures de l'utilisateur) : « House -
+    July » (Easy_Eva ; sa page est en plus le n° 605765 de 2:35, notre fichier le n° 605767 de 1:05) et « Filter House »
+    (Aurec, qui a en plus « Content ID Registered » : une vidéo qui l'utiliserait pourrait être bloquée). Aussi écartés :
+    « House Music » (Aurec, 100 BPM, trop lent) et « House » (PrettyJohn1, tonalité pas mesurable sûrement). **Règle : avant
+    d'utiliser un morceau Pixabay, regarder s'il porte la mention « AI generated ».**
+  - **Un seul programme** fabrique toute la musique : `tests/musique-pixabay.js` (ancien `tests/tutos-morceaux.js`, renommé ;
+    `node tests/musique-pixabay.js niv-` ne refait que les niveaux, `guide-` l'intro du guide, rangée dans
+    `audio-essai/extraits/`, jamais publiée). Un extrait peut être fait de plusieurs morceaux de grille raccordés au début
+    d'une phrase (pour sauter un break). **Calage refait** : le pic de l'énergie des graves ne suffit pas, « Fashion Diva » et
+    « Ambient House » ont une grosse caisse longue (plus de 100 ms) et partaient 90 et 45 ms trop tôt ; on cale maintenant le
+    **début** du coup (`debutCoup` : on recule depuis le pic jusqu'à plancher + 25 % ; convention `DEBUT` = −8 ms, mesurée
+    sur « Deep House »). Les 5 extraits des niveaux tombent entre −9 et −1 ms. Deux pièges vus en mesurant : la dernière
+    partie de « Deep House Instrumental » et son intro ont une grosse caisse qui commence 20 à 24 ms avant celle du drop
+    (d'où le drop joué deux fois pour B1, et un calage à part pour l'intro, `instruIntro`). Mesures par phrase et repères
+    des basses en tête du programme.
+  - Tests : `tests/vrais.spec.js` (titres, B1 différent de B0 dans chaque mélange, fichiers du dossier `musique/` sans
+    doublon avec les tutos), `tests/premiers-anime.spec.js` (nom du fichier). 69 tests verts sur les fichiers touchés
+    (vrais, premiers-anime, tutos, guide). Suite complète et gardien : pas encore.
+  - **Jamais écouté par un humain.** Aperçus fabriqués pour l'utilisateur (hors Git) :
+    `Documents\coach-dj-lot56\audio-essai\apercus\` (une transition par mélange, un swap par mélange, la musique des
+    Premiers pas), par un script de la session (pas dans le dépôt).
+  - **Pour reprendre** : 1. l'utilisateur écoute les aperçus et dit si les paires lui plaisent, et où il entend le drop
+    d'« Ambient House » (mesuré à 0:32) ; 2. sa capture datée de la bonne page de « Luxury Life » (n° 618587, 2:25 ; deux
+    fois il a envoyé la page n° 620531, de 2:44, un autre morceau du même nom) ; 3. suite complète des tests et gardien ;
+    4. publication avec son accord ; 5. lot 58 (tutos Les effets, Le volume et les basses), lot 59 (Pro, paiement).
+    Plus tard : remplacer Play House dans les vidéos de `marketing/` et les maquettes de `captures/`.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -1981,7 +2028,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   vers `index.html#vrai`. Son code sert de base à « Passer au vrai » ; `coach.html?ancien=1` l'affiche encore.
 - `tests/` — scripts Playwright (Python) : `tdz.py`, `robust.py`, `clar.py`, `play.py`, `play2.py`, `user.py`.
 - `tests/rekordbox-exemple.xml` — fausse collection rekordbox pour essayer l'import à la main.
-- `musique/` — extraits de vrais morceaux (Play House, CC0) pour « Vraie musique », refaits par `node tests/vrais-morceaux.js`.
+- `musique/` — extraits de vrais morceaux (Pixabay depuis le lot 57, Play House avant) pour « Vraie musique » (`niv-*`) et les tutos (`tuto-*`), refaits par `node tests/musique-pixabay.js`.
 - `README.md` — description publique.
 
 ## Architecture du code (repères ; « fin du script » = `js/demarrage.js`)
