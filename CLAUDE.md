@@ -201,6 +201,24 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `#vfSvg`) : même matière, et trois sillons dessinés dans les molettes (`circle.sl` dans `tableSvg`, `js/table.js`).
   104 tests verts sur les fichiers touchés (commandes, clarte, table, verif, avis, quiz, tutos). **Jamais vu sur la vraie
   FLX4** : vérifier que les commandes allumées se voient bien pendant une partie.
+  **Lot 64 « Apprendre refait » (9 nov. 2026)** : demande de l'utilisateur (texte collé) : « trop lourd, trop de texte, en
+  désordre, et les exercices ne sont pas verrouillés ». Branche `lot-64-apprendre` (partie du lot 63), copie
+  `Documents\coach-dj-lot64` (serveur des captures sur 8794 ; tests isolés sur 8795).
+  - **Parcours linéaire** (`niveauOuvert`, `niveauEnCours`, `niveauRefuse`, `NIV_LIBRE` dans `js/niveaux.js`) : dans chaque
+    chapitre, le niveau N+1 s'ouvre quand tous les niveaux d'avant ont 2 étoiles ou plus (la règle de « réussi » du site) ;
+    un niveau déjà joué reste ouvert ; toucher un niveau fermé : il ne s'ouvre pas, Vini dit lequel réussir d'abord, la
+    carte tremble ; « Niveau suivant » caché quand le suivant est fermé. Pas concernés : l'entraînement, le test de
+    placement, les liens du guide (`niveauVisite`). `?tout=1` ouvre tout. **Les tests ouvrent tout par défaut**
+    (`window.DJINGOOD_LIBRE`, posé par `tests/outils.js` sauf `verrou: true`) ; `tests/apprendre.spec.js` vérifie le verrou.
+    Piège : Playwright attend qu'une carte `aria-disabled` s'active : `click({ force: true })` dans les tests.
+  - **Cartes de niveau** (`.map .node`, classes `etat-reussi` vert, `etat-encours` orange, `etat-verrou` grisé avec cadenas,
+    étiquette `.etq`) à la place des disques vinyles ; plus de trait entre les niveaux.
+  - **Chapitres** : une rangée toujours visible (plus de menu déroulant : `#chapBtn` caché, `chapMenu` ne cache plus
+    rien), une petite carte par chapitre avec la barre et le pourcentage d'étoiles (`chapPct`), cadenas sur les fermés (la
+    condition « Verrouillé : … » reste lue et dans l'info-bulle). Tests mis à jour (plus de clic sur `#chapBtn`).
+  - **Carte du niveau** : « Jouer » en grand, au-dessus de « Regarde d'abord », « Morceaux » en dessous ; le paragraphe sous
+    les gestes (`#planNote`) retiré.
+  - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de
     défilement horizontal, « Son : 50 % » et son panneau, bouton de la prochaine étape orange, nom « DJingood » sur la
