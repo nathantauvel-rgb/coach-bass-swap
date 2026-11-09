@@ -169,7 +169,8 @@ async function midiQuestion(){
 const MIDI_SOURIS = { attente: 'Table…', question: 'Autorise l’accès à ta table', refuse: 'Table non autorisée', pret: 'Souris (aucune table vue)' };
 function renderPill(){ const pill = $('midiPill'); pill.className = 'chip status' + (tableOn() ? ' on' : '');
   pill.lastElementChild.textContent = midiCount ? midiNames.join(', ') + (tableOn() ? '' : ' · à régler')
-    : midiEtat === 'absent' ? (midiIos() ? 'Souris (table sur ordinateur)' : 'Prends Chrome ou Edge') : MIDI_SOURIS[midiEtat]; }
+    : midiEtat === 'absent' ? (midiIos() ? 'Souris (table sur ordinateur)' : 'Prends Chrome ou Edge') : MIDI_SOURIS[midiEtat];
+  pill.title = 'Ma table : ' + pill.lastElementChild.textContent; }   // le texte peut être coupé dans l'en-tête (lot 61)
 
 /* ---------- Ta table n'apparaît pas ? (lot 45) ----------
    Deux joueurs ne voyaient pas leur table (une DDJ-FLX2, une XDJ-AZ) et le site ne disait pas pourquoi. L'aide suit ce que

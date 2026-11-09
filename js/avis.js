@@ -163,6 +163,7 @@ function avisReset(){
   fini.then(ok => { if (ok === false && typeof cptResetKo === 'function'){ jrOff = false; cptResetKo(); return; } efface(); }, efface);
 }
 $('avisBtn').addEventListener('click', openAvis);
+$('avisBas').addEventListener('click', openAvis);   // en bas de l'accueil : sur téléphone, « Mon avis » quitte l'en-tête (lot 61)
 $('avClose').addEventListener('click', closeAvis);
 $('avis').addEventListener('click', e => { if (e.target === $('avis')) closeAvis(); });
 $('avSave').addEventListener('click', avisSave);
