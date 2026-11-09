@@ -274,7 +274,7 @@
     <div class="rbrow"><button type="button" class="ghost" id="regBack">Retour</button><button type="button" class="ghost" id="regSkip">Je n'ai pas cette commande</button><button type="button" class="ghost" id="regCopie" hidden>Copier le relevé</button><button type="button" class="rbtn go" id="regSave" hidden>Enregistrer</button></div>
   </div>
 </div>
-<div class="wrap">
+<div class="wrap app">
   <header class="top">
     <a class="brand" href="#accueil" aria-label="DJingood, retour à l'accueil"><img class="blogo" src="img/vini-logo.svg" alt="" width="40" height="40"><div><div class="brand-name"><span class="dj">DJ</span>ingood</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
     <nav class="tabs" id="tabs" aria-label="Parcours">
@@ -284,7 +284,6 @@
       <a href="#vrai" data-view="vrai"><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V10"/><path d="M12 20V4"/><path d="M19 20v-6"/></svg></span>Passer au vrai</a>
       <a href="#tutos" data-view="tutos" id="tabTutos" hidden><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="m10 9 5 3-5 3z"/></svg></span>Tutos</a>
     </nav>
-    <button type="button" class="cptbtn" id="cptBtn" hidden><svg class="cptico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.4-6 8-6s6.8 2 8 6"/></svg><span id="cptNom">Se connecter</span></button>
     <div class="hud">
       <a class="chip lvlchip" href="#progres" title="Mes progrès : niveau, étoiles, badges"><span class="lvl" id="lvl">Niv. 1</span><span class="xpbar"><i id="xpFill" style="width:0"></i></span><span class="num" id="xpTxt">0 XP</span><span class="star" aria-hidden="true">★</span><span class="num" id="starTot">0/12</span></a>
       <a class="chip status" id="midiPill" href="#table" title="Ma table : le schéma et les réglages"><svg class="tico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="7.5" cy="12" r="2.6"/><circle cx="16.5" cy="12" r="2.6"/><path d="M12 9v6"/></svg><i></i><span>Table…</span></a>
@@ -304,6 +303,7 @@
       </div>
       <button type="button" class="chip avbtn" id="avisBtn" aria-label="Mon avis" title="Mon avis : ce qui t'a bloqué, ce qui t'a plu"><svg class="tico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4z"/></svg><span class="avtxt">Mon avis</span></button>
     </div>
+    <button type="button" class="cptbtn" id="cptBtn" hidden><svg class="cptico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.4-6 8-6s6.8 2 8 6"/></svg><span id="cptNom">Se connecter</span></button>
   </header>
   <div class="tablebar" id="tableBar" hidden role="status">
     <p id="tbText"></p>
