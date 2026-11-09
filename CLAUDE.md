@@ -220,12 +220,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     les gestes (`#planNote`) retiré.
   - **Gardien (62 + 63 + 64) : feu orange, aucun blocage, personne ne peut être bloqué.** Corrigé : message de Vini juste
     quand le niveau touché n'est pas le suivant ; `goLesson` ne saute plus un niveau fermé ; test du téléphone réparé.
-    **RESTE À FAIRE avant de demander l'accord de publier** : condition visible sur un chapitre fermé (`.chap.ferme .cs`
-    est caché) ; `window.DJINGOOD_LIBRE` dans `tests/captures.js` ; étoiles non choisies de Mon avis peu contrastées
-    (`--line` → `--off-ink`) ; faire défiler la rangée des chapitres jusqu'au chapitre en cours sur téléphone ; point de
-    checklist FLX4 pour la table (lot 63) et `?tout=1` pour la checklist avec un profil neuf ; relancer
-    `tests/apprendre.spec.js`, `clarte`, `parcours`, puis demander l'accord. À dire à l'utilisateur : le verrou touche aussi
-    Apprenti DJ (60/100 en Expert) et DJ confirmé (quiz du chapitre 5) ; « gratuits, et le resteront » sur la présentation.
+    **Finitions faites le 9 nov. au soir** (reprise dans une nouvelle session) : un chapitre fermé écrit en clair ce qu'il
+    manque (`.cv`, « Encore 8 ★ au chapitre 1 » ; la phrase « Verrouillé : … » reste dans `.cs` pour l'info-bulle et les
+    lecteurs d'écran ; plus d'opacité sur toute la carte, bord en pointillé) ; `window.DJINGOOD_LIBRE` dans
+    `tests/captures.js` ; étoiles non choisies de Mon avis en `--off-ink` ; sur téléphone, la rangée des chapitres
+    s'arrête sur le chapitre en cours (fin de `renderChapters`), et les cartes de niveau gardent 128 px (une ancienne règle
+    `.node{width:84px}` les serrait, « VERROUILLÉ » débordait) avec de la place pour l'anneau du niveau choisi ; checklist
+    FLX4 : note sur `?tout=1` pour un profil neuf, points 37 (table du lot 63) et 38 (verrou du lot 64). Test ajouté dans
+    `tests/apprendre.spec.js`. À dire à l'utilisateur en demandant l'accord : le verrou touche aussi Apprenti DJ (60/100 en
+    Expert) et DJ confirmé (quiz du chapitre 5) ; « gratuits, et le resteront » sur la présentation.
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de

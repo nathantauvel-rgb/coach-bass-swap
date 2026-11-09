@@ -69,6 +69,7 @@ const contraste = () => { const lum = c => { const [r, g, b] = c.map(v => { v /=
     p.on('pageerror', e => errs.push(String(e)));
     await p.addInitScript(d => { try { if (!sessionStorage.getItem('__pret')) { for (const [k, v] of Object.entries(d)) localStorage.setItem(k, v); sessionStorage.setItem('__pret', '1'); } } catch (e) {} }, stockage);
     if (midi) await p.addInitScript(fausseTable);
+    await p.addInitScript(() => { window.DJINGOOD_LIBRE = true; });   // lot 64 : niveaux tous ouverts (les écrans ouvrent des niveaux sans les avoir réussis)
     await p.goto(BASE + '/index.html#' + onglet); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(700);
     if (action) { await action(p); await p.waitForTimeout(500); }
     await p.evaluate(() => { const c = document.getElementById('confetti'); if (c) c.style.visibility = 'hidden'; });

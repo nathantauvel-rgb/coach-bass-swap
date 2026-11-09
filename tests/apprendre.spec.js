@@ -70,6 +70,24 @@ test.describe('Les chapitres', () => {
     await expect(page.locator('.chap').nth(1)).toHaveClass(/ferme/);
     await expect(page.locator('.chap').nth(1).locator('.cadenas')).toHaveCount(1);
     await expect(page.locator('.chap').nth(1)).toContainText('Verrouillé : 6/14 ★ au chapitre 1');   // lu, et dans l'info-bulle
+    // et ce qu'il manque, écrit en clair sur la carte
+    await expect(page.locator('.chap').nth(1).locator('.cv')).toBeVisible();
+    await expect(page.locator('.chap').nth(1).locator('.cv')).toHaveText('Encore 8 ★ au chapitre 1');
+    await expect(page.locator('.chap').nth(2).locator('.cv')).toHaveText('Encore 10 ★ au chapitre 2');
+    await expect(page.locator('.chap').nth(0).locator('.cv')).toHaveCount(0);
+  });
+
+  test('sur téléphone : la rangée s’arrête sur le chapitre en cours, les cartes de niveau gardent leur largeur', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    const erreurs = await ouvrir(page, { verrou: true, stockage: { 'coach-lecons': S({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 2 }), 'coach-chapitre': '5' } });
+    const [barre, carte, largeur] = await page.evaluate(() => {
+      const bar = $('chapters'), b = bar.getBoundingClientRect(), c = bar.querySelector('[aria-pressed="true"]').getBoundingClientRect();
+      return [[b.left, b.right], [c.left, c.right], document.querySelector('#map .node').getBoundingClientRect().width];
+    });
+    expect(carte[0]).toBeGreaterThanOrEqual(barre[0] - 1);
+    expect(carte[1]).toBeLessThanOrEqual(barre[1] + 1);
+    expect(largeur).toBeGreaterThanOrEqual(120);   // une ancienne règle les serrait à 84 px
+    expect(erreurs).toEqual([]);
   });
 });
 

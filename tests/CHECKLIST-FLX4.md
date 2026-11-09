@@ -10,6 +10,10 @@ Depuis le lot 33, le site fait cette vérification avec toi : « Ma table » →
 commandes qu'il n'utilise pas encore (point 16) et garde le résultat dans « Copier le rapport ». La liste
 ci-dessous reste la version papier, utile pour noter à part ou pour vérifier sans ouvrir la vérification.
 
+Depuis le lot 64, les niveaux s'ouvrent un par un (il faut 2 étoiles au précédent). Pour faire cette liste avec
+un profil neuf (fenêtre de navigation privée), ajouter **`?tout=1`** à l'adresse : tous les niveaux et chapitres
+sont ouverts, par exemple http://localhost:8766/?tout=1#apprendre ou https://djingood.fr/?tout=1#apprendre.
+
 | # | À faire | Résultat attendu | OK ? |
 |---|---|---|---|
 | 1 | Ouvrir le site et accepter l'autorisation MIDI | La pastille en haut affiche le nom de la table | |
@@ -48,6 +52,8 @@ ci-dessous reste la version papier, utile pour noter à part ou pour vérifier s
 | 34 | Lot 44 : niveau 5 « Au casque », avec un casque sur la table | Avec CUE casque du morceau qui entre, on l'entend au casque et pas dans les enceintes, qu'il soit sur A ou sur B | |
 | 35 | Lot 52 : les Premiers pas animés, en nouveau venu (fenêtre de navigation privée), la table branchée | Après « C'est parti », la musique s'entend étouffée, au casque comme dans les enceintes, et s'ouvre à chaque question ; à l'écran de la table, Vini saute de joie quand la table est reconnue ; « Commencer » fait le drop sur un temps, puis la musique s'éteint quand le niveau s'ouvre | |
 | 36 | Lot 60 : le volume du site (haut-parleur en haut à droite), à 20 % puis à 100 %, pendant un niveau | Les enceintes ET le casque de la table baissent puis montent ensemble ; avec CUE casque de B, B garde le même niveau par rapport au reste ; à 50 % (le réglage de départ), le son est-il assez fort avec les boutons de volume de la table montés ? | |
+| 37 | Lot 63 : la table dessinée refaite, pendant un niveau (chapitre 1, niveau 7) puis dans « Ma table » | Les commandes du niveau se voient bien (les autres sont grisées, pas invisibles) ; faders, potards et molettes bougent dans le même sens que la table ; rien n'est trop petit pour être lu à 1366 × 768 | |
+| 38 | Lot 64 : un profil neuf **sans** `?tout=1`, chapitre 1 | Seul le niveau 1 est ouvert ; après 2 étoiles avec la table, le niveau 2 s'ouvre ; toucher un niveau fermé ne l'ouvre pas et Vini dit lequel réussir d'abord ; les chapitres fermés disent « Encore N ★ au chapitre 1 » | |
 
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 

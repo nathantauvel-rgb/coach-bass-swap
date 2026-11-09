@@ -186,11 +186,17 @@ function renderChapters(){
     const sub = c.soon ? 'Bientôt' : (c.n === 2 || c.n >= 4) && !ch2Unlocked() ? `Verrouillé : ${sumStars(stars)}/14 ★ au chapitre 1` : c.n === 3 && !ch3Unlocked() ? `Verrouillé : ${sumStars(ch2Stars)}/10 ★ au chapitre 2` : c.sub;
     // lot 64 : la progression du chapitre en pourcentage (étoiles gagnées sur le maximum) ; un chapitre fermé a son cadenas
     const pct = chapPct(c.n);
+    // ce qu'il manque, en court et visible sur la carte (la phrase complète reste dans .cs, lue et dans l'info-bulle)
+    const encore = (c.n === 2 || c.n >= 4) && !ch2Unlocked() ? `Encore ${14 - sumStars(stars)} ★ au chapitre 1` : c.n === 3 && !ch3Unlocked() ? `Encore ${10 - sumStars(ch2Stars)} ★ au chapitre 2` : '';
     b.classList.toggle('ferme', locked); b.style.setProperty('--pct', pct + '%');
-    b.innerHTML = `<span class="cn">${locked ? NIV_CADENAS : ''}Chapitre ${c.n}</span><strong></strong><span class="cs"></span><span class="cbar" aria-hidden="true"><i></i></span>`;
+    b.innerHTML = `<span class="cn">${locked ? NIV_CADENAS : ''}Chapitre ${c.n}</span><strong></strong><span class="cs"></span>${locked && encore ? '<span class="cv" aria-hidden="true"></span>' : ''}<span class="cbar" aria-hidden="true"><i></i></span>`;
     b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = locked ? sub : `${pct} %`; b.title = locked ? sub : `${c.title} : ${c.sub}`;
+    if (b.querySelector('.cv')) b.querySelector('.cv').textContent = encore;
     b.addEventListener('click', () => { chapMenu(false); setChapter(c.n); }); bar.appendChild(b);
   }
+  // sur téléphone, la rangée défile : elle s'arrête sur le chapitre en cours, au milieu (lot 64)
+  const sel = bar.querySelector('.chap[aria-pressed="true"]');
+  if (sel && bar.scrollWidth > bar.clientWidth) bar.scrollLeft += sel.getBoundingClientRect().left - bar.getBoundingClientRect().left - (bar.clientWidth - sel.offsetWidth) / 2;
 }
 // La liste des chapitres s'ouvre sous le bouton « Chapitre N · titre »
 // lot 64 : la liste des chapitres est toujours affichée (une rangée qui défile) ; le bouton « Chapitre N · titre » est caché

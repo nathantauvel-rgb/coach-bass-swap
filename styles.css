@@ -2750,10 +2750,10 @@ body.pro-ouvert{overflow:hidden}
    le rapport des testeurs replié. */
 #avis .qcard{gap:12px}
 #avis textarea{min-height:0}
-.avnote button{border:0;background:none;min-width:0;padding:0 2px;font-size:30px;line-height:1;color:var(--line);border-radius:6px}
+.avnote button{border:0;background:none;min-width:0;padding:0 2px;font-size:30px;line-height:1;color:var(--off-ink);border-radius:6px}
 .avnote button:hover{color:var(--muted)}
 .avnote:has(button[aria-pressed="true"]) button{color:var(--mid)}
-.avnote button[aria-pressed="true"] ~ button{color:var(--line)}
+.avnote button[aria-pressed="true"] ~ button{color:var(--off-ink)}
 .avnote button[aria-pressed="true"]{background:none;color:var(--mid)}
 .avnote button:focus-visible{outline:2px solid var(--brand-light);outline-offset:2px}
 .avrapport summary{cursor:pointer;font-weight:800;color:var(--muted)}
@@ -2854,7 +2854,10 @@ body.pro-ouvert{overflow:hidden}
 .chapters .chap .cbar i{display:block;height:100%;width:var(--pct,0%);border-radius:3px;background:linear-gradient(90deg,var(--brand),var(--a))}
 .chapters .chap[aria-pressed="true"]{background:var(--panel-2);border-color:var(--brand-light);box-shadow:inset 0 0 0 1px var(--brand-light)}
 .chapters .chap[aria-pressed="true"] .cn{color:var(--brand-light)}
-.chapters .chap.ferme{opacity:.55}
+/* fermé : le numéro et le titre en sourdine, ce qu'il manque bien lisible (pas d'opacité sur toute la carte) */
+.chapters .chap.ferme,.chapters .chap.ferme:disabled{opacity:1;background:transparent;border-style:dashed}
+.chapters .chap.ferme .cn,.chapters .chap.ferme strong{opacity:.55}
+.chapters .chap.ferme .cv{margin-top:auto;font-size:12px;font-weight:800;line-height:1.25;color:var(--muted)}
 .chapters .chap.ferme .cbar{display:none}
 .cadenas{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
@@ -2910,4 +2913,7 @@ body.pro-ouvert{overflow:hidden}
 @media (max-width:760px){
   .chapsel .chapters,.chapsel .chapters[hidden]{display:flex;flex-wrap:nowrap;overflow-x:auto}
   .chapters .chap{flex:0 0 138px}
+  /* les niveaux aussi (une ancienne règle les serrait à 84 px : « VERROUILLÉ » débordait) */
+  .map{gap:8px;padding:6px 5px 8px}   /* de la place pour l'anneau du niveau choisi, que le défilement coupait */
+  .map .node{flex:0 0 128px;width:128px}
 }
