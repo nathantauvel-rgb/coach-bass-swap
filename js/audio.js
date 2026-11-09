@@ -17,14 +17,32 @@ const xfGain = (x, k) => k === 'A' ? (x <= .5 ? 1 : Math.cos((x - .5) * Math.PI)
 // Filtre (CFX) : coupe-bas vers la droite, coupe-haut vers la gauche
 const cfxFreq = c => [c > .52 ? 20 * Math.pow(400, (c - .5) * 2) : 10, c < .48 ? 20000 * Math.pow(1 / 150, (.5 - c) * 2) : 22000];
 const cfxText = v => Math.abs(v - .5) < .03 ? 'neutre' : v > .5 ? 'coupe-bas ' + Math.round((v - .5) * 200) + ' %' : 'coupe-haut ' + Math.round((.5 - v) * 200) + ' %';
+/* ---------- Le volume du site (lot 60) ----------
+   Demande de l'utilisateur (9 nov. 2026) : « le son est vraiment trop fort sur toutes les pages ». Un seul réglage pour
+   TOUT le son du site : exercices, Comprendre, tutos, sons du jeu, musique des Premiers pas, et le casque de la table (le
+   CUE casque passe par pflBus, pas par master). Gardé sur cet appareil (coach-volume, de 0 à 1 ; il ne suit pas le compte :
+   le bon volume dépend de l'appareil). Au carré, comme le curseur des tutos : il suit mieux l'oreille. Au départ 0,5, soit
+   4 fois moins fort qu'avant (−12 dB) ; tout en haut, le niveau d'avant. Le curseur est dessiné par sons.js (volRend). */
+const VOL_DEFAUT = .5, VOL_BASE = .75;
+let volSite = VOL_DEFAUT, pflBus = null;
+try { const v = parseFloat(localStorage.getItem('coach-volume')); if (v >= 0 && v <= 1) volSite = v; } catch (e) {}
+const volGain = () => volSite * volSite;
+function volRegle(v){
+  v = Math.round(Math.max(0, Math.min(1, +v || 0)) * 100) / 100;
+  volSite = v;
+  try { localStorage.setItem('coach-volume', String(v)); } catch (e) {}
+  if (ac){ master.gain.setTargetAtTime(VOL_BASE * volGain(), ac.currentTime, .02); pflBus.gain.setTargetAtTime(volGain(), ac.currentTime, .02); }
+  if (typeof volRend === 'function') volRend();
+}
 function ensureAudio(){
   if (ac) return;
   ac = new (window.AudioContext || window.webkitAudioContext)();
-  master = ac.createGain(); master.gain.value = .75;
+  master = ac.createGain(); master.gain.value = VOL_BASE * volGain();
   const lim = ac.createDynamicsCompressor(); lim.threshold.value = -6; lim.knee.value = 0; lim.ratio.value = 20; lim.attack.value = .002; lim.release.value = .12;
   master.connect(lim);
   // Le casque (lot 39) : le son de la salle, ou celui des voies dont le CUE casque est allumé (avant leur fader)
   hpBus = ac.createGain(); hpBus.gain.value = 1; hpSalle = ac.createGain(); hpSalle.gain.value = 1; lim.connect(hpSalle); hpSalle.connect(hpBus);
+  pflBus = ac.createGain(); pflBus.gain.value = volGain(); pflBus.connect(hpBus);   // le CUE casque des voies, au volume du site
   const dest = ac.destination;
   try {
     if (dest.maxChannelCount >= 4){
@@ -48,7 +66,7 @@ function ensureAudio(){
     // sans sortie casque (table sans carte son à 4 sorties) : la voie au casque est jouée tout bas dans les enceintes (lot 40)
     d.simu = ac.createGain(); d.simu.gain.value = 0;
     d.an = ac.createAnalyser(); d.an.fftSize = 512;   // vumètre de la voie (après le fader)
-    d.trim.connect(d.eq); d.eq.connect(d.mid); d.mid.connect(d.hi); d.hi.connect(d.hp); d.hp.connect(d.lp); d.lp.connect(d.gain); d.lp.connect(d.pfl); d.pfl.connect(hpBus); d.lp.connect(d.simu); d.simu.connect(master);
+    d.trim.connect(d.eq); d.eq.connect(d.mid); d.mid.connect(d.hi); d.hi.connect(d.hp); d.hp.connect(d.lp); d.lp.connect(d.gain); d.lp.connect(d.pfl); d.pfl.connect(pflBus); d.lp.connect(d.simu); d.simu.connect(master);
     d.gain.connect(d.xf); d.xf.connect(master); d.xf.connect(d.an);
     {
       // Écho envoyé après le fader : il résonne encore quand le fader est coupé. Un par platine (lot 44 : au chapitre 7,

@@ -151,6 +151,7 @@ const proDate = s => new Date(s * 1000).toLocaleDateString('fr-FR', { day: 'nume
 function proCompteRend(){
   const box = $('cptPro'); if (!box) return;
   box.hidden = !(proVerrou() && cpt);
+  if ($('cptProSec')) $('cptProSec').hidden = box.hidden;   // le titre « Abonnement » de « Mon compte » (lot 60)
   if (box.hidden) return;
   const actif = proActif(), e = proEtat;
   box.classList.toggle('actif', actif);

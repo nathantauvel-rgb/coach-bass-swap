@@ -167,7 +167,7 @@
       <h2 id="cptTitle" tabindex="-1">Mon compte</h2>
       <p class="cptsous" id="cptSous" hidden></p>
     </div>
-    <div class="cptmoi" id="cptMoi" hidden><span class="cptavatar" id="cptAvatar" aria-hidden="true"></span><span><b id="cptMoiNom"></b><small id="cptMoiMail"></small></span></div>
+    <div class="cptmoi" id="cptMoi" hidden><span class="cptavatar" id="cptAvatar" aria-hidden="true"></span><span class="cptligne-txt"><b id="cptMoiNom"></b><small id="cptMoiMail"></small></span></div>
     <p class="cptetat" id="cptEtatTxt" role="status"></p>
     <div class="cptchoix" id="cptChoix" hidden>
       <p class="qwhy" id="cptChoixTxt"></p>
@@ -188,10 +188,20 @@
       <button type="submit" class="rbtn go cptmain" id="cptGo">Créer mon compte</button>
       <p class="cptbas"><span id="cptBasTxt"></span> <button type="button" class="cptlien" id="cptBascule"></button></p>
     </form>
+    <!-- Connecté (lot 60) : des sections nettes, comme la page « compte » des grands sites : progression, abonnement, réglages -->
     <div class="cptpas" id="cptConnecte" hidden>
-      <div class="cptpro" id="cptPro" hidden><span class="pro-badge">PRO</span><span><b id="cptProNom">DJingood Pro</b><small id="cptProTxt"></small></span><button type="button" class="cptprobtn" id="cptProBtn">Découvrir Pro</button></div>
-      <div class="cptmails" id="cptMailsRow" hidden><span><b id="cptMailsNom">Les mails de Vini</b><small id="cptMailsTxt">Un par semaine au plus&nbsp;: des astuces et les nouveautés. Tu peux aussi arrêter depuis n'importe quel mail.</small></span><button type="button" class="inter" role="switch" id="cptMailsInter" aria-checked="false" aria-labelledby="cptMailsNom"></button></div>
-      <button type="button" class="cptlien cptsortir" id="cptOut">Se déconnecter</button>
+      <p class="cptsec">Ta progression</p>
+      <div class="cptgroupe">
+        <div class="cptligne"><span class="cptligne-txt"><b id="cptProgNiv"></b><small id="cptProgTxt"></small></span><a class="cptprobtn" href="#progres" id="cptProgBtn">Mes progrès</a></div>
+      </div>
+      <p class="cptsec" id="cptProSec" hidden>Abonnement</p>
+      <div class="cptgroupe cptpro" id="cptPro" hidden><span class="pro-badge">PRO</span><span class="cptligne-txt"><b id="cptProNom">DJingood Pro</b><small id="cptProTxt"></small></span><button type="button" class="cptprobtn" id="cptProBtn">Découvrir Pro</button></div>
+      <p class="cptsec">Réglages</p>
+      <div class="cptgroupe">
+        <div class="cptligne cptvol"><span class="cptligne-txt"><b id="cptVolNom">Volume du site</b><small class="volpct-txt"></small></span><input type="range" class="volcurseur" id="cptVol" min="0" max="100" step="5" aria-labelledby="cptVolNom"></div>
+        <div class="cptligne cptmails" id="cptMailsRow" hidden><span class="cptligne-txt"><b id="cptMailsNom">Les mails de Vini</b><small id="cptMailsTxt">Un par semaine au plus&nbsp;: des astuces et les nouveautés. Tu peux aussi arrêter depuis n'importe quel mail.</small></span><button type="button" class="inter" role="switch" id="cptMailsInter" aria-checked="false" aria-labelledby="cptMailsNom"></button></div>
+      </div>
+      <div class="cptpied"><button type="button" class="cptsortir" id="cptOut">Se déconnecter</button></div>
     </div>
     <p class="qwhy" id="cptMsg" role="status" hidden></p>
     <p class="avsmall" id="cptNote"></p>
@@ -277,7 +287,19 @@
       <a class="chip lvlchip" href="#progres" title="Mes progrès : niveau, étoiles, badges"><span class="lvl" id="lvl">Niv. 1</span><span class="xpbar"><i id="xpFill" style="width:0"></i></span><span class="num" id="xpTxt">0 XP</span><span class="star" aria-hidden="true">★</span><span class="num" id="starTot">0/12</span></a>
       <a class="chip status" id="midiPill" href="#table" title="Ma table : le schéma et les réglages"><i></i><span>Table…</span></a>
       <button type="button" class="chip" id="guideBtn" hidden>Guide</button>
-      <button type="button" class="chip sonsbtn" id="sonsBtn"></button>
+      <div class="volbox">
+        <button type="button" class="chip sonsbtn" id="sonsBtn" aria-controls="volPanneau" aria-expanded="false"></button>
+        <div class="volpan" id="volPanneau" hidden role="group" aria-labelledby="volTitre">
+          <p class="volpan-titre" id="volTitre">Son</p>
+          <div class="volligne">
+            <button type="button" class="volmuet" id="volMuet"></button>
+            <input type="range" class="volcurseur" id="volCurseur" min="0" max="100" step="5" aria-label="Volume du site">
+            <span class="volpct-txt" aria-hidden="true"></span>
+          </div>
+          <p class="volpan-aide">Le volume de tout le site&nbsp;: exercices, tutos, leçons.</p>
+          <div class="volbips"><span class="cptligne-txt"><b id="volBipsNom">Petits sons du jeu</b><small>Réussi, raté, étoiles, coffres.</small></span><button type="button" class="inter" role="switch" id="volBips" aria-checked="true" aria-labelledby="volBipsNom"></button></div>
+        </div>
+      </div>
       <button type="button" class="chip avbtn" id="avisBtn">Mon avis</button>
     </div>
   </header>
@@ -494,7 +516,7 @@
         <button type="button" class="tu-lb" id="tuSuiv" aria-label="Plan suivant"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 4H19v16h-2.5zM4 4v16l11.5-8z"/></svg></button>
         <div class="tu-avance" id="tuAvance"></div>
         <button type="button" class="tu-lb tu-txt" id="tuRejoue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 3v5h5"/></svg><span>Réécouter</span></button>
-        <span class="tu-vol"><button type="button" class="tu-lb" id="tuMuet" aria-label="Couper le son"></button><input type="range" id="tuVolume" min="0" max="1" step="0.05" aria-label="Volume du tuto"></span>
+        <span class="tu-vol"><button type="button" class="tu-lb" id="tuMuet" aria-label="Couper le son"></button><input type="range" class="volcurseur" id="tuVolume" min="0" max="1" step="0.05" aria-label="Volume du site"></span>
         <span class="tu-num" id="tuNum"></span>
       </div>
     </section>

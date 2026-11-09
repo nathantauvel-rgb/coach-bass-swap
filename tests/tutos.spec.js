@@ -181,7 +181,7 @@ test.describe('Tutos : le lecteur', () => {
     await expect(page.locator('#tuPiste')).toBeHidden();
     await expect(page.locator('#tuRetenirListe li')).toHaveCount(3);
     await expect(page.locator('#tuSuivant')).toContainText("La boucle qui prolonge l'outro");
-    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('coach-tutos')))).toEqual({ vus: ['attend'], vol: .7 });
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('coach-tutos')))).toEqual({ vus: ['attend'] });   // plus de `vol` depuis le lot 60 (volume du site, coach-volume)
     await page.locator('#tuSuivant').click();
     await page.waitForFunction(() => tu.phase !== 'charge' && tu.t.id === 'prolonge', null, { timeout: 30000 });
     await expect(page.locator('#tuTitre')).toHaveText("La boucle qui prolonge l'outro");
@@ -241,26 +241,25 @@ test.describe('Tutos : le lecteur', () => {
 });
 
 test.describe('Tutos : le volume', () => {
-  test('la glissière règle le volume ; le haut-parleur du lecteur et celui de l\'en-tête coupent le son', async ({ page }) => {
+  // Lot 60 : la glissière du lecteur est celle du volume de TOUT le site (master) ; les tutos gardent leur niveau d'avant
+  // (0,49) par rapport aux exercices
+  test('la glissière règle le volume du site ; le haut-parleur du lecteur coupe et remet le son', async ({ page }) => {
     await ouvrirTutos(page);
     await lancer(page, 'attend');
     await page.evaluate(() => tuAller(1, { direct: true }));
     await page.waitForFunction(() => tu.phase === 'son', null, { timeout: 20000 });
-    const gain = () => page.evaluate(() => new Promise(r => setTimeout(() => r(+tu.sortie.gain.value.toFixed(3)), 300)));
-    expect(await gain()).toBeCloseTo(.49, 2);   // 0,7 au carré
+    const gains = () => page.evaluate(() => new Promise(r => setTimeout(() => r([+tu.sortie.gain.value.toFixed(3), +master.gain.value.toFixed(4)]), 300)));
+    expect(await gains()).toEqual([.49, .1875]);   // volume du site à 50 % : 0,75 × 0,5 au carré
     await page.locator('#tuVolume').fill('0.3');
-    expect(await gain()).toBeCloseTo(.09, 2);
-    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('coach-tutos')).vol)).toBe(.3);
+    expect((await gains())[1]).toBeCloseTo(.0675, 3);
+    expect(await page.evaluate(() => localStorage.getItem('coach-volume'))).toBe('0.3');
+    await expect(page.locator('#volCurseur')).toHaveValue('30');   // le curseur de l'en-tête suit
     await page.locator('#tuMuet').click();
-    expect(await gain()).toBe(0);
-    await page.locator('#tuMuet').click();
-    expect(await gain()).toBeCloseTo(.09, 2);
-    await page.locator('#sonsBtn').click();   // le haut-parleur de l'en-tête coupe aussi les tutos
-    expect(await gain()).toBe(0);
+    expect((await gains())[1]).toBe(0);
     await expect(page.locator('#tuMuet')).toHaveAttribute('aria-pressed', 'true');
-    await page.locator('#tuVolume').fill('0.5');   // remonter le volume du lecteur rallume les sons
-    expect(await page.evaluate(() => sonsOn)).toBe(true);
-    expect(await gain()).toBeCloseTo(.25, 2);
+    await page.locator('#tuMuet').click();
+    expect((await gains())[1]).toBeCloseTo(.0675, 3);
+    expect((await gains())[0]).toBe(.49);
   });
 });
 

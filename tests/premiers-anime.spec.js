@@ -122,7 +122,7 @@ test.describe('Premiers pas animés', () => {
     await page.locator('#ppSon').click();
     await expect.poll(() => musique(page).then(m => m.joue)).toBe(true);
     expect(await page.evaluate(() => localStorage.getItem('coach-sons'))).toBe('1');
-    await expect(page.locator('#sonsBtn')).toHaveAttribute('aria-pressed', 'true');   // le haut-parleur de l'en-tête suit
+    await expect(page.locator('#volBips')).toHaveAttribute('aria-checked', 'true');   // l'interrupteur du panneau « Son » suit (lot 60)
     await page.locator('#ppSon').click();
     await expect.poll(() => musique(page).then(m => m.joue)).toBe(false);
     await page.locator('#ppSkip').click();

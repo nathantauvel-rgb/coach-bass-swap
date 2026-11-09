@@ -30,10 +30,56 @@ function son(nom, ...arg){
 // Le bouton de l'en-tête : un haut-parleur, avec ou sans ondes (le même dessin sert à la musique des Premiers pas, lot 52)
 const sonsIcone = on => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/>'
   + (on ? '<path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>' : '<path d="M16 9.5l5 5M21 9.5l-5 5"/>') + '</svg>';
-function renderSons(){
-  const b = $('sonsBtn'); b.setAttribute('aria-pressed', String(sonsOn)); b.title = sonsOn ? 'Couper les sons du jeu' : 'Remettre les sons du jeu';
-  b.setAttribute('aria-label', sonsOn ? 'Sons du jeu : activés' : 'Sons du jeu : coupés');
-  b.innerHTML = sonsIcone(sonsOn);
+/* ---------- Le son (lot 60) ----------
+   Le haut-parleur de l'en-tête ouvre un petit panneau « Son » : le volume de tout le site (volSite, js/audio.js) et
+   l'interrupteur des petits sons du jeu (sonsOn, coach-sons ; il coupe aussi la musique des Premiers pas). Le même volume
+   se règle aussi dans « Mon compte » et sous le lecteur des tutos : tous les curseurs .volcurseur bougent ensemble. */
+let volAvant = VOL_DEFAUT;   // le volume d'avant le bouton « couper », pour le remettre
+const volPct = () => Math.round(volSite * 100) + ' %';
+function volMuetBascule(){
+  if (volSite > 0){ volAvant = volSite; volRegle(0); }
+  else volRegle(volAvant > 0 ? volAvant : VOL_DEFAUT);
 }
-$('sonsBtn').addEventListener('click', () => { sonsOn = !sonsOn; try { localStorage.setItem('coach-sons', sonsOn ? '1' : '0'); } catch (e) {} renderSons(); son('clic'); });
-renderSons();
+// Le panneau et l'icône de l'en-tête (appelé aussi par premiers.js quand le bouton de la musique change sonsOn)
+function renderSons(){
+  const b = $('sonsBtn'), muet = volSite === 0;
+  b.innerHTML = sonsIcone(!muet);
+  b.setAttribute('aria-label', muet ? 'Son : coupé' : 'Son : ' + volPct());
+  b.title = 'Régler le son';
+  b.setAttribute('aria-expanded', String(!$('volPanneau').hidden));
+  const m = $('volMuet');
+  m.innerHTML = sonsIcone(!muet); m.setAttribute('aria-pressed', String(muet)); m.setAttribute('aria-label', muet ? 'Remettre le son' : 'Couper le son');
+  $('volBips').setAttribute('aria-checked', String(sonsOn));
+}
+// Tous les curseurs du volume (en-tête, « Mon compte », lecteur des tutos) et leurs textes
+function volRend(){
+  document.querySelectorAll('.volcurseur').forEach(r => {
+    const v = r.max === '100' ? String(Math.round(volSite * 100)) : String(volSite);
+    if (document.activeElement !== r) r.value = v;
+    r.style.setProperty('--rempli', Math.round(volSite * 100) + '%');
+  });
+  document.querySelectorAll('.volpct-txt').forEach(e => { e.textContent = volSite === 0 ? 'Coupé' : volPct(); });
+  renderSons();
+  if (typeof tuVolumeApplique === 'function') tuVolumeApplique();
+}
+function volPanneau(ouvert){
+  $('volPanneau').hidden = !ouvert; renderSons();
+  if (ouvert) $('volCurseur').focus();
+}
+$('sonsBtn').addEventListener('click', () => volPanneau($('volPanneau').hidden));
+$('volMuet').addEventListener('click', volMuetBascule);
+$('volBips').addEventListener('click', () => {
+  sonsOn = !sonsOn; try { localStorage.setItem('coach-sons', sonsOn ? '1' : '0'); } catch (e) {}
+  renderSons(); son('clic');
+  if (typeof ppSonRendu === 'function') ppSonRendu();
+});
+// Un curseur bougé (n'importe lequel) : le volume suit tout de suite ; au lâcher, un petit son pour l'entendre
+document.addEventListener('input', e => {
+  const r = e.target; if (!r.classList || !r.classList.contains('volcurseur')) return;
+  volRegle(r.max === '100' ? (+r.value || 0) / 100 : +r.value || 0);
+});
+document.addEventListener('change', e => { if (e.target.classList && e.target.classList.contains('volcurseur')) son('clic'); });
+// Fermer le panneau : Échap, ou un clic ailleurs
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('volPanneau').hidden){ volPanneau(false); $('sonsBtn').focus(); } });
+document.addEventListener('pointerdown', e => { if (!$('volPanneau').hidden && !e.target.closest('.volbox')) volPanneau(false); });
+volRend();

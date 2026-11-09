@@ -152,7 +152,7 @@ function avisMail(){
 function avisReset(){
   jrOff = true;
   const efface = () => {
-    try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-stats', 'coach-mails'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+    try { Object.keys(localStorage).filter(k => k.startsWith('coach-') && !['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-stats', 'coach-mails', 'coach-volume'].includes(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
     // replaceState ne déclenche pas hashchange : avec location.hash, l'accueil se réaffichait une fraction de seconde et
     // réécrivait les quêtes du jour juste après l'effacement (test instable, trouvé par le gardien du lot 44)
     history.replaceState(null, '', '#accueil'); location.reload();

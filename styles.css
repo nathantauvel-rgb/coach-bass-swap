@@ -2525,3 +2525,67 @@ body.pro-ouvert{overflow:hidden}
   .pro-bandeau{flex-wrap:wrap}.pro-mini{margin-left:0}
 }
 @media (prefers-reduced-motion:reduce){.pro-vinyle{animation:none}}
+
+/* ---------- Lot 60 : le son, et « Mon compte » refait ----------
+   Le panneau « Son » sous le haut-parleur de l'en-tête (volume de tout le site + petits sons du jeu), et « Mon compte »
+   une fois connecté : une fenêtre plus large, alignée à gauche, en sections nettes (comme la page « compte » des grands
+   sites) : qui tu es, ta progression, ton abonnement, tes réglages. Pas de vert qui brille pour l'état de la progression. */
+.volbox{position:relative;display:inline-flex}
+.volpan{position:absolute;right:0;top:calc(100% + 10px);z-index:60;width:300px;display:flex;flex-direction:column;gap:12px;padding:16px;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);text-align:left}
+.volpan[hidden]{display:none}
+.volpan-titre{margin:0;font-size:16px;font-weight:900;color:var(--fg)}
+.volligne{display:flex;align-items:center;gap:10px}
+.volmuet{flex:none;display:grid;place-items:center;width:38px;height:38px;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--panel-2);color:var(--fg);cursor:pointer}
+.volmuet svg{width:20px;height:20px}
+.volmuet[aria-pressed="true"]{color:var(--muted)}
+.volcurseur{accent-color:var(--brand-light);cursor:pointer}
+.volligne .volcurseur{flex:1;min-width:0}
+.volpct-txt{color:var(--muted);font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.volligne .volpct-txt{flex:none;min-width:48px;text-align:right}
+.volpan-aide{margin:-4px 0 0;color:var(--muted);font-size:13px;line-height:1.4}
+.volbips{display:flex;align-items:center;gap:12px;padding-top:12px;border-top:1px solid var(--line)}
+.cptligne-txt{flex:1;min-width:0}
+.cptligne-txt b{display:block;font-size:15px;font-weight:900;color:var(--fg)}
+.cptligne-txt small{display:block;margin-top:2px;color:var(--muted);font-size:13px;line-height:1.4;overflow-wrap:anywhere}
+.cptligne-txt small[hidden]{display:none}
+@media (max-width:600px){.volpan{position:fixed;left:16px;right:16px;top:72px;width:auto}}
+
+#compte .cptcard.connecte{max-width:560px;gap:12px;text-align:left}
+#compte .cptcard.connecte .cpthead{flex-direction:row;justify-content:flex-start;text-align:left;margin:0 0 4px}
+#compte .cptcard.connecte .cpthead h2{font-size:24px}
+#compte .cptcard.connecte .cptmoi{gap:16px;padding:16px;margin:0;border:1px solid var(--line)}
+#compte .cptcard.connecte .cptavatar{width:52px;height:52px;font-size:23px}
+#compte .cptcard.connecte .cptmoi b{font-size:19px}
+#compte .cptcard.connecte .cptetat{margin:-4px 0 0 4px;font-size:13px}
+#compte .cptcard.connecte .cptetat.ok{display:block;color:var(--muted)}
+#compte .cptcard.connecte .cptetat.ok::before{content:none}
+#compte .cptcard.connecte .cptpas{gap:8px}
+.cptsec{margin:10px 0 0 4px;color:var(--muted);font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.cptsec[hidden]{display:none}
+.cptgroupe{border:1px solid var(--line);border-radius:16px;background:var(--panel-2);overflow:hidden}
+.cptgroupe[hidden]{display:none}
+.cptligne{display:flex;align-items:center;gap:14px;padding:14px 16px}
+.cptligne[hidden]{display:none}
+.cptligne:not([hidden]) ~ .cptligne:not([hidden]){border-top:1px solid var(--line)}
+.cptgroupe .cptmails{border:0;border-radius:0;padding:14px 16px}
+#compte .cptgroupe.cptpro{display:flex;align-items:center;gap:14px;margin:0;padding:14px 16px;border-radius:16px}
+#compte .cptgroupe.cptpro[hidden]{display:none}
+#compte .cptgroupe.cptpro .pro-badge{flex:none;box-shadow:none}
+#compte .cptprobtn{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 14px;border-radius:10px;
+  border:1px solid var(--line);background:var(--panel);color:var(--fg);font:inherit;font-size:14px;font-weight:900;white-space:nowrap;text-decoration:none;cursor:pointer}
+#compte .cptprobtn:hover{border-color:var(--brand-light)}
+#compte .cptpro:not(.actif) .cptprobtn{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.cptvol .volcurseur{flex:0 1 200px;min-width:120px}
+.cptpied{display:flex;justify-content:flex-start;margin-top:10px}
+#compte .cptsortir{align-self:auto;min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--fg);
+  font:inherit;font-size:14px;font-weight:900;cursor:pointer}
+#compte .cptsortir:hover{border-color:var(--bad);color:var(--bad)}
+#compte .cptsortir:disabled{opacity:.6;cursor:wait}
+#compte .cptcard.connecte #cptNote,#compte .cptcard.connecte .cptconf{text-align:left;font-size:13px;margin:0}
+#compte .cptcard.connecte #cptNote{padding-top:14px;border-top:1px solid var(--line)}
+@media (max-width:520px){
+  #compte .cptgroupe.cptpro{flex-wrap:wrap}
+  #compte .cptgroupe.cptpro .cptprobtn{width:100%}
+  .cptvol{flex-wrap:wrap}.cptvol .volcurseur{flex:1 1 100%}
+}

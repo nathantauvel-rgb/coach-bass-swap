@@ -98,10 +98,54 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     bloqué) : `PRO_PRET = false` servi, onglet Tutos caché pour un joueur, `?tutos=1` = 11 tutos sans cadenas, `?pro=1` =
     8 cadenas, aucune erreur ; `cgv.html` et `mentions-legales.html` servis, `STRIPE.md` et `CLAUDE.md` en 404,
     `/api/pro` répond 503 `pas-configure` (réglages Vercel pas encore mis).
-  - Reste : les trois réglages Vercel par l'utilisateur (`STRIPE_CLE` = sa clé de test du compte DJingood, qu'il copie
-    lui-même ; `STRIPE_PRIX_MOIS` et `STRIPE_PRIX_AN` = les prix de test notés dans `captures/stripe/notes.md`), Redeploy,
-    puis son essai sur https://djingood.fr/?tutos=1&pro=1#tutos ; logo et e-mails dans Stripe (dont le rappel avant le
-    renouvellement annuel, que `cgv.html` promet).
+  - **Réglages Vercel faits par l'utilisateur le 9 nov.** (`STRIPE_CLE` = sa clé de test du compte DJingood ; `STRIPE_PRIX_MOIS`
+    et `STRIPE_PRIX_AN` = les prix de test notés dans `captures/stripe/notes.md` de la copie lot 59), Redeploy fait : `/api/pro`
+    sans jeton répond 401 `jeton` au lieu de 503, il lit bien les réglages. En production, le site l'a reconnu comme abonné
+    grâce à l'abonnement de test payé en local (même compte Google, même compte Stripe) : la vérification marche. Pour qu'il
+    puisse racheter, tous les abonnements de test ont été annulés tout de suite par `node captures/stripe/abos.js --annule`
+    (copie lot 59, hors Git ; sans `--annule`, il les liste). Il cherchait ensuite où était « Gérer mon abonnement » (bouton
+    à son prénom → « Mon compte », avec `?pro=1` dans l'onglet). Son essai complet en production : pas encore confirmé.
+  - Reste : logo et e-mails dans Stripe (dont le rappel avant le renouvellement annuel, que `cgv.html` promet).
+  **Lot 60 « Volume et Mon compte » (9 nov. 2026)** : branche `lot-60-volume` (partie d'`origin/main` = lot 59 publié), copie
+  `Documents\coach-dj-lot60` (git worktree, `node_modules` relié par jonction ; tests : `DJ_PORT=8776 npx playwright test`,
+  port 8775 pour le serveur des captures). Deux demandes de l'utilisateur, « Lance le lot 60 » :
+  - « baisser le son de tous les exercices », trop fort partout. **Un seul volume pour tout le site** (`volSite` dans
+    `js/audio.js`, clé `coach-volume` de 0 à 1, sur l'appareil seulement : dans `CPT_LOCAL` et gardée par « Tout recommencer à
+    zéro ») : `master.gain` = 0,75 × volume² (exercices, Comprendre, tutos, sons du jeu, musique des Premiers pas) et un bus
+    `pflBus` pour le CUE casque des voies (qui n'allait pas par `master`). **50 % au départ = 4 fois moins fort qu'avant
+    (−12 dB)** ; 100 % = le niveau d'avant. `volRegle(v)` applique et enregistre. Le haut-parleur de l'en-tête (`#sonsBtn`)
+    ouvre maintenant un panneau `#volPanneau` (curseur `#volCurseur`, bouton couper/remettre `#volMuet`, interrupteur
+    `#volBips` des petits sons du jeu = l'ancien `sonsOn`/`coach-sons`, qui coupe aussi la musique des Premiers pas) ;
+    Échap ou un clic ailleurs le ferment. Tous les curseurs `.volcurseur` (en-tête, « Mon compte » `#cptVol`, lecteur des
+    tutos `#tuVolume`) bougent ensemble (`volRend` dans `js/sons.js`). Tutos : plus de volume à part (`tuVol` et le `vol` de
+    `coach-tutos` retirés), `TU_NIVEAU` = 0,49 garde l'équilibre d'avant avec les exercices ; le haut-parleur du lecteur
+    coupe et remet le son du site (`volMuetBascule`), et les petits sons du jeu ne coupent plus les tutos.
+  - « Mon compte » (capture envoyée) : « dégueulasse », « inspire toi d'autres sites pour faire un truc plus propre carré ».
+    Connecté, la fenêtre devient plus large (560 px), alignée à gauche, en sections comme une page « compte » de grand site
+    (`.cptcard.connecte`) : carte d'identité, l'état de la progression en texte gris (plus de pastille verte), « Ta
+    progression » (`cptRendProgres` : niveau, XP, étoiles, série, bouton « Mes progrès » qui ferme la fenêtre), « Abonnement »
+    (`#cptProSec`, montré par `proCompteRend` avec le bloc Pro ; le texte n'est plus coincé en colonne ; badge sans halo),
+    « Réglages » (volume du site, mails de Vini), « Se déconnecter » en vrai bouton, puis la note de la table et le lien de
+    confidentialité. Les écrans de connexion (pas connecté) ne changent pas. Identifiants des tests gardés.
+  - Tests : `tests/volume.spec.js` (nouveau) ; `vini-sons`, `premiers-anime`, `tutos` mis à jour. Captures :
+    `captures/lot60/` (copie lot 60, hors Git, `node captures/lot60/captures.js` avec le serveur sur le port 8775).
+  - L'utilisateur a aussi dit : « il y a beaucoup d'interfaces que je trouve très moches, très mal faites, faudrait qu'on
+    revoie ça ».
+  **Lot 61 « Le tour des écrans » (9 nov. 2026, « go 61 ») : AUDIT seulement, rien de codé.** 31 écrans pris en photo à
+  1366 × 768 et sur téléphone (`node captures/lot61/tour.js` dans la copie lot 60, hors Git, serveur sur le port 8775 →
+  `captures/lot61/ecrans/`). Page privée avec captures et propositions : https://claude.ai/artifact/HnpDtysYZGC8L46si8xBno
+  (source dans le dossier temporaire de la session). 12 écrans à refaire, il doit répondre par lettres : **A** l'en-tête
+  (deux lignes, « Se connecter » qui passe sous le logo dès que l'onglet Tutos est là, tout coupé sur téléphone ; proposé :
+  une barre, onglets en bas sur téléphone, « Mon avis » dans le compte) · **B** les boutons (blanc, orange, violet se
+  battent ; proposé : orange = action principale, contour, lien) · **C** la table dessinée des niveaux et de « Ma table »
+  (traits fins, commandes fantômes ; proposé : une seule table partie de celle des tutos, gros, à essayer sur la FLX4) ·
+  **D** la présentation (moitié vide, textes faux : « sans compte », « gratuit pendant la phase de test ») · **E**
+  S'entraîner (cartes de texte toutes « Nouveau ») · **F** catalogue des tutos (pas de vignettes alors que Pro en a) ·
+  **G** l'accueil (bouton blanc, anneau gris vide, coffres gris, Vini dans le vide) · **H** l'écran d'un niveau (le rond
+  « — » du compte à rebours avant la partie, carte écrasée sur téléphone) · **I** le guide de bienvenue (pavé de texte) ·
+  **J** Mon avis (plus haute que l'écran) · **K** Vérifier ma table (lignes en « … », 4 boutons égaux) · **L** Mes progrès
+  (formes grises à zéro). Ordre conseillé : A+B+H, puis F, E, G, puis C seul, puis D, I, J, K, L. Jugés bons : Premiers
+  pas, lecteur des tutos, fenêtre Pro, carte de fin, série, Comprendre, Mon compte et panneau du son (lot 60).
   **Lot 58 « Tutos : le volume et les effets » PUBLIÉ le 8 nov. 2026, onglet toujours caché** (« publie 58 » ; commit
   `ae938f6` ; production vérifiée : rien de neuf pour un joueur, 11 tutos avec `?tutos=1`, aucune erreur) (branche `lot-58-tutos-effets`, copie
   `Documents\coach-dj-lot58`) : 7 tutos de plus, moteur avec potards, filtre, écho et réverbe. Voir l'entrée « Lot 58 ».
@@ -2275,7 +2319,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-tutos` (`{ vus: [identifiants], vol }`, les tutos vus jusqu'au bout et le volume du lecteur, lot 56), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester

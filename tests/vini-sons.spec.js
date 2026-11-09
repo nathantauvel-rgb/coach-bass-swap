@@ -85,21 +85,23 @@ test.describe('Sons du jeu', () => {
     await page.locator('#ppGo').click(); await page.locator('#ppOpts .pp-opt').first().click();
     expect(await sons(page)).toEqual(['coffre', 'serie', 'clic']);
   });
-  test('le bouton coupe les sons, et le choix est gardé', async ({ page }) => {
+  // Lot 60 : le haut-parleur de l'en-tête ouvre le panneau « Son » ; les petits sons du jeu y ont leur interrupteur
+  test('l’interrupteur du panneau « Son » coupe les sons du jeu, et le choix est gardé', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'accueil', stockage: BASE });
-    const b = page.locator('#sonsBtn');
-    await expect(b).toHaveAttribute('aria-pressed', 'true');
-    await expect(b).toHaveAttribute('aria-label', 'Sons du jeu : activés');
+    await page.locator('#sonsBtn').click();
+    const b = page.locator('#volBips');
+    await expect(b).toHaveAttribute('aria-checked', 'true');
     // les vraies notes passent, sans erreur
     await page.evaluate(() => { window.__notes = 0; const n = sonNote; sonNote = (...a) => { window.__notes++; n(...a); }; for (const k of Object.keys(SONS)) son(k, 1); });
     expect(await page.evaluate(() => window.__notes)).toBeGreaterThan(15);
     await b.click();
-    await expect(b).toHaveAttribute('aria-pressed', 'false');
+    await expect(b).toHaveAttribute('aria-checked', 'false');
     expect(await page.evaluate(() => localStorage.getItem('coach-sons'))).toBe('0');
     await page.evaluate(() => { window.__notes = 0; son('fin'); son('coffre'); });
     expect(await page.evaluate(() => window.__notes)).toBe(0);
     await page.reload();
-    await expect(page.locator('#sonsBtn')).toHaveAttribute('aria-label', 'Sons du jeu : coupés');
+    await page.locator('#sonsBtn').click();
+    await expect(page.locator('#volBips')).toHaveAttribute('aria-checked', 'false');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
 });

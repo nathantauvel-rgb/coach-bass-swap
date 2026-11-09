@@ -430,12 +430,12 @@ const tu = {
   texte: { spans: [], temps: [], vus: 0, total: 0 }, vues: new Set(), angle: { A: 0, B: 0 },
   bufs: {}, charge: {}, sortie: null, noeuds: [], srcs: [], son: null, raf: 0
 };
-// coach-tutos : { vus: [tutos vus jusqu'au bout], vol: volume du lecteur, de 0 à 1 }
+// coach-tutos : { vus: [tutos vus jusqu'au bout] } (l'ancien `vol`, volume du lecteur, n'est plus lu depuis le lot 60 :
+// le volume est celui du site, coach-volume)
 const TU_CLE = 'coach-tutos';
 const tuLu = (() => { try { const d = JSON.parse(localStorage.getItem(TU_CLE)); return d && typeof d === 'object' ? d : {}; } catch (e) { return {}; } })();
 let tuVus = Array.isArray(tuLu.vus) ? tuLu.vus.filter(id => TUTOS.some(t => t.id === id)) : [];
-let tuVol = typeof tuLu.vol === 'number' && tuLu.vol >= 0 && tuLu.vol <= 1 ? tuLu.vol : .7;
-const tuGarde = () => { try { localStorage.setItem(TU_CLE, JSON.stringify({ vus: tuVus, vol: tuVol })); } catch (e) {} };
+const tuGarde = () => { try { localStorage.setItem(TU_CLE, JSON.stringify({ vus: tuVus })); } catch (e) {} };
 function tuMarqueVu(id){
   if (tuVus.includes(id)) return;
   tuVus.push(id); tuGarde();
@@ -479,7 +479,7 @@ function tuSonStop(){
 }
 function tuSonJoue([de, a, vNom = 'bon']){
   tuSonStop(); ensureAudio();
-  if (!tu.sortie){ tu.sortie = ac.createGain(); tu.sortie.connect(master); tuVolumeApplique(); }   // → volume du lecteur → sortie du site
+  if (!tu.sortie){ tu.sortie = ac.createGain(); tu.sortie.connect(master); tuVolumeApplique(); }   // → niveau des tutos → sortie du site (volume du site)
   const v = tu.t.versions[vNom], t0 = ac.currentTime + .1, T = x => t0 + (x - de) * TU_BEAT, nd = n => (tu.noeuds.push(n), n);
   tu.son = { de, a, v: vNom, t0, tFin: t0 + (a - de) * TU_BEAT };
   // les effets, partagés par les deux platines (un seul est allumé à la fois, comme le BEAT FX de la table)
@@ -918,28 +918,17 @@ document.addEventListener('keydown', e => {
 // Un onglet caché arrête l'image : on met le tuto en pause pour que le son ne parte pas sans elle
 document.addEventListener('visibilitychange', () => { if (document.hidden && tu.phase !== 'ferme' && tu.phase !== 'charge' && !tu.pause) tuMetPause(true); });
 /* ---------- Le volume du lecteur ----------
-   Une glissière et un haut-parleur, comme sous une vidéo (demande de l'utilisateur, 7 nov. 2026). Le haut-parleur de
-   l'en-tête (les sons du jeu, coach-sons) coupe aussi les tutos ; remonter le volume du lecteur le rallume. */
-const tuMuet = () => !sonsOn || tuVol === 0;
-let tuVolAvant = .7;
+   Une glissière et un haut-parleur, comme sous une vidéo (demande de l'utilisateur, 7 nov. 2026). Depuis le lot 60, la
+   glissière règle le volume de TOUT le site (volSite, js/audio.js), comme le haut-parleur de l'en-tête et « Mon compte » :
+   c'est un curseur .volcurseur, que sons.js suit tout seul (volRend). Le haut-parleur du lecteur coupe et remet le son du
+   site. TU_NIVEAU garde l'équilibre d'avant entre les tutos et les exercices (0,7 au carré : l'ancien réglage du lecteur). */
+const TU_NIVEAU = .49;
+const tuMuet = () => volSite === 0;
 function tuVolumeApplique(){
-  const v = sonsOn ? tuVol : 0;
-  if (tu.sortie && ac) tu.sortie.gain.setTargetAtTime(v * v, ac.currentTime, .02);   // au carré : la glissière suit mieux l'oreille
-  const r = $('tuVolume'); if (document.activeElement !== r) r.value = String(sonsOn ? tuVol : 0);
+  if (tu.sortie && ac) tu.sortie.gain.value = TU_NIVEAU;
   const b = $('tuMuet'), muet = tuMuet();
   b.setAttribute('aria-pressed', String(muet)); b.setAttribute('aria-label', muet ? 'Remettre le son' : 'Couper le son'); b.innerHTML = sonsIcone(!muet);
 }
-function tuSonsRallume(){ if (!sonsOn){ sonsOn = true; try { localStorage.setItem('coach-sons', '1'); } catch (e) {} renderSons(); } }
-$('tuVolume').addEventListener('input', e => {
-  tuVol = Math.max(0, Math.min(1, +e.target.value || 0));
-  if (tuVol > 0) tuSonsRallume();
-  tuVolumeApplique(); tuGarde();
-});
-$('tuMuet').addEventListener('click', () => {
-  if (tuMuet()){ if (tuVol === 0) tuVol = tuVolAvant || .7; tuSonsRallume(); }
-  else { tuVolAvant = tuVol; tuVol = 0; }
-  tuVolumeApplique(); tuGarde();
-});
-$('sonsBtn').addEventListener('click', tuVolumeApplique);   // après celui de sons.js, qui a déjà changé sonsOn
+$('tuMuet').addEventListener('click', volMuetBascule);
 tuVolumeApplique();
 $('tabTutos').hidden = !tutosOn();

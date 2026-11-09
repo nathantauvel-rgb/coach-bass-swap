@@ -47,7 +47,7 @@ const CPT_MAX = 400000;                       // au-delà, on n'envoie pas (gard
    - `coach-stats` : les étapes déjà comptées par les statistiques sur ce navigateur (stats.js).
    - `coach-compte-propose` : le jour où la carte de fin a proposé le compte (mails.js) ; ne sert qu'avant d'en avoir un.
    `coach-mails` (la réponse « Vini peut m'écrire », lot 54), elle, suit le compte : on ne repose pas la question ailleurs. */
-const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
+const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-volume', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
 const cptOn = () => !!(CPT_CFG && CPT_CFG.apiKey && CPT_CFG.projectId && CPT_CFG.appId);
 const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_LOCAL.includes(k);
 
@@ -433,11 +433,14 @@ function cptRend(){
   $('cptVini').hidden = !!cpt || cptPas === 'creer' || cptPas === 'oubli';
   // qui est connecté : l'adresse vient de Firebase (elle n'est pas dans le document de progression)
   $('cptMoi').hidden = !cpt;
+  // Connecté (lot 60) : une fenêtre plus large, alignée à gauche, en sections (progression, abonnement, réglages)
+  $('compte').querySelector('.cptcard').classList.toggle('connecte', !!cpt);
   if (cpt){
     const u = cptFb && cptFb.auth && cptFb.auth.currentUser, mail = (u && u.email) || '';
     $('cptAvatar').textContent = cptInitiale();
     $('cptMoiNom').textContent = cpt.prenom === 'toi' ? 'Toi' : cpt.prenom;
     $('cptMoiMail').textContent = mail; $('cptMoiMail').hidden = !mail;
+    cptRendProgres();
   }
   const bien = !!cpt && !cptAttente && !cptSouci && !cptLent && !cptEnvoi && !cptBloque;
   $('cptEtatTxt').textContent = !cpt ? ''
@@ -456,8 +459,19 @@ function cptRend(){
     : 'DJingood enregistre ton prénom, ton adresse et ta progression. Rien d’autre, et rien n’est partagé.';
   $('cptNote').hidden = !$('cptNote').textContent;
   mlRend(); if (typeof proCompteRend === 'function') proCompteRend();   // le bloc de l'abonnement (pro.js)
+  if (typeof volRend === 'function') volRend();   // le curseur du volume (sons.js)
   viniMettre($('cptVini'), 'calme');
 }
+// « Ta progression » dans « Mon compte » (lot 60) : les mêmes chiffres que la pastille de l'en-tête (renderHud), en phrases
+function cptRendProgres(){
+  const niv = ($('lvl').textContent || '').replace(/^Niv\.\s*/, ''), xp = parseInt($('xpTxt').textContent, 10) || 0;
+  const [eu, tot] = ($('starTot').textContent || '0/0').split('/').map(n => parseInt(n, 10) || 0);
+  const serie = typeof goalStreak === 'function' ? goalStreak() : 0;
+  $('cptProgNiv').textContent = 'Niveau ' + (niv || '1') + ' · ' + xp.toLocaleString('fr-FR') + ' XP';
+  $('cptProgTxt').textContent = eu + (eu > 1 ? ' étoiles' : ' étoile') + ' sur ' + tot
+    + (serie > 0 ? ' · série de ' + serie + (serie > 1 ? ' jours' : ' jour') : '');
+}
+$('cptProgBtn').addEventListener('click', () => closeCompte());   // le lien mène à « Mes progrès » (#progres)
 
 /* ---------- Après la connexion : la fenêtre se ferme toute seule ----------
    Demande de l'utilisateur (29 oct. 2026) : « dès que j'ai créé un compte, je dois fermer une page ». Quand le joueur
