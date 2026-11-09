@@ -21,7 +21,10 @@ function fausseTable(cfg) {
 // Ouvre le site. `stockage` = contenu du localStorage (le guide est marqué comme vu sauf indication contraire),
 // `midi` = { branchee, refuse } pour la fausse table (branchee : true pour une DDJ-FLX4, ou le nom d'une autre table),
 // ou null pour laisser le navigateur tel quel.
-async function ouvrir(page, { stockage = {}, midi = null, onglet = 'apprendre', avant = '' } = {}) {
+async function ouvrir(page, { stockage = {}, midi = null, onglet = 'apprendre', avant = '', verrou = false } = {}) {
+  // Le parcours linéaire (lot 64) ferme les niveaux pas encore atteints : les tests ouvrent n'importe quel niveau, sauf ceux
+  // qui vérifient justement le verrouillage (verrou: true)
+  if (!verrou) await page.addInitScript(() => { window.DJINGOOD_LIBRE = true; });
   const erreurs = [];
   page.on('pageerror', e => erreurs.push(String(e)));
   // Les tests jouent la house du site sauf indication contraire (la vraie musique, choisie par défaut, a ses propres tests).

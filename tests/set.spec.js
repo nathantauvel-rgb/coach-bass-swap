@@ -15,7 +15,6 @@ const ROBOT = 'window.ENC_ROBOT = true;';
 test.describe('Le chapitre', () => {
   test('il s\'ouvre avec le chapitre 2 (14 étoiles au chapitre 1)', async ({ page }) => {
     const erreurs = await ouvrir(page);
-    await page.locator('#chapBtn').click();
     const c7 = page.locator('#chapters .chap').nth(6);
     await expect(c7).toContainText('Le set'); await expect(c7).toBeDisabled(); await expect(c7).toContainText('Verrouillé');
     expect(erreurs).toEqual([]); await sansBandeau(page);

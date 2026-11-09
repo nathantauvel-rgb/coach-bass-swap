@@ -15,7 +15,6 @@ const serie = (de, a, f) => { const o = []; for (let b = de; b < a; b += .25) o.
 test.describe('Le chapitre', () => {
   test('il s\'ouvre avec le chapitre 2 (14 étoiles au chapitre 1)', async ({ page }) => {
     const erreurs = await ouvrir(page);
-    await page.locator('#chapBtn').click();
     await expect(page.locator('#chapters .chap').nth(4)).toContainText('Le calage');
     await expect(page.locator('#chapters .chap').nth(4)).toBeDisabled();
     await expect(page.locator('#chapters .chap').nth(4)).toContainText('Verrouillé');

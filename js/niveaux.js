@@ -184,12 +184,17 @@ function renderChapters(){
     const locked = c.soon || (c.n === 2 && !ch2Unlocked()) || (c.n === 3 && !ch3Unlocked()) || (c.n === 4 && !ch4Unlocked()) || (c.n === 5 && !ch5Unlocked()) || (c.n === 6 && !ch6Unlocked()) || (c.n === 7 && !ch7Unlocked());
     b.disabled = locked && c.n !== chapter;
     const sub = c.soon ? 'Bientôt' : (c.n === 2 || c.n >= 4) && !ch2Unlocked() ? `Verrouillé : ${sumStars(stars)}/14 ★ au chapitre 1` : c.n === 3 && !ch3Unlocked() ? `Verrouillé : ${sumStars(ch2Stars)}/10 ★ au chapitre 2` : c.sub;
-    b.innerHTML = `<span class="cn">Chapitre ${c.n}</span><strong></strong><span class="cs"></span>`; b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = sub;
+    // lot 64 : la progression du chapitre en pourcentage (étoiles gagnées sur le maximum) ; un chapitre fermé a son cadenas
+    const pct = chapPct(c.n);
+    b.classList.toggle('ferme', locked); b.style.setProperty('--pct', pct + '%');
+    b.innerHTML = `<span class="cn">${locked ? NIV_CADENAS : ''}Chapitre ${c.n}</span><strong></strong><span class="cs"></span><span class="cbar" aria-hidden="true"><i></i></span>`;
+    b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = locked ? sub : `${pct} %`; b.title = locked ? sub : `${c.title} : ${c.sub}`;
     b.addEventListener('click', () => { chapMenu(false); setChapter(c.n); }); bar.appendChild(b);
   }
 }
 // La liste des chapitres s'ouvre sous le bouton « Chapitre N · titre »
-function chapMenu(open){ $('chapters').hidden = !open; $('chapBtn').setAttribute('aria-expanded', String(open)); }
+// lot 64 : la liste des chapitres est toujours affichée (une rangée qui défile) ; le bouton « Chapitre N · titre » est caché
+function chapMenu(open){ $('chapBtn').setAttribute('aria-expanded', String(open)); }
 $('chapBtn').addEventListener('click', () => chapMenu($('chapters').hidden));
 function setChapter(n){
   if (run || n === chapter) return; if (n === 2 && !ch2Unlocked()) return; if (n === 3 && !ch3Unlocked()) return; if (n === 4 && !ch4Unlocked()) return; if (n === 5 && !ch5Unlocked()) return; if (n === 6 && !ch6Unlocked()) return; if (n === 7 && !ch7Unlocked()) return;
@@ -197,6 +202,32 @@ function setChapter(n){
   chapter = n; try { localStorage.setItem('coach-chapitre', String(n)); } catch (e) {}
   const bank = bankOf(n), first = LESSONS.findIndex((_, i) => !(bank[i] >= 2)); selectLesson(first < 0 ? 0 : first);
 }
+/* ---------- Le parcours linéaire (lot 64) ----------
+   Demande de l'utilisateur (9 nov. 2026) : « les exercices ne sont pas verrouillés ». Dans chaque chapitre, le niveau N+1
+   s'ouvre quand tous les niveaux d'avant sont réussis (2 étoiles ou plus : la règle de « réussi » du site, celle de
+   setChapter et des quêtes). Un niveau déjà joué reste ouvert (progression d'avant ce lot). L'entraînement, le test de
+   placement et les liens du guide (niveauVisite) passent par selectLesson et ne sont pas concernés. `?tout=1` (essais) et
+   `window.DJINGOOD_LIBRE` (posé par les tests) ouvrent tout. */
+const NIV_LIBRE = /[?&]tout=1/.test(location.search);
+const NIV_CADENAS = '<svg class="cadenas" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+const niveauReussi = (bank, i) => (bank[i] || 0) >= 2;
+function niveauOuvert(i, n = chapter){
+  if (NIV_LIBRE || window.DJINGOOD_LIBRE || i <= 0) return true;
+  const bank = bankOf(n); if ((bank[i] || 0) > 0) return true;
+  for (let k = 0; k < i; k++) if (!niveauReussi(bank, k)) return false;
+  return true;
+}
+// Le niveau qui bloque la suite : le premier pas encore réussi
+const niveauEnCours = (n = chapter) => lessonsOf(n).findIndex((_, i) => !niveauReussi(bankOf(n), i));
+// Un niveau fermé touché : Vini dit lequel réussir d'abord, la carte tremble
+function niveauRefuse(i, b){
+  const k = niveauEnCours(), l = LESSONS[k];
+  $('tip').textContent = l ? `Réussis d’abord « ${l.title} » (2 étoiles) : « ${LESSONS[i].title} » s’ouvrira juste après.` : '';
+  if (typeof viniReagit === 'function') viniReagit('bad');
+  if (b){ b.classList.remove('refuse'); void b.offsetWidth; b.classList.add('refuse'); }
+}
+// La progression d'un chapitre, en pourcentage des étoiles
+const chapPct = n => { const L = lessonsOf(n); return L.length ? Math.round(sumStars(bankOf(n)) / (L.length * 3) * 100) : 0; };
 // Lien d'une page du guide (lot 51, demarrage.js) : ouvre un niveau, même si son chapitre n'est pas encore débloqué, le temps
 // de la visite. Rien n'est enregistré (coach-chapitre garde le chapitre d'avant) : au rechargement, on revient où on en était.
 function niveauVisite(n, i){ if (run || !lessonsOf(n)[i]) return; LESSONS = lessonsOf(n); chapter = n; selectLesson(i); }
@@ -211,11 +242,14 @@ function renderHud(){
   const bank = bankOf(chapter), map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove()); map.style.setProperty('--n', LESSONS.length);
   let lastDone = -1;
   LESSONS.forEach((l, i) => { const st = bank[i] || 0; if (st) lastDone = i;
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'node' + (st ? ' done' : ''); b.setAttribute('aria-pressed', String(i === li));
+    // lot 64 : une carte par niveau, avec son état (réussi, à faire, verrouillé)
+    const ouvert = niveauOuvert(i), etat = !ouvert ? 'verrou' : st >= 2 ? 'reussi' : 'encours';
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'node etat-' + etat + (st ? ' done' : ''); b.setAttribute('aria-pressed', String(i === li));
+    if (!ouvert) b.setAttribute('aria-disabled', 'true');
     // Le disque garde toujours son numéro (comme sur la maquette du 22 oct.) : les étoiles sont juste en dessous.
-    b.innerHTML = `<span class="dot">${i + 1}</span><span class="t"></span><span class="s"><b>${'★'.repeat(st)}</b>${'★'.repeat(3 - st)}</span>`;
-    b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${st} étoile(s) sur 3`);
-    b.addEventListener('click', () => { if (!placement) selectLesson(i); }); map.appendChild(b); });
+    b.innerHTML = `<span class="dot">${ouvert ? i + 1 : NIV_CADENAS}</span><span class="t"></span><span class="s"><b>${'★'.repeat(st)}</b>${'★'.repeat(3 - st)}</span><span class="etq">${etat === 'reussi' ? 'Réussi' : etat === 'encours' ? 'À faire' : 'Verrouillé'}</span>`;
+    b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${st} étoile(s) sur 3` + (ouvert ? '' : ', verrouillé'));
+    b.addEventListener('click', () => { if (placement) return; if (!niveauOuvert(i)){ niveauRefuse(i, b); return; } selectLesson(i); }); map.appendChild(b); });
   $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * (100 - 100 / LESSONS.length)) + '%';
   renderChapters(); if (typeof cpRendChemin === 'function') cpRendChemin();
   const cur = map.querySelector('.node[aria-pressed="true"]'); if (cur && map.scrollWidth > map.clientWidth) map.scrollLeft = cur.offsetLeft - map.clientWidth / 2 + cur.offsetWidth / 2;
@@ -593,7 +627,8 @@ function finish(){
   $('rGain').textContent = [rec, gained > 0 ? `+${gained} XP` : '', !wasOpen && ch2Unlocked() ? (CH6_PRET ? 'Chapitres 2, 4, 5, 6 et 7 débloqués !' : 'Chapitres 2, 4, 5 et 7 débloqués !') : '', !was3 && ch3Unlocked() ? 'Chapitre 3 débloqué !' : ''].filter(Boolean).join(' · ');
   resultatCarte(st, items, r.set ? { note: r.set.score, pire: r.set.pire, resume: items[0][0] === 'ok' ? 'Voir le détail' : `Voir toutes mes erreurs (${items.length})` } : {});
   const ul = $('rDetails'); ul.innerHTML = ''; for (const [lvl, txt] of items){ const x = document.createElement('li'); x.className = lvl; x.textContent = txt; ul.appendChild(x); }
-  $('next').hidden = li >= LESSONS.length - 1;
+  $('next').hidden = li >= LESSONS.length - 1 || !niveauOuvert(li + 1);   // lot 64 : pas de « Niveau suivant » vers un niveau fermé
+  resultatBoutons(st);
   $('result').hidden = false; $('result').scrollTop = 0; $('retry').focus({ preventScroll: true });
   // la carte est en haut de la scène : on remonte la scène en haut de l'écran (sinon, après un set, les boutons étaient sous l'écran)
   { const r0 = $('stage').getBoundingClientRect(); if (!$('vLearn').hidden && (r0.top < -4 || r0.top > 40)) window.scrollTo({ top: scrollY + r0.top - 8, behavior: 'auto' }); }

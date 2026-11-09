@@ -17,7 +17,6 @@ const robot = page => page.evaluate(() => { const l = LESSONS[li];
 test.describe('Ouverture du chapitre 4', () => {
   test('verrouillé au début, ouvert avec 14 étoiles au chapitre 1, comme le chapitre 2', async ({ page }) => {
     await ouvrir(page);
-    await page.locator('#chapBtn').click();
     await expect(page.locator('.chap')).toHaveCount(7);
     await expect(page.locator('.chap').nth(3)).toBeDisabled();
     await expect(page.locator('.chap').nth(3)).toContainText('Verrouillé : 0/14 ★ au chapitre 1');

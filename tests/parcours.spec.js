@@ -39,7 +39,6 @@ test.describe('Première visite', () => {
     await expect(page.locator('#onb')).toBeHidden();
     await expect(page.locator('#expertBtn')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('#guideBtn')).toBeVisible();
-    await page.locator('#chapBtn').click();
     await expect(page.locator('#chapters .chap:disabled')).toHaveCount(0);
     await expect(page.locator('#chapters')).not.toContainText('Test de placement');
     expect(erreurs).toEqual([]);

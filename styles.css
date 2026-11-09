@@ -2829,3 +2829,74 @@ body.pro-ouvert{overflow:hidden}
 :is(#tSvg,#vfSvg) .tc:hover>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc:hover>rect:not(.cap):not(.hit){fill:var(--ps-bouton)}
 :is(#tSvg,#vfSvg) .tc.sel>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc.sel>rect:not(.cap):not(.hit){fill:var(--hi);stroke:var(--fg);stroke-width:3}
 :is(#tSvg,#vfSvg) .tc.live>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc.live>rect:not(.cap):not(.hit){fill:var(--go)}
+
+/* ---------- Lot 64 : la page « Apprendre » refaite ----------
+   Demande de l'utilisateur (9 nov. 2026) : « trop lourd, trop de texte, en désordre, et les exercices ne sont pas
+   verrouillés ». 1. Les chapitres : une rangée de cartes toujours visible (plus de menu déroulant), chacune avec sa
+   progression en pourcentage. 2. Les niveaux : des cartes aérées, orange pour celui à faire, vert pour les réussis, grisées
+   avec un cadenas pour les suivants (parcours linéaire : niveauOuvert dans niveaux.js). 3. La carte du niveau : le titre, la
+   consigne en une phrase, les gestes en court, et un grand « Jouer » à côté de Vini. */
+
+/* 1. Les chapitres */
+#chapBtn{display:none}
+.chapsel{display:block;margin-bottom:4px}
+.chapters,.chapters[hidden]{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;padding:2px 2px 10px;scroll-snap-type:x proximity;scrollbar-width:thin}
+.chapters .chap{flex:1 1 0;min-width:126px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:10px 12px;
+  border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:none;color:var(--fg);text-align:left;cursor:pointer}
+.chapters .chap:not(:disabled):hover{border-color:var(--muted)}
+.chapters .chap .cn{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chapters .chap strong{font-size:14px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+/* le pourcentage pour un chapitre ouvert ; pour un chapitre fermé, la condition reste lue (lecteurs d'écran, info-bulle) mais ne s'affiche pas */
+.chapters .chap .cs{font-size:12px;font-weight:800;color:var(--muted)}
+.chapters .chap.ferme .cs{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.chapters .chap{position:relative}
+.chapters .chap .cbar{align-self:stretch;height:5px;margin-top:auto;border-radius:3px;background:var(--brand-soft);overflow:hidden}
+.chapters .chap .cbar i{display:block;height:100%;width:var(--pct,0%);border-radius:3px;background:linear-gradient(90deg,var(--brand),var(--a))}
+.chapters .chap[aria-pressed="true"]{background:var(--panel-2);border-color:var(--brand-light);box-shadow:inset 0 0 0 1px var(--brand-light)}
+.chapters .chap[aria-pressed="true"] .cn{color:var(--brand-light)}
+.chapters .chap.ferme{opacity:.55}
+.chapters .chap.ferme .cbar{display:none}
+.cadenas{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* 2. Les niveaux : des cartes */
+.map{gap:10px;padding:4px 0 8px}
+.map::before,.map .prog{display:none}
+.map .node{align-items:flex-start;justify-content:flex-start;gap:6px;padding:12px 12px 10px;min-height:128px;border:1.5px solid var(--line);border-radius:16px;
+  background:var(--panel);text-align:left;transform:none;transition:border-color .15s,transform .15s}
+.map .node:not(.etat-verrou):hover{transform:translateY(-2px)}
+.map .node .dot{width:34px;height:34px;font-size:16px;font-weight:900;border:0;border-radius:50%;background:var(--off);color:var(--fg);box-shadow:none;transform:none}
+.map .node .dot::after,.map .node .dot::before{display:none}
+.map .node .t{font-size:14px;font-weight:800;line-height:1.25}
+.map .node .s{font-size:12px;letter-spacing:.1em}
+.map .node .etq{margin-top:auto;font-size:10.5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--off);color:var(--muted)}
+.map .node[aria-pressed="true"]{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--fg)}
+.map .node[aria-pressed="true"] .dot{box-shadow:none}
+/* à faire : orange vif */
+.map .node.etat-encours{border-color:var(--a);background:linear-gradient(165deg,var(--hot),var(--panel) 72%)}
+.map .node.etat-encours .dot{background:var(--a);color:var(--ink)}
+.map .node.etat-encours .etq{background:var(--a);color:var(--ink)}
+/* réussi : vert */
+.map .node.etat-reussi{border-color:var(--ok)}
+.map .node.etat-reussi .dot{background:var(--ok);color:var(--ink)}
+.map .node.etat-reussi .etq{background:var(--ok-bg);color:var(--ok-ink)}
+/* verrouillé : grisé, cadenas */
+.map .node.etat-verrou{opacity:.5;cursor:not-allowed}
+.map .node.etat-verrou .dot{color:var(--muted)}
+.map .node.etat-verrou .s{visibility:hidden}
+.map .node.refuse{animation:niv-refus .35s ease-in-out}
+@keyframes niv-refus{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){.map .node.refuse{animation:none}}
+@media (max-width:760px){
+  .map{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:140px;overflow-x:auto;row-gap:0}
+}
+
+/* 3. La carte du niveau : moins de texte, un grand « Jouer » */
+#planNote{display:none}
+.plan{padding:12px 14px}
+.plan h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+@media (min-width:1040px){
+  .actionbar .btnrow{flex-direction:column;flex-wrap:nowrap;gap:8px}
+  .actionbar .btnrow .start{order:-1;flex:none;min-height:68px;font-size:24px}
+  .actionbar .btnrow .watch{flex:none;min-height:44px;font-size:15px}
+  .actionbar .opts{order:2;justify-content:center}
+}

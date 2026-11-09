@@ -28,7 +28,6 @@ const resultat = async page => { await expect(page.locator('#result')).toBeVisib
 test.describe('Le chapitre', () => {
   test('il s\'ouvre avec le chapitre 2 (14 étoiles au chapitre 1)', async ({ page }) => {
     const erreurs = await ouvrir(page);
-    await page.locator('#chapBtn').click();
     const c6 = page.locator('#chapters .chap').nth(5);
     await expect(c6).toContainText('Hot cues et boucles'); await expect(c6).toBeDisabled(); await expect(c6).toContainText('Verrouillé');
     expect(erreurs).toEqual([]); await sansBandeau(page);
