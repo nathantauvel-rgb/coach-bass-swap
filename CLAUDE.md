@@ -171,6 +171,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - **H, l'écran d'un niveau** : `.stage:not(.joue):not(.estset) .ringwrap{display:none}` (le rond « — » n'apparaît plus
     avant la partie ; au chapitre 7 il garde le record) ; sur téléphone, la carte du niveau prend toute la largeur.
   - Ensuite, prévu : F (vignettes des tutos), E (S'entraîner), G (accueil), puis C (la table), D, I, J, K, L.
+  - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
+    `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de
+    défilement horizontal, « Son : 50 % » et son panneau, bouton de la prochaine étape orange, nom « DJingood » sur la
+    présentation en téléphone, aucune erreur. Les lots 62, 63 et 64 attendent dans leurs copies (à fusionner avec ce `main`).
   - **Gardien (lots 60 + 61 ensemble) : feu orange, aucun blocage.** Corrigé avant l'envoi : les règles de l'en-tête ne
     visent plus que celui d'`index.html` (`.wrap.app`, `.app > .top`) — les pages annexes (présentation, guides, CGV…)
     gardaient le nom « DJingood » caché sur téléphone et un en-tête de 1280 px ; voyant de la table orange en cas de souci
