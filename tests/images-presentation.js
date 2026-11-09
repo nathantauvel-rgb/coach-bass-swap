@@ -16,7 +16,7 @@ const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-
   if (!(await fetch(BASE + '/index.html').then(r => r.ok).catch(() => false))) { srv = spawn(process.execPath, [path.join(__dirname, 'serveur.js')], { stdio: 'ignore' }); await new Promise(r => setTimeout(r, 800)); }
   const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
   const page = async (hash, stockage = VENU) => { const ctx = await b.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1 }), p = await ctx.newPage();
-    await p.addInitScript(d => { try { for (const [k, v] of Object.entries(d)) localStorage.setItem(k, v); } catch (e) {} }, stockage); await p.addInitScript(fausseTable);
+    await p.addInitScript(d => { try { for (const [k, v] of Object.entries(d)) localStorage.setItem(k, v); } catch (e) {} }, stockage); await p.addInitScript(fausseTable); await p.addInitScript(() => { window.DJINGOOD_LIBRE = true; });   // lot 64 : niveaux tous ouverts pour les photos
     await p.goto(BASE + '/index.html#' + hash); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(600); return p; };
   // haut : hauteur maximale de l'image, en pixels (le reste de l'élément est coupé)
   const shot = async (p, nom, sel, haut = 0) => { await p.evaluate(() => { const c = document.getElementById('confetti'); if (c) c.style.visibility = 'hidden'; });
