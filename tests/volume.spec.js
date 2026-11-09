@@ -120,3 +120,24 @@ test.describe('« Mon compte », connecté', () => {
     expect(largeur).toBeGreaterThan(180);
   });
 });
+
+test.describe('Corrections du gardien (lot 60)', () => {
+  test('Échap ferme le panneau du son sans fermer la carte de fin d’un niveau', async ({ page }) => {
+    await ouvrir(page, { onglet: 'apprendre' });
+    await page.evaluate(() => { $('result').hidden = false; });
+    await page.locator('#sonsBtn').click();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#volPanneau')).toBeHidden();
+    await expect(page.locator('#result')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#result')).toBeHidden();
+  });
+  test('à 700 px de large, le panneau du son est entier (il sort de la ligne des pastilles qui défile)', async ({ page }) => {
+    await page.setViewportSize({ width: 700, height: 768 });
+    await ouvrir(page, { onglet: 'accueil' });
+    await page.locator('#sonsBtn').click();
+    await expect(page.locator('#volBips')).toBeVisible();
+    const r = await page.locator('#volPanneau').evaluate(e => { const b = e.getBoundingClientRect(); return [b.left >= 0, b.right <= innerWidth, getComputedStyle(e).position]; });
+    expect(r).toEqual([true, true, 'fixed']);
+  });
+});
