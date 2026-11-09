@@ -153,6 +153,24 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   **J** Mon avis (plus haute que l'écran) · **K** Vérifier ma table (lignes en « … », 4 boutons égaux) · **L** Mes progrès
   (formes grises à zéro). Ordre conseillé : A+B+H, puis F, E, G, puis C seul, puis D, I, J, K, L. Jugés bons : Premiers
   pas, lecteur des tutos, fenêtre Pro, carte de fin, série, Comprendre, Mon compte et panneau du son (lot 60).
+  **Réponse de l'utilisateur : « Fais des changements qui te semblent le mieux ».** Fait dans l'ordre conseillé, d'abord
+  **A + B + H** : branche `lot-61-ecrans` (partie du lot 60, qui y est fusionné), copie `Documents\coach-dj-lot61`
+  (tests : `DJ_PORT=8778 npx playwright test` ; serveur des captures sur 8777, `node captures/lot61/tour.js [préfixe]`,
+  `node captures/lot61/mesure.js` mesure l'en-tête de 390 à 1920 px). Non publié.
+  - **A, l'en-tête** (fin de `styles.css`, section « Lot 61 ») : `.wrap` passe à 1280 px pour l'en-tête seulement (les
+    pages gardent 1012 px : `.wrap > :not(.top)`), un trait sous l'en-tête, le sous-titre du logo retiré. **Une seule
+    ligne à partir de 1270 px** (logo, onglets, pastilles, compte : mesuré sans débordement de 1280 à 1920 px, avec Tutos,
+    un prénom long et une table) ; en dessous, les onglets passent sur une seconde ligne ; sur téléphone (≤ 760 px), onglets
+    répartis sur la largeur (icône au-dessus du nom), compte en icône ou initiale (nom gardé pour les lecteurs d'écran),
+    table, « Mon avis » et guide hors de l'en-tête. Pastilles compactes : la table devient une icône + voyant (texte complet
+    dans l'info-bulle, `pill.title` dans `renderPill`, et dans « Ma table » ; le texte reste dans le span pour les tests),
+    « Mon avis » une icône (`aria-label`) + un lien « Donner mon avis » en bas de l'accueil (`#avisBas`), le guide une icône
+    « ? », la barre d'XP et les XP retirés de la pastille du niveau (restent dans Mes progrès et Mon compte).
+  - **B, les boutons** : `.rbtn.go`, `.onb-nav .go` et `.cta` passent du blanc à l'orange de « Jouer » (`--a`, texte `--ink`,
+    relief `--a-edge`) ; le violet reste au compte (`#compte .cptmain`) et à Pro.
+  - **H, l'écran d'un niveau** : `.stage:not(.joue):not(.estset) .ringwrap{display:none}` (le rond « — » n'apparaît plus
+    avant la partie ; au chapitre 7 il garde le record) ; sur téléphone, la carte du niveau prend toute la largeur.
+  - Ensuite, prévu : F (vignettes des tutos), E (S'entraîner), G (accueil), puis C (la table), D, I, J, K, L.
   **Lot 58 « Tutos : le volume et les effets » PUBLIÉ le 8 nov. 2026, onglet toujours caché** (« publie 58 » ; commit
   `ae938f6` ; production vérifiée : rien de neuf pour un joueur, 11 tutos avec `?tutos=1`, aucune erreur) (branche `lot-58-tutos-effets`, copie
   `Documents\coach-dj-lot58`) : 7 tutos de plus, moteur avec potards, filtre, écho et réverbe. Voir l'entrée « Lot 58 ».
