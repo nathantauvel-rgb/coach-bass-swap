@@ -79,7 +79,7 @@ test.describe('Quiz éclair', () => {
   });
   test('cinq bonnes réponses : 25 XP, enregistrées une seule fois', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'entrainer', stockage: JOUE });
-    await expect(page.locator('#tQuizS')).toHaveText('Nouveau');
+    await expect(page.locator('#tQuizS')).toHaveText('À essayer');
     await expect(page.locator('#xpTxt')).toHaveText('80 XP');
     await page.locator('#quizCard').click();
     await expect(page.locator('#quiz')).toBeVisible();

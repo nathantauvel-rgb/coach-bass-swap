@@ -874,6 +874,22 @@ function tuFerme(){
 }
 
 /* ---------- Le catalogue (l'onglet « Tutos ») ---------- */
+/* Les vignettes du catalogue (lot 62) : un mot et un dessin du geste, dans le style de la fenêtre Pro (« Ce que tu
+   débloques »). Avant, les cartes n'avaient que du texte (tour des écrans du lot 61, point F). Dessins en traits, 100 × 60. */
+const TU_VIGNETTES = {
+  fondu: ['FADER', '<path d="M6 14C40 14 60 46 94 46"/><path d="M6 46C40 46 60 14 94 14" opacity=".45"/>'],
+  swap: ['BASSES', '<path d="M4 44c10-22 20 10 30-6s20 18 30-4 20 12 32-2"/><path d="M4 30h92" opacity=".25"/>'],
+  bandes: ['3 BANDES', '<path d="M14 16h48M14 30h68M14 44h34"/><circle cx="70" cy="16" r="4"/><circle cx="90" cy="30" r="4"/><circle cx="56" cy="44" r="4"/>'],
+  coupe: ['COUPURE', '<path d="M6 30h38"/><path d="M50 8v44"/><path d="M58 22h36v16H58z" opacity=".7"/>'],
+  echo: ['ÉCHO', '<path d="M10 10v40M30 16v28M48 22v16M64 26v8M78 28v4"/>'],
+  reverbe: ['RÉVERBE', '<circle cx="50" cy="30" r="8"/><circle cx="50" cy="30" r="17" opacity=".6"/><circle cx="50" cy="30" r="26" opacity=".3"/>'],
+  filtre: ['FILTRE', '<path d="M4 50C30 50 40 10 60 10s30 0 36 0"/>'],
+  attend: ['BOUCLE', '<path d="M30 18h40a12 12 0 0 1 0 24H30a12 12 0 0 1 0-24"/><path d="M62 12l8 6-8 6"/>'],
+  prolonge: ['BOUCLE', '<path d="M6 30h22" opacity=".45"/><path d="M34 20h18a10 10 0 0 1 0 20H34a10 10 0 0 1 0-20"/><path d="M62 20h18a10 10 0 0 1 0 20H62a10 10 0 0 1 0-20" opacity=".6"/>'],
+  montee: ['MONTÉE', '<path d="M8 50h16v-8h16v-8h16v-8h16v-8h16"/><path d="M78 10l10 8" opacity=".45"/>'],
+  secours: ['SECOURS', '<circle cx="50" cy="30" r="20"/><circle cx="50" cy="30" r="9"/><path d="M50 10v11M50 39v11M30 30h11M59 30h11"/>']
+};
+const tuVignette = id => { const v = TU_VIGNETTES[id]; return v ? `<span class="tu-vg" aria-hidden="true"><span class="tu-vg-mot">${v[0]}</span><svg viewBox="0 0 100 60">${v[1]}</svg></span>` : ''; };
 function renderTutos(){
   if (tu.phase !== 'ferme') return;
   $('tuFamilles').innerHTML = TU_FAMILLES.map(f => {
@@ -881,7 +897,7 @@ function renderTutos(){
     return `<section class="tu-famille"><h2>${f.titre}</h2><p class="tu-fam-resume">${tuTypo(f.resume)}</p><div class="cards tu-cartes">${liste.map(t => {
       const vu = tuVus.includes(t.id), etiquette = vu ? 'Vu' : t.gratuit ? 'Gratuit' : 'Pro', ferme = !proLibre(t);
       const cadenas = ferme ? '<svg class="tu-cadenas" viewBox="0 0 24 24" aria-label="Avec DJingood Pro"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>' : '';
-      return `<button type="button" class="card tu-carte${vu ? ' tu-vu' : ''}${ferme ? ' tu-ferme' : ''}" data-tu="${t.id}"><span class="soon tu-etiq${vu ? ' ok' : t.gratuit ? '' : ' pro'}">${etiquette}</span>${cadenas}<strong>${tuTypo(t.titre)}</strong><p>${tuTypo(t.resume)}</p><span class="tu-duree">${t.duree} · avec Vini</span></button>`;
+      return `<button type="button" class="card tu-carte${vu ? ' tu-vu' : ''}${ferme ? ' tu-ferme' : ''}" data-tu="${t.id}">${tuVignette(t.id)}<span class="soon tu-etiq${vu ? ' ok' : t.gratuit ? '' : ' pro'}">${etiquette}</span>${cadenas}<strong>${tuTypo(t.titre)}</strong><p>${tuTypo(t.resume)}</p><span class="tu-duree">${t.duree} · avec Vini</span></button>`;
     }).join('')}</div></section>`;
   }).join('');
   $('tuFamilles').querySelectorAll('[data-tu]').forEach(b => b.addEventListener('click', () => tuOuvre(b.dataset.tu)));

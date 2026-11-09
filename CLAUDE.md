@@ -171,6 +171,17 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - **H, l'écran d'un niveau** : `.stage:not(.joue):not(.estset) .ringwrap{display:none}` (le rond « — » n'apparaît plus
     avant la partie ; au chapitre 7 il garde le record) ; sur téléphone, la carte du niveau prend toute la largeur.
   - Ensuite, prévu : F (vignettes des tutos), E (S'entraîner), G (accueil), puis C (la table), D, I, J, K, L.
+  **Lot 62 « Le tour des écrans, deuxième série » (9 nov. 2026)** : branche `lot-62-ecrans` (partie du lot 61), copie
+  `Documents\coach-dj-lot62` (serveur des captures sur le port **8790** : 8779 est pris par un autre serveur ;
+  `node captures/lot62/tour.js [préfixe]`). L'utilisateur a demandé de publier les lots 60 et 61 ensemble ; le 62 suivra.
+  - **F, les tutos** : `TU_VIGNETTES` et `tuVignette` dans `js/tutos.js` (un mot et un dessin en traits par tuto, style des
+    vignettes de la fenêtre Pro), en haut de chaque carte ; étiquette et cadenas posés sur la vignette.
+  - **E, S'entraîner** : le défi du jour en grande carte (`.tr-defi`, icône orange), les quatre autres sur une ligne avec
+    une icône (`.tr-ico`) ; « Nouveau » devient « À essayer » (`js/entrainement.js`, `js/quiz.js`, test du quiz) ;
+    l'étiquette « Étape 2 » devient « Entraînement ».
+  - **G, l'accueil** : un grand vinyle derrière Vini (`.hvini::before`, dégradés du vinyle des niveaux, pas de halo),
+    anneau de l'objectif violet même à zéro (doré une fois atteint), coffres pas encore gagnés aux vraies couleurs en
+    sourdine, parcours replié sur une ligne avec « Mes progrès et mes badges ».
   **Lot 58 « Tutos : le volume et les effets » PUBLIÉ le 8 nov. 2026, onglet toujours caché** (« publie 58 » ; commit
   `ae938f6` ; production vérifiée : rien de neuf pour un joueur, 11 tutos avec `?tutos=1`, aucune erreur) (branche `lot-58-tutos-effets`, copie
   `Documents\coach-dj-lot58`) : 7 tutos de plus, moteur avec potards, filtre, écho et réverbe. Voir l'entrée « Lot 58 ».

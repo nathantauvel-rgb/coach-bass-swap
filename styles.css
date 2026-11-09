@@ -2652,7 +2652,7 @@ body.pro-ouvert{overflow:hidden}
   .top > .cptbtn.on{padding:0;width:38px}
   .top > .cptbtn #cptNom{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 }
-.avisbas{background:none;border:0;padding:0;color:inherit;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.avisbas{background:none;border:0;padding:0;color:var(--xp);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 
 /* B. Les boutons : une seule règle. Orange = l'action principale de l'écran (comme « Jouer »), contour = la secondaire,
    lien = le reste ; le violet reste au compte et à Pro. Le bouton blanc, qui avait l'air d'un bouton par défaut, disparaît. */
@@ -2664,3 +2664,70 @@ body.pro-ouvert{overflow:hidden}
 /* H. L'écran d'un niveau : le rond du compte à rebours n'apparaît que pendant la partie (avant, il montrait « — » et
    ressemblait à un bouton cassé ; sur téléphone, il écrasait la carte du niveau). Au chapitre 7, il garde le record. */
 .stage:not(.joue):not(.estset) .ringwrap{display:none}
+
+/* ---------- Lot 62 : le tour des écrans, deuxième série (F les tutos, E S'entraîner, G l'accueil) ---------- */
+
+/* F. Le catalogue des tutos : chaque carte a sa vignette en haut (un mot et le dessin du geste), comme dans la fenêtre Pro.
+   L'étiquette (Gratuit, Pro, Vu) et le cadenas se posent sur la vignette. */
+.tu-carte{overflow:hidden;padding-top:0}
+.tu-vg{position:relative;display:block;align-self:stretch;height:112px;margin:0 -20px 12px;border-bottom:1px solid var(--pro-bord);
+  background:linear-gradient(170deg,var(--pro-teinte),var(--pro-carte-2) 70%)}
+.tu-carte:nth-child(even) .tu-vg{background:linear-gradient(170deg,var(--pro-teinte-b),var(--pro-carte-2) 70%)}
+.tu-vg-mot{position:absolute;left:16px;bottom:12px;font-size:12px;font-weight:900;letter-spacing:.16em;color:var(--muted)}
+.tu-vg svg{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:62%;height:62%;stroke:var(--fg);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.tu-carte .tu-etiq{position:absolute;top:12px;left:12px}
+.tu-carte .tu-cadenas{top:14px;right:14px;width:20px;height:20px;padding:5px;box-sizing:content-box;border-radius:50%;background:var(--pro-ombre);stroke:var(--fg)}
+.tu-carte.tu-ferme .tu-vg svg{opacity:.55}
+.tu-carte strong{margin-top:2px}
+
+/* E. S'entraîner : le défi du jour en grande carte en haut, les quatre autres sur une ligne, chacune avec son icône ;
+   « Nouveau » (écrit partout) devient « À essayer », et ne s'affiche que tant qu'on n'a pas joué. */
+#vTrain .cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+#vTrain .card{gap:8px;padding:18px;border:1px solid var(--line);background:var(--panel-2)}
+#vTrain .card:not(:disabled):hover{border-color:var(--brand-light)}
+#vTrain .card strong{font-size:18px}
+#vTrain .card p{margin:0}
+.tr-ico{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--brand-soft);border:1px solid var(--brand-line)}
+.tr-ico svg{width:24px;height:24px;fill:none;stroke:var(--brand-light);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#vTrain .card .soon{order:-1}
+#vTrain .card .tr-ico{order:-2}
+#vTrain .card.tr-defi{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"ico titre etiq" "ico texte etiq";
+  column-gap:18px;row-gap:4px;align-items:center;padding:22px;border-color:var(--a-edge);background:linear-gradient(100deg,var(--hot),var(--panel-2) 60%)}
+.tr-defi .tr-ico{grid-area:ico;width:60px;height:60px;border-radius:16px;background:var(--a);border-color:var(--a)}
+.tr-defi .tr-ico svg{width:32px;height:32px;stroke:var(--ink)}
+.tr-defi strong{grid-area:titre;font-size:22px}
+.tr-defi p{grid-area:texte;color:var(--fg)}
+.tr-defi .soon{grid-area:etiq;justify-self:end}
+#vTrain .card.tr-defi:not(:disabled):hover{border-color:var(--a)}
+@media (max-width:900px){#vTrain .cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){
+  #vTrain .card.tr-defi{grid-template-columns:auto 1fr;grid-template-areas:"ico etiq" "titre titre" "texte texte"}
+  .tr-defi .soon{justify-self:start}
+}
+
+/* G. L'accueil : Vini mixe devant un grand vinyle (le vide à droite se remplit, sans halo de lumière) ; l'anneau de
+   l'objectif est violet même à zéro (doré une fois atteint) ; les coffres pas encore gagnés gardent leur forme de coffre,
+   en sourdine (c'étaient des pavés gris) ; le parcours replié tient sur une ligne avec « Mes progrès et mes badges ». */
+.hero .hbuddy .hvini{position:relative;isolation:isolate}
+.hero .hbuddy .hvini::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:230px;height:230px;margin:-118px 0 0 -115px;border-radius:50%;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 50%, var(--brand) 0 13%, rgba(0,0,0,0) 13.4%),
+    radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 13.4%, var(--vinyle-lisere) 13.4% 14.2%, rgba(0,0,0,0) 14.6%),
+    conic-gradient(from 140deg at 50% 50%, rgba(0,0,0,0) 0deg, var(--vinyle-reflet) 24deg, rgba(0,0,0,0) 54deg, rgba(0,0,0,0) 176deg, var(--vinyle-reflet) 204deg, rgba(0,0,0,0) 234deg, rgba(0,0,0,0) 360deg),
+    repeating-radial-gradient(circle at 50% 50%, var(--vinyle-sillon) 0 .6px, rgba(0,0,0,0) .6px 3px),
+    repeating-radial-gradient(circle at 50% 50%, var(--vinyle-bande) 0 1px, rgba(0,0,0,0) 1px 11px),
+    radial-gradient(circle at 34% 26%, var(--vinyle-haut) 0%, var(--vinyle-bas) 68%);
+  box-shadow:inset 0 0 0 1px var(--vinyle-rim), 0 12px 30px var(--vinyle-ombre)}
+@media (max-width:760px){.hero .hbuddy .hvini::before{width:132px;height:132px;margin:-68px 0 0 -66px}}
+.gtrack{stroke:var(--brand-line)}
+.gfill{stroke:var(--brand-light)}
+.goalbox.done .gfill{stroke:var(--mid)}
+.goalbox{border:1px solid var(--line)}
+.qt:not(.faite) .qt-coffre .qt-bois{fill:var(--brand)}
+.qt:not(.faite) .qt-coffre .qt-bois2{fill:var(--brand-edge)}
+.qt:not(.faite) .qt-coffre .qt-or{fill:var(--mid)}
+.qt:not(.faite) .qt-coffre svg{opacity:.38}
+.pathbox{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px}
+.pathbox details{width:auto;flex:1 1 auto}
+.pathbox details[open]{flex-basis:100%}
+.pathbox summary{list-style-position:inside}

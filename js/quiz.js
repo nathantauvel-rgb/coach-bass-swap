@@ -132,7 +132,7 @@ function closeQuiz(){
 // Carte « Quiz éclair » de S'entraîner (appelée par renderTrain)
 function renderQuizCard(){
   const e = $('tQuizS'); $('quizCard').disabled = !quizFlash().length;
-  e.textContent = quizOk.length ? `${quizOk.length} sur ${QUIZ.length} trouvées` : 'Nouveau'; e.classList.toggle('ok', quizOk.length > 0);
+  e.textContent = quizOk.length ? `${quizOk.length} sur ${QUIZ.length} trouvées` : 'À essayer'; e.classList.toggle('ok', quizOk.length > 0);
 }
 // Carte de résultat d'un niveau (appelée par finish) : question bonus si le niveau est réussi, et badges gagnés
 function quizOffer(st){ $('quizBtn').hidden = !!prac || !!placement || st < 2 || !quizBonus(); badgeNote('rBadge'); }

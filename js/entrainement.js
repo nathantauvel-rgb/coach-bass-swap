@@ -35,9 +35,9 @@ function renderTrain(){
   tag('tDefiS', ds >= 2 ? 'Réussi ' + '★'.repeat(ds) : doneToday ? 'À retenter' : 'À faire', ds >= 2);
   const p = ok ? dailyPick(pool) : null;
   $('tDefiP').textContent = (p ? `Aujourd'hui : ${BASE_LESSONS[p.li].title}, en ${STYLE_DEFS[p.sty].label}.` : 'Une transition différente chaque jour.') + (sk ? ` Réussi ${plur(sk, 'jour', 'jours')} d’affilée.` : '');
-  tag('tVarS', pracNum('vars') ? plur(pracNum('vars'), 'jouée', 'jouées') : 'Nouveau', pracNum('vars'));
-  tag('tEarS', pracNum('ears') ? plur(pracNum('ears'), 'réussie', 'réussies') : 'Nouveau', pracNum('ears'));
-  tag('tSetS', pool.length < 3 ? 'Verrouillé' : pracNum('setBest') ? `Record : ${pracNum('setBest')}/9 ★` : 'Nouveau', pool.length >= 3 && pracNum('setBest'));
+  tag('tVarS', pracNum('vars') ? plur(pracNum('vars'), 'jouée', 'jouées') : 'À essayer', pracNum('vars'));
+  tag('tEarS', pracNum('ears') ? plur(pracNum('ears'), 'réussie', 'réussies') : 'À essayer', pracNum('ears'));
+  tag('tSetS', pool.length < 3 ? 'Verrouillé' : pracNum('setBest') ? `Record : ${pracNum('setBest')}/9 ★` : 'À essayer', pool.length >= 3 && pracNum('setBest'));
   $('tSetP').textContent = pool.length < 3 ? 'Joue 3 niveaux dans Apprendre pour débloquer les mini-sets.' : 'Trois transitions d\'affilée, sans pouvoir rejouer : comme en soirée.';
   renderQuizCard();
   $('trainNote').innerHTML = ok ? `L'entraînement reprend les niveaux que tu as déjà joués dans Apprendre (${pool.length} sur ${BASE_LESSONS.length}), sur d'autres morceaux.` : 'Joue d\'abord un niveau dans <a href="#apprendre">Apprendre</a> : l\'entraînement reprend les gestes que tu connais déjà.';
