@@ -182,6 +182,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - **G, l'accueil** : un grand vinyle derrière Vini (`.hvini::before`, dégradés du vinyle des niveaux, pas de halo),
     anneau de l'objectif violet même à zéro (doré une fois atteint), coffres pas encore gagnés aux vraies couleurs en
     sourdine, parcours replié sur une ligne avec « Mes progrès et mes badges ».
+  - **D, la présentation** : à droite du titre, le dessin des Premiers pas (Vini qui mixe derrière sa table, sans le halo),
+    recopié en SVG fixe dans `presentation.html` (`.pres-scene pp-derriere pp-mixe` ; refait par `node captures/lot62/scene.js`,
+    hors Git) ; phrases remises à jour (« Gratuit pour apprendre · rien à installer · compte facultatif » ; FAQ « C'est
+    gratuit ? »). **À refaire avant la mise en ligne du lot 62 : les images de la présentation** (`node tests/images-presentation.js`).
+  - **I, le guide** : Vini présente chaque étape à côté du titre (`#onbVini`, `.onb-tete` ; pas dans les fiches).
+  - **J, Mon avis** : champs plus courts, note en étoiles (`aria-label` « N sur 5 »), rapport replié (`#avRapport`, tests mis à jour).
+  - **K, Vérifier ma table** : pastille d'état dessinée par ligne (texte « Fait : » / « En attente : » pour les lecteurs
+    d'écran, classe `.sr` ; test mis à jour), « Ça ne marche pas » et « Passer » en liens.
+  - **L, Mes progrès** : barres au dégradé violet → orange sur un fond violet, la barre du niveau montre toujours son début.
+  - Reste du tour : **C, la table dessinée** (gros, à essayer sur la FLX4).
   **Lot 58 « Tutos : le volume et les effets » PUBLIÉ le 8 nov. 2026, onglet toujours caché** (« publie 58 » ; commit
   `ae938f6` ; production vérifiée : rien de neuf pour un joueur, 11 tutos avec `?tutos=1`, aucune erreur) (branche `lot-58-tutos-effets`, copie
   `Documents\coach-dj-lot58`) : 7 tutos de plus, moteur avec potards, filtre, écho et réverbe. Voir l'entrée « Lot 58 ».
