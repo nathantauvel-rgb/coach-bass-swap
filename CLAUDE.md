@@ -227,8 +227,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     s'arrête sur le chapitre en cours (fin de `renderChapters`), et les cartes de niveau gardent 128 px (une ancienne règle
     `.node{width:84px}` les serrait, « VERROUILLÉ » débordait) avec de la place pour l'anneau du niveau choisi ; checklist
     FLX4 : note sur `?tout=1` pour un profil neuf, points 37 (table du lot 63) et 38 (verrou du lot 64). Test ajouté dans
-    `tests/apprendre.spec.js`. À dire à l'utilisateur en demandant l'accord : le verrou touche aussi Apprenti DJ (60/100 en
-    Expert) et DJ confirmé (quiz du chapitre 5) ; « gratuits, et le resteront » sur la présentation.
+    `tests/apprendre.spec.js`. À dire à l'utilisateur : le verrou touche aussi Apprenti DJ (60/100 en Mode Expert pour
+    ouvrir le niveau suivant) et DJ confirmé (il commence au chapitre 7 : 75/100) ; « gratuits, et le resteront » sur la
+    présentation. **Accord de l'utilisateur pour publier les trois lots (« Oui, publie », 9 nov.).**
+  - **Gardien avant publication (suite complète, 22 min) : feu rouge**, 708 tests sur 709. Le lien du guide « Essayer cette
+    transition dans le jeu » (`?guide=transition`) ouvrait « Le bon moment » au lieu de « La transition complète » pour un
+    visiteur neuf : `goLesson` remplaçait le niveau fermé par le niveau en cours. Corrigé : `goLesson(ch, idx, visite)`, le
+    troisième argument ouvre le niveau demandé pour cette fois (comme `niveauVisite`), utilisé par ce lien et par « Aller
+    jouer « Le swap des basses » » de Vérifier ma table (un testeur neuf ne pouvait pas faire cette étape). Test ajouté
+    (`tests/apprendre.spec.js`) ; `guide`, `apprendre`, `verif`, `parcours` : 67 tests verts. Leçon : les 168 tests « des
+    écrans touchés » n'avaient pas vu ce défaut, il faut la suite complète avant de demander l'accord.
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de

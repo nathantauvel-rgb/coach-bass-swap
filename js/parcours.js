@@ -42,12 +42,13 @@ const ch4Done = () => CH4_LESSONS.filter((_, i) => ch4Stars[i] >= 2).length;
 // Mode Expert : un niveau compte quand son record vaut 2 étoiles (60 sur 100, comme expertResult)
 const X_OK = 60, xDone = () => BASE_LESSONS.filter((_, i) => xBest[i] >= X_OK).length;
 const xTodo = () => { const i = BASE_LESSONS.findIndex((_, k) => !(xBest[k] >= X_OK)); return i < 0 ? 0 : i; };
-function goLesson(ch, idx){
+function goLesson(ch, idx, visite){
   location.hash = '#apprendre'; setView('apprendre');
   if (placement) quitPlacement();
   if (chapter !== ch) setChapter(ch);
-  // lot 64 : un raccourci (badge, ancien test de placement, Vérifier ma table) ne saute pas un niveau fermé
-  if (chapter === ch && idx != null) selectLesson(niveauOuvert(idx) ? idx : Math.max(0, niveauEnCours()));
+  // lot 64 : un raccourci (badge, ancien test de placement) ne saute pas un niveau fermé ; `visite` (lien du guide, Vérifier
+  // ma table) ouvre le niveau demandé pour cette fois, comme niveauVisite (gardien du lot 64)
+  if (chapter === ch && idx != null) selectLesson(visite || niveauOuvert(idx) ? idx : Math.max(0, niveauEnCours()));
 }
 const STAGES = {
   guide: { title: 'Découvre ta table', text: 'Un petit tour d\'une minute, avec le son : compter les phrases et reconnaître les parties d\'un morceau. Chaque bouton de ta table te sera présenté juste avant de t\'en servir.',

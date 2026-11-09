@@ -53,6 +53,14 @@ test.describe('Le parcours linéaire', () => {
     expect((await etats(page)).slice(0, 3)).toEqual(['reussi', 'encours', 'verrou']);
   });
 
+  test('Vérifier ma table : « Aller jouer » ouvre le swap des basses, même fermé (gardien)', async ({ page }) => {
+    const erreurs = await ouvrir(page, { verrou: true });
+    await page.evaluate(() => vfJouer('swap'));
+    await expect(page.locator('#ltitle')).toHaveText('Le swap des basses');
+    expect(await page.evaluate(() => [chapter, li, niveauOuvert(5)])).toEqual([1, 5, false]);
+    expect(erreurs).toEqual([]);
+  });
+
   test('?tout=1 (pour les essais) ouvre tout', async ({ page }) => {
     await page.addInitScript(() => { try { localStorage.setItem('coach-accueil', JSON.stringify({ passe: true, fini: '2026-10-16' })); localStorage.setItem('coach-guide-vu', '1'); } catch (e) {} });
     await page.goto('/index.html?tout=1#apprendre');

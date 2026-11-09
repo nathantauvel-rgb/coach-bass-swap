@@ -124,7 +124,7 @@ function vfEcoute(){
 }
 // « Aller jouer » : on garde l'étape, on ouvre le bon niveau ; « Ma table » propose ensuite de reprendre
 function vfJouer(quoi){ closeVerif();
-  if (quoi === 'expert'){ expert = true; saveExpert(); goLesson(1, 0); } else goLesson(1, BASE_LESSONS.findIndex(l => l.kind === 'swap')); }
+  if (quoi === 'expert'){ expert = true; saveExpert(); goLesson(1, 0); } else goLesson(1, BASE_LESSONS.findIndex(l => l.kind === 'swap'), true); }   // le swap, même fermé : c'est la table qu'on vérifie (lot 64)
 
 function renderVerif(){
   if (!verif.on) return;

@@ -70,7 +70,7 @@ setView(location.hash.slice(1));
 const GUIDE_VERS = {
   apprendre: () => cpLecon(0),
   phrase: () => { cpGuide = 3; cpLecon(3); },
-  transition: () => { if (cpMobile()){ cpGuide = 6; cpLecon(6); } else goLesson(1, 6); },
+  transition: () => { if (cpMobile()){ cpGuide = 6; cpLecon(6); } else goLesson(1, 6, true); },   // ouvert pour la visite, même fermé (lot 64)
   // le chapitre 5 est ouvert pour la visite seulement (choix de l'utilisateur) : « Entendre le décalage » se fait sans table
   caler: () => { if (cpMobile()){ cpGuide = 2; cpLecon(2); } else { location.hash = '#apprendre'; setView('apprendre'); niveauVisite(5, 0); } },
   table: () => { location.hash = '#table'; setView('table'); }
