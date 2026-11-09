@@ -43,7 +43,7 @@ function tableSvg(){
   for (const [side, dx] of [['A', 0], ['B', 600]]){
     s += `<text class="tt" x="${dx + 210}" y="47" text-anchor="middle">PLATINE ${side}</text>`;
     s += g('sync' + side, `<rect x="${dx + 30}" y="28" width="84" height="28" rx="14"/><text x="${dx + 72}" y="47" text-anchor="middle">SYNC</text>`);
-    s += g('jog' + side, `<circle cx="${dx + 150}" cy="165" r="88"/><circle class="in" cx="${dx + 150}" cy="165" r="26"/>`);
+    s += g('jog' + side, `<circle cx="${dx + 150}" cy="165" r="88"/><circle class="sl" cx="${dx + 150}" cy="165" r="72"/><circle class="sl" cx="${dx + 150}" cy="165" r="58"/><circle class="sl" cx="${dx + 150}" cy="165" r="44"/><circle class="in" cx="${dx + 150}" cy="165" r="26"/>`);   // lot 63 : les sillons
     s += g('tempo' + side, `<rect x="${dx + 268}" y="90" width="18" height="150" rx="9"/><rect class="cap" x="${dx + 262}" y="156" width="30" height="14" rx="4"/>`);
     s += g('cue' + side, `<circle cx="${dx + 50}" cy="318" r="21"/><text x="${dx + 50}" y="322" text-anchor="middle">CUE</text>`);
     s += g('play' + side, `<circle cx="${dx + 50}" cy="378" r="21"/><path class="mkf" d="M${dx + 44} 369v18l15-9z"/>`);

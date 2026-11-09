@@ -2777,3 +2777,55 @@ body.pro-ouvert{overflow:hidden}
 .pgbar{background:var(--brand-soft);border:1px solid var(--brand-line)}
 .pgbar i{background:linear-gradient(90deg,var(--brand),var(--a))}
 #pgXpFill{min-width:10px}
+
+/* ---------- Lot 63 : la table dessinée (point C du tour des écrans) ----------
+   Avant : des traits fins, des potards réduits à un trait, des commandes éteintes en fantômes gris (« pas fini »), et
+   trois tables différentes sur le site. Maintenant la table des niveaux prend la matière de celle des tutos (le dessin le
+   plus net) : une façade de contrôleur (--ps-face), des zones plus sombres (--tu-zone), des molettes à sillons avec
+   l'anneau de leur platine, des potards pleins, des faders dans leur rainure, des pads en relief. Les commandes dont le
+   niveau ne se sert pas sont seulement atténuées. Rien ne change dans le fonctionnement (mêmes éléments, mêmes réglages). */
+.deck{background:none;border:0;padding:0}
+.deck .decklab{display:block;margin:0 0 8px 4px}
+.table3{background:var(--ps-face);border:2px solid var(--ps-bord);border-radius:26px;padding:14px;gap:12px;box-shadow:0 10px 26px var(--vinyle-ombre)}
+.table3 .pl,.table3 .mx{background:var(--tu-zone);border:1.5px solid var(--ps-bord);border-radius:18px}
+/* les molettes : plateau à sillons, anneau de la platine, centre et repère */
+.table3 .jog{border:4px solid var(--off);box-shadow:inset 0 0 0 3px var(--ps-face);
+  background:radial-gradient(circle,var(--tu-zone) 0 21%,var(--ps-bord) 21.5% 24%,rgba(0,0,0,0) 24.5%),
+    repeating-radial-gradient(circle,var(--ps-sillon) 0 1px,rgba(0,0,0,0) 1px 6px),var(--ps-plat)}
+.table3 .plA .jog{border-color:var(--a)} .table3 .plB .jog{border-color:var(--b)}
+.table3 .jog .mk::before{top:10px;width:5px;height:16px;margin-left:-2.5px;background:var(--ps-metal)}
+.table3 .jog.tenu{border-color:var(--fg)}
+/* les potards : pleins, avec leur aiguille ; l'arc de couleur dit où ils sont */
+.table3 .knob .body{fill:var(--off);stroke:var(--off-edge);stroke-width:1.5}
+.table3 .knob .trk{stroke:var(--tu-rail)}
+/* les faders : une rainure sombre et un bouton métal, comme sur la vraie table */
+.table3 .fader .slot{background:var(--tu-rail);width:6px;margin-left:-3px}
+.table3 .fader .fill{width:6px;margin-left:-3px;opacity:.85}
+.table3 .fader .cap2{background:var(--ps-metal);border-radius:5px;height:22px;box-shadow:0 3px 0 var(--vinyle-ombre)}
+.table3 .fader .cap2::after{background:var(--ps-face)}
+.table3 .fader.tempo .slot::after{background:var(--ps-bord)}
+/* les boutons ronds (CUE, PLAY), les pads et l'écho : pleins, en relief */
+.table3 .rb{background:var(--off);border:2px solid var(--off-edge);box-shadow:inset 0 -3px 0 var(--off-edge)}
+.table3 .pad{background:var(--off);border:1px solid var(--off-edge);box-shadow:inset 0 -3px 0 var(--off-edge)}
+.table3 .ptabs button{background:var(--off);border-color:var(--off-edge)}
+.table3 .hcue{background:var(--off);border-color:var(--off-edge)}
+.table3 .vu{background:var(--tu-rail)}
+/* éteintes : atténuées, pas en fantômes */
+.deck .eteint{opacity:.36;filter:grayscale(.5)}
+.table3 .pl{justify-content:space-between}
+
+/* « Ma table » et « Vérifier ma table » : le même schéma, avec la matière de la table des niveaux (lot 63) */
+:is(#tSvg,#vfSvg){background:var(--ps-face);border:2px solid var(--ps-bord);border-radius:24px}
+:is(#tSvg,#vfSvg) .body{fill:var(--tu-zone);stroke:var(--ps-bord);stroke-width:1.5}
+:is(#tSvg,#vfSvg) .tc>circle,:is(#tSvg,#vfSvg) .tc>rect{fill:var(--off);stroke:var(--off-edge);stroke-width:2}
+:is(#tSvg,#vfSvg) .tc>circle.sl{fill:none;stroke:var(--ps-sillon);stroke-width:1.5;pointer-events:none}
+:is(#tSvg,#vfSvg) .tc .in{fill:var(--tu-zone);stroke:var(--ps-bord)}
+:is(#tSvg,#vfSvg) .tc .cap{fill:var(--ps-metal);stroke:none}
+:is(#tSvg,#vfSvg) .mk{stroke:var(--fg)}
+:is(#tSvg,#vfSvg) .mkf{fill:var(--fg)}
+:is(#tSvg,#vfSvg) .tc.site.ta>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc.site.ta>rect:not(.cap):not(.hit){stroke:var(--a);stroke-width:3}
+:is(#tSvg,#vfSvg) .tc.site.tb>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc.site.tb>rect:not(.cap):not(.hit){stroke:var(--b);stroke-width:3}
+:is(#tSvg,#vfSvg) .tc.site.tm>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc.site.tm>rect:not(.cap):not(.hit){stroke:var(--xp);stroke-width:3}
+:is(#tSvg,#vfSvg) .tc:hover>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc:hover>rect:not(.cap):not(.hit){fill:var(--ps-bouton)}
+:is(#tSvg,#vfSvg) .tc.sel>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc.sel>rect:not(.cap):not(.hit){fill:var(--hi);stroke:var(--fg);stroke-width:3}
+:is(#tSvg,#vfSvg) .tc.live>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc.live>rect:not(.cap):not(.hit){fill:var(--go)}

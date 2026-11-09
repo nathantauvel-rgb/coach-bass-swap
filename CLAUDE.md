@@ -192,6 +192,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     d'écran, classe `.sr` ; test mis à jour), « Ça ne marche pas » et « Passer » en liens.
   - **L, Mes progrès** : barres au dégradé violet → orange sur un fond violet, la barre du niveau montre toujours son début.
   - Reste du tour : **C, la table dessinée** (gros, à essayer sur la FLX4).
+  **Lot 63 « La table » (9 nov. 2026, « go fais la table »)** : branche `lot-63-table` (partie du lot 62), copie
+  `Documents\coach-dj-lot63` (serveur des captures sur 8791, `node captures/lot63/tour.js 50|51|52`). Par les styles seuls,
+  sans toucher au fonctionnement (mêmes éléments, mêmes identifiants) : la table des niveaux (`.table3`) prend la matière de
+  celle des tutos — façade `--ps-face`, zones `--tu-zone`, molettes à sillons avec l'anneau de leur platine, potards pleins
+  (`--off`), faders dans une rainure (`--tu-rail`) avec un bouton métal, pads et boutons en relief ; commandes éteintes à
+  36 % (au lieu de fantômes) ; le cadre « Ta table » autour disparaît. « Ma table » et « Vérifier ma table » (`#tSvg`,
+  `#vfSvg`) : même matière, et trois sillons dessinés dans les molettes (`circle.sl` dans `tableSvg`, `js/table.js`).
+  104 tests verts sur les fichiers touchés (commandes, clarte, table, verif, avis, quiz, tutos). **Jamais vu sur la vraie
+  FLX4** : vérifier que les commandes allumées se voient bien pendant une partie.
   **Lot 58 « Tutos : le volume et les effets » PUBLIÉ le 8 nov. 2026, onglet toujours caché** (« publie 58 » ; commit
   `ae938f6` ; production vérifiée : rien de neuf pour un joueur, 11 tutos avec `?tutos=1`, aucune erreur) (branche `lot-58-tutos-effets`, copie
   `Documents\coach-dj-lot58`) : 7 tutos de plus, moteur avec potards, filtre, écho et réverbe. Voir l'entrée « Lot 58 ».
