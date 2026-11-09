@@ -49,6 +49,53 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   l'utilisateur ; gardien : feu orange sans blocage, 666 tests verts) : « Dj » de Play House remplacé partout par les
   morceaux Pixabay. Production vérifiée (Umami bloqué) : « « Deep House » puis « Ambient House » · Pixabay », les extraits
   servis, `dj-a.mp3` en 404, aucune erreur. Aperçus à écouter dans `audio-essai\apercus\` de la copie `coach-dj-lot56`.
+  **Lot 59 « DJingood Pro » fait le 9 nov. 2026, NON PUBLIÉ et éteint** (branche `lot-59-pro`, copie
+  `Documents\coach-dj-lot59`) : l'abonnement (fonction `api/pro.js`, écran Pro, cadenas, « Mon compte », pages légales à
+  compléter, `STRIPE.md`). Voir l'entrée « Lot 59 ».
+  **Stripe branché en MODE TEST le 9 nov. 2026 (« go mettre strip »), rien en ligne, tout marche avec un robot.**
+  **Le dépôt GitHub est public : jamais d'identifiant Stripe (`acct_`, `prod_`, `price_`, `bpc_`, `pmc_`), de nom d'un autre
+  projet de l'utilisateur ni de chemin de la clé dans un fichier suivi par Git** (feu rouge du gardien le 9 nov.). Tout ça est
+  dans `captures/stripe/notes.md` de la copie lot 59 (hors Git).
+  - Clé de test (standard, `sk_test_`) rangée dans un fichier de l'ordinateur hors de tout dépôt (lu par les scripts de
+    `captures/stripe/`), jamais dans le chat. Piège : « Créer une clé » mène à « Sélectionner des autorisations » de
+    l'**organisation** ; une clé d'organisation demande l'en-tête `Stripe-Context` que `api/pro.js` n'envoie pas : prendre
+    « Révéler la clé de test » (clés standard).
+  - Premier essai sur un ancien compte Stripe de l'utilisateur, ouvert pour un autre projet : la page de paiement affichait
+    le nom de cet autre projet. **Il a créé un compte distinct « DJingood » dans son organisation Stripe** (site djingood.fr) ;
+    c'est sa clé de test qui sert. La case des conditions marche sur ce compte sans rien régler.
+  - `node captures/stripe/portail.js` (hors Git) : règle le portail par défaut par l'API :
+    annuler à la fin de la période sans remboursement (avec la raison), carte, factures, nom et adresse, **changer de
+    formule** (mensuel → annuel tout de suite, `always_invoice` ; annuel → mensuel à la fin de l'année payée,
+    `schedule_at_period_end`), liens vers `cgv.html` et `confidentialite.html`. À refaire sur le compte réel (clé live).
+  - **Moyens de paiement : la carte seulement** (accord de l'utilisateur, « oui »), comme le dit `cgv.html` : Stripe
+    proposait tout seul Klarna, Amazon Pay, Satispay, Link… **`payment_method_types` est refusé par Stripe** (« no longer
+    supported when creating a Checkout Session ») : ne pas le remettre dans `api/pro.js`. Réglé dans le compte par
+    `node captures/stripe/moyens.js` (configuration par défaut : card, apple_pay, google_pay allumés, le reste
+    éteint). En vrai : Paramètres → Moyens de paiement, à refaire (noté dans `STRIPE.md`).
+  - `node captures/stripe/installe.js` (hors Git, relançable sans doublon) : produit « DJingood Pro » et prix
+    `djingood_pro_mois` (4,99 €/mois) et `djingood_pro_an` (49,99 €/an), identifiants écrits à côté de la clé.
+    Sur un autre compte : nouvelle clé dans le fichier, relancer ce script.
+  - `node captures/stripe/serveur.js` (hors Git) : site + `api/pro.js` sur http://localhost:8774 (clés de test seulement ;
+    localhost est autorisé par Firebase : l'utilisateur peut s'y connecter avec Google et payer avec la carte 4242).
+    `ROBOT=1` : accepte le faux Firebase des tests (jeton signé par le serveur). Attention, il garde `api/pro.js` en mémoire :
+    le relancer après une modification (tuer le node dont la ligne de commande contient `captures/stripe/serveur.js`).
+  - `node captures/stripe/robot.js` : paie la formule mensuelle avec la carte 4242 sur le vrai Stripe (mode test), captures
+    dans `captures/stripe/robot/`. **Résultat** : cadenas, fenêtre Pro, page de Stripe (prix, case des conditions avec notre
+    texte), retour « Bienvenue dans Pro », 0 cadenas, « Mon compte » (« Au mois · renouvelé le 9 décembre 2026 »), portail
+    de Stripe ouvert (« Modifier l'abonnement », « Annuler l'abonnement », carte, factures).
+  - **Défaut trouvé et corrigé** : `api/pro.js` retrouvait l'abonnement par la recherche de Stripe,
+    qui met jusqu'à une minute à voir un nouvel abonnement → « Gérer mon abonnement » échouait juste après le paiement (et
+    un rechargement aurait remis les cadenas). Maintenant : clients Stripe de l'adresse du jeton puis leurs abonnements
+    (listes à jour tout de suite), sinon la recherche ; toujours filtré par `metadata.uid`. Deux tests de plus (15 verts).
+  - **Essayé par l'utilisateur le 9 nov. 2026 sur localhost avec son vrai compte Google : « ça a bien fonctionné »** (le
+    journal du serveur montre etat, payer, session réussis ; il n'a pas ouvert « Gérer », le robot l'a fait).
+  - `STRIPE.md` réécrit (ce qui est fait, Vercel, image de marque et e-mails, passage en vrai).
+  - Suite complète : **685 tests verts** (9 nov. 2026). Gardien : **feu rouge** pour les identifiants Stripe écrits ici
+    (retirés, les commits du lot regroupés en un seul avant tout envoi), le code lui-même jugé propre (une adresse seule ne
+    donne jamais accès à l'abonnement d'un autre, aucune clé dans le dépôt, pages légales introuvables pour un joueur).
+  - Reste : repasser le gardien, puis, avec son accord, la publication du lot 59 éteint et les trois réglages Vercel (clé de
+    test et prix du compte DJingood) ; logo et e-mails dans Stripe (dont le rappel avant le renouvellement annuel, que
+    `cgv.html` promet).
   **Lot 58 « Tutos : le volume et les effets » PUBLIÉ le 8 nov. 2026, onglet toujours caché** (« publie 58 » ; commit
   `ae938f6` ; production vérifiée : rien de neuf pour un joueur, 11 tutos avec `?tutos=1`, aucune erreur) (branche `lot-58-tutos-effets`, copie
   `Documents\coach-dj-lot58`) : 7 tutos de plus, moteur avec potards, filtre, écho et réverbe. Voir l'entrée « Lot 58 ».
@@ -2066,6 +2113,46 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     illisibles) ; le libellé « · filtré » est coupé sur « House - July ».
   - **Jamais écouté par un humain**, ni vu par l'utilisateur. À lui faire regarder et écouter avant toute publication. Pour
     essayer : dans la copie, `DJ_PORT=8772 node tests/serveur.js`, puis http://localhost:8772/index.html?tutos=1#tutos.
+- **Lot 59 « DJingood Pro » (9 nov. 2026)** : branche `lot-59-pro` (partie d'`origin/main` après le lot 58), copie à part
+  `Documents\coach-dj-lot59` (git worktree, `node_modules` relié par jonction ; tests : `DJ_PORT=8773 npx playwright test`),
+  **non publiée**, **éteint** (`PRO_PRET = false` en haut de `js/pro.js`). Maquette validée par étapes (`captures/maquette-pro/`,
+  hors Git, v1 à v5 ; la v5 sert de modèle : voir la mémoire « visuel et pro, sans tics IA ») ; l'utilisateur a dit « reprend »
+  après la v5. Décisions : rien de ce qui existe ne passe en Pro ; Pro = les tutos sauf le premier de chaque famille ;
+  4,99 €/mois ou 49,99 €/an ; pas d'essai gratuit.
+  - **C'est Stripe qui dit qui est Pro**, sans base de données : `api/pro.js` (fonction Vercel, aucune dépendance, même
+    vérification du jeton Firebase que `api/mails.js`, qu'elle réutilise par `require`). Actions : `etat` (recherche des
+    abonnements de Stripe par `metadata.uid`), `payer` (page de paiement Stripe Checkout : abonnement, `client_reference_id`
+    et `metadata.uid` = le compte, case obligatoire des conditions avec la renonciation au délai de rétractation, retour sur
+    `/?pro=merci&session={CHECKOUT_SESSION_ID}#tutos` ; 409 si déjà abonné), `session` (juste après le paiement : la
+    recherche de Stripe met jusqu'à une minute à voir un nouvel abonnement), `gerer` (portail client de Stripe : changer de
+    formule, de carte, factures, arrêter). Réglages Vercel : `STRIPE_CLE`, `STRIPE_PRIX_MOIS`, `STRIPE_PRIX_AN` (et `SITE_URL`
+    facultatif) ; sans eux : 503.
+  - **Le site** (`js/pro.js`, chargé après `compte`) : `proVerrou()` (PRO_PRET, `?pro=1` retenu pour l'onglet, ou
+    `window.DJINGOOD_PRO` des tests), `proLibre(t)` (tuto gratuit, ou abonné, ou Pro éteint), `proEtat` gardé dans
+    `coach-pro` (`{ uid, actif, formule, jusqua, annule }`, sur l'ordinateur seulement : ajouté à `CPT_LOCAL`), fenêtre plein
+    écran `#pro` (`proOuvre`, `proFerme`, bascule Mensuel / Annuel, « Passer à Pro » : sans compte, la fenêtre du compte
+    s'ouvre sur « Créer » et le paiement s'enchaîne une fois connecté, `proApres`), « Bienvenue dans Pro » (`#proMerci`,
+    propose le tuto qu'on voulait voir, `djingood-pro-voulu`), bloc `#cptPro` dans « Mon compte » (« Découvrir Pro » ou
+    « Gérer mon abonnement » avec la formule et la date). `js/tutos.js` : cadenas `.tu-cadenas` et classe `tu-ferme` sur
+    les tutos fermés, bandeau `#proBandeau`, `tuOuvre` envoie un tuto fermé vers la fenêtre Pro. `js/compte.js` appelle
+    `proCompte(u)` à chaque connexion et `proCompteRend()` dans `cptRend` (avec `typeof` : une session reprise tout de suite
+    arrive avant le chargement de `pro.js`, qui la rattrape lui-même à la fin du fichier). Étape `pro` dans `STATS_ETAPES`,
+    statistiques `pro-ouvert`, `pro-payer`.
+  - Styles `.pro-…` à la fin de `styles.css`, teintes `--pro-…` dans `:root` (pas de halo dans le fond, pas de reflet
+    animé, pas de texte en dégradé ; le dégradé violet → orange reste sur le bouton « Passer à Pro » et les vignettes).
+  - Pages `cgv.html` (conditions de vente : prix, renouvellement et rappel avant l'échéance annuelle, accès immédiat et
+    renonciation, arrêt en deux clics, médiation) et `mentions-legales.html` (éditeur, hébergeurs Vercel, Firebase, Stripe,
+    musique Pixabay), **avec des passages entre crochets à compléter** (nom, SIRET, adresse, e-mail, médiateur, date),
+    `noindex`, pas dans `sitemap.xml`, liées seulement depuis la fenêtre Pro. `confidentialite.html` pas encore mise à jour.
+  - `STRIPE.md` : la marche à suivre de l'utilisateur (compte Stripe en mode test, produit et deux prix, portail client,
+    conditions et e-mails de Stripe, réglages Vercel, essai avec la carte 4242, passage en vrai).
+  - Tests : `tests/pro.spec.js` (13 : Pro éteint, cadenas et fenêtre, bascule, sans compte puis paiement, panne, « Mon
+    compte », abonné, autre compte et `coach-pro` abîmé, retour de Stripe ; et la fonction `api/pro.js` sans réseau, avec un
+    faux Stripe) ; `tests/site.spec.js` (ordre des fichiers). 167 tests verts sur les fichiers touchés (pro, tutos, compte,
+    mails, stats, site). Suite complète le 9 nov. : 685 tests verts.
+  - Captures : `captures/lot59/` (dossier principal, hors Git).
+  - **Essayé avec le vrai Stripe en mode test le 9 nov. 2026** (robot et utilisateur, en local) : voir le paragraphe
+    « Stripe branché en MODE TEST » en haut de ce fichier. À la charge de l'utilisateur : sa micro-entreprise (SIRET, URSSAF, TVA), les passages entre crochets, un médiateur de la consommation.
 - Plan en 5 étapes : 1. Restructurer (3 onglets, supprimer le mode libre, page d'accueil) ·
   2. Remplir S'entraîner · 3. Remplir Passer au vrai · 4. Tester avec 3 à 5 débutants · 5. Lancer.
 - **1. Restructurer : fait le 12 oct. 2026.** Accueil + 3 onglets dans `index.html`, lien « Mode libre »
@@ -2087,13 +2174,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `erreurs` (bandeau d'erreur) → `stats` (statistiques Umami, lot 46) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `set` (chapitre 7 « Le set », lot 44) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) → `comprendre` (leçons sans table, lot 48) → `tutos` (l'onglet « Tutos », lot 56) →
-  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `mails` (les mails de Vini, lot 54) → `compte` (se connecter avec Google) →
+  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `mails` (les mails de Vini, lot 54) → `compte` (se connecter avec Google) → `pro` (DJingood Pro, lot 59) →
   `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
   dans un fichier chargé avant ; `function stop` remplace `window.stop` (sans effet connu).
   Étape suivante possible, non commencée : de vrais modules avec import/export.
 - `confidentialite.html` — « Ce que DJingood garde sur toi » (lot 46), avec le bouton qui refuse les statistiques.
+- `cgv.html`, `mentions-legales.html` — conditions de vente de DJingood Pro et mentions légales (lot 59, à compléter).
+- `api/pro.js`, `STRIPE.md` — l'abonnement DJingood Pro chez Stripe, et la marche à suivre pour le régler (lot 59).
 - `guide/` — le guide du débutant (lot 51) : une page d'entrée et cinq pages de questions, pour Google et les IA.
 - `STATISTIQUES.md` — marche à suivre de l'utilisateur pour Umami et pour lire les avis (lot 46).
 - `MAILS.md` — marche à suivre de l'utilisateur pour Brevo (mails de Vini, lot 54). `mails/` — les trois modèles à coller dans Brevo. `api/mails.js` — la fonction Vercel qui parle à Brevo (clé dans les réglages de Vercel, jamais dans le site).
@@ -2180,7 +2269,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-tutos` (`{ vus: [identifiants], vol }`, les tutos vus jusqu'au bout et le volume du lecteur, lot 56), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester

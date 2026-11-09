@@ -189,6 +189,7 @@
       <p class="cptbas"><span id="cptBasTxt"></span> <button type="button" class="cptlien" id="cptBascule"></button></p>
     </form>
     <div class="cptpas" id="cptConnecte" hidden>
+      <div class="cptpro" id="cptPro" hidden><span class="pro-badge">PRO</span><span><b id="cptProNom">DJingood Pro</b><small id="cptProTxt"></small></span><button type="button" class="cptprobtn" id="cptProBtn">Découvrir Pro</button></div>
       <div class="cptmails" id="cptMailsRow" hidden><span><b id="cptMailsNom">Les mails de Vini</b><small id="cptMailsTxt">Un par semaine au plus&nbsp;: des astuces et les nouveautés. Tu peux aussi arrêter depuis n'importe quel mail.</small></span><button type="button" class="inter" role="switch" id="cptMailsInter" aria-checked="false" aria-labelledby="cptMailsNom"></button></div>
       <button type="button" class="cptlien cptsortir" id="cptOut">Se déconnecter</button>
     </div>
@@ -196,6 +197,44 @@
     <p class="avsmall" id="cptNote"></p>
     <p class="avsmall cptconf"><a class="avlien" href="confidentialite.html" target="_blank" rel="noopener">Ce que DJingood garde sur toi</a></p>
   </div>
+</div>
+<div data-nosnippet class="pro-page" id="pro" hidden role="dialog" aria-modal="true" aria-labelledby="proTitre">
+  <button type="button" class="pro-fermer" id="proFermer" aria-label="Fermer">×</button>
+  <div class="pro-hero">
+    <div>
+      <span class="pro-badge">PRO</span>
+      <h2 id="proTitre" tabindex="-1">Mixe comme<br><span class="pro-accent">un vrai DJ.</span></h2>
+      <p class="pro-sous">Toutes les techniques des DJ, expliquées par Vini, avec la musique et la table sous les yeux.</p>
+      <ul class="pro-atouts">
+        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></span><span>Tous les tutos<small>Le swap, les 3 bandes, l'écho, la réverbe, le filtre, les boucles…</small></span></li>
+        <li><span class="pro-ic pro-ic-b"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg></span><span>De nouveaux tutos chaque mois<small>Vini t'apprend une nouvelle technique à chaque fois.</small></span></li>
+        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Le reste reste gratuit<small>Les leçons, le Mode Expert, Comprendre : pour toujours.</small></span></li>
+      </ul>
+    </div>
+    <div class="pro-offre">
+      <div class="pro-vinyle-zone"><div class="pro-vinyle"></div><img src="img/vini-logo.svg" alt=""></div>
+      <div class="pro-bascule" role="group" aria-label="Formule"><button type="button" data-f="mois" aria-pressed="false">Mensuel</button><button type="button" data-f="an" aria-pressed="true">Annuel<span class="pro-eco">−17 %</span></button></div>
+      <p class="pro-prix"><b id="proPrix">49,99 €</b><span id="proPar">/ an</span></p>
+      <p class="pro-prix-detail" id="proDetail"></p>
+      <button type="button" class="pro-go" id="proGo">Passer à Pro<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <p class="pro-msg" id="proMsg" role="status" hidden></p>
+      <p class="pro-rassure"><span>Sans engagement</span><span>Paiement sécurisé par Stripe</span></p>
+      <p class="pro-legal"><a href="cgv.html" target="_blank" rel="noopener">Conditions de vente</a> · <a href="mentions-legales.html" target="_blank" rel="noopener">Mentions légales</a></p>
+      <button type="button" class="pro-lien" id="proPlusTard">Pas maintenant</button>
+    </div>
+  </div>
+  <div class="pro-dedans">
+    <h3>Ce que tu débloques</h3>
+    <p id="proDedansTxt">Tous les tutos, et un nouveau chaque mois.</p>
+    <div class="pro-vignettes"><div class="pro-vg"><span class="pro-vg-mot">BASSES</span><span class="pro-vg-lec"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg></span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M4 44c10-22 20 10 30-6s20 18 30-4 20 12 32-2"/><path d="M4 30h92" opacity=".25"/></svg><strong>Le swap des basses</strong><small>3 min</small></div><div class="pro-vg"><span class="pro-vg-mot">ÉCHO</span><span class="pro-vg-lec"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg></span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M10 10v40M30 16v28M48 22v16M64 26v8M78 28v4"/></svg><strong>L'écho out</strong><small>3 min</small></div><div class="pro-vg"><span class="pro-vg-mot">FILTRE</span><span class="pro-vg-lec"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg></span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M4 50C30 50 40 10 60 10s30 0 36 0"/></svg><strong>Le filtre qui ouvre</strong><small>3 min</small></div><div class="pro-vg"><span class="pro-vg-mot">RÉVERBE</span><span class="pro-vg-lec"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg></span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><circle cx="50" cy="30" r="8"/><circle cx="50" cy="30" r="17" opacity=".6"/><circle cx="50" cy="30" r="26" opacity=".3"/></svg><strong>La sortie dans la réverbe</strong><small>3 min</small></div><div class="pro-vg"><span class="pro-vg-mot">BOUCLES</span><span class="pro-vg-lec"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg></span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M30 18h40a12 12 0 0 1 0 24H30a12 12 0 0 1 0-24"/><path d="M62 12l8 6-8 6"/></svg><strong>La montée en boucle</strong><small>3 min</small></div></div>
+  </div>
+</div>
+<div data-nosnippet class="pro-page pro-merci" id="proMerci" hidden role="dialog" aria-modal="true" aria-labelledby="proMerciTitre">
+  <div class="pro-vinyle-zone pro-vinyle-grand"><div class="pro-vinyle"></div><img src="img/vini-logo.svg" alt=""></div>
+  <span class="pro-badge">PRO</span>
+  <h2 id="proMerciTitre">Bienvenue dans <span class="pro-accent">Pro</span> !</h2>
+  <p class="pro-sous" id="proMerciTxt">Tous les tutos sont ouverts.</p>
+  <button type="button" class="pro-go" id="proMerciGo">Voir les tutos</button>
 </div>
 <div data-nosnippet class="quiz" id="mlQ" hidden role="dialog" aria-modal="true" aria-labelledby="mlTitre">
   <div class="qcard cptcard">
@@ -404,6 +443,7 @@
       <div class="vcoin"><button type="button" class="hvini" id="tutosViniBtn" aria-label="Faire sauter Vini"><span id="tutosVini"></span></button><p class="bubble" id="tutosTip" aria-live="polite"></p></div>
       <h1>Tutos</h1>
       <p class="lead">Les techniques des DJ, expliquées par Vini. Tu écoutes, tu regardes la table, et tu comprends pourquoi ça marche.</p>
+      <div class="pro-bandeau" id="proBandeau" hidden><img src="img/vini-logo.svg" alt=""><p>Le premier tuto de chaque famille est gratuit.<small id="proBandeauTxt">Les autres, et un nouveau chaque mois, sont dans DJingood Pro.</small></p><button type="button" class="pro-mini" id="proBandeauBtn">Découvrir Pro</button></div>
       <div id="tuFamilles"></div>
     </section>
     <section class="tu" id="tuLecteur" hidden aria-label="Tuto">
@@ -642,6 +682,7 @@
 <script src="js/avis.js"></script>
 <script src="js/mails.js"></script>
 <script src="js/compte.js"></script>
+<script src="js/pro.js"></script>
 <script src="js/demarrage.js"></script>
 </body>
 </html>

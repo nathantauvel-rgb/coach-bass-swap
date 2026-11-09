@@ -47,7 +47,7 @@ const CPT_MAX = 400000;                       // au-delà, on n'envoie pas (gard
    - `coach-stats` : les étapes déjà comptées par les statistiques sur ce navigateur (stats.js).
    - `coach-compte-propose` : le jour où la carte de fin a proposé le compte (mails.js) ; ne sert qu'avant d'en avoir un.
    `coach-mails` (la réponse « Vini peut m'écrire », lot 54), elle, suit le compte : on ne repose pas la question ailleurs. */
-const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', 'coach-stats', ML_PROPOSE, CPT_KEY];
+const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
 const cptOn = () => !!(CPT_CFG && CPT_CFG.apiKey && CPT_CFG.projectId && CPT_CFG.appId);
 const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_LOCAL.includes(k);
 
@@ -201,12 +201,14 @@ function cptChange(u){
   // remet l'écran à l'accueil que si on vient vraiment de se déconnecter, sinon le formulaire qu'on est en
   // train de remplir disparaîtrait tout seul.
   if (!u){ const avait = !!cpt; cpt = null; cptBloque = true; cptAttente = null;
-    if (avait){ cptPas = 'accueil'; cptFait = ''; cptDemande = false; mlVu = ''; mlQCache(); try { cptBrut.del(CPT_KEY); } catch (e) {} } cptEtat(); return; }
+    if (avait){ cptPas = 'accueil'; cptFait = ''; cptDemande = false; mlVu = ''; mlQCache(); try { cptBrut.del(CPT_KEY); } catch (e) {} } cptEtat(); if (typeof proCompte === 'function') proCompte(null); return; }
   cpt = { uid: u.uid, prenom: (u.displayName || '').trim().split(/\s+/)[0] || 'toi' };
   stat1('compte');   // la première connexion sur ce navigateur (stats.js)
   if (!cptSauve || cptSauve.uid !== cpt.uid){ cptMaj = 0; cptSale = false; }   // un autre compte que la dernière fois
   cptNote(); cptEtat();
   if (cptFait !== cpt.uid){ cptFait = cpt.uid; cptSync().catch(e => { cptBloque = true; cptDit(cptErreur(e)); cptEtat(); }); }
+  // DJingood Pro (pro.js, chargé après ce fichier : une session reprise tout de suite arrive avant lui, il la rattrape)
+  if (typeof proCompte === 'function') proCompte(u);
 }
 
 /* ---------- Comparer, puis seulement après, enregistrer ----------
@@ -453,7 +455,7 @@ function cptRend(){
     : mlActif() ? 'DJingood enregistre ton prénom, ton adresse et ta progression. Ton adresse ne sert à t’écrire que si tu coches la case.'
     : 'DJingood enregistre ton prénom, ton adresse et ta progression. Rien d’autre, et rien n’est partagé.';
   $('cptNote').hidden = !$('cptNote').textContent;
-  mlRend();
+  mlRend(); if (typeof proCompteRend === 'function') proCompteRend();   // le bloc de l'abonnement (pro.js)
   viniMettre($('cptVini'), 'calme');
 }
 
