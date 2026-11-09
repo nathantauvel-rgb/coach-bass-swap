@@ -99,6 +99,7 @@ test.describe('Le rapport', () => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     await ouvrir(page);
     await page.locator('#avisBtn').click();
+    await page.locator('#avRapport summary').click();   // le rapport est replié (lot 62)
     await page.locator('#avCopy').click();
     await expect(page.locator('#avMsg')).toContainText('Rapport copié');
     expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('Rapport DJingood du');
@@ -106,6 +107,7 @@ test.describe('Le rapport', () => {
   test('sans presse-papiers, le rapport s\'affiche pour être copié à la main', async ({ page }) => {
     await ouvrir(page, { avant: 'Object.defineProperty(navigator, "clipboard", { value: undefined });' });
     await page.locator('#avisBtn').click();
+    await page.locator('#avRapport summary').click();   // le rapport est replié (lot 62)
     await page.locator('#avCopy').click();
     await expect(page.locator('#avText')).toBeVisible();
     await expect(page.locator('#avText')).toHaveValue(/^Rapport DJingood du/);

@@ -143,6 +143,6 @@ test.describe('Vérifier ma table', () => {
     await page.evaluate(() => { tableCfg = { nom: 'Mixtrack Pro' }; renderTable(); });
     await ouvrirVerif(page);
     await expect(page.locator('#vfList li.ok')).toHaveCount(2);
-    await expect(page.locator('#vfList li').nth(1)).toHaveText('✓ Elle est réglée et prête à jouer');
+    await expect(page.locator('#vfList li').nth(1)).toHaveText('Fait : Elle est réglée et prête à jouer');
   });
 });

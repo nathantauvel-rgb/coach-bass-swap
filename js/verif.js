@@ -133,7 +133,9 @@ function renderVerif(){
   $('vfFill').style.width = (fin ? 100 : Math.max(4, vf.i / VF_N * 100)) + '%';
   $('vfTitle').textContent = st.titre; $('vfText').textContent = fin ? vfBilan() : st.texte;
   const ul = $('vfList'); ul.innerHTML = ''; ul.hidden = !(st.type === 'auto' || st.type === 'branche');
-  if (!ul.hidden){ const cs = vfChecks(st); for (const [t, ok] of cs){ const li = document.createElement('li'); li.className = ok ? 'ok' : ''; li.textContent = (ok ? '✓ ' : '… ') + t; ul.appendChild(li); }
+  if (!ul.hidden){ const cs = vfChecks(st); for (const [t, ok] of cs){ const li = document.createElement('li'); li.className = ok ? 'ok' : '';
+    // lot 62 : une pastille d'état dessinée (avant, « … » en début de ligne, on aurait dit un bug) ; l'état reste lu par les lecteurs d'écran
+    const sr = document.createElement('span'); sr.className = 'sr'; sr.textContent = ok ? 'Fait : ' : 'En attente : '; li.append(sr, t); ul.appendChild(li); }
     if (cs.every(c => c[1]) && !vf.res[st.id]){ if (st.id === 'table') vf.nom = midiNames.join(', ').slice(0, 80); vfResultat('ok', true); } }
   // le relevé d'une commande pas encore utilisée
   const sEl = $('vfState'); sEl.className = 'regstate'; sEl.textContent = '';

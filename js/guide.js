@@ -124,6 +124,9 @@ function renderOnb(){
   const steps = onb.steps, st = steps[onb.i], last = onb.i === steps.length - 1;
   $('onbDots').innerHTML = steps.length > 1 ? steps.map((_, j) => `<i class="${j <= onb.i ? 'on' : ''}"></i>`).join('') : '';
   $('onbTitle').textContent = st.title; $('onbText').textContent = st.text;
+  // Lot 62 : dans le guide (pas dans les fiches, qui montrent la table), Vini présente chaque étape, comme aux Premiers pas
+  const vini = $('onbVini'); vini.hidden = onb.fiche; $('onb').classList.toggle('guide', !onb.fiche);
+  if (!onb.fiche && !vini.firstChild && typeof viniMettre === 'function') viniMettre(vini, 'calme');
   if (st.k && st.k !== 'playB' && st.k !== 'fxOn') onb.base[st.k] = ctrl[st.k];
   $('onbSvg').style.display = st.hl ? '' : 'none'; onbHighlight(st.hl); onbSchemaSync();
   $('onbBack').hidden = onb.i === 0;

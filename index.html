@@ -88,8 +88,8 @@
 <div data-nosnippet class="onb" id="onb" hidden role="dialog" aria-modal="true" aria-labelledby="onbTitle">
   <div class="onb-card">
     <div class="onb-dots" id="onbDots"></div>
-    <h2 id="onbTitle"></h2>
-    <p class="tx" id="onbText"></p>
+    <div class="onb-tete"><div class="onb-vini" id="onbVini" aria-hidden="true"></div><div class="onb-tete-txt"><h2 id="onbTitle"></h2>
+    <p class="tx" id="onbText"></p></div></div>
     <svg class="onb-svg" id="onbSvg" viewBox="0 0 600 270" aria-label="Schéma simplifié d'une table DJ">
       <rect class="body" x="8" y="8" width="584" height="254" rx="22"/>
       <circle class="jog" cx="122" cy="118" r="82"/><circle class="part" cx="122" cy="118" r="20"/>
@@ -129,16 +129,18 @@
     <button type="button" class="rclose" id="avClose" aria-label="Fermer">×</button>
     <span class="lnum">DJingood est en test</span>
     <h2 id="avTitle">Ton avis</h2>
-    <label class="avq">Qu'est-ce qui t'a bloqué ou gêné ?<textarea id="avBloque" rows="3" maxlength="1000"></textarea></label>
-    <label class="avq">Qu'est-ce qui t'a plu ?<textarea id="avPlu" rows="3" maxlength="1000"></textarea></label>
-    <div class="avnote" id="avNote" role="group" aria-label="Ta note sur 5"><span>Ta note</span><button type="button" data-note="1" aria-pressed="false">1</button><button type="button" data-note="2" aria-pressed="false">2</button><button type="button" data-note="3" aria-pressed="false">3</button><button type="button" data-note="4" aria-pressed="false">4</button><button type="button" data-note="5" aria-pressed="false">5</button></div>
+    <label class="avq">Qu'est-ce qui t'a bloqué ou gêné ?<textarea id="avBloque" rows="2" maxlength="1000"></textarea></label>
+    <label class="avq">Qu'est-ce qui t'a plu ?<textarea id="avPlu" rows="2" maxlength="1000"></textarea></label>
+    <div class="avnote" id="avNote" role="group" aria-label="Ta note sur 5"><span>Ta note</span><button type="button" data-note="1" aria-pressed="false" aria-label="1 sur 5">★</button><button type="button" data-note="2" aria-pressed="false" aria-label="2 sur 5">★</button><button type="button" data-note="3" aria-pressed="false" aria-label="3 sur 5">★</button><button type="button" data-note="4" aria-pressed="false" aria-label="4 sur 5">★</button><button type="button" data-note="5" aria-pressed="false" aria-label="5 sur 5">★</button></div>
     <button type="button" class="rbtn go" id="avSave">Envoyer mon avis</button>
     <p class="avsmall">Ton avis part chez l'équipe DJingood avec le nom de l'écran, ta table et ton navigateur. <a class="avlien" href="confidentialite.html" target="_blank" rel="noopener">Ce que DJingood garde sur toi</a></p>
     <p class="qwhy" id="avMsg" role="status" hidden></p>
-    <h3 class="avh">Ton rapport</h3>
+    <!-- Lot 62 : le rapport des testeurs est replié (la fenêtre dépassait le bas d'un écran de PC) -->
+    <details class="avrapport" id="avRapport"><summary>Ton rapport pour l'équipe</summary>
     <p class="avsmall" id="avSum"></p>
     <div class="rbrow"><button type="button" class="ghost" id="avCopy">Copier mon rapport</button><button type="button" class="ghost" id="avMail" hidden>Envoyer par e-mail</button></div>
     <textarea class="avtext" id="avText" rows="8" readonly hidden aria-label="Ton rapport"></textarea>
+    </details>
     <details class="avreset"><summary>Tout recommencer à zéro</summary><p class="avsmall">Efface ta progression, tes étoiles, tes badges, tes réponses au quiz et tes avis sur cet ordinateur, et aussi sur ton compte si tu es connecté. Les réglages et la vérification de ta table sont gardés.</p><button type="button" class="rbtn" id="avReset">Oui, tout effacer</button></details>
   </div>
 </div>

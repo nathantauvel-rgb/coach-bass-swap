@@ -2731,3 +2731,49 @@ body.pro-ouvert{overflow:hidden}
 .pathbox details{width:auto;flex:1 1 auto}
 .pathbox details[open]{flex-basis:100%}
 .pathbox summary{list-style-position:inside}
+
+/* D. La présentation : à droite du titre, Vini qui mixe derrière sa table (le dessin des Premiers pas, sans halo) */
+.pres-scene{flex:0 1 440px;min-width:0}
+.pres-scene svg{display:block;width:100%;height:auto}
+@media (max-width:760px){.pres-scene{flex-basis:100%;max-width:360px;margin:0 auto}}
+
+/* I. Le guide de bienvenue : Vini présente chaque étape à côté du titre, comme aux Premiers pas (avant : un pavé de texte
+   dans une fenêtre nue). Les fiches « Découvre ce bouton », qui montrent la table, gardent leur mise en page. */
+.onb-tete{display:flex;align-items:flex-start;gap:20px}
+.onb-tete-txt{display:flex;flex-direction:column;gap:14px;min-width:0;flex:1}
+.onb-vini{flex:none;width:96px;height:104px}
+.onb-vini[hidden]{display:none}
+.onb-vini svg{width:100%;height:100%}
+@media (max-width:520px){.onb-tete{flex-direction:column;gap:10px}.onb-vini{width:72px;height:78px}}
+
+/* J. Mon avis : plus courte (elle dépassait le bas d'un écran de PC), la note en étoiles (dorées jusqu'à celle choisie),
+   le rapport des testeurs replié. */
+#avis .qcard{gap:12px}
+#avis textarea{min-height:0}
+.avnote button{border:0;background:none;min-width:0;padding:0 2px;font-size:30px;line-height:1;color:var(--line);border-radius:6px}
+.avnote button:hover{color:var(--muted)}
+.avnote:has(button[aria-pressed="true"]) button{color:var(--mid)}
+.avnote button[aria-pressed="true"] ~ button{color:var(--line)}
+.avnote button[aria-pressed="true"]{background:none;color:var(--mid)}
+.avnote button:focus-visible{outline:2px solid var(--brand-light);outline-offset:2px}
+.avrapport summary{cursor:pointer;font-weight:800;color:var(--muted)}
+.avrapport[open] summary{margin-bottom:8px;color:var(--fg)}
+.avrapport > .rbrow{margin-top:8px}
+
+/* K. Vérifier ma table : une pastille d'état par ligne (cercle vide en attente, coche verte une fois fait) au lieu de
+   « … » ; « Continuer » en orange (lot 61), « Ça ne marche pas » et « Passer » en liens. */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.vflist li{position:relative;padding-left:34px;color:var(--fg)}
+.vflist li::before{content:"";position:absolute;left:10px;top:50%;width:14px;height:14px;margin-top:-9px;border-radius:50%;border:2px solid var(--muted)}
+.vflist li.ok{color:var(--ok-ink)}
+.vflist li.ok::before{border-color:var(--ok);background:var(--ok)}
+.vflist li.ok::after{content:"";position:absolute;left:15px;top:50%;width:4px;height:8px;margin-top:-7px;border:solid var(--ink);border-width:0 2px 2px 0;transform:rotate(45deg)}
+#vfKo,#vfSkip{border:0;background:none;box-shadow:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding-inline:6px}
+#vfKo:hover,#vfSkip:hover{color:var(--fg)}
+
+/* L. Mes progrès : à zéro, la barre du niveau et l'anneau du jour ne sont plus des formes grises vides (l'anneau suit la
+   règle de l'accueil : violet, doré une fois atteint) ; la barre du niveau passe au dégradé violet → orange du site et
+   montre toujours son début. */
+.pgbar{background:var(--brand-soft);border:1px solid var(--brand-line)}
+.pgbar i{background:linear-gradient(90deg,var(--brand),var(--a))}
+#pgXpFill{min-width:10px}
