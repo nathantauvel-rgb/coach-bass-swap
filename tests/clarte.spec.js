@@ -75,7 +75,7 @@ test.describe('La piste reste visible', () => {
     await ouvrir(page);
     await page.locator('.node').first().click();
     const [vus, n] = await page.evaluate(async () => { const st = $('stage'), y0 = scrollY + st.getBoundingClientRect().top, y1 = y0 + st.offsetHeight - innerHeight; let vus = 0, n = 0;
-      for (let y = y0; y <= y1; y += 60){ window.scrollTo(0, y); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      for (let y = y0; y <= y1; y += 30){ window.scrollTo(0, y);   // tous les 30 px : la scène est plus courte depuis le lot 64 await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
         const b = $('startBtn').getBoundingClientRect(); n++; if (b.top >= 0 && b.bottom <= innerHeight) vus++; }
       return [vus, n]; });
     expect(n).toBeGreaterThan(3);

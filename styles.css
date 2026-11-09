@@ -2894,11 +2894,13 @@ body.pro-ouvert{overflow:hidden}
 #planNote{display:none}
 .plan{padding:12px 14px}
 .plan h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+/* seulement avant la partie : pendant la partie, « Arrêter » garde sa place d'avant (sinon la table passait sous le bas
+   d'un écran de 1366 × 768, test de commandes.spec.js) */
 @media (min-width:1040px){
-  .actionbar .btnrow{flex-direction:column;flex-wrap:nowrap;gap:8px}
-  .actionbar .btnrow .start{order:-1;flex:none;min-height:68px;font-size:24px}
-  .actionbar .btnrow .watch{flex:none;min-height:44px;font-size:15px}
-  .actionbar .opts{order:2;justify-content:center}
+  .stage:not(.joue) .actionbar .btnrow{flex-direction:column;flex-wrap:nowrap;gap:8px}
+  .stage:not(.joue) .actionbar .btnrow .start{order:-1;flex:none;min-height:68px;font-size:24px}
+  .stage:not(.joue) .actionbar .btnrow .watch{flex:none;min-height:44px;font-size:15px}
+  .stage:not(.joue) .actionbar .opts{order:2;justify-content:center}
 }
 /* Lot 61 (remarque du gardien) : la pastille de la table n'affiche plus son texte dans l'en-tête ; le voyant passe à l'orange
    quand quelque chose l'empêche d'être vue (accès refusé, pas de Web MIDI, question du navigateur) */
