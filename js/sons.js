@@ -56,7 +56,6 @@ function volRend(){
   document.querySelectorAll('.volcurseur').forEach(r => {
     const v = r.max === '100' ? String(Math.round(volSite * 100)) : String(volSite);
     if (document.activeElement !== r) r.value = v;
-    r.style.setProperty('--rempli', Math.round(volSite * 100) + '%');
   });
   document.querySelectorAll('.volpct-txt').forEach(e => { e.textContent = volSite === 0 ? 'Coupé' : volPct(); });
   renderSons();
@@ -80,6 +79,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => { if (e.target.classList && e.target.classList.contains('volcurseur')) son('clic'); });
 // Fermer le panneau : Échap, ou un clic ailleurs
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('volPanneau').hidden){ volPanneau(false); $('sonsBtn').focus(); } });
+// stopImmediatePropagation : Échap ne ferme que le panneau, pas aussi la carte de fin d'un niveau (demarrage.js, gardien du lot 60)
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('volPanneau').hidden){ e.stopImmediatePropagation(); volPanneau(false); $('sonsBtn').focus(); } });
 document.addEventListener('pointerdown', e => { if (!$('volPanneau').hidden && !e.target.closest('.volbox')) volPanneau(false); });
 volRend();

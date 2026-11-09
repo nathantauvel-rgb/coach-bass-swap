@@ -47,6 +47,8 @@ ci-dessous reste la version papier, utile pour noter à part ou pour vérifier s
 | 33 | Lot 44 : la note du set | Un set joué « proprement » à l'oreille donne-t-il 90 ou plus (★★★) ? Noter ce qui coûte des points sans raison (calage, basses, volume, phrase) : les seuils sont en haut de `js/set.js` (ENC_OK 15 ms, ★★★ à 90, ★★ à 75) | |
 | 34 | Lot 44 : niveau 5 « Au casque », avec un casque sur la table | Avec CUE casque du morceau qui entre, on l'entend au casque et pas dans les enceintes, qu'il soit sur A ou sur B | |
 | 35 | Lot 52 : les Premiers pas animés, en nouveau venu (fenêtre de navigation privée), la table branchée | Après « C'est parti », la musique s'entend étouffée, au casque comme dans les enceintes, et s'ouvre à chaque question ; à l'écran de la table, Vini saute de joie quand la table est reconnue ; « Commencer » fait le drop sur un temps, puis la musique s'éteint quand le niveau s'ouvre | |
+| 36 | Lot 60 : le volume du site (haut-parleur en haut à droite), à 20 % puis à 100 %, pendant un niveau | Les enceintes ET le casque de la table baissent puis montent ensemble ; avec CUE casque de B, B garde le même niveau par rapport au reste ; à 50 % (le réglage de départ), le son est-il assez fort avec les boutons de volume de la table montés ? | |
+
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 
 Dernière vérification complète : jamais faite depuis l'ajout des onglets (12 oct. 2026).

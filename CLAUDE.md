@@ -127,6 +127,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     (`#cptProSec`, montré par `proCompteRend` avec le bloc Pro ; le texte n'est plus coincé en colonne ; badge sans halo),
     « Réglages » (volume du site, mails de Vini), « Se déconnecter » en vrai bouton, puis la note de la table et le lien de
     confidentialité. Les écrans de connexion (pas connecté) ne changent pas. Identifiants des tests gardés.
+  - Suite complète : 696 sur 697 (l'échec, un test de `comprendre.spec.js` qui dépend du temps, PC chargé ; repasse seul,
+    3 fois sur 3). **Gardien : feu orange, aucun blocage.** Corrigé : panneau du son coupé entre 601 et 760 px (la ligne des
+    pastilles y défile : `position:fixed` jusqu'à 760 px) ; Échap fermait aussi la carte de fin d'un niveau
+    (`stopImmediatePropagation`) ; `--rempli` inutile retiré ; `coach-tutos` décrit `{ vus }` ; point 36 de la checklist
+    FLX4 (volume, enceintes et casque). Remarques laissées : à 50 %, le limiteur n'agit presque plus (une bosse de volume
+    A + B s'entend un peu plus ; à 100 %, identique) ; un joueur qui avait coupé les sons du jeu entend maintenant les tutos
+    (voulu) ; à vérifier sur un téléphone que 50 % n'est pas trop faible pour Comprendre et les Premiers pas.
   - Tests : `tests/volume.spec.js` (nouveau) ; `vini-sons`, `premiers-anime`, `tutos` mis à jour. Captures :
     `captures/lot60/` (copie lot 60, hors Git, `node captures/lot60/captures.js` avec le serveur sur le port 8775).
   - L'utilisateur a aussi dit : « il y a beaucoup d'interfaces que je trouve très moches, très mal faites, faudrait qu'on
@@ -1972,7 +1979,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `window.DJINGOOD_TUTOS`. `js/tutos.js` (chargé après `comprendre`, préfixe `tu`) :
   - **Catalogue** (`#tuCatalogue`, `renderTutos`) : Vini (`viniDit('tutos', …)`) conseille le prochain tuto, une famille
     « Les boucles » (`TU_FAMILLES`), 4 cartes (`.tu-carte`, étiquette Gratuit / Pro / Vu). Pas encore de paiement : tout se
-    joue (lot 58). Tutos vus jusqu'au bout dans `coach-tutos` (`{ vus, vol }`, suit le compte, hors de `cptPoids`).
+    joue (lot 58). Tutos vus jusqu'au bout dans `coach-tutos` (`{ vus }` ; l'ancien `vol` n'est plus écrit depuis le lot 60 ; suit le compte, hors de `cptPoids`).
   - **Lecteur** (`#tuLecteur`, `tuOuvre`, `tuFerme`) : la maquette `captures/maquette-tutos` portée dans le site. Plans
     (`plans` d'un tuto : `ch`, `dit`, `seg` [de, à, version], `etape`, `badge`, `focus`, `note`, `cibles`, `pose`,
     `revele`, `fin`), 5 chapitres (`TU_CHAPITRES` : Écoute · Quand l'utiliser · Pas à pas · Les erreurs · À retenir),

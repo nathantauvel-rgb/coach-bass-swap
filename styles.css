@@ -2549,7 +2549,8 @@ body.pro-ouvert{overflow:hidden}
 .cptligne-txt b{display:block;font-size:15px;font-weight:900;color:var(--fg)}
 .cptligne-txt small{display:block;margin-top:2px;color:var(--muted);font-size:13px;line-height:1.4;overflow-wrap:anywhere}
 .cptligne-txt small[hidden]{display:none}
-@media (max-width:600px){.volpan{position:fixed;left:16px;right:16px;top:72px;width:auto}}
+/* jusqu'à 760 px, la ligne des pastilles défile : le panneau en sort (sinon il y était coupé, gardien du lot 60) */
+@media (max-width:760px){.volpan{position:fixed;left:16px;right:16px;top:72px;width:auto}}
 
 #compte .cptcard.connecte{max-width:560px;gap:12px;text-align:left}
 #compte .cptcard.connecte .cpthead{flex-direction:row;justify-content:flex-start;text-align:left;margin:0 0 4px}
