@@ -222,7 +222,7 @@ const niveauEnCours = (n = chapter) => lessonsOf(n).findIndex((_, i) => !niveauR
 // Un niveau fermé touché : Vini dit lequel réussir d'abord, la carte tremble
 function niveauRefuse(i, b){
   const k = niveauEnCours(), l = LESSONS[k];
-  $('tip').textContent = l ? `Réussis d’abord « ${l.title} » (2 étoiles) : « ${LESSONS[i].title} » s’ouvrira juste après.` : '';
+  $('tip').textContent = l ? `Réussis d’abord « ${l.title} » (2 étoiles) : « ${LESSONS[i].title} » ${i === k + 1 ? 's’ouvrira juste après' : 'viendra ensuite : les niveaux s’ouvrent un par un'}.` : '';
   if (typeof viniReagit === 'function') viniReagit('bad');
   if (b){ b.classList.remove('refuse'); void b.offsetWidth; b.classList.add('refuse'); }
 }

@@ -29,7 +29,7 @@ test.describe('Le parcours linéaire', () => {
     await page.locator('.node').nth(5).click({ force: true });
     await expect(page.locator('#ltitle')).toHaveText('La coupure sèche');
     await expect(page.locator('#tip')).toContainText('Réussis d’abord « La coupure sèche » (2 étoiles)');
-    await expect(page.locator('#tip')).toContainText('« Le swap des basses » s’ouvrira juste après');
+    await expect(page.locator('#tip')).toContainText('« Le swap des basses » viendra ensuite : les niveaux s’ouvrent un par un');
     // un niveau réussi se rejoue quand on veut
     await page.locator('.node').nth(0).click();
     await expect(page.locator('#ltitle')).toHaveText('Le bon moment');

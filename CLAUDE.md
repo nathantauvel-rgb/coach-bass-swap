@@ -218,6 +218,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     condition « Verrouillé : … » reste lue et dans l'info-bulle). Tests mis à jour (plus de clic sur `#chapBtn`).
   - **Carte du niveau** : « Jouer » en grand, au-dessus de « Regarde d'abord », « Morceaux » en dessous ; le paragraphe sous
     les gestes (`#planNote`) retiré.
+  - **Gardien (62 + 63 + 64) : feu orange, aucun blocage, personne ne peut être bloqué.** Corrigé : message de Vini juste
+    quand le niveau touché n'est pas le suivant ; `goLesson` ne saute plus un niveau fermé ; test du téléphone réparé.
+    **RESTE À FAIRE avant de demander l'accord de publier** : condition visible sur un chapitre fermé (`.chap.ferme .cs`
+    est caché) ; `window.DJINGOOD_LIBRE` dans `tests/captures.js` ; étoiles non choisies de Mon avis peu contrastées
+    (`--line` → `--off-ink`) ; faire défiler la rangée des chapitres jusqu'au chapitre en cours sur téléphone ; point de
+    checklist FLX4 pour la table (lot 63) et `?tout=1` pour la checklist avec un profil neuf ; relancer
+    `tests/apprendre.spec.js`, `clarte`, `parcours`, puis demander l'accord. À dire à l'utilisateur : le verrou touche aussi
+    Apprenti DJ (60/100 en Expert) et DJ confirmé (quiz du chapitre 5) ; « gratuits, et le resteront » sur la présentation.
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de

@@ -46,7 +46,8 @@ function goLesson(ch, idx){
   location.hash = '#apprendre'; setView('apprendre');
   if (placement) quitPlacement();
   if (chapter !== ch) setChapter(ch);
-  if (chapter === ch && idx != null) selectLesson(idx);
+  // lot 64 : un raccourci (badge, ancien test de placement, Vérifier ma table) ne saute pas un niveau fermé
+  if (chapter === ch && idx != null) selectLesson(niveauOuvert(idx) ? idx : Math.max(0, niveauEnCours()));
 }
 const STAGES = {
   guide: { title: 'Découvre ta table', text: 'Un petit tour d\'une minute, avec le son : compter les phrases et reconnaître les parties d\'un morceau. Chaque bouton de ta table te sera présenté juste avant de t\'en servir.',
