@@ -237,6 +237,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     jouer « Le swap des basses » » de Vérifier ma table (un testeur neuf ne pouvait pas faire cette étape). Test ajouté
     (`tests/apprendre.spec.js`) ; `guide`, `apprendre`, `verif`, `parcours` : 67 tests verts. Leçon : les 168 tests « des
     écrans touchés » n'avaient pas vu ce défaut, il faut la suite complète avant de demander l'accord.
+  - **Second passage : feu orange, aucun blocage, 710 tests sur 710.** **Lots 62, 63 et 64 PUBLIÉS ensemble le 9 nov. 2026**
+    (« Oui, publie » ; avance rapide `b5da726..28a4baa` sur `main`). Production vérifiée par `node captures/lot64/prod.js`
+    (hors Git, Umami bloqué, PC 1366 × 768 et téléphone 390) : code du verrou servi, profil neuf avec 2 niveaux réussis →
+    « réussi réussi encours verrou… », chapitres fermés « Encore 8 ★ au chapitre 1 », pas de défilement de côté, aucune
+    erreur. Captures `captures/lot64/prod-*.png`. **À faire par Nathan** : points 37 et 38 de la checklist sur la FLX4.
+  - **Ensuite : lot 65 « Arrivée et compte »**, maquette dans le dossier principal (`captures/maquette-onboarding/`, détail
+    dans `marketing/onboarding.md`, hors Git) : quiz de 4 questions sans compte (niveau, « Ton oreille », table, temps par
+    jour ; « Tu écoutes quoi ? » retirée par Nathan), « Ton plan est prêt », **compte obligatoire juste après le plan (choix
+    B de Nathan)**, prénom + e-mail sans mot de passe, lien magique de Firebase vers l'ordinateur, accueil du téléphone en
+    deux parties. Reste à régler avant sa mise en ligne : l'envoi des mails depuis djingood.fr.
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de
