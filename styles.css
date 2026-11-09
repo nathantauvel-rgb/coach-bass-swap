@@ -2597,60 +2597,60 @@ body.pro-ouvert{overflow:hidden}
 
 /* A. L'en-tête : une seule ligne sur un PC (logo, onglets, pastilles, compte), sous laquelle un trait le sépare de la page.
    La colonne du site (.wrap) s'élargit à 1280 px pour l'en-tête seulement ; les pages gardent leurs 1012 px. Le petit texte
-   sous le nom disparaît de l'en-tête (il reste sur la présentation). Les onglets restent sur la ligne du logo (demande
+   sous le nom disparaît de l'en-tête (les autres pages, présentation et guides, gardent leur en-tête : ces règles ne visent que .wrap.app d'index.html). Les onglets restent sur la ligne du logo (demande
    de l'utilisateur du 22 oct. 2026). */
-.wrap{max-width:1280px}
-.wrap > :not(.top){width:100%;max-width:1012px;align-self:center}
-.top{flex-wrap:nowrap;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
-.top .brand{flex:none}
-.top .brand-sub{display:none}
-.top .tabs{order:1;flex:1 1 auto;justify-content:center;flex-wrap:nowrap;gap:0}
-.top .tabs a{padding:10px 8px 12px;font-size:15px;gap:8px;white-space:nowrap}
-.top .tabs a .tn,.top .tabs a .tn svg{width:18px;height:18px}
-.top .hud{order:2;flex:none;flex-wrap:nowrap;justify-content:flex-end;gap:5px}
-.top > .cptbtn{order:3;flex:none;margin-left:0}
-.top .hud .chip{height:38px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:none;font-size:14px;white-space:nowrap}
-.top .hud .chip:hover{border-color:var(--muted)}
-.top .hud .lvlchip{gap:7px}
-.top .hud .lvlchip .xpbar{display:none}
-.top .hud #midiPill{max-width:178px}
-.top .hud #midiPill span{overflow:hidden;text-overflow:ellipsis}
-.top .hud .sonsbtn{width:38px;padding:0}
-.top .hud .avbtn{color:var(--muted)}
-.top .hud .avbtn:hover{color:var(--fg)}
+.wrap.app{max-width:1280px}
+.wrap.app > :not(.top){width:100%;max-width:1012px;align-self:center}
+.app > .top{flex-wrap:nowrap;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.app > .top .brand{flex:none}
+.app > .top .brand-sub{display:none}
+.app > .top .tabs{order:1;flex:1 1 auto;justify-content:center;flex-wrap:nowrap;gap:0}
+.app > .top .tabs a{padding:10px 8px 12px;font-size:15px;gap:8px;white-space:nowrap}
+.app > .top .tabs a .tn,.app > .top .tabs a .tn svg{width:18px;height:18px}
+.app > .top .hud{order:2;flex:none;flex-wrap:nowrap;justify-content:flex-end;gap:5px}
+.app > .top > .cptbtn{order:3;flex:none;margin-left:0}
+.app > .top .hud .chip{height:38px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:none;font-size:14px;white-space:nowrap}
+.app > .top .hud .chip:hover{border-color:var(--muted)}
+.app > .top .hud .lvlchip{gap:7px}
+.app > .top .hud .lvlchip .xpbar{display:none}
+.app > .top .hud #midiPill{max-width:178px}
+.app > .top .hud #midiPill span{overflow:hidden;text-overflow:ellipsis}
+.app > .top .hud .sonsbtn{width:38px;padding:0}
+.app > .top .hud .avbtn{color:var(--muted)}
+.app > .top .hud .avbtn:hover{color:var(--fg)}
 /* Pastilles compactes : la table en icône (son nom seulement quand elle est branchée ; l'état complet est dans l'info-bulle
    et dans « Ma table »), « Mon avis » en icône (et en lien en bas de l'accueil), les XP dans « Mes progrès » */
-.top .hud .tico{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.top .hud #midiPill{gap:7px}
-.top .hud #midiPill span{display:none}
-.top .hud .guidebtn{width:38px;padding:0;justify-content:center}
-.top .hud .avbtn{width:38px;padding:0;justify-content:center}
-.top .hud .avtxt{display:none}
-.top .hud #xpTxt{display:none}
+.app > .top .hud .tico{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.app > .top .hud #midiPill{gap:7px}
+.app > .top .hud #midiPill span{display:none}
+.app > .top .hud .guidebtn{width:38px;padding:0;justify-content:center}
+.app > .top .hud .avbtn{width:38px;padding:0;justify-content:center}
+.app > .top .hud .avtxt{display:none}
+.app > .top .hud #xpTxt{display:none}
 /* Écran moyen : les onglets passent sur une seconde ligne, le compte et les pastilles restent sur la ligne du logo */
 @media (max-width:1269px){
-  .top{flex-wrap:wrap;row-gap:10px}
-  .top .hud{margin-left:auto}
-  .top .tabs{order:4;flex:1 1 100%;justify-content:center}
+  .app > .top{flex-wrap:wrap;row-gap:10px}
+  .app > .top .hud{margin-left:auto}
+  .app > .top .tabs{order:4;flex:1 1 100%;justify-content:center}
 }
 /* Téléphone : le logo, le niveau, le son et le compte ; dessous, les onglets qui se partagent la largeur (icône au-dessus du
    nom), sans défilement. La table, « Mon avis » et le guide quittent l'en-tête (la table ne se branche pas sur un
    téléphone ; « Mon avis » est en bas de l'accueil). */
 @media (max-width:760px){
-  .top{gap:8px}
-  .top .brand-name{display:none}
-  .top .hud{gap:6px}
-  .top .hud #midiPill,.top .hud .avbtn,.top .hud #guideBtn{display:none}
-  .top .hud .lvlchip .xpbar,.top .hud .lvlchip #xpTxt{display:none}
-  .top .hud .chip{height:36px;padding:0 10px}
-  .top .hud .sonsbtn{width:36px}
-  .top .tabs{overflow:visible;gap:0}
-  .top .tabs a{flex:1 1 0;min-width:0;flex-direction:column;gap:3px;padding:6px 2px 10px;font-size:11.5px;line-height:1.15;white-space:normal;text-align:center}
-  .top .tabs a[aria-current="page"]::after{left:18%;right:18%}
+  .app > .top{gap:8px}
+  .app > .top .brand-name{display:none}
+  .app > .top .hud{gap:6px}
+  .app > .top .hud #midiPill,.app > .top .hud .avbtn,.app > .top .hud #guideBtn{display:none}
+  .app > .top .hud .lvlchip .xpbar,.app > .top .hud .lvlchip #xpTxt{display:none}
+  .app > .top .hud .chip{height:36px;padding:0 10px}
+  .app > .top .hud .sonsbtn{width:36px}
+  .app > .top .tabs{overflow:visible;gap:0}
+  .app > .top .tabs a{flex:1 1 0;min-width:0;flex-direction:column;gap:3px;padding:6px 2px 10px;font-size:11.5px;line-height:1.15;white-space:normal;text-align:center}
+  .app > .top .tabs a[aria-current="page"]::after{left:18%;right:18%}
   /* le bouton du compte : son icône (ou l'initiale une fois connecté) ; le nom reste lu par les lecteurs d'écran */
-  .top > .cptbtn{width:38px;height:38px;padding:0;justify-content:center;gap:0}
-  .top > .cptbtn.on{padding:0;width:38px}
-  .top > .cptbtn #cptNom{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .app > .top > .cptbtn{width:38px;height:38px;padding:0;justify-content:center;gap:0}
+  .app > .top > .cptbtn.on{padding:0;width:38px}
+  .app > .top > .cptbtn #cptNom{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 }
 .avisbas{background:none;border:0;padding:0;color:var(--xp);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 
@@ -2829,3 +2829,6 @@ body.pro-ouvert{overflow:hidden}
 :is(#tSvg,#vfSvg) .tc:hover>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc:hover>rect:not(.cap):not(.hit){fill:var(--ps-bouton)}
 :is(#tSvg,#vfSvg) .tc.sel>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc.sel>rect:not(.cap):not(.hit){fill:var(--hi);stroke:var(--fg);stroke-width:3}
 :is(#tSvg,#vfSvg) .tc.live>circle:not(.sl):not(.in),:is(#tSvg,#vfSvg) .tc.live>rect:not(.cap):not(.hit){fill:var(--go)}
+/* Lot 61 (remarque du gardien) : la pastille de la table n'affiche plus son texte dans l'en-tête ; le voyant passe à l'orange
+   quand quelque chose l'empêche d'être vue (accès refusé, pas de Web MIDI, question du navigateur) */
+.status.souci i{background:var(--mid)}
