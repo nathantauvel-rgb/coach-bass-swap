@@ -49,7 +49,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   l'utilisateur ; gardien : feu orange sans blocage, 666 tests verts) : « Dj » de Play House remplacé partout par les
   morceaux Pixabay. Production vérifiée (Umami bloqué) : « « Deep House » puis « Ambient House » · Pixabay », les extraits
   servis, `dj-a.mp3` en 404, aucune erreur. Aperçus à écouter dans `audio-essai\apercus\` de la copie `coach-dj-lot56`.
-  **Lot 59 « DJingood Pro » fait le 9 nov. 2026, NON PUBLIÉ et éteint** (branche `lot-59-pro`, copie
+  **Lot 59 « DJingood Pro » fait le 9 nov. 2026, PUBLIÉ le même jour, ÉTEINT** (commit `ea5836c` ; branche `lot-59-pro`, copie
   `Documents\coach-dj-lot59`) : l'abonnement (fonction `api/pro.js`, écran Pro, cadenas, « Mon compte », pages légales à
   compléter, `STRIPE.md`). Voir l'entrée « Lot 59 ».
   **Stripe branché en MODE TEST le 9 nov. 2026 (« go mettre strip »), rien en ligne, tout marche avec un robot.**
@@ -93,9 +93,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - Suite complète : **685 tests verts** (9 nov. 2026). Gardien : **feu rouge** pour les identifiants Stripe écrits ici
     (retirés, les commits du lot regroupés en un seul avant tout envoi), le code lui-même jugé propre (une adresse seule ne
     donne jamais accès à l'abonnement d'un autre, aucune clé dans le dépôt, pages légales introuvables pour un joueur).
-  - Reste : repasser le gardien, puis, avec son accord, la publication du lot 59 éteint et les trois réglages Vercel (clé de
-    test et prix du compte DJingood) ; logo et e-mails dans Stripe (dont le rappel avant le renouvellement annuel, que
-    `cgv.html` promet).
+  - Gardien, second passage : **feu vert** (un seul commit `ea5836c`, plus rien de privé, code identique).
+  - **PUBLIÉ le 9 nov. 2026, éteint** (« go » ; avance rapide `662837f..ea5836c` sur `main`). Production vérifiée (Umami
+    bloqué) : `PRO_PRET = false` servi, onglet Tutos caché pour un joueur, `?tutos=1` = 11 tutos sans cadenas, `?pro=1` =
+    8 cadenas, aucune erreur ; `cgv.html` et `mentions-legales.html` servis, `STRIPE.md` et `CLAUDE.md` en 404,
+    `/api/pro` répond 503 `pas-configure` (réglages Vercel pas encore mis).
+  - Reste : les trois réglages Vercel par l'utilisateur (`STRIPE_CLE` = sa clé de test du compte DJingood, qu'il copie
+    lui-même ; `STRIPE_PRIX_MOIS` et `STRIPE_PRIX_AN` = les prix de test notés dans `captures/stripe/notes.md`), Redeploy,
+    puis son essai sur https://djingood.fr/?tutos=1&pro=1#tutos ; logo et e-mails dans Stripe (dont le rappel avant le
+    renouvellement annuel, que `cgv.html` promet).
   **Lot 58 « Tutos : le volume et les effets » PUBLIÉ le 8 nov. 2026, onglet toujours caché** (« publie 58 » ; commit
   `ae938f6` ; production vérifiée : rien de neuf pour un joueur, 11 tutos avec `?tutos=1`, aucune erreur) (branche `lot-58-tutos-effets`, copie
   `Documents\coach-dj-lot58`) : 7 tutos de plus, moteur avec potards, filtre, écho et réverbe. Voir l'entrée « Lot 58 ».
