@@ -105,7 +105,8 @@ const PP_I = id => PP_ETAPES.indexOf(id);
 // Le compte manque encore : Firebase est réglé, personne n'est connecté ici, ni ne l'a été sur ce navigateur
 const ppCompteManque = () => typeof cptOn === 'function' && cptOn() && !(typeof cpt !== 'undefined' && cpt) && !(typeof cptSauve !== 'undefined' && cptSauve);
 // Un nouveau venu, ou quelqu'un qui a fait le quiz sans créer son compte (lot 65 : le compte est obligatoire)
-const ppAOuvrir = () => !parcours && (!accueil || (accueil.mur && ppCompteManque()));
+// (`mur` sans parcours : rechargé avant le compte ; avec un parcours : « Continuer sans compte pour l'instant » à la visite d'avant)
+const ppAOuvrir = () => (!parcours && !accueil) || !!(accueil && accueil.mur && ppCompteManque());
 const ppSave = o => { accueil = o; try { localStorage.setItem(ACC_KEY, JSON.stringify(o)); } catch (e) {} };
 // Les minuteurs d'un écran, tous annulés quand l'écran change ou que les questions se ferment
 let ppMinuteurs = [];
@@ -152,9 +153,10 @@ function ppVersPlan(){
 }
 // La fin : le parcours qui va avec le niveau, puis sa première étape : le niveau 1 (et le guide) pour un Grand débutant, le Mode
 // Expert pour un Apprenti DJ, le set (chapitre 7) pour un DJ confirmé ; sur un téléphone, « Comprendre » passe devant (lot 48)
-function ppTermine(){
+// `sansCompte` : « Continuer sans compte pour l'instant » ; `mur` reste, et le compte sera redemandé à la visite suivante
+function ppTermine(sansCompte){
   const r = pp.rep; if (pp.fini) return; pp.fini = true;
-  if (accueil && accueil.mur) ppSave(Object.assign({}, accueil, { mur: false }));
+  if (accueil && accueil.mur && !sansCompte) ppSave(Object.assign({}, accueil, { mur: false }));
   ppMusiqueArret(1.2); ppClose(); setParcours(r.niveau);
   if (r.niveau === 'debut' && !cpEtape()) goLesson(1, 0); else STAGES[nextStage() || PARCOURS[r.niveau].stages[0]].go();
 }
@@ -477,7 +479,7 @@ function ppCompteOpts(){
     cptEntrer(mlActif() ? $('ppMails').checked : undefined).then(e => { if (e) ppMsg(cptErreur(e)); });   // la suite : cptChange → ppCompteOk
   });
   $('ppDeja').addEventListener('click', () => { if (pp.envoi) return; openCompte(); cptVa('entrer'); if (pp.mailTape) $('cptMail').value = pp.mailTape; });
-  $('ppSans').addEventListener('click', () => { stat1('mur-sans-compte'); ppTermine(); });
+  $('ppSans').addEventListener('click', () => { stat1('mur-sans-compte'); ppTermine(true); });
 }
 function ppMsg(t){ const m = $('ppMsg'); if (!m) return; m.textContent = t || ''; m.hidden = !t; }
 function ppCompteEnvoie(){
@@ -509,6 +511,7 @@ function ppCompteEnvoie(){
 function ppCompteOk(){
   if (!pp.on || pp.fini || pp.envoi || PP_ETAPES[pp.i] !== 'compte') return;
   if (accueil && accueil.mur) ppSave(Object.assign({}, accueil, { mur: false }));
+  setParcours(pp.rep.niveau);   // tout de suite : une page rechargée ou fermée sur « lien envoyé » garde le parcours (gardien)
   // sur un téléphone, le lien qui ouvre le même compte sur l'ordinateur ; puis l'écran qui dit où il est parti
   if (pp.mail && cpMobile()){
     ppLienPart();

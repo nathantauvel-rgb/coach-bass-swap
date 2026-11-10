@@ -274,3 +274,62 @@ test.describe('Sur l\'ordinateur, par le lien du mail', () => {
     await expect(page.locator('#pp')).toBeVisible();
   });
 });
+
+test.describe('Corrections du gardien (lot 65)', () => {
+  // le compte créé sur le téléphone, sans aucune leçon finie : seulement les réponses et le parcours
+  const SAM_SANS_LECON = `try { if (!sessionStorage.getItem('__faux_gens')) sessionStorage.setItem('__faux_gens', JSON.stringify({ 'sam@exemple.fr': { uid: 'm1', mdp: 'x', nom: 'Sam' } })); } catch (e) {}`
+    + dansLaBase('m1', { 'coach-parcours': 'debut',
+      'coach-accueil': JSON.stringify({ niveau: 'debut', table: 'souris', modele: '', min: 10, oreille: null, mur: false, fini: '2026-11-10' }) }, 5);
+  test('le lien ouvert sur l\'ordinateur avant toute leçon : le plan du téléphone arrive, il n\'est pas effacé', async ({ page }) => {
+    const erreurs = [];
+    page.on('pageerror', e => erreurs.push(String(e)));
+    await page.addInitScript(SAM_SANS_LECON); await page.addInitScript(FAUX);
+    await page.goto('/index.html?apiKey=faux&oobCode=faux123&mode=signIn&lang=fr');
+    await page.locator('#cptMail').fill('sam@exemple.fr'); await page.locator('#cptGo').click();
+    await expect(page.locator('#ordi')).toBeVisible({ timeout: 15000 });
+    expect(await page.evaluate(() => [localStorage.getItem('coach-parcours'), JSON.parse(localStorage.getItem('coach-accueil')).niveau])).toEqual(['debut', 'debut']);
+    // et le compte n'a pas été remplacé par le vide de l'ordinateur
+    const base = await page.evaluate(() => JSON.parse(sessionStorage.getItem('__faux_base')).m1.donnees);
+    expect(base['coach-parcours']).toBe('debut');
+    await page.locator('#ordiGo').click();
+    await page.reload();
+    await expect(page.locator('#pp')).toBeHidden();   // Vini ne repose pas les questions
+    expect(erreurs).toEqual([]);
+  });
+
+  test('le code du lien quitte l\'adresse dès le chargement, avant les statistiques', async ({ page }) => {
+    await page.addInitScript(SAM_SANS_LECON); await page.addInitScript(FAUX);
+    await page.goto('/index.html?apiKey=faux&oobCode=faux123&mode=signIn&lang=fr');
+    await expect(page.locator('#compte')).toBeVisible();
+    expect(await page.evaluate(() => [location.search, location.href.includes('oobCode')])).toEqual(['', false]);
+  });
+
+  test('une page rechargée sur « lien envoyé » garde le parcours : pas de retour aux questions', async ({ browser }) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }), page = await ctx.newPage();
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: FAUX });
+    await jusquauPlan(page); await creerCompte(page);
+    await expect(page.locator('.pp-envoye')).toBeVisible();
+    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('debut');
+    await page.reload();
+    await expect(page.locator('#pp')).toBeHidden();
+    await ctx.close();
+  });
+
+  test('« Tout recommencer à zéro » efface aussi l\'adresse du dernier lien envoyé', async ({ page }) => {
+    await ouvrir(page, { onglet: 'accueil', stockage: { 'coach-parcours': 'debut' }, avant: FAUX });
+    await page.evaluate(() => { localStorage.setItem('__djingood-lien', 'sam@exemple.fr'); avisReset(); });
+    // la page se recharge : on relit une fois qu'elle est revenue
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('__djingood-lien')).catch(() => 'rechargement')).toBeNull();
+  });
+
+  test('« Continuer sans compte pour l\'instant » : le compte est redemandé à la visite suivante', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: FAUX + `window.__refus = 'auth/network-request-failed';` });
+    await jusquauPlan(page); await creerCompte(page);
+    await page.locator('#ppSans').click();
+    await expect(page.locator('#pp')).toBeHidden();
+    expect(await stocke(page, 'coach-accueil')).toMatchObject({ mur: true });
+    await page.reload();
+    await expect(page.locator('#pp')).toBeVisible();
+    await expect.poll(() => etape(page)).toBe('plan');
+  });
+});

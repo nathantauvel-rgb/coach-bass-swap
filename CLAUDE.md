@@ -285,6 +285,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     le texte standard de Firebase (en français), pas le mail « Vini » de la maquette (il faudrait Brevo).
   - Tests : `tests/arrivee.spec.js` (nouveau) ; `premiers.spec.js` et `premiers-anime.spec.js` mis à jour ; le faux Firebase
     (`tests/faux-firebase.js`) sait envoyer un lien (`window.__liensConnexion`) et l'ouvrir (`oobCode=vieux` = déjà servi).
+  - **Gardien, premier passage : feu rouge** (728 tests sur 728). Bloquant : le lien ouvert sur l'ordinateur **avant toute
+    leçon finie** envoyait le vide du PC par-dessus le compte (un compte sans rien de « gagné » prenait ce qu'il y avait
+    ici) : le plan était perdu, Vini reposait les questions. Corrigé dans `cptSync` : un compte qui n'a que des réponses
+    (`cptReponses` : `coach-parcours`, ou `coach-accueil` avec un niveau) est repris par un appareil qui n'en a pas **et**
+    n'a rien de gagné (`cptVide`) ; des étoiles d'ici ne sont jamais remplacées (un test du lot 34 l'a rappelé). Remarques
+    corrigées : le code du lien (`oobCode`) est retiré de l'adresse par `stats.js` dès le chargement, avant Umami
+    (`LIEN_CONNEXION`, relu par compte.js) ; le parcours est choisi dès que le compte existe (`setParcours` dans
+    `ppCompteOk` : une page rechargée sur « lien envoyé » ne repose plus les questions) ; « Tout recommencer à zéro » efface
+    `__djingood-lien` ; « Continuer sans compte pour l'instant » garde `mur`, donc le plan et le compte reviennent à la
+    visite suivante (`ppAOuvrir` : `mur` même avec un parcours). Un test par correction (« Corrections du gardien »).
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de

@@ -124,6 +124,11 @@ function cptPoids(d){
 }
 // Vrai si ce navigateur n'a rien à perdre : on peut prendre la progression du compte sans rien demander.
 function cptVide(){ return cptPoids(cptDonnees()) === 0; }
+// Les réponses des questions de Vini et le parcours choisi (lot 65) : rien de « gagné », mais le plan du joueur
+function cptReponses(d){
+  if (typeof d['coach-parcours'] === 'string' && d['coach-parcours']) return true;
+  try { const a = JSON.parse(d['coach-accueil'] || 'null'); return !!(a && typeof a === 'object' && a.niveau && !a.passe); } catch (e) { return false; }
+}
 // Remplace la progression de cet ordinateur par celle du compte (puis on recharge la page)
 function cptEcrit(d){
   try {
@@ -220,6 +225,11 @@ function cptSync(){
     const brut = s.exists ? s.data() : null, b = brut && brut.donnees;
     const d = b && typeof b === 'object' && !Array.isArray(b) ? b : null;
     const maj = Math.max(0, Math.floor(+(brut && brut.maj)) || 0);
+    // Lot 65 (feu rouge du gardien) : un compte créé sur un téléphone n'a encore rien de « gagné », mais il a les réponses
+    // des questions et le parcours. Un appareil qui n'en a pas (l'ordinateur où l'on ouvre le lien, un autre navigateur) les
+    // reprend, au lieu d'envoyer son vide par-dessus. Après le rechargement, cet appareil les a : on ne repasse pas ici.
+    // Seulement s'il n'a vraiment rien de gagné (cptVide) : des étoiles d'ici ne sont jamais remplacées par des réponses.
+    if (d && !cptPoids(d) && cptReponses(d) && !cptReponses(cptDonnees()) && cptVide()) return cptReprend(d, maj);
     // Compte neuf, ou compte sans rien de gagné : il prend ce qu'il y a ici.
     // (Ce deuxième cas évite aussi de « reprendre » un document vide en boucle s'il n'a pas de `maj` utilisable.)
     if (!d || !cptPoids(d)){
@@ -396,11 +406,12 @@ function cptLienDemande(){
     e => { cptDit(cptErreur(e)); cptBoutons(false); });
 }
 // Au chargement, l'adresse de la page est un lien de connexion (le mail qu'on vient d'ouvrir) : on connecte au compte.
-const cptLienVu = cptOn() && /[?&]oobCode=/.test(location.search) && /[?&]mode=signIn/.test(location.search);
+// (stats.js l'a déjà retirée de l'adresse, avant Umami, et gardée dans LIEN_CONNEXION)
+const cptLienVu = cptOn() && !!LIEN_CONNEXION;
 const CPT_ORDI = '__djingood-ordi';   // marque de session : afficher « Bienvenue sur ordinateur », même après le rechargement du compte
 function cptLienFinir(){
   cptSdkAuth().then(() => {
-    if (!cptFb.auth.isSignInWithEmailLink(location.href)) return cptLienRate();
+    if (!cptFb.auth.isSignInWithEmailLink(LIEN_CONNEXION)) return cptLienRate();
     let m = ''; try { m = localStorage.getItem(CPT_LIEN_CLE) || ''; } catch (e) {}
     if (m && cptMailOk(m)) return cptLienEntre(m);
     openCompte(); cptVa('lien');   // ouvert sur un autre appareil : Firebase veut qu'on réécrive l'adresse
@@ -408,7 +419,7 @@ function cptLienFinir(){
 }
 function cptLienEntre(mail){
   cptDemande = true; cptDit('Connexion en cours…'); cptBoutons(true);
-  return cptFb.auth.signInWithEmailLink(mail, location.href).then(() => {
+  return cptFb.auth.signInWithEmailLink(mail, LIEN_CONNEXION).then(() => {
     cptBoutons(false);
     cptLienPropre();
     try { localStorage.removeItem(CPT_LIEN_CLE); } catch (e) {}
