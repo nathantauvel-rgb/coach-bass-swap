@@ -1,6 +1,16 @@
 // Lot 48 : « Comprendre », sept petites leçons de théorie sans table, au doigt sur un téléphone.
 const { test, expect } = require('@playwright/test');
 const { ouvrir, sansBandeau } = require('./outils');
+const { FAUX } = require('./faux-firebase');
+// Lot 65 : niveau, « Ton oreille » (passée), table, temps par jour, le plan, puis le compte obligatoire
+async function questions(page) {
+  await page.locator('#ppGo').click(); await page.locator('#ppOpts .pp-opt').nth(0).click(); await page.locator('#ppGo').click();
+  await page.locator('#ppOrPasse').click();
+  await page.locator('#ppOpts .pp-opt').nth(1).click(); await page.locator('#ppGo').click();
+  await page.locator('#ppOpts .pp-opt').nth(1).click(); await page.locator('#ppGo').click();
+  await expect(page.locator('.pp-frise')).toBeVisible(); await page.locator('#ppGo').click();
+  await page.locator('#ppPrenom').fill('Sam'); await page.locator('#ppMail').fill('sam@exemple.fr'); await page.locator('#ppGo').click();
+}
 
 const S = o => JSON.stringify(o);
 // Un iPhone : aucun de ses navigateurs (ni l'appli TikTok) ne sait parler aux tables
@@ -52,10 +62,10 @@ test.describe('Sur un ordinateur, rien n\'est imposé', () => {
 
 test.describe('Sur un téléphone', () => {
   test('après les questions de Vini, on arrive sur la leçon 1 ; l\'accueil la propose ensuite', async ({ page }) => {
-    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: SANS_MIDI });
-    await page.locator('#ppGo').click(); await page.locator('#ppOpts .pp-opt').nth(0).click(); await page.locator('#ppGo').click();
-    await page.locator('#ppOpts .pp-opt').nth(1).click(); await page.locator('#ppGo').click();
-    await page.locator('#ppOpts .pp-opt').nth(1).click(); await page.locator('#ppGo').click();
+    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: SANS_MIDI + FAUX });
+    await questions(page);
+    await expect(page.locator('.pp-envoye')).toBeVisible();   // sur un téléphone, le lien pour l'ordinateur est parti
+    await page.locator('#ppGo').click();
     await expect(page.locator('#cp')).toBeVisible();
     await expect(page.locator('.cp-kick')).toHaveText('Leçon 1 · Le temps');
     await expect(page.locator('#onb')).toBeHidden();   // pas de guide par-dessus
@@ -222,10 +232,9 @@ test.describe('Corrections du gardien', () => {
     await expect(page.locator('.cp-fin .cp-vgo')).toBeFocused();   // pas « Rejouer » d'une partie restée derrière (gardien)
   });
   test('Safari sur un Mac est un ordinateur : niveau 1 après les questions, pas de lien d\'envoi', async ({ page }) => {
-    await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: MAC_SAFARI });
-    await page.locator('#ppGo').click(); await page.locator('#ppOpts .pp-opt').nth(0).click(); await page.locator('#ppGo').click();
-    await page.locator('#ppOpts .pp-opt').nth(1).click(); await page.locator('#ppGo').click();
-    await page.locator('#ppOpts .pp-opt').nth(1).click(); await page.locator('#ppGo').click();
+    await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: MAC_SAFARI + FAUX });
+    await questions(page);
+    await expect(page.locator('#pp')).toBeHidden();   // sur un ordinateur, pas d'écran « lien envoyé »
     await expect(page.locator('#cp')).toBeHidden();
     await expect(page.locator('#vLearn')).toBeVisible();
     await page.evaluate(() => { location.hash = '#accueil'; });

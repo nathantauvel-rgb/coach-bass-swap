@@ -10,6 +10,7 @@ const SANS_MIDI = 'try { Object.defineProperty(Navigator.prototype, "requestMIDI
 async function ecranTable(page) {
   await page.locator('#ppGo').click();
   await page.locator('#ppOpts .pp-opt').nth(0).click(); await page.locator('#ppGo').click();
+  await page.locator('#ppOrPasse').click();   // lot 65 : « Ton oreille », passée
   await expect(page.locator('#ppOpts .pp-opt')).toHaveCount(2);
 }
 

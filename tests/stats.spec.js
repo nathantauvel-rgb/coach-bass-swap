@@ -100,16 +100,19 @@ test.describe('Statistiques de visite', () => {
     await expect.poll(() => noms(page)).toEqual(['sans-midi']);
     await expect(page.locator('#midiPill')).toContainText('Prends Chrome ou Edge');
   });
-  test('Premiers pas : passés, ou finis avec le parcours choisi', async ({ page }) => {
+  test('Premiers pas : finis avec le parcours choisi, puis le plan vu et le compte demandé (lot 65)', async ({ page }) => {
     const NOUVEAU = { 'coach-guide-vu': null, 'coach-fiches': null, 'coach-accueil': null };
     await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: FAUX_UMAMI });
-    await page.locator('#ppSkip').click();
-    expect(await noms(page)).toEqual(['premiers-pas-passes']);
-    await page.evaluate(() => { localStorage.removeItem('coach-accueil'); localStorage.removeItem('coach-stats'); });
-    await page.reload(); await expect(page.locator('#pp')).toBeVisible();
     const choix = i => page.locator('#ppOpts .pp-opt').nth(i).click(), suite = () => page.locator('#ppGo').click();
-    await suite(); await choix(0); await suite(); await choix(1); await suite(); await choix(1); await suite();
+    await suite(); await choix(0); await suite();
+    await page.locator('#ppRond').dispatchEvent('pointerdown');
+    await page.evaluate(() => { const o = ppOr; for (let k = 4; k < 12; k++) ppOrFrappe(o.t0 + k * o.per); ppOrFin(); });
+    await expect.poll(() => envois(page)).toContainEqual(['quiz-oreille', { pile: 8 }]);
+    await suite(); await choix(1); await suite(); await choix(1); await suite();
     await expect.poll(() => envois(page)).toContainEqual(['premiers-pas-fin', { parcours: 'debut', table: 'non' }]);
+    await expect.poll(() => noms(page)).toContain('plan-vu');
+    await suite();
+    await expect.poll(() => noms(page)).toContain('mur-vu');
   });
   test('refuser : plus rien ne part, et rien n\'est marqué', async ({ page }) => {
     await ouvrir(page, { avant: FAUX_UMAMI, stockage: { 'umami.disabled': '1', 'coach-journal': S({ jours: ['2020-01-01'] }) } });
@@ -222,7 +225,7 @@ test.describe('Ce que DJingood garde sur toi', () => {
     const erreurs = []; page.on('pageerror', e => erreurs.push(String(e)));
     await page.goto('/confidentialite.html');
     await expect(page.locator('h1')).toHaveText('Ce que DJingood garde sur toi');
-    await expect(page.locator('h2.sub')).toHaveText(['Sur ton ordinateur', 'Si tu crées un compte', 'Les mails de Vini', 'Les statistiques de visite', 'Quand tu envoies ton avis', 'Une question ?']);
+    await expect(page.locator('h2.sub')).toHaveText(['Sur ton ordinateur', 'Ton compte', 'Les mails de Vini', 'Les statistiques de visite', 'Quand tu envoies ton avis', 'Une question ?']);
     const btn = page.locator('#statsBtn');
     await expect(btn).toHaveText('Ne plus compter mes visites');
     await btn.click();

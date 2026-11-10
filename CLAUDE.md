@@ -247,6 +247,44 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     jour ; « Tu écoutes quoi ? » retirée par Nathan), « Ton plan est prêt », **compte obligatoire juste après le plan (choix
     B de Nathan)**, prénom + e-mail sans mot de passe, lien magique de Firebase vers l'ordinateur, accueil du téléphone en
     deux parties. Reste à régler avant sa mise en ligne : l'envoi des mails depuis djingood.fr.
+  **Lot 65 « Arrivée et compte » (10 nov. 2026, « Oui, lance le 65 »)** : branche `lot-65-arrivee` (partie d'`origin/main`
+  = lots 62 à 64 publiés), copie `Documents\coach-dj-lot65` (tests : `DJ_PORT=8801 npx playwright test` ; serveur local
+  `coach-dj-lot65` sur le port 8798 ; essais `node captures/lot65/parcours.js tel|pc` et `node captures/lot65/lien-pc.js`,
+  hors Git, avec le faux Firebase : **jamais de vrai compte créé pour essayer**). Non publié.
+  - **Premiers pas** (`js/premiers.js`) : `PP_ETAPES` = salut, niveau, **oreille**, table, objectif, **plan**, **compte**,
+    **envoye** ; `PP_POS` par écran ; plus de « Passer » (`#ppSkip` retiré, `ppPasser` supprimé ; les anciennes réponses
+    `passe` restent valables). « Ton oreille » (`ppOreilleOpts`, `ppOrLance`, `ppOrFrappe(t)`, `ppOrFin`, `ppOrStop`) :
+    `cpJoue({ n: 12, kick })` de Comprendre, 4 temps pour se caler puis 8 à taper (rond, barre d'espace), pile à 110 ms,
+    presque à 200 ms, la musique des questions baissée (`ppMusiqueBaisse`) ; « Passer cette question » (`oreillePasse`).
+    Table sur téléphone (`PP_TABLES_TEL`, sans l'aide de la table). « Voir mon plan » = le drop (`ppVersPlan` : réponses
+    gardées avec `mur: true` tant que le compte manque, stat `premiers-pas-fin`, `plan-vu`). `PP_PLAN` (3 étapes par niveau,
+    téléphone ou ordinateur), score de l'oreille. **Compte obligatoire** (`ppCompteManque()` : Firebase réglé, personne de
+    connecté ni de retenu dans `coach-compte`) : `ppCompteOpts` (prénom, e-mail, case des mails si `mlActif()`, Google sauf
+    `cptAppli()`, « J'ai déjà un compte » ouvre `#compte` par-dessus, `html.pp-open #compte{z-index:45}`), `ppCompteEnvoie`
+    (vérifie, puis `cptCreerSansMdp`), adresse déjà prise → lien de connexion (`cptLienEnvoie`), Firebase injoignable →
+    « Continuer sans compte pour l'instant » (`#ppSans`, stat `mur-sans-compte`, pour ne jamais rester bloqué).
+    `ppCompteOk` (appelé aussi par `cptChange`, attend la fin d'une création) : sur téléphone, le lien part (`ppLienPart`,
+    « Renvoyer » au plus toutes les 30 s) et l'écran « envoye » le dit (`ppMasque`) ; sur ordinateur, bandeau « Bienvenue »
+    et `ppTermine` (l'ancien `ppFinSuite` : parcours, première étape). Un rechargement avant le compte rouvre sur le plan
+    (`ppAOuvrir` : `accueil.mur`). `coach-accueil` gagne `oreille` (0 à 8 ou null) et `mur`.
+  - **Compte sans mot de passe** (`js/compte.js`) : `cptCreerSansMdp(prenom, mail, accord)` (mot de passe tiré au hasard,
+    jamais gardé), `cptLienEnvoie(mail)` (`sendSignInLinkToEmail`, `handleCodeInApp`, adresse gardée dans
+    `__djingood-lien`, hors `coach-`), `cptLienDemande` (bouton `#cptLienBtn` « Recevoir un lien de connexion » à l'écran
+    « entrer »), `cptLienVu` (l'adresse de la page porte `oobCode` et `mode=signIn`) → `cptLienFinir` → `cptLienEntre`
+    (adresse retenue, sinon écran « lien » de `#compte`) → `signInWithEmailLink` → adresse nettoyée (`cptLienPropre`), stat
+    `ordi-depuis-lien`, marque `__djingood-ordi` → carte **« Bienvenue sur ordinateur »** (`#ordi`, `ordiBienvenue`,
+    `ordiMaj` : Comprendre, la table en direct par `ppMidi`, la prochaine étape ; elle revient après le rechargement de la
+    reprise du compte). Lien déjà servi : `cptLienRate`. `cptEntrer(accord)` rend une promesse (l'erreur, ou rien).
+    `demarrage.js` n'ouvre pas les questions pendant un lien de connexion ; les fermer sans se connecter les rouvre.
+  - **Accueil du téléphone** : `#homeLien` devient une carte « Sur ton ordinateur » ; avec un compte, « M'envoyer le lien »
+    envoie le lien de connexion par mail (`cpEnvoieLien`), sinon la feuille de partage comme avant.
+  - Statistiques : `quiz-oreille`, `plan-vu`, `mur-vu`, `mur-sans-compte`, `lien-ordi-envoye`, `ordi-depuis-lien`.
+    `confidentialite.html` (le compte demandé à l'arrivée, sans mot de passe) et `COMPTE-FIREBASE.md` (section « 2 bis »).
+  - **À faire par Nathan avant la mise en ligne** : activer « Lien envoyé par e-mail (connexion sans mot de passe) » dans
+    Firebase ; régler l'envoi des mails depuis djingood.fr (sinon le lien finit dans les indésirables). Le mail du lien est
+    le texte standard de Firebase (en français), pas le mail « Vini » de la maquette (il faudrait Brevo).
+  - Tests : `tests/arrivee.spec.js` (nouveau) ; `premiers.spec.js` et `premiers-anime.spec.js` mis à jour ; le faux Firebase
+    (`tests/faux-firebase.js`) sait envoyer un lien (`window.__liensConnexion`) et l'ouvrir (`oobCode=vieux` = déjà servi).
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de
