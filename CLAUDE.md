@@ -309,6 +309,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     pas de défilement de côté ; un faux lien de connexion quitte l'adresse tout de suite ; aucune erreur.
     **Reste à faire par Nathan** : le vrai essai (son téléphone, si possible depuis l'appli TikTok → le mail → son PC), et
     l'envoi des mails depuis djingood.fr (sinon indésirables). À surveiller dans Umami : `plan-vu` → `mur-vu` → `compte`.
+    **Essayé par Nathan en production le 10 nov. 2026 : « c bon ca marche »** (le vrai Firebase, pour la première fois).
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de
