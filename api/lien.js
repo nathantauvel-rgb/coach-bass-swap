@@ -7,31 +7,42 @@
 
    Réglages de Vercel (Settings → Environment Variables), jamais dans le site :
    - BREVO_CLE       : la clé d'API de Brevo (la même que pour les mails de Vini, lot 54) ;
-   - FIREBASE_COMPTE : la clé d'un compte de service Google aux droits limités (« Administrateur Firebase Authentication »),
-                       tout le fichier JSON tel quel. Elle permet de fabriquer le lien ; elle ne sort jamais d'ici.
+   - FIREBASE_COMPTE : la clé d'un compte de service Google aux droits limités (rôles « Administrateur Firebase
+                       Authentication » et « Utilisateur Cloud Datastore »), tout le fichier JSON tel quel. Elle permet de
+                       fabriquer le lien et de compter les envois ; elle ne sort jamais d'ici.
    Sans elles : 503, et le site envoie le lien par Firebase, comme avant (rien ne casse).
 
    Sécurités :
-   - on n'envoie qu'à une adresse qui a déjà un compte DJingood (sinon 404, et le site repasse par Firebase) ;
-   - au plus MAX liens par adresse et par heure (429), pour que personne ne puisse bombarder une boîte ; les envois sont
-     retenus sur le compte lui-même (champ « liens » de ses attributs Firebase), sans autre base ;
-   - le lien ramène toujours sur une page de DJingood (SITES), jamais sur une adresse donnée par celui qui appelle ;
+   - on n'envoie qu'à une adresse qui a déjà un compte DJingood (sinon 404, et le site repasse par Firebase). Ça ne suffit
+     pas à protéger un inconnu (n'importe qui peut créer un compte avec l'adresse d'un autre), d'où les deux limites :
+   - au plus MAX liens par adresse et par heure (429), et au plus PLAFOND mails par jour pour tout le site, sous les 300 de
+     l'offre gratuite de Brevo (503 : le lien part alors par Firebase). Les envois sont comptés dans Firestore (collection
+     `limites`, une fiche par adresse et par heure, nommée d'après une empreinte de l'adresse, jamais l'adresse en clair, et
+     une fiche par jour) par un **ajout atomique** : Firestore ajoute 1 et rend le nouveau total en une seule opération, donc
+     vingt demandes arrivées en même temps reçoivent 1, 2, 3… 20, jamais toutes « 0 » (feu rouge du gardien : avec une
+     lecture puis une écriture, 4 vagues de 20 demandes envoyaient 60 mails à la même adresse). Les règles de Firestore
+     ferment cette collection au site ; seul ce compte de service y écrit ;
+   - le lien ramène toujours sur l'accueil de DJingood (SITES, page / ou /index.html), jamais sur une adresse ni une page
+     données par celui qui appelle ;
    - rien de libre n'arrive dans le mail : le prénom ne garde que des lettres.
 
    Le lien du mail pointe directement sur djingood.fr (…?apiKey=…&oobCode=…&mode=signIn), comme celui où Firebase
    ramène après son propre passage : le site le reconnaît pareil (stats.js, LIEN_CONNEXION), et un lien vers le même
    domaine que l'expéditeur rassure les messageries.
 
-   POST { mail, retour } → 200 { envoye: true } | 400 | 404 pas-de-compte | 405 | 429 trop | 502 | 503 pas-configure */
+   POST { mail, retour } → 200 { envoye: true } | 400 | 404 pas-de-compte | 405 | 429 trop | 502 | 503 pas-configure | plafond */
 const crypto = require('crypto');
 const PROJET = 'djingo-1e1f4';   // le projet Firebase (identifiant technique, ne jamais le renommer)
 const IDT = 'https://identitytoolkit.googleapis.com/v1/projects/' + PROJET;
+const BASE = 'projects/' + PROJET + '/databases/(default)/documents';
+const FS = 'https://firestore.googleapis.com/v1/' + BASE + ':commit';
+const PLAFOND = 200;   // mails de lien par jour (UTC) pour tout le site : Brevo gratuit en permet 300, dont ceux de Vini
 const JETON = 'https://oauth2.googleapis.com/token';
 const BREVO = 'https://api.brevo.com/v3/smtp/email';
 // Même expéditeur que les mails de Firebase depuis le 10 nov. 2026 : ce que les joueurs ont déjà marqué « pas un spam » compte
 const EXPEDITEUR = { name: 'DJingood', email: 'noreply@djingood.fr' };
 const SITES = ['https://djingood.fr', 'https://www.djingood.fr', 'https://coach-bass-swap.vercel.app'];
-const MAX = 3, FENETRE = 3600 * 1000;
+const MAX = 3;   // liens par adresse et par heure (heure pleine, UTC)
 const SUJET = 'Ton lien pour te connecter à DJingood';
 
 const mailOk = v => typeof v === 'string' && v.trim().length <= 200 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
@@ -40,14 +51,28 @@ const prenomOk = v => (typeof v === 'string' && /^\p{L}+(?:[ '’-]\p{L}+)?$/u.t
 const html = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 function repond(res, code, d){ res.statusCode = code; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.setHeader('Cache-Control', 'no-store'); res.end(JSON.stringify(d)); }
 
-// La page où le lien ramène : celle d'où le joueur l'a demandé, si c'est bien une page de DJingood ; sinon l'accueil
+// La page où le lien ramène : l'accueil du site d'où le joueur l'a demandé (seule page qui sait finir la connexion) ;
+// sinon l'accueil de djingood.fr
 function retourOk(v){
   try {
     const u = new URL(String(v));
-    if (SITES.includes(u.origin) && /^\/[\w./-]{0,80}$/.test(u.pathname) && !u.pathname.includes('..')) return u.origin + u.pathname;
+    if (SITES.includes(u.origin) && (u.pathname === '/' || u.pathname === '/index.html')) return u.origin + u.pathname;
   } catch (e) {}
   return SITES[0] + '/';
 }
+
+// Les deux compteurs, dans un seul envoi à Firestore : +1 sur la fiche de l'adresse pour cette heure, +1 sur celle du jour.
+// Firestore rend les nouveaux totaux (transformResults). Une fiche absente est créée ; `fin` permet un ménage automatique
+// (règle TTL de Firestore sur ce champ, facultative).
+function compteurs(mail, maintenant = new Date()){
+  const iso = maintenant.toISOString(), heure = iso.slice(0, 13).replace(/[-T]/g, ''), jour = iso.slice(0, 10);
+  const empreinte = crypto.createHash('sha256').update('djingood-lien:' + mail).digest('hex').slice(0, 32);
+  const fin = new Date(maintenant.getTime() + 2 * 86400e3).toISOString();
+  const ecrit = id => ({ update: { name: BASE + '/limites/' + id, fields: { fin: { timestampValue: fin } } },
+    updateMask: { fieldPaths: ['fin'] }, updateTransforms: [{ fieldPath: 'n', increment: { integerValue: '1' } }] });
+  return { writes: [ecrit('a-' + empreinte + '-' + heure), ecrit('jour-' + jour)] };
+}
+const total = w => { const t = w && Array.isArray(w.transformResults) && w.transformResults[0]; const n = t ? parseInt(t.integerValue, 10) : NaN; return n > 0 ? n : NaN; };
 // Le lien du mail : directement sur la page de DJingood, avec ce que Firebase a mis dans le sien. Sinon, le sien tel quel.
 function lienDirect(oob, retour){
   try {
@@ -86,7 +111,7 @@ async function jetonAcces(c){
   return acces.v;
 }
 async function google(chemin, jeton, corps){
-  const r = await fetch(IDT + chemin, { method: 'POST', headers: { authorization: 'Bearer ' + jeton, 'content-type': 'application/json' }, body: JSON.stringify(corps) });
+  const r = await fetch(/^https:/.test(chemin) ? chemin : IDT + chemin, { method: 'POST', headers: { authorization: 'Bearer ' + jeton, 'content-type': 'application/json' }, body: JSON.stringify(corps) });
   let d = null; try { d = await r.json(); } catch (e) {}
   return { ok: r.ok, status: r.status, d };
 }
@@ -141,15 +166,13 @@ async function handler(req, res){
     const u = qui.d && Array.isArray(qui.d.users) ? qui.d.users[0] : null;
     if (!u || u.disabled || typeof u.localId !== 'string' || !mailOk(u.email)) return repond(res, 404, { erreur: 'pas-de-compte' });
 
-    // 2. Pas plus de MAX liens par heure pour cette adresse (retenus sur le compte, avant l'envoi)
-    let attr = {};
-    try { attr = JSON.parse(u.customAttributes || '{}'); } catch (e) {}
-    if (!attr || typeof attr !== 'object' || Array.isArray(attr)) attr = {};
-    const recents = (Array.isArray(attr.liens) ? attr.liens : []).filter(x => typeof x === 'number' && Date.now() - x < FENETRE && x <= Date.now());
-    if (recents.length >= MAX) return repond(res, 429, { erreur: 'trop' });
-    attr.liens = recents.concat(Date.now()).slice(-MAX);
-    const note = await google('/accounts:update', jeton, { localId: u.localId, customAttributes: JSON.stringify(attr) });
-    if (!note.ok) return repond(res, 502, { erreur: 'google', statut: note.status });
+    // 2. Les limites, comptées AVANT l'envoi par un ajout atomique (voir l'en-tête) : MAX par adresse et par heure, PLAFOND par jour
+    const n = await google(FS, jeton, compteurs(u.email.toLowerCase()));
+    const w = n.ok && n.d && Array.isArray(n.d.writeResults) ? n.d.writeResults : [];
+    const parAdresse = total(w[0]), parJour = total(w[1]);
+    if (!(parAdresse > 0) || !(parJour > 0)) return repond(res, 502, { erreur: 'compteur', statut: n.status });
+    if (parAdresse > MAX) return repond(res, 429, { erreur: 'trop' });
+    if (parJour > PLAFOND) return repond(res, 503, { erreur: 'plafond' });
 
     // 3. Le lien, fabriqué par Firebase sans qu'il l'envoie
     const oob = await google('/accounts:sendOobCode', jeton, { requestType: 'EMAIL_SIGNIN', email: u.email, continueUrl: retour, canHandleCodeInApp: true, returnOobLink: true });
@@ -172,3 +195,5 @@ module.exports.mailTexte = mailTexte;
 module.exports.retourOk = retourOk;
 module.exports.lienDirect = lienDirect;
 module.exports.MAX = MAX;
+module.exports.PLAFOND = PLAFOND;
+module.exports.compteurs = compteurs;

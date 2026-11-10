@@ -23,12 +23,15 @@ avec moi. Tu les colles seulement dans Vercel.
 2. **Brevo, la clé.** Si tu ne l'as pas déjà fait pour les mails de Vini : **SMTP & API → Clés API → Générer une nouvelle
    clé**, nom `djingood-site`. Dans Vercel (projet `coach-bass-swap` → **Settings → Environment Variables**), ajoute
    `BREVO_CLE` = cette clé, pour « Production » seulement.
-3. **Firebase, une clé aux droits limités.** Elle sert seulement à fabriquer le lien de connexion.
+3. **Firebase, une clé aux droits limités.** Elle sert seulement à fabriquer le lien de connexion et à compter les envois.
    - Ouvre https://console.cloud.google.com/iam-admin/serviceaccounts?project=djingo-1e1f4 (le même compte Google que
      Firebase).
    - **Créer un compte de service** → nom `djingood-liens` → « Créer et continuer ».
-   - Rôle : cherche **« Administrateur Firebase Authentication »** (en anglais : Firebase Authentication Admin) → « Continuer »
-     → « OK ». **Pas** « Propriétaire » ni « Éditeur » : ils donneraient accès à tout le projet.
+   - Rôles : cherche **« Administrateur Firebase Authentication »** (en anglais : Firebase Authentication Admin), puis
+     « Ajouter un autre rôle » et cherche **« Utilisateur Cloud Datastore »** (Cloud Datastore User : c'est ce qui lui permet
+     de compter les mails envoyés) → « Continuer » → « OK ». **Pas** « Propriétaire » ni « Éditeur » : ils donneraient accès
+     à tout le projet. (Si tu as déjà créé le compte avec un seul rôle : **IAM** → crayon sur la ligne `djingood-liens` →
+     « Ajouter un autre rôle ».)
    - Clique sur le compte `djingood-liens` → onglet **Clés** → **Ajouter une clé → Créer une clé → JSON → Créer**. Un
      fichier `.json` se télécharge. (Si Google dit que la création de clés est désactivée, arrête-toi et dis-le-moi.)
    - Ouvre ce fichier avec le Bloc-notes, tout sélectionner (Ctrl+A), copier (Ctrl+C).
@@ -43,11 +46,15 @@ avec moi. Tu les colles seulement dans Vercel.
    de « DJingood », commencer par « Salut … ! » et avoir un bouton violet « Me connecter ». Sur ton ordinateur, clique le
    bouton : tu dois être connecté. Regarde aussi où mène le bouton (appui long sur téléphone) : l'adresse doit commencer par
    `https://djingood.fr`. Si elle commence par une adresse de Brevo (suivi des clics), dis-le-moi, on le coupe ensemble.
-   Dans Umami, l'événement `lien-envoye` dit par où le lien est parti (`par` : `brevo` ou `firebase`).
+   Dans Umami, l'événement `lien-envoye` dit par où le lien est parti (`par` : `brevo` ou `firebase`). Si tu ne vois que
+   `firebase`, un réglage manque (une clé, ou le second rôle) : dis-le-moi.
    Tu peux effacer les comptes d'essai dans Firebase (**Authentication → Users**).
 
 Sécurités prévues (api/lien.js) : on n'écrit qu'à une adresse qui a déjà un compte DJingood, au plus 3 liens par adresse et
-par heure, et le lien ramène toujours sur djingood.fr. La formule gratuite de Brevo permet 300 mails par jour.
+par heure (même si les demandes arrivent toutes en même temps), au plus 200 mails de lien par jour pour tout le site (la
+formule gratuite de Brevo en permet 300, avec ceux de Vini ; au-delà, le lien part par Firebase), et le lien ramène toujours
+sur l'accueil de djingood.fr. Les envois sont comptés dans Firestore (collection `limites`, de petites fiches sans adresse
+en clair). Facultatif, pour qu'elles s'effacent toutes seules : Firestore → **TTL** → collection `limites`, champ `fin`.
 
 ## Comment ça marche
 

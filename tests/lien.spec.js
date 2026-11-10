@@ -62,11 +62,11 @@ test.describe('Le site : Brevo d\'abord, Firebase en secours', () => {
     });
   }
 
-  test('trop de liens demandés (429) : on le dit, et Firebase ne sert pas à contourner la limite', async ({ page }) => {
+  test('trop de liens demandés (429) : on dit où le chercher, et Firebase ne sert pas à contourner la limite', async ({ page }) => {
     await fausseFonction(page, { statut: 429, corps: { erreur: 'trop' } });
     await ouvrir(page, { onglet: 'accueil', avant: FAUX });
     await demandeLien(page);
-    await expect(page.locator('#cptMsg')).toHaveText(/Trop d’essais de suite/);
+    await expect(page.locator('#cptMsg')).toHaveText('Je t’ai déjà envoyé 3 liens dans l’heure : regarde dans ta boîte de réception et dans tes spams, il y est. Tu pourras en redemander un un peu plus tard.');
     expect(await liensFirebase(page)).toEqual([]);
   });
 
@@ -93,11 +93,38 @@ test.describe('Le site : Brevo d\'abord, Firebase en secours', () => {
       expect(await liensFirebase(page)).toEqual([]);
       expect(erreurs).toEqual([]); await sansBandeau(page);
     });
+
+    test('3 liens déjà partis dans l\'heure : l\'écran le dit et montre où chercher (gardien du lot 67)', async ({ page }) => {
+      await fausseFonction(page, { statut: 429, corps: { erreur: 'trop' } });
+      await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: FAUX });
+      await jusquauPlan(page);
+      await suite(page);
+      await page.locator('#ppPrenom').fill('Sam'); await page.locator('#ppMail').fill('sam@exemple.fr');
+      await suite(page);
+      await expect(page.locator('#ppLienTitre')).toHaveText('Je t’ai déjà envoyé 3 liens dans l’heure, à s•••@exemple.fr');
+      await expect(page.locator('#ppLienTxt')).toContainText('dans ta boîte de réception ou dans tes spams');
+      await expect(page.locator('#ppSpam')).toBeVisible();
+      expect(await liensFirebase(page)).toEqual([]);
+    });
+
+    test('l\'accueil du téléphone : « M\'envoyer le lien » refusé (429) le dit sans « réessaie »', async ({ page }) => {
+      await fausseFonction(page, { statut: 429, corps: { erreur: 'trop' } });
+      const avant = `try { sessionStorage.setItem('__faux_user', JSON.stringify({ uid: 'u9', displayName: 'Lou', email: 'lou@exemple.fr', emailVerified: true })); } catch (e) {}` + FAUX;
+      await ouvrir(page, { onglet: 'accueil', stockage: { 'coach-parcours': 'debut', 'coach-compte': JSON.stringify({ uid: 'u9', prenom: 'Lou', maj: 0, sale: false }) }, avant });
+      await page.waitForFunction(() => typeof cpt !== 'undefined' && cpt && cptFb && cptFb.auth && cptFb.auth.currentUser);
+      await page.evaluate(() => renderHome());
+      await page.locator('#homeLienBtn').click();
+      await expect(page.locator('#homeLienBtn')).toHaveText('Déjà envoyé : regarde tes mails');
+      await expect(page.locator('#homeLienTxt')).toContainText('Je t’ai déjà envoyé 3 liens dans l’heure');
+      expect(await liensFirebase(page)).toEqual([]);
+    });
   });
 });
 
 /* ---------- La fonction api/lien.js, sans réseau ----------
-   Google (le jeton d'accès, la recherche du compte, la fabrication du lien) et Brevo sont remplacés par un faux `fetch`. */
+   Google (le jeton d'accès, la recherche du compte, la fabrication du lien), Firestore (les compteurs) et Brevo sont remplacés
+   par un faux `fetch`. Chaque faux appel rend la main avant de répondre, comme le réseau : des demandes lancées ensemble
+   s'entremêlent vraiment. Le faux Firestore ajoute 1 d'un seul coup, comme le vrai (`increment`). */
 test.describe('La fonction /api/lien', () => {
   const fn = require('../api/lien.js');
   const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
@@ -109,13 +136,20 @@ test.describe('La fonction /api/lien', () => {
   test.beforeEach(() => {
     process.env.BREVO_CLE = 'cle-brevo'; process.env.FIREBASE_COMPTE = JSON.stringify(COMPTE);
     fn.jetonAcces = async () => 'jeton-google';
-    g = { appels: [], users: [{ localId: 'u1', email: 'lea@exemple.fr', displayName: 'Léa' }], brevo: 201, lookup: 200, update: 200, oob: 200 };
+    g = { appels: [], users: [{ localId: 'u1', email: 'lea@exemple.fr', displayName: 'Léa' }], brevo: 201, lookup: 200, commit: 200, oob: 200, fiches: {}, commitVide: false };
     global.fetch = async (url, o = {}) => {
       const corps = o.body && /json/.test(JSON.stringify(o.headers || {})) ? JSON.parse(o.body) : o.body;
       g.appels.push({ url, corps, entetes: o.headers });
+      await new Promise(r => setImmediate(r));   // le réseau : les autres demandes avancent pendant ce temps
       const rep = (statut, d) => ({ ok: statut >= 200 && statut < 300, status: statut, json: async () => d });
-      if (url.endsWith('/accounts:lookup')) return rep(g.lookup, g.users.length ? { users: g.users } : {});
-      if (url.endsWith('/accounts:update')) return rep(g.update, { localId: 'u1' });
+      if (url.endsWith('/accounts:lookup')) return rep(g.lookup, g.users.length ? { users: g.users.filter(u => u.email === corps.email[0]) } : {});
+      if (url === 'https://firestore.googleapis.com/v1/projects/djingo-1e1f4/databases/(default)/documents:commit') {
+        if (g.commit !== 200) return rep(g.commit, {});
+        if (g.commitVide) return rep(200, { commitTime: 'x' });
+        const writeResults = corps.writes.map(w => { const nom = w.update.name; g.fiches[nom] = (g.fiches[nom] || 0) + 1;
+          return { updateTime: 'x', transformResults: [{ integerValue: String(g.fiches[nom]) }] }; });
+        return rep(200, { writeResults, commitTime: 'x' });
+      }
       if (url.endsWith('/accounts:sendOobCode')) return rep(g.oob, { email: 'lea@exemple.fr', oobLink: OOB });
       if (url === 'https://api.brevo.com/v3/smtp/email') return rep(g.brevo, { messageId: 'm1' });
       return rep(404, {});
@@ -166,8 +200,10 @@ test.describe('La fonction /api/lien', () => {
   test('le lien ramène toujours sur une page de DJingood, jamais sur une adresse donnée par celui qui appelle', async () => {
     for (const [retour, attendu] of [['https://arnaque.example/djingood.fr', 'https://djingood.fr/'], ['javascript:alert(1)', 'https://djingood.fr/'],
       ['https://djingood.fr.arnaque.example/', 'https://djingood.fr/'], ['https://www.djingood.fr/index.html?x=1#y', 'https://www.djingood.fr/index.html'],
-      ['https://coach-bass-swap.vercel.app/', 'https://coach-bass-swap.vercel.app/'], [undefined, 'https://djingood.fr/'], ['http://djingood.fr/', 'https://djingood.fr/']]) {
-      g.appels = [];
+      ['https://coach-bass-swap.vercel.app/', 'https://coach-bass-swap.vercel.app/'], [undefined, 'https://djingood.fr/'], ['http://djingood.fr/', 'https://djingood.fr/'],
+      // seules l'accueil et /index.html savent finir la connexion (remarque du gardien)
+      ['https://djingood.fr/presentation.html', 'https://djingood.fr/'], ['https://djingood.fr//arnaque.example', 'https://djingood.fr/'], ['https://djingood.fr/api/lien', 'https://djingood.fr/']]) {
+      g.appels = []; g.fiches = {};   // chaque essai repart d'un compteur vide (3 liens par heure)
       expect((await appel({ mail: 'lea@exemple.fr', retour })).statusCode).toBe(200);
       expect(vers('/accounts:sendOobCode')[0].corps.continueUrl).toBe(attendu);
       expect(brevo()[0].corps.textContent).toContain(attendu + '?apiKey=');
@@ -181,36 +217,54 @@ test.describe('La fonction /api/lien', () => {
     g.users = [{ localId: 'u1', email: 'lea@exemple.fr', disabled: true }];
     r = await appel({ mail: 'lea@exemple.fr' });
     expect(r.statusCode).toBe(404);
-    expect(vers('/accounts:update')).toEqual([]); expect(brevo()).toEqual([]);
+    expect(vers(':commit')).toEqual([]); expect(brevo()).toEqual([]);
   });
 
-  test(`au plus ${fn.MAX} liens par heure et par adresse, retenus sur le compte sans toucher au reste`, async () => {
-    const maintenant = Date.now();
-    g.users[0].customAttributes = JSON.stringify({ pro: true, liens: [maintenant - 10e3, maintenant - 20e3, maintenant - 30e3] });
-    let r = await appel({ mail: 'lea@exemple.fr' });
-    expect(r.statusCode).toBe(429); expect(r.corps).toEqual({ erreur: 'trop' });
-    expect(vers('/accounts:update')).toEqual([]); expect(brevo()).toEqual([]);
-    // des envois de plus d'une heure : oubliés
-    g.users[0].customAttributes = JSON.stringify({ pro: true, liens: [maintenant - 2 * 3600e3, maintenant - 30e3, 'n’importe quoi'] });
-    r = await appel({ mail: 'lea@exemple.fr' });
-    expect(r.statusCode).toBe(200);
-    const note = vers('/accounts:update')[0].corps;
-    expect(note.localId).toBe('u1');
-    const attr = JSON.parse(note.customAttributes);
-    expect(attr.pro).toBe(true);
-    expect(attr.liens).toHaveLength(2);
-    expect(attr.liens[1]).toBeGreaterThanOrEqual(maintenant);
-    // des attributs abîmés ne bloquent rien
-    for (const abime of ['{ pas du json', '[1,2]', 'null']) {
-      g.appels = []; g.users[0].customAttributes = abime;
-      expect((await appel({ mail: 'lea@exemple.fr' })).statusCode).toBe(200);
-      expect(JSON.parse(vers('/accounts:update')[0].corps.customAttributes).liens).toHaveLength(1);
+  test(`au plus ${fn.MAX} liens par heure et par adresse, même demandés tous en même temps (feu rouge du gardien)`, async () => {
+    // 20 demandes lancées ensemble pour la même adresse : avec une lecture puis une écriture, toutes passaient
+    const r = await Promise.all(Array.from({ length: 20 }, () => appel({ mail: 'lea@exemple.fr' })));
+    const codes = r.map(x => x.statusCode);
+    expect(codes.filter(c => c === 200)).toHaveLength(fn.MAX);
+    expect(codes.filter(c => c === 429)).toHaveLength(20 - fn.MAX);
+    expect(r.find(x => x.statusCode === 429).corps).toEqual({ erreur: 'trop' });
+    expect(brevo()).toHaveLength(fn.MAX);
+    expect(vers('/accounts:sendOobCode')).toHaveLength(fn.MAX);   // pas de lien fabriqué pour rien
+    // une autre adresse a son propre compteur
+    g.users.push({ localId: 'u2', email: 'tom@exemple.fr', displayName: 'Tom' });
+    expect((await appel({ mail: 'tom@exemple.fr' })).statusCode).toBe(200);
+  });
+
+  test('les compteurs : une fiche par adresse et par heure (sans l\'adresse en clair), une par jour, +1 d\'un seul coup', async () => {
+    await appel({ mail: 'lea@exemple.fr' });
+    const w = vers(':commit')[0].corps.writes;
+    expect(w).toHaveLength(2);
+    expect(w[0].update.name).toMatch(/^projects\/djingo-1e1f4\/databases\/\(default\)\/documents\/limites\/a-[0-9a-f]{32}-\d{10}$/);
+    expect(w[1].update.name).toMatch(/^projects\/djingo-1e1f4\/databases\/\(default\)\/documents\/limites\/jour-\d{4}-\d{2}-\d{2}$/);
+    for (const x of w) {
+      expect(x.updateTransforms).toEqual([{ fieldPath: 'n', increment: { integerValue: '1' } }]);
+      expect(x.updateMask).toEqual({ fieldPaths: ['fin'] });
+      expect(x.update.fields.fin.timestampValue).toMatch(/^\d{4}-/);
+      expect(JSON.stringify(x)).not.toContain('lea');
     }
+    // même adresse, même heure : même fiche ; heure suivante ou autre adresse : une autre
+    const nom = (m, d) => fn.compteurs(m, new Date(d)).writes[0].update.name;
+    expect(nom('lea@exemple.fr', '2026-11-10T21:00:01Z')).toBe(nom('lea@exemple.fr', '2026-11-10T21:59:59Z'));
+    expect(nom('lea@exemple.fr', '2026-11-10T21:59:59Z')).not.toBe(nom('lea@exemple.fr', '2026-11-10T22:00:00Z'));
+    expect(nom('lea@exemple.fr', '2026-11-10T21:00:00Z')).not.toBe(nom('tom@exemple.fr', '2026-11-10T21:00:00Z'));
+    expect(fn.compteurs('lea@exemple.fr', new Date('2026-11-10T23:30:00Z')).writes[1].update.name).toMatch(/jour-2026-11-10$/);
+  });
+
+  test(`au-delà de ${fn.PLAFOND} mails par jour pour tout le site : 503, et le site repasse par Firebase`, async () => {
+    const jour = fn.compteurs('x@exemple.fr').writes[1].update.name;
+    g.fiches[jour] = fn.PLAFOND;
+    const r = await appel({ mail: 'lea@exemple.fr' });
+    expect(r.statusCode).toBe(503); expect(r.corps).toEqual({ erreur: 'plafond' });
+    expect(brevo()).toEqual([]); expect(vers('/accounts:sendOobCode')).toEqual([]);
   });
 
   test('rien de libre n\'arrive dans le mail : le prénom ne garde que des lettres', async () => {
     for (const [nom, salut] of [['Jean-Pierre', 'Salut Jean-Pierre !'], ['Léa <b>', 'Salut !'], ['Va sur arnaque.com', 'Salut !'], [undefined, 'Salut !'], ['Nathan2', 'Salut !']]) {
-      g.appels = []; g.users[0].displayName = nom;
+      g.appels = []; g.fiches = {}; g.users[0].displayName = nom;
       await appel({ mail: 'lea@exemple.fr' });
       expect(brevo()[0].corps.textContent.split('\n')[0]).toBe(salut);
       expect(brevo()[0].corps.htmlContent).not.toContain('<b>');
@@ -218,11 +272,15 @@ test.describe('La fonction /api/lien', () => {
   });
 
   test('Google ou Brevo en panne : 502, et le site repassera par Firebase', async () => {
-    for (const panne of ['lookup', 'update', 'oob', 'brevo']) {
-      g.appels = []; g[panne] = 500;
+    for (const panne of ['lookup', 'commit', 'oob', 'brevo']) {
+      g.appels = []; g.fiches = {}; g[panne] = 500;
       expect((await appel({ mail: 'lea@exemple.fr' })).statusCode).toBe(502);
       g[panne] = panne === 'brevo' ? 201 : 200;
     }
+    // Firestore répond sans les totaux (par exemple sans le droit d'écrire) : rien ne part par Brevo
+    g.appels = []; g.commitVide = true;
+    expect((await appel({ mail: 'lea@exemple.fr' })).statusCode).toBe(502);
+    expect(brevo()).toEqual([]); g.commitVide = false;
     fn.jetonAcces = async () => { throw new Error('refusé'); };
     expect((await appel({ mail: 'lea@exemple.fr' })).statusCode).toBe(502);
     global.fetch = async () => { throw new Error('réseau'); };

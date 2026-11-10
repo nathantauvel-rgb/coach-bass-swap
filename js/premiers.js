@@ -497,7 +497,8 @@ function ppCompteEnvoie(){
       // il a déjà un compte avec cette adresse : on lui envoie un lien pour s'y connecter, sans rien créer
       ppMsg('Tu as déjà un compte avec cette adresse. Je t’envoie un lien pour te connecter…');
       cptLienEnvoie(mail).then(() => ppMsg('Tu as déjà un compte avec cette adresse : je t’ai envoyé un lien pour te connecter (regarde aussi dans les spams). Ouvre-le sur ce téléphone, ou choisis « J’ai déjà un compte ».'),
-        () => ppMsg('Tu as déjà un compte avec cette adresse : choisis « J’ai déjà un compte » juste en dessous.'));
+        e => ppMsg(e && e.code === CPT_LIEN_TROP ? 'Tu as déjà un compte avec cette adresse, et je t’ai déjà envoyé 3 liens dans l’heure : regarde dans ta boîte de réception et dans tes spams.'
+          : 'Tu as déjà un compte avec cette adresse : choisis « J’ai déjà un compte » juste en dessous.'));
     } else {
       ppMsg(cptErreur(e));
       // Firebase ne répond pas du tout : on laisse continuer sans compte (sinon le joueur resterait bloqué ici)
@@ -524,7 +525,8 @@ function ppCompteOk(){
 const PP_RENVOI = 30000;
 function ppLienPart(){
   pp.lien = 'envoi'; pp.lienAt = Date.now(); ppEnvoyeMaj();
-  cptLienEnvoie(pp.mail).then(() => { pp.lien = 'ok'; ppEnvoyeMaj(); }, () => { pp.lien = 'rate'; ppEnvoyeMaj(); });
+  cptLienEnvoie(pp.mail).then(() => { pp.lien = 'ok'; ppEnvoyeMaj(); },
+    e => { pp.lien = e && e.code === CPT_LIEN_TROP ? 'trop' : 'rate'; ppEnvoyeMaj(); });   // trop : 3 liens déjà partis dans l'heure (lot 67)
   setTimeout(ppEnvoyeMaj, PP_RENVOI + 50);
 }
 
@@ -546,8 +548,10 @@ function ppEnvoyeOpts(){
 }
 function ppEnvoyeMaj(){
   const t = $('ppLienTitre'); if (!t) return;
-  t.textContent = pp.lien === 'ok' ? `Ton lien pour l’ordinateur est parti à ${ppMasque(pp.mail)}` : pp.lien === 'rate' ? 'Le lien n’a pas pu partir' : 'J’envoie ton lien pour l’ordinateur…';
+  t.textContent = pp.lien === 'ok' ? `Ton lien pour l’ordinateur est parti à ${ppMasque(pp.mail)}` : pp.lien === 'rate' ? 'Le lien n’a pas pu partir'
+    : pp.lien === 'trop' ? `Je t’ai déjà envoyé 3 liens dans l’heure, à ${ppMasque(pp.mail)}` : 'J’envoie ton lien pour l’ordinateur…';
   $('ppLienTxt').textContent = pp.lien === 'rate' ? 'Sur ton ordinateur, ouvre djingood.fr et choisis « J’ai déjà un compte », avec la même adresse : je t’enverrai un lien là-bas.'
+    : pp.lien === 'trop' ? 'Ils sont dans ta boîte de réception ou dans tes spams : ouvre le plus récent sur ton PC. Tu pourras en redemander un un peu plus tard.'
     : 'Ta table, ce sera sur ordinateur. Ouvre ce mail sur ton PC : tu seras connecté tout de suite.';
   // le mail d'un domaine neuf arrive souvent dans les spams, où Gmail désactive les liens (vu le 10 nov. 2026)
   $('ppSpam').hidden = pp.lien === 'rate';

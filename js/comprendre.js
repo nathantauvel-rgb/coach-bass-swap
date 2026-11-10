@@ -430,7 +430,11 @@ async function cpEnvoieLien(b){
   if (u && u.email){
     if (b.disabled) return; b.disabled = true; b.textContent = 'Envoi…';
     try { await cptLienEnvoie(u.email); b.textContent = 'Envoyé à ' + ppMasque(u.email);
-      $('homeLienTxt').textContent = 'Pas dans ta boîte de réception ? Regarde dans les spams, puis indique à ta messagerie que ce n’est pas un spam : sinon, le lien ne s’ouvre pas.'; } catch (e) { b.textContent = 'Pas parti : réessaie'; }
+      $('homeLienTxt').textContent = 'Pas dans ta boîte de réception ? Regarde dans les spams, puis indique à ta messagerie que ce n’est pas un spam : sinon, le lien ne s’ouvre pas.'; }
+    catch (e) {
+      if (e && e.code === CPT_LIEN_TROP){ b.textContent = 'Déjà envoyé : regarde tes mails'; $('homeLienTxt').textContent = cptErreur(e); }   // 3 liens dans l'heure (lot 67)
+      else b.textContent = 'Pas parti : réessaie';
+    }
     setTimeout(() => { b.disabled = false; b.textContent = 'M’envoyer le lien'; }, 5000); return;
   }
   const url = location.origin + location.pathname;

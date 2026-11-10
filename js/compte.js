@@ -393,8 +393,9 @@ function cptCreerSansMdp(prenom, mail, accord){
 /* Le lien part d'abord par Brevo, avec notre texte et depuis djingood.fr (lot 67 « Le mail qui arrive », api/lien.js) : le
    mail de Firebase, au texte impossible à changer, tombait souvent dans les spams d'un nouveau venu. Si la fonction n'est pas
    réglée, ne connaît pas l'adresse, ne répond pas ou se trompe, le lien part par Firebase comme avant : rien ne casse. Seul
-   « trop de liens demandés » (429) s'arrête là : repasser par Firebase contournerait la limite. */
-const CPT_LIEN_API = '/api/lien', CPT_LIEN_ATTENTE = 8000;
+   « trop de liens demandés » (429 : 3 dans l'heure pour cette adresse) s'arrête là, avec le code `djingood/trop-de-liens` :
+   repasser par Firebase contournerait la limite. */
+const CPT_LIEN_API = '/api/lien', CPT_LIEN_ATTENTE = 8000, CPT_LIEN_TROP = 'djingood/trop-de-liens';
 function cptLienBrevo(mail){
   if (typeof fetch !== 'function') return Promise.resolve(false);
   const ctl = typeof AbortController === 'function' ? new AbortController() : null;
@@ -403,7 +404,7 @@ function cptLienBrevo(mail){
     body: JSON.stringify({ mail, retour: location.origin + location.pathname }) })
     .then(r => {
       clearTimeout(fin);
-      if (r.status === 429){ const e = new Error('trop de liens'); e.code = 'auth/too-many-requests'; throw e; }
+      if (r.status === 429){ const e = new Error('trop de liens'); e.code = CPT_LIEN_TROP; throw e; }
       return r.ok ? r.json().then(d => !!(d && d.envoye), () => false) : false;
     }, () => { clearTimeout(fin); return false; });
 }
@@ -479,6 +480,7 @@ function cptErreur(e){
   if (c === 'auth/wrong-password' || c === 'auth/invalid-credential' || c === 'auth/invalid-login-credentials') return 'Adresse ou mot de passe incorrect.';
   if (c === 'auth/missing-password') return 'Écris ton mot de passe.';
   if (c === 'auth/too-many-requests') return 'Trop d’essais de suite. Attends quelques minutes, puis réessaie.';
+  if (c === CPT_LIEN_TROP) return 'Je t’ai déjà envoyé 3 liens dans l’heure : regarde dans ta boîte de réception et dans tes spams, il y est. Tu pourras en redemander un un peu plus tard.';
   if (c === 'auth/operation-not-allowed') return 'La connexion par e-mail n’est pas activée dans Firebase (Authentication → Sign-in method → E-mail/Mot de passe, et « Lien envoyé par e-mail »).';
   if (c === 'auth/invalid-action-code' || c === 'auth/expired-action-code') return 'Ce lien a déjà servi ou il est trop vieux. Demande-en un nouveau.';
   if (c === 'auth/missing-email') return 'Cette adresse e-mail n’a pas l’air valide.';

@@ -335,22 +335,41 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     « DJingood » <noreply@djingood.fr> (le même expéditeur que Firebase : les « pas un spam » déjà cliqués comptent).
     - `api/lien.js` (nouvelle fonction Vercel, sans dépendance) : POST `{ mail, retour }`. Jeton d'accès Google fabriqué à
       partir de la clé d'un compte de service (`FIREBASE_COMPTE`, JWT RS256 signé avec `crypto`, gardé jusqu'à 5 min avant
-      sa fin) ; `accounts:lookup` (pas de compte, ou compte bloqué → 404) ; au plus 3 liens par heure et par adresse, retenus
-      dans les attributs Firebase du compte (`customAttributes.liens`, les autres attributs gardés ; 429) ;
+      sa fin) ; `accounts:lookup` (pas de compte, ou compte bloqué → 404) ; **limites comptées dans Firestore par un ajout
+      atomique** (`documents:commit` avec `updateTransforms` `increment`, qui rend le nouveau total : deux demandes
+      simultanées ne lisent jamais le même chiffre) : collection `limites`, fiche `a-<empreinte sha256 de l'adresse>-
+      <AAAAMMJJHH UTC>` (au plus 3 par adresse et par heure pleine → 429) et fiche `jour-<AAAA-MM-JJ>` (au plus `PLAFOND` =
+      200 par jour → 503, le site repasse par Firebase), champ `fin` pour une règle TTL facultative ; le compte de service a
+      donc **deux rôles** (« Administrateur Firebase Authentication » et « Utilisateur Cloud Datastore ») ;
       `accounts:sendOobCode` avec `returnOobLink` (Firebase fabrique le lien sans l'envoyer) ; **lien direct sur la page de
       DJingood** (`…?apiKey=…&oobCode=…&mode=signIn&lang=fr`, même forme que celle où Firebase ramène : `LIEN_CONNEXION` le
-      reconnaît) ; `retour` seulement parmi `SITES` (djingood.fr, www, coach-bass-swap.vercel.app), sinon l'accueil ;
+      reconnaît) ; `retour` seulement `/` ou `/index.html` de `SITES` (djingood.fr, www, coach-bass-swap.vercel.app),
+      sinon l'accueil de djingood.fr ;
       prénom lu sur le compte (`displayName`), lettres seulement ; Brevo `/v3/smtp/email` (HTML sans image + texte, tag
       `lien-connexion`). Sans `BREVO_CLE` ou `FIREBASE_COMPTE` : 503.
     - Site (`js/compte.js`) : `cptLienBrevo(mail)` appelle `/api/lien` (8 s au plus, `CPT_LIEN_ATTENTE`) ; `cptLienEnvoie`
       repasse par Firebase (`sendSignInLinkToEmail`) pour toute autre réponse (503, 404, 502, réseau, délai), **sauf 429**
-      (« Trop d'essais de suite », pour ne pas contourner la limite). Statistique `lien-envoye` avec `par` : `brevo` ou
+      (code `CPT_LIEN_TROP` = `djingood/trop-de-liens`, pour ne pas contourner la limite) : « Je t'ai déjà envoyé 3 liens
+      dans l'heure : regarde dans ta boîte de réception et dans tes spams » (`cptErreur`), état `trop` de l'écran « lien
+      envoyé » (`ppEnvoyeMaj`), adresse déjà prise (`ppCompteEnvoie`), « Déjà envoyé : regarde tes mails » sur l'accueil du
+      téléphone (`cpEnvoieLien`). Statistique `lien-envoye` avec `par` : `brevo` ou
       `firebase`. Les trois endroits passent par là (compte des Premiers pas, adresse déjà prise, « Recevoir un lien de
       connexion », plus « M'envoyer le lien » de l'accueil du téléphone).
     - `confidentialite.html` (le mail du lien part par Brevo) ; `MAILS.md` (nouvelle section en tête : la marche à suivre de
       Nathan, Brevo authentifié, `BREVO_CLE`, compte de service `djingood-liens` au rôle « Administrateur Firebase
-      Authentication », `FIREBASE_COMPTE`, Redeploy, essai avec `+essai1`). Tests : `tests/lien.spec.js` (20 : le site avec
-      une fausse fonction, la fonction sans réseau). Aperçu du mail : `node captures/lot67/apercu-mail.js` → `captures/lot67/`.
+      Authentication » + « Utilisateur Cloud Datastore », `FIREBASE_COMPTE`, Redeploy, essai avec `+essai1`). Tests :
+      `tests/lien.spec.js` (24 : le site avec une fausse fonction, la fonction sans réseau avec un faux Firestore qui ajoute
+      de façon atomique ; 20 demandes simultanées → 3 mails). Aperçu du mail : `node captures/lot67/apercu-mail.js`.
+    - **Gardien, premier passage : feu rouge** (147 tests des fichiers touchés verts) : la première limite (lue dans les
+      attributs du compte, puis réécrite) ne tenait pas face à des demandes simultanées (simulation : 4 vagues de 20 demandes
+      = 60 mails à la même adresse), et « on n'écrit qu'à une adresse qui a un compte » ne protège pas un inconnu (n'importe
+      qui peut créer un compte avec l'adresse d'un autre). Corrigé par les compteurs Firestore atomiques et le plafond du
+      jour. Remarques reprises : le message du 429 (il disait « quelques minutes » ; il dit maintenant où chercher le mail),
+      le retour limité à l'accueil. Laissées : 404 / 200 disent si une adresse a un compte (Firebase le disait déjà) ; la clé
+      `FIREBASE_COMPTE` ouvre tous les comptes si elle fuit (consignes dans `MAILS.md`).
+    - **Tests : lancer la suite en quatre morceaux** (`DJ_PORT=88xx npx playwright test --shard=N/4`) : en entier elle dépasse
+      10 minutes. Piège vu : un serveur de test resté sur un port sert l'ancien code d'une autre copie (tests du site en
+      échec sans raison) ; changer de port.
     - **Jamais essayé avec le vrai Google ni le vrai Brevo** (les clés sont à Nathan). Après ses réglages : un vrai essai,
       et vérifier que le bouton du mail mène bien à `https://djingood.fr` (Brevo peut réécrire les liens pour compter les
       clics). Ensuite : lot 68, allumer les mails de Vini (`ML_PRET`, reste de `MAILS.md`).
