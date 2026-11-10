@@ -108,6 +108,9 @@ function renderHome(){
   $('homeCta').textContent = st ? st.cta() : 'Faire le défi du jour';
   renderGoal(); homeVini();
   $('homeLien').hidden = !(typeof cpMobile === 'function' && cpMobile());   // lot 48 : sur un téléphone, s'envoyer le lien pour l'ordinateur
+  // lot 65 : avec un compte, le lien part par mail et connecte tout seul sur l'ordinateur
+  $('homeLienTxt').textContent = typeof cpt !== 'undefined' && cpt ? 'Les 7 gestes, avec ta table : ouvre le lien sur ton ordinateur, tu seras déjà connecté.'
+    : 'Les 7 gestes, avec ta table : ouvre djingood.fr sur ton ordinateur.';
   const etapes = parcoursEtapes(parcours), n = etapes.indexOf(cur); $('pathSum').textContent = cur ? `Voir tout mon parcours · étape ${n + 1} sur ${etapes.length}` : 'Voir tout mon parcours · terminé';
   $('homePathName').textContent = PARCOURS[parcours].name;
   const ol = $('homeStages'); ol.innerHTML = '';

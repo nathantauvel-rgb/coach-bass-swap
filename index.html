@@ -48,7 +48,6 @@
       <button type="button" class="pp-back" id="ppBack" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
       <div class="pp-bar pp-onde" id="ppBar" role="progressbar" aria-label="Avancement" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="ppFill"></i></div>
       <button type="button" class="pp-son" id="ppSon" hidden></button>
-      <button type="button" class="pp-skip" id="ppSkip">Passer</button>
     </div>
     <div class="pp-body" id="ppBody">
       <div class="pp-head"><div id="ppVini"></div><p class="pp-bubble" id="ppAsk" aria-live="polite"></p></div>
@@ -186,6 +185,7 @@
       <label class="cptch" id="cptChMail"><span>Ton e-mail</span><input id="cptMail" type="email" autocomplete="email" maxlength="120"></label>
       <label class="cptch" id="cptChMdp"><span id="cptMdpLab">Ton mot de passe</span><span class="cptmdp"><input id="cptMdp" type="password" maxlength="100"><button type="button" id="cptOeil" aria-pressed="false">Voir</button></span></label>
       <div class="cptsousmdp"><p class="cptaide" id="cptAide"></p><button type="button" class="cptlien" id="cptOubli">Mot de passe oublié&nbsp;?</button></div>
+      <button type="button" class="cptlien cptlienmail" id="cptLienBtn" hidden>Pas de mot de passe&nbsp;? Recevoir un lien de connexion</button>
       <label class="cptaccord" id="cptAccord" hidden><input type="checkbox" id="cptMails"><span><b>Vini peut m'écrire</b><small>Des astuces pour progresser et les nouveautés de DJingood. Un mail par semaine au plus.</small></span></label>
       <button type="submit" class="rbtn go cptmain" id="cptGo">Créer mon compte</button>
       <p class="cptbas"><span id="cptBasTxt"></span> <button type="button" class="cptlien" id="cptBascule"></button></p>
@@ -247,6 +247,18 @@
   <h2 id="proMerciTitre">Bienvenue dans <span class="pro-accent">Pro</span> !</h2>
   <p class="pro-sous" id="proMerciTxt">Tous les tutos sont ouverts.</p>
   <button type="button" class="pro-go" id="proMerciGo">Voir les tutos</button>
+</div>
+<div data-nosnippet class="quiz" id="ordi" hidden role="dialog" aria-modal="true" aria-labelledby="ordiTitre">
+  <div class="qcard cptcard ordicard">
+    <button type="button" class="rclose" id="ordiFerme" aria-label="Fermer">×</button>
+    <div class="cpthead">
+      <span class="cptvini" id="ordiVini" aria-hidden="true"></span>
+      <span><span class="lnum">Tu es connecté</span><h2 id="ordiTitre" tabindex="-1">Bienvenue sur ordinateur&nbsp;!</h2></span>
+    </div>
+    <p class="mltexte">Ta progression du téléphone est là. Ici, tu vas brancher ta table.</p>
+    <ol class="ordietapes" id="ordiEtapes"></ol>
+    <div class="cptpas"><button type="button" class="rbtn go cptmain" id="ordiGo">C’est parti</button></div>
+  </div>
 </div>
 <div data-nosnippet class="quiz" id="mlQ" hidden role="dialog" aria-modal="true" aria-labelledby="mlTitre">
   <div class="qcard cptcard">
@@ -318,7 +330,11 @@
         <h1 id="homeTitle">Tu as une table et tu n'y connais rien ?</h1>
         <p class="lead" id="homeLead">En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.</p>
         <button type="button" class="cta" id="homeCta" hidden>Commencer</button>
-        <p class="homelien" id="homeLien" hidden><span>Ta table, ce sera sur ordinateur.</span> <button type="button" class="linkbtn" id="homeLienBtn">M’envoyer le lien</button></p>
+        <div class="homeordi" id="homeLien" hidden>
+          <svg class="homeordi-ic" viewBox="0 0 64 40" aria-hidden="true"><rect class="ho-ecran" x="6" y="3" width="34" height="23" rx="3"/><rect class="ho-ligne" x="11" y="9" width="15" height="3" rx="1.5"/><rect class="ho-gris" x="11" y="15" width="22" height="2.5" rx="1.2"/><path class="ho-pied" d="M2 30h42l-3-3H5z"/><rect class="ho-table" x="44" y="20" width="18" height="12" rx="3"/><circle class="ho-a" cx="49" cy="26" r="3"/><circle class="ho-b" cx="57" cy="26" r="3"/></svg>
+          <span class="homeordi-txt"><b>Sur ton ordinateur</b><small id="homeLienTxt">Les 7 gestes, avec ta table : ouvre djingood.fr sur ton ordinateur.</small></span>
+          <button type="button" class="ghost homeordi-btn" id="homeLienBtn">M’envoyer le lien</button>
+        </div>
         <div class="goalbox" id="homeGoal" hidden>
           <svg class="gring" viewBox="0 0 64 64" aria-hidden="true"><circle class="gtrack" cx="32" cy="32" r="27"/><circle class="gfill" id="goalFill" cx="32" cy="32" r="27"/></svg>
           <div class="gtxt"><strong id="goalTitle"></strong><span id="goalSub"></span></div>

@@ -11,9 +11,14 @@
    mise en avant : la table branchée est reconnue toute seule, sinon on la choisit dans la liste.
    Lot 52 (« Oui, toutes », 28 oct. 2026, d'après la maquette captures/maquette-vini) : c'est la première image du site, elle doit
    vivre. Vini sort de la platine et mixe au premier écran, sa bulle s'écrit pendant qu'il parle, il réagit à chaque réponse et
-   danse au rythme de l'objectif choisi, et la musique monte d'une question à l'autre jusqu'au drop de « Commencer ». */
+   danse au rythme de l'objectif choisi, et la musique monte d'une question à l'autre jusqu'au drop de « Commencer ».
+   Lot 65 « Arrivée et compte » (9 nov. 2026, maquette captures/maquette-onboarding du dossier principal) : les visiteurs viennent
+   de TikTok, souvent sur leur téléphone. Quatre questions (niveau, « Ton oreille » : 8 temps à taper, table, temps par jour),
+   puis « Ton plan est prêt » (le drop), puis **le compte, obligatoire** (choix de l'utilisateur : ni « Plus tard », ni
+   « Passer ») : prénom + e-mail, sans mot de passe ; le mail de Firebase porte le lien qui connecte au même compte sur
+   l'ordinateur. Sur un téléphone, un dernier écran dit où est parti ce lien. Les joueurs déjà venus ne voient rien de neuf. */
 const ACC_KEY = 'coach-accueil';
-const PP_ETAPES = ['salut', 'niveau', 'table', 'objectif'];
+const PP_ETAPES = ['salut', 'niveau', 'oreille', 'table', 'objectif', 'plan', 'compte', 'envoye'];
 // Les trois niveaux : identifiant (= parcours), nom, ce qu'il veut dire, ce que répond Vini
 const PP_NIVEAUX = [
   ['debut', 'Grand débutant', 'Je n’ai jamais mixé', 'Parfait, on part de zéro. Chaque bouton, un par un !'],
@@ -21,6 +26,8 @@ const PP_NIVEAUX = [
   ['confirme', 'DJ confirmé', 'Je mixe déjà, je veux du défi', 'Alors on attaque direct par un vrai set : plusieurs morceaux enchaînés, noté sur 100. Accroche-toi !']
 ];
 const PP_TABLES = [['table', 'J’ai une table', 'Branche-la en USB : je la reconnais toute seule'], ['souris', 'Pas encore de table', 'Je joue à la souris']];
+// Sur un téléphone, on ne branche rien : on demande seulement s'il en a une (lot 65)
+const PP_TABLES_TEL = { table: ['Oui, j’en ai une', 'Tu la brancheras sur ton ordinateur'], souris: ['Pas encore', 'Je commence au doigt, sur mon téléphone'] };
 const PP_MINUTES = [[5, 'Tranquille', 'à ton rythme !'], [10, 'Normal', 'en 2 semaines !'], [15, 'Intensif', 'encore plus vite !']];
 // Ce que fait Vini à chaque réponse (lot 52) : une pose par-dessus son humeur (viniPose, js/vini.js) ; calme : il ne danse pas
 const PP_POSES = {
@@ -34,8 +41,8 @@ const PP_POSES = {
   connue: { bras: 'pouce', yeux: 'clin' },
   branchee: { fx: 'etoiles' }
 };
-// La tête de lecture de la barre d'avancement, en % : le drop de la forme d'onde est au bout, « Commencer » l'y amène
-const PP_POS = [5, 30, 52, 74];
+// La tête de lecture de la barre d'avancement, en % : le drop de la forme d'onde est au bout, « Voir mon plan » l'y amène
+const PP_POS = { salut: 5, niveau: 24, oreille: 40, table: 56, objectif: 72, plan: 100, compte: 100, envoye: 100 };
 // Les tables que le site connaît, rangées par marque, toutes sur un pied d'égalité (la FLX4 avec les autres Pioneer)
 const ppMarque = nom => nom.split(' ')[0];
 const PP_LISTE = [{ id: 'flx4', nom: 'Pioneer DDJ-FLX4' }].concat(MODELES.map(m => ({ id: m.id, nom: m.nom })))
@@ -53,7 +60,12 @@ const PP_IC = {
   table: ppTrait('<rect x="2" y="8" width="28" height="16" rx="4"/><g class="pp-ic-rot" style="transform-origin:9px 16px"><circle cx="9" cy="16" r="4"/><path d="M9 16v-3.2"/></g><g class="pp-ic-rot" style="transform-origin:23px 16px"><circle cx="23" cy="16" r="4"/><path d="M23 16v-3.2"/></g><path d="M15 12v8M17 12v8"/>'),
   souris: ppTrait('<rect x="9" y="3" width="14" height="26" rx="7"/><path d="M9 11h14"/><path class="pp-ic-molette" d="M16 5v3.5"/>'),
   coche: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
-  plan: ppTrait('<circle cx="16" cy="16" r="13"/>' + [[10, 7], [15, 11], [20, 5], [25, 9]].map(([x, h], i) => `<path class="pp-pl" style="--i:${i}" d="M${x} 21v-${h}" stroke-width="2.6"/>`).join(''))
+  plan: ppTrait('<circle cx="16" cy="16" r="13"/>' + [[10, 7], [15, 11], [20, 5], [25, 9]].map(([x, h], i) => `<path class="pp-pl" style="--i:${i}" d="M${x} 21v-${h}" stroke-width="2.6"/>`).join('')),
+  // lot 65 : le plan, le lien envoyé
+  tel: ppTrait('<rect x="9" y="3" width="14" height="26" rx="3.5"/><path d="M14.5 24.5h3"/>'),
+  oreille: ppTrait('<path d="M10 13a6 6 0 1 1 12 0c0 4-4 5-4 9a3.5 3.5 0 0 1-7 0"/><path d="M14 13a2 2 0 1 1 4 0"/><path d="M25 9q2.5 4 0 8M27.5 6q4.5 7 0 14"/>'),
+  etoile: ppTrait('<path d="m16 4 3.6 7.4 8.1 1.2-5.9 5.7 1.4 8.1L16 22.6l-7.2 3.8 1.4-8.1-5.9-5.7 8.1-1.2z"/>'),
+  mail: ppTrait('<rect x="4" y="7" width="24" height="18" rx="4"/><path d="m5.5 9.5 10.5 8 10.5-8"/>')
 };
 const ppBarres = n => `<svg viewBox="0 0 28 24">${[[2, 14, 10], [11.5, 7, 17], [21, 0, 24]].map(([x, y, h], k) => `<rect class="${k <= n ? 'pp-b-on' : 'pp-b-off'}" style="--i:${k}" x="${x}" y="${y}" width="5" height="${h}" rx="2.5"/>`).join('')}</svg>`;
 // L'objectif du jour : un petit disque qui tourne plus ou moins vite
@@ -70,21 +82,30 @@ function ppMiniTable(){
 <path class="ps-fente" d="M54 15V35M66 15V35"/><rect class="ps-cap" x="50" y="18" width="8" height="4" rx="1"/><rect class="ps-cap" x="62" y="18" width="8" height="4" rx="1"/>${pads}</svg>`;
 }
 
-// réponses déjà données : un objet { niveau, table, modele, min, fini } ou { passe, fini } ; tout le reste est ignoré.
+// réponses déjà données : un objet { niveau, table, modele, min, oreille, mur, fini } ou { passe, fini } ; tout le reste est ignoré.
 // Avant le lot 37, `niveau` était un numéro de 0 à 3 (0 = Grand débutant, 1 et 2 = Apprenti DJ, 3 = DJ confirmé)
-// et `table` valait 'flx4', 'autre' ou 'souris'.
+// et `table` valait 'flx4', 'autre' ou 'souris'. Lot 65 : `oreille` = « boum » tapés pile sur 8 (null : passé) ; `mur` = le
+// plan est fait mais le compte pas encore créé (au rechargement, les questions rouvrent sur le plan).
 let accueil = null; try { accueil = JSON.parse(localStorage.getItem(ACC_KEY) || 'null'); } catch (e) {}
 if (!accueil || typeof accueil !== 'object' || Array.isArray(accueil) || !(accueil.passe === true || typeof accueil.fini === 'string')) accueil = null;
-else { const v = accueil.niveau, t = accueil.table, m = accueil.modele;
+else { const v = accueil.niveau, t = accueil.table, m = accueil.modele, o = accueil.oreille;
   accueil = { niveau: PP_NIVEAUX.some(x => x[0] === v) ? v : [0, 1, 2, 3].includes(v) ? ['debut', 'apprenti', 'apprenti', 'confirme'][v] : null,
     table: PP_TABLES.some(x => x[0] === t) ? t : t === 'flx4' || t === 'autre' ? 'table' : null,
     modele: typeof m === 'string' && (m === 'autre' || m === 'inconnue' || !!ppNomDe(m)) ? m : t === 'flx4' ? 'flx4' : '',
-    min: PP_MINUTES.some(x => x[0] === accueil.min) ? accueil.min : null, passe: accueil.passe === true, fini: typeof accueil.fini === 'string' ? accueil.fini.slice(0, 10) : '' }; }
-const ppVide = () => ({ niveau: null, table: null, modele: '', min: null, vue: false });   // vue : la table a été reconnue au branchement
+    min: PP_MINUTES.some(x => x[0] === accueil.min) ? accueil.min : null, passe: accueil.passe === true, fini: typeof accueil.fini === 'string' ? accueil.fini.slice(0, 10) : '',
+    oreille: Number.isInteger(o) && o >= 0 && o <= 8 ? o : null, mur: accueil.mur === true }; }
+// vue : la table a été reconnue au branchement ; oreille : le score du test (null : pas fait), oreillePasse : passé exprès
+const ppVide = () => ({ niveau: null, table: null, modele: '', min: null, vue: false, oreille: null, oreillePasse: false });
 // entree : l'entrée du premier écran a déjà été jouée ; attente : la bulle attend que Vini ait atterri ; vol : son saut vers le coin ;
 // vh : Vini sur la table du premier écran ; sort : on quitte le premier écran ; fini : « Commencer » a été cliqué
-const pp = { on: false, i: 0, rep: ppVide(), entree: false, attente: false, vol: null, vh: null, sort: false, fini: false };
-const ppAOuvrir = () => !parcours && !accueil;
+// mail : l'adresse du compte créé ici ; lien : 'envoi', 'ok' ou 'rate' (le lien pour l'ordinateur) ; envoi : création en cours ;
+// rate : la création a échoué faute de réseau (on peut alors continuer sans compte, pour ne jamais rester coincé)
+const pp = { on: false, i: 0, rep: ppVide(), entree: false, attente: false, vol: null, vh: null, sort: false, fini: false, mail: '', lien: '', envoi: false, rate: false, prenom: '', mailTape: '' };
+const PP_I = id => PP_ETAPES.indexOf(id);
+// Le compte manque encore : Firebase est réglé, personne n'est connecté ici, ni ne l'a été sur ce navigateur
+const ppCompteManque = () => typeof cptOn === 'function' && cptOn() && !(typeof cpt !== 'undefined' && cpt) && !(typeof cptSauve !== 'undefined' && cptSauve);
+// Un nouveau venu, ou quelqu'un qui a fait le quiz sans créer son compte (lot 65 : le compte est obligatoire)
+const ppAOuvrir = () => !parcours && (!accueil || (accueil.mur && ppCompteManque()));
 const ppSave = o => { accueil = o; try { localStorage.setItem(ACC_KEY, JSON.stringify(o)); } catch (e) {} };
 // Les minuteurs d'un écran, tous annulés quand l'écran change ou que les questions se ferment
 let ppMinuteurs = [];
@@ -96,47 +117,50 @@ function ppAnnule(){
 
 function openPremiers(){
   if (pp.on) return;
-  Object.assign(pp, { on: true, i: 0, rep: ppVide(), entree: false, sort: false, fini: false });
+  Object.assign(pp, { on: true, i: 0, rep: ppVide(), entree: false, sort: false, fini: false, mail: '', lien: '', envoi: false, rate: false, prenom: '', mailTape: '' });
   if (!$('ppVini').firstChild) viniMettre($('ppVini'));
   if (!$('ppFill').firstChild) ppOndeInit();
   $('pp').hidden = false; document.documentElement.classList.add('pp-open');
+  // le quiz est déjà fait, le compte manque (rechargement, ou retour plus tard) : on reprend sur le plan
+  if (accueil && accueil.mur){ Object.assign(pp.rep, { niveau: accueil.niveau, table: accueil.table, modele: accueil.modele, min: accueil.min, oreille: accueil.oreille });
+    pp.entree = true; pp.i = PP_I('plan'); }
   ppRender(0);
 }
 function ppClose(){
-  ppAnnule(); ppTapeFin(); ppMusiqueArret();
+  ppAnnule(); ppTapeFin(); ppOrStop(); ppMusiqueArret();
   pp.on = false; $('pp').hidden = true; document.documentElement.classList.remove('pp-open');
   $('ppScene').textContent = ''; pp.vh = null;
   ppSon.pret = null;   // le morceau décodé (23 Mo) est rendu à la mémoire (gardien du lot 52)
 }
-// « Commencer » : les réponses sont gardées tout de suite. Vini se ramasse, la musique s'ouvre jusqu'au temps suivant, et c'est
-// le drop (lot 52) : il saute, les notes et les vinyles volent. Puis la première étape du parcours qui va avec le niveau : le niveau 1
-// (et le guide) pour un Grand débutant, le Mode Expert pour un Apprenti DJ, le set (chapitre 7) pour un DJ confirmé
-function ppFin(){
+// « Voir mon plan » : les réponses sont gardées tout de suite (avec `mur` tant que le compte manque). Vini se ramasse, la musique
+// s'ouvre jusqu'au temps suivant, et c'est le drop (lot 52) : il saute, les notes et les vinyles volent, et le plan apparaît.
+function ppVersPlan(){
   const r = pp.rep, v = $('ppVini');
-  pp.fini = true; $('ppGo').disabled = true;
-  ppSave({ niveau: r.niveau, table: r.table, modele: r.modele, min: r.min, fini: dayKey() });
+  pp.sort = true; $('ppGo').disabled = true;
+  ppSave({ niveau: r.niveau, table: r.table, modele: r.modele, min: r.min, oreille: r.oreille, mur: ppCompteManque(), fini: dayKey() });
   stat1('premiers-pas-fin', { parcours: r.niveau, table: r.table === 'table' ? 'oui' : 'non' });
   goalSet(r.min);
   ppAnnule(); ppAvance(100);
   const attente = ppMusiqueDrop();
-  if (REDUCED) return ppFinSuite();
+  const suite = () => { pp.sort = false; pp.i = PP_I('plan'); ppRender(1); stat1('plan-vu'); };
+  if (REDUCED) return suite();
   viniPose(v, { yeux: 'fermes' }); viniHumeur(v, 'calme'); v.classList.add('pp-ramasse');
   ppPlusTard(attente, () => {
     v.classList.remove('pp-ramasse'); viniPose(v, {}); viniHumeur(v, 'parfait'); v._pose = null;
-    ppDrop(v); if (ppBulle('C’est parti !')) ppTaper(v);
-    ppPlusTard(1100, ppFinSuite);
+    ppDrop(v); suite();
   });
 }
-function ppFinSuite(){
-  const r = pp.rep;
+// La fin : le parcours qui va avec le niveau, puis sa première étape : le niveau 1 (et le guide) pour un Grand débutant, le Mode
+// Expert pour un Apprenti DJ, le set (chapitre 7) pour un DJ confirmé ; sur un téléphone, « Comprendre » passe devant (lot 48)
+function ppTermine(){
+  const r = pp.rep; if (pp.fini) return; pp.fini = true;
+  if (accueil && accueil.mur) ppSave(Object.assign({}, accueil, { mur: false }));
   ppMusiqueArret(1.2); ppClose(); setParcours(r.niveau);
-  // sur un téléphone, « Comprendre » passe devant (lot 48) : nextStage la donne en premier
   if (r.niveau === 'debut' && !cpEtape()) goLesson(1, 0); else STAGES[nextStage() || PARCOURS[r.niveau].stages[0]].go();
 }
-// pendant le drop, les réponses sont déjà gardées : « Passer » ne doit plus les remplacer (gardien du lot 52)
-function ppPasser(){ if (pp.fini) return; ppSave({ passe: true, fini: dayKey() }); stat1('premiers-pas-passes'); ppClose(); renderHome(); }
 const ppPret = () => { const r = pp.rep, id = PP_ETAPES[pp.i];
-  return id === 'salut' || (id === 'niveau' && r.niveau !== null) || (id === 'table' && r.table !== null) || (id === 'objectif' && r.min !== null); };
+  return id === 'salut' || id === 'plan' || id === 'envoye' || (id === 'compte' && !pp.envoi) || (id === 'niveau' && r.niveau !== null)
+    || (id === 'oreille' && (r.oreille !== null || r.oreillePasse) && !(ppOr && !ppOr.fin)) || (id === 'table' && r.table !== null) || (id === 'objectif' && r.min !== null); };
 /* L'écran de la table. Une table branchée est reconnue toute seule (ppMidi est appelé par initMidi à chaque branchement) ;
    sinon « J'ai une table » ouvre la liste par marque, qui sert seulement à savoir si DJingood la connaît déjà. */
 function ppTableOpts(add){
@@ -145,9 +169,10 @@ function ppTableOpts(add){
     add({ v: 'table', txt: b.nom, sub: b.id === 'inconnue' ? 'Branchée · je ne la connais pas encore' : 'Branchée et reconnue', ic: ppMiniTable(), big: true, pick: () => {} });
     return; }
   if (r.vue){ r.vue = false; r.modele = ''; }   // elle vient d'être débranchée
-  PP_TABLES.forEach(([v, txt, sub]) => add({ v, txt, sub, ic: PP_IC[v], pick: () => { r.table = v; if (v === 'souris') r.modele = ''; } }));
+  const tel = cpMobile();
+  PP_TABLES.forEach(([v, txt, sub]) => add({ v, txt: tel ? PP_TABLES_TEL[v][0] : txt, sub: tel ? PP_TABLES_TEL[v][1] : sub, ic: PP_IC[v], pick: () => { r.table = v; if (v === 'souris') r.modele = ''; } }));
   const box = document.createElement('label'), t = document.createElement('span'), sel = document.createElement('select');
-  box.className = 'pp-liste'; box.id = 'ppListe'; t.textContent = 'Laquelle ? (si tu ne peux pas la brancher maintenant)'; sel.id = 'ppModele';
+  box.className = 'pp-liste'; box.id = 'ppListe'; t.textContent = tel ? 'Laquelle ?' : 'Laquelle ? (si tu ne peux pas la brancher maintenant)'; sel.id = 'ppModele';
   const vide = document.createElement('option'); vide.value = ''; vide.textContent = 'Choisis ta table'; sel.appendChild(vide);
   let grp = null;
   PP_LISTE.forEach(x => { if (!grp || grp.label !== ppMarque(x.nom)){ grp = document.createElement('optgroup'); grp.label = ppMarque(x.nom); sel.appendChild(grp); }
@@ -156,6 +181,7 @@ function ppTableOpts(add){
   sel.value = r.modele || '';
   sel.addEventListener('change', () => { r.modele = sel.value; ppMaj(); ppSautille(); });
   box.append(t, sel); $('ppOpts').appendChild(box);
+  if (tel) return;   // sur un téléphone, rien à brancher : l'aide de la table attendra l'ordinateur (lot 65)
   // Lot 45 : la table est branchée mais le navigateur ne la voit pas, ou l'accès a été refusé (midi.js)
   const d = document.createElement('details'), sm = document.createElement('summary'), body = document.createElement('div');
   d.className = 'pp-aide'; d.id = 'ppAide'; body.className = 'taide-in'; midiAideRemplir(body);
@@ -170,6 +196,9 @@ function ppTableDit(){
   const r = pp.rep, b = ppBranchee();
   if (b) return b.id === 'inconnue' ? `Je vois ta table, mais je ne la connais pas encore : je te montrerai comment la régler, ça prend deux minutes.`
     : `Je la reconnais : ta ${b.nom} est prête à jouer !`;
+  // sur un téléphone (lot 65) : rien à brancher ici, la table ira sur l'ordinateur
+  if (cpMobile()) return r.table === 'table' ? (r.modele && r.modele !== 'autre' ? `La ${ppNomDe(r.modele)}, super ! On la branchera sur ton ordinateur.` : 'Super ! On la branchera sur ton ordinateur, je t’enverrai le lien.')
+    : r.table === 'souris' ? 'Pas de souci : on commence sur ton téléphone, au doigt.' : 'Tu as une table DJ ?';
   if (r.table === 'souris') return 'Aucun problème : tout se joue à la souris. Tu brancheras une table plus tard.';
   // ce que le navigateur a répondu (lot 45) : il ne peut pas voir de table, il attend qu'on l'autorise, ou on l'a refusé
   if (midiEtat === 'absent') return midiIos() ? 'Sur iPhone et iPad, je ne peux pas parler à une table. Continue à la souris, et ouvre DJingood sur un ordinateur pour brancher ta table.'
@@ -185,6 +214,7 @@ function ppTableDit(){
 // (le navigateur prévient plusieurs fois pour un seul branchement : on ne refait l'écran que si la table a changé)
 let ppVu = '';
 function ppMidi(){ const b = ppBranchee(), k = b ? b.nom : '';
+  if (typeof ordiMaj === 'function') ordiMaj();   // la carte « Bienvenue sur ordinateur » suit la table (lot 65)
   if (k === ppVu) return; ppVu = k;
   if (!pp.on || PP_ETAPES[pp.i] !== 'table' || pp.fini) return;
   ppRender(0);
@@ -210,10 +240,11 @@ function ppOption(o, k){
 // `vol` : la place de Vini sur la table du premier écran, quand il en vient (il saute jusqu'au coin)
 function ppRender(sens, vol){
   const id = PP_ETAPES[pp.i], r = pp.rep, body = $('ppBody'), box = $('ppOpts');
-  ppAnnule(); ppTapeFin();
-  $('ppBack').hidden = pp.i === 0;
+  ppAnnule(); ppTapeFin(); if (id !== 'oreille') ppOrStop();
+  $('ppBack').hidden = pp.i === 0 || id === 'envoye';
   $('ppSon').hidden = pp.i === 0;
-  ppAvance(PP_POS[pp.i]); ppMusiqueEtape();
+  ppAvance(PP_POS[id]); ppMusiqueEtape();
+  body.classList.toggle('pp-fin', id === 'plan' || id === 'compte' || id === 'envoye');   // le plan et le compte, plus longs : en haut de l'écran
   body.classList.remove('pp-intro', 'pp-derriere', 'pp-salue', 'pp-mixe', 'pp-sort');
   body.classList.toggle('pp-hero', id === 'salut');
   $('ppAsk').classList.remove('pp-cache', 'pp-pop');
@@ -226,13 +257,28 @@ function ppRender(sens, vol){
   let k = 0;
   const add = o => box.appendChild(ppOption(o, k++));
   if (id === 'niveau') PP_NIVEAUX.forEach(([v, txt, sub], n) => add({ v, txt, sub, ic: ppBarres(n), pick: () => { r.niveau = v; } }));
+  if (id === 'oreille') ppOreilleOpts();
   if (id === 'table') ppTableOpts(add);
   if (id === 'objectif') PP_MINUTES.forEach(([v, tag]) => add({ v, txt: v + ' min par jour', tag, ic: ppVinyle(v), pick: () => { r.min = v; ppMusiqueVitesse(v); } }));
-  $('ppGo').textContent = id === 'salut' ? 'C’est parti' : id === 'objectif' ? 'Commencer' : 'Continuer';
+  if (id === 'plan') ppPlanOpts();
+  if (id === 'compte') ppCompteOpts();
+  if (id === 'envoye') ppEnvoyeOpts();
   ppMaj();
   if (vol && !REDUCED && id !== 'salut') ppVol(vol);
   else if (sens && id !== 'salut') ppSautille();
-  const first = box.querySelector('.pp-opt'); (first || $('ppCol')).focus({ preventScroll: true });
+  // au compte, sur ordinateur, le curseur va dans le prénom (sur un téléphone, le clavier cacherait le plan d'un coup)
+  const first = box.querySelector('.pp-opt') || (id === 'compte' && !cpMobile() ? $('ppPrenom') : null) || (id === 'oreille' ? $('ppRond') : null);
+  (first || $('ppCol')).focus({ preventScroll: true });
+}
+// Le texte du bouton du bas, selon l'écran
+function ppGoTexte(){
+  const id = PP_ETAPES[pp.i];
+  if (id === 'salut') return 'C’est parti';
+  if (id === 'objectif') return 'Voir mon plan';
+  if (id === 'plan') return ppCompteManque() ? 'Garder mon plan' : 'Commencer';
+  if (id === 'compte') return pp.envoi ? 'Création de ton compte…' : 'Garder mon plan';
+  if (id === 'envoye') return cpEtape() && STAGES.comprendre && !STAGES.comprendre.done() ? 'Commencer la leçon 1' : 'C’est parti';
+  return 'Continuer';
 }
 // Après un choix : les cartes cochées, ce que dit Vini et ce qu'il fait, la petite note, le bouton du bas
 function ppMaj(){
@@ -241,9 +287,13 @@ function ppMaj(){
   $('ppOpts').querySelectorAll('.pp-opt').forEach(b => b.setAttribute('aria-pressed', String(sel !== null && sel !== undefined && String(sel) === b.dataset.v)));
   const liste = $('ppListe'); if (liste) liste.hidden = r.table !== 'table';
   const aide = $('ppAide'); if (aide) aide.hidden = !ppAideVue(r);
-  const texte = id === 'salut' ? 'Salut, moi c’est Vini ! Je vais t’apprendre à mixer. D’abord, trois questions pour préparer ton parcours.'
+  const texte = id === 'salut' ? 'Salut, moi c’est Vini ! Je vais t’apprendre à mixer. En une minute, je te fais ton plan.'
     : id === 'niveau' ? (r.niveau === null ? 'Tu en es où avec le mix ?' : PP_NIVEAUX.find(x => x[0] === r.niveau)[3])
+    : id === 'oreille' ? ppOrTexte()
     : id === 'table' ? ppTableDit()
+    : id === 'plan' ? 'Ton plan est prêt !'
+    : id === 'compte' ? (cpMobile() ? 'Crée ton compte gratuit pour garder ton plan. Je t’envoie aussi un lien pour l’ouvrir sur ton ordinateur.' : 'Crée ton compte gratuit pour garder ton plan et ta progression.')
+    : id === 'envoye' ? `C’est bon${ppPrenomVu() ? ', ' + ppPrenomVu() : ''} ! Ton plan est gardé sur ton compte.`
     : 'Combien de temps par jour pour t’entraîner ?';
   if (ppBulle(texte) && !pp.attente) ppTaper(id === 'salut' ? pp.vh : $('ppVini'));
   if (!pp.attente) ppPose();
@@ -251,14 +301,21 @@ function ppMaj(){
   note.hidden = !(id === 'objectif' && m);
   if (!note.hidden){ note.innerHTML = PP_IC.plan; const t = document.createElement('span'), b = document.createElement('b');
     t.textContent = `Avec ${m[0]} min par jour, ta première vraie transition propre `; b.textContent = m[2]; t.appendChild(b); note.appendChild(t); }
+  $('ppGo').textContent = ppGoTexte();
   $('ppGo').disabled = !ppPret() || pp.fini;
 }
 $('ppGo').addEventListener('click', () => {
   if (!ppPret() || pp.fini || pp.sort) return;
-  if (pp.i === 0) ppQuitteHero(); else if (pp.i === PP_ETAPES.length - 1) ppFin(); else { pp.i++; ppRender(1); }
+  const id = PP_ETAPES[pp.i];
+  if (id === 'salut') ppQuitteHero();
+  else if (id === 'objectif') ppVersPlan();
+  else if (id === 'plan'){ if (ppCompteManque()){ pp.i = PP_I('compte'); ppRender(1); stat1('mur-vu'); } else ppTermine(); }
+  else if (id === 'compte') ppCompteEnvoie();
+  else if (id === 'envoye') ppTermine();
+  else { pp.i++; ppRender(1); }
 });
-$('ppBack').addEventListener('click', () => { if (pp.i > 0 && !pp.fini && !pp.sort){ pp.i--; ppRender(-1); } });
-$('ppSkip').addEventListener('click', ppPasser);
+// pas de retour depuis « lien envoyé » : le compte existe déjà
+$('ppBack').addEventListener('click', () => { if (pp.i > 0 && PP_ETAPES[pp.i] !== 'envoye' && !pp.fini && !pp.sort && !pp.envoi){ ppOrStop(); pp.i--; ppRender(-1); } });
 // Pour le rapport des testeurs : ce que la personne a répondu en arrivant
 function ppResume(){
   if (!accueil) return 'pas encore faits';
@@ -266,7 +323,229 @@ function ppResume(){
   const niv = PP_NIVEAUX.find(x => x[0] === accueil.niveau);
   const tab = accueil.table === 'souris' ? 'pas encore de table' : accueil.table !== 'table' ? ''
     : 'une table' + (accueil.modele === 'inconnue' ? ' (branchée, pas dans la liste)' : accueil.modele === 'autre' ? ' (pas dans la liste)' : accueil.modele ? ' : ' + ppNomDe(accueil.modele) : '');
-  return [niv ? niv[1] : '', tab, accueil.min ? accueil.min + ' min par jour' : ''].filter(Boolean).join(' · ');
+  return [niv ? niv[1] : '', tab, accueil.min ? accueil.min + ' min par jour' : '', accueil.oreille !== null ? 'oreille ' + accueil.oreille + '/8' : '',
+    accueil.mur ? 'compte pas encore créé' : ''].filter(Boolean).join(' · ');
+}
+
+/* ---------- « Ton oreille » (lot 65) : 4 « boum » pour se caler, puis 8 à taper ----------
+   Le son et l'instant entendu sont ceux de la leçon 1 de « Comprendre » (cpJoue, cpEntendu, chargés après ce fichier).
+   Pile : à 110 ms près, presque : à 200 ms près, comme dans la leçon. La musique des questions se tait pendant le test. */
+const PP_OR_PILE = .11, PP_OR_PRESQUE = .2;
+let ppOr = null;   // le test en cours : { t0, per, coups (écart en s pour chacun des 8 temps), fin }
+const ppOrPhrase = n => n >= 6 ? `${n} sur 8 pile : tu as le rythme !` : n >= 3 ? `${n} sur 8 pile : c’est un bon début.` : `${n} sur 8 pile : on va l’entraîner ensemble.`;
+function ppOrTexte(){
+  const n = pp.rep.oreille;
+  if (ppOr && !ppOr.fin) return 'Écoute les 4 premiers, puis tape sur chaque « boum » !';
+  if (n === null) return 'Ton oreille ! Touche le rond : je lance 4 « boum », puis tape en rythme sur les 8 suivants.';
+  return n >= 6 ? 'Tu as l’oreille, bravo ! Tu peux réessayer, ou continuer.' : 'Pas de souci : c’est exactement ce qu’on va travailler ensemble.';
+}
+function ppOreilleOpts(){
+  const r = pp.rep, w = document.createElement('div'); w.className = 'pp-oreille';
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-rond'; b.id = 'ppRond';
+  b.setAttribute('aria-label', 'Taper sur le temps (ou la barre d’espace)'); b.textContent = r.oreille !== null ? String(r.oreille) : '▶';
+  b.addEventListener('pointerdown', e => { e.preventDefault(); ppOrTouche(); });
+  b.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); ppOrTouche(); } });   // Espace : écouté sur toute la fenêtre
+  const pts = document.createElement('div'); pts.className = 'pp-points'; pts.id = 'ppPoints'; pts.setAttribute('aria-hidden', 'true');
+  for (let k = 0; k < 8; k++) pts.appendChild(document.createElement('i'));
+  const res = document.createElement('p'); res.className = 'pp-res'; res.id = 'ppOrRes'; res.setAttribute('role', 'status');
+  res.textContent = r.oreille !== null ? ppOrPhrase(r.oreille) : ''; res.hidden = r.oreille === null;
+  const passe = document.createElement('button'); passe.type = 'button'; passe.className = 'pp-passe'; passe.id = 'ppOrPasse'; passe.textContent = 'Passer cette question';
+  passe.addEventListener('click', () => { if (pp.fini || pp.sort) return; ppOrStop(); r.oreille = null; r.oreillePasse = true; pp.i++; ppRender(1); });
+  w.append(b, pts, res, passe); $('ppOpts').appendChild(w);
+}
+function ppOrTouche(){ if (!pp.on || PP_ETAPES[pp.i] !== 'oreille' || pp.fini || pp.sort) return; if (ppOr && !ppOr.fin) ppOrFrappe(cpEntendu()); else ppOrLance(); }
+function ppOrLance(){
+  ppOrStop();
+  const e = cpJoue({ n: 12, kick: true, bpm: 124 }, .3);
+  ppOr = { t0: e.t0, per: e.per, coups: [], fin: false };
+  ppMusiqueBaisse(true); pp.rep.oreille = null; pp.rep.oreillePasse = false;
+  $('ppPoints').querySelectorAll('i').forEach(i => { i.className = ''; });
+  $('ppOrRes').hidden = true; $('ppOrPasse').hidden = true;
+  ppMaj();
+  const dans = s => Math.max(0, (s - ac.currentTime) * 1000);
+  for (let k = 0; k < 12; k++) ppPlusTard(dans(ppOr.t0 + k * ppOr.per), () => ppOrBoum(k));
+  ppPlusTard(dans(ppOr.t0 + 12 * ppOr.per + .25), ppOrFin);
+}
+// Le rond bat la mesure : 1, 2, 3, 4 pour se caler, puis un point à chaque temps à taper
+function ppOrBoum(k){
+  const r = $('ppRond'); if (!r || !ppOr) return;
+  r.textContent = k < 4 ? String(k + 1) : '●'; r.classList.toggle('a-toi', k >= 4);
+  r.classList.remove('boum'); void r.offsetWidth; r.classList.add('boum');
+}
+// Une frappe à l'instant t (entendu) : le temps le plus proche, et l'écart. Les tests l'appellent avec l'instant voulu.
+function ppOrFrappe(t){
+  if (!ppOr || ppOr.fin) return;
+  const k = Math.round((t - ppOr.t0) / ppOr.per), r = $('ppRond');
+  if (r){ r.classList.add('tape'); clearTimeout(r._tape); r._tape = setTimeout(() => r.classList.remove('tape'), 140); }
+  if (k < 4 || k > 11 || ppOr.coups[k - 4] != null) return;
+  const e = Math.abs(t - (ppOr.t0 + k * ppOr.per)); ppOr.coups[k - 4] = e;
+  const p = $('ppPoints').children[k - 4]; if (p) p.className = e < PP_OR_PILE ? 'pile' : e < PP_OR_PRESQUE ? 'presque' : 'rate';
+}
+function ppOrFin(){
+  if (!ppOr) return;
+  ppOr.fin = true;
+  const n = ppOr.coups.filter(e => e != null && e < PP_OR_PILE).length;
+  pp.rep.oreille = n;
+  $('ppPoints').querySelectorAll('i').forEach(i => { if (!i.className) i.className = 'rate'; });
+  const r = $('ppRond'); r.textContent = String(n); r.classList.remove('a-toi');
+  $('ppOrRes').textContent = ppOrPhrase(n); $('ppOrRes').hidden = false; $('ppOrPasse').hidden = false;
+  ppMusiqueBaisse(false); stat1('quiz-oreille', { pile: n });
+  if (n >= 6){ viniJoie($('ppVini')); son('reussi'); } else ppSautille();
+  ppMaj();
+}
+function ppOrStop(){ if (ppOr && !ppOr.fin){ try { cpStop(); } catch (e) {} ppMusiqueBaisse(false); } ppOr = null; }
+// La barre d'espace tape aussi (sur ordinateur) ; jamais pendant qu'on écrit dans un champ
+window.addEventListener('keydown', e => {
+  if (!pp.on || PP_ETAPES[pp.i] !== 'oreille' || e.code !== 'Space' || /INPUT|SELECT|TEXTAREA/.test((e.target && e.target.tagName) || '')) return;
+  e.preventDefault(); e.stopPropagation(); if (!e.repeat) ppOrTouche();
+}, true);
+
+/* ---------- « Ton plan est prêt » (lot 65) ----------
+   Trois étapes selon le niveau et l'appareil (sur un téléphone, on commence par ce qui se fait au doigt), le score de l'oreille,
+   et un seul bouton : « Garder mon plan ». */
+const PP_PLAN = {
+  debut: tel => [
+    tel ? ['tel', 'Aujourd’hui · sur ton téléphone', 'Comprendre la musique', 'Le temps, la phrase, les basses : 7 leçons de 2 minutes, au doigt.']
+        : ['table', 'Aujourd’hui · avec ta table', 'Les 7 gestes du DJ', 'Lancer, fader, couper les basses, filtre, écho… en jouant.'],
+    tel ? ['table', 'Sur ton ordinateur · avec ta table', 'Les 7 gestes du DJ', 'Lancer, fader, couper les basses, filtre, écho… en jouant.']
+        : ['oreille', 'Ensuite', 'À l’oreille', 'Les mêmes gestes, sans compte à rebours.'],
+    ['etoile', '', 'Ta première vraie transition', 'Propre, en rythme, sur de la vraie musique.']],
+  apprenti: tel => [
+    tel ? ['tel', 'Aujourd’hui · sur ton téléphone', 'Révise les bases', '7 leçons de 2 minutes, au doigt : va vite si tu connais.']
+        : ['table', 'Aujourd’hui · avec ta table', 'Le Mode Expert', 'Les 7 gestes, notés à la milliseconde.'],
+    tel ? ['table', 'Sur ton ordinateur · avec ta table', 'Le Mode Expert', 'Les 7 gestes, notés à la milliseconde.']
+        : ['oreille', 'Ensuite', 'Les combos et le calage', 'Plusieurs gestes d’affilée, et deux tempos à caler.'],
+    ['etoile', '', 'Des transitions vraiment propres', 'Jusqu’à ton premier set, noté sur 100.']],
+  confirme: tel => [
+    tel ? ['tel', 'Aujourd’hui · sur ton téléphone', 'Révise les bases', '7 leçons de 2 minutes, au doigt : va vite si tu connais.']
+        : ['table', 'Aujourd’hui · avec ta table', 'Le set', 'Plusieurs morceaux enchaînés, noté sur 100.'],
+    tel ? ['table', 'Sur ton ordinateur · avec ta table', 'Le set', 'Plusieurs morceaux enchaînés, noté sur 100.']
+        : ['oreille', 'Ensuite', 'Le calage à l’oreille', 'Sans BPM affiché, comme en club.'],
+    ['etoile', '', 'Un set à 100 sur 100', 'Hot cues, boucles, et plus aucune aide.']]
+};
+function ppPlanOpts(){
+  const r = pp.rep, box = $('ppOpts'), niv = PP_NIVEAUX.find(x => x[0] === r.niveau) || PP_NIVEAUX[0];
+  const nomTable = r.table !== 'table' ? 'Pas encore de table' : r.modele && r.modele !== 'autre' && r.modele !== 'inconnue' ? ppNomDe(r.modele) : 'Ta table';
+  const res = document.createElement('div'); res.className = 'pp-resume';
+  [niv[1], nomTable, r.min ? r.min + ' min par jour' : ''].filter(Boolean).forEach(t => { const s = document.createElement('span'); s.textContent = t; res.appendChild(s); });
+  const quand = r.min === 5 ? 'À ton rythme' : r.min === 15 ? 'En moins de 2 semaines' : 'Dans 2 semaines';
+  const ol = document.createElement('ol'); ol.className = 'pp-frise';
+  (PP_PLAN[r.niveau] || PP_PLAN.debut)(cpMobile()).forEach(([ic, q, titre, txt], i) => {
+    const li = document.createElement('li'); li.className = i === 0 ? 'pp-maint' : '';
+    li.innerHTML = `<span class="pp-pt" aria-hidden="true">${PP_IC[ic]}</span><span><span class="pp-quand"></span><b></b><small></small></span>`;
+    li.querySelector('.pp-quand').textContent = q || quand; li.querySelector('b').textContent = titre; li.querySelector('small').textContent = txt;
+    ol.appendChild(li);
+  });
+  box.append(res, ol);
+  if (r.oreille !== null){
+    const s = document.createElement('p'); s.className = 'pp-score';
+    s.innerHTML = `<span class="pp-ic" aria-hidden="true">${PP_IC.coche}</span><span></span>`;
+    s.lastChild.textContent = `Ton oreille : ${r.oreille} « boum » sur 8 pile. ${r.oreille >= 5 ? 'On part bien !' : 'On va l’entraîner ensemble.'}`;
+    box.appendChild(s);
+  }
+}
+
+/* ---------- Le compte (lot 65) : obligatoire, sans mot de passe ----------
+   Choix de l'utilisateur (9 nov. 2026, « B : obligatoire direct ») : juste après le plan, ni « Plus tard », ni croix. Prénom +
+   e-mail ; le compte est créé tout de suite (cptCreerSansMdp, compte.js), donc ce qu'il fait ensuite sur ce téléphone part dessus.
+   Google aussi, sauf dans le navigateur d'une appli (TikTok, Instagram…), où Google refuse la connexion. « J'ai déjà un compte »
+   ouvre la fenêtre du compte par-dessus. Si Firebase ne répond pas du tout (pas de réseau, service bloqué), on peut continuer sans
+   compte : un mur qui ne s'ouvre jamais ferait perdre le joueur pour de bon. */
+const ppPrenomVu = () => { const p = (typeof cpt !== 'undefined' && cpt && cpt.prenom !== 'toi' && cpt.prenom) || pp.prenom || ''; return p; };
+function ppCompteOpts(){
+  const f = document.createElement('form'); f.className = 'pp-compte'; f.id = 'ppCompte'; f.noValidate = true;
+  f.innerHTML = `<label class="pp-champ"><span>Ton prénom</span><input id="ppPrenom" autocomplete="given-name" maxlength="40" enterkeyhint="next"></label>
+<label class="pp-champ"><span>Ton e-mail</span><input id="ppMail" type="email" autocomplete="email" inputmode="email" maxlength="120" enterkeyhint="go"></label>
+<label class="pp-case" id="ppAccord"><input type="checkbox" id="ppMails"> <span>Vini peut m’écrire : un conseil par semaine au plus. Désinscription en un clic.</span></label>
+<p class="pp-msg" id="ppMsg" role="status" hidden></p>
+<p class="pp-mdp">Pas de mot de passe : je t’envoie un lien pour te connecter.</p>
+<div class="pp-ou" id="ppOu"><span>ou</span></div>
+<button type="button" class="pp-google" id="ppGoogle"></button>
+<div class="pp-liens"><button type="button" class="pp-passe" id="ppDeja">J’ai déjà un compte</button><button type="button" class="pp-passe" id="ppSans" hidden>Continuer sans compte pour l’instant</button></div>
+<p class="pp-legal">DJingood garde ton prénom, ton adresse et ta progression. <a href="confidentialite.html" target="_blank" rel="noopener">Ce que DJingood garde sur toi</a></p>`;
+  $('ppOpts').appendChild(f);
+  $('ppGoogle').innerHTML = $('cptIn').innerHTML;   // le bouton aux couleurs que Google demande (lot 54), le même que dans la fenêtre du compte
+  $('ppPrenom').value = pp.prenom || ''; $('ppMail').value = pp.mailTape || '';
+  $('ppPrenom').addEventListener('input', e => { pp.prenom = e.target.value.trim().slice(0, 40); });
+  $('ppMail').addEventListener('input', e => { pp.mailTape = e.target.value.trim(); });
+  $('ppAccord').hidden = !mlActif();
+  const google = !cptAppli(); $('ppGoogle').hidden = !google; $('ppOu').hidden = !google;
+  $('ppSans').hidden = !pp.rate;
+  f.addEventListener('submit', e => { e.preventDefault(); if (ppPret()) ppCompteEnvoie(); });
+  $('ppGoogle').addEventListener('click', () => {
+    if (pp.envoi) return; ppMsg('Connexion en cours…');
+    cptEntrer(mlActif() ? $('ppMails').checked : undefined).then(e => { if (e) ppMsg(cptErreur(e)); });   // la suite : cptChange → ppCompteOk
+  });
+  $('ppDeja').addEventListener('click', () => { if (pp.envoi) return; openCompte(); cptVa('entrer'); if (pp.mailTape) $('cptMail').value = pp.mailTape; });
+  $('ppSans').addEventListener('click', () => { stat1('mur-sans-compte'); ppTermine(); });
+}
+function ppMsg(t){ const m = $('ppMsg'); if (!m) return; m.textContent = t || ''; m.hidden = !t; }
+function ppCompteEnvoie(){
+  if (pp.envoi || pp.fini) return;
+  const prenom = $('ppPrenom').value.trim().slice(0, 40), mail = $('ppMail').value.trim();
+  if (!prenom){ ppMsg('Écris ton prénom : c’est comme ça que je t’appellerai.'); $('ppPrenom').focus(); return; }
+  if (!cptMailOk(mail)){ ppMsg('Écris une adresse e-mail valide, comme toi@exemple.fr.'); $('ppMail').focus(); return; }
+  pp.prenom = prenom; pp.envoi = true; ppMsg(''); ppMaj();
+  cptCreerSansMdp(prenom, mail, $('ppAccord').hidden ? null : $('ppMails').checked).then(() => {
+    pp.envoi = false; pp.mail = mail; ppCompteOk();
+  }, e => {
+    pp.envoi = false;
+    const c = (e && e.code) || '';
+    if (c === 'auth/email-already-in-use'){
+      // il a déjà un compte avec cette adresse : on lui envoie un lien pour s'y connecter, sans rien créer
+      ppMsg('Tu as déjà un compte avec cette adresse. Je t’envoie un lien pour te connecter…');
+      cptLienEnvoie(mail).then(() => ppMsg('Tu as déjà un compte avec cette adresse : je t’ai envoyé un lien pour te connecter. Ouvre-le sur ce téléphone, ou choisis « J’ai déjà un compte ».'),
+        () => ppMsg('Tu as déjà un compte avec cette adresse : choisis « J’ai déjà un compte » juste en dessous.'));
+    } else {
+      ppMsg(cptErreur(e));
+      // Firebase ne répond pas du tout : on laisse continuer sans compte (sinon le joueur resterait bloqué ici)
+      if (!c || c === 'auth/network-request-failed' || c === 'unavailable' || c === 'auth/internal-error' || c === 'auth/operation-not-allowed'){ pp.rate = true; $('ppSans').hidden = false; }
+    }
+    ppMaj();
+  });
+}
+// Le compte existe : créé ici (pp.mail), ou on vient de se connecter (Google, « J'ai déjà un compte ») : cptChange l'appelle.
+// Pendant une création, on attend sa réponse (Firebase annonce le compte avant qu'elle revienne).
+function ppCompteOk(){
+  if (!pp.on || pp.fini || pp.envoi || PP_ETAPES[pp.i] !== 'compte') return;
+  if (accueil && accueil.mur) ppSave(Object.assign({}, accueil, { mur: false }));
+  // sur un téléphone, le lien qui ouvre le même compte sur l'ordinateur ; puis l'écran qui dit où il est parti
+  if (pp.mail && cpMobile()){
+    ppLienPart();
+    pp.i = PP_I('envoye'); ppRender(1); return;
+  }
+  if (typeof cptToast === 'function') cptToast(`Bienvenue${ppPrenomVu() ? ' ' + ppPrenomVu() : ''} !`, 'Ton compte est créé : ton plan et ta progression sont gardés.');
+  ppTermine();
+}
+// « Renvoyer » attend 30 secondes entre deux envois (Firebase limite les mails, et un double clic ne doit pas en envoyer deux)
+const PP_RENVOI = 30000;
+function ppLienPart(){
+  pp.lien = 'envoi'; pp.lienAt = Date.now(); ppEnvoyeMaj();
+  cptLienEnvoie(pp.mail).then(() => { pp.lien = 'ok'; ppEnvoyeMaj(); }, () => { pp.lien = 'rate'; ppEnvoyeMaj(); });
+  setTimeout(ppEnvoyeMaj, PP_RENVOI + 50);
+}
+
+/* ---------- Sur un téléphone : le lien pour l'ordinateur est parti (lot 65) ---------- */
+const ppMasque = m => { const [a, d] = String(m || '').split('@'); return d ? Array.from(a)[0] + '•••@' + d : String(m || ''); };
+function ppEnvoyeOpts(){
+  const c = document.createElement('div'); c.className = 'pp-envoye';
+  c.innerHTML = `<div class="pp-mailcarte"><span class="pp-ic" aria-hidden="true">${PP_IC.mail}</span><span><b id="ppLienTitre"></b><small id="ppLienTxt"></small></span></div>
+<div class="pp-mini"><button type="button" id="ppCopie">Copier le lien</button><button type="button" id="ppRenvoie">Renvoyer</button></div>`;
+  $('ppOpts').appendChild(c);
+  $('ppCopie').addEventListener('click', async e => {
+    const b = e.currentTarget, url = midiLien(); let ok = false;
+    try { await navigator.clipboard.writeText(url); ok = true; } catch (x) {}
+    b.textContent = ok ? 'Lien copié !' : url; if (ok) setTimeout(() => { b.textContent = 'Copier le lien'; }, 2500);
+  });
+  $('ppRenvoie').addEventListener('click', () => { if (pp.lien === 'envoi' || Date.now() - (pp.lienAt || 0) < PP_RENVOI) return; ppLienPart(); });
+  ppEnvoyeMaj();
+}
+function ppEnvoyeMaj(){
+  const t = $('ppLienTitre'); if (!t) return;
+  t.textContent = pp.lien === 'ok' ? `Ton lien pour l’ordinateur est parti à ${ppMasque(pp.mail)}` : pp.lien === 'rate' ? 'Le lien n’a pas pu partir' : 'J’envoie ton lien pour l’ordinateur…';
+  $('ppLienTxt').textContent = pp.lien === 'rate' ? 'Sur ton ordinateur, ouvre djingood.fr et choisis « J’ai déjà un compte », avec la même adresse : je t’enverrai un lien là-bas.'
+    : 'Ta table, ce sera sur ordinateur. Ouvre ce mail sur ton PC : tu seras connecté tout de suite. Regarde aussi dans les indésirables.';
+  $('ppRenvoie').disabled = pp.lien === 'envoi' || Date.now() - (pp.lienAt || 0) < PP_RENVOI;
 }
 
 /* ---------- Vini réagit (lot 52) ----------
@@ -276,6 +555,10 @@ function ppPoseDe(){
   const id = PP_ETAPES[pp.i], r = pp.rep;
   if (id === 'niveau') return PP_POSES[r.niveau] || null;
   if (id === 'objectif') return PP_POSES[r.min] || null;
+  // lot 65 : il écoute pendant le test de l'oreille, puis il est content ; il fête le plan, il fait un clin d'œil au compte
+  if (id === 'oreille') return ppOr && !ppOr.fin ? { bras: 'oreille', calme: true } : r.oreille === null ? PP_POSES.ecoute : r.oreille >= 6 ? PP_POSES.branchee : PP_POSES.connue;
+  if (id === 'plan' || id === 'envoye') return PP_POSES.branchee;
+  if (id === 'compte') return PP_POSES.connue;
   if (id !== 'table') return null;
   if (ppBranchee()) return PP_POSES.branchee;
   if (r.table === 'souris') return PP_POSES.souris;
@@ -448,7 +731,8 @@ function ppAvance(p){
    sur le temps suivant. Elle suit le bouton des sons (coach-sons) et s'arrête quand les questions se ferment. */
 const PP_MUSIQUE = 'musique/niv-deep-a.mp3';
 const PP_TEMPS = 60 / 124;   // un temps du morceau, en secondes
-const PP_COUPURE = { salut: 380, niveau: 380, table: 820, objectif: 1900 };
+// après le drop (plan, compte, lien envoyé), le filtre reste grand ouvert
+const PP_COUPURE = { salut: 380, niveau: 380, oreille: 600, table: 820, objectif: 1900, plan: 16000, compte: 16000, envoye: 16000 };
 const PP_VITESSE = { 5: .94, 10: 1, 15: 1.07 };
 const ppSon = { pret: null, src: null, filtre: null, gain: null, t0: 0, pos0: 0, vitesse: 1 };
 function ppMusiquePrepare(){
@@ -479,7 +763,15 @@ document.addEventListener('visibilitychange', () => {
 });
 // Où en est le morceau, en temps (sans musique : 0)
 const ppTemps = () => ppSon.src ? ppSon.pos0 + (ac.currentTime - ppSon.t0) * ppSon.vitesse / PP_TEMPS : 0;
-function ppMusiqueEtape(){ if (ppSon.src && !pp.fini) ppSon.filtre.frequency.setTargetAtTime(PP_COUPURE[PP_ETAPES[pp.i]], ac.currentTime, .4); }
+function ppMusiqueEtape(){
+  if (!ppSon.src || pp.fini) return;
+  const id = PP_ETAPES[pp.i];
+  ppSon.filtre.frequency.setTargetAtTime(PP_COUPURE[id], ac.currentTime, .4);
+  // pendant qu'on écrit son prénom et son adresse, la musique se fait plus discrète (lot 65)
+  if (id === 'compte' || id === 'envoye') ppSon.gain.gain.setTargetAtTime(.32, ac.currentTime, .5);
+}
+// Pendant le test de l'oreille, la musique des questions se tait presque : on n'entend que les « boum » (lot 65)
+function ppMusiqueBaisse(oui){ if (ppSon.src && !document.hidden) ppSon.gain.gain.setTargetAtTime(oui ? .05 : .55, ac.currentTime, .12); }
 function ppMusiqueVitesse(min){
   const v = PP_VITESSE[min] || 1;
   if (!ppSon.src || v === ppSon.vitesse) return;

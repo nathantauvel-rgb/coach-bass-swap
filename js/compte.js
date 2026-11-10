@@ -207,6 +207,7 @@ function cptChange(u){
   if (!cptSauve || cptSauve.uid !== cpt.uid){ cptMaj = 0; cptSale = false; }   // un autre compte que la dernière fois
   cptNote(); cptEtat();
   if (cptFait !== cpt.uid){ cptFait = cpt.uid; cptSync().catch(e => { cptBloque = true; cptDit(cptErreur(e)); cptEtat(); }); }
+  if (typeof ppCompteOk === 'function') ppCompteOk();   // l'écran du compte des Premiers pas passe à la suite (lot 65)
   // DJingood Pro (pro.js, chargé après ce fichier : une session reprise tout de suite arrive avant lui, il la rattrape)
   if (typeof proCompte === 'function') proCompte(u);
 }
@@ -260,15 +261,21 @@ function cptGarde(quoi){
 }
 
 /* ---------- Se connecter ---------- */
-function cptEntrer(){
-  if (!cptOn()) return;
-  mlChoix();   // « Continuer avec Google » depuis « Créer mon compte » : la case compte aussi (mails.js)
+// `accord` : la case « Vini peut m'écrire » de l'écran du compte des Premiers pas (lot 65) ; sans lui, celle de la fenêtre.
+// Rend une promesse : rien si ça a marché, l'erreur sinon (les Premiers pas l'affichent dans leur propre écran).
+function cptEntrer(accord){
+  if (!cptOn()) return Promise.resolve();
+  if (typeof accord === 'boolean') mlVoulu = mlActif() ? accord : null;
+  else mlChoix();   // « Continuer avec Google » depuis « Créer mon compte » : la case compte aussi (mails.js)
   cptDemande = true; cptDit('Connexion en cours…'); cptBoutons(true);
-  cptSdkAuth()
+  return cptSdkAuth()
     .then(() => cptFb.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()))
     .then(() => { cptBoutons(false); })                                   // la suite est faite par cptChange → cptSync
-    .catch(e => { cptDemande = false; cptDit(cptErreur(e)); cptBoutons(false); });
+    .catch(e => { cptDemande = false; cptDit(cptErreur(e)); cptBoutons(false); return e; });
 }
+// Le navigateur d'une appli (TikTok, Instagram, Facebook, Snapchat…) : Google y refuse la connexion (« disallowed_useragent »),
+// alors on n'y montre pas son bouton (lot 65)
+const cptAppli = () => /BytedanceWebview|musical_ly|TikTok|Instagram|FBAN|FBAV|FB_IAB|Snapchat|Line\//i.test(navigator.userAgent || '');
 
 /* ---------- Envoyer la progression ---------- */
 // Rend vrai si la progression est vraiment partie, faux sinon (refus de Firebase, trop grosse, pas le moment).
@@ -351,6 +358,73 @@ function cptEntrerMail(mail, mdp){
     .then(() => { cptBoutons(false); })                       // la suite est faite par cptChange → cptSync
     .catch(e => { cptDemande = false; cptDit(cptErreur(e)); cptBoutons(false); });
 }
+/* ---------- Sans mot de passe (lot 65 « Arrivée et compte ») ----------
+   Le compte des Premiers pas se crée avec un prénom et une adresse, sans mot de passe à retenir. Firebase demande un mot de passe
+   pour créer un compte par e-mail : on en tire un au hasard, que personne ne voit ni ne garde. Le compte existe donc tout de suite,
+   et la progression part dessus dès la première minute. Pour s'y reconnecter (sur l'ordinateur, sur un autre téléphone), Firebase
+   envoie un « lien magique » (sendSignInLinkToEmail) : il connecte au même compte, puisque c'est la même adresse.
+   Il faut que « Lien envoyé par e-mail (connexion sans mot de passe) » soit activé dans la console Firebase (Authentication →
+   Sign-in method → E-mail/Mot de passe) : voir COMPTE-FIREBASE.md. Le lien ouvert sur cet appareil retrouve l'adresse dans
+   CPT_LIEN_CLE ; ouvert ailleurs, Firebase demande de la réécrire (c'est sa sécurité). */
+const CPT_LIEN_CLE = '__djingood-lien';   // l'adresse à qui le dernier lien a été envoyé (hors `coach-` : elle ne voyage pas avec le compte)
+function cptMdpHasard(){
+  const o = new Uint8Array(24); crypto.getRandomValues(o);
+  return Array.from(o, x => 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!#%'[x % 59]).join('');
+}
+// Rend une promesse : le compte est créé (et connecté), ou l'erreur de Firebase. `accord` : la case « Vini peut m'écrire ».
+function cptCreerSansMdp(prenom, mail, accord){
+  mlVoulu = mlActif() && typeof accord === 'boolean' ? accord : null;
+  cptDemande = true;
+  return cptSdkAuth()
+    .then(() => cptFb.auth.createUserWithEmailAndPassword(mail, cptMdpHasard()))
+    .then(r => { cpt = { uid: r.user.uid, prenom }; cptNote(); cptEtat(); return r.user.updateProfile({ displayName: prenom }).catch(() => {}); })
+    .catch(e => { cptDemande = false; throw e; });
+}
+// Le lien de connexion, par mail. Il ramène sur cette page, d'où cptLienFinir connecte au compte.
+function cptLienEnvoie(mail){
+  return cptSdkAuth().then(() => cptFb.auth.sendSignInLinkToEmail(mail, { url: location.origin + location.pathname, handleCodeInApp: true })).then(() => {
+    try { localStorage.setItem(CPT_LIEN_CLE, mail); } catch (e) {}
+    stat1('lien-ordi-envoye');
+  });
+}
+// « J'ai déjà un compte » → « Recevoir un lien de connexion » : pour les comptes créés sans mot de passe, et pour ceux qui l'ont oublié
+function cptLienDemande(){
+  const mail = $('cptMail').value.trim();
+  if (!cptMailOk(mail)){ cptDit('Écris l’adresse de ton compte, comme toi@exemple.fr : je t’envoie un lien pour te connecter.'); $('cptMail').focus(); return; }
+  cptDit('Envoi en cours…'); cptBoutons(true);
+  cptLienEnvoie(mail).then(() => { cptDit('C’est envoyé ! Ouvre le lien sur cet appareil : tu seras connecté. Regarde aussi dans les indésirables.'); cptBoutons(false); },
+    e => { cptDit(cptErreur(e)); cptBoutons(false); });
+}
+// Au chargement, l'adresse de la page est un lien de connexion (le mail qu'on vient d'ouvrir) : on connecte au compte.
+const cptLienVu = cptOn() && /[?&]oobCode=/.test(location.search) && /[?&]mode=signIn/.test(location.search);
+const CPT_ORDI = '__djingood-ordi';   // marque de session : afficher « Bienvenue sur ordinateur », même après le rechargement du compte
+function cptLienFinir(){
+  cptSdkAuth().then(() => {
+    if (!cptFb.auth.isSignInWithEmailLink(location.href)) return cptLienRate();
+    let m = ''; try { m = localStorage.getItem(CPT_LIEN_CLE) || ''; } catch (e) {}
+    if (m && cptMailOk(m)) return cptLienEntre(m);
+    openCompte(); cptVa('lien');   // ouvert sur un autre appareil : Firebase veut qu'on réécrive l'adresse
+  }, e => { openCompte(); cptDit(cptErreur(e)); });
+}
+function cptLienEntre(mail){
+  cptDemande = true; cptDit('Connexion en cours…'); cptBoutons(true);
+  return cptFb.auth.signInWithEmailLink(mail, location.href).then(() => {
+    cptBoutons(false);
+    cptLienPropre();
+    try { localStorage.removeItem(CPT_LIEN_CLE); } catch (e) {}
+    stat1('ordi-depuis-lien');
+    if (!cpMobile()){ try { sessionStorage.setItem(CPT_ORDI, '1'); } catch (e) {} closeCompte(); ordiBienvenue(); }
+  }, e => { cptDemande = false; cptBoutons(false); cptLienRate(e); });
+}
+// Le lien a déjà servi, ou il est trop vieux : on le retire de l'adresse et on propose d'en recevoir un autre
+function cptLienRate(e){
+  cptLienPropre();
+  openCompte(); cptVa('entrer');
+  cptDit(e && e.code && !/action-code/.test(e.code) ? cptErreur(e) : 'Ce lien a déjà servi ou il est trop vieux. Écris ton adresse, puis « Recevoir un lien de connexion » : je t’en envoie un nouveau.');
+}
+// L'adresse de la page sans les morceaux du lien (oobCode, apiKey…) : un rechargement ne doit pas le réessayer
+function cptLienPropre(){ try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} }
+
 function cptOubliMdp(mail){
   cptDit('Envoi en cours…'); cptBoutons(true);
   cptSdkAuth()
@@ -374,11 +448,14 @@ function cptErreur(e){
   if (c === 'auth/wrong-password' || c === 'auth/invalid-credential' || c === 'auth/invalid-login-credentials') return 'Adresse ou mot de passe incorrect.';
   if (c === 'auth/missing-password') return 'Écris ton mot de passe.';
   if (c === 'auth/too-many-requests') return 'Trop d’essais de suite. Attends quelques minutes, puis réessaie.';
-  if (c === 'auth/operation-not-allowed') return 'La création de compte par e-mail n’est pas activée dans Firebase (Authentication → Sign-in method → E-mail/Mot de passe).';
+  if (c === 'auth/operation-not-allowed') return 'La connexion par e-mail n’est pas activée dans Firebase (Authentication → Sign-in method → E-mail/Mot de passe, et « Lien envoyé par e-mail »).';
+  if (c === 'auth/invalid-action-code' || c === 'auth/expired-action-code') return 'Ce lien a déjà servi ou il est trop vieux. Demande-en un nouveau.';
+  if (c === 'auth/missing-email') return 'Cette adresse e-mail n’a pas l’air valide.';
+  if (c === 'auth/unauthorized-continue-uri' || c === 'auth/invalid-continue-uri' || c === 'auth/missing-continue-uri') return 'Ce site n’est pas encore autorisé dans le projet Firebase (Authentication → Settings → Authorized domains).';
   return 'Ça n’a pas marché : ' + ((e && e.message) || 'erreur inconnue');
 }
 function cptDit(t){ const m = $('cptMsg'); if (!m) return; m.textContent = t || ''; m.hidden = !t; }
-function cptBoutons(off){ for (const id of ['cptGo', 'cptIn', 'cptOut', 'cptVersCreer', 'cptVersEntrer', 'cptOubli', 'cptBascule', 'cptRetour']){ const b = $(id); if (b) b.disabled = !!off; } }
+function cptBoutons(off){ for (const id of ['cptGo', 'cptIn', 'cptOut', 'cptVersCreer', 'cptVersEntrer', 'cptOubli', 'cptBascule', 'cptRetour', 'cptLienBtn']){ const b = $(id); if (b) b.disabled = !!off; } }
 // Le bouton du compte, en haut à droite de l'en-tête : « Se connecter », ou l'initiale et le prénom. L'initiale est
 // dessinée par la feuille de style (data-initiale), pour que le texte du bouton reste le prénom.
 const cptInitiale = () => (Array.from((cpt && cpt.prenom !== 'toi' && cpt.prenom) || '?')[0] || '?').toUpperCase();
@@ -398,15 +475,16 @@ function cptEtat(){
    Refaite le 29 oct. 2026 à la demande de l'utilisateur (« Nathan » grisé dans le prénom, « Se connecter » et Google
    pas assez visibles) : Google en premier et en grand, des cases vides, « ← Retour ». */
 let cptPas = 'accueil';
-const CPT_TITRES = { accueil: 'Garde ta progression', creer: 'Créer mon compte', entrer: 'Content de te revoir\u00a0!', oubli: 'Mot de passe oublié' };
+const CPT_TITRES = { accueil: 'Garde ta progression', creer: 'Créer mon compte', entrer: 'Content de te revoir\u00a0!', oubli: 'Mot de passe oublié', lien: 'Connexion par lien' };
 function cptVa(pas){
   cptPas = pas; mlVoulu = null; cptDit(''); cptRend();
-  const f = $(pas === 'creer' ? 'cptPrenom' : pas === 'entrer' || pas === 'oubli' ? 'cptMail' : 'cptTitle');
+  const f = $(pas === 'creer' ? 'cptPrenom' : pas === 'entrer' || pas === 'oubli' || pas === 'lien' ? 'cptMail' : 'cptTitle');
   if (f) f.focus({ preventScroll: true });
 }
 function cptRend(){
-  const form = cptPas === 'creer' || cptPas === 'entrer' || cptPas === 'oubli';
-  const dehors = !cpt && !cptAttente, google = dehors && (cptPas === 'accueil' || cptPas === 'entrer');
+  const form = cptPas === 'creer' || cptPas === 'entrer' || cptPas === 'oubli' || cptPas === 'lien';
+  // Google : pas dans le navigateur d'une appli, où il refuse la connexion (lot 65)
+  const dehors = !cpt && !cptAttente, google = dehors && (cptPas === 'accueil' || cptPas === 'entrer') && !cptAppli();
   $('cptChoix').hidden = !cptAttente;
   $('cptAccueil').hidden = !(dehors && cptPas === 'accueil');
   $('cptForm').hidden = !(dehors && form);
@@ -418,19 +496,23 @@ function cptRend(){
 
   if (dehors && form){
     $('cptChPrenom').hidden = cptPas !== 'creer';
-    $('cptChMdp').hidden = cptPas === 'oubli';
+    $('cptChMdp').hidden = cptPas === 'oubli' || cptPas === 'lien';
+    $('cptLienBtn').hidden = cptPas !== 'entrer';
     $('cptMdpLab').textContent = cptPas === 'creer' ? 'Choisis un mot de passe' : 'Ton mot de passe';
     $('cptOubli').hidden = cptPas !== 'entrer';
-    $('cptGo').textContent = cptPas === 'creer' ? 'Créer mon compte' : cptPas === 'entrer' ? 'Me connecter' : 'Envoyer le lien';
+    $('cptGo').textContent = cptPas === 'creer' ? 'Créer mon compte' : cptPas === 'entrer' || cptPas === 'lien' ? 'Me connecter' : 'Envoyer le lien';
     $('cptAide').textContent = cptPas === 'creer' ? CPT_MDP_MIN + ' caractères minimum' : cptPas === 'oubli' ? 'On t’envoie un lien pour en choisir un nouveau.' : '';
+    $('cptOubli').parentElement.hidden = cptPas === 'lien';
     $('cptBasTxt').textContent = cptPas === 'creer' ? 'Déjà un compte\u00a0?' : cptPas === 'entrer' ? 'Pas encore de compte\u00a0?' : '';
+    $('cptBascule').parentElement.hidden = cptPas === 'lien';
     $('cptBascule').textContent = cptPas === 'creer' ? 'Se connecter' : cptPas === 'entrer' ? 'Créer un compte' : 'Revenir à la connexion';
   }
 
   $('cptTitle').textContent = cpt ? 'Mon compte' : CPT_TITRES[cptPas] || CPT_TITRES.accueil;
-  const sous = cpt ? '' : cptPas === 'accueil' ? 'Tes étoiles et ta série te suivent sur tous tes appareils.' : cptPas === 'oubli' ? 'Écris l’adresse de ton compte.' : '';
+  const sous = cpt ? '' : cptPas === 'accueil' ? 'Tes étoiles et ta série te suivent sur tous tes appareils.' : cptPas === 'oubli' ? 'Écris l’adresse de ton compte.'
+    : cptPas === 'lien' ? 'Écris l’adresse où tu as reçu le lien : c’est la sécurité de la connexion sans mot de passe.' : '';
   $('cptSous').textContent = sous; $('cptSous').hidden = !sous;
-  $('cptVini').hidden = !!cpt || cptPas === 'creer' || cptPas === 'oubli';
+  $('cptVini').hidden = !!cpt || cptPas === 'creer' || cptPas === 'oubli' || cptPas === 'lien';
   // qui est connecté : l'adresse vient de Firebase (elle n'est pas dans le document de progression)
   $('cptMoi').hidden = !cpt;
   // Connecté (lot 60) : une fenêtre plus large, alignée à gauche, en sections (progression, abonnement, réglages)
@@ -508,6 +590,7 @@ function cptEnvoyer(e){
   const prenom = $('cptPrenom').value.trim().slice(0, 40), mail = $('cptMail').value.trim(), mdp = $('cptMdp').value;
   if (!cptMailOk(mail)){ cptDit('Écris une adresse e-mail valide, comme toi@exemple.fr.'); $('cptMail').focus(); return; }
   if (cptPas === 'oubli'){ cptOubliMdp(mail); return; }
+  if (cptPas === 'lien'){ cptLienEntre(mail); return; }
   if (!mdp){ cptDit('Écris ton mot de passe.'); $('cptMdp').focus(); return; }
   if (cptPas === 'entrer'){ cptEntrerMail(mail, mdp); return; }
   if (!prenom){ cptDit('Écris ton prénom : c’est comme ça que Vini t’appellera.'); $('cptPrenom').focus(); return; }
@@ -537,7 +620,48 @@ function closeCompte(){
   if ($('compte').hidden) return;
   $('compte').hidden = true; $('cptMdp').value = '';
   const b = $('cptBtn'); if (b && !b.hidden) b.focus({ preventScroll: true });
+  // un lien de connexion ouvert sans aller au bout (fenêtre fermée) : un nouveau venu retrouve les questions de Vini (lot 65)
+  if (cptLienVu && !cpt && typeof ppAOuvrir === 'function' && !pp.on && ppAOuvrir()) openPremiers();
 }
+
+/* ---------- Arrivée sur l'ordinateur par le lien (lot 65) ----------
+   Le joueur a créé son compte sur son téléphone, puis ouvre le lien du mail sur son PC : « Bienvenue sur ordinateur », ce qu'il a
+   déjà fait (Comprendre), sa table (reconnue en direct : ppMidi appelle ordiMaj), et un seul bouton vers sa prochaine étape.
+   La marque CPT_ORDI survit au rechargement que fait la reprise de la progression du compte ; elle s'efface quand il ferme. */
+function ordiBienvenue(){
+  if (cpMobile() || !$('ordi').hidden) return;
+  viniMettre($('ordiVini'), 'parfait');
+  $('ordi').hidden = false; ordiMaj(); $('ordiGo').focus({ preventScroll: true });
+}
+function ordiMaj(){
+  if ($('ordi').hidden) return;
+  const p = (cpt && cpt.prenom !== 'toi' && cpt.prenom) || (cptSauve && cptSauve.prenom && cptSauve.prenom !== 'toi' ? cptSauve.prenom : '');
+  $('ordiTitre').textContent = 'Bienvenue sur ordinateur' + (p ? ', ' + p : '') + ' !';
+  const n = Object.keys(cpStars).length, b = ppBranchee(), k = nextStage(), st = k && STAGES[k];
+  const lignes = [
+    [n > 0, 'Comprendre la musique', n > 0 ? `${n} leçon${n > 1 ? 's' : ''} sur 7` : 'Quand tu veux'],
+    [!!b, b ? 'Ta table : ' + b.nom : 'Branche ta table en USB', b ? 'Reconnue' : 'Je la reconnaîtrai toute seule'],
+    [false, st ? st.title : 'Ton premier niveau', '']
+  ];
+  const ol = $('ordiEtapes'); ol.textContent = '';
+  lignes.forEach(([fait, titre, note], i) => {
+    const li = document.createElement('li'); li.className = fait ? 'fait' : '';
+    const num = document.createElement('span'); num.className = 'ordi-n'; num.setAttribute('aria-hidden', 'true'); num.textContent = fait ? '✓' : String(i + 1);
+    const t = document.createElement('span'); t.className = 'ordi-t'; t.textContent = titre;
+    const nt = document.createElement('span'); nt.className = 'ordi-note'; nt.textContent = note;
+    li.append(num, t, nt); if (fait) li.setAttribute('aria-label', titre + ' : fait'); ol.appendChild(li);
+  });
+}
+function ordiFerme(aller){
+  if ($('ordi').hidden) return;
+  $('ordi').hidden = true;
+  try { sessionStorage.removeItem(CPT_ORDI); } catch (e) {}
+  if (aller){ const k = nextStage(); if (k && STAGES[k]) STAGES[k].go(); }
+}
+$('ordiGo').addEventListener('click', () => ordiFerme(true));
+$('ordiFerme').addEventListener('click', () => ordiFerme(false));
+$('ordi').addEventListener('click', e => { if (e.target === $('ordi')) ordiFerme(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('ordi').hidden){ e.stopPropagation(); ordiFerme(false); } }, true);
 
 $('cptBtn').addEventListener('click', openCompte);
 $('cptClose').addEventListener('click', closeCompte);
@@ -546,10 +670,11 @@ $('cptVersCreer').addEventListener('click', () => cptVa('creer'));
 $('cptVersEntrer').addEventListener('click', () => cptVa('entrer'));
 $('cptBascule').addEventListener('click', () => cptVa(cptPas === 'entrer' ? 'creer' : 'entrer'));
 $('cptOubli').addEventListener('click', () => cptVa('oubli'));
+$('cptLienBtn').addEventListener('click', cptLienDemande);
 $('cptRetour').addEventListener('click', () => cptVa(cptPas === 'oubli' ? 'entrer' : 'accueil'));
 $('cptForm').addEventListener('submit', cptEnvoyer);
 $('cptOeil').addEventListener('click', () => cptOeil($('cptMdp').type === 'password'));
-$('cptIn').addEventListener('click', cptEntrer);
+$('cptIn').addEventListener('click', () => cptEntrer());
 $('cptOut').addEventListener('click', cptSortir);
 $('cptGardeCompte').addEventListener('click', () => cptGarde('compte'));
 $('cptGardeIci').addEventListener('click', () => cptGarde('ici'));
@@ -562,8 +687,12 @@ document.addEventListener('keydown', e => {
 
 /* ---------- Au chargement ---------- */
 cptEtat();
+let cptOrdiVu = false; try { cptOrdiVu = sessionStorage.getItem(CPT_ORDI) === '1'; } catch (e) {}
+// le bandeau « Content de te revoir » ne double pas la carte « Bienvenue sur ordinateur » (lot 65)
 try { const b = JSON.parse(sessionStorage.getItem(CPT_BONJOUR) || 'null'); sessionStorage.removeItem(CPT_BONJOUR);
-  if (Array.isArray(b)) setTimeout(() => cptToast(String(b[0] || ''), String(b[1] || '')), 600); } catch (e) {}
+  if (Array.isArray(b) && !cptOrdiVu) setTimeout(() => cptToast(String(b[0] || ''), String(b[1] || '')), 600); } catch (e) {}
+if (cptLienVu) cptLienFinir();                                   // la page est un lien de connexion (le mail qu'on vient d'ouvrir)
+else if (cptOrdiVu) setTimeout(ordiBienvenue, 600);              // connecté par le lien, puis la progression du compte a rechargé la page
 if (cptOn()){
   // Déjà connecté la dernière fois : on reprend la session tout de suite (cptSync comparera ensuite).
   // Sinon, on prépare quand même la connexion une fois la page tranquille, pour que le clic soit immédiat.

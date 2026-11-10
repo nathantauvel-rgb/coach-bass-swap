@@ -423,8 +423,15 @@ function cpRendChemin(){
     if (st) t.appendChild(cpEl('span', 'cp-st', '★'.repeat(st) + '☆'.repeat(3 - st)));
     b.appendChild(t); b.addEventListener('click', () => cpLecon(i)); li.appendChild(b); ol.appendChild(li); });
 }
-// « M'envoyer le lien » (accueil d'un téléphone) : la feuille de partage du téléphone, sinon le lien copié
+// « M'envoyer le lien » (accueil d'un téléphone) : la feuille de partage du téléphone, sinon le lien copié.
+// Lot 65 : avec un compte, c'est le lien de connexion qui part par mail : il ouvre le même compte sur l'ordinateur.
 async function cpEnvoieLien(b){
+  const u = typeof cpt !== 'undefined' && cpt && cptFb && cptFb.auth && cptFb.auth.currentUser;
+  if (u && u.email){
+    if (b.disabled) return; b.disabled = true; b.textContent = 'Envoi…';
+    try { await cptLienEnvoie(u.email); b.textContent = 'Envoyé à ' + ppMasque(u.email); } catch (e) { b.textContent = 'Pas parti : réessaie'; }
+    setTimeout(() => { b.disabled = false; b.textContent = 'M’envoyer le lien'; }, 5000); return;
+  }
   const url = location.origin + location.pathname;
   if (navigator.share){ try { await navigator.share({ title: 'DJingood', text: 'À ouvrir sur mon ordinateur, avec ma table DJ', url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
   let ok = false; try { await navigator.clipboard.writeText(url); ok = true; } catch (e) {}

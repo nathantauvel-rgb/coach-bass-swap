@@ -48,6 +48,21 @@ window.DJINGO_FIREBASE = { apiKey: 'faux', authDomain: 'faux.firebaseapp.com', p
     sendPasswordResetEmail(mail){
       if (!gens()[mail]) return Promise.reject({ code: 'auth/user-not-found' });
       window.__lienEnvoye = mail; return Promise.resolve();
+    },
+    // Le lien magique (lot 65) : on note à qui il part ; un lien « oobCode=vieux » a déjà servi
+    sendSignInLinkToEmail(mail, reglages){
+      if (window.__refusLien) return Promise.reject({ code: window.__refusLien });
+      window.__liensConnexion = (window.__liensConnexion || []).concat([{ mail, url: reglages && reglages.url, app: !!(reglages && reglages.handleCodeInApp) }]);
+      return Promise.resolve();
+    },
+    isSignInWithEmailLink(href){ return /[?&]oobCode=/.test(href) && /[?&]mode=signIn/.test(href); },
+    signInWithEmailLink(mail, href){
+      if (/oobCode=vieux/.test(href)) return Promise.reject({ code: 'auth/invalid-action-code' });
+      const g = gens();
+      if (!g[mail]){ g[mail] = { uid: 'm' + (Object.keys(g).length + 1), mdp: '', nom: '' }; gensEcrire(g); }
+      user = { uid: g[mail].uid, displayName: g[mail].nom || null, email: mail, emailVerified: true };
+      try { sessionStorage.setItem(SESS, JSON.stringify(user)); } catch (e) {}
+      prevenir(); return Promise.resolve({ user });
     }
   };
   auth.languageCode = null;

@@ -82,4 +82,4 @@ if (Object.prototype.hasOwnProperty.call(GUIDE_VERS, guideVers)){
   stat('guide-vers-jeu', { page: guideVers });
 }
 // Premiers pas (lot 28) : un nouveau venu répond d'abord aux questions de Vini
-else if (ppAOuvrir()) openPremiers();
+else if (ppAOuvrir() && !cptLienVu) openPremiers();   // un lien de connexion d'abord (lot 65) : les questions attendent
