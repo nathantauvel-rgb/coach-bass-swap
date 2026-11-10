@@ -200,6 +200,9 @@ test.describe('Sur un téléphone', () => {
     await creerCompte(page);
     await expect(page.locator('.pp-envoye')).toBeVisible();
     await expect(page.locator('#ppLienTitre')).toHaveText('Ton lien pour l’ordinateur est parti à s•••@exemple.fr');
+    // le mail d'un domaine neuf arrive souvent dans les spams, où Gmail désactive les liens : on le dit clairement
+    await expect(page.locator('#ppSpam')).toBeVisible();
+    await expect(page.locator('#ppSpam')).toContainText('ce n’est pas un spam : sinon, le lien ne s’ouvre pas');
     const l = await page.evaluate(() => window.__liensConnexion);
     expect(l).toEqual([{ mail: 'sam@exemple.fr', url: expect.stringMatching(/\/index\.html$/), app: true }]);
     await expect(page.locator('#ppBack')).toBeHidden();

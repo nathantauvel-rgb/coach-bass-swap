@@ -402,7 +402,7 @@ function cptLienDemande(){
   const mail = $('cptMail').value.trim();
   if (!cptMailOk(mail)){ cptDit('Écris l’adresse de ton compte, comme toi@exemple.fr : je t’envoie un lien pour te connecter.'); $('cptMail').focus(); return; }
   cptDit('Envoi en cours…'); cptBoutons(true);
-  cptLienEnvoie(mail).then(() => { cptDit('C’est envoyé ! Ouvre le lien sur cet appareil : tu seras connecté. Regarde aussi dans les indésirables.'); cptBoutons(false); },
+  cptLienEnvoie(mail).then(() => { cptDit('C’est envoyé ! Ouvre le lien sur cet appareil : tu seras connecté. Pas dans ta boîte de réception ? Regarde dans les spams, puis indique à ta messagerie que ce n’est pas un spam : sinon, le lien ne s’ouvre pas.'); cptBoutons(false); },
     e => { cptDit(cptErreur(e)); cptBoutons(false); });
 }
 // Au chargement, l'adresse de la page est un lien de connexion (le mail qu'on vient d'ouvrir) : on connecte au compte.

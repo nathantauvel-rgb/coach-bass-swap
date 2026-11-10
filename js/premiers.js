@@ -496,7 +496,7 @@ function ppCompteEnvoie(){
     if (c === 'auth/email-already-in-use'){
       // il a déjà un compte avec cette adresse : on lui envoie un lien pour s'y connecter, sans rien créer
       ppMsg('Tu as déjà un compte avec cette adresse. Je t’envoie un lien pour te connecter…');
-      cptLienEnvoie(mail).then(() => ppMsg('Tu as déjà un compte avec cette adresse : je t’ai envoyé un lien pour te connecter. Ouvre-le sur ce téléphone, ou choisis « J’ai déjà un compte ».'),
+      cptLienEnvoie(mail).then(() => ppMsg('Tu as déjà un compte avec cette adresse : je t’ai envoyé un lien pour te connecter (regarde aussi dans les spams). Ouvre-le sur ce téléphone, ou choisis « J’ai déjà un compte ».'),
         () => ppMsg('Tu as déjà un compte avec cette adresse : choisis « J’ai déjà un compte » juste en dessous.'));
     } else {
       ppMsg(cptErreur(e));
@@ -533,6 +533,7 @@ const ppMasque = m => { const [a, d] = String(m || '').split('@'); return d ? Ar
 function ppEnvoyeOpts(){
   const c = document.createElement('div'); c.className = 'pp-envoye';
   c.innerHTML = `<div class="pp-mailcarte"><span class="pp-ic" aria-hidden="true">${PP_IC.mail}</span><span><b id="ppLienTitre"></b><small id="ppLienTxt"></small></span></div>
+<p class="pp-spam" id="ppSpam"><b>Pas dans ta boîte de réception ?</b> Regarde dans les spams, puis indique à ta messagerie que ce n’est pas un spam : sinon, le lien ne s’ouvre pas.</p>
 <div class="pp-mini"><button type="button" id="ppCopie">Copier le lien</button><button type="button" id="ppRenvoie">Renvoyer</button></div>`;
   $('ppOpts').appendChild(c);
   $('ppCopie').addEventListener('click', async e => {
@@ -547,7 +548,9 @@ function ppEnvoyeMaj(){
   const t = $('ppLienTitre'); if (!t) return;
   t.textContent = pp.lien === 'ok' ? `Ton lien pour l’ordinateur est parti à ${ppMasque(pp.mail)}` : pp.lien === 'rate' ? 'Le lien n’a pas pu partir' : 'J’envoie ton lien pour l’ordinateur…';
   $('ppLienTxt').textContent = pp.lien === 'rate' ? 'Sur ton ordinateur, ouvre djingood.fr et choisis « J’ai déjà un compte », avec la même adresse : je t’enverrai un lien là-bas.'
-    : 'Ta table, ce sera sur ordinateur. Ouvre ce mail sur ton PC : tu seras connecté tout de suite. Regarde aussi dans les indésirables.';
+    : 'Ta table, ce sera sur ordinateur. Ouvre ce mail sur ton PC : tu seras connecté tout de suite.';
+  // le mail d'un domaine neuf arrive souvent dans les spams, où Gmail désactive les liens (vu le 10 nov. 2026)
+  $('ppSpam').hidden = pp.lien === 'rate';
   $('ppRenvoie').disabled = pp.lien === 'envoi' || Date.now() - (pp.lienAt || 0) < PP_RENVOI;
 }
 

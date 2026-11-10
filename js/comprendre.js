@@ -429,7 +429,8 @@ async function cpEnvoieLien(b){
   const u = typeof cpt !== 'undefined' && cpt && cptFb && cptFb.auth && cptFb.auth.currentUser;
   if (u && u.email){
     if (b.disabled) return; b.disabled = true; b.textContent = 'Envoi…';
-    try { await cptLienEnvoie(u.email); b.textContent = 'Envoyé à ' + ppMasque(u.email); } catch (e) { b.textContent = 'Pas parti : réessaie'; }
+    try { await cptLienEnvoie(u.email); b.textContent = 'Envoyé à ' + ppMasque(u.email);
+      $('homeLienTxt').textContent = 'Pas dans ta boîte de réception ? Regarde dans les spams, puis indique à ta messagerie que ce n’est pas un spam : sinon, le lien ne s’ouvre pas.'; } catch (e) { b.textContent = 'Pas parti : réessaie'; }
     setTimeout(() => { b.disabled = false; b.textContent = 'M’envoyer le lien'; }, 5000); return;
   }
   const url = location.origin + location.pathname;
