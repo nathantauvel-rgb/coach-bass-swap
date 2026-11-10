@@ -73,7 +73,13 @@ Dans l'ordre où un joueur les rencontre :
 |---|---|
 | `sans-midi` | Le navigateur ne peut pas parler à une table (iPhone, appli TikTok, Safari, Firefox) |
 | `premiers-pas-fin` | Il a répondu aux questions de Vini (avec son parcours et s'il a une table) |
-| `premiers-pas-passes` | Il a appuyé sur « Passer » |
+| `premiers-pas-passes` | Il a appuyé sur « Passer » (avant le lot 65, qui a retiré « Passer ») |
+| `quiz-oreille` | Il a tapé les 8 temps de « Ton oreille » (avec son score, `pile`) |
+| `plan-vu` | Il a vu « Ton plan est prêt » |
+| `mur-vu` | Il a vu l'écran du compte, obligatoire juste après le plan (lot 65) |
+| `mur-sans-compte` | Firebase ne répondait pas : il a continué sans compte |
+| `lien-ordi-envoye` | Un lien de connexion lui a été envoyé par mail (sur téléphone : pour l'ordinateur) |
+| `ordi-depuis-lien` | Il a ouvert ce lien et s'est connecté (sur l'ordinateur, le plus souvent) |
 | `comprendre-1` | Il a fini sa première leçon « Comprendre » (lot 48) |
 | `comprendre-fin` | Il a fini les sept leçons « Comprendre » |
 | `table-branchee` | Une table est branchée (avec son nom) |
@@ -86,6 +92,10 @@ Dans l'ordre où un joueur les rencontre :
 | `jours-7` | Il est venu 7 jours différents |
 
 Et à chaque fois : `avis` (un avis envoyé, avec sa note) et `clair` (une réponse à « C'était clair ? »).
+
+Le lien de connexion, à chaque envoi : `lien-envoye`, avec `par` = `brevo` (notre mail, lot 67) ou `firebase` (le mail de
+Firebase, quand Brevo n'est pas réglé ou ne répond pas). Pour savoir si le mail arrive : compare `lien-ordi-envoye` et
+`ordi-depuis-lien`, avant et après le lot 67.
 
 Le guide du débutant (lot 51), à chaque fois aussi : `guide-ecoute` (un son d'exemple écouté, avec son nom) et
 `guide-vers-jeu` (un lecteur a cliqué sur le bouton de fin d'une page du guide et arrive dans le jeu, avec le nom de la

@@ -326,6 +326,34 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     fichiers servis, aucune erreur sur PC, téléphone et appli TikTok). Laissé : la phrase de l'accueil disparaît si
     l'accueil se redessine. Piste plus solide, à proposer : envoyer le lien par Brevo (mail « Vini », domaine déjà en
     partie réglé pour Brevo), ce qui demande une fonction Vercel avec un compte de service Firebase.
+  - **Lot 67 « Le mail qui arrive » (10 nov. 2026, « Oui, lance le 66 » : renuméroté 67 parce qu'une autre session
+    travaillait déjà sur un « lot 66 » dans `Documents\coach-dj-lot66`, branche `lot-66-pro-reel`, CGV et mentions légales,
+    fichiers pas commités : ne pas y toucher)** : branche `lot-67-mail` (partie d'`origin/main` = `7a198a7`), copie
+    `Documents\coach-dj-lot67` (tests : `DJ_PORT=8811 npx playwright test`). Non publié. Le lien de connexion part par
+    Brevo, avec notre texte (validé par Nathan : « Salut Sam ! », bouton violet « Me connecter », « Ouvre-le sur
+    l'ordinateur où tu brancheras ta table », « Ce lien ne sert qu'une fois… », « Vini, de DJingood »), depuis
+    « DJingood » <noreply@djingood.fr> (le même expéditeur que Firebase : les « pas un spam » déjà cliqués comptent).
+    - `api/lien.js` (nouvelle fonction Vercel, sans dépendance) : POST `{ mail, retour }`. Jeton d'accès Google fabriqué à
+      partir de la clé d'un compte de service (`FIREBASE_COMPTE`, JWT RS256 signé avec `crypto`, gardé jusqu'à 5 min avant
+      sa fin) ; `accounts:lookup` (pas de compte, ou compte bloqué → 404) ; au plus 3 liens par heure et par adresse, retenus
+      dans les attributs Firebase du compte (`customAttributes.liens`, les autres attributs gardés ; 429) ;
+      `accounts:sendOobCode` avec `returnOobLink` (Firebase fabrique le lien sans l'envoyer) ; **lien direct sur la page de
+      DJingood** (`…?apiKey=…&oobCode=…&mode=signIn&lang=fr`, même forme que celle où Firebase ramène : `LIEN_CONNEXION` le
+      reconnaît) ; `retour` seulement parmi `SITES` (djingood.fr, www, coach-bass-swap.vercel.app), sinon l'accueil ;
+      prénom lu sur le compte (`displayName`), lettres seulement ; Brevo `/v3/smtp/email` (HTML sans image + texte, tag
+      `lien-connexion`). Sans `BREVO_CLE` ou `FIREBASE_COMPTE` : 503.
+    - Site (`js/compte.js`) : `cptLienBrevo(mail)` appelle `/api/lien` (8 s au plus, `CPT_LIEN_ATTENTE`) ; `cptLienEnvoie`
+      repasse par Firebase (`sendSignInLinkToEmail`) pour toute autre réponse (503, 404, 502, réseau, délai), **sauf 429**
+      (« Trop d'essais de suite », pour ne pas contourner la limite). Statistique `lien-envoye` avec `par` : `brevo` ou
+      `firebase`. Les trois endroits passent par là (compte des Premiers pas, adresse déjà prise, « Recevoir un lien de
+      connexion », plus « M'envoyer le lien » de l'accueil du téléphone).
+    - `confidentialite.html` (le mail du lien part par Brevo) ; `MAILS.md` (nouvelle section en tête : la marche à suivre de
+      Nathan, Brevo authentifié, `BREVO_CLE`, compte de service `djingood-liens` au rôle « Administrateur Firebase
+      Authentication », `FIREBASE_COMPTE`, Redeploy, essai avec `+essai1`). Tests : `tests/lien.spec.js` (20 : le site avec
+      une fausse fonction, la fonction sans réseau). Aperçu du mail : `node captures/lot67/apercu-mail.js` → `captures/lot67/`.
+    - **Jamais essayé avec le vrai Google ni le vrai Brevo** (les clés sont à Nathan). Après ses réglages : un vrai essai,
+      et vérifier que le bouton du mail mène bien à `https://djingood.fr` (Brevo peut réécrire les liens pour compter les
+      clics). Ensuite : lot 68, allumer les mails de Vini (`ML_PRET`, reste de `MAILS.md`).
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de

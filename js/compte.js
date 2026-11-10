@@ -371,8 +371,8 @@ function cptEntrerMail(mail, mdp){
 /* ---------- Sans mot de passe (lot 65 « Arrivée et compte ») ----------
    Le compte des Premiers pas se crée avec un prénom et une adresse, sans mot de passe à retenir. Firebase demande un mot de passe
    pour créer un compte par e-mail : on en tire un au hasard, que personne ne voit ni ne garde. Le compte existe donc tout de suite,
-   et la progression part dessus dès la première minute. Pour s'y reconnecter (sur l'ordinateur, sur un autre téléphone), Firebase
-   envoie un « lien magique » (sendSignInLinkToEmail) : il connecte au même compte, puisque c'est la même adresse.
+   et la progression part dessus dès la première minute. Pour s'y reconnecter (sur l'ordinateur, sur un autre téléphone), un
+   « lien magique » part par mail (Brevo depuis le lot 67, sinon Firebase : cptLienEnvoie) : il connecte au même compte.
    Il faut que « Lien envoyé par e-mail (connexion sans mot de passe) » soit activé dans la console Firebase (Authentication →
    Sign-in method → E-mail/Mot de passe) : voir COMPTE-FIREBASE.md. Le lien ouvert sur cet appareil retrouve l'adresse dans
    CPT_LIEN_CLE ; ouvert ailleurs, Firebase demande de la réécrire (c'est sa sécurité). */
@@ -390,12 +390,32 @@ function cptCreerSansMdp(prenom, mail, accord){
     .then(r => { cpt = { uid: r.user.uid, prenom }; cptNote(); cptEtat(); return r.user.updateProfile({ displayName: prenom }).catch(() => {}); })
     .catch(e => { cptDemande = false; throw e; });
 }
+/* Le lien part d'abord par Brevo, avec notre texte et depuis djingood.fr (lot 67 « Le mail qui arrive », api/lien.js) : le
+   mail de Firebase, au texte impossible à changer, tombait souvent dans les spams d'un nouveau venu. Si la fonction n'est pas
+   réglée, ne connaît pas l'adresse, ne répond pas ou se trompe, le lien part par Firebase comme avant : rien ne casse. Seul
+   « trop de liens demandés » (429) s'arrête là : repasser par Firebase contournerait la limite. */
+const CPT_LIEN_API = '/api/lien', CPT_LIEN_ATTENTE = 8000;
+function cptLienBrevo(mail){
+  if (typeof fetch !== 'function') return Promise.resolve(false);
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+  const fin = ctl ? setTimeout(() => ctl.abort(), CPT_LIEN_ATTENTE) : 0;
+  return fetch(CPT_LIEN_API, { method: 'POST', headers: { 'content-type': 'application/json' }, signal: ctl ? ctl.signal : undefined,
+    body: JSON.stringify({ mail, retour: location.origin + location.pathname }) })
+    .then(r => {
+      clearTimeout(fin);
+      if (r.status === 429){ const e = new Error('trop de liens'); e.code = 'auth/too-many-requests'; throw e; }
+      return r.ok ? r.json().then(d => !!(d && d.envoye), () => false) : false;
+    }, () => { clearTimeout(fin); return false; });
+}
 // Le lien de connexion, par mail. Il ramène sur cette page, d'où cptLienFinir connecte au compte.
 function cptLienEnvoie(mail){
-  return cptSdkAuth().then(() => cptFb.auth.sendSignInLinkToEmail(mail, { url: location.origin + location.pathname, handleCodeInApp: true })).then(() => {
-    try { localStorage.setItem(CPT_LIEN_CLE, mail); } catch (e) {}
-    stat1('lien-ordi-envoye');
-  });
+  return cptLienBrevo(mail)
+    .then(brevo => brevo ? 'brevo' : cptSdkAuth().then(() => cptFb.auth.sendSignInLinkToEmail(mail, { url: location.origin + location.pathname, handleCodeInApp: true })).then(() => 'firebase'))
+    .then(par => {
+      try { localStorage.setItem(CPT_LIEN_CLE, mail); } catch (e) {}
+      stat1('lien-ordi-envoye');
+      stat('lien-envoye', { par });   // pour comparer, dans Umami, les liens envoyés par Brevo et par Firebase
+    });
 }
 // « J'ai déjà un compte » → « Recevoir un lien de connexion » : pour les comptes créés sans mot de passe, et pour ceux qui l'ont oublié
 function cptLienDemande(){

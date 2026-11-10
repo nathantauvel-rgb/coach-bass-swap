@@ -7,6 +7,48 @@ Les noms des menus de Brevo peuvent changer un peu : si tu ne trouves pas un éc
 de Vini, ou l'interrupteur de « Mon compte »). Jamais d'import d'adresses depuis Firebase, jamais de mail aux comptes
 qui n'ont pas répondu. Et **un mail par semaine au plus**.
 
+## D'abord : le lien de connexion par Brevo (lot 67 « Le mail qui arrive »)
+
+Depuis le lot 67, le mail du lien de connexion (celui qui fait passer du téléphone à l'ordinateur) part par Brevo, avec
+**notre texte**, au lieu du texte de Firebase qui tombait dans les spams. Tant que ces réglages ne sont pas faits, rien ne
+casse : le site envoie le lien par Firebase, comme avant. Compte une vingtaine de minutes.
+
+**Les deux clés de cette page ne se donnent à personne** : ni dans le site, ni dans un message, ni dans une conversation
+avec moi. Tu les colles seulement dans Vercel.
+
+1. **Brevo, le domaine.** Les lignes de Brevo sont déjà dans la zone DNS d'OVH (vérifié le 10 nov. 2026 : `brevo-code`,
+   `brevo1._domainkey` et `brevo2._domainkey`, DMARC). Dans Brevo : **Expéditeurs, domaines et IP dédiées → Domaines** :
+   `djingood.fr` doit être marqué « Authentifié ». Sinon, clique sur « Authentifier » et dis-le-moi.
+   Si Brevo demande de compléter le profil de ton entreprise ou d'activer l'envoi de mails « transactionnels », fais-le.
+2. **Brevo, la clé.** Si tu ne l'as pas déjà fait pour les mails de Vini : **SMTP & API → Clés API → Générer une nouvelle
+   clé**, nom `djingood-site`. Dans Vercel (projet `coach-bass-swap` → **Settings → Environment Variables**), ajoute
+   `BREVO_CLE` = cette clé, pour « Production » seulement.
+3. **Firebase, une clé aux droits limités.** Elle sert seulement à fabriquer le lien de connexion.
+   - Ouvre https://console.cloud.google.com/iam-admin/serviceaccounts?project=djingo-1e1f4 (le même compte Google que
+     Firebase).
+   - **Créer un compte de service** → nom `djingood-liens` → « Créer et continuer ».
+   - Rôle : cherche **« Administrateur Firebase Authentication »** (en anglais : Firebase Authentication Admin) → « Continuer »
+     → « OK ». **Pas** « Propriétaire » ni « Éditeur » : ils donneraient accès à tout le projet.
+   - Clique sur le compte `djingood-liens` → onglet **Clés** → **Ajouter une clé → Créer une clé → JSON → Créer**. Un
+     fichier `.json` se télécharge. (Si Google dit que la création de clés est désactivée, arrête-toi et dis-le-moi.)
+   - Ouvre ce fichier avec le Bloc-notes, tout sélectionner (Ctrl+A), copier (Ctrl+C).
+   - Dans Vercel, ajoute `FIREBASE_COMPTE` = tout le texte collé tel quel, pour « Production » seulement (coche
+     « Sensitive » si Vercel le propose).
+   - **Supprime ensuite le fichier `.json`** de tes Téléchargements (et vide la corbeille) : la clé ne doit vivre que dans
+     Vercel. Si un jour tu crois qu'elle a fuité : supprime-la dans l'onglet Clés de Google, puis refais celle-ci.
+4. **Faire prendre les réglages.** Vercel ne les lit qu'au déploiement suivant : **Deployments** → le plus récent → « ⋯ »
+   → **Redeploy** (ou attends la prochaine mise en ligne).
+5. **Essayer.** Sur ton téléphone, fais les questions de Vini avec une adresse neuve : avec Gmail, ajoute `+essai1` avant
+   le `@` (`ton.nom+essai1@gmail.com` arrive dans ta boîte, mais c'est un nouveau compte pour DJingood). Le mail doit venir
+   de « DJingood », commencer par « Salut … ! » et avoir un bouton violet « Me connecter ». Sur ton ordinateur, clique le
+   bouton : tu dois être connecté. Regarde aussi où mène le bouton (appui long sur téléphone) : l'adresse doit commencer par
+   `https://djingood.fr`. Si elle commence par une adresse de Brevo (suivi des clics), dis-le-moi, on le coupe ensemble.
+   Dans Umami, l'événement `lien-envoye` dit par où le lien est parti (`par` : `brevo` ou `firebase`).
+   Tu peux effacer les comptes d'essai dans Firebase (**Authentication → Users**).
+
+Sécurités prévues (api/lien.js) : on n'écrit qu'à une adresse qui a déjà un compte DJingood, au plus 3 liens par adresse et
+par heure, et le lien ramène toujours sur djingood.fr. La formule gratuite de Brevo permet 300 mails par jour.
+
 ## Comment ça marche
 
 1. Le joueur dit oui sur le site. S'il a créé son compte avec une adresse e-mail (pas avec Google), le site lui fait
