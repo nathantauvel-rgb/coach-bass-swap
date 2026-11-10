@@ -2,17 +2,28 @@
 // puis mène à la première étape du parcours qui va avec le niveau.
 const { test, expect } = require('@playwright/test');
 const { ouvrir, sansBandeau } = require('./outils');
+const { FAUX } = require('./faux-firebase');   // lot 65 : le compte est obligatoire après le plan
 
 const NOUVEAU = { 'coach-guide-vu': null, 'coach-fiches': null, 'coach-accueil': null };
 const stocke = (page, k) => page.evaluate(c => JSON.parse(localStorage.getItem(c)), k);
 const choix = (page, i) => page.locator('#ppOpts .pp-opt').nth(i).click();
 const suite = page => page.locator('#ppGo').click();
-// Répond à tout : niveau (numéro), table (numéro), minutes (numéro)
+const passerOreille = page => page.locator('#ppOrPasse').click();   // lot 65 : « Ton oreille », après le niveau
+// Lot 65 : après « Voir mon plan », le plan, puis le compte (faux Firebase) avant le premier niveau
+async function compte(page) {
+  await expect(page.locator('.pp-frise')).toBeVisible();
+  await suite(page);
+  await page.locator('#ppPrenom').fill('Sam'); await page.locator('#ppMail').fill('sam@exemple.fr');
+  await suite(page);
+}
+// Répond à tout : niveau (numéro), table (numéro), minutes (numéro), puis crée le compte
 async function repondre(page, { niveau, table, minutes }) {
   await suite(page);
   await choix(page, niveau); await suite(page);
+  await passerOreille(page);
   await choix(page, table); await suite(page);
   await choix(page, minutes); await suite(page);
+  await compte(page);
 }
 
 test.describe('Premiers pas', () => {
@@ -46,14 +57,14 @@ test.describe('Premiers pas', () => {
     await expect(page.locator('#ppAsk')).toHaveText(/Mode Expert/);
     await expect(page.locator('#ppGo')).toBeEnabled();
     await suite(page);
-    await expect(page.locator('#ppAsk')).toHaveText('Tu as une table DJ ?');
+    await expect(page.locator('#ppAsk')).toHaveText(/^Ton oreille/);
     await page.locator('#ppBack').click();
     await expect(page.locator('#ppOpts .pp-opt').nth(1)).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('#ppGo')).toBeEnabled();
   });
   test('table : aucune n\'est mise en avant ; la liste par marque dit si DJingood la connaît', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
-    await suite(page); await choix(page, 0); await suite(page);
+    await suite(page); await choix(page, 0); await suite(page); await passerOreille(page);
     await expect(page.locator('#ppOpts .pp-opt')).toHaveCount(2);
     await expect(page.locator('#ppOpts .pp-opt').filter({ hasText: 'FLX4' })).toHaveCount(0);
     await expect(page.locator('#ppListe')).toBeHidden();
@@ -76,7 +87,7 @@ test.describe('Premiers pas', () => {
   });
   test('table branchée : reconnue toute seule, même pendant l\'écran', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: {} });
-    await suite(page); await choix(page, 0); await suite(page);
+    await suite(page); await choix(page, 0); await suite(page); await passerOreille(page);
     await expect(page.locator('#ppGo')).toBeDisabled();
     await page.evaluate(() => window.__midi.brancher('DJControl Inpulse 300'));
     await expect(page.locator('#ppAsk')).toHaveText('Je la reconnais : ta Hercules DJControl Inpulse 300 est prête à jouer !');
@@ -94,24 +105,25 @@ test.describe('Premiers pas', () => {
     expect(erreurs).toEqual([]);
   });
   test('Grand débutant : parcours « Grand débutant », objectif enregistré, puis le guide au niveau 1', async ({ page }) => {
-    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU });
+    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: FAUX });
     await suite(page);
-    await choix(page, 0); await suite(page);
+    await choix(page, 0); await suite(page); await passerOreille(page);
     await choix(page, 0); await page.locator('#ppModele').selectOption('flx4'); await suite(page);
     await choix(page, 0);
-    await expect(page.locator('#ppGo')).toHaveText('Commencer');
+    await expect(page.locator('#ppGo')).toHaveText('Voir mon plan');
     await suite(page);
+    await compte(page);
     await expect(page.locator('#pp')).toBeHidden();
     await expect(page.locator('#vLearn')).toBeVisible();
     await expect(page.locator('#onb')).toBeVisible();
     await expect(page.locator('#ltitle')).toHaveText('Le bon moment');
     expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('debut');
     expect((await stocke(page, 'coach-objectif')).min).toBe(5);
-    expect(await stocke(page, 'coach-accueil')).toEqual({ niveau: 'debut', table: 'table', modele: 'flx4', min: 5, fini: expect.any(String) });
+    expect(await stocke(page, 'coach-accueil')).toEqual({ niveau: 'debut', table: 'table', modele: 'flx4', min: 5, oreille: null, mur: false, fini: expect.any(String) });
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('Apprenti DJ : niveau 1 en Mode Expert, sans guide ni fiche, chapitres ouverts', async ({ page }) => {
-    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU });
+    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: FAUX });
     await repondre(page, { niveau: 1, table: 1, minutes: 1 });
     await expect(page.locator('#vLearn')).toBeVisible();
     await expect(page.locator('#ltitle')).toHaveText('Le bon moment');
@@ -122,7 +134,7 @@ test.describe('Premiers pas', () => {
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('DJ confirmé : on commence par le set (lot 44)', async ({ page }) => {
-    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU });
+    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, avant: FAUX });
     await repondre(page, { niveau: 2, table: 1, minutes: 2 });
     await expect(page.locator('#vLearn')).toBeVisible();
     await expect(page.locator('#lnum')).toHaveText(/^Chapitre 7 · Niveau 1/);
@@ -131,17 +143,14 @@ test.describe('Premiers pas', () => {
     expect((await stocke(page, 'coach-objectif')).min).toBe(15);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
-  test('« Passer » : aucun parcours imposé, l\'accueil propose les trois parcours, et plus de questions ensuite', async ({ page }) => {
+  test('plus de « Passer » (lot 65) ; ceux qui avaient passé les questions avant ne les revoient pas', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: NOUVEAU });
-    await page.locator('#ppSkip').click();
+    await expect(page.locator('#ppSkip')).toHaveCount(0);
+  });
+  test('anciennes réponses « passées » : pas de questions, l\'accueil propose les trois parcours', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: Object.assign({}, NOUVEAU, { 'coach-accueil': '{"passe": true, "fini": "2026-10-20"}' }) });
     await expect(page.locator('#pp')).toBeHidden();
     await expect(page.locator('#homeChoice')).toBeVisible();
-    await expect(page.locator('#homeChoice .choice')).toHaveCount(3);
-    expect((await stocke(page, 'coach-accueil')).passe).toBe(true);
-    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBeNull();
-    await page.reload();
-    await expect(page.locator('#homeChoice')).toBeVisible();
-    await expect(page.locator('#pp')).toBeHidden();
   });
   test('arrivé directement sur Apprendre : d\'abord les questions, le guide ensuite', async ({ page }) => {
     await ouvrir(page, { onglet: 'apprendre', stockage: NOUVEAU });
@@ -150,7 +159,7 @@ test.describe('Premiers pas', () => {
   });
   test('le rapport des testeurs reprend les réponses', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: NOUVEAU });
-    await suite(page); await choix(page, 0); await suite(page);
+    await suite(page); await choix(page, 0); await suite(page); await passerOreille(page);
     await choix(page, 0); await page.locator('#ppModele').selectOption('dj505'); await suite(page);
     await choix(page, 1); await suite(page);
     const r = await page.evaluate(() => avisRapport().replace(/ /g, ' '));

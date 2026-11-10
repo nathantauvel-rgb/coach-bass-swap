@@ -2,6 +2,8 @@
 // qu'il parle ; il réagit à chaque réponse ; la musique monte d'une question à l'autre, et « Commencer » est le drop.
 const { test, expect } = require('@playwright/test');
 const { ouvrir, sansBandeau } = require('./outils');
+const { FAUX } = require('./faux-firebase');   // lot 65 : le compte, après le plan
+const passerOreille = page => page.locator('#ppOrPasse').click();   // lot 65 : « Ton oreille », après le niveau
 
 const NOUVEAU = { 'coach-guide-vu': null, 'coach-fiches': null, 'coach-accueil': null };
 const suite = page => page.locator('#ppGo').click();
@@ -50,14 +52,16 @@ test.describe('Premiers pas animés', () => {
     await expect.poll(() => musique(page).then(m => m.joue)).toBe(true);
     await expect(page.locator('#ppAsk')).toHaveText('Tu en es où avec le mix ?');
     await expect.poll(() => cachees(page), { timeout: 5000 }).toBe(0);
-    expect(await avance(page)).toBe('30');
+    expect(await avance(page)).toBe('24');
     const c1 = (await musique(page)).coupure;
     expect(c1).toBeLessThan(500);
     await choix(page, 'debut'); await suite(page);
-    expect(await avance(page)).toBe('52');
+    expect(await avance(page)).toBe('40');
+    await passerOreille(page);
+    expect(await avance(page)).toBe('56');
     await expect.poll(() => musique(page).then(m => m.coupure)).toBeGreaterThan(650);
     await choix(page, 'souris'); await suite(page);
-    expect(await avance(page)).toBe('74');
+    expect(await avance(page)).toBe('72');
     await expect.poll(() => musique(page).then(m => m.coupure)).toBeGreaterThan(1500);
     // l'objectif change le tempo du morceau, comme le tempo d'une platine
     await choix(page, 15); await expect.poll(() => musique(page).then(m => m.vitesse)).toBe(1.07);
@@ -75,6 +79,9 @@ test.describe('Premiers pas animés', () => {
     await choix(page, 'confirme');
     await expect.poll(() => pose(page).then(p => [p.bras, p.yeux, /vn-lunettes/.test(p.cls)])).toEqual([null, null, true]);
     await suite(page);
+    // lot 65 : il tend l'oreille avant le test du rythme
+    await expect.poll(() => pose(page)).toMatchObject({ bras: 'oreille', fx: 'ondes' });
+    await passerOreille(page);
     // la table : il tend l'oreille en attendant qu'on la branche, sort une souris sans table, lève le pouce pour une table connue
     await choix(page, 'table');
     await expect.poll(() => pose(page)).toMatchObject({ bras: 'oreille', fx: 'ondes', cls: expect.stringContaining('vn-calme') });
@@ -95,9 +102,9 @@ test.describe('Premiers pas animés', () => {
     await choix(page, 10);
     await expect.poll(() => pose(page).then(p => [p.bras, p.yeux, /vn-r-|vn-sueur/.test(p.cls)])).toEqual([null, null, false]);
   });
-  test('« Commencer » : le drop sur le temps suivant, puis le premier niveau, et la musique s’arrête', async ({ page }) => {
-    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
-    await suite(page); await choix(page, 'debut'); await suite(page); await choix(page, 'souris'); await suite(page); await choix(page, 10);
+  test('« Voir mon plan » : le drop sur le temps suivant, le plan, puis le premier niveau, et la musique s’arrête', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false }, avant: FAUX });
+    await suite(page); await choix(page, 'debut'); await suite(page); await passerOreille(page); await choix(page, 'souris'); await suite(page); await choix(page, 10);
     await expect.poll(() => musique(page).then(m => m.joue)).toBe(true);
     await suite(page);
     await expect(page.locator('#ppGo')).toBeDisabled();
@@ -106,13 +113,16 @@ test.describe('Premiers pas animés', () => {
     expect(JSON.parse(await page.evaluate(() => localStorage.getItem('coach-accueil')))).toMatchObject({ niveau: 'debut', table: 'souris', min: 10 });
     await expect.poll(() => musique(page).then(m => m.coupure), { timeout: 3000 }).toBeGreaterThan(15000);
     await expect(page.locator('#ppVini')).toHaveClass(/vn-parfait/);
-    await expect(page.locator('#ppAsk')).toHaveText('C’est parti !');
+    await expect(page.locator('#ppAsk')).toHaveText('Ton plan est prêt !');
+    await suite(page);
+    await page.locator('#ppPrenom').fill('Sam'); await page.locator('#ppMail').fill('sam@exemple.fr');
+    await suite(page);
     await expect(page.locator('#pp')).toBeHidden({ timeout: 4000 });
     expect((await musique(page)).joue).toBe(false);
     await expect(page.locator('#ltitle')).toHaveText('Le bon moment');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
-  test('sons coupés : pas de musique ; le bouton à côté de « Passer » la remet, et le choix est gardé', async ({ page }) => {
+  test('sons coupés : pas de musique ; le bouton du haut la remet, et le choix est gardé', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: Object.assign({ 'coach-sons': '0' }, NOUVEAU), midi: { branchee: false } });
     await suite(page);
     await expect(page.locator('#ppSon')).toHaveAttribute('aria-pressed', 'false');
@@ -125,16 +135,6 @@ test.describe('Premiers pas animés', () => {
     await expect(page.locator('#volBips')).toHaveAttribute('aria-checked', 'true');   // l'interrupteur du panneau « Son » suit (lot 60)
     await page.locator('#ppSon').click();
     await expect.poll(() => musique(page).then(m => m.joue)).toBe(false);
-    await page.locator('#ppSkip').click();
-    await expect(page.locator('#pp')).toBeHidden();
-  });
-  test('« Passer » pendant la musique : elle s’arrête avec les questions', async ({ page }) => {
-    await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
-    await suite(page);
-    await expect.poll(() => musique(page).then(m => m.joue)).toBe(true);
-    await page.locator('#ppSkip').click();
-    await expect(page.locator('#pp')).toBeHidden();
-    expect((await musique(page)).joue).toBe(false);
   });
   test('« Retour » jusqu’au premier écran : Vini mixe déjà, sans rejouer l’entrée', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
@@ -146,7 +146,7 @@ test.describe('Premiers pas animés', () => {
     await expect(page.locator('#ppBody')).not.toHaveClass(/pp-intro/);
     await expect(page.locator('#ppSon')).toBeHidden();
   });
-  test('animations réduites : pas d’entrée ni d’écriture lettre par lettre, et « Commencer » ne fait pas attendre', async ({ page }) => {
+  test('animations réduites : pas d’entrée ni d’écriture lettre par lettre, et « Voir mon plan » ne fait pas attendre', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
     await expect(page.locator('#ppBody')).toHaveClass(/pp-mixe/);
@@ -154,23 +154,22 @@ test.describe('Premiers pas animés', () => {
     await suite(page);
     await expect(page.locator('#ppAsk')).toHaveText('Tu en es où avec le mix ?');
     expect(await cachees(page)).toBe(0);
-    await choix(page, 'apprenti'); await suite(page); await choix(page, 'souris'); await suite(page); await choix(page, 5);
+    await choix(page, 'apprenti'); await suite(page); await passerOreille(page); await choix(page, 'souris'); await suite(page); await choix(page, 5);
     await suite(page);
-    await expect(page.locator('#pp')).toBeHidden({ timeout: 1000 });
+    await expect(page.locator('#ppAsk')).toHaveText('Ton plan est prêt !', { timeout: 1000 });
     expect(erreurs).toEqual([]);
   });
 });
 
 test.describe('Corrections du gardien (lot 52)', () => {
-  test('« Passer » pendant le drop ne fait rien : les réponses et le parcours restent', async ({ page }) => {
+  test('pendant le drop, un second clic ne saute pas le plan (lot 65)', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
-    await suite(page); await choix(page, 'debut'); await suite(page); await choix(page, 'souris'); await suite(page); await choix(page, 10);
+    await suite(page); await choix(page, 'debut'); await suite(page); await passerOreille(page); await choix(page, 'souris'); await suite(page); await choix(page, 10);
     await suite(page);
-    await page.locator('#ppSkip').click();
-    await expect(page.locator('#pp')).toBeHidden({ timeout: 4000 });
+    await page.locator('#ppGo').click({ force: true });
+    await expect(page.locator('#ppAsk')).toHaveText('Ton plan est prêt !', { timeout: 4000 });
+    expect(await page.evaluate(() => PP_ETAPES[pp.i])).toBe('plan');
     expect(JSON.parse(await page.evaluate(() => localStorage.getItem('coach-accueil')))).toMatchObject({ niveau: 'debut', table: 'souris', min: 10 });
-    expect(await page.evaluate(() => localStorage.getItem('coach-parcours'))).toBe('debut');
-    await expect(page.locator('#ltitle')).toHaveText('Le bon moment');
   });
   test('la musique ne se télécharge qu’au clic sur « C’est parti », et le morceau est rendu à la mémoire à la fin', async ({ page }) => {
     const demandes = [];
@@ -181,7 +180,7 @@ test.describe('Corrections du gardien (lot 52)', () => {
     await suite(page);
     await expect.poll(() => musique(page).then(m => m.joue)).toBe(true);
     expect(demandes.length).toBeGreaterThan(0);
-    await page.locator('#ppSkip').click();
+    await page.evaluate(() => ppClose());   // la fin des questions
     await expect(page.locator('#pp')).toBeHidden();
     expect(await page.evaluate(() => ppSon.pret)).toBeNull();
   });
@@ -199,7 +198,7 @@ test.describe('Corrections du gardien (lot 52)', () => {
   });
   test('la table reconnue garde son onde jusqu’au bout', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: {} });
-    await suite(page); await choix(page, 'debut'); await suite(page);
+    await suite(page); await choix(page, 'debut'); await suite(page); await passerOreille(page);
     await page.evaluate(() => window.__midi.brancher('DDJ-FLX4'));
     const carte = page.locator('#ppOpts .pp-big');
     await expect(carte).toBeVisible();

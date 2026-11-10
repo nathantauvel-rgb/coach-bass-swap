@@ -23,6 +23,20 @@ Je ne peux pas faire ces étapes à ta place : elles demandent ton compte Google
 2. Onglet **Sign-in method** → clique **Google** → bascule **Enable**.
 3. Choisis une adresse d'assistance (la tienne) → **Save**.
 
+## 2 bis. Autoriser la connexion sans mot de passe (lot 65)
+
+Le compte des premières questions se crée avec un prénom et une adresse, **sans mot de passe** : pour se reconnecter
+(sur l'ordinateur, sur un autre téléphone), Firebase envoie un lien par mail. Il faut l'autoriser une fois :
+
+1. **Build → Authentication** → onglet **Sign-in method** → clique **E-mail/Mot de passe**.
+2. Laisse **E-mail/Mot de passe** activé, et active aussi **Lien envoyé par e-mail (connexion sans mot de passe)**.
+3. **Save**.
+
+Sans ça, le compte se crée quand même, mais le lien pour l'ordinateur ne part pas (le site le dit, et propose de se
+connecter sur l'ordinateur avec « J'ai déjà un compte »). Le mail du lien est celui de Firebase, en français ; il part
+lui aussi de `noreply@djingo-1e1f4.firebaseapp.com` tant que la section « Envoyer les e-mails depuis djingood.fr »
+(plus bas) n'est pas faite : **à faire avant de mettre le lot 65 en ligne**, sinon il risque de finir dans les indésirables.
+
 ## 3. Autoriser nos adresses
 
 Toujours dans **Authentication** → onglet **Settings** → **Authorized domains**.
@@ -105,7 +119,7 @@ appareil à l'autre »).
 
 ## Envoyer les e-mails depuis djingood.fr (15 minutes, puis jusqu'à 48 h d'attente)
 
-**Pourquoi** : l'e-mail « Mot de passe oublié » part aujourd'hui de `noreply@djingo-1e1f4.firebaseapp.com`, une
+**Pourquoi** : les e-mails de Firebase (le lien de connexion du lot 65, « Mot de passe oublié ») partent aujourd'hui de `noreply@djingo-1e1f4.firebaseapp.com`, une
 adresse qui n'appartient pas à DJingood. Gmail le range dans les indésirables et y désactive le lien. En l'envoyant
 depuis `djingood.fr`, le domaine qui est à toi, tu prouves aux messageries que le message vient bien de toi. Ça ne
 garantit pas la boîte de réception dès le premier jour (un domaine tout neuf n'a pas encore de réputation), mais
