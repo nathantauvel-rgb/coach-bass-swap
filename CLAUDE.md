@@ -321,7 +321,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     spam : sinon, le lien ne s'ouvre pas. » sur l'écran « lien envoyé » (`#ppSpam`, carte `.pp-spam`, cachée si le lien n'a
     pas pu partir), dans `cptLienDemande`, pour une adresse déjà prise et sur l'accueil du téléphone après « M'envoyer le
     lien » (`#homeLienTxt`) ; « Mot de passe oublié » dit aussi « spams » (un seul mot partout). Gardien : feu orange, 131 tests
-    des fichiers touchés. Laissé : la phrase de l'accueil disparaît si l'accueil se redessine. Piste plus solide, à proposer : envoyer le lien par Brevo (mail « Vini », domaine déjà en
+    des fichiers touchés (98 après ses remarques). **Retouche PUBLIÉE le 10 nov. 2026** (« Oui, publie » ; avance rapide
+    `d09a1f8..25eb86f` sur `main`, notes comprises ; production vérifiée sans créer de compte, Umami bloqué : nouveaux
+    fichiers servis, aucune erreur sur PC, téléphone et appli TikTok). Laissé : la phrase de l'accueil disparaît si
+    l'accueil se redessine. Piste plus solide, à proposer : envoyer le lien par Brevo (mail « Vini », domaine déjà en
     partie réglé pour Brevo), ce qui demande une fonction Vercel avec un compte de service Firebase.
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
