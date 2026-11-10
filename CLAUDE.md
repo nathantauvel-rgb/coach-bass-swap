@@ -313,8 +313,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     **Les mails de Firebase partent déjà de `noreply@djingood.fr`** (dit par Nathan, 10 nov.) ; zone DNS lue sur `ns103.ovh.net` :
     une seule ligne `v=spf1 include:mx.ovh.com include:_spf.firebasemail.com -all`, `firebase1/2._domainkey` (CNAME vers
     firebasemail.com), `firebase=djingo-1e1f4`, DMARC `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com`, et `brevo-code:` (Brevo
-    commencé). Reste à savoir si le mail arrive en boîte de réception : si oui, adoucir les phrases « regarde aussi dans les
-    indésirables » (écran « lien envoyé », `cptLienDemande`, `cptOubliMdp`).
+    commencé). **Mais le mail du lien arrivait dans les spams de Nathan** (Gmail, 10 nov. : il l'a marqué « non spam », donc
+    chez lui il arrive maintenant en boîte de réception ; un nouveau venu, lui, le trouvera dans ses spams). Le domaine est
+    neuf, sans réputation, et le texte du mail est celui de Firebase (pas modifiable). **Garder** les phrases « regarde aussi
+    dans les indésirables ». Gmail désactive les liens d'un mail rangé en spam (vu au lot 35) : il faut le marquer « non
+    spam » pour pouvoir cliquer. Piste plus solide, à proposer : envoyer le lien par Brevo (mail « Vini », domaine déjà en
+    partie réglé pour Brevo), ce qui demande une fonction Vercel avec un compte de service Firebase.
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de
