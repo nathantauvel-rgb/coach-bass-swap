@@ -295,6 +295,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     `ppCompteOk` : une page rechargée sur « lien envoyé » ne repose plus les questions) ; « Tout recommencer à zéro » efface
     `__djingood-lien` ; « Continuer sans compte pour l'instant » garde `mur`, donc le plan et le compte reviennent à la
     visite suivante (`ppAOuvrir` : `mur` même avec un parcours). Un test par correction (« Corrections du gardien »).
+  - **Gardien, second passage : feu orange, aucun blocage, 733 tests sur 733.** Remarques laissées (à dire à Nathan) : un PC
+    qui avait déjà des étoiles gagnées sans compte garde ses étoiles, et le plan du téléphone disparaît du compte (rare) ;
+    recharger pendant qu'on redemande l'adresse oblige à rouvrir le mail (le lien n'est plus dans l'adresse) ; pendant une
+    panne de Firebase, le plan revient à chaque visite et il faut réessayer pour retrouver « Continuer sans compte ».
+    **Le vrai Firebase n'a jamais servi** : après les deux réglages de Nathan, un vrai essai téléphone (TikTok si possible)
+    → mail → PC. La checklist FLX4 n'est pas touchée par ce lot. Captures : `captures/lot65/` (hors Git).
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de
