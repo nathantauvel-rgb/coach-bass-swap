@@ -367,6 +367,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
       jour. Remarques reprises : le message du 429 (il disait « quelques minutes » ; il dit maintenant où chercher le mail),
       le retour limité à l'accueil. Laissées : 404 / 200 disent si une adresse a un compte (Firebase le disait déjà) ; la clé
       `FIREBASE_COMPTE` ouvre tous les comptes si elle fuit (consignes dans `MAILS.md`).
+    - **Gardien, second passage : feu orange, aucun blocage** (118 tests relancés par lui ; sa simulation : 4 vagues de
+      50 demandes simultanées = 3 mails). Repris : une demande refusée remplissait aussi le compteur du jour (200 demandes
+      refusées coupaient Brevo pour tout le monde jusqu'à minuit UTC) → deux ajouts séparés (`fiches`, `ajout`, `compte1`) :
+      l'adresse d'abord, le jour seulement si l'adresse a passé ; « un un peu plus tard » → « un plus tard ». Laissés : le
+      compteur suit l'heure pleine (3 à 21 h 59 puis 3 à 22 h 00, au plus 72 par jour pour une adresse) ; les variantes
+      Gmail (`+essai`, points) comptent à part, bornées par le plafond du jour ; sous une attaque, Firestore peut refuser des
+      écritures sur la fiche du jour → 502 → repli Firebase, sans danger.
     - **Tests : lancer la suite en quatre morceaux** (`DJ_PORT=88xx npx playwright test --shard=N/4`) : en entier elle dépasse
       10 minutes. Piège vu : un serveur de test resté sur un port sert l'ancien code d'une autre copie (tests du site en
       échec sans raison) ; changer de port.

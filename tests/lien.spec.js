@@ -66,7 +66,7 @@ test.describe('Le site : Brevo d\'abord, Firebase en secours', () => {
     await fausseFonction(page, { statut: 429, corps: { erreur: 'trop' } });
     await ouvrir(page, { onglet: 'accueil', avant: FAUX });
     await demandeLien(page);
-    await expect(page.locator('#cptMsg')).toHaveText('Je t’ai déjà envoyé 3 liens dans l’heure : regarde dans ta boîte de réception et dans tes spams, il y est. Tu pourras en redemander un un peu plus tard.');
+    await expect(page.locator('#cptMsg')).toHaveText('Je t’ai déjà envoyé 3 liens dans l’heure : regarde dans ta boîte de réception et dans tes spams, il y est. Tu pourras en redemander un plus tard.');
     expect(await liensFirebase(page)).toEqual([]);
   });
 
@@ -236,26 +236,34 @@ test.describe('La fonction /api/lien', () => {
 
   test('les compteurs : une fiche par adresse et par heure (sans l\'adresse en clair), une par jour, +1 d\'un seul coup', async () => {
     await appel({ mail: 'lea@exemple.fr' });
-    const w = vers(':commit')[0].corps.writes;
-    expect(w).toHaveLength(2);
-    expect(w[0].update.name).toMatch(/^projects\/djingo-1e1f4\/databases\/\(default\)\/documents\/limites\/a-[0-9a-f]{32}-\d{10}$/);
-    expect(w[1].update.name).toMatch(/^projects\/djingo-1e1f4\/databases\/\(default\)\/documents\/limites\/jour-\d{4}-\d{2}-\d{2}$/);
-    for (const x of w) {
+    const c = vers(':commit').map(x => x.corps.writes);
+    expect(c).toHaveLength(2);   // l'adresse d'abord, puis le jour
+    expect(c.map(w => w.length)).toEqual([1, 1]);
+    const [w0, w1] = c.map(w => w[0]);
+    expect(w0.update.name).toMatch(/^projects\/djingo-1e1f4\/databases\/\(default\)\/documents\/limites\/a-[0-9a-f]{32}-\d{10}$/);
+    expect(w1.update.name).toMatch(/^projects\/djingo-1e1f4\/databases\/\(default\)\/documents\/limites\/jour-\d{4}-\d{2}-\d{2}$/);
+    for (const x of [w0, w1]) {
       expect(x.updateTransforms).toEqual([{ fieldPath: 'n', increment: { integerValue: '1' } }]);
       expect(x.updateMask).toEqual({ fieldPaths: ['fin'] });
       expect(x.update.fields.fin.timestampValue).toMatch(/^\d{4}-/);
       expect(JSON.stringify(x)).not.toContain('lea');
     }
     // même adresse, même heure : même fiche ; heure suivante ou autre adresse : une autre
-    const nom = (m, d) => fn.compteurs(m, new Date(d)).writes[0].update.name;
+    const nom = (m, d) => fn.fiches(m, new Date(d)).adresse;
     expect(nom('lea@exemple.fr', '2026-11-10T21:00:01Z')).toBe(nom('lea@exemple.fr', '2026-11-10T21:59:59Z'));
     expect(nom('lea@exemple.fr', '2026-11-10T21:59:59Z')).not.toBe(nom('lea@exemple.fr', '2026-11-10T22:00:00Z'));
     expect(nom('lea@exemple.fr', '2026-11-10T21:00:00Z')).not.toBe(nom('tom@exemple.fr', '2026-11-10T21:00:00Z'));
-    expect(fn.compteurs('lea@exemple.fr', new Date('2026-11-10T23:30:00Z')).writes[1].update.name).toMatch(/jour-2026-11-10$/);
+    expect(fn.fiches('lea@exemple.fr', new Date('2026-11-10T23:30:00Z')).jour).toMatch(/jour-2026-11-10$/);
+  });
+
+  test('une demande refusée (429) ne compte pas dans la journée : personne ne peut couper Brevo pour les autres (gardien)', async () => {
+    const r = await Promise.all(Array.from({ length: 30 }, () => appel({ mail: 'lea@exemple.fr' })));
+    expect(r.filter(x => x.statusCode === 200)).toHaveLength(fn.MAX);
+    expect(g.fiches[fn.fiches('lea@exemple.fr').jour]).toBe(fn.MAX);
   });
 
   test(`au-delà de ${fn.PLAFOND} mails par jour pour tout le site : 503, et le site repasse par Firebase`, async () => {
-    const jour = fn.compteurs('x@exemple.fr').writes[1].update.name;
+    const jour = fn.fiches('x@exemple.fr').jour;
     g.fiches[jour] = fn.PLAFOND;
     const r = await appel({ mail: 'lea@exemple.fr' });
     expect(r.statusCode).toBe(503); expect(r.corps).toEqual({ erreur: 'plafond' });

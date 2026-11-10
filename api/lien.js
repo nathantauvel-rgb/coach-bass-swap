@@ -61,18 +61,26 @@ function retourOk(v){
   return SITES[0] + '/';
 }
 
-// Les deux compteurs, dans un seul envoi à Firestore : +1 sur la fiche de l'adresse pour cette heure, +1 sur celle du jour.
-// Firestore rend les nouveaux totaux (transformResults). Une fiche absente est créée ; `fin` permet un ménage automatique
-// (règle TTL de Firestore sur ce champ, facultative).
-function compteurs(mail, maintenant = new Date()){
+// Les deux fiches de compteur : celle de l'adresse pour cette heure (nommée d'après une empreinte, jamais l'adresse en
+// clair) et celle du jour pour tout le site.
+function fiches(mail, maintenant = new Date()){
   const iso = maintenant.toISOString(), heure = iso.slice(0, 13).replace(/[-T]/g, ''), jour = iso.slice(0, 10);
   const empreinte = crypto.createHash('sha256').update('djingood-lien:' + mail).digest('hex').slice(0, 32);
-  const fin = new Date(maintenant.getTime() + 2 * 86400e3).toISOString();
-  const ecrit = id => ({ update: { name: BASE + '/limites/' + id, fields: { fin: { timestampValue: fin } } },
-    updateMask: { fieldPaths: ['fin'] }, updateTransforms: [{ fieldPath: 'n', increment: { integerValue: '1' } }] });
-  return { writes: [ecrit('a-' + empreinte + '-' + heure), ecrit('jour-' + jour)] };
+  return { adresse: BASE + '/limites/a-' + empreinte + '-' + heure, jour: BASE + '/limites/jour-' + jour };
 }
-const total = w => { const t = w && Array.isArray(w.transformResults) && w.transformResults[0]; const n = t ? parseInt(t.integerValue, 10) : NaN; return n > 0 ? n : NaN; };
+// +1 sur une fiche, en une seule opération : Firestore rend le nouveau total (transformResults). Une fiche absente est
+// créée ; `fin` permet un ménage automatique (règle TTL de Firestore sur ce champ, facultative).
+function ajout(nom, maintenant = new Date()){
+  const fin = new Date(maintenant.getTime() + 2 * 86400e3).toISOString();
+  return { writes: [{ update: { name: nom, fields: { fin: { timestampValue: fin } } }, updateMask: { fieldPaths: ['fin'] },
+    updateTransforms: [{ fieldPath: 'n', increment: { integerValue: '1' } }] }] };
+}
+async function compte1(nom, jeton){
+  const n = await google(FS, jeton, ajout(nom));
+  const w = n.ok && n.d && Array.isArray(n.d.writeResults) ? n.d.writeResults[0] : null;
+  const t = w && Array.isArray(w.transformResults) && w.transformResults[0], v = t ? parseInt(t.integerValue, 10) : NaN;
+  return v > 0 ? v : NaN;
+}
 // Le lien du mail : directement sur la page de DJingood, avec ce que Firebase a mis dans le sien. Sinon, le sien tel quel.
 function lienDirect(oob, retour){
   try {
@@ -166,12 +174,15 @@ async function handler(req, res){
     const u = qui.d && Array.isArray(qui.d.users) ? qui.d.users[0] : null;
     if (!u || u.disabled || typeof u.localId !== 'string' || !mailOk(u.email)) return repond(res, 404, { erreur: 'pas-de-compte' });
 
-    // 2. Les limites, comptées AVANT l'envoi par un ajout atomique (voir l'en-tête) : MAX par adresse et par heure, PLAFOND par jour
-    const n = await google(FS, jeton, compteurs(u.email.toLowerCase()));
-    const w = n.ok && n.d && Array.isArray(n.d.writeResults) ? n.d.writeResults : [];
-    const parAdresse = total(w[0]), parJour = total(w[1]);
-    if (!(parAdresse > 0) || !(parJour > 0)) return repond(res, 502, { erreur: 'compteur', statut: n.status });
+    // 2. Les limites, comptées AVANT l'envoi par un ajout atomique (voir l'en-tête) : d'abord MAX par adresse et par heure,
+    //    puis, seulement pour une demande qui a passé la première, PLAFOND par jour. (Une demande refusée ne compte pas dans
+    //    la journée : sinon, quelqu'un pourrait couper Brevo pour tout le monde avec 200 demandes refusées, remarque du gardien.)
+    const f = fiches(u.email.toLowerCase());
+    const parAdresse = await compte1(f.adresse, jeton);
+    if (!(parAdresse > 0)) return repond(res, 502, { erreur: 'compteur' });
     if (parAdresse > MAX) return repond(res, 429, { erreur: 'trop' });
+    const parJour = await compte1(f.jour, jeton);
+    if (!(parJour > 0)) return repond(res, 502, { erreur: 'compteur' });
     if (parJour > PLAFOND) return repond(res, 503, { erreur: 'plafond' });
 
     // 3. Le lien, fabriqué par Firebase sans qu'il l'envoie
@@ -196,4 +207,5 @@ module.exports.retourOk = retourOk;
 module.exports.lienDirect = lienDirect;
 module.exports.MAX = MAX;
 module.exports.PLAFOND = PLAFOND;
-module.exports.compteurs = compteurs;
+module.exports.fiches = fiches;
+module.exports.ajout = ajout;

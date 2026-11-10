@@ -480,7 +480,7 @@ function cptErreur(e){
   if (c === 'auth/wrong-password' || c === 'auth/invalid-credential' || c === 'auth/invalid-login-credentials') return 'Adresse ou mot de passe incorrect.';
   if (c === 'auth/missing-password') return 'Écris ton mot de passe.';
   if (c === 'auth/too-many-requests') return 'Trop d’essais de suite. Attends quelques minutes, puis réessaie.';
-  if (c === CPT_LIEN_TROP) return 'Je t’ai déjà envoyé 3 liens dans l’heure : regarde dans ta boîte de réception et dans tes spams, il y est. Tu pourras en redemander un un peu plus tard.';
+  if (c === CPT_LIEN_TROP) return 'Je t’ai déjà envoyé 3 liens dans l’heure : regarde dans ta boîte de réception et dans tes spams, il y est. Tu pourras en redemander un plus tard.';
   if (c === 'auth/operation-not-allowed') return 'La connexion par e-mail n’est pas activée dans Firebase (Authentication → Sign-in method → E-mail/Mot de passe, et « Lien envoyé par e-mail »).';
   if (c === 'auth/invalid-action-code' || c === 'auth/expired-action-code') return 'Ce lien a déjà servi ou il est trop vieux. Demande-en un nouveau.';
   if (c === 'auth/missing-email') return 'Cette adresse e-mail n’a pas l’air valide.';
