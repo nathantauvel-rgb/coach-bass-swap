@@ -301,6 +301,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     panne de Firebase, le plan revient à chaque visite et il faut réessayer pour retrouver « Continuer sans compte ».
     **Le vrai Firebase n'a jamais servi** : après les deux réglages de Nathan, un vrai essai téléphone (TikTok si possible)
     → mail → PC. La checklist FLX4 n'est pas touchée par ce lot. Captures : `captures/lot65/` (hors Git).
+  - **Lot 65 PUBLIÉ le 10 nov. 2026** (« C'est fait, publie » : Nathan a activé « Lien envoyé par e-mail » dans Firebase ;
+    avance rapide `1d550dd..eab3be4` sur `main`). Production vérifiée par `node captures/lot65/prod.js` (hors Git, Umami
+    bloqué, **sans valider l'écran du compte : aucun vrai compte créé**) : PC, téléphone et navigateur TikTok simulés,
+    pas de « Passer », « Ton oreille », table « Oui, j'en ai une / Pas encore » sur téléphone, plan adapté (« Comprendre la
+    musique » d'abord sur téléphone), « Garder mon plan », écran du compte (Google caché dans TikTok), `mur: true` gardé,
+    pas de défilement de côté ; un faux lien de connexion quitte l'adresse tout de suite ; aucune erreur.
+    **Reste à faire par Nathan** : le vrai essai (son téléphone, si possible depuis l'appli TikTok → le mail → son PC), et
+    l'envoi des mails depuis djingood.fr (sinon indésirables). À surveiller dans Umami : `plan-vu` → `mur-vu` → `compte`.
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de
