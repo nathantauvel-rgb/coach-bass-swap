@@ -491,7 +491,7 @@ test.describe('Mot de passe oublié', () => {
     await page.locator('#cptMail').fill('moi@exemple.fr');
     await page.locator('#cptGo').click();
     await expect(page.locator('#cptMsg')).toContainText('est envoyé');
-    await expect(page.locator('#cptMsg')).toContainText('indésirables');
+    await expect(page.locator('#cptMsg')).toContainText('spams');
     expect(await page.evaluate(() => window.__lienEnvoye)).toBe('moi@exemple.fr');
     // et l'e-mail doit partir en français, pas en anglais
     expect(await page.evaluate(() => cptFb.auth.languageCode)).toBe('fr');
