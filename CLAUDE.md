@@ -315,9 +315,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     firebasemail.com), `firebase=djingo-1e1f4`, DMARC `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com`, et `brevo-code:` (Brevo
     commencé). **Mais le mail du lien arrivait dans les spams de Nathan** (Gmail, 10 nov. : il l'a marqué « non spam », donc
     chez lui il arrive maintenant en boîte de réception ; un nouveau venu, lui, le trouvera dans ses spams). Le domaine est
-    neuf, sans réputation, et le texte du mail est celui de Firebase (pas modifiable). **Garder** les phrases « regarde aussi
-    dans les indésirables ». Gmail désactive les liens d'un mail rangé en spam (vu au lot 35) : il faut le marquer « non
-    spam » pour pouvoir cliquer. Piste plus solide, à proposer : envoyer le lien par Brevo (mail « Vini », domaine déjà en
+    neuf, sans réputation, et le texte du mail est celui de Firebase (pas modifiable). Gmail désactive les liens d'un mail
+    rangé en spam (vu au lot 35) : il faut le marquer « non spam » pour pouvoir cliquer. **Retouche du 10 nov. (« Oui,
+    fais-le »)** : « Pas dans ta boîte de réception ? Regarde dans les spams, puis indique à ta messagerie que ce n'est pas un
+    spam : sinon, le lien ne s'ouvre pas. » sur l'écran « lien envoyé » (`#ppSpam`, carte `.pp-spam`, cachée si le lien n'a
+    pas pu partir), dans `cptLienDemande`, pour une adresse déjà prise et sur l'accueil du téléphone après « M'envoyer le
+    lien » (`#homeLienTxt`) ; « Mot de passe oublié » dit aussi « spams » (un seul mot partout). Gardien : feu orange, 131 tests
+    des fichiers touchés. Laissé : la phrase de l'accueil disparaît si l'accueil se redessine. Piste plus solide, à proposer : envoyer le lien par Brevo (mail « Vini », domaine déjà en
     partie réglé pour Brevo), ce qui demande une fonction Vercel avec un compte de service Firebase.
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur

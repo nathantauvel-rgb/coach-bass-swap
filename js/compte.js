@@ -440,7 +440,7 @@ function cptOubliMdp(mail){
   cptDit('Envoi en cours…'); cptBoutons(true);
   cptSdkAuth()
     .then(() => cptFb.auth.sendPasswordResetEmail(mail))
-    .then(() => { cptDit('C’est envoyé ! Regarde dans ta boîte mail, et surtout dans les indésirables. Si le lien n’y est pas cliquable, dis à ta messagerie que ce n’est pas un spam : il s’activera.'); cptBoutons(false); })
+    .then(() => { cptDit('C’est envoyé ! Regarde dans ta boîte mail, et surtout dans les spams. Si le lien n’y est pas cliquable, dis à ta messagerie que ce n’est pas un spam : il s’activera.'); cptBoutons(false); })
     .catch(e => { cptDit(cptErreur(e)); cptBoutons(false); });
 }
 

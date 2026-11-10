@@ -230,6 +230,7 @@ test.describe('Sur un téléphone', () => {
     await expect(page.locator('#homeLienTxt')).toHaveText(/tu seras déjà connecté/);
     await page.locator('#homeLienBtn').click();
     await expect(page.locator('#homeLienBtn')).toHaveText('Envoyé à s•••@exemple.fr');
+    await expect(page.locator('#homeLienTxt')).toContainText('Regarde dans les spams');   // (gardien de la retouche)
   });
 });
 
