@@ -182,7 +182,7 @@ async function handler(req, res){
     if (b.action === 'gerer'){
       const s = await abonnement(qui, cle);
       if (!s || !s.customer) return repond(res, 404, { erreur: 'pas-abonne' });
-      const p = await stripe('/billing_portal/sessions', cle, { corps: { customer: typeof s.customer === 'string' ? s.customer : s.customer.id, return_url: site + '/#tutos', locale: 'fr' } });
+      const p = await stripe('/billing_portal/sessions', cle, { corps: { customer: typeof s.customer === 'string' ? s.customer : s.customer.id, return_url: site + '/#apprendre', locale: 'fr' } });
       return repond(res, 200, { url: p.url });
     }
   } catch (e) { return repond(res, 502, { erreur: 'stripe', statut: e.statut || 0 }); }

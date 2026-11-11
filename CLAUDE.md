@@ -125,8 +125,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     `#apprendre`, 2 tests du mois offert) ; `tutos.spec.js` (un seul « Gratuit ») ; `site.spec.js` (`pro-pret` dans l'ordre).
   - **Pour ouvrir Pro (préparé le 11 nov., « Oui, on prépare »)** : les infos légales du lot 66 (copie `coach-dj-lot66`, jamais
     commitées là-bas) sont reprises à l'identique dans `cgv.html` et `mentions-legales.html` (lu sans toucher à cette copie ;
-    le lot 66 n'a plus rien d'autre à fusionner). Restent entre crochets : `[nom et adresse du médiateur]` et
-    `[date d'ouverture de Pro]`. « Gratuit pendant la phase de test » (description d'`index.html`, 5 pages du guide) devient
+    le lot 66 n'a plus rien d'autre à fusionner). Reste entre crochets (choix de l'utilisateur) : `[nom et adresse du médiateur]` ; la date
+    d'ouverture est remplie (11 novembre 2026). « Gratuit pendant la phase de test » (description d'`index.html`, 5 pages du guide) devient
     « Premiers exercices gratuits », vrai avant comme après. **Les tests ne dépendent plus de l'interrupteur** :
     `tests/serveur.js --tests` (lancé par Playwright) sert toujours `PRO_PRET = false`, les tests allument Pro avec
     `window.DJINGOOD_PRO` (test « L'interrupteur de Pro » dans `decoupe.spec.js`). Essayé : avec `PRO_PRET = true`, les 68
@@ -147,8 +147,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     est à jour ; « Vérifier ma table » faisait jouer le swap (Pro) → sans abonnement, « Le fader » (`vfNivMusique`, verif.js).
     Remarque « le serveur croit le site pour le mois offert » : réglée le 11 nov. par la règle de l'utilisateur (date de
     création du compte vérifiée chez Firebase par `api/pro.js`, voir « Mois offert aux comptes déjà créés » plus haut).
-    **Suite complète après toutes ces corrections et le mois offert (11 nov. midi) : 760 tests sur 760, 22 min.** Pas de
-    second passage du gardien pour l'instant (à lancer avant toute publication, après la fusion avec le lot 66).
+    **Suite complète après toutes ces corrections et le mois offert (11 nov. midi) : 760 tests sur 760, 22 min.** Puis
+    second passage du gardien le 11 nov. au soir (Pro allumé) : FEU ORANGE, 761 tests sur 761, aucun blocage ; pas de fusion avec le lot 66 (rien à reprendre). Vérifié ensuite : la clé publique Firebase n'est pas limitée au site (Google répond depuis un serveur), donc la date de création des comptes se lit bien depuis Vercel. Corrigé : « Gérer mon abonnement » ramène sur `#apprendre` (api/pro.js). Non bloquant, laissé : deux liens du guide (premiere-transition, caler-sans-sync) mènent à un niveau de Pro ; les anciens joueurs SANS compte perdent ce qu'ils avaient au-delà du niveau 3.
     **À faire par l'utilisateur avant la mise en ligne** : la checklist FLX4 au moins sur les niveaux 1 à 3 (le lot touche
     `midi.js` et `niveaux.js`). 132 tests des fichiers touchés verts après les corrections ; suite complète relancée.
 - **Abonnement « DJingood Pro » et lot 56 « Tutos » (6-7 nov. 2026).** Question de l'utilisateur : mettre en place un
