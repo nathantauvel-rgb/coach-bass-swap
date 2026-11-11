@@ -3,4 +3,4 @@
 // (sinon un visiteur lirait « 4,99 € » sur un site encore entièrement gratuit). Chargé juste après stats.js.
 // Le jour de l'ouverture : passer à true (avec STRIPE.md, section 3 : les vrais réglages de Stripe et de Vercel).
 'use strict';
-const PRO_PRET = false;
+const PRO_PRET = true;
