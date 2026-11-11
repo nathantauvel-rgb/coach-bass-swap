@@ -32,6 +32,125 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 68 « La découpe » (10-11 nov. 2026) : 3 exercices gratuits, tout le reste dans Pro. FAIT, ENREGISTRÉ SUR LA BRANCHE le 11 nov. (pas envoyé sur GitHub), NON PUBLIÉ, Pro ÉTEINT.**
+  Branche `lot-68-decoupe` (partie d'`origin/main` = `7a198a7`), copie `Documents\coach-dj-lot68` (git worktree,
+  `node_modules` relié par jonction à la copie lot 65 ; tests : `DJ_PORT=8820 npx playwright test` ; essai et captures :
+  `node captures/lot68/essai.js` avec le serveur de la copie sur 8820, hors Git). **Numéroté 68 parce qu'une autre session
+  avait déjà pris 66 (`lot-66-pro-reel` : allumer Pro en vrai, infos légales de `cgv.html` / `mentions-legales.html`, non
+  commité au 11 nov.) et 67 (`lot-67-mail` : le lien de connexion par Brevo).** Les deux toucheront aussi `cgv.html` et
+  peut-être `js/pro.js` : fusionner avec soin.
+  - **Décision de l'utilisateur (10 nov., remplace « rien de ce qui existe ne passe en Pro » du 6 nov.)** : 2 ou 3 exercices
+    simples pour comprendre le concept, tout le reste payant. Maquette validée (« Oui, la maquette », puis « Oui, lance le
+    66 ») : `captures/maquette-pro-decoupe/` (dossier principal, hors Git). Les 3 questions restées sans réponse ont été
+    réglées comme conseillé : Comprendre entièrement gratuit, un mois de Pro offert aux joueurs d'avant Pro, défi du jour et
+    un tuto gratuits.
+  - **Gratuit** : chapitre 1 niveaux 1 à 3 (Le bon moment, Le fader, La coupure sèche), Mode Expert compris ; Comprendre ;
+    le défi du jour (il ne tire que les niveaux gratuits) ; le tuto « Le fondu au fader ». **Pro** : les 40 autres exercices
+    (chapitre 1 niveaux 4 à 7, chapitres 2 à 7), le Mode Expert ailleurs, variations / à l'oreille / mini-set / quiz éclair,
+    Passer au vrai, 10 tutos.
+  - **Un seul interrupteur, `js/pro-pret.js`** (nouveau, chargé juste après `stats.js`) : `PRO_PRET` y a été déplacé depuis
+    `js/pro.js`, parce que `presentation.html` le lit aussi (le prix n'y est écrit que quand Pro est ouvert : classes
+    `.si-pro` / `.sans-pro`, `.avec-pro` sur `<html>`). Avec Pro allumé, l'onglet Tutos se montre aussi (`tutosOn`, et
+    `pro.js` le rend visible à la fin de son chargement). Pour essayer : `?pro=1`.
+  - `js/niveaux.js` : `NIV_GRATUITS` (3), `proBloque()` (Pro allumé et pas abonné), `niveauGratuit`, `niveauPro(n, i)`,
+    `chapitrePro(n)`, `proNbExercices()` (40) ; cartes `.etat-pro` (cadenas violet, pas grisé ; il
+    passe avant le cadenas gris de la progression), chapitres `.chap.pro` (« Pro · 7 niveaux », ouvrent la fenêtre Pro),
+    ligne `#proNiv` sous les niveaux, étiquette « Gratuit » sur Comprendre (`#cpBlocGratuit`) ; un niveau de Pro affiché
+    (`proIci`) : « Continuer avec Pro » (`#startBtn.pro`), pas de démo, pas de Mode Expert, pas de position de départ
+    (`updateSetup`, midi.js), `startRun` et le bouton ouvrent la fenêtre Pro avant toute fiche ; `setChapter` refuse un
+    chapitre de Pro ; `finEssai` : la **première** réussite (2 ★) du niveau 3 → « Ta première transition ! », bloc `#rPro`
+    (les 4 niveaux suivants, puis les chapitres), un seul bouton `#rProGo` « Continuer avec Pro », stat `essai-fini`.
+    « Niveau suivant » vers un niveau de Pro ouvre la fenêtre Pro (demarrage.js).
+  - `js/pro.js` : `proOuvre(id, q)` (q = `{ n, i }`, `{ chap }`, `{ vue: 'entrainer' | 'vrai' }`, `{ fin: true }`) →
+    `proPour` écrit en haut d'où l'on vient (`#proContexte` : « Pour jouer « L'écho out » »…) et retient ce qu'on voulait
+    (`djingood-pro-voulu`, que « Bienvenue dans Pro » propose ensuite : `proSuite`). Fenêtre réécrite (index.html) : les
+    7 chapitres, les tutos, l'entraînement et Passer au vrai ; « Le reste reste gratuit » retiré ; « Ce que tu débloques »
+    = les chapitres. **Règle : jamais pousser à payer avant d'avoir joué** (`proAJoue` : une étoile ou un record Expert) :
+    sinon `#proEssai` « D'abord, essaie avec ta table » (ordinateur : « Jouer le niveau 1 (gratuit) » ; téléphone : le lien
+    pour l'ordi) et « Passer à Pro quand même ». `proRafraichit` redessine tout à chaque réponse de Stripe.
+  - **Mois offert aux comptes DÉJÀ CRÉÉS** (règle de l'utilisateur du 11 nov. : « les comptes déjà enregistrés ont un mois
+    offert, chaque nouveau compte n'a accès qu'à quelques exercices ») : c'est `api/pro.js` qui décide. Il lit la date de
+    création du compte chez Firebase (`accounts:lookup` avec le jeton du joueur et la clé publique du site, fonction
+    `creation`, remplaçable par les tests), la compare à `FONDATEURS_AVANT` (réglage Vercel `PRO_FONDATEURS_AVANT`, date ISO ;
+    sinon la fin du 11 nov. 2026, heure de Paris : **date confirmée par l'utilisateur le 11 nov. (« Oui, le 11 novembre »)**, plutôt que le jour du lancement ; **si on la change, changer aussi la phrase de `cgv.html`**), et répond
+    `offert: true` dans `etat` pour un compte d'avant la limite jamais abonné. Sans compte, pas d'offre. Côté site,
+    `proFondateur()` = Pro allumé, pas abonné, `proEtat.offert` (gardé dans `coach-pro`) pour ce compte ; message `#fond` une
+    seule fois (`coach-fondateur` = '1', suit le compte ; pas par-dessus une autre fenêtre ni une partie), stat
+    `fondateur-vu` ; ensuite la fenêtre Pro garde l'offre (`#proFond`, bouton « Prendre mon mois offert »). `api/pro.js` :
+    `payer` avec `essai: true` → essai de 30 jours, `payment_method_collection: 'if_required'`,
+    `trial_settings.end_behavior.missing_payment_method: 'cancel'` (sans carte, ça s'arrête tout seul, rien n'est prélevé) ;
+    403 `essai-reserve` pour un compte créé après la limite, 409 `essai-deja` s'il a déjà eu un abonnement, quel qu'il soit
+    (`dejaAbonne`) ; `etat` renvoie `essai`
+    (« Mois offert jusqu'au … » dans Mon compte). Retour de Stripe sur `#apprendre` ; la case dit « l'accès à DJingood Pro ».
+    **Ces réglages d'essai n'ont PAS été essayés sur le vrai Stripe** (voir le point suivant) : seulement avec le faux Stripe
+    des tests.
+  - ⚠️ **Le 11 nov., le fichier privé de la clé de TEST (hors de tout dépôt, voir les notes privées de la copie lot 59)
+    contenait une clé réelle.** Signalé à l'utilisateur. Ne lancer aucun script Stripe d'essai avant de l'avoir vérifié
+    (sans afficher la clé : elle doit commencer par la marque des clés de test).
+    **Vérifié le 11 nov. à midi, en lecture seule** (après « j'ai activé le compte et mis la nouvelle clé dans le fichier ») :
+    il n'y a plus de fichier de clé de test, et le fichier de la clé réelle n'a pas bougé depuis le 10 nov. au soir : c'est
+    toujours la clé de son **ancien** compte Stripe (paiements réels activés, libellé DJINGOOD, site djingood.fr, nom public
+    de l'autre projet, 0 produit), **pas celle du compte DJingood à part**. Aucune nouvelle clé trouvée sur le PC. Rien créé.
+    Script de vérification (il n'affiche ni la clé ni les identifiants, seulement oui/non) : à refaire dès qu'il dit l'avoir collée.
+    **Puis sa décision (11 nov.) : « Celui-ci, je le renomme »** : on garde cet ancien compte (déjà activé), il met lui-même
+    « DJingood » comme nom public. Script prêt, hors Git : `node captures/stripe-reel/installe-reel.js` (regarde seulement)
+    puis `--creer` (seulement avec son accord) : produit « DJingood Pro » (description = tout DJingood), prix 4,99 €/mois et
+    49,99 €/an (lookup_key `djingood_pro_mois` / `djingood_pro_an`, identifiants dans le dossier privé de l'utilisateur,
+    `stripe-live-prix.json`), portail client, moyens de paiement (carte + Apple Pay + Google Pay ; Klarna, Amazon Pay, Link,
+    Bancontact… à éteindre), puis deux pages de paiement ouvertes et refermées (normale, et mois offert sans carte : ce sera
+    le premier essai des réglages du mois offert sur le vrai Stripe). Il refuse de créer tant que le nom public n'est pas
+    DJingood. Premier passage (regarder seulement) : nom public pas encore changé, aucun produit, **pas de portail client
+    par défaut en réel** (Stripe ne le crée qu'au premier « Enregistrer » dans Paramètres → Facturation → Portail client).
+    **FAIT le 11 nov. vers 13 h (« Oui, c'est fait, crée »)** : l'utilisateur a renommé le compte « DJingood » (nom public et
+    nom du compte ; dans son organisation Stripe « Djingood », le compte activé est celui rangé SOUS l'organisation ; un
+    autre compte « DJingood » à part, « Autres comptes », est l'essai du 9 nov. : inutile, ne pas le supprimer sans raison)
+    et créé une nouvelle clé secrète réelle de ce compte (l'ancienne a expiré). Créés en RÉEL : produit « DJingood Pro »,
+    prix 4,99 €/mois et 49,99 €/an ; moyens de paiement réduits à carte, Apple Pay et Google Pay ; deux pages de paiement
+    ouvertes puis refermées sans erreur, **dont le mois offert sans carte** (`trial_period_days` 30, `missing_payment_method:
+    cancel`, `payment_method_collection: if_required`, case des conditions) : Stripe accepte ces réglages en réel.
+    **Portail client réglé le même jour** (l'utilisateur a cliqué « Enregistrer », puis `installe-reel.js --creer`), relu :
+    arrêter en fin de période sans remboursement, changer de formule entre les deux prix (annuel → mensuel en fin d'année),
+    changer de carte, factures, liens CGV et confidentialité. **Stripe réel : tout est prêt.** **Vercel pas touché** : les trois réglages réels (`STRIPE_CLE`, `STRIPE_PRIX_MOIS`,
+    `STRIPE_PRIX_AN`) ne se mettent que le jour où Pro s'ouvre (avec `?pro=1`, n'importe qui pourrait sinon payer pour de
+    vrai) ; les identifiants des prix sont dans le fichier privé `stripe-live-prix.json`, jamais dans un fichier suivi.
+  - Ailleurs : `parcours.js` (étape `essai` en tête pour Apprenti DJ et DJ confirmé sans abonnement, en Mode Expert ;
+    `stagePro` ; l'accueil montre le niveau de Pro `#homePro`, « Continuer avec Pro », et `#homeDefi` « Ou fais le défi du
+    jour (gratuit) » ; Vini le dit ; `goLesson` ouvre la fenêtre Pro pour un chapitre ou un niveau de Pro, sauf `visite`) ;
+    `entrainement.js` (`PRAC_PRO`, cartes `.tr-pro` avec l'étiquette « Pro », `pracPool` sans les niveaux de Pro) ; `quiz.js`
+    (quiz éclair → Pro) ; `rekordbox.js` (`#rbPro` à la place de l'import) ; `tutos.js` (un seul `gratuit`, bandeau
+    `#proBandeauTitre`) ; `expert.js` ; `premiers.js` (`PP_PLAN_PRO` : chaque étape marquée « Gratuit » ou « Pro ») ;
+    `cgv.html` (ce que Pro ouvre, le mois offert) ; `presentation.html` (prix seulement avec Pro, et « et le resteront »
+    retiré dès maintenant) ; `confidentialite.html` (Stripe) ; styles à la fin de `styles.css` (section « Lot 68 »).
+  - Tests : `tests/decoupe.spec.js` (nouveau, 21 avec les corrections du gardien) ; `pro.spec.js` (10 tutos fermés, `A_JOUE`, `essai`, retour sur
+    `#apprendre`, 2 tests du mois offert) ; `tutos.spec.js` (un seul « Gratuit ») ; `site.spec.js` (`pro-pret` dans l'ordre).
+  - **Pour ouvrir Pro (préparé le 11 nov., « Oui, on prépare »)** : les infos légales du lot 66 (copie `coach-dj-lot66`, jamais
+    commitées là-bas) sont reprises à l'identique dans `cgv.html` et `mentions-legales.html` (lu sans toucher à cette copie ;
+    le lot 66 n'a plus rien d'autre à fusionner). Restent entre crochets : `[nom et adresse du médiateur]` et
+    `[date d'ouverture de Pro]`. « Gratuit pendant la phase de test » (description d'`index.html`, 5 pages du guide) devient
+    « Premiers exercices gratuits », vrai avant comme après. **Les tests ne dépendent plus de l'interrupteur** :
+    `tests/serveur.js --tests` (lancé par Playwright) sert toujours `PRO_PRET = false`, les tests allument Pro avec
+    `window.DJINGOOD_PRO` (test « L'interrupteur de Pro » dans `decoupe.spec.js`). Essayé : avec `PRO_PRET = true`, les 68
+    tests de Pro, découpe, présentation et tutos passent. Jour J : le médiateur et la date dans `cgv.html`,
+    `PRO_PRET = true`, tests, gardien, les 3 réglages réels dans Vercel, publication sur son accord (`STRIPE.md`, section 4).
+  - **Gardien, premier passage (11 nov.) : feu rouge**, 752 tests sur 753 (l'échec, `pro.spec.js:148` « Bienvenue dans Pro »,
+    repasse seul et sous charge : instable quand le PC est très chargé). Code jugé sain (Pro éteint : rien ne change).
+    Bloquants, corrigés : le chemin du fichier privé de la clé Stripe était écrit dans ce CLAUDE.md (dépôt public : retiré) ;
+    `coach-fondateur` et le champ `essai` de `coach-pro` manquaient dans « Clés localStorage », `pro-pret` dans l'ordre des
+    fichiers. Remarques corrigées (un test chacune dans `tests/decoupe.spec.js`, « Corrections du gardien ») : après le
+    paiement, « Bienvenue dans Pro » proposait un chapitre encore fermé par les étoiles (14 ★ au chapitre 1) et laissait le
+    client au niveau 4 sans rien dire → `proSuite` dit ce qui manque et propose un niveau vraiment ouvert (`proChapOuvert`,
+    `proChapAttente`), et la fenêtre Pro l'annonce avant de payer (« … (après 14 ★ au chapitre 1) ») ; le message du mois
+    offert attend la réponse de Stripe quand un compte est connu (`proReponse` : sinon un abonné sur un nouvel ordinateur le
+    voyait) ; texte blanc sur dégradé violet → orange vif = 3,3 de contraste → dégradé vers `--a-edge` (4,5 au moins) pour
+    `#startBtn.pro`, `#homeCta.pro`, `.rpro-go` ; « 11 tutos aujourd'hui » et « 10 tutos » dans la même fenêtre → « 10 de
+    plus » partout ; `confidentialite.html` ne renvoie plus vers `cgv.html` (encore des passages entre crochets) et sa date
+    est à jour ; « Vérifier ma table » faisait jouer le swap (Pro) → sans abonnement, « Le fader » (`vfNivMusique`, verif.js).
+    Remarque « le serveur croit le site pour le mois offert » : réglée le 11 nov. par la règle de l'utilisateur (date de
+    création du compte vérifiée chez Firebase par `api/pro.js`, voir « Mois offert aux comptes déjà créés » plus haut).
+    **Suite complète après toutes ces corrections et le mois offert (11 nov. midi) : 760 tests sur 760, 22 min.** Pas de
+    second passage du gardien pour l'instant (à lancer avant toute publication, après la fusion avec le lot 66).
+    **À faire par l'utilisateur avant la mise en ligne** : la checklist FLX4 au moins sur les niveaux 1 à 3 (le lot touche
+    `midi.js` et `niveaux.js`). 132 tests des fichiers touchés verts après les corrections ; suite complète relancée.
 - **Abonnement « DJingood Pro » et lot 56 « Tutos » (6-7 nov. 2026).** Question de l'utilisateur : mettre en place un
   abonnement, quelle plus-value, quel business model. Tout le fil (propositions, comparaisons de prix, chiffres) est dans
   `marketing/abonnement.md` (hors Git, dossier principal). **Ses décisions** : il a déjà un statut pour encaisser ;
@@ -2414,7 +2533,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `styles.css` — toute l'apparence (thème sombre « Cabine »).
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
-  `erreurs` (bandeau d'erreur) → `stats` (statistiques Umami, lot 46) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
+  `erreurs` (bandeau d'erreur) → `stats` (statistiques Umami, lot 46) → `pro-pret` (l’interrupteur de Pro, `PRO_PRET`, lot 68 ; aussi lu par `presentation.html`) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `set` (chapitre 7 « Le set », lot 44) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) → `comprendre` (leçons sans table, lot 48) → `tutos` (l'onglet « Tutos », lot 56) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `mails` (les mails de Vini, lot 54) → `compte` (se connecter avec Google) → `pro` (DJingood Pro, lot 59) →
@@ -2512,7 +2631,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-tutos` (`{ vus: [identifiants] }`, les tutos vus jusqu'au bout, lot 56 ; l'ancien `vol` n'est plus écrit depuis le lot 60), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
+`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester

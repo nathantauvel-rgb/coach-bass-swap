@@ -137,7 +137,7 @@ function renderQuizCard(){
 // Carte de résultat d'un niveau (appelée par finish) : question bonus si le niveau est réussi, et badges gagnés
 function quizOffer(st){ $('quizBtn').hidden = !!prac || !!placement || st < 2 || !quizBonus(); badgeNote('rBadge'); }
 $('quizBtn').addEventListener('click', () => { const q = quizBonus(); if (q) openQuiz([q], false); });
-$('quizCard').addEventListener('click', () => openQuiz(quizFlash(), true));
+$('quizCard').addEventListener('click', () => { if (proBloque()){ proOuvre('', { vue: 'entrainer' }); return; } openQuiz(quizFlash(), true); });   // lot 68 : le quiz éclair est dans Pro
 $('qNext').addEventListener('click', quizStep);
 $('qClose').addEventListener('click', closeQuiz);
 $('quiz').addEventListener('click', e => { if (e.target === $('quiz')) closeQuiz(); });

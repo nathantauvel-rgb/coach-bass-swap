@@ -7,7 +7,7 @@
 <!-- Ce que Google et les liens partagés montrent du site (lot 50). La seule adresse officielle est djingood.fr :
      www.djingood.fr et coach-bass-swap.vercel.app affichent la même page, « canonical » dit à Google laquelle garder.
      Les icônes et img/partage.jpg sont fabriquées par node tests/icones.js. -->
-<meta name="description" content="Tu as une table DJ et tu n'y connais rien ? DJingood t'apprend à mixer en jouant : le site écoute ta table et note tes gestes. Gratuit pendant la phase de test.">
+<meta name="description" content="Tu as une table DJ et tu n'y connais rien ? DJingood t'apprend à mixer en jouant : le site écoute ta table et note tes gestes. Premiers exercices gratuits.">
 <link rel="canonical" href="https://djingood.fr/">
 <meta property="og:site_name" content="DJingood">
 <meta property="og:title" content="DJingood · Apprends à mixer sur ta table DJ, en jouant">
@@ -214,13 +214,14 @@
   <button type="button" class="pro-fermer" id="proFermer" aria-label="Fermer">×</button>
   <div class="pro-hero">
     <div>
+      <p class="pro-contexte" id="proContexte" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span id="proContexteTxt"></span></p>
       <span class="pro-badge">PRO</span>
       <h2 id="proTitre" tabindex="-1">Mixe comme<br><span class="pro-accent">un vrai DJ.</span></h2>
-      <p class="pro-sous">Toutes les techniques des DJ, expliquées par Vini, avec la musique et la table sous les yeux.</p>
+      <p class="pro-sous">Toute la formation DJingood : les exercices avec ta table, les tutos de Vini, l’entraînement.</p>
       <ul class="pro-atouts">
-        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></span><span>Tous les tutos<small>Le swap, les 3 bandes, l'écho, la réverbe, le filtre, les boucles…</small></span></li>
-        <li><span class="pro-ic pro-ic-b"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg></span><span>De nouveaux tutos chaque mois<small>Vini t'apprend une nouvelle technique à chaque fois.</small></span></li>
-        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Le reste reste gratuit<small>Les leçons, le Mode Expert, Comprendre : pour toujours.</small></span></li>
+        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span><span>Les 7 chapitres<small><b id="proNbEx">40</b> exercices de plus : le swap des basses, le calage, les hot cues, le set noté sur 100.</small></span></li>
+        <li><span class="pro-ic pro-ic-b"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></span><span>Tous les tutos de Vini<small><b id="proNbTu">10</b> de plus aujourd’hui, et un nouveau chaque mois.</small></span></li>
+        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>L’entraînement et Passer au vrai<small>Variations, à l’oreille, mini-sets, et ta collection rekordbox.</small></span></li>
       </ul>
     </div>
     <div class="pro-offre">
@@ -228,7 +229,10 @@
       <div class="pro-bascule" role="group" aria-label="Formule"><button type="button" data-f="mois" aria-pressed="false">Mensuel</button><button type="button" data-f="an" aria-pressed="true">Annuel<span class="pro-eco">−17 %</span></button></div>
       <p class="pro-prix"><b id="proPrix">49,99 €</b><span id="proPar">/ an</span></p>
       <p class="pro-prix-detail" id="proDetail"></p>
+      <p class="pro-fond" id="proFond" hidden><b>Ton premier mois est offert</b>, sans carte bancaire : merci d’avoir été là avant Pro. Ensuite, ce prix, seulement si tu continues.</p>
+      <div class="pro-essai" id="proEssai" hidden><b>D’abord, essaie avec ta table</b><p id="proEssaiTxt"></p><button type="button" class="pro-essai-go" id="proEssaiGo">Jouer le niveau 1 (gratuit)</button></div>
       <button type="button" class="pro-go" id="proGo">Passer à Pro<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <button type="button" class="pro-lien pro-quandmeme" id="proQuandMeme" hidden>Passer à Pro quand même</button>
       <p class="pro-msg" id="proMsg" role="status" hidden></p>
       <p class="pro-rassure"><span>Sans engagement</span><span>Paiement sécurisé par Stripe</span></p>
       <p class="pro-legal"><a href="cgv.html" target="_blank" rel="noopener">Conditions de vente</a> · <a href="mentions-legales.html" target="_blank" rel="noopener">Mentions légales</a></p>
@@ -238,7 +242,7 @@
   <div class="pro-dedans">
     <h3>Ce que tu débloques</h3>
     <p id="proDedansTxt">Tous les tutos, et un nouveau chaque mois.</p>
-    <div class="pro-vignettes"><div class="pro-vg"><span class="pro-vg-mot">BASSES</span><span class="pro-vg-lec"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg></span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M4 44c10-22 20 10 30-6s20 18 30-4 20 12 32-2"/><path d="M4 30h92" opacity=".25"/></svg><strong>Le swap des basses</strong><small>3 min</small></div><div class="pro-vg"><span class="pro-vg-mot">ÉCHO</span><span class="pro-vg-lec"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg></span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M10 10v40M30 16v28M48 22v16M64 26v8M78 28v4"/></svg><strong>L'écho out</strong><small>3 min</small></div><div class="pro-vg"><span class="pro-vg-mot">FILTRE</span><span class="pro-vg-lec"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg></span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M4 50C30 50 40 10 60 10s30 0 36 0"/></svg><strong>Le filtre qui ouvre</strong><small>3 min</small></div><div class="pro-vg"><span class="pro-vg-mot">RÉVERBE</span><span class="pro-vg-lec"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg></span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><circle cx="50" cy="30" r="8"/><circle cx="50" cy="30" r="17" opacity=".6"/><circle cx="50" cy="30" r="26" opacity=".3"/></svg><strong>La sortie dans la réverbe</strong><small>3 min</small></div><div class="pro-vg"><span class="pro-vg-mot">BOUCLES</span><span class="pro-vg-lec"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg></span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M30 18h40a12 12 0 0 1 0 24H30a12 12 0 0 1 0-24"/><path d="M62 12l8 6-8 6"/></svg><strong>La montée en boucle</strong><small>3 min</small></div></div>
+    <div class="pro-vignettes"><div class="pro-vg"><span class="pro-vg-mot">LES BASES</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M6 30h38"/><path d="M50 8v44"/><path d="M58 22h36v16H58z" opacity=".7"/></svg><strong>La fin du chapitre 1</strong><small>4 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">À L’OREILLE</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><circle cx="50" cy="30" r="8"/><circle cx="50" cy="30" r="17" opacity=".6"/><circle cx="50" cy="30" r="26" opacity=".3"/></svg><strong>La maîtrise</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">CALAGE</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M6 14C40 14 60 46 94 46"/><path d="M6 46C40 46 60 14 94 14" opacity=".45"/></svg><strong>Le calage</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">HOT CUES</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M30 18h40a12 12 0 0 1 0 24H30a12 12 0 0 1 0-24"/><path d="M62 12l8 6-8 6"/></svg><strong>Hot cues et boucles</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">LE SET</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M8 50h16v-8h16v-8h16v-8h16v-8h16"/></svg><strong>Le set</strong><small>7 niveaux, noté sur 100</small></div></div>
   </div>
 </div>
 <div data-nosnippet class="pro-page pro-merci" id="proMerci" hidden role="dialog" aria-modal="true" aria-labelledby="proMerciTitre">
@@ -247,6 +251,19 @@
   <h2 id="proMerciTitre">Bienvenue dans <span class="pro-accent">Pro</span> !</h2>
   <p class="pro-sous" id="proMerciTxt">Tous les tutos sont ouverts.</p>
   <button type="button" class="pro-go" id="proMerciGo">Voir les tutos</button>
+</div>
+<div data-nosnippet class="quiz" id="fond" hidden role="dialog" aria-modal="true" aria-labelledby="fondTitre">
+  <div class="qcard cptcard fondcard">
+    <button type="button" class="rclose" id="fondX" aria-label="Fermer">×</button>
+    <span class="fondvini" id="fondVini" aria-hidden="true"></span>
+    <h2 id="fondTitre" tabindex="-1">Merci d’avoir été là dès le début&nbsp;!</h2>
+    <p class="fondsous">DJingood passe à un abonnement, DJingood Pro.</p>
+    <div class="fondoffre"><p class="fondpour"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 13h18M12 9v12"/><path d="M12 9c-2-4-6-4-6-1s4 1 6 1c2 0 6 2 6-1s-4-3-6 1z"/></svg><span id="fondPour">Pour toi</span></p>
+      <p>Tu gardes toutes tes étoiles et ton niveau. Et pour te remercier, <b>ton premier mois de Pro est offert</b>&nbsp;: tous les chapitres, tous les tutos.</p>
+      <p class="fondpetit">Sans carte bancaire. À la fin du mois, tu choisis de continuer ou non.</p></div>
+    <div class="fondbtns"><button type="button" class="rbtn" id="fondPlusTard">Plus tard</button><button type="button" class="pro-go fondgo" id="fondGo">Prendre mon mois offert</button></div>
+    <p class="fondpetit">Ce message ne s’affiche qu’une fois. L’offre reste dans la fenêtre Pro.</p>
+  </div>
 </div>
 <div data-nosnippet class="quiz" id="ordi" hidden role="dialog" aria-modal="true" aria-labelledby="ordiTitre">
   <div class="qcard cptcard ordicard">
@@ -329,7 +346,9 @@
         <span class="lnum" id="homeKicker" hidden>Ta prochaine étape</span>
         <h1 id="homeTitle">Tu as une table et tu n'y connais rien ?</h1>
         <p class="lead" id="homeLead">En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.</p>
+        <p class="homepro" id="homePro" hidden><span class="homepro-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><b id="homeProTxt"></b><span class="pro-tag">Pro</span></p>
         <button type="button" class="cta" id="homeCta" hidden>Commencer</button>
+        <button type="button" class="linkbtn homedefi" id="homeDefi" hidden>Ou fais le défi du jour (gratuit)</button>
         <div class="homeordi" id="homeLien" hidden>
           <svg class="homeordi-ic" viewBox="0 0 64 40" aria-hidden="true"><rect class="ho-ecran" x="6" y="3" width="34" height="23" rx="3"/><rect class="ho-ligne" x="11" y="9" width="15" height="3" rx="1.5"/><rect class="ho-gris" x="11" y="15" width="22" height="2.5" rx="1.2"/><path class="ho-pied" d="M2 30h42l-3-3H5z"/><rect class="ho-table" x="44" y="20" width="18" height="12" rx="3"/><circle class="ho-a" cx="49" cy="26" r="3"/><circle class="ho-b" cx="57" cy="26" r="3"/></svg>
           <span class="homeordi-txt"><b>Sur ton ordinateur</b><small id="homeLienTxt">Les 7 gestes, avec ta table : ouvre djingood.fr sur ton ordinateur.</small></span>
@@ -384,6 +403,13 @@
     <section class="page">
       <div class="vcoin"><button type="button" class="hvini" id="realViniBtn" aria-label="Faire sauter Vini"><span id="realVini"></span></button><p class="bubble" id="realTip" aria-live="polite"></p></div>
       <input type="file" id="rbFile" accept=".xml,text/xml,application/xml" hidden>
+      <div class="rbpro" id="rbPro" hidden>
+        <span class="lnum">Passer au vrai</span>
+        <h1>Mixe ta propre musique</h1>
+        <p class="lead">Le site lit ta collection rekordbox, te trouve deux morceaux qui s’enchaînent bien, et te donne des missions à faire sur ta table.</p>
+        <p class="rbpro-t"><span class="pro-tag">Pro</span>Avec DJingood Pro, comme les 7 chapitres et tous les tutos.</p>
+        <button type="button" class="pro-mini" id="rbProBtn">Découvrir Pro</button>
+      </div>
       <div id="rbEmpty" class="rbempty">
         <span class="lnum">Passer au vrai</span>
         <h1>Mixe ta propre musique</h1>
@@ -483,7 +509,7 @@
       <div class="vcoin"><button type="button" class="hvini" id="tutosViniBtn" aria-label="Faire sauter Vini"><span id="tutosVini"></span></button><p class="bubble" id="tutosTip" aria-live="polite"></p></div>
       <h1>Tutos</h1>
       <p class="lead">Les techniques des DJ, expliquées par Vini. Tu écoutes, tu regardes la table, et tu comprends pourquoi ça marche.</p>
-      <div class="pro-bandeau" id="proBandeau" hidden><img src="img/vini-logo.svg" alt=""><p>Le premier tuto de chaque famille est gratuit.<small id="proBandeauTxt">Les autres, et un nouveau chaque mois, sont dans DJingood Pro.</small></p><button type="button" class="pro-mini" id="proBandeauBtn">Découvrir Pro</button></div>
+      <div class="pro-bandeau" id="proBandeau" hidden><img src="img/vini-logo.svg" alt=""><p><span id="proBandeauTitre">« Le fondu au fader » est gratuit.</span><small id="proBandeauTxt">Les autres, et un nouveau chaque mois, sont dans DJingood Pro.</small></p><button type="button" class="pro-mini" id="proBandeauBtn">Découvrir Pro</button></div>
       <div id="tuFamilles"></div>
     </section>
     <section class="tu" id="tuLecteur" hidden aria-label="Tuto">
@@ -541,11 +567,12 @@
   </div>
 
   <div class="view" id="vLearn" hidden>
-  <details class="cpbloc" id="cpBloc"><summary><span class="cpb-t"><b>Comprendre</b> · sans table</span><span class="cpb-n" id="cpBlocN">0/21 ★</span></summary>
+  <details class="cpbloc" id="cpBloc"><summary><span class="cpb-t"><b>Comprendre</b> · sans table</span><span class="pro-tag gratuit" id="cpBlocGratuit" hidden>Gratuit</span><span class="cpb-n" id="cpBlocN">0/21 ★</span></summary>
     <p class="cpb-sub">7 petites leçons pour entendre ce que fait un DJ. Juste ton doigt et le son.</p><ol class="cpchemin" id="cpChemin"></ol></details>
   <div class="chapsel"><button type="button" class="chapbtn" id="chapBtn" aria-expanded="false" aria-controls="chapters">Chapitre 1</button><nav class="chapters" id="chapters" aria-label="Chapitres"></nav></div>
 
   <nav class="map" id="map" aria-label="Niveaux"><span class="prog" id="mapProg" style="width:0"></span></nav>
+  <div class="pro-bandeau pro-niv" id="proNiv" hidden><img src="img/vini-logo.svg" alt=""><p><span id="proNivTitre">Les 3 premiers niveaux sont gratuits.</span><small id="proNivTxt"></small></p><button type="button" class="pro-mini" id="proNivBtn">Découvrir Pro</button></div>
 
   <div class="pbanner" id="pBanner" hidden><span><b id="pTitle">Test de placement</b> · <span id="pText"></span></span><button type="button" id="pQuit">Quitter le test</button></div>
   <div class="pbanner" id="prBanner" hidden><span><b id="prTitle"></b> · <span id="prText"></span></span><button type="button" id="prQuit">Quitter</button></div>
@@ -667,7 +694,9 @@
         <p class="rgain"><span class="gain" id="rGain"></span></p>
         <div class="rtravail" id="rTravail" hidden><h3>À travailler</h3><p class="rquoi" id="rQuoi"></p><p class="rcout" id="rCout" hidden></p>
           <p class="rastuce" id="rAstuce" hidden><img src="img/vini-icone.svg" alt=""><span id="rAstuceTxt"></span></p></div>
-        <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
+        <div class="rpro" id="rPro" hidden><p class="rpro-t"><span class="pro-tag">Pro</span>La suite, avec DJingood Pro</p><ol class="rpro-niv" id="rProNiv"></ol>
+          <p class="rpro-txt">Puis 6 chapitres : à l’oreille, les vrais morceaux, les combos, le calage, les hot cues et le set noté sur 100.</p></div>
+        <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button><button type="button" class="rbtn rpro-go" id="rProGo" hidden>Continuer avec Pro</button></div>
         <div class="rplus"><button type="button" class="linkbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="linkbtn" id="slowBtn" hidden></button></div>
         <div class="rmeta"><span class="newbadge" id="rBadge" role="status" hidden></span><span class="goalline" id="rGoal"></span><span class="questline" id="rQuete" role="status" hidden></span></div>
         <div class="rcompte" id="rCompte" hidden><img src="img/vini-icone.svg" alt=""><p><b>Garde ta progression.</b><span>Crée ton compte&nbsp;: tes étoiles et ta série te suivent sur tous tes appareils.</span></p><button type="button" class="rbtn" id="rCompteGo">Créer mon compte</button></div>
@@ -688,6 +717,7 @@
 
 <script src="js/erreurs.js"></script>
 <script src="js/stats.js"></script>
+<script src="js/pro-pret.js"></script>
 <script src="js/morceaux.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/platines.js"></script>

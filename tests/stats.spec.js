@@ -225,7 +225,7 @@ test.describe('Ce que DJingood garde sur toi', () => {
     const erreurs = []; page.on('pageerror', e => erreurs.push(String(e)));
     await page.goto('/confidentialite.html');
     await expect(page.locator('h1')).toHaveText('Ce que DJingood garde sur toi');
-    await expect(page.locator('h2.sub')).toHaveText(['Sur ton ordinateur', 'Ton compte', 'Les mails de Vini', 'Les statistiques de visite', 'Quand tu envoies ton avis', 'Une question ?']);
+    await expect(page.locator('h2.sub')).toHaveText(['Sur ton ordinateur', 'Ton compte', 'Les mails de Vini', 'Les statistiques de visite', 'Quand tu envoies ton avis', 'Si tu t’abonnes à DJingood Pro', 'Une question ?']);
     const btn = page.locator('#statsBtn');
     await expect(btn).toHaveText('Ne plus compter mes visites');
     await btn.click();

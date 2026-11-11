@@ -3,8 +3,9 @@
 'use strict';
 /* ---------- Démarrage ---------- */
 buildControls(); buildCommandes();
-$('startBtn').addEventListener('click', () => run ? stopRun() : withFiches(() => startRun()));
-$('watchBtn').addEventListener('click', () => { if (!run) withFiches(() => startRun(true)); });
+// lot 68 : sur un niveau de Pro (sans abonnement), le bouton ouvre la fenêtre Pro avant toute fiche « Découvre ce bouton »
+$('startBtn').addEventListener('click', () => run ? stopRun() : proIci() ? proOuvre('', { n: chapter, i: li }) : withFiches(() => startRun()));
+$('watchBtn').addEventListener('click', () => { if (!run && !proIci()) withFiches(() => startRun(true)); });
 const styleShow = () => { const b = document.querySelector(`#styleOpts [data-style="${styleChoice}"]`); $('styleBtn').textContent = styleChoice === 'vrai' ? 'Morceaux : vraie musique' : 'Morceaux : ' + (b ? b.textContent : 'House'); };
 const styleMenu = open => { $('styleOpts').hidden = !open; $('styleBtn').setAttribute('aria-expanded', String(open)); };
 $('styleBtn').addEventListener('click', () => styleMenu($('styleOpts').hidden)); styleShow();
@@ -27,7 +28,9 @@ $('next').addEventListener('click', () => {
   if (go === 'ch1') LESSONS = BASE_LESSONS;
   if (go === 'ch1'){ $('result').hidden = true; chapter = 1; try { localStorage.setItem('coach-chapitre', '1'); } catch (e) {} selectLesson(goLi); return; }
   if (placement){ if (placement.i >= P_STEPS.length - 1){ placementVerdict(); return; } placement.i++; selectLesson(P_STEPS[placement.i]); updatePBanner(); return; }
-  selectLesson(Math.min(LESSONS.length - 1, li + 1)); });
+  const suivant = Math.min(LESSONS.length - 1, li + 1);
+  if (niveauPro(chapter, suivant)){ $('result').hidden = true; proOuvre('', { n: chapter, i: suivant }); return; }   // lot 68
+  selectLesson(suivant); });
 document.addEventListener('keydown', e => { if (e.code === 'Space' && run && !(e.target instanceof HTMLInputElement)){ e.preventDefault(); if (run.set) encLance(); else launchB(); } if (e.code === 'KeyE' && run && !e.repeat){ e.preventDefault(); toggleEcho(); } }, true);
 $('echoBtn').addEventListener('click', toggleEcho);
 window.addEventListener('resize', () => drawHighway(run ? beatNow() : START));

@@ -262,6 +262,8 @@ function setupReady(){ const l = LESSONS[li]; return (l.depart || l.user).every(
 function updateSetup(){
   renderPlan();
   const box = $('setup'), btn = $('startBtn');
+  // lot 68 : un niveau de Pro (sans abonnement) : pas de position de départ, le bouton ouvre la fenêtre Pro (setStartBtn)
+  if (!run && proIci()){ box.hidden = true; btn.disabled = false; btn.classList.remove('ready'); setStartBtn(false); return; }
   if (run || !needSetup()){ box.hidden = true; if (!run){ btn.disabled = false; btn.classList.remove('ready'); if (btn.textContent !== 'Préparation…') btn.textContent = 'Jouer'; } return; }
   const l = LESSONS[li], ul = $('setupList'); ul.innerHTML = '';
   for (const k of l.depart || l.user){

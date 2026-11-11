@@ -37,7 +37,7 @@ test.describe('Tutos : l\'onglet', () => {
     await expect(page.locator('#tabTutos')).toBeVisible();
   });
 
-  test('le catalogue : trois familles dans l\'ordre où on les apprend, le premier tuto de chacune gratuit', async ({ page }) => {
+  test('le catalogue : trois familles dans l\'ordre où on les apprend, un seul tuto gratuit (lot 68)', async ({ page }) => {
     const erreurs = await ouvrirTutos(page);
     await expect(page.locator('#tabTutos')).toHaveAttribute('aria-current', 'page');
     await expect(page.locator('.tu-famille h2')).toHaveText(['Le volume et les basses', 'Les effets', 'Les boucles']);
@@ -45,7 +45,7 @@ test.describe('Tutos : l\'onglet', () => {
     expect(await page.locator('.tu-carte').evaluateAll(cs => cs.map(c => c.dataset.tu))).toEqual(ORDRE);
     await expect(page.locator('.tu-carte strong')).toHaveText(['Le fondu au fader', 'Le swap des basses', 'Le mix aux 3 bandes', 'La coupure sèche',
       "L'écho out", 'La sortie dans la réverbe', 'Le filtre qui ouvre', 'La boucle qui attend', "La boucle qui prolonge l'outro", 'La montée en boucle', 'La boucle de secours']);
-    await expect(page.locator('.tu-etiq')).toHaveText(['Gratuit', 'Pro', 'Pro', 'Pro', 'Gratuit', 'Pro', 'Pro', 'Gratuit', 'Pro', 'Pro', 'Pro']);
+    await expect(page.locator('.tu-etiq')).toHaveText(['Gratuit', 'Pro', 'Pro', 'Pro', 'Pro', 'Pro', 'Pro', 'Pro', 'Pro', 'Pro', 'Pro']);
     await expect(page.locator('#tutosTip')).toContainText('Le fondu au fader');
     expect(erreurs).toEqual([]);
   });
