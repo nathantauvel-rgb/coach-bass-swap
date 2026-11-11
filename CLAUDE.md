@@ -32,7 +32,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 68 « La découpe » (10-11 nov. 2026) : 3 exercices gratuits, tout le reste dans Pro. FAIT, ENREGISTRÉ SUR LA BRANCHE le 11 nov. (pas envoyé sur GitHub), NON PUBLIÉ. Pro ALLUMÉ le 11 nov. au soir (`PRO_PRET = true`, CGV datées du 11 nov.), « mets tout en ligne » : en attente du gardien et des 3 réglages Vercel.**
+- **Lot 68 « La découpe » (10-11 nov. 2026) : 3 exercices gratuits, tout le reste dans Pro. FAIT. Pro ALLUMÉ le 11 nov. (`PRO_PRET = true`, CGV datées du 11 nov.), « mets tout en ligne ». **PUBLIÉ le 11 nov. vers 15 h** (`origin/main` = `6543764`, gardien orange sans blocage, 3 réglages Stripe réels dans Vercel). Production vérifiée (nouveau visiteur : 3 niveaux libres, cadenas Pro, prix sur la présentation). **Essayé par l’utilisateur avec son compte : « j’ai le mois offert, ça marche »** ; il a envoyé le mail d’information aux comptes d’avant (texte : `marketing/mail-mois-offert.md` du dossier principal).**
   Branche `lot-68-decoupe` (partie d'`origin/main` = `7a198a7`), copie `Documents\coach-dj-lot68` (git worktree,
   `node_modules` relié par jonction à la copie lot 65 ; tests : `DJ_PORT=8820 npx playwright test` ; essai et captures :
   `node captures/lot68/essai.js` avec le serveur de la copie sur 8820, hors Git). **Numéroté 68 parce qu'une autre session
