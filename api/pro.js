@@ -15,8 +15,14 @@
    prend l'identifiant et l'adresse dans le jeton**, jamais dans ce que le site envoie.
 
    Actions (POST, JSON) :
-   - `etat`    : { pro, formule ('mois' | 'an' | null), jusqua (secondes), annule (s'arrête à la fin de la période) } ;
-   - `payer`   : { formule } → { url } de la page de paiement de Stripe (409 si déjà Pro) ;
+   - `etat`    : { pro, formule ('mois' | 'an' | null), jusqua (secondes), annule (s'arrête à la fin de la période),
+                 essai (pendant le mois offert), offert (pas abonné : le mois offert l'attend, compte d'avant la limite
+                 jamais abonné, lot 68) } ;
+   - `payer`   : { formule, essai? } → { url } de la page de paiement de Stripe (409 si déjà Pro). Avec `essai: true`
+                 (lot 68) : le mois offert aux comptes créés avant la limite (FONDATEURS_AVANT, plus bas), 30 jours sans
+                 carte bancaire ; si aucune carte n'est ajoutée, l'abonnement s'arrête tout seul à la fin. 403
+                 `essai-reserve` pour un compte plus récent ; une seule fois par compte : 409 `essai-deja` si ce compte a
+                 déjà eu un abonnement, quel qu'il soit ;
    - `session` : { id } → comme `etat`, juste après le paiement (la recherche de Stripe met jusqu'à une minute à voir un
                  nouvel abonnement ; la session de paiement, elle, le connaît tout de suite) ;
    - `gerer`   : { url } de la page « Gérer mon abonnement » de Stripe (changer de formule, de carte, factures, arrêter :
@@ -49,7 +55,7 @@ const finPeriode = s => s.current_period_end || (s.items && s.items.data && s.it
 function etatDe(s, prix){
   if (!s || !ACTIFS.includes(s.status)) return { pro: false, formule: null, jusqua: null, annule: false };
   const p = s.items && s.items.data && s.items.data[0] && s.items.data[0].price && s.items.data[0].price.id;
-  return { pro: true, formule: p === prix.an ? 'an' : p === prix.mois ? 'mois' : null, jusqua: finPeriode(s), annule: !!s.cancel_at_period_end };
+  return { pro: true, formule: p === prix.an ? 'an' : p === prix.mois ? 'mois' : null, jusqua: finPeriode(s), annule: !!s.cancel_at_period_end, essai: s.status === 'trialing' };
 }
 /* L'abonnement de ce compte : le plus récent qui est encore actif.
    Deux chemins, parce que **la recherche de Stripe met jusqu'à une minute à voir un nouvel abonnement** (vu avec le vrai
@@ -79,6 +85,45 @@ async function abonnement(qui, cle){
   actifs.sort((a, b) => (b.created || 0) - (a.created || 0));
   return actifs[0] || null;
 }
+/* Lot 68, demande de l'utilisateur (11 nov. 2026) : le mois offert va aux comptes DJingood DÉJÀ CRÉÉS ; un compte créé
+   ensuite n'a que les exercices gratuits. La date de création vient de Firebase (accounts:lookup, avec le jeton du joueur et
+   la clé publique du site, la même que js/compte.js : ce n'est pas un secret), jamais de ce que le site envoie.
+   La limite : PRO_FONDATEURS_AVANT dans les réglages de Vercel (une date ISO), sinon la fin du 11 novembre 2026, heure de
+   Paris. Si on la change, changer aussi la phrase de cgv.html (« créés jusqu'au 11 novembre 2026 inclus »). */
+const FONDATEURS_AVANT = () => { const t = Date.parse(process.env.PRO_FONDATEURS_AVANT || ''); return isFinite(t) ? t : Date.parse('2026-11-12T00:00:00+01:00'); };
+const CLE_WEB = 'AIzaSyCRQf6s3sNfUiJ-WIrRNBXV9tb09ZFeaAU';   // la clé publique du site (js/compte.js, CPT_CFG.apiKey)
+async function creation(jeton){
+  const r = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + CLE_WEB,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: jeton }) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw Object.assign(new Error('google ' + r.status), { statut: r.status });
+  const u = d && d.users && d.users[0];
+  return u ? { uid: String(u.localId || ''), cree: Number(u.createdAt) || 0 } : null;
+}
+// Ce compte existait avant la limite (et c'est bien le sien : même identifiant que dans le jeton vérifié)
+async function fondateur(jeton, qui){
+  const c = await module.exports.creation(jeton);
+  return !!c && c.uid === qui.uid && c.cree > 0 && c.cree < FONDATEURS_AVANT();
+}
+// Le mois offert l'attend : compte d'avant la limite, jamais abonné (une erreur de Google = pas d'offre affichée, rien de cassé)
+async function offertA(jeton, qui, cle){
+  try { if (!await fondateur(jeton, qui)) return false; } catch (e) { return false; }
+  // Stripe qui répond mal ici ne doit pas faire échouer toute la réponse (gardien, 11 nov.) : pas de mois offert, c'est tout
+  try { return !(await dejaAbonne(qui, cle)); } catch (e) { return false; }
+}
+// Lot 68 : ce compte a-t-il déjà eu un abonnement, même arrêté ? (le mois offert ne sert qu'une fois)
+async function dejaAbonne(qui, cle){
+  const q = encodeURIComponent(`metadata['uid']:'${qui.uid.replace(/'/g, '')}'`);
+  const d = await stripe('/subscriptions/search?limit=1&query=' + q, cle);
+  if ((d.data || []).length) return true;
+  if (!qui.email) return false;
+  const c = await stripe('/customers?limit=10&email=' + encodeURIComponent(qui.email), cle);
+  for (const client of (c.data || []).slice(0, 5)){
+    const s = await stripe('/subscriptions?status=all&limit=20&customer=' + encodeURIComponent(client.id), cle);
+    if ((s.data || []).some(x => x && x.metadata && x.metadata.uid === qui.uid)) return true;
+  }
+  return false;
+}
 
 async function handler(req, res){
   if (req.method !== 'POST') return repond(res, 405, { erreur: 'methode' });
@@ -96,22 +141,34 @@ async function handler(req, res){
   if (!b || typeof b !== 'object') return repond(res, 400, { erreur: 'corps' });
 
   try {
-    if (b.action === 'etat') return repond(res, 200, etatDe(await abonnement(qui, cle), prix));
+    if (b.action === 'etat'){
+      const e = etatDe(await abonnement(qui, cle), prix);
+      if (!e.pro) e.offert = await offertA(m[1], qui, cle);   // lot 68 : le mois offert des comptes déjà créés
+      return repond(res, 200, e);
+    }
 
     if (b.action === 'payer'){
       if (!FORMULES.includes(b.formule)) return repond(res, 400, { erreur: 'formule' });
       if (await abonnement(qui, cle)) return repond(res, 409, { erreur: 'deja-pro' });
-      const s = await stripe('/checkout/sessions', cle, { corps: {
+      const essai = b.essai === true;
+      if (essai){
+        let f; try { f = await fondateur(m[1], qui); } catch (e) { return repond(res, 502, { erreur: 'google' }); }
+        if (!f) return repond(res, 403, { erreur: 'essai-reserve' });   // un compte créé après la limite : pas de mois offert
+        if (await dejaAbonne(qui, cle)) return repond(res, 409, { erreur: 'essai-deja' });
+      }
+      const s = await stripe('/checkout/sessions', cle, { corps: Object.assign({
         mode: 'subscription', locale: 'fr', allow_promotion_codes: 'true',
         line_items: { 0: { price: prix[b.formule], quantity: 1 } },
         client_reference_id: qui.uid, customer_email: qui.email,
-        metadata: { uid: qui.uid }, subscription_data: { metadata: { uid: qui.uid } },
-        success_url: site + '/?pro=merci&session={CHECKOUT_SESSION_ID}#tutos', cancel_url: site + '/#tutos',
+        metadata: { uid: qui.uid }, subscription_data: Object.assign({ metadata: { uid: qui.uid } },
+          // le mois offert : 30 jours, sans carte ; sans carte ajoutée d'ici là, l'abonnement s'arrête (rien n'est prélevé)
+          essai ? { trial_period_days: 30, trial_settings: { end_behavior: { missing_payment_method: 'cancel' } } } : {}),
+        success_url: site + '/?pro=merci&session={CHECKOUT_SESSION_ID}#apprendre', cancel_url: site + '/#apprendre',
         // la case à cocher obligatoire : les conditions de vente, et l'accès tout de suite (le joueur renonce au délai de
         // rétractation de 14 jours, comme la loi le permet pour un contenu numérique ouvert immédiatement)
         consent_collection: { terms_of_service: 'required' },
-        custom_text: { terms_of_service_acceptance: { message: `J'accepte les [conditions de vente](${site}/cgv.html). Je demande l'accès aux tutos tout de suite et je renonce à mon délai de rétractation de 14 jours.` } }
-      } });
+        custom_text: { terms_of_service_acceptance: { message: `J'accepte les [conditions de vente](${site}/cgv.html). Je demande l'accès à DJingood Pro tout de suite et je renonce à mon délai de rétractation de 14 jours.` } }
+      }, essai ? { payment_method_collection: 'if_required' } : {}) });
       return repond(res, 200, { url: s.url });
     }
 
@@ -125,7 +182,7 @@ async function handler(req, res){
     if (b.action === 'gerer'){
       const s = await abonnement(qui, cle);
       if (!s || !s.customer) return repond(res, 404, { erreur: 'pas-abonne' });
-      const p = await stripe('/billing_portal/sessions', cle, { corps: { customer: typeof s.customer === 'string' ? s.customer : s.customer.id, return_url: site + '/#tutos', locale: 'fr' } });
+      const p = await stripe('/billing_portal/sessions', cle, { corps: { customer: typeof s.customer === 'string' ? s.customer : s.customer.id, return_url: site + '/#apprendre', locale: 'fr' } });
       return repond(res, 200, { url: p.url });
     }
   } catch (e) { return repond(res, 502, { erreur: 'stripe', statut: e.statut || 0 }); }
@@ -135,3 +192,4 @@ async function handler(req, res){
 module.exports = handler;
 module.exports.formulaire = formulaire;
 module.exports.cles = () => mails.cles();   // remplacé par les tests (pas de réseau vers Google)
+module.exports.creation = creation;   // remplacé par les tests (pas de réseau vers Google)

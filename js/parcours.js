@@ -43,6 +43,9 @@ const ch4Done = () => CH4_LESSONS.filter((_, i) => ch4Stars[i] >= 2).length;
 const X_OK = 60, xDone = () => BASE_LESSONS.filter((_, i) => xBest[i] >= X_OK).length;
 const xTodo = () => { const i = BASE_LESSONS.findIndex((_, k) => !(xBest[k] >= X_OK)); return i < 0 ? 0 : i; };
 function goLesson(ch, idx, visite){
+  // lot 68 : un chapitre ou un niveau de Pro, sans abonnement : la fenêtre Pro. `visite` (lien du guide, Vérifier ma table)
+  // ouvre quand même le niveau : on le voit, et son bouton propose Pro.
+  if (!visite && (chapitrePro(ch) || (idx != null && niveauPro(ch, idx)))){ proOuvre('', ch !== 1 && idx == null ? { chap: ch } : { n: ch, i: idx || 0 }); return; }
   location.hash = '#apprendre'; setView('apprendre');
   if (placement) quitPlacement();
   if (chapter !== ch) setChapter(ch);
@@ -90,12 +93,28 @@ const STAGES = {
   vrai: { title: 'Passer au vrai', text: 'Avec ta musique : importe ta collection rekordbox, choisis une paire, et fais les missions sur ta table.',
     done: () => rbMis.total > 0, cta: () => 'Aller à Passer au vrai', go: () => { location.hash = '#vrai'; } }
 };
+/* lot 68 : sans abonnement, Apprenti DJ et DJ confirmé commencent par les niveaux gratuits, en Mode Expert (leur parcours
+   commence sinon par des étapes de Pro). Le Grand débutant les a déjà dans l'étape « Les bases ». */
+const essaiFait = () => BASE_LESSONS.slice(0, NIV_GRATUITS).every((_, i) => stars[i] >= 2 || xBest[i] >= X_OK);
+const essaiTodo = () => { const i = BASE_LESSONS.slice(0, NIV_GRATUITS).findIndex((_, k) => !(stars[k] >= 2 || xBest[k] >= X_OK)); return i < 0 ? 0 : i; };
+STAGES.essai = { title: `Tes ${NIV_GRATUITS} premiers gestes`, text: `Lancer au bon moment, le fader, la coupure : les ${NIV_GRATUITS} premiers niveaux, gratuits. En Mode Expert, sans aucune aide, chaque geste noté à la milliseconde.`,
+  done: essaiFait, prog: () => `${BASE_LESSONS.slice(0, NIV_GRATUITS).filter((_, i) => stars[i] >= 2 || xBest[i] >= X_OK).length} sur ${NIV_GRATUITS}`,
+  cta: () => `Mode Expert, niveau ${essaiTodo() + 1} : ${BASE_LESSONS[essaiTodo()].title}`,
+  go: () => { if (!expert){ expert = true; saveExpert(); } goLesson(1, essaiTodo()); } };
+// Une étape qui mène à du contenu de Pro, sans abonnement : l'accueil propose Pro à la place
+function stagePro(id){
+  if (!proBloque()) return false;
+  if (id === 'ch1') return firstTodo(stars, BASE_LESSONS.length, testFail()) >= NIV_GRATUITS;
+  if (id === 'expert') return xTodo() >= NIV_GRATUITS;
+  return ['ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7', 'vrai'].includes(id);
+}
 // Les étapes de ce parcours : sur un téléphone, « Comprendre » passe devant (lot 48, cpEtape dans comprendre.js)
-const parcoursEtapes = p => (typeof cpEtape === 'function' && cpEtape() ? ['comprendre'] : []).concat(PARCOURS[p].stages);
+const parcoursEtapes = p => (typeof cpEtape === 'function' && cpEtape() ? ['comprendre'] : []).concat(proBloque() && parcoursAvance(p) ? ['essai'] : [], PARCOURS[p].stages);
 const nextStage = () => parcours ? parcoursEtapes(parcours).find(id => !STAGES[id].done()) || '' : '';
 function setParcours(p){ if (!PARCOURS[p]) return; parcours = p; parcoursPick = false; try { localStorage.setItem('coach-parcours', p); } catch (e) {} parcoursOuvre(); renderHome(); }
 function renderHome(){
   const choosing = !parcours || parcoursPick, cur = nextStage(), st = STAGES[cur];
+  $('homePro').hidden = true; $('homeDefi').hidden = true; $('homeCta').classList.remove('pro');   // lot 68, montrés plus bas
   $('homeLien').hidden = true;   // montré plus bas, sur un téléphone, hors du choix du parcours (lot 48)
   $('homeChoice').hidden = !choosing; $('homeQuetes').hidden = choosing; if (!choosing) renderQuetes(); $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing; $('homeGoal').hidden = choosing;
   document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.parcours === parcours)));
@@ -106,6 +125,12 @@ function renderHome(){
   $('homeTitle').textContent = st ? st.title : 'Bravo, tu as tout fait !';
   $('homeLead').textContent = st ? st.text : 'Garde la main : un défi par jour, et de nouvelles paires de morceaux dans rekordbox.';
   $('homeCta').textContent = st ? st.cta() : 'Faire le défi du jour';
+  // lot 68 : une étape qui mène à du contenu de Pro (sans abonnement) : le niveau avec son étiquette Pro, « Continuer avec
+  // Pro », et ce qui reste gratuit (le défi du jour, sur les niveaux gratuits)
+  const pro = !!cur && stagePro(cur);
+  $('homePro').hidden = !pro; $('homeDefi').hidden = !(pro && pracPool().length); $('homeCta').classList.toggle('pro', pro);
+  if (pro){ $('homeProTxt').textContent = st.cta(); $('homeCta').textContent = 'Continuer avec Pro';
+    if (cur === 'ch1' || cur === 'expert') $('homeLead').textContent = `Bravo, tu as fini les ${NIV_GRATUITS} niveaux gratuits. La suite : l’écho, le filtre, le swap des basses, puis la transition complète.`; }
   renderGoal(); homeVini();
   $('homeLien').hidden = !(typeof cpMobile === 'function' && cpMobile());   // lot 48 : sur un téléphone, s'envoyer le lien pour l'ordinateur
   // lot 65 : avec un compte, le lien part par mail et connecte tout seul sur l'ordinateur
@@ -128,6 +153,7 @@ function homeVini(){
   const salut = h < 5 ? 'Encore debout\u00a0?' : h < 12 ? 'Bonjour\u00a0!' : h < 18 ? 'Salut\u00a0!' : 'Bonsoir\u00a0!';
   viniDit('home', coffres ? (coffres > 1 ? `${coffres} coffres t’attendent dans tes quêtes\u00a0!` : 'Un coffre t’attend dans tes quêtes\u00a0!')
     : fait ? 'Objectif du jour atteint, bravo\u00a0! Reviens demain pour ta série.'
+    : stagePro(nextStage()) ? 'Tes gestes gratuits sont faits, bravo ! La suite t’attend dans DJingood Pro.'   // lot 68
     : sk ? `${salut} Ta série de ${plur(sk, 'jour', 'jours')} t’attend\u00a0: quelques minutes suffisent.`
     : `${salut} Prêt pour ta prochaine transition\u00a0?`, coffres || fait ? 'danse' : 'calme');
 }
@@ -139,7 +165,11 @@ function viniProgres(){
   // sans parcours choisi (« Passer » aux Premiers pas, ou arrivé par le guide), il n'y a pas de prochaine étape : ce n'est pas « tout fait »
   else viniDit('prog', st ? `Prochaine étape\u00a0: «\u00a0${st.cta()}\u00a0». À toi de jouer\u00a0!` : !parcours ? 'Choisis ton parcours sur l’accueil\u00a0: je te dirai par où continuer.' : 'Tu as tout fait, bravo\u00a0! Garde la main avec le défi du jour.');
 }
-$('homeCta').addEventListener('click', () => { const st = STAGES[nextStage()]; if (st) st.go(); else location.hash = '#entrainer'; });
+// Ce que la fenêtre Pro doit annoncer pour une étape de Pro (lot 68)
+const stageQuoi = id => id === 'ch1' ? { n: 1, i: firstTodo(stars, BASE_LESSONS.length, testFail()) } : id === 'expert' ? { n: 1, i: xTodo() }
+  : id === 'vrai' ? { vue: 'vrai' } : /^ch\d$/.test(id) ? { chap: +id.slice(2) } : {};
+$('homeCta').addEventListener('click', () => { const cur = nextStage(), st = STAGES[cur]; if (st && stagePro(cur)){ proOuvre('', stageQuoi(cur)); return; } if (st) st.go(); else location.hash = '#entrainer'; });
+$('homeDefi').addEventListener('click', () => { location.hash = '#entrainer'; });
 $('homeChange').addEventListener('click', () => { parcoursPick = true; renderHome(); });
 document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.addEventListener('click', () => setParcours(b.dataset.parcours)));
 /* ---------- Mes progrès : niveau, étoiles, série, objectif, badges ---------- */
@@ -167,7 +197,8 @@ function renderProgres(){
     if (frac != null){ const bar = document.createElement('div'), f = document.createElement('i'); bar.className = 'pgbar'; f.style.width = frac * 100 + '%'; bar.appendChild(f); top.appendChild(bar); }
     ul.appendChild(liEl); };
   const ch = n => CHAPTERS.find(c => c.n === n).title, max1 = BASE_LESSONS.length * 3;
-  const open = (n, bank, len) => row(`${n} · ${ch(n)}`, `${sumStars(bank)} ★ sur ${len * 3}`, sumStars(bank) / (len * 3), () => goLesson(n, firstTodo(bank, len)));
+  // lot 68 : un chapitre de Pro (sans abonnement) le dit, et son bouton ouvre la fenêtre Pro (goLesson)
+  const open = (n, bank, len) => row(`${n} · ${ch(n)}`, chapitrePro(n) ? 'Avec DJingood Pro' : `${sumStars(bank)} ★ sur ${len * 3}`, sumStars(bank) / (len * 3), () => goLesson(n, firstTodo(bank, len)));
   if (typeof cpEtoiles === 'function') row('Comprendre', `${cpEtoiles()} ★ sur ${CP_LECONS.length * 3}`, cpEtoiles() / (CP_LECONS.length * 3), () => { location.hash = '#apprendre'; setView('apprendre'); $('cpBloc').open = true; $('cpBloc').scrollIntoView({ block: 'start' }); });
   open(1, stars, BASE_LESSONS.length);
   // Le chapitre 6 n'apparaît ici que s'il est prêt (CH6_PRET dans js/hotcues.js) : sinon on l'annoncerait à un

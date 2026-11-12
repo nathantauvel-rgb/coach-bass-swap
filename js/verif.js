@@ -29,7 +29,7 @@ const VF_STEPS = [
     choix: [['ok', 'Oui, j’entends bien'], ['ko', 'Non, rien dans le casque']] },
   { id: 'expert', type: 'manuel', titre: 'Le Mode Expert, au casque', texte: 'Joue 5 fois le niveau 1 « Le bon moment » en Mode Expert, au casque de la table, en appuyant sur PLAY bien en rythme. Tes scores tournent autour de :', jouer: 'expert',
     choix: [['80', 'Plus de 80'], ['60', 'Entre 60 et 80'], ['0', 'Moins de 60']], choix2: ['Le site dit le plus souvent :', [['tot', 'Trop tôt'], ['tard', 'Trop tard'], ['varie', 'Ça varie']]] },
-  { id: 'musique', type: 'manuel', titre: 'La vraie musique', texte: 'Joue le niveau 6 « Le swap des basses » avec la vraie musique, au casque. Quand A et B jouent ensemble, les grosses caisses tombent-elles en même temps ?', jouer: 'swap',
+  { id: 'musique', type: 'manuel', titre: 'La vraie musique', texte: 'Joue le niveau du bouton ci-dessous avec la vraie musique, au casque. Quand A et B jouent ensemble, les grosses caisses tombent-elles en même temps ?', jouer: 'swap',
     choix: [['ok', 'Oui, c’est calé'], ['ko', 'Non, ça « galope »']], choix2: ['Et les deux morceaux ensemble :', [['ok', 'Sonnent bien'], ['ko', 'Sonnent faux']]] },
   { id: 'sons', type: 'manuel', titre: 'Les petits sons du jeu', texte: 'Pendant ces parties, les petits sons du jeu (réussi, raté, étoiles) étaient :', choix: [['ok', 'Bien dosés'], ['fort', 'Trop forts'], ['gene', 'Gênants en Mode Expert']] },
   { id: 'fin', type: 'fin', titre: 'Vérification terminée' }
@@ -124,7 +124,9 @@ function vfEcoute(){
 }
 // « Aller jouer » : on garde l'étape, on ouvre le bon niveau ; « Ma table » propose ensuite de reprendre
 function vfJouer(quoi){ closeVerif();
-  if (quoi === 'expert'){ expert = true; saveExpert(); goLesson(1, 0); } else goLesson(1, BASE_LESSONS.findIndex(l => l.kind === 'swap'), true); }   // le swap, même fermé : c'est la table qu'on vérifie (lot 64)
+  if (quoi === 'expert'){ expert = true; saveExpert(); goLesson(1, 0); } else goLesson(1, vfNivMusique(), true); }   // le swap, même fermé : c'est la table qu'on vérifie (lot 64)
+// Lot 68 : sans abonnement, le swap est dans Pro ; « Le fader » (gratuit) fait aussi jouer A et B ensemble sur la vraie musique
+const vfNivMusique = () => BASE_LESSONS.findIndex(l => l.kind === (proBloque() ? 'fader' : 'swap'));
 
 function renderVerif(){
   if (!verif.on) return;
@@ -154,7 +156,7 @@ function renderVerif(){
       for (const [v, t] of liste){ const b = document.createElement('button'); b.type = 'button'; b.className = 'vfopt'; b.textContent = t; b.setAttribute('aria-pressed', String(vf[cle][st.id] === v));
         b.addEventListener('click', () => { vf[cle][st.id] = v; vfSave(); son('clic'); renderVerif(); }); row.appendChild(b); }
       box.appendChild(row); };
-    if (st.jouer){ const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost vfjouer'; b.textContent = st.jouer === 'expert' ? 'Aller jouer le niveau 1 en Mode Expert' : 'Aller jouer « Le swap des basses »';
+    if (st.jouer){ const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost vfjouer'; b.textContent = st.jouer === 'expert' ? 'Aller jouer le niveau 1 en Mode Expert' : `Aller jouer « ${BASE_LESSONS[vfNivMusique()].title} »`;
       b.addEventListener('click', () => vfJouer(st.jouer)); box.appendChild(b); }
     if (st.ecoute){ const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost vfjouer'; b.textContent = 'Écouter'; b.addEventListener('click', vfEcoute); box.appendChild(b); }
     groupe('', st.choix, 'res'); if (st.choix2) groupe(st.choix2[0], st.choix2[1], 'res2');

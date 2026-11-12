@@ -51,7 +51,7 @@ function expertResult(score){
   return { xs, st: xs >= 90 ? 3 : xs >= 60 ? 2 : 1, txt: rec ? (prev == null ? `Expert : ${xs}/100 · premier record` : `Expert : ${xs}/100 · nouveau record (avant : ${prev})`) : `Expert : ${xs}/100 · record : ${prev}/100` };
 }
 function renderExpert(){
-  const b = $('expertBtn'); b.hidden = chapter !== 1 || !!prac || !!placement; if (b.hidden) return;
+  const b = $('expertBtn'); b.hidden = chapter !== 1 || !!prac || !!placement || niveauPro(1, li); if (b.hidden) return;   // lot 68 : rien à régler sur un niveau de Pro
   b.setAttribute('aria-pressed', String(expert)); b.textContent = expert ? `Mode Expert · record ${xBest[li] != null ? xBest[li] + '/100' : '—'}` : 'Mode Expert';
 }
 $('expertBtn').addEventListener('click', () => { if (run || preparing) return; expert = !expert; saveExpert(); selectLesson(li); });

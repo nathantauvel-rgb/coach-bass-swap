@@ -13,5 +13,5 @@ module.exports = defineConfig({
     viewport: { width: 1366, height: 768 },
     launchOptions: { args: ['--autoplay-policy=no-user-gesture-required'] }
   },
-  webServer: { command: 'node tests/serveur.js', url: `http://localhost:${PORT}/index.html`, reuseExistingServer: true }
+  webServer: { command: 'node tests/serveur.js --tests', url: `http://localhost:${PORT}/index.html`, reuseExistingServer: true }
 });

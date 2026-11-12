@@ -293,7 +293,7 @@ function ppMaj(){
     : id === 'niveau' ? (r.niveau === null ? 'Tu en es où avec le mix ?' : PP_NIVEAUX.find(x => x[0] === r.niveau)[3])
     : id === 'oreille' ? ppOrTexte()
     : id === 'table' ? ppTableDit()
-    : id === 'plan' ? 'Ton plan est prêt !'
+    : id === 'plan' ? (typeof proVerrou === 'function' && proVerrou() ? 'Ton plan est prêt ! Le début est gratuit.' : 'Ton plan est prêt !')
     : id === 'compte' ? (cpMobile() ? 'Crée ton compte gratuit pour garder ton plan. Je t’envoie aussi un lien pour l’ouvrir sur ton ordinateur.' : 'Crée ton compte gratuit pour garder ton plan et ta progression.')
     : id === 'envoye' ? `C’est bon${ppPrenomVu() ? ', ' + ppPrenomVu() : ''} ! Ton plan est gardé sur ton compte.`
     : 'Combien de temps par jour pour t’entraîner ?';
@@ -425,6 +425,34 @@ const PP_PLAN = {
         : ['oreille', 'Ensuite', 'Le calage à l’oreille', 'Sans BPM affiché, comme en club.'],
     ['etoile', '', 'Un set à 100 sur 100', 'Hot cues, boucles, et plus aucune aide.']]
 };
+/* Lot 68 : avec DJingood Pro, le plan dit dès le début ce qui est gratuit et ce qui est dans Pro (personne ne doit tomber sur
+   le mur par surprise). Apprenti DJ et DJ confirmé commencent par les 3 niveaux gratuits en Mode Expert (avant, le confirmé
+   commençait par le set, qui est dans Pro). Le 5e élément de chaque étape : 'gratuit' ou 'pro'. */
+const PP_TROIS = ['Tes 3 premiers gestes', 'Lancer au bon moment, le fader, la coupure : ta première transition, avec ta table.'];
+const PP_TROIS_X = ['Tes 3 premiers gestes, en Mode Expert', 'Lancer, le fader, la coupure : sans aide, notés à la milliseconde.'];
+const PP_PLAN_PRO = {
+  debut: tel => tel
+    ? [['tel', 'Aujourd’hui · sur ton téléphone', 'Comprendre la musique', 'Le temps, la phrase, les basses : 7 leçons de 2 minutes, au doigt.', 'gratuit'],
+       ['table', 'Sur ton ordinateur · avec ta table', ...PP_TROIS, 'gratuit'],
+       ['etoile', 'Ensuite', `Les ${proNbExercices()} autres exercices`, 'Le swap des basses, le calage, les hot cues, jusqu’au set noté sur 100.', 'pro']]
+    : [['table', 'Aujourd’hui · avec ta table', ...PP_TROIS, 'gratuit'],
+       ['oreille', 'Ensuite', 'Les 4 autres gestes', 'L’écho, le filtre, le swap des basses, la transition complète.', 'pro'],
+       ['etoile', '', 'Jusqu’au set noté sur 100', 'Les vrais morceaux, le calage, les hot cues.', 'pro']],
+  apprenti: tel => tel
+    ? [['tel', 'Aujourd’hui · sur ton téléphone', 'Révise les bases', '7 leçons de 2 minutes, au doigt : va vite si tu connais.', 'gratuit'],
+       ['table', 'Sur ton ordinateur · avec ta table', ...PP_TROIS_X, 'gratuit'],
+       ['etoile', 'Ensuite', 'Les combos et le calage', 'Plusieurs gestes d’affilée, deux tempos à caler, jusqu’au set.', 'pro']]
+    : [['table', 'Aujourd’hui · avec ta table', ...PP_TROIS_X, 'gratuit'],
+       ['oreille', 'Ensuite', 'Les combos et le calage', 'Plusieurs gestes d’affilée, et deux tempos à caler.', 'pro'],
+       ['etoile', '', 'Des transitions vraiment propres', 'Jusqu’à ton premier set, noté sur 100.', 'pro']],
+  confirme: tel => tel
+    ? [['tel', 'Aujourd’hui · sur ton téléphone', 'Révise les bases', '7 leçons de 2 minutes, au doigt : va vite si tu connais.', 'gratuit'],
+       ['table', 'Sur ton ordinateur · avec ta table', ...PP_TROIS_X, 'gratuit'],
+       ['etoile', 'Ensuite', 'Le set et le calage', 'Plusieurs morceaux enchaînés, sans BPM affiché, comme en club.', 'pro']]
+    : [['table', 'Aujourd’hui · avec ta table', ...PP_TROIS_X, 'gratuit'],
+       ['oreille', 'Ensuite', 'Le set', 'Plusieurs morceaux enchaînés, noté sur 100.', 'pro'],
+       ['etoile', '', 'Un set à 100 sur 100', 'Hot cues, boucles, et plus aucune aide.', 'pro']]
+};
 function ppPlanOpts(){
   const r = pp.rep, box = $('ppOpts'), niv = PP_NIVEAUX.find(x => x[0] === r.niveau) || PP_NIVEAUX[0];
   const nomTable = r.table !== 'table' ? 'Pas encore de table' : r.modele && r.modele !== 'autre' && r.modele !== 'inconnue' ? ppNomDe(r.modele) : 'Ta table';
@@ -432,10 +460,12 @@ function ppPlanOpts(){
   [niv[1], nomTable, r.min ? r.min + ' min par jour' : ''].filter(Boolean).forEach(t => { const s = document.createElement('span'); s.textContent = t; res.appendChild(s); });
   const quand = r.min === 5 ? 'À ton rythme' : r.min === 15 ? 'En moins de 2 semaines' : 'Dans 2 semaines';
   const ol = document.createElement('ol'); ol.className = 'pp-frise';
-  (PP_PLAN[r.niveau] || PP_PLAN.debut)(cpMobile()).forEach(([ic, q, titre, txt], i) => {
+  const plans = typeof proVerrou === 'function' && proVerrou() ? PP_PLAN_PRO : PP_PLAN;   // lot 68
+  (plans[r.niveau] || plans.debut)(cpMobile()).forEach(([ic, q, titre, txt, prix], i) => {
     const li = document.createElement('li'); li.className = i === 0 ? 'pp-maint' : '';
     li.innerHTML = `<span class="pp-pt" aria-hidden="true">${PP_IC[ic]}</span><span><span class="pp-quand"></span><b></b><small></small></span>`;
     li.querySelector('.pp-quand').textContent = q || quand; li.querySelector('b').textContent = titre; li.querySelector('small').textContent = txt;
+    if (prix){ const t = document.createElement('span'); t.className = 'pro-tag' + (prix === 'gratuit' ? ' gratuit' : ''); t.textContent = prix === 'gratuit' ? 'Gratuit' : 'Pro'; li.querySelector('.pp-quand').append(' ', t); }
     ol.appendChild(li);
   });
   box.append(res, ol);

@@ -25,7 +25,7 @@ const STATS_DOMAINES = ['djingood.fr', 'www.djingood.fr', 'coach-bass-swap.verce
 const STATS_KEY = 'coach-stats', STATS_NON = 'umami.disabled';
 // Les étapes comptées une fois par navigateur, dans l'ordre où un joueur les rencontre
 const STATS_ETAPES = ['sans-midi', 'premiers-pas-fin', 'premiers-pas-passes', 'comprendre-1', 'comprendre-fin', 'table-branchee', 'premiere-partie', 'premiere-reussite',
-  'chapitre-1', 'chapitre-2', 'chapitre-3', 'chapitre-4', 'chapitre-5', 'chapitre-6', 'chapitre-7', 'compte-propose', 'compte', 'mails-question', 'quiz-oreille', 'plan-vu', 'mur-vu', 'mur-sans-compte', 'lien-ordi-envoye', 'ordi-depuis-lien', 'rekordbox', 'revenu', 'jours-7', 'pro'];   // pro : abonné (lot 59)
+  'chapitre-1', 'chapitre-2', 'chapitre-3', 'chapitre-4', 'chapitre-5', 'chapitre-6', 'chapitre-7', 'compte-propose', 'compte', 'mails-question', 'quiz-oreille', 'plan-vu', 'mur-vu', 'mur-sans-compte', 'lien-ordi-envoye', 'ordi-depuis-lien', 'rekordbox', 'revenu', 'jours-7', 'pro', 'essai-fini', 'fondateur-vu'];   // pro : abonné (lot 59) ; essai-fini : les 3 niveaux gratuits réussis, fondateur-vu : le mois offert proposé (lot 68)
 let statsFaits = []; try { statsFaits = JSON.parse(localStorage.getItem(STATS_KEY) || '[]'); } catch (e) {}
 if (!Array.isArray(statsFaits)) statsFaits = [];
 statsFaits = statsFaits.filter(n => STATS_ETAPES.includes(n));

@@ -9,7 +9,8 @@
    (retenu pour l'onglet du navigateur). Les tests posent window.DJINGOOD_TUTOS. */
 const TUTOS_PRET = false;
 const tuEssai = (() => { try { if (/[?&]tutos=1(&|$)/.test(location.search)) sessionStorage.setItem('djingood-tutos', '1'); return sessionStorage.getItem('djingood-tutos') === '1'; } catch (e) { return false; } })();
-const tutosOn = () => TUTOS_PRET || tuEssai || !!window.DJINGOOD_TUTOS;
+// lot 68 : avec Pro allumé, l'onglet se montre aussi (pro.js le rend visible à la fin de son chargement, après celui-ci)
+const tutosOn = () => TUTOS_PRET || tuEssai || !!window.DJINGOOD_TUTOS || (typeof proVerrou === 'function' && proVerrou());
 
 const TU_BEAT = 60 / 124;   // les extraits de « Vraie musique » sont tous à 124 BPM
 const TU_CASQUE = .26;      // une platine « au casque » : dans un tuto, on l'entend tout bas, pour suivre
@@ -78,7 +79,7 @@ const TU_FILTRE_B = { debut: 64, filtre: [[0, .8], [96, .8], [128, 0]], niv: [[0
 
 const TUTOS = [
   {
-    id: 'attend', famille: 'boucles', titre: 'La boucle qui attend', gratuit: true, duree: '3 min', musique: 'deep',
+    id: 'attend', famille: 'boucles', titre: 'La boucle qui attend', duree: '3 min', musique: 'deep',
     resume: 'B patiente en boucle juste avant son drop, puis part pile quand A se termine.',
     vue: [24, 144], etat: 112,
     versions: {
@@ -288,7 +289,7 @@ const TUTOS = [
   },
   // ---------- Les effets (lot 58) : paire « july » (« Luxury Life » puis « House - July ») ; A coupé au temps 128 ----------
   {
-    id: 'echo', famille: 'effets', titre: "L'écho out", gratuit: true, duree: '3 min', musique: 'july',
+    id: 'echo', famille: 'effets', titre: "L'écho out", duree: '3 min', musique: 'july',
     resume: 'La dernière mesure de A rebondit en échos, pendant que le drop de B arrive dessous.',
     vue: [56, 144], etat: 126,
     versions: {
@@ -904,6 +905,8 @@ function renderTutos(){
   // le bandeau de DJingood Pro (pro.js) : seulement quand Pro est allumé et qu'on n'est pas abonné
   const fermes = TUTOS.filter(t => !proLibre(t)).length;
   $('proBandeau').hidden = !fermes;
+  const libres = TUTOS.filter(t => t.gratuit).map(t => `« ${t.titre} »`);   // lot 68 : un seul tuto gratuit, « Le fondu au fader »
+  $('proBandeauTitre').textContent = libres.length > 1 ? `${libres.join(', ')} sont gratuits.` : `${libres[0] || 'Un tuto'} est gratuit.`;
   $('proBandeauTxt').textContent = `Les ${fermes} autres, et un nouveau chaque mois, sont dans DJingood Pro.`;
   const reste = tuDansLOrdre().filter(t => !tuVus.includes(t.id));
   viniDit('tutos', tuTypo(!tuVus.length ? `Ici, je t'explique les techniques des DJ, une par une. Commence par « ${reste[0].titre} » !`

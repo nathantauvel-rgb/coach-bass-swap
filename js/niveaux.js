@@ -188,6 +188,15 @@ function renderChapters(){
     const pct = chapPct(c.n);
     // ce qu'il manque, en court et visible sur la carte (la phrase complète reste dans .cs, lue et dans l'info-bulle)
     const encore = (c.n === 2 || c.n >= 4) && !ch2Unlocked() ? `Encore ${14 - sumStars(stars)} ★ au chapitre 1` : c.n === 3 && !ch3Unlocked() ? `Encore ${10 - sumStars(ch2Stars)} ★ au chapitre 2` : '';
+    // lot 68 : sans abonnement, les chapitres 2 à 7 sont dans Pro ; la carte ouvre la fenêtre Pro (pas grisée : elle doit donner envie)
+    if (chapitrePro(c.n)){
+      const nb = lessonsOf(c.n).length;
+      b.className = 'chap pro'; b.disabled = false;
+      b.innerHTML = `<span class="cn">${NIV_CADENAS}Chapitre ${c.n}</span><strong></strong><span class="cs"><span class="pro-tag">Pro</span> ${nb} niveaux</span>`;
+      b.querySelector('strong').textContent = c.title; b.title = `${c.title} : avec DJingood Pro`;
+      b.setAttribute('aria-label', `Chapitre ${c.n} : ${c.title}, ${nb} niveaux, avec DJingood Pro`);
+      b.addEventListener('click', () => { chapMenu(false); proOuvre('', { chap: c.n }); }); bar.appendChild(b); continue;
+    }
     b.classList.toggle('ferme', locked); b.style.setProperty('--pct', pct + '%');
     b.innerHTML = `<span class="cn">${locked ? NIV_CADENAS : ''}Chapitre ${c.n}</span><strong></strong><span class="cs"></span>${locked && encore ? '<span class="cv" aria-hidden="true"></span>' : ''}<span class="cbar" aria-hidden="true"><i></i></span>`;
     b.querySelector('strong').textContent = c.title; b.querySelector('.cs').textContent = locked ? sub : `${pct} %`; b.title = locked ? sub : `${c.title} : ${c.sub}`;
@@ -203,7 +212,7 @@ function renderChapters(){
 function chapMenu(open){ $('chapBtn').setAttribute('aria-expanded', String(open)); }
 $('chapBtn').addEventListener('click', () => chapMenu($('chapters').hidden));
 function setChapter(n){
-  if (run || n === chapter) return; if (n === 2 && !ch2Unlocked()) return; if (n === 3 && !ch3Unlocked()) return; if (n === 4 && !ch4Unlocked()) return; if (n === 5 && !ch5Unlocked()) return; if (n === 6 && !ch6Unlocked()) return; if (n === 7 && !ch7Unlocked()) return;
+  if (run || n === chapter) return; if (chapitrePro(n)){ proOuvre('', { chap: n }); return; } if (n === 2 && !ch2Unlocked()) return; if (n === 3 && !ch3Unlocked()) return; if (n === 4 && !ch4Unlocked()) return; if (n === 5 && !ch5Unlocked()) return; if (n === 6 && !ch6Unlocked()) return; if (n === 7 && !ch7Unlocked()) return;
   LESSONS = lessonsOf(n);
   chapter = n; try { localStorage.setItem('coach-chapitre', String(n)); } catch (e) {}
   const bank = bankOf(n), first = LESSONS.findIndex((_, i) => !(bank[i] >= 2)); selectLesson(first < 0 ? 0 : first);
@@ -232,6 +241,19 @@ function niveauRefuse(i, b){
   if (typeof viniReagit === 'function') viniReagit('bad');
   if (b){ b.classList.remove('refuse'); void b.offsetWidth; b.classList.add('refuse'); }
 }
+/* ---------- DJingood Pro : ce qui est gratuit (lot 68) ----------
+   Décision de l'utilisateur (10 nov. 2026), qui remplace « rien de ce qui existe ne passe en Pro » : 2 ou 3 exercices simples
+   pour comprendre le concept, tout le reste dans Pro. Gratuit : les 3 premiers niveaux du chapitre 1 (Mode Expert compris),
+   Comprendre, le défi du jour (sur ces 3 niveaux) et un tuto (tutos.js). Le reste (40 exercices, l'entraînement, Passer au
+   vrai, 10 tutos) demande l'abonnement. Maquette validée : captures/maquette-pro-decoupe/ (dossier principal, hors Git).
+   Tout dépend de proVerrou (pro.js, chargé bien plus tard : d'où le `typeof`) : tant que PRO_PRET est faux, rien ne change. */
+const NIV_GRATUITS = 3;
+const proBloque = () => typeof proVerrou === 'function' && proVerrou() && !proActif();
+const niveauGratuit = (n, i) => n === 1 && i < NIV_GRATUITS;
+const niveauPro = (n = chapter, i = li) => proBloque() && !niveauGratuit(n, i);
+const chapitrePro = n => proBloque() && n !== 1;
+// Le nombre d'exercices de Pro, pour les textes (40 aujourd'hui) : les niveaux des 7 chapitres, moins les gratuits
+const proNbExercices = () => BASE_LESSONS.length * 2 + CH3_LESSONS.length + CH4_LESSONS.length + CH5_LESSONS.length + (CH6_PRET ? CH6_LESSONS.length : 0) + CH7_LESSONS.length - NIV_GRATUITS;
 // La progression d'un chapitre, en pourcentage des étoiles
 const chapPct = n => { const L = lessonsOf(n); return L.length ? Math.round(sumStars(bankOf(n)) / (L.length * 3) * 100) : 0; };
 // Lien d'une page du guide (lot 51, demarrage.js) : ouvre un niveau, même si son chapitre n'est pas encore débloqué, le temps
@@ -249,15 +271,20 @@ function renderHud(){
   let lastDone = -1;
   LESSONS.forEach((l, i) => { const st = bank[i] || 0; if (st) lastDone = i;
     // lot 64 : une carte par niveau, avec son état (réussi, à faire, verrouillé)
-    const ouvert = niveauOuvert(i), etat = !ouvert ? 'verrou' : st >= 2 ? 'reussi' : 'encours';
+    // lot 68 : un niveau de Pro (sans abonnement) a son propre cadenas, violet ; il passe avant le cadenas gris de la progression
+    const ouvert = niveauOuvert(i), pro = niveauPro(chapter, i), etat = pro ? 'pro' : !ouvert ? 'verrou' : st >= 2 ? 'reussi' : 'encours';
     const b = document.createElement('button'); b.type = 'button'; b.className = 'node etat-' + etat + (st ? ' done' : ''); b.setAttribute('aria-pressed', String(i === li));
-    if (!ouvert) b.setAttribute('aria-disabled', 'true');
+    if (!ouvert && !pro) b.setAttribute('aria-disabled', 'true');
     // Le disque garde toujours son numéro (comme sur la maquette du 22 oct.) : les étoiles sont juste en dessous.
-    b.innerHTML = `<span class="dot">${ouvert ? i + 1 : NIV_CADENAS}</span><span class="t"></span><span class="s"><b>${'★'.repeat(st)}</b>${'★'.repeat(3 - st)}</span><span class="etq">${etat === 'reussi' ? 'Réussi' : etat === 'encours' ? 'À faire' : 'Verrouillé'}</span>`;
-    b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${st} étoile(s) sur 3` + (ouvert ? '' : ', verrouillé'));
-    b.addEventListener('click', () => { if (placement) return; if (!niveauOuvert(i)){ niveauRefuse(i, b); return; } selectLesson(i); }); map.appendChild(b); });
+    b.innerHTML = `<span class="dot">${ouvert && !pro ? i + 1 : NIV_CADENAS}</span><span class="t"></span><span class="s"><b>${'★'.repeat(st)}</b>${'★'.repeat(3 - st)}</span><span class="etq">${pro ? 'Pro' : etat === 'reussi' ? 'Réussi' : etat === 'encours' ? 'À faire' : 'Verrouillé'}</span>`;
+    b.querySelector('.t').textContent = l.title; b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${st} étoile(s) sur 3` + (pro ? ', avec DJingood Pro' : ouvert ? '' : ', verrouillé'));
+    b.addEventListener('click', () => { if (placement) return; if (niveauPro(chapter, i)){ proOuvre('', { n: chapter, i }); return; } if (!niveauOuvert(i)){ niveauRefuse(i, b); return; } selectLesson(i); }); map.appendChild(b); });
   $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * (100 - 100 / LESSONS.length)) + '%';
   renderChapters(); if (typeof cpRendChemin === 'function') cpRendChemin();
+  // lot 68 : une ligne sous les niveaux, sans abonnement (pas pendant l'entraînement : les cartes sont cachées)
+  const pb = $('proNiv'); pb.hidden = !(proBloque() && !prac && !placement); $('cpBlocGratuit').hidden = !proBloque();
+  if (!pb.hidden){ $('proNivTitre').textContent = chapter === 1 ? `Les ${NIV_GRATUITS} premiers niveaux sont gratuits.` : `Les ${NIV_GRATUITS} premiers niveaux du chapitre 1 sont gratuits.`;
+    $('proNivTxt').textContent = `Les ${proNbExercices()} autres, du swap des basses au set noté sur 100, sont dans DJingood Pro.`; }
   const cur = map.querySelector('.node[aria-pressed="true"]'); if (cur && map.scrollWidth > map.clientWidth) map.scrollLeft = cur.offsetLeft - map.clientWidth / 2 + cur.offsetWidth / 2;
 }
 function styleLabel(){ if (chapter === 7) return encEtiquette(LESSONS[li]); if (chapter === 3) return 'House · 124 BPM'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
@@ -288,7 +315,7 @@ function selectLesson(i){
   $('stage').classList.remove('ear');
   chooseSongs();
   // Avant de jouer, la bulle ne donne jamais le geste (il est dans « Pendant le niveau ») : seulement quoi faire maintenant
-  const idle = needSetup() ? 'Place ta table en position de départ, puis appuie sur Jouer.' : l.set ? 'Pas de repère cette fois. Enchaîne comme en soirée !' : expertOn() ? 'Mode Expert : ni compte à rebours, ni repère, ni calage automatique. Chaque geste est noté en millisecondes.' : 'Lis les gestes à faire, ou regarde d\'abord la démo. Puis à toi !';
+  const idle = proIci() ? `Ce niveau est dans DJingood Pro. Les ${NIV_GRATUITS} premiers niveaux du chapitre 1 sont gratuits.` : needSetup() ? 'Place ta table en position de départ, puis appuie sur Jouer.' : l.set ? 'Pas de repère cette fois. Enchaîne comme en soirée !' : expertOn() ? 'Mode Expert : ni compte à rebours, ni repère, ni calage automatique. Chaque geste est noté en millisecondes.' : 'Lis les gestes à faire, ou regarde d\'abord la démo. Puis à toi !';
   const fb = $('lfiches'); fb.innerHTML = '';
   for (const k of fichesOf(l)){ const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'linkbtn'; bt.textContent = 'Revoir la fiche : ' + FICHE_NAMES[k]; bt.addEventListener('click', () => { if (!run) openOnb([FICHES[k]], { fiche: true, keys: [k] }); }); fb.appendChild(bt); }
   fb.hidden = !fb.children.length;
@@ -298,10 +325,16 @@ function selectLesson(i){
 }
 // Sur un écran peu haut, la barre des boutons (collée en bas) recouvrait la piste : on amène la scène en haut de l'écran
 function stageIntoView(){ const r = $('stage').getBoundingClientRect(); if (r.bottom > innerHeight && r.top > 8) window.scrollTo({ top: scrollY + r.top - 8, behavior: REDUCED ? 'auto' : 'smooth' }); }
-function setStartBtn(running){ $('stage').classList.toggle('joue', running); if (running && !$('vLearn').hidden) requestAnimationFrame(stageIntoView); const b = $('startBtn'); b.textContent = running ? 'Arrêter' : 'Jouer'; b.classList.toggle('stop', running); }
+function setStartBtn(running){ $('stage').classList.toggle('joue', running); if (running && !$('vLearn').hidden) requestAnimationFrame(stageIntoView); const b = $('startBtn'), pro = !running && proIci();
+  b.textContent = running ? 'Arrêter' : pro ? 'Continuer avec Pro' : 'Jouer'; b.classList.toggle('stop', running); b.classList.toggle('pro', pro); $('watchBtn').hidden = pro; }
+// lot 68 : le niveau affiché est dans Pro (sans abonnement) : « Jouer » ouvre la fenêtre Pro, pas de démo (l'entraînement
+// et l'ancien test de placement ne jouent que des niveaux gratuits)
+const proIci = () => !prac && !placement && !!LESSONS[li] && niveauPro(chapter, li);
 
 let START = 16, END = 116;
 function startRun(demo = false){
+  // lot 68 : un niveau de Pro, sans abonnement : la fenêtre Pro, ni partie ni démo
+  if (proIci()){ proOuvre('', { n: chapter, i: li }); return; }
   // Table pas en place (par exemple après une fiche où l'on a tourné un potard) : on montre l'encadré et on le dit
   if (!demo && needSetup() && !setupReady()){ updateSetup(); say('Remets ta table en position de départ : « Jouer » se débloquera tout seul.'); $('setup').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' }); return; }
   ensureAudio(); if (ac.state !== 'running') ac.resume();
@@ -647,11 +680,31 @@ function finish(){
   questLigne(questNote({ st, expert: !!r.expert, ear: !!r.ear, ch: r.ch }));   // après pracStep : le défi du jour est à jour
   const fresh = goalFresh;
   quizOffer(st); avisPartie(r.ch, st); goalNote(); slowOffer(st); resultatBoutons(st); mlPropose(st);   // le compte, après une réussite (mails.js)
+  finEssai(r.ch, st, before);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
   if (fresh) openSerie();   // objectif du jour atteint avec cette partie : l'écran de la série passe devant (avec son propre son)
   else if (st >= 2){ for (let i = 0; i < st; i++) setTimeout(() => son('etoile', i), 120 + i * 180); setTimeout(() => son('fin'), 160 + st * 180); }
   else son('finRatee');
 }
+/* ---------- La fin des niveaux gratuits (lot 68) ----------
+   Le seul endroit où l'on pousse vraiment Pro : la première réussite (2 étoiles ou plus) du dernier niveau gratuit. La
+   personne vient de faire sa première transition et sait que le site marche avec sa table. On montre la suite (les niveaux
+   suivants, puis les chapitres) et un seul bouton, « Continuer avec Pro ». Raté, ou déjà réussi avant : la carte normale. */
+function finEssai(ch, st, before){
+  const ici = proBloque() && !prac && !placement && ch === 1 && li === NIV_GRATUITS - 1 && st >= 2 && before < 2;
+  $('rPro').hidden = !ici; $('rProGo').hidden = !ici;
+  if (!ici) return;
+  $('rTitle').textContent = 'Ta première transition !';
+  $('rProNiv').innerHTML = '';
+  BASE_LESSONS.slice(NIV_GRATUITS).forEach((l, k) => { const e = document.createElement('li'), s = document.createElement('small'), t = document.createElement('span');
+    s.innerHTML = NIV_CADENAS + 'Niveau ' + (NIV_GRATUITS + k + 1); t.textContent = l.title; e.append(s, t); $('rProNiv').appendChild(e); });
+  $('rGain').textContent = [`Tu as fini les ${NIV_GRATUITS} niveaux gratuits`, $('rGain').textContent].filter(Boolean).join(' · ');
+  // une seule chose à faire : on range ce qui détourne l'œil (À travailler, question bonus, compte, « Niveau suivant »)
+  $('rTravail').hidden = true; $('quizBtn').hidden = true; $('slowBtn').hidden = true; $('rCompte').hidden = true; $('next').hidden = true;
+  $('retry').classList.remove('go');
+  stat1('essai-fini');
+}
+$('rProGo').addEventListener('click', () => { $('result').hidden = true; proOuvre('', { fin: true }); });
 /* ---------- Carte de résultat ----------
    Lot 29 : Vini (joie ou déception) et le titre, façon Duolingo. Lot 44 (23 oct. 2026), à la demande de l'utilisateur
    (« trop de couleurs, trop d'informations ») : plus de cartes de couleur. Une ligne (record, XP), puis « À travailler » :

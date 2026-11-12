@@ -15,7 +15,10 @@ const plur = (n, one, many) => n + ' ' + (n > 1 ? many : one);
 const dayKey = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 const yesterdayKey = () => { const d = new Date(); d.setDate(d.getDate() - 1); return dayKey(d); };
 const streakNow = () => [dayKey(), yesterdayKey()].includes(pracStr('lastOk')) ? pracNum('streak') : 0;
-const pracPool = () => BASE_LESSONS.map((_, i) => i).filter(i => PRAC_ALL || stars[i] >= 1);
+// lot 68 : sans abonnement, seulement les niveaux gratuits (le défi du jour reste gratuit, il tourne sur eux)
+const pracPool = () => BASE_LESSONS.map((_, i) => i).filter(i => (PRAC_ALL || stars[i] >= 1) && !niveauPro(1, i));
+// Variations, à l'oreille, mini-set (et le quiz éclair, quiz.js) : dans Pro
+const PRAC_PRO = ['var', 'ear', 'set'];
 function dailyPick(pool){ let h = 7; for (const c of dayKey()) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return { li: pool[h % pool.length], sty: PRAC_STYLES[(h >>> 4) % 3], vr: (h >>> 8) % VARIANTS }; }
 // Vini sur « S'entraîner » (lot 32) : jouer d'abord un niveau, le défi du jour qui attend, ou la suite une fois réussi
@@ -23,15 +26,18 @@ function viniEntrainement(){
   const pool = pracPool();
   if (!pool.length){ viniDit('train', 'Joue d’abord un niveau dans Apprendre\u00a0: ensuite, je t’entraîne ici\u00a0!'); return; }
   const fait = pracStr('defiDate') === dayKey(), ds = fait ? pracNum('defiStars') : 0, rec = pracNum('setBest'), p = dailyPick(pool);
-  if (ds >= 2) viniDit('train', pool.length >= 3 ? (rec ? `Défi réussi\u00a0! Et un mini-set pour battre ton record de ${rec}\u00a0★ sur 9\u00a0?` : 'Défi réussi\u00a0! Et si tu tentais un mini-set de 3 transitions\u00a0?')
+  if (ds >= 2 && proBloque()) viniDit('train', 'Défi réussi ! Reviens demain pour le suivant : ta série t’attend.', 'danse');   // lot 68 : le reste est dans Pro
+  else if (ds >= 2) viniDit('train', pool.length >= 3 ? (rec ? `Défi réussi\u00a0! Et un mini-set pour battre ton record de ${rec}\u00a0★ sur 9\u00a0?` : 'Défi réussi\u00a0! Et si tu tentais un mini-set de 3 transitions\u00a0?')
     : 'Défi réussi\u00a0! Rejoue tes gestes à l’oreille pour les affûter.', 'danse');
   else if (fait) viniDit('train', 'Le défi du jour n’est pas encore réussi\u00a0: retente-le\u00a0!');
   else viniDit('train', `Le défi du jour t’attend\u00a0: «\u00a0${BASE_LESSONS[p.li].title}\u00a0», en ${STYLE_DEFS[p.sty].label}.`);
 }
 function renderTrain(){
   const pool = pracPool(), ok = pool.length > 0, doneToday = pracStr('defiDate') === dayKey(), ds = doneToday ? Math.min(3, pracNum('defiStars')) : 0, sk = streakNow();
-  document.querySelectorAll('#vTrain [data-prac]').forEach(b => { b.disabled = !ok || (b.dataset.prac === 'set' && pool.length < 3); });
-  const tag = (id, txt, good) => { const e = $(id); e.textContent = txt; e.classList.toggle('ok', !!good); };
+  const pro = proBloque();
+  document.querySelectorAll('#vTrain [data-prac]').forEach(b => { const p = pro && PRAC_PRO.includes(b.dataset.prac); b.classList.toggle('tr-pro', p);
+    b.disabled = !p && (!ok || (b.dataset.prac === 'set' && pool.length < 3)); });
+  const tag = (id, txt, good) => { const e = $(id); e.textContent = txt; e.classList.toggle('ok', !!good); e.classList.toggle('pro', false); };
   tag('tDefiS', ds >= 2 ? 'Réussi ' + '★'.repeat(ds) : doneToday ? 'À retenter' : 'À faire', ds >= 2);
   const p = ok ? dailyPick(pool) : null;
   $('tDefiP').textContent = (p ? `Aujourd'hui : ${BASE_LESSONS[p.li].title}, en ${STYLE_DEFS[p.sty].label}.` : 'Une transition différente chaque jour.') + (sk ? ` Réussi ${plur(sk, 'jour', 'jours')} d’affilée.` : '');
@@ -41,9 +47,18 @@ function renderTrain(){
   $('tSetP').textContent = pool.length < 3 ? 'Joue 3 niveaux dans Apprendre pour débloquer les mini-sets.' : 'Trois transitions d\'affilée, sans pouvoir rejouer : comme en soirée.';
   renderQuizCard();
   $('trainNote').innerHTML = ok ? `L'entraînement reprend les niveaux que tu as déjà joués dans Apprendre (${pool.length} sur ${BASE_LESSONS.length}), sur d'autres morceaux.` : 'Joue d\'abord un niveau dans <a href="#apprendre">Apprendre</a> : l\'entraînement reprend les gestes que tu connais déjà.';
+  // lot 68 : sans abonnement, une étiquette « Pro » sur les quatre cartes de Pro, et une phrase sous les cartes
+  if (pro){
+    for (const id of ['tVarS', 'tEarS', 'tSetS', 'tQuizS']){ const e = $(id); e.textContent = 'Pro'; e.classList.remove('ok'); e.classList.add('pro'); }
+    $('tSetP').textContent = 'Trois transitions d\'affilée, sans pouvoir rejouer : comme en soirée.';
+    $('quizCard').disabled = false; $('quizCard').classList.add('tr-pro');
+    $('trainNote').innerHTML = (ok ? 'Le défi du jour reprend tes niveaux gratuits, sur d’autres morceaux.' : 'Joue d’abord un niveau gratuit dans <a href="#apprendre">Apprendre</a> : le défi du jour le reprendra, sur d’autres morceaux.')
+      + ' Le reste de l’entraînement est dans DJingood Pro.';
+  } else { $('quizCard').classList.remove('tr-pro'); $('tQuizS').classList.remove('pro'); }
   viniEntrainement();
 }
 function startPrac(kind){
+  if (proBloque() && PRAC_PRO.includes(kind)){ proOuvre('', { vue: 'entrainer' }); return; }   // lot 68
   const pool = pracPool(); if (run || prac || !pool.length || (kind === 'set' && pool.length < 3)) return;
   prac = { kind, ear: kind === 'ear', back: { chapter, li }, i: 0, res: [], queue: [], done: false, sty: 'house', vr: 0, last: '' };
   if (kind === 'set'){ const rest = pool.slice(); while (prac.queue.length < 3) prac.queue.push(rest.splice(pracRand(rest.length), 1)[0]); }

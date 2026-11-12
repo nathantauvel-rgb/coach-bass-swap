@@ -31,7 +31,7 @@ const OU = ['creation', 'question', 'compte'];
 // (BASE_LESSONS et STAGES dans le site). Un test de tests/mails.spec.js vérifie qu'il n'en manque aucune.
 const NIVEAUX = ['Le bon moment', 'Le fader', 'La coupure sèche', 'L\'écho out', 'Le filtre', 'Le swap des basses', 'La transition complète',
   'Comprendre la musique', 'Découvre ta table', 'Les bases', 'Les bases en Mode Expert', 'Les combos', 'S\'entraîner', 'La maîtrise',
-  'Les vrais morceaux', 'Le calage', 'Hot cues et boucles', 'Le set', 'Passer au vrai'];
+  'Les vrais morceaux', 'Le calage', 'Hot cues et boucles', 'Le set', 'Passer au vrai', 'Tes 3 premiers gestes'];   // lot 68 : l'étape gratuite des parcours avancés
 
 // Les clés publiques de Google, gardées le temps qu'il indique
 let cache = { cles: null, fin: 0 };

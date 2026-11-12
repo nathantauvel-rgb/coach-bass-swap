@@ -141,6 +141,9 @@ function viniVrai(){
   else viniDit('real', `Mission ${cur + 1} sur ${list.length}\u00a0: ${list[cur][1].replace(/^./, c => c.toLowerCase())}.`);
 }
 function renderReal(){
+  // lot 68 : sans abonnement, « Passer au vrai » est dans Pro (une carte qui l'explique, à la place de l'import)
+  const pro = proBloque(); $('rbPro').hidden = !pro;
+  if (pro){ $('rbEmpty').hidden = true; $('rbFull').hidden = true; viniDit('real', 'Mixer ta propre musique, c’est dans DJingood Pro : je te trouve les paires, toi tu fais les transitions.'); return; }
   const has = rbLib.length > 0; $('rbEmpty').hidden = has; $('rbFull').hidden = !has; if (!has){ viniVrai(); return; }
   const usable = rbLib.filter(t => t[3] && t[4]).length;
   $('rbSum').textContent = plur(rbLib.length, 'morceau', 'morceaux') + (rbName ? ' · ' + rbName : '') + (usable < rbLib.length ? ` · ${usable} avec tempo et tonalité` : '');

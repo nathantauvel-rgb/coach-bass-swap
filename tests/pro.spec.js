@@ -1,4 +1,4 @@
-// Lot 59 : DJingood Pro, l'abonnement qui ouvre les tutos Pro (js/pro.js, api/pro.js). Tant que PRO_PRET est faux, rien
+// Lot 59 : DJingood Pro, l'abonnement (js/pro.js, api/pro.js) ; depuis le lot 68 il ouvre tout le site (tests/decoupe.spec.js). Tant que PRO_PRET est faux, rien
 // ne change pour les joueurs ; les tests posent window.DJINGOOD_PRO (et window.DJINGOOD_TUTOS pour voir l'onglet).
 const crypto = require('crypto');
 const { test, expect } = require('@playwright/test');
@@ -7,6 +7,8 @@ const { FAUX, dejaConnecte, ouvrirCompte } = require('./faux-firebase');
 
 const S = o => JSON.stringify(o);
 const TUTOS = 'window.DJINGOOD_TUTOS = true;', PRO = 'window.DJINGOOD_PRO = true;';
+// Lot 68 : un joueur qui a déjà joué (sinon la fenêtre Pro propose d'abord d'essayer avec sa table)
+const A_JOUE = { 'coach-lecons': S({ 0: 2 }) };
 // La fausse fonction /api/pro : retient chaque appel et répond comme Stripe le dirait
 async function fausseApi(page, { pro = false, panne = false, url = '/index.html?paye=1#tutos' } = {}){
   const etat = { pro, panne, appels: [] };
@@ -43,16 +45,18 @@ test.describe('Tant que Pro n’est pas allumé', () => {
 test.describe('Pro allumé, sans abonnement', () => {
   test('les tutos Pro ont un cadenas et ouvrent la fenêtre Pro ; les gratuits s’ouvrent', async ({ page }) => {
     const err = await ouvrir(page, { onglet: 'tutos', avant: TUTOS + PRO });
-    await expect(page.locator('.tu-cadenas')).toHaveCount(8);
+    await expect(page.locator('.tu-cadenas')).toHaveCount(10);
     await expect(page.locator('#proBandeau')).toBeVisible();
-    await expect(page.locator('#proBandeauTxt')).toContainText('Les 8 autres');
+    await expect(page.locator('#proBandeauTitre')).toHaveText('« Le fondu au fader » est gratuit.');
+    await expect(page.locator('#proBandeauTxt')).toContainText('Les 10 autres');
     await page.locator('[data-tu="fondu"]').click();
     await expect(page.locator('#tuLecteur')).toBeVisible();
     await page.locator('#tuRetour').click();
     await page.locator('[data-tu="swap"]').click();
     await expect(page.locator('#pro')).toBeVisible();
     await expect(page.locator('#tuLecteur')).toBeHidden();
-    await expect(page.locator('#proDedansTxt')).toContainText('11 tutos');
+    await expect(page.locator('#proDedansTxt')).toContainText('10 tutos');
+    await expect(page.locator('#proContexteTxt')).toHaveText('Pour regarder « Le swap des basses »');
     expect(err).toEqual([]);
   });
   test('la fenêtre Pro : à l’année d’avance, la bascule change le prix, Échap et « Pas maintenant » ferment', async ({ page }) => {
@@ -72,7 +76,7 @@ test.describe('Pro allumé, sans abonnement', () => {
   });
   test('sans compte, « Passer à Pro » fait créer le compte, puis enchaîne sur le paiement', async ({ page }) => {
     const api = await fausseApi(page);
-    await ouvrir(page, { onglet: 'tutos', avant: FAUX + TUTOS + PRO });
+    await ouvrir(page, { onglet: 'tutos', avant: FAUX + TUTOS + PRO, stockage: A_JOUE });
     await page.locator('[data-tu="swap"]').click();
     await page.locator('#pro .pro-bascule button[data-f="mois"]').click();
     await page.locator('#proGo').click();
@@ -90,7 +94,7 @@ test.describe('Pro allumé, sans abonnement', () => {
   });
   test('connecté : « Passer à Pro » ouvre la page de paiement ; si elle n’est pas prête, le site le dit', async ({ page }) => {
     const api = await fausseApi(page, { panne: true });
-    await ouvrir(page, { onglet: 'tutos', avant: dejaConnecte() + FAUX + TUTOS + PRO });
+    await ouvrir(page, { onglet: 'tutos', avant: dejaConnecte() + FAUX + TUTOS + PRO, stockage: A_JOUE });
     await page.locator('[data-tu="echo"]').waitFor();
     await page.locator('[data-tu="reverbe"]').click();
     await page.locator('#proGo').click();
@@ -134,10 +138,10 @@ test.describe('Pro allumé, abonné', () => {
   test('l’abonnement d’un autre compte ne sert pas ; un coach-pro abîmé ne bloque rien', async ({ page }) => {
     await fausseApi(page);
     await ouvrir(page, { onglet: 'tutos', avant: FAUX + TUTOS + PRO, stockage: { 'coach-pro': S({ uid: 'quelqu-un', actif: true, formule: 'an' }) } });
-    await expect(page.locator('.tu-cadenas')).toHaveCount(8);
+    await expect(page.locator('.tu-cadenas')).toHaveCount(10);
     for (const v of ['{casse', '[]', '"texte"', S({ uid: 5, actif: 'oui' })]){
       const err = await ouvrir(page, { onglet: 'tutos', avant: TUTOS + PRO, stockage: { 'coach-pro': v } });
-      await expect(page.locator('.tu-cadenas')).toHaveCount(8);
+      await expect(page.locator('.tu-cadenas')).toHaveCount(10);
       expect(err).toEqual([]);
     }
   });
@@ -159,6 +163,7 @@ test.describe('Pro allumé, abonné', () => {
    Les clés de Google sont remplacées par une clé fabriquée ici, et Stripe par un faux `fetch`. */
 test.describe('La fonction /api/pro', () => {
   const fn = require('../api/pro.js');
+  const vraieCreation = fn.creation;   // gardée avant que beforeEach la remplace (lot 68)
   const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
   const PUB = publicKey.export({ type: 'spki', format: 'pem' });
   const b64 = o => Buffer.from(typeof o === 'string' ? o : S(o)).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -175,9 +180,11 @@ test.describe('La fonction /api/pro', () => {
   test.beforeEach(() => {
     Object.assign(process.env, { STRIPE_CLE: 'sk_test_secret', STRIPE_PRIX_MOIS: 'price_mois', STRIPE_PRIX_AN: 'price_an' });
     fn.cles = async () => ({ k1: PUB });
+    // lot 68 : la date de création du compte chez Firebase (null = Google ne connaît pas ce compte)
+    fn.creation = async () => { if (stripe.creationPanne) throw new Error('google 500'); return stripe.creation; };
     // abonnements : ce que la RECHERCHE voit (avec une minute de retard chez le vrai Stripe) ;
     // clients : { adresse: [{ id, abos: [...] }] }, ce que les LISTES voient tout de suite
-    stripe = { appels: [], abonnements: [], clients: {}, session: null, statut: 200 };
+    stripe = { appels: [], abonnements: [], clients: {}, session: null, statut: 200, creation: null, creationPanne: false };
     global.fetch = async (url, o = {}) => {
       stripe.appels.push({ url, methode: o.method, cle: o.headers && o.headers.Authorization, corps: o.body || '' });
       const ok = stripe.statut === 200, rep = d => ({ ok, status: stripe.statut, json: async () => d });
@@ -211,24 +218,26 @@ test.describe('La fonction /api/pro', () => {
   });
   test('etat : cherche les abonnements de ce compte (l’identifiant vient du jeton), avec la clé secrète', async () => {
     let r = await appel({ action: 'etat', uid: 'quelqu-un-d-autre' });
-    expect(r.corps).toEqual({ pro: false, formule: null, jusqua: null, annule: false });
+    expect(r.corps).toEqual({ pro: false, formule: null, jusqua: null, annule: false, offert: false });
     expect(decodeURIComponent(stripe.appels[0].url)).toContain('/customers?limit=10&email=lea@exemple.fr');
     expect(decodeURIComponent(stripe.appels[1].url)).toContain("metadata['uid']:'u1'");
     expect(stripe.appels[0].cle).toBe('Bearer sk_test_secret');
     stripe.abonnements = [ABO({ status: 'canceled', created: 300 }), ABO(), ABO({ metadata: { uid: 'u2' } })];
     r = await appel({ action: 'etat' });
-    expect(r.corps).toEqual({ pro: true, formule: 'an', jusqua: 1826000000, annule: false });
+    expect(r.corps).toEqual({ pro: true, formule: 'an', jusqua: 1826000000, annule: false, essai: false });
     stripe.abonnements = [ABO({ cancel_at_period_end: true, items: { data: [{ current_period_end: 1800000000, price: { id: 'price_mois' } }] } })];
-    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'mois', jusqua: 1800000000, annule: true });
+    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'mois', jusqua: 1800000000, annule: true, essai: false });
   });
   test('payer : une page de paiement avec le bon prix, le compte, la case des conditions ; jamais deux abonnements', async () => {
     let r = await appel({ action: 'payer', formule: 'an' });
     expect(r.statusCode).toBe(200); expect(r.corps).toEqual({ url: 'https://checkout.stripe.com/c/pay/cs_test_1' });
     const corps = decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps);
     for (const morceau of ['mode=subscription', 'line_items[0][price]=price_an', 'client_reference_id=u1', 'customer_email=lea@exemple.fr',
-      'subscription_data[metadata][uid]=u1', 'consent_collection[terms_of_service]=required', 'success_url=https://djingood.fr/?pro=merci&session={CHECKOUT_SESSION_ID}#tutos'])
+      'subscription_data[metadata][uid]=u1', 'consent_collection[terms_of_service]=required', 'success_url=https://djingood.fr/?pro=merci&session={CHECKOUT_SESSION_ID}#apprendre'])
       expect(corps).toContain(morceau);
     expect(corps).toContain('je renonce à mon délai de rétractation');
+    expect(corps).toContain('accès à DJingood Pro');
+    expect(corps).not.toContain('trial');   // pas d'essai pour tout le monde (lot 68 : seulement le mois offert aux joueurs d'avant Pro)
     expect((await appel({ action: 'payer', formule: 'semaine' })).statusCode).toBe(400);
     stripe.abonnements = [ABO()];
     r = await appel({ action: 'payer', formule: 'mois' });
@@ -253,7 +262,7 @@ test.describe('La fonction /api/pro', () => {
   test('juste après le paiement (la recherche de Stripe ne voit rien encore) : Pro, « Gérer » marche, pas de second abonnement', async () => {
     stripe.abonnements = [];
     stripe.clients = { 'lea@exemple.fr': [{ id: 'cus_9', abos: [ABO({ customer: 'cus_9' })] }] };
-    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'an', jusqua: 1826000000, annule: false });
+    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'an', jusqua: 1826000000, annule: false, essai: false });
     expect(stripe.appels.some(a => a.url.includes('/subscriptions/search'))).toBe(false);
     const g = await appel({ action: 'gerer' });
     expect(g.statusCode).toBe(200);
@@ -265,5 +274,62 @@ test.describe('La fonction /api/pro', () => {
     expect((await appel({ action: 'etat' })).corps).toMatchObject({ pro: false });
     expect(stripe.appels.some(a => a.url.includes('/subscriptions/search'))).toBe(true);
     expect((await appel({ action: 'gerer' })).statusCode).toBe(404);
+  });
+  // Lot 68 : le mois offert aux joueurs d'avant Pro, 30 jours sans carte, une seule fois par compte
+  test('payer avec essai : 30 jours, sans carte, arrêt tout seul sans carte ; refusé si ce compte a déjà eu un abonnement', async () => {
+    stripe.creation = { uid: 'u1', cree: Date.parse('2026-10-20T10:00:00Z') };   // un compte d'avant la limite
+    let r = await appel({ action: 'payer', formule: 'mois', essai: true });
+    expect(r.statusCode).toBe(200);
+    const corps = decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps);
+    for (const morceau of ['subscription_data[trial_period_days]=30', 'subscription_data[trial_settings][end_behavior][missing_payment_method]=cancel',
+      'payment_method_collection=if_required', 'line_items[0][price]=price_mois', 'subscription_data[metadata][uid]=u1']) expect(corps).toContain(morceau);
+    // un ancien abonnement arrêté (la recherche voit tous les abonnements, quel que soit leur état) : plus de mois offert
+    stripe.appels = []; stripe.abonnements = [ABO({ status: 'canceled' })];
+    r = await appel({ action: 'payer', formule: 'mois', essai: true });
+    expect(r.statusCode).toBe(409); expect(r.corps).toEqual({ erreur: 'essai-deja' });
+    expect(stripe.appels.some(a => a.url.endsWith('/checkout/sessions'))).toBe(false);
+    // le même, trouvé seulement par la liste des abonnements du client (la recherche a une minute de retard)
+    stripe.abonnements = []; stripe.clients = { 'lea@exemple.fr': [{ id: 'cus_7', abos: [ABO({ customer: 'cus_7', status: 'canceled' })] }] };
+    expect((await appel({ action: 'payer', formule: 'an', essai: true })).corps).toEqual({ erreur: 'essai-deja' });
+    // sans essai, un ancien abonné peut toujours se réabonner
+    expect((await appel({ action: 'payer', formule: 'an' })).statusCode).toBe(200);
+  });
+  test('etat pendant le mois offert : Pro, avec essai', async () => {
+    stripe.abonnements = [ABO({ status: 'trialing', items: { data: [{ current_period_end: 1790000000, price: { id: 'price_mois' } }] } })];
+    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'mois', jusqua: 1790000000, annule: false, essai: true });
+  });
+  // Lot 68, règle de l'utilisateur (11 nov.) : le mois offert va aux comptes déjà créés, pas aux nouveaux
+  test('le mois offert : seulement les comptes créés avant la limite, jamais abonnés ; la date vient de Firebase', async () => {
+    const etat = async () => (await appel({ action: 'etat' })).corps;
+    stripe.creation = { uid: 'u1', cree: Date.parse('2026-11-11T21:00:00Z') };   // le 11 nov. à 22 h, heure de Paris
+    expect(await etat()).toMatchObject({ pro: false, offert: true });
+    stripe.creation = { uid: 'u1', cree: Date.parse('2026-11-11T23:30:00Z') };   // le 12 nov. à 0 h 30 : trop tard
+    expect(await etat()).toMatchObject({ pro: false, offert: false });
+    let r = await appel({ action: 'payer', formule: 'mois', essai: true });
+    expect(r.statusCode).toBe(403); expect(r.corps).toEqual({ erreur: 'essai-reserve' });
+    expect((await appel({ action: 'payer', formule: 'mois' })).statusCode).toBe(200);   // il peut s'abonner normalement
+    // la réponse de Google doit parler du même compte que le jeton
+    stripe.creation = { uid: 'quelqu-un', cree: Date.parse('2026-10-01T00:00:00Z') };
+    expect(await etat()).toMatchObject({ offert: false });
+    // un compte d'avant la limite, déjà abonné une fois : plus d'offre
+    stripe.creation = { uid: 'u1', cree: Date.parse('2026-10-01T00:00:00Z') };
+    stripe.abonnements = [ABO({ status: 'canceled' })];
+    expect(await etat()).toMatchObject({ pro: false, offert: false });
+    // Google en panne : pas d'offre affichée, et le mois offert ne part pas (502)
+    stripe.abonnements = []; stripe.creationPanne = true;
+    expect(await etat()).toMatchObject({ pro: false, offert: false });
+    expect((await appel({ action: 'payer', formule: 'mois', essai: true })).statusCode).toBe(502);
+    // la limite se règle dans Vercel
+    stripe.creationPanne = false; stripe.creation = { uid: 'u1', cree: Date.parse('2026-11-20T00:00:00Z') };
+    process.env.PRO_FONDATEURS_AVANT = '2026-12-01';
+    expect(await etat()).toMatchObject({ offert: true });
+    delete process.env.PRO_FONDATEURS_AVANT;
+  });
+  test('la vraie lecture de la date demande à Firebase avec le jeton du joueur et la clé publique du site', async () => {
+    const vraie = vraieCreation, appels = [];
+    global.fetch = async (url, o) => { appels.push({ url, corps: JSON.parse(o.body) }); return { ok: true, json: async () => ({ users: [{ localId: 'u1', createdAt: '1760000000000' }] }) }; };
+    expect(await vraie('JETON')).toEqual({ uid: 'u1', cree: 1760000000000 });
+    expect(appels[0].url).toMatch(/^https:\/\/identitytoolkit\.googleapis\.com\/v1\/accounts:lookup\?key=AIza/);
+    expect(appels[0].corps).toEqual({ idToken: 'JETON' });
   });
 });
