@@ -157,7 +157,7 @@ function mailHtml(prenom, lien){
 
 async function handler(req, res){
   if (req.method !== 'POST') return repond(res, 405, { erreur: 'methode' });
-  const cle = process.env.BREVO_CLE, c = compte();
+  const cle = (process.env.BREVO_CLE || '').trim(), c = compte();
   if (!cle || !c) return repond(res, 503, { erreur: 'pas-configure' });
 
   let b = req.body;
@@ -194,7 +194,12 @@ async function handler(req, res){
     const prenom = prenomOk(u.displayName);
     const r = await fetch(BREVO, { method: 'POST', headers: { 'api-key': cle, accept: 'application/json', 'content-type': 'application/json' },
       body: JSON.stringify({ sender: EXPEDITEUR, to: [{ email: u.email }], subject: SUJET, htmlContent: mailHtml(prenom, lien), textContent: mailTexte(prenom, lien), tags: ['lien-connexion'] }) });
-    if (!r.ok) return repond(res, 502, { erreur: 'brevo', statut: r.status });
+    if (!r.ok){
+      // la raison donnée par Brevo (« Key not found », « unrecognised IP address »…), pour savoir quoi régler ; jamais la clé
+      const d = await r.json().catch(() => null);
+      const detail = d && typeof d.message === 'string' ? d.message.split(cle).join('…').slice(0, 200) : '';
+      return repond(res, 502, { erreur: 'brevo', statut: r.status, code: d && typeof d.code === 'string' ? d.code.slice(0, 40) : '', detail });
+    }
     return repond(res, 200, { envoye: true });
   } catch (e) { return repond(res, 502, { erreur: 'reseau' }); }
 }

@@ -152,7 +152,7 @@ test.describe('La fonction /api/lien', () => {
         return rep(200, { writeResults, commitTime: 'x' });
       }
       if (url.endsWith('/accounts:sendOobCode')) return rep(g.oob, { email: 'lea@exemple.fr', oobLink: OOB });
-      if (url === 'https://api.brevo.com/v3/smtp/email') return rep(g.brevo, { messageId: 'm1' });
+      if (url === 'https://api.brevo.com/v3/smtp/email') return rep(g.brevo, g.brevoCorps || { messageId: 'm1' });
       return rep(404, {});
     };
   });
@@ -278,6 +278,18 @@ test.describe('La fonction /api/lien', () => {
       expect(brevo()[0].corps.textContent.split('\n')[0]).toBe(salut);
       expect(brevo()[0].corps.htmlContent).not.toContain('<b>');
     }
+  });
+
+  test('Brevo refuse : la réponse donne sa raison, jamais la clé (13 nov.)', async () => {
+    process.env.BREVO_CLE = '  cle-brevo\n';   // espaces collés avec la clé : enlevés
+    g.brevo = 401; g.brevoCorps = { code: 'unauthorized', message: 'Key not found: cle-brevo' };
+    const r = await appel({ mail: 'lea@exemple.fr' });
+    expect(brevo()[0].entetes['api-key']).toBe('cle-brevo');
+    expect(r.statusCode).toBe(502);
+    expect(r.corps).toEqual({ erreur: 'brevo', statut: 401, code: 'unauthorized', detail: 'Key not found: …' });
+    g.brevoCorps = null; g.appels = []; g.fiches = {};
+    g.brevo = 500; global.fetch = (f => async (url, o) => url.startsWith('https://api.brevo.com') ? { ok: false, status: 500, json: async () => { throw new Error('pas du JSON'); } } : f(url, o))(global.fetch);
+    expect((await appel({ mail: 'lea@exemple.fr' })).corps).toEqual({ erreur: 'brevo', statut: 500, code: '', detail: '' });
   });
 
   test('Google ou Brevo en panne : 502, et le site repassera par Firebase', async () => {
