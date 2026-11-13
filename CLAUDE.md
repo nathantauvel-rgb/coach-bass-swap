@@ -32,6 +32,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 67 « Le mail qui arrive » repris le 13 nov. 2026** (« Oui, lance le lot 67 », choisi comme priorité : Umami du 8 au
+  12 nov. = 6 liens pour l'ordinateur envoyés, 1 ou 2 ouverts). Version en ligne (lot 68, Pro ouvert, + la note `cd68984`)
+  fusionnée dans `lot-67-mail` (copie `Documents\coach-dj-lot67`, commit `e8731b7`), **sans conflit** ; aucun nouvel
+  endroit n'envoie de lien (seul `index.html` charge `js/compte.js`). **786 tests sur 786** (`DJ_PORT=8811`, quatre
+  morceaux `--shard=N/4`). **Réglages Vercel faits par Nathan le 13 nov.** : `BREVO_CLE` (et `BREVO_LISTE`) déjà là
+  (vérifié : `POST /api/mails` répond 401 et non 503), `FIREBASE_COMPTE` ajouté (compte de service `djingood-liens`, pas
+  `firebase-adminsdk` ; fichier `.json` plus dans ses Téléchargements). Pas de Redeploy : la publication du lot 67 les
+  prendra. **Après la mise en ligne** : vérifier `POST /api/lien` (sans adresse → 400, pas 503), puis son vrai essai
+  (étape 5 de `MAILS.md`, adresse `+essai1`, bouton qui mène à `https://djingood.fr`, `lien-envoye` avec `par: brevo`).
 - **Lot 68 « La découpe » (10-11 nov. 2026) : 3 exercices gratuits, tout le reste dans Pro. FAIT. Pro ALLUMÉ le 11 nov. (`PRO_PRET = true`, CGV datées du 11 nov.), « mets tout en ligne ». **PUBLIÉ le 11 nov. vers 15 h** (`origin/main` = `6543764`, gardien orange sans blocage, 3 réglages Stripe réels dans Vercel). Production vérifiée (nouveau visiteur : 3 niveaux libres, cadenas Pro, prix sur la présentation). **Essayé par l’utilisateur avec son compte : « j’ai le mois offert, ça marche »** ; il a envoyé le mail d’information aux comptes d’avant (texte : `marketing/mail-mois-offert.md` du dossier principal).**
   Branche `lot-68-decoupe` (partie d'`origin/main` = `7a198a7`), copie `Documents\coach-dj-lot68` (git worktree,
   `node_modules` relié par jonction à la copie lot 65 ; tests : `DJ_PORT=8820 npx playwright test` ; essai et captures :
