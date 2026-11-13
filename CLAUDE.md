@@ -32,6 +32,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **LOT 67 PUBLIÉ le 13 nov. 2026 vers 1 h 25** (« oui met ») : `origin/main` = `078ff22` (avance rapide depuis `6543764`).
+  Production vérifiée : `POST /api/lien` sans adresse → 400 (les deux clés sont lues), page sans erreur sur ordinateur et
+  téléphone (Umami bloqué), Pro toujours allumé. **Reste : le vrai essai de Nathan** (navigation privée, adresse `+essai1`,
+  mail « Salut … ! » + bouton violet, bouton qui mène à `https://djingood.fr`), puis `lien-envoye` `par: brevo` dans Umami.
+  Conseillé aussi : le « Nom public » du projet Firebase = DJingood (son essai d'avant publication montrait
+  « project-613784014718 » partout dans le mail de Firebase, qui reste le secours). **Pour reprendre, lire ce CLAUDE.md**
+  (= copie `Documents\coach-dj-lot67`, branche `lot-67-mail`) ; cette note est à envoyer avec la prochaine publication.
 - **Lot 67 « Le mail qui arrive » repris le 13 nov. 2026** (« Oui, lance le lot 67 », choisi comme priorité : Umami du 8 au
   12 nov. = 6 liens pour l'ordinateur envoyés, 1 ou 2 ouverts). Version en ligne (lot 68, Pro ouvert, + la note `cd68984`)
   fusionnée dans `lot-67-mail` (copie `Documents\coach-dj-lot67`, commit `e8731b7`), **sans conflit** ; aucun nouvel
