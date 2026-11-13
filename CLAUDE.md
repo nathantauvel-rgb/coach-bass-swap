@@ -41,6 +41,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `firebase-adminsdk` ; fichier `.json` plus dans ses Téléchargements). Pas de Redeploy : la publication du lot 67 les
   prendra. **Après la mise en ligne** : vérifier `POST /api/lien` (sans adresse → 400, pas 503), puis son vrai essai
   (étape 5 de `MAILS.md`, adresse `+essai1`, bouton qui mène à `https://djingood.fr`, `lien-envoye` avec `par: brevo`).
+  **Gardien du 13 nov. : feu orange, aucun blocage** (183 tests des fichiers touchés, fusion propre, rien du lot 68 perdu).
+  Repris : un 429 qui ne vient pas de nous (protection de Vercel) passait pour « 3 liens déjà envoyés » → `cptLienBrevo`
+  ne lève `CPT_LIEN_TROP` que si le corps dit `erreur: 'trop'`, sinon Firebase prend le relais (test qui échoue sur
+  l'ancien code). **Si Umami ne montre que `par: firebase`** : regarder d'abord dans Brevo, Sécurité → « IP autorisées »
+  (Brevo peut bloquer les IP inconnues, et celles de Vercel changent), puis l'envoi « transactionnel » et l'expéditeur
+  `noreply@djingood.fr`. Laissés : un envoi compte dans les 3 de l'heure même si Brevo refuse (le lien part alors par
+  Firebase, le message reste vrai) ; au-delà de 8 s, deux mails possibles ; conseiller la double authentification sur Brevo.
 - **Lot 68 « La découpe » (10-11 nov. 2026) : 3 exercices gratuits, tout le reste dans Pro. FAIT. Pro ALLUMÉ le 11 nov. (`PRO_PRET = true`, CGV datées du 11 nov.), « mets tout en ligne ». **PUBLIÉ le 11 nov. vers 15 h** (`origin/main` = `6543764`, gardien orange sans blocage, 3 réglages Stripe réels dans Vercel). Production vérifiée (nouveau visiteur : 3 niveaux libres, cadenas Pro, prix sur la présentation). **Essayé par l’utilisateur avec son compte : « j’ai le mois offert, ça marche »** ; il a envoyé le mail d’information aux comptes d’avant (texte : `marketing/mail-mois-offert.md` du dossier principal).**
   Branche `lot-68-decoupe` (partie d'`origin/main` = `7a198a7`), copie `Documents\coach-dj-lot68` (git worktree,
   `node_modules` relié par jonction à la copie lot 65 ; tests : `DJ_PORT=8820 npx playwright test` ; essai et captures :
@@ -507,7 +514,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
       échec sans raison) ; changer de port.
     - **Jamais essayé avec le vrai Google ni le vrai Brevo** (les clés sont à Nathan). Après ses réglages : un vrai essai,
       et vérifier que le bouton du mail mène bien à `https://djingood.fr` (Brevo peut réécrire les liens pour compter les
-      clics). Ensuite : lot 68, allumer les mails de Vini (`ML_PRET`, reste de `MAILS.md`).
+      clics). Plus tard : allumer les mails de Vini (`ML_PRET`, reste de `MAILS.md`) ; le numéro 68 a servi à la découpe
+      gratuit / Pro.
   - Les lots 60 et 61 publiés sont fusionnés dans 62, 63 et 64 (conflits d'ajouts en fin de fichier, les deux gardés).
   - **Lots 60 et 61 PUBLIÉS ensemble le 9 nov. 2026** (« lot 61 et 60 ensemble » ; avance rapide `3071d01..9ebd71e` sur
     `main`). Production vérifiée (Umami bloqué) : en-tête sur une ligne à 1366 px, compte sur la ligne du logo, pas de

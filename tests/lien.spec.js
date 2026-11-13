@@ -50,6 +50,7 @@ test.describe('Le site : Brevo d\'abord, Firebase en secours', () => {
     ['adresse sans compte (404)', { statut: 404, corps: { erreur: 'pas-de-compte' } }],
     ['Brevo en panne (502)', { statut: 502, corps: { erreur: 'brevo' } }],
     ['réponse bizarre', { statut: 200, corps: { autre: 1 } }],
+    ['bloquée par la protection de Vercel (429 sans notre réponse, gardien du 13 nov.)', { statut: 429, corps: { error: { code: 'rate_limited' } } }],
     ['pas de connexion', 'coupe']]) {
     test(`fonction ${nom} : le lien part par Firebase, comme avant`, async ({ page }) => {
       const appels = await fausseFonction(page, reponse);

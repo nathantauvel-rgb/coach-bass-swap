@@ -404,7 +404,11 @@ function cptLienBrevo(mail){
     body: JSON.stringify({ mail, retour: location.origin + location.pathname }) })
     .then(r => {
       clearTimeout(fin);
-      if (r.status === 429){ const e = new Error('trop de liens'); e.code = CPT_LIEN_TROP; throw e; }
+      // 429 avec { erreur: 'trop' } = notre limite ; un 429 sans ce corps vient de la protection de Vercel : Firebase prend le relais
+      if (r.status === 429) return r.json().then(d => d, () => null).then(d => {
+        if (d && d.erreur === 'trop'){ const e = new Error('trop de liens'); e.code = CPT_LIEN_TROP; throw e; }
+        return false;
+      });
       return r.ok ? r.json().then(d => !!(d && d.envoye), () => false) : false;
     }, () => { clearTimeout(fin); return false; });
 }
