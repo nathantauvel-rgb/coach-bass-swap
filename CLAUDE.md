@@ -32,6 +32,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **13 nov. 2026, 2 h 05 : LE MAIL PAR BREVO MARCHE EN VRAI** (« C'est bon ça fonctionne » : mail « Salut … ! » reçu sur
+  l'adresse `+essai1`, bouton cliqué). Deux blocages réglés chez Brevo pendant la nuit, à se rappeler : 1. Nathan avait
+  créé des **clés SMTP** (`xsmtpsib-`) au lieu d'une **clé API** (`xkeysib-`, onglet « Clés API », copiée dans la fenêtre
+  qui suit « Générer » : la liste n'en montre qu'un bout) → Brevo répondait 401 « Key not found » ; 2. **Sécurité → IPs
+  autorisées → « Blocage d'adresses IP non autorisées » : désactivé pour les clés API** (laissé actif pour SMTP, qui ne
+  sert pas) → sinon 401 « unrecognised IP address » (Vercel change d'IP). Changer `BREVO_CLE` dans Vercel demande un
+  Redeploy. Publié en plus (`28732d8`, « oui ») : `api/lien.js` renvoie la raison de Brevo (`code`, `detail`, jamais la
+  clé) et enlève les espaces autour de la clé ; diagnostic : `curl -X POST -d '{"mail":"<adresse avec compte>"}'
+  https://djingood.fr/api/lien` (envoie un vrai mail, compte dans les 3 de l'heure ; une adresse sans compte → 404 sans
+  envoi). Conseillé à Nathan : supprimer les clés SMTP inutiles, double authentification sur Brevo, « Nom public » du
+  projet Firebase = DJingood, effacer le compte d'essai `+essai1`. À suivre dans Umami : `lien-envoye` (`par: brevo`) et
+  `ordi-depuis-lien` comparé à `lien-ordi-envoye` (avant : 6 envoyés pour 1 ou 2 ouverts, du 8 au 12 nov.).
 - **LOT 67 PUBLIÉ le 13 nov. 2026 vers 1 h 25** (« oui met ») : `origin/main` = `078ff22` (avance rapide depuis `6543764`).
   Production vérifiée : `POST /api/lien` sans adresse → 400 (les deux clés sont lues), page sans erreur sur ordinateur et
   téléphone (Umami bloqué), Pro toujours allumé. **Reste : le vrai essai de Nathan** (navigation privée, adresse `+essai1`,
