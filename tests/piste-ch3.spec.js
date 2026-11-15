@@ -43,4 +43,25 @@ test.describe('Piste du chapitre 3', () => {
     expect(await page.evaluate(() => [...document.querySelectorAll('.chap, #chapBtn, .chapters *')].some(e => /Formes d'onde/.test(e.textContent)))).toBe(false);
     expect(erreurs).toEqual([]);
   });
+  // Lot 71 : sur téléphone (piste de 190 px), « B si tu le lances maintenant » était écrit sous le bas de la piste, et
+  // « Drop » ne tenait pas sur un écran de 360 px
+  for (const [nom, vp, dessous] of [['ordinateur', { width: 1366, height: 768 }, true], ['téléphone de 390 px', { width: 390, height: 844 }, false], ['téléphone de 360 px', { width: 360, height: 780 }, false]])
+    test(`${nom} : les textes de B en pointillé restent dans la piste`, async ({ page }) => {
+      test.setTimeout(90000);
+      await page.setViewportSize(vp);
+      const erreurs = await ouvrir(page, { stockage: CH3 });
+      await page.evaluate(() => setChapter(3)); await page.locator('.node').nth(0).click();
+      await page.locator('#startBtn').click();
+      await page.waitForFunction(() => run && beatNow() >= START + 4, null, { timeout: 60000 });
+      const r = await page.evaluate(() => { const ecrits = [], f = CanvasRenderingContext2D.prototype.fillText;
+        CanvasRenderingContext2D.prototype.fillText = function (t, x, y){ ecrits.push([t, x, y]); return f.apply(this, arguments); };
+        drawHighway(beatNow()); CanvasRenderingContext2D.prototype.fillText = f;
+        const cv = $('hw'); return { ecrits, h: cv.clientHeight, w: cv.clientWidth }; });
+      const phrase = r.ecrits.find(e => e[0] === 'B si tu le lances maintenant');
+      expect(phrase).toBeTruthy();
+      expect(phrase[2]).toBeLessThan(r.h - 2);
+      expect(phrase[2] > 136 + 46).toBe(dessous);   // sous la piste de B sur ordinateur, entre A et B sur téléphone
+      expect(r.ecrits.some(e => e[0] === 'Drop' && e[1] < r.w)).toBe(true);
+      expect(erreurs).toEqual([]);
+    });
 });

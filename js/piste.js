@@ -42,9 +42,11 @@ function drawHighway(b){
       for (const [f, t, lab, s] of bl){ const a = X(b + f), z = X(b + t); if (z < 0 || a > w) continue;
         if (s){ g.globalAlpha = .14; g.fillStyle = COL.b; rr(g, a + 1, yB, z - a - 2, H, H / 2); g.fill(); g.globalAlpha = 1; }
         g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, z - a - 2, H, H / 2); g.stroke(); g.setLineDash([]);
-        const lx = Math.max(a + 12, 52), room = Math.min(z, w) - lx - 12; g.font = '600 13px ' + COL.font;
-        if (room > 46){ g.fillStyle = COL.b; g.textAlign = 'left'; g.fillText(fit(lab, room), lx, yB + 28); } }
-      g.fillStyle = COL.b; g.font = '600 12px ' + COL.font; g.textAlign = 'left'; g.fillText('B si tu le lances maintenant', hitX + 56, yB + H + 18); }
+        const lx = Math.max(a + 12, 52), room = Math.min(z, w) - lx - (z > w ? 2 : 12); g.font = '600 13px ' + COL.font;   // coupé par le bord : moins de marge
+        if (room > Math.min(46, g.measureText(lab).width + 4)){ g.fillStyle = COL.b; g.textAlign = 'left'; g.fillText(fit(lab, room), lx, yB + 28); } }   // « Drop » tient aussi sur téléphone (lot 71)
+      // sous la piste de B à côté de MAINTENANT ; sur téléphone (piste de 190 px, pas de place dessous) : entre A et B (lot 71)
+      const dessous = yB + H + 18 <= h - 4;
+      g.fillStyle = COL.b; g.font = '600 12px ' + COL.font; g.textAlign = 'left'; g.fillText('B si tu le lances maintenant', dessous ? hitX + 56 : hitX + 8, dessous ? yB + H + 18 : yB - 10); }
   } else {
   for (const [f, t, s, lab] of (l.blocsA || [[16, 32, true, 'Corps'], [32, 128, false, 'Outro']])) block(f, t, yA, COL.a, s, lab);   // blocsA : chapitre 6
   if (L !== null){ if (l.bCue >= 64){ block(L, L + 160, yB, COL.b, true, 'Drop'); } else if (l.bCue){ block(L, L + 64 - l.bCue, yB, COL.b, false, 'Fin d\'intro'); block(L + 64 - l.bCue, L + 160, yB, COL.b, true, 'Drop'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'Intro (avec basse)' : 'Intro'); block(L + 64, L + 160, yB, COL.b, true, 'Drop'); } }

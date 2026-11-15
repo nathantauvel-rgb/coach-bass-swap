@@ -32,6 +32,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 71 « Piste sur téléphone » (16 nov. 2026, nuit) : FAIT, NON PUBLIÉ.** Suite du lot 70 (« tu peux régler le souci ? ») :
+  sur téléphone (piste de 190 px), « B si tu le lances maintenant » était écrit à 200 px, sous le bas de la piste ; il passe
+  entre les pistes A et B quand il n'y a pas de place dessous (`js/piste.js`, branche `l.wave`, `dessous`) ; sur ordinateur,
+  rien ne change. « Drop » de B en pointillé s'affiche dès que le mot tient (au lieu de 46 px de place minimum), avec moins
+  de marge quand le bloc est coupé par le bord : visible sur un écran de 360 px. Branche `lot-71-piste-telephone` (partie
+  d'`origin/main` = `96f1f98`), copie `Documents\coach-dj-lot69`. Tests : 3 de plus dans `tests/piste-ch3.spec.js` (ils
+  échouent sur l'ancienne version). Captures : `captures/lot71/` (hors Git). Les noms des blocs (niveaux 2 et 3 plus faciles)
+  ne sont pas touchés.
 - **Lot 70 « Piste du chapitre 3 » (15 nov. 2026, soir) : PUBLIÉ le 15 nov.** (« oui » = gardien puis publication sans
   blocage ; `origin/main` = `7cb1069`, avance rapide depuis `60ddb02`). Production vérifiée (Umami bloqué) : nouveaux
   `niveaux.js`, `piste.js`, `parcours.js`, `midi.js` servis, piste des 4 niveaux du chapitre 3 dessinée sans erreur.
