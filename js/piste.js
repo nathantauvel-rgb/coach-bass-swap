@@ -33,18 +33,18 @@ function drawHighway(b){
     if (room > 46){ g.fillStyle = strong ? COL.ink : COL.fg; g.textAlign = 'left'; g.fillText(fit(label, room), lx, y + 28); } };
   const l = LESSONS[li], L = run && run.launch !== null ? run.launch : (l.autoLaunch ? l.launchBeat : null);
   if (l.wave){
-    const v0 = b - hitX / ppb - 1, v1 = b + 24;
-    const wave = (env, y, col, off, alpha) => { const bw = Math.max(1, ppb / 4 - 1);
-      for (let q = Math.max(0, Math.floor((v0 - off) * 4)); q < env.full.length; q++){ const v = q / 4 + off; if (v > v1) break; const x = X(v);
-        const hf = env.full[q] * (H + 8), hl = env.low[q] * (H + 8) * .6;
-        g.globalAlpha = alpha; g.fillStyle = col; g.fillRect(x, y + H / 2 - hf / 2, bw, hf);
-        g.globalAlpha = alpha * .7; g.fillStyle = COL.fg; g.fillRect(x, y + H / 2 - hl / 2, bw, hl); }
-      g.globalAlpha = 1; };
-    g.fillStyle = COL.muted; g.font = '600 12px ' + COL.font; g.textAlign = 'left';
-    if (waveTk){ wave(waveTk.envA, yA, COL.a, 0, .95);
-      if (L !== null) wave(waveTk.envB, yB, COL.b, L, .95);
-      else { wave(waveTk.envB, yB, COL.b, b, .32); g.fillStyle = COL.b; g.fillText('B si tu le lances maintenant', 8, yB + H + 18); } }
-    else { g.fillText('Préparation des formes d\'onde…', 12, yA + 28); }
+    // Chapitre 3 (lot 70, demande de l'utilisateur) : les mêmes blocs que partout ailleurs, tirés de la structure des morceaux
+    // (l.A, l.B), à la place des formes d'onde. Plein = la partie à fond (corps de A, drop de B), pâle = le reste.
+    for (const [f, t, lab, s] of ch3BlocsA(l)) block(f, t, yA, COL.a, s, lab);
+    const bl = ch3BlocsB(l);
+    if (L !== null) for (const [f, t, lab, s] of bl) block(L + f, L + t, yB, COL.b, s, lab);
+    else {   // pas encore lancé : B en pointillé là où il tomberait si on le lançait maintenant (sans trahir le bon moment)
+      for (const [f, t, lab, s] of bl){ const a = X(b + f), z = X(b + t); if (z < 0 || a > w) continue;
+        if (s){ g.globalAlpha = .14; g.fillStyle = COL.b; rr(g, a + 1, yB, z - a - 2, H, H / 2); g.fill(); g.globalAlpha = 1; }
+        g.setLineDash([6, 5]); g.strokeStyle = COL.b; g.lineWidth = 2; rr(g, a + 1, yB, z - a - 2, H, H / 2); g.stroke(); g.setLineDash([]);
+        const lx = Math.max(a + 12, 52), room = Math.min(z, w) - lx - 12; g.font = '600 13px ' + COL.font;
+        if (room > 46){ g.fillStyle = COL.b; g.textAlign = 'left'; g.fillText(fit(lab, room), lx, yB + 28); } }
+      g.fillStyle = COL.b; g.font = '600 12px ' + COL.font; g.textAlign = 'left'; g.fillText('B si tu le lances maintenant', hitX + 56, yB + H + 18); }
   } else {
   for (const [f, t, s, lab] of (l.blocsA || [[16, 32, true, 'Corps'], [32, 128, false, 'Outro']])) block(f, t, yA, COL.a, s, lab);   // blocsA : chapitre 6
   if (L !== null){ if (l.bCue >= 64){ block(L, L + 160, yB, COL.b, true, 'Drop'); } else if (l.bCue){ block(L, L + 64 - l.bCue, yB, COL.b, false, 'Fin d\'intro'); block(L + 64 - l.bCue, L + 160, yB, COL.b, true, 'Drop'); } else { block(L, L + 64, yB, COL.b, false, l.bBass ? 'Intro (avec basse)' : 'Intro'); block(L + 64, L + 160, yB, COL.b, true, 'Drop'); } }

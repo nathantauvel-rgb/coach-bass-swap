@@ -52,7 +52,7 @@ const QUIZ = [
   ['c0a', 'c0', 'B a 16 temps d\'intro. Combien de temps avant la fin de A le lances-tu ?',
     ['16 temps', '32 temps', '8 temps'],
     'Tu comptes à rebours depuis la fin de A : la longueur de l\'intro de B te donne le moment du lancement.'],
-  ['c0b', 'c0', 'Sur une forme d\'onde, à quoi reconnaît-on le drop ?',
+  ['c0b', 'c0', 'Dans rekordbox, sur la forme d\'onde, à quoi reconnaît-on le drop ?',
     ['L\'onde grossit d\'un coup', 'L\'onde devient toute fine', 'L\'onde s\'arrête'],
     'Au drop, la grosse caisse et la basse reviennent ensemble : l\'onde devient bien plus épaisse.'],
   ['c1a', 'c1', 'La musique de A se vide au milieu du morceau, puis repart de plus belle. C\'est…',

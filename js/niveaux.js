@@ -36,12 +36,12 @@ const FULL = ['k', 'b', 'h', 'c', 'cl'], CH3_INIT = { faderA: 1, faderB: 0, lowA
 // la note tombe dès le geste. Le break a été resserré (break, 16 temps de A, puis son outro) pour garder le piège.
 const CH3_LESSONS = [
   { kind: 'shortintro', wave: true, title: 'L\'intro courte', goal: 'Lance B pour que son drop tombe pile quand A s\'arrête.',
-    how: 'Ici, B n\'a que 16 temps d\'intro. Sur la piste, la forme d\'onde bleue pâle montre où tomberait B si tu le lançais maintenant : lance-le quand son drop (là où l\'onde grossit) s\'aligne sur la fin de A.',
+    how: 'Ici, B n\'a que 16 temps d\'intro. Sur la piste, B en pointillé montre où il tomberait si tu le lançais maintenant : lance-le quand le début de son drop s\'aligne sur la fin de A.',
     show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 16, end: 44,
     A: [[0, 16, FULL], [16, 48, ['k', 'b', 'h']]], aEnd: 48, B: [[0, 16, ['k', 'h']], [16, 80, FULL]], bIntro: 16, bLoop: [16, 80], launchBeat: 32,
     targets: [[32, 'LANCE B', 'B']], caps: [[16, 'A entre dans son outro'], [32, 'B lancé : 16 temps avant la fin de A'], [38, 'Son drop tombera pile à la fin de A']] },
   { kind: 'break', wave: true, title: 'Le piège du break', goal: 'Ne te fais pas avoir par le break : attends la vraie fin de A.',
-    how: 'A a un break au milieu : la musique se vide, puis repart de plus belle. Repère sur la forme d\'onde la vraie fin du morceau, puis lance B (32 temps d\'intro) pour que son drop tombe quand A s\'arrête.',
+    how: 'A a un break au milieu : la musique se vide, puis repart de plus belle. Repère sur la piste la vraie fin du morceau (le break n\'en est pas une), puis lance B (32 temps d\'intro) pour que son drop tombe quand A s\'arrête.',
     show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 8, end: 60,
     A: [[0, 16, FULL], [16, 32, ['pad', 'h']], [32, 48, FULL], [48, 80, ['k', 'b', 'h']]], aEnd: 80, B: [[0, 32, ['k', 'h']], [32, 96, FULL]], bIntro: 32, bLoop: [32, 96], launchBeat: 48,
     targets: [[48, 'LANCE B', 'B']], caps: [[16, 'Break : ce n\'est pas la fin !'], [32, 'A repart à fond'], [48, 'Vraie outro : B est lancé'], [54, 'Son drop tombera pile à la fin de A']] },
@@ -52,8 +52,8 @@ const CH3_LESSONS = [
     show: ['gMid'], autoLaunch: true, init: CH3_INIT, user: ['midA'], start: 32, end: 56,
     A: [[0, 32, FULL.concat('lead')], [32, 80, ['k', 'b', 'h', 'lead']], [80, 96, ['k', 'b', 'h']]], aEnd: 96, B: [[0, 16, ['k', 'h']], [16, 64, ['k', 'h', 'lead']], [64, 128, FULL]], bIntro: 64, bLoop: [64, 128], launchBeat: 32,
     targets: [[48, 'MÉLODIE', 'A']], caps: [[32, 'B arrive, sans mélodie'], [48, 'La mélodie de B commence : MID de A coupé'], [52, 'Une seule mélodie à la fois']] },
-  { kind: 'read', wave: true, random: true, title: 'Lecture express', goal: 'Structure inconnue : lis les formes d\'onde et lance B au bon moment.',
-    how: 'À chaque partie, l\'outro de A et l\'intro de B changent de longueur. Lis la forme d\'onde de A pour trouver sa fin, regarde l\'intro de B, et lance B pour que son drop tombe quand A s\'arrête.',
+  { kind: 'read', wave: true, random: true, title: 'Lecture express', goal: 'Structure inconnue : lis la piste et lance B au bon moment.',
+    how: 'À chaque partie, l\'outro de A et l\'intro de B changent de longueur. Lis la piste de A pour trouver sa fin, regarde la longueur de l\'intro de B, et lance B pour que son drop tombe quand A s\'arrête.',
     show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 0, end: 100, launchBeat: 32, targets: [], caps: [] }
 ];
 CH3_LESSONS.forEach(l => { l.init = Object.assign({}, l.init); l.bCue = 0; l.btn = []; });
@@ -64,6 +64,10 @@ function randomizeRead(l){
   l.launchBeat = l.aEnd - bi; l.start = Math.max(0, l.launchBeat - 16); l.end = l.launchBeat + 12; l.targets = [[l.launchBeat, 'LANCE B', 'B']];
   l.caps = [[aOut, 'A entre dans son outro'], [l.launchBeat, `B lancé : ${bi} temps avant la fin de A`], [l.launchBeat + 6, 'Son drop tombera pile à la fin de A']];
 }
+// Lot 70 : la piste du chapitre 3 montre les mêmes blocs que les autres chapitres (avant : des formes d'onde), tirés de la
+// structure des morceaux. [début, fin, nom, à fond] ; pour B, en temps depuis son lancement, son drop prolongé (il boucle).
+const ch3BlocsA = l => l.A.map(([f, t, fl]) => [f, t, !fl.includes('k') ? 'Break' : fl.includes('c') ? 'Corps' : fl.includes('lead') ? 'Outro (mélodie)' : 'Outro', fl.includes('k') && fl.includes('c')]);
+const ch3BlocsB = l => l.B.map(([f, t, fl], i, a) => [f, i === a.length - 1 ? Math.max(t, 160) : t, fl.includes('c') ? 'Drop' : fl.includes('lead') ? 'Intro (mélodie)' : fl.includes('b') ? 'Intro (avec basse)' : 'Intro', fl.includes('c')]);
 let LESSONS = BASE_LESSONS;
 const TARGETS = { 0: [[32, 'LANCE B', 'B']], 1: [[32, 'MONTE B', 'B'], [64, 'B À FOND', 'B'], [96, 'A SORTI', 'A']], 2: [[64, 'LANCE B', 'B'], [64, 'COUPE A', 'A']], 3: [[63, 'ECHO', 'AB'], [64, 'COUPE A', 'A']], 4: [[64, 'FILTRE', 'A'], [92, 'À FOND', 'A']], 5: [[64, 'SWAP', 'AB']], 6: [[32, 'LANCE B', 'B'], [56, 'B À FOND', 'B'], [64, 'SWAP', 'AB'], [96, 'A SORTI', 'A']] };
 const ACT = { 'LANCE B': 'lance B (PLAY de droite)', 'MONTE B': 'commence à monter le fader de B, doucement', 'B À FOND': 'monte le fader de B jusqu\'en haut', 'A SORTI': 'baisse le fader de A jusqu\'en bas', 'SWAP': 'échange les basses : LOW de A normal → coupé, LOW de B coupé → normal',
@@ -123,7 +127,7 @@ const CH2_STYLE = ['techno', 'afro', 'house', 'techno', 'afro', 'house', 'techno
 const CHAPTERS = [
   { n: 1, title: 'Les bases', sub: 'Guidé, un geste à la fois' },
   { n: 2, title: 'La maîtrise', sub: 'À l\'oreille, précision ×2' },
-  { n: 3, title: 'Les vrais morceaux', sub: 'Formes d\'onde, breaks, mélodies' },
+  { n: 3, title: 'Les vrais morceaux', sub: 'Intros, breaks, mélodies' },
   { n: 4, title: 'Les combos', sub: 'Plusieurs gestes, au demi-temps près' },
   { n: 5, title: 'Le calage', sub: 'Caler deux morceaux soi-même, sans SYNC' },
   { n: 6, title: 'Hot cues et boucles', sub: 'Partir au bon endroit, gagner du temps', soon: !CH6_PRET },
@@ -308,9 +312,9 @@ function selectLesson(i){
   // chapitre 7 (lot 44) : la feuille de route à droite, « Comment c'est noté ? », et le record dans le rond
   $('stage').classList.toggle('estset', !!l.set); $('setNoteBox').hidden = !l.set; $('setRoute').hidden = !l.set;
   if (l.set){ encAvant(l); const rc = encRecords[i]; $('cdNum').textContent = rc == null ? '—' : rc; $('cdLab').textContent = 'record'; }
-  $('hint').textContent = chapter === 6 ? (l.hc.quant ? 'Chapitre 6 : hot cues et boucles. Quantize allumé, mais chaque appui est noté en millisecondes.' : 'Chapitre 6 : Quantize éteint. Repères et boucles partent exactement à l’appui.') : chapter === 5 ? 'Chapitre 5 : B ne se cale plus tout seul. Le site mesure le décalage pendant toute la partie.' : chapter === 4 ? 'Chapitre 4 : plusieurs gestes d\'affilée, notés au demi-temps près. 3 étoiles seulement si tout est juste.' : chapter === 3 ? 'Chapitre 3 : plus de compte à rebours. Lis les formes d\'onde, comme dans rekordbox. La démo montre le bon moment.' : chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
+  $('hint').textContent = chapter === 6 ? (l.hc.quant ? 'Chapitre 6 : hot cues et boucles. Quantize allumé, mais chaque appui est noté en millisecondes.' : 'Chapitre 6 : Quantize éteint. Repères et boucles partent exactement à l’appui.') : chapter === 5 ? 'Chapitre 5 : B ne se cale plus tout seul. Le site mesure le décalage pendant toute la partie.' : chapter === 4 ? 'Chapitre 4 : plusieurs gestes d\'affilée, notés au demi-temps près. 3 étoiles seulement si tout est juste.' : chapter === 3 ? 'Chapitre 3 : plus de compte à rebours. Lis la piste : elle montre l\'intro, le break et la fin de chaque morceau. La démo montre le bon moment.' : chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
   ear = chapter === 2; $('styleSeg').hidden = chapter === 2 || chapter === 3 || chapter >= 5;
-  $('modeTag').hidden = !(chapter === 2 || chapter >= 4 || l.wave); $('modeTag').textContent = l.set ? 'Noté sur 100' : l.hc ? (l.hc.quant ? 'Quantize allumé · noté en ms' : 'Quantize éteint · noté en ms') : l.cal ? (l.cal.quiz ? 'À l\'oreille, sans geste' : `Calé à moins de ${CAL_OK} ms`) : l.wave ? 'Lis les formes d\'onde' : chapter === 4 ? (l.noCount ? 'Sans compte à rebours · au demi-temps près' : 'Au demi-temps près') : 'À l\'oreille · précision ×2';
+  $('modeTag').hidden = !(chapter === 2 || chapter >= 4 || l.wave); $('modeTag').textContent = l.set ? 'Noté sur 100' : l.hc ? (l.hc.quant ? 'Quantize allumé · noté en ms' : 'Quantize éteint · noté en ms') : l.cal ? (l.cal.quiz ? 'À l\'oreille, sans geste' : `Calé à moins de ${CAL_OK} ms`) : l.wave ? 'Lis la piste' : chapter === 4 ? (l.noCount ? 'Sans compte à rebours · au demi-temps près' : 'Au demi-temps près') : 'À l\'oreille · précision ×2';
   if (l.wave){ waveTk = null; if (hasWorkers()) prepareCh3(l).then(tk => { if (LESSONS[li] === l && !run){ waveTk = tk; drawHighway(START); } }).catch(() => {}); } else waveTk = null; $('styleTag').textContent = styleLabel();
   $('stage').classList.remove('ear');
   chooseSongs();
@@ -540,7 +544,7 @@ function frame(){
   const LL = LESSONS[li], userGroups = LL.show.filter(g => g !== 'gPlay' || !LL.autoLaunch);
   if (run.demo){ $('cdNum').textContent = tg ? Math.max(0, Math.ceil(tg[0] - b)) : '♪'; $('cdLab').textContent = tg ? 'temps' : ''; ring.classList.remove('hot'); setFocus(tg && tg[0] - b <= 6 ? LL.targets.filter(t => t[0] === tg[0]).map(t => GROUP_OF[t[1]]) : []); }
   else if (LL.wave || run.ear || run.expert){ $('cdNum').textContent = '?'; $('cdLab').textContent = ''; ring.classList.remove('hot'); setFocus(userGroups);
-    showAction(LL.wave ? 'Lis les formes d\'onde et agis au bon moment.' : run.expert ? 'Mode Expert : aucun repère, à toi de sentir le moment.' : 'Pas de compte à rebours : écoute et sens la phrase.'); }
+    showAction(LL.wave ? 'Lis la piste et agis au bon moment.' : run.expert ? 'Mode Expert : aucun repère, à toi de sentir le moment.' : 'Pas de compte à rebours : écoute et sens la phrase.'); }
   else if (tg){ const n = Math.max(0, Math.ceil(tg[0] - b)), same = LL.targets.filter(t => t[0] === tg[0]);
     $('cdNum').textContent = n; $('cdLab').textContent = 'temps'; ring.classList.toggle('hot', n <= 4);
     setFocus(n <= 8 ? same.map(t => GROUP_OF[t[1]]) : []);
@@ -615,13 +619,13 @@ function evalCut(fr, L){
   return out;
 }
 function evalWave(L, l){
-  if (L == null) return [['bad', 'Tu n\'as pas lancé B : repère la fin de A sur la forme d\'onde, puis lance B pour que son drop tombe dessus.', 0]];
+  if (L == null) return [['bad', 'Tu n\'as pas lancé B : repère la fin de A sur la piste, puis lance B pour que son drop tombe dessus.', 0]];
   const d = L + l.bIntro - l.aEnd, how = ` Le bon moment était le temps ${l.launchBeat} : fin de A (temps ${l.aEnd}) moins l'intro de B (${l.bIntro} temps).`, out = [];
   if (d === 0) out.push(['ok', 'Le drop de B est tombé pile quand A s\'est arrêté.', 1]);
   else if (d < 0) out.push([d >= -2 ? 'mid' : 'bad', `B lancé trop tôt : son drop est tombé ${-d} temps avant la fin de A, pendant que A jouait encore.` + how, d >= -2 ? .5 : 0]);
   else out.push([d <= 2 ? 'mid' : 'bad', `B lancé trop tard : ${d} temps de vide entre la fin de A et le drop de B.` + how, d <= 2 ? .5 : 0]);
   // piégé : lancé pendant le break, ou juste après (plus de 8 temps trop tôt ; une légère avance n'est pas le piège)
-  if (l.kind === 'break' && L >= 16 && L < l.launchBeat - 8) out.push(['bad', 'Tu t\'es fait piéger par le break de A : la musique s\'est vidée, mais ce n\'était pas la fin. Sur la forme d\'onde, on voyait qu\'elle repartait.', 0]);
+  if (l.kind === 'break' && L >= 16 && L < l.launchBeat - 8) out.push(['bad', 'Tu t\'es fait piéger par le break de A : la musique s\'est vidée, mais ce n\'était pas la fin. Sur la piste, on voyait que A repartait à fond après le break.', 0]);
   return out;
 }
 function evalVocal(fr){

@@ -32,6 +32,19 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 70 « Piste du chapitre 3 » (15 nov. 2026, soir) : FAIT, NON PUBLIÉ.** Demande de l'utilisateur (capture) : au
+  chapitre 3, « les bandes des sons ne sont pas pareilles que sur tous les autres du site, fais en sorte qu'ils aient tous le
+  truc de base ». La piste du chapitre 3 dessinait des formes d'onde (`waveTk.envA/envB`) ; elle dessine maintenant les mêmes
+  blocs arrondis que les autres chapitres, tirés de la structure des morceaux : `ch3BlocsA(l)` / `ch3BlocsB(l)` (fin de
+  `randomizeRead` dans `js/niveaux.js` ; « Corps » plein, « Break », « Outro », « Outro (mélodie) » pâles ; B : « Intro »,
+  « Intro (mélodie) », « Intro (avec basse) », « Drop » plein et prolongé). Avant le lancement, B est en pointillé là où il
+  tomberait (« B si tu le lances maintenant », à droite de MAINTENANT) : aucun repère du bon moment, comme avant. La piste ne
+  dépend plus de `waveTk` (qui sert encore au son). Textes : « Lis la piste » (étiquette, bulle, aide), consignes des niveaux
+  1, 2 et 4, notes de fin, sous-titre du chapitre « Intros, breaks, mélodies », quiz `c0b` « Dans rekordbox, sur la forme
+  d'onde… » (identifiant inchangé). Le guide `phrase-musicale-32-temps.html` parle de la forme d'onde du logiciel DJ : gardé.
+  Branche `lot-70-piste-ch3` (partie d'`origin/main` = `60ddb02`), même copie `Documents\coach-dj-lot69`. Tests :
+  `tests/piste-ch3.spec.js` ; 80 tests liés verts. Captures avant / après : `captures/lot70/` (hors Git, `avant-apres.png`).
+  En attente de l'accord de l'utilisateur pour le gardien et la publication.
 - **Lot 69 « Calage plus court » (15 nov. 2026, soir) : PUBLIÉ le 15 nov.** (« 2 » = publier si le gardien ne bloque rien ;
   `origin/main` = `792cc5a`, avance rapide depuis `28732d8`, la note `1a3f6f9` est partie avec). Production vérifiée
   (Umami bloqué) : `CAL_ECOUTE` 4, `CAL_PAUSE` 2, fins 124/48/60/60/76/76/76, niveau 5 départ 32 / B au temps 36, aucune
