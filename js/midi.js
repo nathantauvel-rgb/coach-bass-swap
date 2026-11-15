@@ -252,7 +252,7 @@ function planSteps(l){
 function renderPlan(){
   const l = LESSONS[li], steps = planSteps(l), box = $('plan'); box.hidden = !!run || !steps.length; if (box.hidden) return;
   const ol = $('planList'); ol.innerHTML = ''; for (const t of steps){ const x = document.createElement('li'); x.textContent = t; ol.appendChild(x); }
-  $('planNote').textContent = expertOn() ? 'Mode Expert : pas de compte à rebours ni de repère, et B part exactement quand tu appuies. Chaque geste est noté en millisecondes, score sur 100.' : l.wave || chapter === 2 || l.noCount ? 'Ici, pas de compte à rebours : écoute la musique (ou lis la forme d’onde) et fais chaque geste au bon moment.' : 'Chaque geste arrive sur la piste avec un repère ◆ et un compte à rebours : fais-le quand il touche la ligne.';
+  $('planNote').textContent = expertOn() ? 'Mode Expert : pas de compte à rebours ni de repère, et B part exactement quand tu appuies. Chaque geste est noté en millisecondes, score sur 100.' : l.wave || chapter === 2 || l.noCount ? 'Ici, pas de compte à rebours : écoute la musique (ou lis la piste) et fais chaque geste au bon moment.' : 'Chaque geste arrive sur la piste avec un repère ◆ et un compte à rebours : fais-le quand il touche la ligne.';
 }
 function inPlace(k, v, p){ if (p == null) return null; return k.startsWith('fader') ? (v >= .5 ? p >= .94 : p <= .06) : (v < .1 ? p <= .05 : Math.abs(p - .5) <= .07); }
 const needSetup = () => midiCount > 0 && tableOn() && !mouseMode && LESSONS[li].user.length > 0;

@@ -44,7 +44,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   d'onde… » (identifiant inchangé). Le guide `phrase-musicale-32-temps.html` parle de la forme d'onde du logiciel DJ : gardé.
   Branche `lot-70-piste-ch3` (partie d'`origin/main` = `60ddb02`), même copie `Documents\coach-dj-lot69`. Tests :
   `tests/piste-ch3.spec.js` ; 80 tests liés verts. Captures avant / après : `captures/lot70/` (hors Git, `avant-apres.png`).
-  En attente de l'accord de l'utilisateur pour le gardien et la publication.
+  **Gardien : feu orange, aucun blocage, 792 tests sur 792.** Repris : l'étape ch3 du parcours (`js/parcours.js`, « Lire la
+  structure des morceaux… ») et « Pendant le niveau » (`js/midi.js`, « ou lis la piste ») parlaient encore de formes d'onde.
+  Laissés : le badge « Lecteur d'ondes » ; sur téléphone (piste de 190 px), « B si tu le lances maintenant » ne se voit pas
+  (déjà le cas avant) ; les noms des blocs rendent les niveaux 2 (« Break » écrit) et 3 (« Intro (mélodie) » commence au
+  temps 48, le moment du geste) plus faciles qu'avec les formes d'onde : à dire à l'utilisateur.
 - **Lot 69 « Calage plus court » (15 nov. 2026, soir) : PUBLIÉ le 15 nov.** (« 2 » = publier si le gardien ne bloque rien ;
   `origin/main` = `792cc5a`, avance rapide depuis `28732d8`, la note `1a3f6f9` est partie avec). Production vérifiée
   (Umami bloqué) : `CAL_ECOUTE` 4, `CAL_PAUSE` 2, fins 124/48/60/60/76/76/76, niveau 5 départ 32 / B au temps 36, aucune
