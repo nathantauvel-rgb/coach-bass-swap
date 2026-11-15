@@ -32,7 +32,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 71 « Piste sur téléphone » (16 nov. 2026, nuit) : FAIT, NON PUBLIÉ.** Suite du lot 70 (« tu peux régler le souci ? ») :
+- **Lot 71 « Piste sur téléphone » (16 nov. 2026, nuit) : PUBLIÉ le 16 nov.** (« oui » ; gardien orange sans blocage,
+  795 tests sur 795 ; `origin/main` = `1b491c9` puis cette note). Production vérifiée (Umami bloqué) : phrase à 126 px sur une
+  piste de 190 px (téléphones de 390 et 360 px), 200 px sur 210 (ordinateur), « Drop » écrit partout, aucune erreur.
+  Signalé par le gardien, pas fait : sur téléphone, en démo, le nom d'un repère de la piste B (« LANCE B »…) est écrit à
+  200 px, sous le bas de la piste, dans tous les chapitres (défaut ancien), à proposer.
+  Détail du lot : Suite du lot 70 (« tu peux régler le souci ? ») :
   sur téléphone (piste de 190 px), « B si tu le lances maintenant » était écrit à 200 px, sous le bas de la piste ; il passe
   entre les pistes A et B quand il n'y a pas de place dessous (`js/piste.js`, branche `l.wave`, `dessous`) ; sur ordinateur,
   rien ne change. « Drop » de B en pointillé s'affiche dès que le mot tient (au lieu de 46 px de place minimum), avec moins
