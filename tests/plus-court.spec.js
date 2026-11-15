@@ -34,7 +34,30 @@ test.describe('Durée des niveaux', () => {
   });
   test('chapitre 5 : on ne garde plus B calé pendant 30 secondes de trop', async ({ page }) => {
     await ouvrir(page);
-    expect(await page.evaluate(() => CH5_LESSONS.map(l => l.end))).toEqual([124, 64, 84, 84, 80, 80, 80]);
+    // lot 69 : encore plus court (le niveau 1 garde 124 comme filet : il finit dès la cinquième réponse)
+    expect(await page.evaluate(() => CH5_LESSONS.map(l => l.end))).toEqual([124, 48, 60, 60, 76, 76, 76]);
+    // une fois le temps laissé pour caler passé, on reste noté 20 à 24 temps au plus avant le geste suivant ou la fin
+    const trop = await page.evaluate(() => CH5_LESSONS.slice(1).map((l, i) => { const d0 = l.launchBeat + l.cal.grace, geste = l.cal.swap || l.cal.entre;
+      return (geste ? geste - d0 > 16 || l.end - geste > 12 : l.end - d0 > 24) ? `niveau ${i + 2}` : null; }).filter(Boolean));
+    expect(trop).toEqual([]);
+  });
+  test('chapitre 5, niveau 1 : les cinq écoutes tiennent en moins de 45 temps (lot 69)', async ({ page }) => {
+    test.setTimeout(90000);
+    const erreurs = await ouvrir(page, { stockage: { 'coach-ch2-ouvert': '1' } });
+    await page.evaluate(() => setChapter(5)); await page.locator('.node').nth(0).click();
+    await page.locator('#startBtn').click();
+    await expect(page.locator('#calQuiz')).toBeVisible({ timeout: 30000 });
+    // un joueur qui répond juste dès que les boutons s'allument
+    const r = await page.evaluate(() => new Promise(fin => { const pr = []; let der = 0;
+      const tick = () => { if (!run){ fin({ der, pr, start: CH5_LESSONS[0].start }); return; } der = beatNow();
+        const q = run.q; if (q && q.attend){ pr.push(Math.round(parseFloat($('progFill').style.width))); const ms = q.tours[q.i]; calRepond(ms === 0 ? 0 : ms > 0 ? 1 : -1); }
+        requestAnimationFrame(tick); };
+      requestAnimationFrame(tick); }));
+    expect(r.der - r.start).toBeLessThan(45);   // avant le lot 69 : environ 66 temps (32 s)
+    // la barre suit les réponses (avant : elle était calée sur 108 temps et s'arrêtait à la moitié)
+    expect(r.pr).toEqual([0, 20, 40, 60, 80]);
+    await expect(page.locator('#rStars .on')).toHaveCount(3, { timeout: 10000 });
+    expect(erreurs).toEqual([]);
   });
   test('au swap, B est déjà en route au départ, au bon endroit de son morceau', async ({ page }) => {
     test.setTimeout(60000);

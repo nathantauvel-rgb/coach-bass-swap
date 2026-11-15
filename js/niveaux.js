@@ -530,7 +530,9 @@ function frame(){
     $('progFill').style.width = clamp01((b - START) / (END - START)) * 100 + '%'; drawHighway(b); if (b >= END) finish();
     if (run && !LESSONS[li].autoLaunch && run.launch === null && b > LESSONS[li].launchBeat + 40) finish(); return; }
   if (LESSONS[li].cal){ calFrame(b); const rg = $('ring'); $('cdNum').textContent = '♪'; $('cdLab').textContent = ''; rg.classList.remove('hot'); setFocus(LESSONS[li].show);
-    $('progFill').style.width = clamp01((b - START) / (END - START)) * 100 + '%'; drawHighway(b); if (b >= END) finish();
+    // niveau 1 (le quiz) : la barre avance à chaque réponse, il finit dès la cinquième (END n'est qu'un filet)
+    const q = run && run.q, pr = q ? q.i / q.tours.length : (b - START) / (END - START);
+    $('progFill').style.width = clamp01(pr) * 100 + '%'; drawHighway(b); if (b >= END) finish();
     if (run && !LESSONS[li].autoLaunch && run.launch === null && b > LESSONS[li].launchBeat + 40) finish(); return; }
   const tg = LESSONS[li].targets.find(([x, lab]) => x > b - .5 && !(run.status[lab] && run.status[lab] !== 'late'));
   const ring = $('ring');
