@@ -32,7 +32,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 69 « Calage plus court » (15 nov. 2026, soir) : FAIT, NON PUBLIÉ.** Demande de l'utilisateur : « le chapitre 5, le
+- **Lot 69 « Calage plus court » (15 nov. 2026, soir) : PUBLIÉ le 15 nov.** (« 2 » = publier si le gardien ne bloque rien ;
+  `origin/main` = `792cc5a`, avance rapide depuis `28732d8`, la note `1a3f6f9` est partie avec). Production vérifiée
+  (Umami bloqué) : `CAL_ECOUTE` 4, `CAL_PAUSE` 2, fins 124/48/60/60/76/76/76, niveau 5 départ 32 / B au temps 36, aucune
+  erreur. **Pour reprendre, lire ce CLAUDE.md** (= copie `Documents\coach-dj-lot69`). Notion : texte donné à l'utilisateur. Demande de l'utilisateur : « le chapitre 5, le
   premier exercice est beaucoup trop long, la musique est trop longue par rapport à ce qu'il faut faire ; vérifie que tout
   l'exercice ne soit pas trop long ». Copie `Documents\coach-dj-lot69`, branche `lot-69-calage-court` (partie de
   `lot-67-mail` = `origin/main` + la note locale `1a3f6f9`, qui partira avec), `node_modules` relié à la copie lot 65 ;
