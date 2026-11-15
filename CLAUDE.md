@@ -32,6 +32,21 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 69 « Calage plus court » (15 nov. 2026, soir) : FAIT, NON PUBLIÉ.** Demande de l'utilisateur : « le chapitre 5, le
+  premier exercice est beaucoup trop long, la musique est trop longue par rapport à ce qu'il faut faire ; vérifie que tout
+  l'exercice ne soit pas trop long ». Copie `Documents\coach-dj-lot69`, branche `lot-69-calage-court` (partie de
+  `lot-67-mail` = `origin/main` + la note locale `1a3f6f9`, qui partira avec), `node_modules` relié à la copie lot 65 ;
+  tests : `DJ_PORT=8830 npx playwright test`. Niveau 1 (`js/calage.js`) : on répond après 4 temps d'écoute (`CAL_ECOUTE`,
+  avant 8), l'écoute suivante part 2 temps après la réponse (`CAL_PAUSE`, avant 4), la démo laisse 6 temps par écoute
+  (`CAL_ECOUTE_DEMO`) ; la barre de progression avance à chaque réponse (`js/niveaux.js`, branche `cal` de `frame` ; avant,
+  elle était calée sur 108 temps et s'arrêtait à la moitié) ; `end: 124` reste comme filet. Un joueur qui répond tout de
+  suite : 66 temps (32 s) → moins de 45 temps (~19 s). Niveaux 2 à 7 : fins 64/84/84/80/80/80 → 48/60/60/76/76/76, et au
+  casque B part au temps 36 (départ 32) au lieu de 20 (départ 16), entrée toujours au temps 64 (début de l'outro de A).
+  Démos mesurées : 31/23/33/33/31/31/31 s → 22/16/21/21/21/29/29 s. Seuils et temps laissés pour caler inchangés (la
+  part du temps calé se mesure sur moins de temps : 20 à 24 temps au lieu de 36 à 48). Tests : `tests/plus-court.spec.js`
+  (fins du chapitre 5, règle « ≤ 16 temps entre la fin du temps pour caler et le geste, ≤ 12 après », quiz joué par un
+  robot en moins de 45 temps, barre 0/20/40/60/80 %) ; 31 tests de `calage` + `plus-court` verts. Commit `ed00732`.
+  Gardien pas encore lancé. **À essayer par l'utilisateur sur sa FLX4** (niveaux 2 à 7), avant ou après publication.
 - **13 nov. 2026, 2 h 05 : LE MAIL PAR BREVO MARCHE EN VRAI** (« C'est bon ça fonctionne » : mail « Salut … ! » reçu sur
   l'adresse `+essai1`, bouton cliqué). Deux blocages réglés chez Brevo pendant la nuit, à se rappeler : 1. Nathan avait
   créé des **clés SMTP** (`xsmtpsib-`) au lieu d'une **clé API** (`xkeysib-`, onglet « Clés API », copiée dans la fenêtre
