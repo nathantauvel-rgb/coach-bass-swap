@@ -32,7 +32,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 70 « Piste du chapitre 3 » (15 nov. 2026, soir) : FAIT, NON PUBLIÉ.** Demande de l'utilisateur (capture) : au
+- **Lot 70 « Piste du chapitre 3 » (15 nov. 2026, soir) : PUBLIÉ le 15 nov.** (« oui » = gardien puis publication sans
+  blocage ; `origin/main` = `7cb1069`, avance rapide depuis `60ddb02`). Production vérifiée (Umami bloqué) : nouveaux
+  `niveaux.js`, `piste.js`, `parcours.js`, `midi.js` servis, piste des 4 niveaux du chapitre 3 dessinée sans erreur.
+  **Pour reprendre, lire ce CLAUDE.md** (= copie `Documents\coach-dj-lot69`, branche `lot-70-piste-ch3`). Demande de l'utilisateur (capture) : au
   chapitre 3, « les bandes des sons ne sont pas pareilles que sur tous les autres du site, fais en sorte qu'ils aient tous le
   truc de base ». La piste du chapitre 3 dessinait des formes d'onde (`waveTk.envA/envB`) ; elle dessine maintenant les mêmes
   blocs arrondis que les autres chapitres, tirés de la structure des morceaux : `ch3BlocsA(l)` / `ch3BlocsB(l)` (fin de
