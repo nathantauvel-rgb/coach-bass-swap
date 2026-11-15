@@ -45,8 +45,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   Démos mesurées : 31/23/33/33/31/31/31 s → 22/16/21/21/21/29/29 s. Seuils et temps laissés pour caler inchangés (la
   part du temps calé se mesure sur moins de temps : 20 à 24 temps au lieu de 36 à 48). Tests : `tests/plus-court.spec.js`
   (fins du chapitre 5, règle « ≤ 16 temps entre la fin du temps pour caler et le geste, ≤ 12 après », quiz joué par un
-  robot en moins de 45 temps, barre 0/20/40/60/80 %) ; 31 tests de `calage` + `plus-court` verts. Commit `ed00732`.
-  Gardien pas encore lancé. **À essayer par l'utilisateur sur sa FLX4** (niveaux 2 à 7), avant ou après publication.
+  robot en moins de 45 temps, barre 0/20/40/60/80 %). **Gardien : feu orange, aucun blocage, 789 tests sur 789** (robot
+  parfait : 3 étoiles aux niveaux 2 à 7, démo du niveau 5 entrée au temps 64,03). Repris : à la fin de la démo du niveau 1,
+  la barre redescendait (~43 %) → `frame` s'arrête si `calFrame` a fini la partie, barre à 100 % (test dans
+  `calage.spec.js`). Choix de l'utilisateur (« 2 ») : publier sans essai sur la table. **À essayer par lui sur sa FLX4**
+  (point 27 de la checklist : niveaux 2 à 4 notés sur 20 à 24 temps, moins de temps pour se rattraper).
 - **13 nov. 2026, 2 h 05 : LE MAIL PAR BREVO MARCHE EN VRAI** (« C'est bon ça fonctionne » : mail « Salut … ! » reçu sur
   l'adresse `+essai1`, bouton cliqué). Deux blocages réglés chez Brevo pendant la nuit, à se rappeler : 1. Nathan avait
   créé des **clés SMTP** (`xsmtpsib-`) au lieu d'une **clé API** (`xkeysib-`, onglet « Clés API », copiée dans la fenêtre

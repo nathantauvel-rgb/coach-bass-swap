@@ -160,5 +160,7 @@ test.describe('Corrections du gardien', () => {
     await expect(page.locator('#tip')).toHaveText(/^Écoute 1 : (calés|B en avance|B en retard)/, { timeout: 30000 });
     expect(await page.evaluate(() => [...document.querySelectorAll('#calQuiz button')].every(b => b.disabled))).toBe(true);
     await expect(page.locator('#startBtn')).toHaveClass(/ready/, { timeout: 80000 });
+    // lot 69 : la barre reste pleine à la fin de la démo (avant : elle redescendait vers 43 %)
+    expect(await page.evaluate(() => $('progFill').style.width)).toBe('100%');
   });
 });
