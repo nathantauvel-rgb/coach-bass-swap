@@ -342,6 +342,8 @@ test.describe('Un appareil tout neuf', () => {
     expect(await page.evaluate(() => cptPoids({ 'coach-missions': JSON.stringify({ pair: 'x', done: { 0: 1, 1: 1 }, total: 0 }) }))).toBe(2);
     // des paires validées comptent même sans mission cochée, sans dépendre du badge « Pour de vrai »
     expect(await page.evaluate(() => cptPoids({ 'coach-missions': JSON.stringify({ pair: '', done: {}, total: 3 }) }))).toBe(1);
+    // lot 72 : les missions de plusieurs paires (Ma musique)
+    expect(await page.evaluate(() => cptPoids({ 'coach-missions': JSON.stringify({ v: 2, total: 1, paires: { 'ma>mb': 6, 'mc>md': 2 }, ok: ['ma>mb'] }) }))).toBe(9);
     // des XP de coffre gardés d'un jour à l'autre comptent aussi
     expect(await page.evaluate(() => cptPoids({ 'coach-quetes': JSON.stringify({ ouverts: [], cpt: {}, xp: 10 }) }))).toBe(1);
   });

@@ -32,6 +32,50 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 72 « Ma musique » (16 nov. 2026, soir) : FAIT, NON PUBLIÉ.** Copie `Documents\coach-dj-lot72`, branche
+  `lot-72-ma-musique` (partie d'`origin/main` = `c1a794b`). Demande de l'utilisateur : refaire « Passer au vrai » (nom qui ne
+  dit rien, interface qui ne donne pas envie, pas de filtres, « Une autre paire » sans retour, pas de favoris) ; maquette
+  validée (« Oui, lance le lot » ; `captures/maquette-ma-musique/` du dossier principal, hors Git). **L'onglet s'appelle
+  « Ma musique »** (adresse `#musique`, nom interne `vrai` et vue `vReal` gardés, `#vrai` marche encore) ; renommé partout
+  (onglet, accueil et parcours, fenêtre Pro, avis des testeurs, présentation, CGV, README, `api/mails.js`, `coach.html`).
+  Tout est dans `js/rekordbox.js` (réécrit) : « Mes morceaux » (toute la collection, recherche, styles en un clic, filtres
+  rangés derrière « Filtres » : tempo à deux curseurs, tonalité, playlist rekordbox, ajoutés depuis moins d'un mois, jamais
+  joués, favoris ; pastilles des filtres choisis ; tri ; 100 morceaux puis « Afficher plus ») ; la fiche « Ce qui va avec »
+  (`#musique/morceau/<clé>` : partenaires notés sur 100 avec `rbScore`, pourquoi, difficulté, **technique conseillée** :
+  swap des basses, « caler, puis swap » (ch. 5 niv. 3), filtre qui ouvre (Camelot +2), écho out (tempos à plus de 3 %) ;
+  ambiance garder / monter / calmer, même style, même tempo ; « Écouter » = recherche YouTube) ; « Préparer la transition »
+  (`#musique/paire/<A>/<B>` : platines A orange et B bleue, technique, « M'entraîner sur le site » = `goLesson`, « Voir le
+  tuto » si `tutosOn()`, missions dont la 5e suit la technique, « Précédente », liste à cocher) ; « Mes favoris »
+  (morceaux et paires, avec où on en est) ; « Vus récemment » ; paire du jour en petit bouton. Le bouton retour du navigateur
+  marche (une adresse par page, `mmRoute` appelé par `setView`). L'export rekordbox est maintenant lu avec la date d'ajout,
+  le nombre de lectures et les playlists (`rbParse` → `{ morceaux, playlists }`) ; collection d'exemple refaite (24 morceaux
+  inventés). Chaque morceau a une clé (empreinte FNV-1a de titre + artiste, `rbCles`), stable d'un import à l'autre.
+  Données : `coach-collection` passe à `{ v: 2, n, t, p }` (l'ancien format est relu, avec « Réimporte ta collection… ») ;
+  `coach-missions` passe à `{ v: 2, total, paires: { 'clé>clé': missions faites }, ok: [paires validées] }` (l'ancienne paire
+  en cours est reprise ; `cptPoids` lit les deux) ; nouveau `coach-musique` (`{ fav, favP, vus, offerte }`, dans `CPT_LOCAL` :
+  favoris et vus récents restent sur l'ordinateur, comme la collection, **écart voulu avec la maquette** qui les disait « sur
+  ton compte »). Statistiques : `ma-musique-fiche`, `ma-musique-paire`. **Sans abonnement (`mmOfferte = true`, en haut de
+  `js/rekordbox.js`) : l'import et la fiche d'UN morceau sont offerts, le reste ouvre la fenêtre Pro. CHOIX DE L'UTILISATEUR
+  le 16 nov. 2026 (« Oui, on l'offre »)**, écrit dans le gratuit de `cgv.html` et de `presentation.html` (faux = toute la
+  page dans Pro, comme avant). Tests : `tests/musique.spec.js` (39, remplace `vrai.spec.js`), et mis à jour : `site`,
+  `vini-partout`, `quiz`, `decoupe`, `parcours`, `compte`, `captures.js`, `images-presentation.js` (`img/vrai.jpg` refaite :
+  la fiche d'un morceau). Pour voir la page : configuration `coach-dj-lot72` de `.claude/launch.json` (port 8773, `--tests`).
+  **Gardien, 1er passage : feu rouge (811 tests verts), CORRIGÉ** : HTML fabriqué par `mmH` (échappe tout par défaut) ;
+  la collection d'exemple ne consomme plus la fiche offerte (`rbExemple`, `ex: true` dans `coach-collection`) ; bandeau
+  juste quand la fiche offerte n'est plus dans la collection ; « M'entraîner sur le site » = `goLesson(…, true)` ;
+  téléphone (avant l'import, paires sur deux lignes) ; lignes « Fiche » de Vus récemment ; « Même tempo » ≤ 0,5 % ;
+  pluriels ; curseurs du tempo séparables ; dates impossibles refusées ; paire du jour sans `rbBuild` ; apostrophes et
+  espaces insécables (`mmFr`) ; compteur des favoris ; étape « Ma musique » de l'accueil ouverte si `mmOfferte`.
+  Tests des fichiers touchés : tous verts (musique 39, site, vini-partout, quiz, decoupe, parcours, compte). Essai avec le
+  vrai export de l'utilisateur (`audio-essai/rekordbpx.xml`) : 1060 morceaux en 0,27 s, 21 playlists, dates et lectures lues,
+  fiche en 0,15 s, aucune erreur. **Gardien, 2e passage : feu orange, aucun blocage, 818 tests sur 818.** Ses remarques,
+  corrigées ensuite (209 tests des fichiers touchés verts) : « M'entraîner » vers un chapitre encore fermé (ch. 5) =
+  `niveauVisite` ; `aria-pressed="false"` (et non vide : `mmVal` écrit les booléens) ; CGV « en vigueur au 16 novembre 2026 »
+  (à changer si la publication se fait un autre jour) ; statistiques `ma-musique-*` sans la collection d'exemple ; champ `ex`
+  noté dans les clés. **À dire à l'utilisateur avant de publier : la règle du gardien « textContent, jamais innerHTML »
+  devient « HTML seulement par mmH et mmMet » (lui seul peut l'accepter) ; favoris et vus récemment sur l'ordinateur
+  seulement. RESTE : son accord pour publier** (commit sur `lot-72-ma-musique`, fusion dans `main`, envoi, vérifier la
+  production, Notion).
 - **Lot 71 « Piste sur téléphone » (16 nov. 2026, nuit) : PUBLIÉ le 16 nov.** (« oui » ; gardien orange sans blocage,
   795 tests sur 795 ; `origin/main` = `1b491c9` puis cette note). Production vérifiée (Umami bloqué) : phrase à 126 px sur une
   piste de 190 px (téléphones de 390 et 360 px), 200 px sur 210 (ordinateur), « Drop » écrit partout, aucune erreur.
@@ -2694,7 +2738,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `MAILS.md` — marche à suivre de l'utilisateur pour Brevo (mails de Vini, lot 54). `mails/` — les trois modèles à coller dans Brevo. `api/mails.js` — la fonction Vercel qui parle à Brevo (clé dans les réglages de Vercel, jamais dans le site).
 - `robots.txt`, `sitemap.xml`, `favicon.ico`, `.vercelignore` — pour Google et pour ce que Vercel publie (lot 50).
 - `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap), retiré du site : la page renvoie
-  vers `index.html#vrai`. Son code sert de base à « Passer au vrai » ; `coach.html?ancien=1` l'affiche encore.
+  vers `index.html#musique` (lot 72). Son code a servi de base à « Ma musique » ; `coach.html?ancien=1` l'affiche encore.
 - `tests/` — scripts Playwright (Python) : `tdz.py`, `robust.py`, `clar.py`, `play.py`, `play2.py`, `user.py`.
 - `tests/rekordbox-exemple.xml` — fausse collection rekordbox pour essayer l'import à la main.
 - `musique/` — extraits de vrais morceaux (Pixabay depuis le lot 57, Play House avant) pour « Vraie musique » (`niv-*`) et les tutos (`tuto-*`), refaits par `node tests/musique-pixabay.js`.
@@ -2702,7 +2746,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 
 ## Architecture du code (repères ; « fin du script » = `js/demarrage.js`)
 - **Onglets** : des blocs `.view` (`vHome`, `vLearn`, `vTrain`, `vReal`, `vTable`, `vProgres`), un seul visible. `setView(v)`
-  (fin du script) suit l'adresse : `#accueil` (défaut), `#apprendre`, `#entrainer`, `#vrai`, et aussi `#table` (« Ma table ») et `#progres` (« Mes progrès »). Quitter
+  (fin du script) suit l'adresse : `#accueil` (défaut), `#apprendre`, `#entrainer`, `#musique` (« Ma musique », lot 72, suivi de sa page : `#musique/morceau/…`, `#musique/paire/…/…`, `#musique/favoris`, `#musique/recents` ; l'ancien `#vrai` marche encore), et aussi `#table` (« Ma table ») et `#progres` (« Mes progrès »). Quitter
   Apprendre arrête la partie en cours ; le guide de premier lancement s'ouvre à la première entrée dans
   Apprendre, plus au chargement. Les tests ouvrent `index.html#apprendre`.
 - **Parcours** (`js/parcours.js`) : `PARCOURS` (ordre des étapes de chaque parcours), `STAGES` (pour
@@ -2731,12 +2775,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   le bouton « suivant » passe par `pracNext` ; `quitPrac` remet le chapitre et le niveau d'avant.
   Le défi du jour est tiré de la date (`dailyPick`). « À l'oreille » ici = sans compte à rebours mais
   précision normale (le chapitre 2 garde la précision ×2).
-- **Passer au vrai** (fonctions `rb…`) : `rbParse` lit le XML rekordbox et ne garde que
-  [titre, artiste, genre, bpm, tonalité Camelot] (`rbClean` valide chaque morceau, 6000 au plus).
-  `rbBuild(filtre)` cherche les paires (écart de tempo ≤ 6 %, tonalités qui frottent exclues, score
-  tempo/tonalité/genre) ; le résultat sans filtre est gardé dans `rbAll` car il coûte ~2 s sur 6000 morceaux.
-  `rbMissionList(a, b)` écrit les 6 missions avec les titres et tempos de la paire ; `renderReal` affiche tout.
-  Les titres viennent d'un fichier : toujours les écrire avec `textContent`, jamais `innerHTML`.
+- **Ma musique** (lot 72, ancien « Passer au vrai » ; fonctions `rb…` et `mm…` de `js/rekordbox.js`) : `rbParse` lit le XML
+  rekordbox et ne garde que [titre, artiste, genre, bpm, tonalité Camelot, date d'ajout, lectures, playlists] (`rbClean`
+  valide chaque morceau, 6000 au plus ; `rbPl` = noms des playlists). `rbCles` / `rbParCle` : la clé de chaque morceau.
+  `mmCompat(a, b)` note une transition (`rbScore`) et donne l'ambiance, la difficulté et la technique ; `mmPartenaires(i)`
+  trie ceux qui vont avec un morceau. `mmPdj()` : la paire du jour (un morceau tiré de la date et son meilleur partenaire,
+  quelques ms). `mmMissions(a, b, technique)` écrit les 6 missions.
+  `mmRoute(parties de l'adresse)` choisit la page (appelé par `setView`), `renderReal` dessine tout.
+  Les titres viennent d'un fichier : dans `js/rekordbox.js`, tout le HTML est fabriqué par le gabarit `mmH`…`` qui échappe
+  TOUTE valeur insérée (sauf un morceau déjà fabriqué par `mmH` ou un dessin marqué `mmBrut`) et n'entre que par `mmMet` ;
+  ailleurs, toujours `textContent`. Ne jamais construire de HTML avec une chaîne ordinaire dans ce fichier.
 - **Gestionnaire d'erreurs** en tête du script → bandeau `#errBanner`. Les rejets marqués `.silent` sont ignorés.
 - **État** : `let stars` est déclaré AVANT `earStars`, `ch2Stars`, `chapter`, etc. Puis validation de
   `styleChoice` (house/techno/afro/random) et `chapter` (1/2/3). Déblocage : `ch2Unlocked` (≥14 étoiles
@@ -2775,7 +2823,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-tutos` (`{ vus: [identifiants] }`, les tutos vus jusqu'au bout, lot 56 ; l'ancien `vol` n'est plus écrit depuis le lot 60), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés), `coach-missions` (paire choisie, missions cochées, paires validées), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
+`coach-collection` (morceaux importés, `{ v: 2, n, t, p, ex }` depuis le lot 72, `ex: true` = la collection d'exemple, qui ne consomme pas la fiche offerte ; ne suit pas le compte), `coach-missions` (lot 72 : `{ v: 2, total, paires: { 'clé>clé': missions faites }, ok }` ; avant, une seule paire `{ pair, done, total }`), `coach-musique` (favoris, vus récemment, fiche offerte, lot 72 ; ne suit pas le compte), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -2789,7 +2837,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/vrai.spec.js` : Passer au vrai étape par étape. `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Passer au vrai. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/mails.spec.js` : les mails de Vini et la fonction `api/mails.js` (lot 54) ; `tests/faux-firebase.js` : le faux Firebase partagé. `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/musique.spec.js` : « Ma musique » (lot 72 : liste, filtres, fiche, transition, favoris, vus récemment, adresses, sans abonnement, téléphone). `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Ma musique. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/mails.spec.js` : les mails de Vini et la fonction `api/mails.js` (lot 54) ; `tests/faux-firebase.js` : le faux Firebase partagé. `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

@@ -1,4 +1,4 @@
-// Lot 32 : Vini en haut de « Mes progrès », « S'entraîner » et « Passer au vrai », avec une phrase qui dépend de chaque page.
+// Lot 32 : Vini en haut de « Mes progrès », « S'entraîner » et « Ma musique » (ancien « Passer au vrai »), avec une phrase qui dépend de chaque page.
 const { test, expect } = require('@playwright/test');
 const { ouvrir, sansBandeau } = require('./outils');
 
@@ -41,21 +41,22 @@ test.describe('S\'entraîner', () => {
   });
 });
 
-test.describe('Passer au vrai', () => {
-  test('la collection, la paire du jour, les missions une par une, la paire validée', async ({ page }) => {
+test.describe('Ma musique', () => {
+  test('la collection, la fiche d’un morceau, les missions une par une, la paire validée', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'vrai', stockage: BASE });
-    expect(await dit(page, 'real')).toBe('Montre-moi ta collection rekordbox : je te trouve deux morceaux qui vont bien ensemble !');
+    expect(await dit(page, 'real')).toBe('Montre-moi ta collection rekordbox : je te trouve les morceaux qui vont ensemble.');
     await page.locator('#rbDemo').click();
-    expect(await dit(page, 'real')).toBe('Voilà ta paire du jour ! Ça te tente ?');
-    await page.locator('#rbNext').click();
-    expect(await dit(page, 'real')).toBe('Voilà une autre paire pour toi ! Ça te tente ?');
-    await page.locator('#rbGo').click();
-    expect(await dit(page, 'real')).toBe('Mission 1 sur 6 : prépare tes deux morceaux.');
+    expect(await dit(page, 'real')).toBe('Choisis un morceau que tu aimes : je te montre ceux qui vont avec.');
+    await page.locator('#mmListe .mm-ouvre').filter({ hasText: 'Après minuit' }).click();
+    await expect(page.locator('#mmFiche h1')).toHaveText('Après minuit');   // la page change avec l'adresse (hashchange), juste après le clic
+    expect(await dit(page, 'real')).toBe('Voilà les morceaux de ta collection qui vont le mieux après « Après minuit ». Le premier, c’est un sans-faute.');
+    await page.locator('#mmFiche .mm-carte [data-mm="paire"]').first().click();
+    await expect(page.locator('#mmPaire .mm-t-deck.b b')).toHaveText('Soleil noir');
+    expect(await dit(page, 'real')).toBe('« Après minuit » puis « Soleil noir » : même tempo, même tonalité. Fais un swap des basses !');
     await page.evaluate(() => { window.__sons = []; son = n => window.__sons.push(n); });
-    await page.locator('#rbMissions .rbok').click();
+    await page.locator('#mmPaire [data-mm="mok"]').click();
     await expect(page.locator('#realVini')).toHaveClass(/vn-parfait/);
-    expect(await dit(page, 'real')).toMatch(/^Mission 2 sur 6 : /);
-    for (let i = 0; i < 5; i++) await page.locator('#rbMissions .rbok').click();
+    for (let i = 0; i < 5; i++) await page.locator('#mmPaire [data-mm="mok"]').click();
     expect(await dit(page, 'real')).toBe('Paire validée, bravo ! Tu as fait 1 vraie transition avec ta musique.');
     expect(await page.evaluate(() => window.__sons)).toEqual(['reussi', 'reussi', 'reussi', 'reussi', 'reussi', 'fin']);
     await expect(page.locator('#realVini')).toHaveClass(/vn-danse/, { timeout: 3000 });
@@ -63,11 +64,12 @@ test.describe('Passer au vrai', () => {
   });
 });
 
-test.describe('Passer au vrai, sans paire', () => {
-  test('une collection sans tempo ni tonalité : Vini ne promet pas de paire', async ({ page }) => {
-    await ouvrir(page, { onglet: 'vrai', stockage: Object.assign({ 'coach-collection': JSON.stringify({ name: 'vide.xml', list: [['Un', 'A', '', 0, ''], ['Deux', 'B', '', 0, '']] }) }, BASE) });
-    await page.evaluate(() => { rbLib = [['Un', 'A', '', 0, ''], ['Deux', 'B', '', 0, '']]; rbAll = null; rbStale = true; rbSel = null; renderReal(); });
-    expect(await dit(page, 'real')).toBe('Je n’ai pas trouvé de paire : il me faut des morceaux avec leur tempo et leur tonalité.');
+test.describe('Ma musique, un morceau pas analysé', () => {
+  test('une collection sans tempo ni tonalité : Vini ne promet rien', async ({ page }) => {
+    await ouvrir(page, { onglet: 'vrai', stockage: Object.assign({ 'coach-collection': JSON.stringify({ v: 2, n: 'vide', t: [['Un', 'A', '', 0, ''], ['Deux', 'B', '', 0, '']], p: [] }) }, BASE) });
+    await page.locator('#mmListe .mm-ouvre').first().click();
+    await expect(page.locator('#mmFiche')).toBeVisible();
+    expect(await dit(page, 'real')).toBe('Ce morceau n’est pas encore analysé par rekordbox.');
   });
 });
 

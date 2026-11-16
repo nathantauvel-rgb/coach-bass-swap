@@ -47,7 +47,7 @@ const CPT_MAX = 400000;                       // au-delà, on n'envoie pas (gard
    - `coach-stats` : les étapes déjà comptées par les statistiques sur ce navigateur (stats.js).
    - `coach-compte-propose` : le jour où la carte de fin a proposé le compte (mails.js) ; ne sert qu'avant d'en avoir un.
    `coach-mails` (la réponse « Vini peut m'écrire », lot 54), elle, suit le compte : on ne repose pas la question ailleurs. */
-const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-bibliotheque', 'coach-sons', 'coach-volume', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
+const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-musique', 'coach-bibliotheque', 'coach-sons', 'coach-volume', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
 const cptOn = () => !!(CPT_CFG && CPT_CFG.apiKey && CPT_CFG.projectId && CPT_CFG.appId);
 const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_LOCAL.includes(k);
 
@@ -117,7 +117,8 @@ function cptPoids(d){
   const ob = lu('coach-objectif'); if (ob) n += combien(ob.faits);
   // `total` = les paires validées. Le badge « Pour de vrai » les couvre déjà aujourd'hui, mais on ne veut pas
   // dépendre d'un badge : si sa règle changeait, ces paires deviendraient invisibles pour le poids.
-  const ms = lu('coach-missions'); if (ms) n += combien(ms.done) + ((+ms.total || 0) > 0 ? 1 : 0);
+  // lot 72 : { paires: { 'clé>clé': missions faites } } ; avant, une seule paire ({ done: {...} })
+  const ms = lu('coach-missions'); if (ms) n += (ms.paires && typeof ms.paires === 'object' ? Object.values(ms.paires).reduce((s, x) => s + Math.max(0, Math.min(6, Math.floor(+x) || 0)), 0) : combien(ms.done)) + ((+ms.total || 0) > 0 ? 1 : 0);
   const pr = lu('coach-entrainement'); if (vals(pr).some(x => typeof x === 'number' && x > 0)) n += 1;
   if (typeof d['coach-test'] === 'string' && d['coach-test']) n += 1;
   return n;

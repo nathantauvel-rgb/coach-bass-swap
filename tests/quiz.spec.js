@@ -186,9 +186,10 @@ test.describe('Badge « Pour de vrai »', () => {
   test('valider une première paire donne le badge', async ({ page }) => {
     await ouvrir(page, { onglet: 'vrai' });
     await page.locator('#rbDemo').click();
-    await page.locator('#rbGo').click();
-    for (let i = 0; i < 6; i++) await page.locator('#rbMissions .rbok').click();
-    await expect(page.locator('#rbDone')).toContainText('Nouveau badge : Pour de vrai.');
+    await page.locator('#mmListe .mm-ouvre').first().click();
+    await page.locator('#mmFiche .mm-carte [data-mm="paire"]').first().click();
+    for (let i = 0; i < 6; i++) await page.locator('#mmPaire [data-mm="mok"]').click();
+    await expect(page.locator('#mmPaire .mm-bravo')).toContainText('Nouveau badge : Pour de vrai.');
     expect(await stocke(page, 'coach-badges')).toEqual(['vrai']);
   });
 });

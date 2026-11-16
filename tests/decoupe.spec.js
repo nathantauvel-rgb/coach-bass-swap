@@ -169,11 +169,13 @@ test.describe('Pro allumé, sans abonnement', () => {
     expect(err).toEqual([]);
   });
 
-  test('Passer au vrai est dans Pro ; l’onglet Tutos se montre, un seul tuto gratuit', async ({ page }) => {
+  test('Ma musique : l’import et une fiche offerts, le reste dans Pro (lot 72) ; l’onglet Tutos se montre, un seul tuto gratuit', async ({ page }) => {
     const err = await ouvrir(page, { onglet: 'vrai', stockage: TROIS, avant: PRO });
-    await expect(page.locator('#rbPro')).toBeVisible();
-    await expect(page.locator('#rbEmpty')).toBeHidden();
-    await page.locator('#rbProBtn').click();
+    await expect(page.locator('#rbPro')).toBeHidden();
+    await expect(page.locator('#rbEmpty')).toBeVisible();
+    await expect(page.locator('#mmOffre')).toBeVisible();
+    await page.locator('#rbDemo').click();
+    await page.locator('#mmGratuit [data-mm="pro"]').click();
     await expect(page.locator('#proContexteTxt')).toHaveText('Pour mixer ta propre musique');
     await page.keyboard.press('Escape');
     await expect(page.locator('#tabTutos')).toBeVisible();

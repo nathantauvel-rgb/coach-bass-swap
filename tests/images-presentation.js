@@ -1,6 +1,7 @@
 // Fabrique les images de la page de présentation (dossier img/), à partir du vrai site.
 // Usage : node tests/images-presentation.js     (le serveur de test est lancé tout seul)
-// À relancer quand l'écran d'un niveau, l'accueil ou « Passer au vrai » change.
+// À relancer quand l'écran d'un niveau, l'accueil ou « Ma musique » change. Avec Pro allumé (PRO_PRET), lancer d'abord le serveur
+// de test (node tests/serveur.js --tests) : sinon « Ma musique » est photographiée comme pour un joueur sans abonnement.
 const { chromium } = require('@playwright/test'), path = require('path'), fs = require('fs'), { spawn } = require('child_process');
 const OUT = path.join(__dirname, '..', 'img'), BASE = `http://localhost:${process.env.DJ_PORT || 8766}`, S = o => JSON.stringify(o);
 const jour = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
@@ -33,8 +34,8 @@ const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-
   await shot(p, 'apprendre.jpg', '#stage'); await p.context().close();
   // 2. L'accueil : la prochaine étape et l'objectif du jour
   p = await page('accueil'); await shot(p, 'accueil.jpg', '.hero'); await p.context().close();
-  // 3. Passer au vrai : une paire de la collection d'exemple et ses missions
-  p = await page('vrai'); await p.locator('#rbDemo').click(); await p.locator('#rbGo').click(); await p.locator('#rbMissions .rbok').click(); await p.waitForTimeout(400);
+  // 3. Ma musique : la fiche d'un morceau de la collection d'exemple (« Ce qui va avec »)
+  p = await page('musique'); await p.locator('#rbDemo').click(); await p.locator('#mmListe .mm-ouvre').nth(2).click(); await p.waitForTimeout(400);
   await shot(p, 'vrai.jpg', '#rbFull', 640); await p.context().close();
   await b.close(); if (srv) srv.kill();
 })();

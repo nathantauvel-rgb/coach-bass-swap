@@ -87,7 +87,9 @@ Dans l'ordre où un joueur les rencontre :
 | `premiere-reussite` | Premier niveau réussi (2 étoiles ou plus) |
 | `chapitre-1` à `chapitre-7` | Premier niveau réussi dans ce chapitre |
 | `compte` | Il s'est connecté à un compte |
-| `rekordbox` | Il a importé sa collection rekordbox |
+| `rekordbox` | Il a importé sa collection rekordbox (onglet « Ma musique ») |
+| `ma-musique-fiche` | Il a ouvert la fiche d'un de ses morceaux (« Ce qui va avec ») |
+| `ma-musique-paire` | Il a ouvert « Préparer la transition » pour une paire de ses morceaux |
 | `revenu` | Il est revenu un autre jour |
 | `jours-7` | Il est venu 7 jours différents |
 

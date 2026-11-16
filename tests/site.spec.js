@@ -192,9 +192,9 @@ test.describe('Onglets', () => {
     await page.locator('#tabs a[data-view=apprendre]').click();
     await expect(page.locator('#startBtn')).toHaveText('Jouer');
   });
-  test('l\'ancienne page du mode libre renvoie vers Passer au vrai', async ({ page }) => {
+  test('l\'ancienne page du mode libre renvoie vers Ma musique', async ({ page }) => {
     await page.goto('/coach.html');
-    await expect(page).toHaveURL(/index\.html#vrai$/);
+    await expect(page).toHaveURL(/index\.html#musique$/);
     await expect(page.locator('#vReal')).toBeVisible();
   });
 });
@@ -219,26 +219,27 @@ test.describe('S\'entraîner', () => {
   });
 });
 
-test.describe('Passer au vrai', () => {
-  test('collection d\'exemple : paires, missions, paire validée', async ({ page }) => {
+test.describe('Ma musique', () => {
+  test('collection d\'exemple : un morceau, ce qui va avec, une transition préparée jusqu\'au bout', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'vrai' });
     await page.locator('#rbDemo').click();
-    await expect(page.locator('#rbSum')).toContainText('12 morceaux');
-    await expect(page.locator('#rbHero')).toBeVisible();
-    await page.locator('#rbGo').click();
-    await expect(page.locator('#rbMissions li')).toHaveCount(6);
-    for (let i = 0; i < 6; i++) await page.locator('#rbMissions .rbok').click();
-    await expect(page.locator('#rbDone')).toContainText('Paire validée');
+    await expect(page.locator('#rbSum')).toContainText('24 morceaux');
+    await page.locator('#mmListe .mm-ouvre').first().click();
+    await expect(page.locator('#mmFiche .mm-carte').first()).toBeVisible();
+    await page.locator('#mmFiche .mm-carte [data-mm="paire"]').first().click();
+    await expect(page.locator('#mmPaire .mm-m-tete b')).toHaveText('Mission 1 sur 6');
+    for (let i = 0; i < 6; i++) await page.locator('#mmPaire [data-mm="mok"]').click();
+    await expect(page.locator('#mmPaire .mm-bravo')).toContainText('les 6 missions sont faites');
     expect(erreurs).toEqual([]);
   });
   test('import d\'un fichier rekordbox, puis d\'un fichier qui n\'en est pas un', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'vrai' });
     await page.locator('#rbFile').setInputFiles('tests/rekordbox-exemple.xml');
     await expect(page.locator('#rbSum')).toHaveText('9 morceaux · rekordbox-exemple · 7 avec tempo et tonalité');
-    await expect(page.locator('#rbPairs .duo')).toHaveCount(2);
-    await expect(page.locator('#rbPairs b', { hasText: 'Balises' })).toHaveCount(0);
+    await expect(page.locator('#mmListe .mm-ligne')).toHaveCount(9);
+    expect(await page.locator('#mmListe b b').count()).toBe(0);
     await page.locator('#rbFile').setInputFiles({ name: 'faux.xml', mimeType: 'text/xml', buffer: Buffer.from('<html>coucou</html>') });
-    await expect(page.locator('#rbMsg')).toContainText('n\'est pas une collection rekordbox');
+    await expect(page.locator('#rbMsg')).toContainText('n’est pas une collection rekordbox');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
 });

@@ -221,7 +221,7 @@
       <ul class="pro-atouts">
         <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span><span>Les 7 chapitres<small><b id="proNbEx">40</b> exercices de plus : le swap des basses, le calage, les hot cues, le set noté sur 100.</small></span></li>
         <li><span class="pro-ic pro-ic-b"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></span><span>Tous les tutos de Vini<small><b id="proNbTu">10</b> de plus aujourd’hui, et un nouveau chaque mois.</small></span></li>
-        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>L’entraînement et Passer au vrai<small>Variations, à l’oreille, mini-sets, et ta collection rekordbox.</small></span></li>
+        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>L’entraînement et Ma musique<small>Variations, à l’oreille, mini-sets, et ce qui va avec chaque morceau de ta collection rekordbox.</small></span></li>
       </ul>
     </div>
     <div class="pro-offre">
@@ -310,7 +310,7 @@
       <a href="#accueil" data-view="accueil"><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>Accueil</a>
       <a href="#apprendre" data-view="apprendre"><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>Apprendre</a>
       <a href="#entrainer" data-view="entrainer"><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg></span>S'entraîner</a>
-      <a href="#vrai" data-view="vrai"><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V10"/><path d="M12 20V4"/><path d="M19 20v-6"/></svg></span>Passer au vrai</a>
+      <a href="#musique" data-view="vrai"><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 5.5a6.5 6.5 0 0 1 6.5 6.5"/></svg></span>Ma musique</a>
       <a href="#tutos" data-view="tutos" id="tabTutos" hidden><span class="tn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="m10 9 5 3-5 3z"/></svg></span>Tutos</a>
     </nav>
     <div class="hud">
@@ -404,50 +404,53 @@
       <div class="vcoin"><button type="button" class="hvini" id="realViniBtn" aria-label="Faire sauter Vini"><span id="realVini"></span></button><p class="bubble" id="realTip" aria-live="polite"></p></div>
       <input type="file" id="rbFile" accept=".xml,text/xml,application/xml" hidden>
       <div class="rbpro" id="rbPro" hidden>
-        <span class="lnum">Passer au vrai</span>
-        <h1>Mixe ta propre musique</h1>
-        <p class="lead">Le site lit ta collection rekordbox, te trouve deux morceaux qui s’enchaînent bien, et te donne des missions à faire sur ta table.</p>
+        <span class="lnum">Ma musique</span>
+        <h1>Mixe ta musique</h1>
+        <p class="lead">Choisis un morceau de ta collection rekordbox : je te trouve ceux qui vont avec, et je t’explique comment faire la transition.</p>
         <p class="rbpro-t"><span class="pro-tag">Pro</span>Avec DJingood Pro, comme les 7 chapitres et tous les tutos.</p>
         <button type="button" class="pro-mini" id="rbProBtn">Découvrir Pro</button>
       </div>
-      <div id="rbEmpty" class="rbempty">
-        <span class="lnum">Passer au vrai</span>
-        <h1>Mixe ta propre musique</h1>
-        <p class="lead">Le site lit ta collection rekordbox et te trouve deux morceaux qui s'enchaînent bien. Toi, tu fais la transition sur ta table.</p>
-        <ol class="rbsteps">
-          <li><span class="rbn">1</span><strong>Exporte ta collection</strong><span>Dans rekordbox : menu Fichier, puis « Exporter la collection au format xml ».</span></li>
-          <li><span class="rbn">2</span><strong>Choisis le fichier ici</strong><span>Rien n'est envoyé : tout reste sur ton ordinateur.</span></li>
-          <li><span class="rbn">3</span><strong>Reçois ta paire</strong><span>Deux de tes morceaux qui vont ensemble, et des missions à faire dans rekordbox.</span></li>
-        </ol>
-        <div class="rbrow"><button type="button" class="cta" id="rbPick">Choisir mon fichier rekordbox</button><button type="button" class="linkbtn" id="rbDemo">Essayer avec des morceaux d'exemple</button></div>
+      <!-- Lot 72 : « Ma musique » (ancien « Passer au vrai »). Le reste de la page est dessiné par js/rekordbox.js. -->
+      <div id="rbEmpty" class="mm-avant">
+        <div class="mm-avant-g">
+          <span class="lnum">Ma musique</span>
+          <h1>Mixe ta musique</h1>
+          <p class="lead">Choisis un morceau que tu aimes : je te trouve ceux qui vont avec dans ta collection, et je t’explique comment faire la transition.</p>
+          <p class="mm-offre" id="mmOffre" hidden><span class="pro-tag">Pro</span>Gratuit : l’import, et la fiche d’un morceau. Tout le reste avec DJingood Pro.</p>
+          <button type="button" class="cta mm-importer" id="rbPick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Importer ma collection rekordbox</button>
+          <p class="mm-rien"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Rien n’est envoyé : tout reste sur ton ordinateur.</p>
+          <button type="button" class="linkbtn" id="rbDemo">Essayer avec des morceaux d’exemple</button>
+          <details class="mm-comment"><summary>Comment exporter ma collection depuis rekordbox ?</summary>
+            <ol><li>Dans rekordbox, ouvre le menu <b>Fichier</b>.</li><li>Choisis <b>« Exporter la collection au format xml »</b>, et enregistre le fichier.</li><li>Reviens ici, appuie sur « Importer ma collection rekordbox » et choisis ce fichier.</li></ol></details>
+        </div>
+        <div class="mm-apercu" id="mmApercu"></div>
       </div>
       <div id="rbFull" hidden>
-        <div class="rbtop"><p class="rbsum" id="rbSum"></p><button type="button" class="linkbtn" id="rbChange">Changer de fichier</button><button type="button" class="linkbtn" id="rbClear">Retirer</button></div>
-        <div class="rbhero" id="rbHero">
-          <span class="lnum" id="rbKick">Ta paire du jour</span>
-          <div class="rbdecks">
-            <div class="rbdeck rba"><span class="rbdisc" aria-hidden="true"></span><div><span class="rbside">Platine A</span><strong id="rbAT"></strong><span class="rbart" id="rbAA"></span><span class="rbmeta" id="rbAM"></span></div></div>
-            <span class="rbto" aria-hidden="true">→</span>
-            <div class="rbdeck rbb"><span class="rbdisc" aria-hidden="true"></span><div><span class="rbside">Platine B</span><strong id="rbBT"></strong><span class="rbart" id="rbBA"></span><span class="rbmeta" id="rbBM"></span></div></div>
+        <div class="mm-haut" id="mmHaut"><p class="rbsum" id="rbSum"></p><button type="button" class="linkbtn" id="rbChange">Mettre à jour</button><button type="button" class="linkbtn" id="rbClear">Retirer</button></div>
+        <p class="mm-ancien" id="mmAncien" hidden>Réimporte ta collection rekordbox pour voir aussi tes playlists, la date d’ajout de tes morceaux et ce que tu as déjà joué.</p>
+        <div class="mm-gratuit" id="mmGratuit" hidden></div>
+        <nav class="mm-onglets" id="mmOnglets" aria-label="Ma musique">
+          <a href="#musique" data-mm-onglet="morceaux"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/></svg>Mes morceaux<span class="mm-n" id="mmNbM"></span></a>
+          <a href="#musique/favoris" data-mm-onglet="favoris"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.2-4.5-9.1-9.3C1.5 7.2 3.7 4 7.1 4c2 0 3.7 1.1 4.9 2.9C13.2 5.1 14.9 4 16.9 4c3.4 0 5.6 3.2 4.2 6.7C19.2 15.5 12 20 12 20z"/></svg>Mes favoris<span class="mm-n" id="mmNbF"></span></a>
+          <a href="#musique/recents" data-mm-onglet="recents"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Vus récemment</a>
+          <button type="button" class="mm-pdj" id="mmPdj" hidden></button>
+        </nav>
+        <div id="mmMorceaux">
+          <div class="mm-outils">
+            <label class="mm-cherche"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" id="mmQ" placeholder="Chercher un titre ou un artiste" aria-label="Chercher un titre ou un artiste" autocomplete="off"></label>
+            <button type="button" class="mm-btn-filtres" id="mmFiltresBtn" aria-expanded="false" aria-controls="mmPanneau"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>Filtres<span class="mm-pastille" id="mmFiltresN" hidden></span></button>
+            <label class="mm-tri">Trier par <select id="mmTri"></select></label>
           </div>
-          <div class="rbchips" id="rbChips"></div>
-          <div class="rbrow"><button type="button" class="cta" id="rbGo">C'est parti</button><button type="button" class="ghost" id="rbNext">Une autre paire</button><button type="button" class="ghost" id="rbPairChange" hidden>Changer de paire</button></div>
-          <button type="button" class="linkbtn" id="rbOwn">Choisir une paire moi-même</button>
+          <div class="mm-styles" id="mmStyles"></div>
+          <div class="mm-panneau" id="mmPanneau" hidden></div>
+          <div class="mm-actifs" id="mmActifs"></div>
+          <div class="mm-liste" id="mmListe" role="list" aria-label="Mes morceaux"></div>
+          <button type="button" class="ghost mm-plus" id="mmPlus" hidden></button>
         </div>
-        <div id="rbPairPick" hidden>
-          <div class="path-head"><h2 class="sub">Choisis ta paire</h2><button type="button" class="linkbtn" id="rbBack">Revenir à la paire proposée</button></div>
-          <input type="search" class="rbfind" id="rbFind" placeholder="Chercher un morceau ou un artiste" aria-label="Chercher un morceau ou un artiste">
-          <div class="duos" id="rbPairs"></div>
-          <button type="button" class="ghost" id="rbMore">Voir d'autres paires</button>
-        </div>
-        <div id="rbMisBox" hidden>
-          <h2 class="sub">Tes missions dans rekordbox</h2>
-          <p class="subnote" id="rbMisSub"></p>
-          <div class="rbdots" id="rbDots" aria-hidden="true"></div>
-          <ol class="missions" id="rbMissions"></ol>
-          <p class="rbdone" id="rbDone" hidden></p>
-          <div class="rbrow rbmis-row"><button type="button" class="cta" id="rbAgain" hidden>Une autre paire</button><button type="button" class="ghost" id="rbMisAll">Voir toutes les missions</button></div>
-        </div>
+        <div id="mmFavoris" hidden></div>
+        <div id="mmRecents" hidden></div>
+        <div id="mmFiche" hidden></div>
+        <div id="mmPaire" hidden></div>
       </div>
       <p class="rbmsg" id="rbMsg" role="status"></p>
     </section>

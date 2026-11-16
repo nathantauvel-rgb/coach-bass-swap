@@ -210,7 +210,7 @@ const BADGE_PROG = {
   accro: () => [Math.min(7, Math.max(goalStreak(), pracNum('streak'))), 7, 'jours de suite', () => goLesson(1, firstTodo(stars, BASE_LESSONS.length))],
   miniset: () => [Math.min(8, pracNum('setBest')), 8, 'étoiles (ton meilleur mini-set)', () => { location.hash = '#entrainer'; }],
   tete: () => [Math.min(10, quizOk.length), 10, 'bonnes réponses', () => { location.hash = '#entrainer'; }],
-  vrai: () => [rbMis.total > 0 ? 1 : 0, 1, '', () => { location.hash = '#vrai'; }]
+  vrai: () => [rbMis.total > 0 ? 1 : 0, 1, '', () => { location.hash = '#musique'; }]
 };
 // Le badge le plus proche : parmi ceux qu'il reste à gagner, celui dont la barre est la plus remplie
 function badgeNext(){

@@ -90,8 +90,8 @@ const STAGES = {
     done: () => ch7Done() >= CH7_LESSONS.length, prog: () => `${ch7Done()} niveau${ch7Done() > 1 ? 'x' : ''} sur ${CH7_LESSONS.length}`,
     cta: () => { const i = firstTodo(ch7Stars, CH7_LESSONS.length); return `Chapitre 7, niveau ${i + 1} : ${CH7_LESSONS[i].title}`; },
     go: () => goLesson(7, firstTodo(ch7Stars, CH7_LESSONS.length)) },
-  vrai: { title: 'Passer au vrai', text: 'Avec ta musique : importe ta collection rekordbox, choisis une paire, et fais les missions sur ta table.',
-    done: () => rbMis.total > 0, cta: () => 'Aller à Passer au vrai', go: () => { location.hash = '#vrai'; } }
+  vrai: { title: 'Ma musique', text: 'Avec ta musique : importe ta collection rekordbox, choisis un morceau, et prépare la transition avec un de ceux qui vont avec.',
+    done: () => rbMis.total > 0, cta: () => 'Aller à Ma musique', go: () => { location.hash = '#musique'; } }
 };
 /* lot 68 : sans abonnement, Apprenti DJ et DJ confirmé commencent par les niveaux gratuits, en Mode Expert (leur parcours
    commence sinon par des étapes de Pro). Le Grand débutant les a déjà dans l'étape « Les bases ». */
@@ -106,7 +106,8 @@ function stagePro(id){
   if (!proBloque()) return false;
   if (id === 'ch1') return firstTodo(stars, BASE_LESSONS.length, testFail()) >= NIV_GRATUITS;
   if (id === 'expert') return xTodo() >= NIV_GRATUITS;
-  return ['ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7', 'vrai'].includes(id);
+  // lot 72 : Ma musique s'ouvre sans abonnement quand l'import et une fiche y sont offerts (mmOfferte, js/rekordbox.js)
+  return ['ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7'].includes(id) || (id === 'vrai' && !mmOfferte);
 }
 // Les étapes de ce parcours : sur un téléphone, « Comprendre » passe devant (lot 48, cpEtape dans comprendre.js)
 const parcoursEtapes = p => (typeof cpEtape === 'function' && cpEtape() ? ['comprendre'] : []).concat(proBloque() && parcoursAvance(p) ? ['essai'] : [], PARCOURS[p].stages);

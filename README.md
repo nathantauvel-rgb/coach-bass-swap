@@ -8,7 +8,7 @@ Le site est rangé en trois onglets :
 
 - **Apprendre** : les leçons guidées, sur des morceaux d'entraînement faits pour s'enchaîner (le bon moment, le fader, la coupure, l'écho, le filtre, le swap des basses, et pour finir la transition complète).
 - **S'entraîner** : défi du jour, variations, à l'oreille, mini-sets, sur les niveaux déjà joués dans Apprendre.
-- **Passer au vrai** : import de la collection rekordbox (fichier XML, lu sur ton appareil, rien n'est envoyé), paires de morceaux recommandées, missions à faire dans rekordbox.
+- **Ma musique** : import de la collection rekordbox (fichier XML, lu sur ton appareil, rien n'est envoyé) ; pour chaque morceau, ceux qui vont bien après, la technique conseillée pour la transition et des missions à faire dans rekordbox ; filtres, favoris, vus récemment.
 
 Les morceaux d'entraînement sont produits dans le navigateur (moteur de production maison : grosse caisse, charleys métalliques, réverb, sidechain, accords, mélodies, montées, plusieurs variantes par style), calculés en tâche de fond.
 

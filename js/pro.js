@@ -168,7 +168,7 @@ $('proFermer').addEventListener('click', proFerme);
 $('proPlusTard').addEventListener('click', proFerme);
 $('proBandeauBtn').addEventListener('click', () => proOuvre(''));
 $('proNivBtn').addEventListener('click', () => proOuvre(''));   // lot 68 : la ligne sous les niveaux
-$('rbProBtn').addEventListener('click', () => proOuvre('', { vue: 'vrai' }));   // lot 68 : Passer au vrai
+$('rbProBtn').addEventListener('click', () => proOuvre('', { vue: 'vrai' }));   // lot 68 : Ma musique (ancien « Passer au vrai », lot 72)
 window.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (!$('pro').hidden){ proFerme(); e.stopImmediatePropagation(); }
@@ -194,7 +194,7 @@ function proSuite(v){
     if (c) attente = proChapAttente(n); }
   if (attente){ const i = firstTodo(stars, BASE_LESSONS.length); return [`${attente} On continue avec « ${BASE_LESSONS[i].title} » ?`, `Jouer « ${BASE_LESSONS[i].title} »`, () => goLesson(1, i)]; }
   if (v === 'vue:entrainer') return ['On va s’entraîner ?', 'Aller à l’entraînement', () => { location.hash = '#entrainer'; }];
-  if (v === 'vue:vrai') return ['On mixe ta musique ?', 'Aller à Passer au vrai', () => { location.hash = '#vrai'; }];
+  if (v === 'vue:vrai') return ['On mixe ta musique ?', 'Aller à Ma musique', () => { location.hash = '#musique'; }];
   const t = TUTOS.find(x => x.id === v);
   if (t) return [`On commence par « ${t.titre} » ?`, `Regarder « ${t.titre} »`, () => { if (location.hash !== '#tutos') location.hash = '#tutos'; setTimeout(() => tuOuvre(t.id), 0); }];
   const i = firstTodo(stars, BASE_LESSONS.length);
