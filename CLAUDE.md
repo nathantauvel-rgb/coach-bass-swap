@@ -32,7 +32,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 72 « Ma musique » (16 nov. 2026, soir) : FAIT, NON PUBLIÉ.** Copie `Documents\coach-dj-lot72`, branche
+- **Lot 72 « Ma musique » (16 nov. 2026, soir) : PUBLIÉ le 16 nov.** (« Oui, publie », après le gardien orange sans
+  blocage ; `origin/main` = `7f1f9b1`, avance rapide depuis `c1a794b`, puis cette note). Production vérifiée (Umami bloqué) :
+  onglet « Ma musique » (`#musique`), offre gratuite annoncée, collection d'exemple, fiche, bouton retour, `#vrai`, CGV du
+  16 nov., aucune erreur. **Pour reprendre, lire ce CLAUDE.md** (= copie `Documents\coach-dj-lot72`). Pas encore fait : un essai
+  par l'utilisateur sur sa vraie collection (dans le site en ligne). Copie `Documents\coach-dj-lot72`, branche
   `lot-72-ma-musique` (partie d'`origin/main` = `c1a794b`). Demande de l'utilisateur : refaire « Passer au vrai » (nom qui ne
   dit rien, interface qui ne donne pas envie, pas de filtres, « Une autre paire » sans retour, pas de favoris) ; maquette
   validée (« Oui, lance le lot » ; `captures/maquette-ma-musique/` du dossier principal, hors Git). **L'onglet s'appelle
@@ -74,8 +78,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (à changer si la publication se fait un autre jour) ; statistiques `ma-musique-*` sans la collection d'exemple ; champ `ex`
   noté dans les clés. **À dire à l'utilisateur avant de publier : la règle du gardien « textContent, jamais innerHTML »
   devient « HTML seulement par mmH et mmMet » (lui seul peut l'accepter) ; favoris et vus récemment sur l'ordinateur
-  seulement. RESTE : son accord pour publier** (commit sur `lot-72-ma-musique`, fusion dans `main`, envoi, vérifier la
-  production, Notion).
+  seulement.** Tout a été dit à l'utilisateur ; son « Oui, publie » vaut accord pour la nouvelle règle du gardien.
 - **Lot 71 « Piste sur téléphone » (16 nov. 2026, nuit) : PUBLIÉ le 16 nov.** (« oui » ; gardien orange sans blocage,
   795 tests sur 795 ; `origin/main` = `1b491c9` puis cette note). Production vérifiée (Umami bloqué) : phrase à 126 px sur une
   piste de 190 px (téléphones de 390 et 360 px), 200 px sur 210 (ordinateur), « Drop » écrit partout, aucune erreur.
