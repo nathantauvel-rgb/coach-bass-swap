@@ -32,7 +32,9 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 74 « La table en relief » (17 nov. 2026, nuit) : FAIT, NON PUBLIÉ, rien de commité au départ.** Demande : « cette
+- **Lot 74 « La table en relief » (17 nov. 2026, nuit) : PUBLIÉ le 18 nov.** (« Oui, publie », après le second passage du
+  gardien, feu orange sans blocage ; `origin/main` = `37cbb22`, avance rapide depuis `97cc85c`, puis cette note). Production
+  vérifiée (Umami bloqué) : la nouvelle table sur djingood.fr, 392 px de haut, aucune erreur ; Journal Notion à jour. Demande : « cette
   partie fait cheap » (la table dessinée des niveaux), puis « un peu plus réaliste avec les contours, 3D ». Maquette v2
   validée (« Oui cette maquette elle est superbe ») : `captures/maquette-table-visuel/index.html` du dossier principal (hors
   Git ; v1 gardée dans `v1-index.html`). Copie `Documents\coach-dj-lot74`, branche `lot-74-table-relief`, partie
@@ -55,9 +57,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   LANCE B perdu pour un lecteur d'écran). **Tout corrigé** : l'anneau du geste est un `outline` au-dessus de tout dans la
   table (`.table3 [data-g].focus`, décalé de 8 px autour des boutons ronds) ; 88 tests de la table verts ensuite. **Second passage du
   gardien : feu orange, aucun blocage** (819 tests sur 819 ; restent deux détails d'apparence : la pastille « B » sur le coin
-  de l'anneau de la molette de B, et le CUE casque sans relief quand il porte l'anneau, déjà le cas avant). **Reste** : un essai avec la vraie FLX4 conseillé (points 4, 23, 32 et 37 de `tests/CHECKLIST-FLX4.md`),
-  accord pour publier.
-- **Question du 17 nov. (pas encore un lot)** : « pourquoi les pages ne prennent pas toute la largeur ? » (écran de
+  de l'anneau de la molette de B, et le CUE casque sans relief quand il porte l'anneau, déjà le cas avant). **Reste** : un essai avec la vraie FLX4 (points 4, 23, 32 et 37 de
+  `tests/CHECKLIST-FLX4.md`), pas encore fait. **Suite** : le lot 75 « Le grand écran » (copie `Documentscoach-dj-lot75`), à
+  fusionner par-dessus.
+- **Question du 17 nov. (devenue le lot 75, copie `Documentscoach-dj-lot75`)** : « pourquoi les pages ne prennent pas toute la largeur ? » (écran de
   1920 px). Raison : `.wrap.app > :not(.top){max-width:1012px}` et l'en-tête à 1280 px (lot 61, pensé pour 1366 px). Piste
   proposée : une mise en page grand écran page par page (pas juste enlever la limite), avec une maquette en 1920 × 1080.
 - **Lot 72 « Ma musique » (16 nov. 2026, soir) : PUBLIÉ le 16 nov.** (« Oui, publie », après le gardien orange sans
