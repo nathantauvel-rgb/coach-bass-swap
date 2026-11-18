@@ -32,6 +32,34 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 74 « La table en relief » (17 nov. 2026, nuit) : FAIT, NON PUBLIÉ, rien de commité au départ.** Demande : « cette
+  partie fait cheap » (la table dessinée des niveaux), puis « un peu plus réaliste avec les contours, 3D ». Maquette v2
+  validée (« Oui cette maquette elle est superbe ») : `captures/maquette-table-visuel/index.html` du dossier principal (hors
+  Git ; v1 gardée dans `v1-index.html`). Copie `Documents\coach-dj-lot74`, branche `lot-74-table-relief`, partie
+  d'`origin/main` = `97cc85c` (le lot 73, jamais commité, n'y est pas : les deux ajoutent un bloc à la fin de `styles.css`,
+  à fusionner à la main). Serveur `coach-dj-lot74` (port 8777) dans `.claude/launch.json`. Captures :
+  `captures/lot74/` de la copie. **Ce qui change (apparence seulement, mêmes identifiants, même fonctionnement)** : bloc
+  « Lot 74 » à la fin de `styles.css` (couleurs `--t-*` dans `:root`) ; potards en relief (`js/controles.js` : ombre, jupe
+  crantée, tête bombée, aiguille de r = 4 à 17, `KNOB_R`) avec les dégradés `#kJupe` / `#kTete` (`svg.kdefs` dans
+  `index.html`) ; PLAY de A en icône SVG, casque en icône SVG au lieu de l'émoji 🎧 ; LANCE B devient un PLAY rond
+  (`class="rb launch"`, texte dans un `<span>`) : bleu tant que le niveau s'en sert, dôme allumé quand on peut appuyer ;
+  vumètres en petites lampes (`<b>` autour du `<i>`) ; écran du BPM (`js/commandes.js` n'écrit plus que le nombre, « BPM »
+  vient du CSS, « – – – » quand la platine ne joue pas). Disposition : lettre de la platine dans le coin, écran du BPM
+  au-dessus du tempo, CUE au-dessus de PLAY et les pads à côté (en miroir sur B), au set CUE et PLAY côte à côte. Une
+  commande éteinte perd sa lumière de couleur (opacité .42, plus de gris). **Hauteur** : 392 px au lieu de 460 ; en
+  1366 × 768 pendant une partie, LANCE B, les pads et le crossfader se voient (avant, pads et crossfader étaient sous le bas
+  de l'écran ; au set, LANCE B aussi). Sur un écran de moins de 820 px de haut, le nom « LANCE B » sous le bouton se cache
+  pendant la partie (la bulle de Vini le dit), et le bouton garde son nom (`aria-label="LANCE B"`). **Gardien du
+  17 nov. : feu rouge** (819 tests verts ; l'anneau blanc du geste à faire, une ombre de 3 px, était caché par la bague des
+  boutons ronds autour de LANCE B ; plus l'onglet des pads au contour orange ou bleu, la molette tenue pas blanche, le nom de
+  LANCE B perdu pour un lecteur d'écran). **Tout corrigé** : l'anneau du geste est un `outline` au-dessus de tout dans la
+  table (`.table3 [data-g].focus`, décalé de 8 px autour des boutons ronds) ; 88 tests de la table verts ensuite. **Second passage du
+  gardien : feu orange, aucun blocage** (819 tests sur 819 ; restent deux détails d'apparence : la pastille « B » sur le coin
+  de l'anneau de la molette de B, et le CUE casque sans relief quand il porte l'anneau, déjà le cas avant). **Reste** : un essai avec la vraie FLX4 conseillé (points 4, 23, 32 et 37 de `tests/CHECKLIST-FLX4.md`),
+  accord pour publier.
+- **Question du 17 nov. (pas encore un lot)** : « pourquoi les pages ne prennent pas toute la largeur ? » (écran de
+  1920 px). Raison : `.wrap.app > :not(.top){max-width:1012px}` et l'en-tête à 1280 px (lot 61, pensé pour 1366 px). Piste
+  proposée : une mise en page grand écran page par page (pas juste enlever la limite), avec une maquette en 1920 × 1080.
 - **Lot 72 « Ma musique » (16 nov. 2026, soir) : PUBLIÉ le 16 nov.** (« Oui, publie », après le gardien orange sans
   blocage ; `origin/main` = `7f1f9b1`, avance rapide depuis `c1a794b`, puis cette note). Production vérifiée (Umami bloqué) :
   onglet « Ma musique » (`#musique`), offre gratuite annoncée, collection d'exemple, fiche, bouton retour, `#vrai`, CGV du

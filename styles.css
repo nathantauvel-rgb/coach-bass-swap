@@ -121,6 +121,29 @@
   --tu-ok-trait:rgba(53,208,127,.5);
   --tu-zone:#0D1018;
   --tu-rail:#07090E;
+  /* Lot 74 : la table en relief (maquette validée le 17 nov. 2026). La lumière vient d'en haut : bords hauts clairs, bords
+     bas sombres, ce qui dépasse fait une ombre dessous, ce qui est creusé a une ombre dedans. */
+  --t-face-1:#20263A; --t-face-2:#131722; --t-face-haut:#353C52; --t-face-bas:#070910;
+  --t-cote:#0B0D13; --t-cote-bord:#1E2333; --t-creux:#080A0F; --t-noir:#05070A; --t-sillon:rgba(0,0,0,.55);
+  --t-lumiere:rgba(255,255,255,.07); --t-lumiere-forte:rgba(255,255,255,.12); --t-lumiere-douce:rgba(255,255,255,.035);
+  --t-ombre:rgba(0,0,0,.6); --t-ombre-douce:rgba(0,0,0,.45); --t-ombre-forte:rgba(0,0,0,.9);
+  --t-gomme-1:#323A4F; --t-gomme-2:#1A1F2C; --t-gomme-3:#141823; --t-gomme-bord:#07090D; --t-gomme-cote:#0B0D13; --t-anneau:#343B50;
+  --t-btn-1:#2C3346; --t-btn-2:#1D2231; --t-btn-survol-1:#343C52; --t-btn-survol-2:#222839;
+  --t-pad-1:#363E54; --t-pad-2:#232939; --t-pad-cote:#0E1118;
+  --t-grad:#3A4157; --t-metal-1:#F6F7FA; --t-metal-2:#C9CED7; --t-metal-3:#9EA5B2; --t-metal-cote:#5C6370; --t-metal-bord:#20242C;
+  --t-metal-reflet:#FFFFFF; --t-metal-strie:rgba(0,0,0,.09);
+  --t-ecran:#06080B; --t-ecran-2:#0F121A; --t-vitre:rgba(255,255,255,.05); --t-serig:#8B92A5; --t-eteint:#3B4256;
+  --t-plateau-1:#232940; --t-plateau-2:#141826; --t-plateau-sillon:rgba(255,255,255,.035); --t-plateau-reflet:rgba(255,255,255,.08);
+  --t-jante-1:#596075; --t-jante-2:#2A2F3F; --t-jante-3:#4D5469; --t-jante-4:#262B3A; --t-jante-5:#4A5166; --t-jante-6:#22273A; --t-jante-7:#555C71;
+  --t-jog-cote:#12151D; --t-ecran-bord:#07090D;
+  --t-mix-1:#161A26; --t-mix-2:#0D1017; --t-mix-haut:#2C3246;
+  --t-vis-1:#9AA1B1; --t-vis-2:#4A5166; --t-vis-3:#151925;
+  --t-jupe-1:#4B5369; --t-jupe-2:#2A3043; --t-jupe-3:#141824; --t-tete-1:#454D64; --t-tete-2:#262C3E; --t-tete-3:#171B27; --t-tete-bord:rgba(255,255,255,.14);
+  --t-vu-eteint:#1E2434;
+  --t-a-1:#FFB08F; --t-a-3:#E0602E; --t-a-cote:#8A3814;
+  --t-b-1:#9FD3FF; --t-b-2:#7CC4FF; --t-b-3:#2B8EE6; --t-b-cote:#1D5F99; --t-b-anneau:#6CBCFF;
+  --t-casque-1:#FFC552; --t-casque-cote:#8A5A00; --t-echo-1:#E4E7EC; --t-echo-cote:#6E7480;
+  --t-reflet-fort:rgba(255,255,255,.5); --t-reflet-moyen:rgba(255,255,255,.2);
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -3391,4 +3414,217 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
   .mm-importer{max-width:100%;white-space:normal;text-align:left;padding-left:20px;padding-right:20px}
   .mm-ap-p{flex-wrap:wrap}
   .mm-ap-tech{white-space:normal;flex-basis:100%;padding-left:62px}
+}
+
+/* ---------- Lot 74 : la table en relief (maquette validée par l'utilisateur le 17 nov. 2026) ----------
+   « Cette partie fait cheap », puis « un peu plus réaliste avec les contours, 3D ». Avant : trois cadres emboîtés, des molettes
+   et des potards minuscules, et les commandes inutiles du niveau en gris-beige délavé. Maintenant : un seul bloc, la façade
+   d'une vraie table éclairée d'en haut, avec son épaisseur visible dessous ; les platines gravées dans la façade ; la table de
+   mixage, une plaque vissée qui dépasse ; molettes, potards, faders, boutons et pads en relief, fentes et bacs creusés.
+   Une commande dont le niveau ne se sert pas s'éteint (sa lumière de couleur disparaît, elle s'efface un peu) au lieu de
+   devenir grise. CUE au-dessus de PLAY, les pads à côté, comme sur la FLX4 ; le PLAY de B (« LANCE B ») devient rond comme
+   celui de A et s'allume en plein quand on peut appuyer. Rien ne change dans le fonctionnement : mêmes éléments, mêmes
+   réglages, mêmes identifiants. Toutes les couleurs sont dans :root (--t-*). */
+
+/* Le corps de la table : la façade et son épaisseur */
+.table3{gap:12px;padding:10px 12px 14px;border-radius:24px;border:1px solid var(--t-face-bas);border-top-color:var(--t-face-haut);
+  background:linear-gradient(180deg,var(--t-face-1),var(--t-face-2));
+  box-shadow:inset 0 1px 0 var(--t-lumiere-forte),inset 0 -2px 0 var(--t-ombre-douce),
+    0 9px 0 var(--t-cote),0 9px 0 1px var(--t-cote-bord),0 26px 36px var(--t-ombre)}
+.deck:has(.table3){padding-bottom:10px}
+.kdefs{position:absolute;width:0;height:0;overflow:hidden}
+.kj1{stop-color:var(--t-jupe-1)} .kj2{stop-color:var(--t-jupe-2)} .kj3{stop-color:var(--t-jupe-3)}
+.kt1{stop-color:var(--t-tete-1)} .kt2{stop-color:var(--t-tete-2)} .kt3{stop-color:var(--t-tete-3)}
+
+/* éteinte : sa lumière s'éteint, elle s'efface un peu, sans devenir grise */
+.table3 [data-g].eteint{opacity:.42;filter:none}
+
+/* Les platines : une zone gravée dans la façade (un fin sillon sombre, éclairé dessous) */
+.table3 .pl{position:relative;padding:10px 14px 12px;border-radius:18px;background:none;border:1px solid var(--t-sillon);
+  box-shadow:0 1px 0 var(--t-lumiere),inset 0 1px 0 var(--t-lumiere-douce);
+  display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto 1fr auto;grid-template-areas:"jog lcd" "jog tempo" ". ." "bas bas";
+  column-gap:12px;row-gap:8px;align-items:center}
+/* la lettre de la platine dans le coin, l'écran du BPM au-dessus du tempo (gain de hauteur : LANCE B tient dans un écran de 768 px) */
+.table3 .plB{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"lcd jog" "tempo jog" ". ." "bas bas"}
+.table3 .pl-head,.table3 .pl-mid{display:contents}
+.table3 .pltag{position:absolute;top:10px;left:14px;z-index:1}
+.table3 .plB .pltag{left:auto;right:14px}
+.table3 .pl-jog{grid-area:jog;align-self:start}
+.table3 .pl-tempo{grid-area:tempo;align-self:start}
+.table3 .pl-bas{grid-area:bas}
+.table3 .pltag{font-size:14px;box-shadow:inset 0 1px 0 var(--t-reflet-fort),inset 0 -2px 0 var(--t-ombre-douce),0 2px 3px var(--t-ombre)}
+/* l'écran du BPM : creusé, avec une vitre ; « – – – » tant que la platine ne joue pas */
+.table3 .pl-bpm{grid-area:lcd;justify-self:center;margin:0;min-width:92px;height:28px;padding:0 10px;border-radius:7px;border:1px solid var(--t-noir);
+  background:linear-gradient(180deg,var(--t-vitre),rgba(0,0,0,0) 45%),var(--t-ecran);display:flex;align-items:center;justify-content:flex-end;gap:6px;
+  font-size:15px;font-weight:800;color:var(--fg);font-variant-numeric:tabular-nums;box-shadow:inset 0 2px 6px var(--t-ombre-forte),0 1px 0 var(--t-lumiere)}
+.table3 .pl-bpm:empty::before{content:"– – –";color:var(--t-eteint)}
+.table3 .pl-bpm::after{content:"BPM";font-size:9px;font-weight:900;letter-spacing:.12em;color:var(--t-serig)}
+.table3 .pl-jog{gap:8px} .table3 .pl-tempo{gap:8px}
+.table3 .pl-jog .gl{font-size:10px;letter-spacing:.12em;color:var(--t-serig)}
+
+/* La molette : posée dans un creux, une jante de métal sombre, le plateau à sillons éclairé en haut à gauche, l'écran du
+   centre creusé et son anneau, qui s'allume à la couleur de la platine */
+.table3 .jog{--led:var(--t-anneau);width:148px;height:148px;margin:10px;border:9px solid transparent;
+  background:radial-gradient(circle at 34% 24%,var(--t-plateau-reflet),rgba(0,0,0,0) 48%) padding-box,
+    repeating-radial-gradient(circle,var(--t-plateau-sillon) 0 1px,rgba(0,0,0,0) 1px 4px) padding-box,
+    radial-gradient(circle,var(--t-plateau-1) 0,var(--t-plateau-2) 78%) padding-box,
+    conic-gradient(var(--t-jante-1),var(--t-jante-2) 13%,var(--t-jante-3) 26%,var(--t-jante-4) 40%,var(--t-jante-5) 55%,var(--t-jante-6) 71%,var(--t-jante-7) 86%,var(--t-jante-1)) border-box;
+  box-shadow:inset 0 0 0 1px var(--t-ombre),inset 0 3px 6px var(--t-sillon),
+    0 0 0 1px var(--t-noir),0 5px 0 0 var(--t-jog-cote),0 5px 0 1px var(--t-noir),
+    0 0 0 9px var(--t-creux),0 0 0 10px var(--t-vitre),0 12px 18px var(--t-sillon)}
+.table3 .jog::before{content:"";position:absolute;inset:30%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 50% 30%,var(--t-ecran-2),var(--t-ecran) 70%);
+  box-shadow:0 0 0 3px var(--led),0 0 0 5px var(--t-ecran-bord),0 0 0 6px var(--t-lumiere),inset 0 3px 8px var(--t-ombre-forte)}
+.table3 .jog .mk::before{top:5px;width:4px;height:20px;margin-left:-2px;border-radius:2px;background:var(--fg);box-shadow:0 1px 2px var(--t-ombre)}
+.table3 .plA [data-g]:not(.eteint) .jog{--led:var(--a)} .table3 .plB [data-g]:not(.eteint) .jog{--led:var(--b)}
+.table3 .pl .jog,.table3 .pl .jog.tenu{border-color:transparent}
+.table3 .pl [data-g] .jog.tenu{--led:var(--fg)}   /* tenue à la souris : l'anneau devient blanc (plus fort que la couleur de la platine) */
+
+/* Les faders : une fente creusée, des graduations imprimées, un bouton de métal strié qui dépasse (dessus clair, côté sombre) */
+.table3 .fader::before{content:"";position:absolute;top:10px;bottom:10px;left:2px;right:2px;pointer-events:none;
+  background:linear-gradient(var(--t-grad) 0 1px,rgba(0,0,0,0) 1px) left top/8px 10% repeat-y,
+             linear-gradient(var(--t-grad) 0 1px,rgba(0,0,0,0) 1px) right top/8px 10% repeat-y}
+.table3 .fader .slot{top:8px;bottom:8px;width:10px;margin-left:-5px;border-radius:5px;background:var(--t-creux);
+  box-shadow:inset 0 2px 3px var(--t-ombre-forte),inset 0 0 0 1px var(--t-ombre),0 1px 0 var(--t-lumiere)}
+.table3 .fader .fill{bottom:10px;width:4px;margin-left:-2px;border-radius:2px;height:calc(var(--v) * (100% - 20px));opacity:.85;background:var(--t-eteint)}
+.table3 [data-g]:not(.eteint) .chanA .fader .fill,.table3 .chanA[data-g]:not(.eteint) .fader .fill{background:var(--a)}
+.table3 [data-g]:not(.eteint) .chanB .fader .fill,.table3 .chanB[data-g]:not(.eteint) .fader .fill{background:var(--b)}
+.table3 .fader .cap2{left:50%;right:auto;width:34px;margin-left:-17px;height:19px;border-radius:4px;bottom:calc(var(--v) * (100% - 22px) + 2px);
+  background:repeating-linear-gradient(180deg,var(--t-metal-strie) 0 1px,rgba(0,0,0,0) 1px 3px),
+    linear-gradient(180deg,var(--t-metal-1),var(--t-metal-2) 55%,var(--t-metal-3));
+  box-shadow:inset 0 1px 0 var(--t-metal-reflet),0 3px 0 var(--t-metal-cote),0 3px 0 1px var(--t-metal-bord),0 8px 10px var(--t-ombre)}
+.table3 .fader .cap2::after{left:4px;right:4px;top:50%;height:2px;margin-top:-1px;background:var(--ink)}
+.table3 .fader.tempo{width:40px;height:124px}
+.table3 .fader.tempo .slot::after{left:-14px;right:-14px;margin-top:-1px;background:var(--t-serig);border-radius:1px}
+.table3 .tpct{font-variant-numeric:tabular-nums}
+
+/* Le bas de la platine : CUE au-dessus de PLAY, les pads à côté (en miroir sur B) */
+.table3 .pl-bas{flex-direction:row;align-items:flex-end;gap:18px}
+.table3 .plB .pl-pads{order:0}
+.table3 .pl-tr{flex-direction:column;gap:12px;padding:0 4px 4px}
+.table3 #gPlay{margin:0;padding:0;border-radius:50%}
+/* les gros boutons ronds : un dôme de gomme qui dépasse de sa bague ; l'anneau s'allume à la couleur de la platine */
+.table3 .rb{--ring:var(--t-anneau);--txt:var(--t-serig);position:relative;width:48px;height:48px;border-radius:50%;border:2px solid var(--ring);
+  background:radial-gradient(circle at 50% 26%,var(--t-gomme-1),var(--t-gomme-2) 66%,var(--t-gomme-3));color:var(--txt);
+  font-size:12px;letter-spacing:.05em;display:grid;place-items:center;padding:0;transition:transform .06s,box-shadow .06s;
+  box-shadow:inset 0 1px 0 var(--t-lumiere-forte),inset 0 -3px 5px var(--t-sillon),
+    0 4px 0 var(--t-gomme-cote),0 4px 0 2px var(--t-noir),0 0 0 5px var(--t-creux),0 0 0 6px var(--t-vitre),0 9px 12px var(--t-ombre-douce)}
+.table3 .rb:active:not(:disabled){transform:translateY(3px);
+  box-shadow:inset 0 1px 0 var(--t-lumiere),inset 0 -2px 4px var(--t-sillon),0 1px 0 var(--t-gomme-cote),0 1px 0 2px var(--t-noir),0 0 0 5px var(--t-creux),0 0 0 6px var(--t-vitre)}
+.table3 .rb svg{width:24px;height:14px}
+.table3 .plA [data-g]:not(.eteint) .rb,.table3 .plA .rb[data-g]:not(.eteint){--ring:var(--a);--txt:var(--a)}
+.table3 .plB [data-g]:not(.eteint) .rb,.table3 .plB .rb[data-g]:not(.eteint){--ring:var(--b);--txt:var(--b)}
+/* LANCE B (le PLAY de B) : bleu tant que le niveau s'en sert, le dôme s'allume en plein quand on peut appuyer ; son nom dessous */
+.table3 .launch{font:inherit;font-weight:900;opacity:1;cursor:pointer}
+.table3 .launch svg{width:20px;height:20px}
+.table3 .launch span{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:12px;line-height:14px;font-size:11px;font-weight:900;letter-spacing:.08em;color:var(--txt);white-space:nowrap}
+.table3 .launch:disabled{opacity:1;cursor:default}
+.table3 #gPlay:not(.eteint) .launch:not(:disabled){--ring:var(--t-b-anneau);color:var(--ink);
+  background:radial-gradient(circle at 50% 26%,var(--t-b-2),var(--b) 60%,var(--t-b-3));
+  box-shadow:inset 0 1px 0 var(--t-reflet-fort),inset 0 -3px 5px var(--t-ombre-douce),
+    0 4px 0 var(--t-b-cote),0 4px 0 2px var(--t-noir),0 0 0 5px var(--t-creux),0 0 0 6px var(--t-vitre),0 9px 12px var(--t-ombre-douce)}
+.table3 #gPlay:not(.eteint) .launch:not(:disabled) span{color:var(--b)}
+.table3 #gPlay:not(.eteint) .launch:active:not(:disabled){box-shadow:inset 0 1px 0 var(--t-reflet-fort),0 1px 0 var(--t-b-cote),0 1px 0 2px var(--t-noir),0 0 0 5px var(--t-creux)}
+
+/* Les petits boutons rectangulaires (modes des pads, ECHO, CUE casque) : en relief, enfoncés quand ils sont choisis */
+.table3 :is(.ptabs button,.echo,.hcue){border:1px solid var(--t-gomme-bord);background:linear-gradient(180deg,var(--t-btn-1),var(--t-btn-2));color:var(--t-serig);
+  font-weight:900;transition:transform .06s,box-shadow .06s;
+  box-shadow:inset 0 1px 0 var(--t-lumiere-forte),0 3px 0 var(--t-gomme-cote),0 3px 0 1px var(--t-gomme-bord),0 6px 8px var(--t-ombre-douce)}
+.table3 :is(.ptabs button,.echo,.hcue):hover{background:linear-gradient(180deg,var(--t-btn-survol-1),var(--t-btn-survol-2))}
+.table3 .ptabs{gap:6px;margin:0}
+.table3 .ptabs button{height:24px;padding:0;border-radius:6px;font-size:10px;letter-spacing:.1em;display:flex;align-items:center;justify-content:center;gap:6px}
+.table3 :is(.ptabs button,.echo)::before{content:"";width:6px;height:6px;border-radius:50%;flex:none;background:var(--t-eteint);box-shadow:inset 0 1px 1px var(--t-ombre)}
+.table3 .ptabs button[aria-pressed="true"]{color:var(--fg);border-color:var(--t-gomme-bord);background:linear-gradient(180deg,var(--t-btn-1),var(--t-btn-2));transform:translateY(2px);
+  box-shadow:inset 0 1px 0 var(--t-lumiere),0 1px 0 var(--t-gomme-cote),0 1px 0 1px var(--t-gomme-bord)}
+.table3 .plA [data-g]:not(.eteint) .ptabs [aria-pressed="true"]::before{background:var(--a)}
+.table3 .plB [data-g]:not(.eteint) .ptabs [aria-pressed="true"]::before{background:var(--b)}
+/* les pads : des carrés de gomme dans un bac creusé ; un hot cue posé (ou une boucle en cours) allume le pad à la couleur de sa platine */
+.table3 .pl-pads{display:flex;flex-direction:column;gap:8px;padding:0}
+.table3 .pgrid{gap:7px;padding:6px 6px 8px;border-radius:12px;background:var(--t-creux);box-shadow:inset 0 2px 5px var(--t-ombre-forte),0 1px 0 var(--t-lumiere)}
+.table3 .pad{height:44px;border-radius:8px;border:1px solid var(--t-gomme-bord);background:radial-gradient(ellipse at 50% 20%,var(--t-pad-1),var(--t-pad-2) 70%);
+  color:var(--t-serig);font-size:14px;transition:transform .06s,box-shadow .06s;
+  box-shadow:inset 0 1px 0 var(--t-lumiere-forte),inset 0 -2px 3px var(--t-sillon),0 3px 0 var(--t-pad-cote),0 3px 0 1px var(--t-noir)}
+.table3 .pad:active{transform:translateY(2px);box-shadow:inset 0 1px 0 var(--t-lumiere),0 1px 0 var(--t-pad-cote),0 1px 0 1px var(--t-noir)}
+.table3 .plA .pad:is(.pose,.live){background:radial-gradient(ellipse at 50% 20%,var(--t-a-1),var(--a) 62%,var(--t-a-3));border-color:var(--t-gomme-bord);color:var(--ink);
+  box-shadow:inset 0 1px 0 var(--t-reflet-fort),inset 0 -2px 3px var(--t-reflet-moyen),0 3px 0 var(--t-a-cote),0 3px 0 1px var(--t-noir)}
+.table3 .plB .pad:is(.pose,.live){background:radial-gradient(ellipse at 50% 20%,var(--t-b-1),var(--b) 62%,var(--t-b-3));border-color:var(--t-gomme-bord);color:var(--ink);
+  box-shadow:inset 0 1px 0 var(--t-reflet-fort),inset 0 -2px 3px var(--t-reflet-moyen),0 3px 0 var(--t-b-cote),0 3px 0 1px var(--t-noir)}
+
+/* La table de mixage : une plaque vissée sur la façade, qui en dépasse un peu */
+.table3 .mx{position:relative;gap:6px 6px;padding:8px 12px 6px;align-content:space-between;border-radius:16px;border:1px solid var(--t-noir);border-top-color:var(--t-mix-haut);
+  background:linear-gradient(180deg,var(--t-mix-1),var(--t-mix-2));
+  box-shadow:inset 0 1px 0 var(--t-lumiere),inset 0 -1px 0 var(--t-ombre),0 4px 0 var(--t-gomme-bord),0 4px 0 1px var(--t-noir),0 12px 18px var(--t-sillon)}
+/* les quatre vis, une dans chaque coin */
+.table3 .mx::before{content:"";position:absolute;inset:7px;pointer-events:none;
+  --vis:radial-gradient(circle at 42% 36%,var(--t-vis-1) 0 1px,var(--t-vis-2) 1.6px 2.6px,var(--t-vis-3) 3.1px 3.6px,rgba(0,0,0,0) 4px);
+  background:var(--vis) left top/9px 9px no-repeat,var(--vis) right top/9px 9px no-repeat,var(--vis) left bottom/9px 9px no-repeat,var(--vis) right bottom/9px 9px no-repeat}
+.table3 .mx .echo{height:28px;padding:0 18px;border-radius:8px;font-size:11px;letter-spacing:.14em;display:flex;align-items:center;gap:8px}
+.table3 [data-g]:not(.eteint) .echo{color:var(--fg)}
+.table3 .mx .echo[aria-pressed="true"]{background:linear-gradient(180deg,var(--t-echo-1),var(--xp));color:var(--ink);transform:translateY(2px);
+  box-shadow:inset 0 1px 0 var(--t-metal-reflet),0 1px 0 var(--t-echo-cote),0 1px 0 1px var(--t-gomme-bord)}
+.table3 .mx .echo[aria-pressed="true"]::before{background:var(--ink)}
+.table3 .mx-col>*,.table3 .mx-lab>span{height:31px}
+.table3 .mx-lab>span{letter-spacing:.12em;color:var(--t-serig);padding:0 4px}
+/* les potards : une jupe crantée et une tête bombée qui dépassent (ombre dessous), l'aiguille blanche, l'arc de couleur */
+.table3 .knob svg{width:37px;height:37px;overflow:visible}
+.table3 .knob .trk{stroke:var(--t-noir);stroke-width:4}
+.table3 .knob .arc{stroke:var(--t-eteint);stroke-width:4}
+.table3 [data-g]:not(.eteint)>.chanA .knob .arc,.table3 .chanA[data-g]:not(.eteint) .knob .arc{stroke:var(--a)}
+.table3 [data-g]:not(.eteint)>.chanB .knob .arc,.table3 .chanB[data-g]:not(.eteint) .knob .arc{stroke:var(--b)}
+.table3 .knob .ombre{fill:var(--t-ombre)}
+.table3 .knob .body{fill:url(#kJupe);stroke:var(--t-noir);stroke-width:1}
+.table3 .knob .dents{fill:none;stroke:var(--t-sillon);stroke-width:2.6;stroke-dasharray:1.3 1.3}
+.table3 .knob .tete{fill:url(#kTete);stroke:var(--t-tete-bord);stroke-width:.8}
+.table3 .knob .ptr{stroke:var(--fg);stroke-width:3}
+.table3 .mx-fad{gap:10px;width:100%;padding-top:6px;border-top:1px solid var(--t-ombre);box-shadow:inset 0 1px 0 var(--t-lumiere)}
+.table3 .mx-fad .group{padding:0}
+.table3 .mx .fader{width:38px;height:84px}
+.table3 .hcue{height:26px;padding:0 8px;border-radius:6px;font-size:10px;letter-spacing:.08em;display:flex;align-items:center;gap:5px;margin-bottom:29px}
+.table3 .hcue .ico-casque{width:13px;height:13px}
+.table3 .hcue[aria-pressed="true"]{background:linear-gradient(180deg,var(--t-casque-1),var(--mid));color:var(--ink);transform:translateY(2px);
+  box-shadow:inset 0 1px 0 var(--t-reflet-fort),0 1px 0 var(--t-casque-cote),0 1px 0 1px var(--t-gomme-bord)}
+/* les vumètres : des petites lampes dans une fente */
+.table3 .vu{width:10px;height:66px;margin-bottom:9px;padding:2px;border-radius:3px;overflow:visible;background:var(--t-creux);box-shadow:inset 0 1px 3px var(--t-ombre-forte),0 1px 0 var(--t-lumiere)}
+.table3 .vu b{display:block;position:relative;width:100%;height:100%;background:var(--t-vu-eteint);overflow:hidden;
+  -webkit-mask:repeating-linear-gradient(to top,#000 0 5px,rgba(0,0,0,0) 5px 7px);mask:repeating-linear-gradient(to top,#000 0 5px,rgba(0,0,0,0) 5px 7px)}
+.table3 .vu i{background-size:100% 62px}
+.table3 .mx-bas{flex-direction:column;gap:0}
+.table3 .mx-xf{gap:3px;padding:2px 8px}
+.table3 .fader.xf{width:184px;height:28px}
+.table3 .fader.xf::before{top:0;bottom:0;left:10px;right:10px;
+  background:linear-gradient(90deg,var(--t-grad) 0 1px,rgba(0,0,0,0) 1px) left top/10% 6px repeat-x,
+             linear-gradient(90deg,var(--t-grad) 0 1px,rgba(0,0,0,0) 1px) left bottom/10% 6px repeat-x}
+.table3 .fader.xf .slot{left:8px;right:8px;top:50%;bottom:auto;width:auto;height:10px;margin:-5px 0 0}
+.table3 .fader.xf .cap2{top:2px;bottom:5px;height:auto;width:18px;margin-left:0;left:calc(var(--v) * (100% - 18px));
+  background:repeating-linear-gradient(90deg,var(--t-metal-strie) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(180deg,var(--t-metal-1),var(--t-metal-2) 55%,var(--t-metal-3))}
+.table3 .fader.xf .cap2::after{left:50%;right:auto;top:3px;bottom:3px;width:2px;height:auto;margin:0 0 0 -1px}
+.table3 .xlab{letter-spacing:.12em;color:var(--t-serig)}
+
+/* Le geste à faire pendant une partie : l'anneau blanc suit la forme de la commande */
+/* (gardien du lot 74) L'ancien anneau était une ombre de 3 px : la bague sombre des boutons ronds (6 px) passait par-dessus, et
+   l'anneau ne se voyait plus autour de LANCE B. C'est maintenant un contour (outline), toujours dessiné au-dessus, posé
+   au-delà de la bague. Un bouton rond qui porte lui-même le geste (CUE de B) garde son relief. */
+.table3 [data-g].focus{border-radius:16px;box-shadow:none;outline:3px solid var(--accent);outline-offset:4px}
+.table3 #gPlay.focus{border-radius:50%;outline-offset:8px}
+.table3 .rb[data-g].focus{border-radius:50%;outline-offset:8px;background:radial-gradient(circle at 50% 26%,var(--t-gomme-1),var(--t-gomme-2) 66%,var(--t-gomme-3));
+  box-shadow:inset 0 1px 0 var(--t-lumiere-forte),inset 0 -3px 5px var(--t-sillon),
+    0 4px 0 var(--t-gomme-cote),0 4px 0 2px var(--t-noir),0 0 0 5px var(--t-creux),0 0 0 6px var(--t-vitre),0 9px 12px var(--t-ombre-douce)}
+/* écran peu haut (PC portable 1366 × 768), pendant la partie : LANCE B est tout en bas de l'écran, son nom dessous serait coupé ;
+   la bulle de Vini le dit déjà (« lance B (PLAY de droite) ») */
+@media (max-height:820px){ .stage.joue .table3 .launch span{visibility:hidden} }
+
+/* Mode set (chapitre 7) : sans les pads, la platine est moins haute ; la molette se resserre pour que tout tienne sous la piste */
+.stage.estset .table3 .jog{width:124px;height:124px}
+.stage.estset .table3 .fader.tempo{height:104px}
+/* au set, pas de pads : CUE et PLAY côte à côte, au milieu de la platine (LANCE B remonte et se voit sur un écran de 768 px) */
+.stage.estset .table3 .pl-bas{justify-content:center}
+.stage.estset .table3 .pl-tr{flex-direction:row;gap:22px}
+/* Téléphone et petite fenêtre : une colonne ; la molette un peu plus petite */
+@media (max-width:1039px){
+  .table3 .jog{width:128px;height:128px}
+  .table3 .fader.tempo{height:110px}
+  .table3 .pl{padding:10px 12px 12px}
+  .table3 .pl-bas{gap:14px;justify-content:center}
+  .table3 .mx-col>*{height:auto}
+  .table3 .pl-bpm:empty{display:none}
 }

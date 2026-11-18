@@ -58,7 +58,7 @@ function tableAnime(){
     const vu = document.querySelector(`#vu${k} i`);
     if (vu && d.an){ d.an.getFloatTimeDomainData(vuBuf); let m = 0; for (let i = 0; i < vuBuf.length; i++) m = Math.max(m, Math.abs(vuBuf[i]));
       vu.style.height = Math.min(100, Math.round(m * 110)) + '%'; }
-    const bpm = $('bpm' + k); if (bpm){ const b = d.joue && d.per ? 60 / d.per * d.rate : null; bpm.textContent = b ? b.toFixed(1).replace('.', ',') + ' BPM' : ''; }
+    const bpm = $('bpm' + k); if (bpm){ const b = d.joue && d.per ? 60 / d.per * d.rate : null; bpm.textContent = b ? b.toFixed(1).replace('.', ',') : ''; }   // « BPM » est écrit par styles.css (lot 74 : l'écran du BPM)
   }
 }
 
