@@ -32,8 +32,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 75 « Le grand écran » (17 nov. 2026, nuit) : FAIT, NON PUBLIÉ, rien de commité. Attend l'accord de l'utilisateur
-  pour publier** (« Oui, termine-le » le 18 nov. = finir tests et gardien, pas publier). **Le 18-19 nov.** : suite complète
+- **Lot 75 « Le grand écran » (17 nov. 2026, nuit) : PUBLIÉ le 19 nov.** (« Oui, publie », après le second gardien ;
+  `origin/main` = `99da6f5`, avance rapide depuis `4946b84`, puis cette note). Production vérifiée (Umami bloqué) : sur
+  djingood.fr en 1920 × 913, page de 1600 px, accueil en deux colonnes, table des niveaux à ×1,2, bulle de Vini entière,
+  aucune erreur ; en 1366 × 768, pages de 1012 px, table à ×1, comme avant. **Reste** : rien d'obligatoire ; à son
+  prochain passage sur son écran 1920, lui demander si la table agrandie se manie bien à la souris et avec la FLX4.
+  (« Oui, termine-le » le 18 nov. = finir tests et gardien.) **Le 18-19 nov.** : suite complète
   sur la version fusionnée, 838 tests sur 838 ; deux retouches de l'accueil : (a) point 9 du bloc, à toutes les tailles, la
   bulle de Vini ne passe plus sous son disque (défaut en ligne depuis le lot 62, « Prêt pou… » coupé, vu aussi en 1366 sur
   la version en ligne) : écart de 54 px dès 1100 px de large, 30 px sur téléphone, et entre les deux l'écart d'avant avec la
@@ -45,8 +49,6 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `tests/grand-ecran.spec.js` a maintenant 23 tests. Captures finales : `captures/lot75/final/` et `captures/lot75/planche.png`
   (envoyée à l'utilisateur) ; script `captures75.js` dans le dossier temporaire de la session du 18 nov. Remarque laissée :
   en 1920 px, l'accueil sans quêtes (« Changer de parcours ») garde un grand vide entre le texte et Vini (voulu par un test).
-  Pour publier : ajouter un par un `styles.css`, `tests/grand-ecran.spec.js`, `CLAUDE.md` (jamais `git add .`), vérifier
-  qu'`origin/main` vaut toujours `4946b84`.
   Ce qui suit est l'entrée d'avant, gardée telle quelle. Question de l'utilisateur
   (écran de 1920 px) : « pourquoi les pages ne prennent pas toute la largeur ? très dérangeant ». Maquette faite sur le vrai
   site (`captures/maquette-grand-ecran/` du dossier principal, hors Git : `grand-ecran.css`, `planche.png`), validée
