@@ -3628,3 +3628,74 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
   .table3 .mx-col>*{height:auto}
   .table3 .pl-bpm:empty{display:none}
 }
+
+/* ---------- Lot 75 : le grand écran (maquette validée par l'utilisateur le 17 nov. 2026, « Oui, ce sera le 75 ») ----------
+   « Pourquoi les pages ne prennent pas toute la largeur ? Ça c'est très dérangeant » (écran de 1920 px). Depuis le lot 61, les
+   pages tenaient dans 1012 px et l'en-tête dans 1280 px, pensés pour un portable de 1366 px. Au-dessus de 1600 px de large
+   SEULEMENT (un portable de 1366 ou 1536 px ne voit rien changer) : la colonne passe à 1600 px, l'en-tête et les pages ont la
+   même largeur, et chaque page range ses blocs côte à côte au lieu de les empiler. Maquette :
+   captures/maquette-grand-ecran/ du dossier principal (hors Git). */
+@media (min-width:1600px){
+  /* 1. La colonne : en-tête et pages alignés, 1600 px de contenu au plus */
+  .wrap.app{max-width:1648px}
+  .wrap.app > :not(.top){max-width:none}
+
+  /* 2. Accueil : « Ta prochaine étape » à gauche, « Quêtes du jour » à droite (quand il y en a), le parcours dessous */
+  /* 1,6 pour 1 : avec la bulle de Vini écartée de son disque (point 9), c'est ce qu'il faut pour que le bouton de l'étape tienne
+     sur une ligne à 1920 px, même le plus long (« Chapitre 7, niveau 1 : Premier enchaînement ») ; les quêtes gardent ~600 px */
+  #vHome:has(> #homeQuetes:not([hidden])){display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:22px;align-items:stretch}
+  #vHome:has(> #homeQuetes:not([hidden])) > *{grid-column:1 / -1}
+  #vHome:has(> #homeQuetes:not([hidden])) > .hero{grid-column:1}
+  #vHome > #homeQuetes:not([hidden]){grid-column:2;display:flex;flex-direction:column}
+  #vHome > #homeQuetes .qt-list{flex:1;justify-content:space-evenly}
+
+  /* 3. Comprendre : les sept leçons sur une ligne */
+  .cpchemin{grid-template-columns:repeat(7,minmax(0,1fr))}
+
+  /* 4. Ma table : le schéma à gauche, l'explication de la commande à droite */
+  #vTable .tgrid{grid-template-columns:minmax(0,1fr) 380px;align-items:start}
+  #vTable .tpanel{position:sticky;top:16px}
+
+  /* 5. Mes progrès : à gauche le niveau, le jour et le prochain badge ; à droite les badges ; les chapitres dessous */
+  #vProgres .pg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+  #vProgres .pg > :nth-child(-n+3){grid-column:1}
+  #vProgres .pg > :nth-child(4){grid-column:2;grid-row:1 / span 3;align-self:stretch}
+  #vProgres .pg > :nth-child(5){grid-column:1 / -1}
+
+  /* 6. Ma musique, la fiche d'un morceau : le morceau qui joue à gauche (il reste en vue), ce qui va bien après à droite */
+  #mmFiche:not([hidden]){display:grid;grid-template-columns:400px minmax(0,1fr);column-gap:24px;row-gap:0;align-items:start}
+  #mmFiche > *{grid-column:2}
+  #mmFiche > .mm-retour{grid-column:1 / -1;justify-self:start}
+  #mmFiche > .mm-f-carte{grid-column:1;grid-row:2 / span 40;position:sticky;top:16px;flex-direction:column;align-items:flex-start;padding:22px}
+  #mmFiche > .mm-f-carte .mm-disque.grand{align-self:center}
+  #mmFiche > .mm-f-carte .mm-f-act{align-self:stretch}
+  #mmFiche > .mm-f-titre{margin-top:0}
+
+  /* 7. S'entraîner : le titre à gauche, le défi du jour et les entraînements à droite */
+  #vTrain > .page{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);grid-template-rows:auto auto auto auto 1fr auto;column-gap:36px;align-items:start}
+  #vTrain > .page > *{grid-column:1}
+  #vTrain > .page > .cards{grid-column:2;grid-row:1 / span 5;margin-top:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+  #vTrain > .page > .cards > .tr-defi{grid-column:1 / -1}
+  #vTrain > .page > .page-note{grid-column:1 / -1;grid-row:6}
+}
+/* 8. Un niveau : la table dessinée grandit avec la page (même dessin, tout à l'échelle). Seulement sur un écran assez haut
+   pour qu'elle tienne en entier sous la piste pendant la partie (sinon LANCE B sortirait de l'écran). `zoom` : les positions
+   lues par la souris (getBoundingClientRect) suivent l'échelle, vérifié par tests/grand-ecran.spec.js.
+   Deux paliers, mesurés pendant de vraies parties avec la table du lot 74 (le pire cas : chapitre 5, niveau 1, où le compteur
+   de décalage s'ajoute au-dessus de la table) : ×1,2 dès 900 px de haut (Chrome en fenêtre normale sur un écran 1920 × 1080
+   laisse ~913 px : les pads de B finissent alors à 881 px) ; ×1,3 dès 1000 px (plein écran, ou écran plus haut). */
+@media (min-width:1600px) and (min-height:900px){
+  .deck .table3{zoom:1.2}
+}
+@media (min-width:1600px) and (min-height:1000px){
+  .deck .table3{zoom:1.3}
+}
+/* 9. Accueil, à toutes les tailles : la bulle de Vini ne passe plus sous son disque. Défaut vu sur les captures du lot 75, mais
+   présent en ligne depuis le lot 62 : le disque (230 px) déborde de 40 px de chaque côté de Vini (150 px), et l'écart n'était
+   que de 14 px, d'où « Prêt pou… » coupé. Sur téléphone, disque de 132 px pour un Vini de 92 px : 20 px de débord.
+   L'écart de 54 px seulement dès 1100 px de large, là où la colonne de texte a la place (gardien du 19 nov. : entre 761 et
+   ~1000 px, il serrait le texte, le bouton gagnait une ligne et la page défilait de 7 px de côté vers 761-767 px). En dessous,
+   l'écart d'avant, mais la bulle passe DEVANT le disque (z-index) : elle n'est plus jamais coupée. */
+.hero .hbuddy .bubble{z-index:1}
+@media (min-width:1100px){.hero .hbuddy{gap:54px}}
+@media (max-width:760px){.hero .hbuddy{gap:30px}}

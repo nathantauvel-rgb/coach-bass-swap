@@ -32,6 +32,44 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 75 « Le grand écran » (17 nov. 2026, nuit) : FAIT, NON PUBLIÉ, rien de commité. Attend l'accord de l'utilisateur
+  pour publier** (« Oui, termine-le » le 18 nov. = finir tests et gardien, pas publier). **Le 18-19 nov.** : suite complète
+  sur la version fusionnée, 838 tests sur 838 ; deux retouches de l'accueil : (a) point 9 du bloc, à toutes les tailles, la
+  bulle de Vini ne passe plus sous son disque (défaut en ligne depuis le lot 62, « Prêt pou… » coupé, vu aussi en 1366 sur
+  la version en ligne) : écart de 54 px dès 1100 px de large, 30 px sur téléphone, et entre les deux l'écart d'avant avec la
+  bulle DEVANT le disque (`z-index`) ; (b) accueil en deux colonnes au-dessus de 1600 px : rapport 1,6 / 1 au lieu de
+  1,3 / 1, pour que le bouton de l'étape tienne sur une ligne (le plus long : « Chapitre 7, niveau 1 : Premier
+  enchaînement »). **Second passage du gardien (19 nov.) : feu orange, aucun blocage** (bloc du 74 intact, table agrandie
+  vérifiée aux chapitres 1 à 7 en 1920 × 913) ; sa remarque sur la bulle (écart de 54 px qui serrait le texte et faisait
+  défiler de 7 px entre 761 et ~1000 px) est corrigée par le seuil de 1100 px, 140 tests de l'accueil relancés, verts.
+  `tests/grand-ecran.spec.js` a maintenant 23 tests. Captures finales : `captures/lot75/final/` et `captures/lot75/planche.png`
+  (envoyée à l'utilisateur) ; script `captures75.js` dans le dossier temporaire de la session du 18 nov. Remarque laissée :
+  en 1920 px, l'accueil sans quêtes (« Changer de parcours ») garde un grand vide entre le texte et Vini (voulu par un test).
+  Pour publier : ajouter un par un `styles.css`, `tests/grand-ecran.spec.js`, `CLAUDE.md` (jamais `git add .`), vérifier
+  qu'`origin/main` vaut toujours `4946b84`.
+  Ce qui suit est l'entrée d'avant, gardée telle quelle. Question de l'utilisateur
+  (écran de 1920 px) : « pourquoi les pages ne prennent pas toute la largeur ? très dérangeant ». Maquette faite sur le vrai
+  site (`captures/maquette-grand-ecran/` du dossier principal, hors Git : `grand-ecran.css`, `planche.png`), validée
+  « Oui, ce sera le 75 ». Copie `Documents\coach-dj-lot75`, branche `lot-75-grand-ecran`, partie d'`origin/main` =
+  `97cc85c`, puis **mise à jour le 18 nov. sur `origin/main` = `4946b84` (lot 74 publié)** : avance rapide, les
+  changements du 75 remis par-dessus, conflits résolus en gardant les deux blocs (74 puis 75 à la fin de `styles.css` ;
+  attention, la fusion avait perdu l'accolade qui ferme la dernière règle « téléphone » du 74, remise à la main).
+  Serveur `coach-dj-lot75` (port 8779). **Ce qui
+  change** : un bloc « Lot 75 » à la fin de `styles.css`, rien d'autre (aucun JavaScript). Au-dessus de 1600 px de large
+  seulement : `.wrap.app` à 1648 px (1600 de contenu), en-tête et pages alignés ; accueil en deux colonnes (étape + quêtes,
+  seulement quand les quêtes s'affichent) ; Comprendre sur 7 colonnes ; Ma table schéma + explication côte à côte ;
+  Mes progrès (badges à droite) ; Ma musique (le morceau qui joue à gauche, collant) ; S'entraîner (défi et cartes à
+  droite) ; et la table des niveaux agrandie en deux paliers : `zoom:1.2` dès 900 px de haut, `zoom:1.3` dès 1000 px
+  (mesuré le 18 nov. avec la table du lot 74 pendant de vraies parties ; pire cas, chapitre 5 niveau 1 : en 913 px de haut,
+  la hauteur d'une fenêtre Chrome normale sur un écran 1920 × 1080, les pads de B finissent à 881 px en ×1,2 ; en ×1,3 ils
+  dépassaient ; en 880 px de haut, même ×1,2 dépasse). Tests neufs : `tests/grand-ecran.spec.js` (15 tests : largeurs,
+  colonnes, fader et crossfader à la souris sous le zoom, LANCE B visible pendant une partie en 1920 × 1080 et en
+  1920 × 913 (chapitres 1 et 5), rien ne change en 1366 et 1536 px, pas de zoom en 1600 × 880, colonne centrée en 2560 px).
+  Captures : `captures/lot75/` de la copie (`f1920x1080-*`, `f1920x913-*` après la fusion). Avant la fusion : 832 tests sur
+  832, **gardien du 18 nov. : feu orange, aucun blocage** (sa remarque principale, le seuil de 1000 px trop haut pour une
+  fenêtre normale, est réglée par le palier à 900 px). **Reste** : toute la suite sur la version fusionnée, un second
+  passage du gardien, puis l'accord de l'utilisateur. Scripts de contrôle du gardien : `verif75.js` et `verif75b.js` dans
+  le dossier temporaire de la session du 17 nov.
 - **Lot 74 « La table en relief » (17 nov. 2026, nuit) : PUBLIÉ le 18 nov.** (« Oui, publie », après le second passage du
   gardien, feu orange sans blocage ; `origin/main` = `37cbb22`, avance rapide depuis `97cc85c`, puis cette note). Production
   vérifiée (Umami bloqué) : la nouvelle table sur djingood.fr, 392 px de haut, aucune erreur ; Journal Notion à jour. Demande : « cette
@@ -58,9 +96,9 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   table (`.table3 [data-g].focus`, décalé de 8 px autour des boutons ronds) ; 88 tests de la table verts ensuite. **Second passage du
   gardien : feu orange, aucun blocage** (819 tests sur 819 ; restent deux détails d'apparence : la pastille « B » sur le coin
   de l'anneau de la molette de B, et le CUE casque sans relief quand il porte l'anneau, déjà le cas avant). **Reste** : un essai avec la vraie FLX4 (points 4, 23, 32 et 37 de
-  `tests/CHECKLIST-FLX4.md`), pas encore fait. **Suite** : le lot 75 « Le grand écran » (copie `Documentscoach-dj-lot75`), à
+  `tests/CHECKLIST-FLX4.md`), pas encore fait. **Suite** : le lot 75 « Le grand écran » (copie `Documents\coach-dj-lot75`), à
   fusionner par-dessus.
-- **Question du 17 nov. (devenue le lot 75, copie `Documentscoach-dj-lot75`)** : « pourquoi les pages ne prennent pas toute la largeur ? » (écran de
+- **Question du 17 nov. (devenue le lot 75, copie `Documents\coach-dj-lot75`)** : « pourquoi les pages ne prennent pas toute la largeur ? » (écran de
   1920 px). Raison : `.wrap.app > :not(.top){max-width:1012px}` et l'en-tête à 1280 px (lot 61, pensé pour 1366 px). Piste
   proposée : une mise en page grand écran page par page (pas juste enlever la limite), avec une maquette en 1920 × 1080.
 - **Lot 72 « Ma musique » (16 nov. 2026, soir) : PUBLIÉ le 16 nov.** (« Oui, publie », après le gardien orange sans
