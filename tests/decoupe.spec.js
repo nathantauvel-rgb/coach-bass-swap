@@ -2,7 +2,7 @@
 // du jour (sur ces 3 niveaux), un tuto. Tout le reste demande DJingood Pro. Tant que PRO_PRET est faux, rien ne change pour
 // les joueurs : les tests allument Pro avec window.DJINGOOD_PRO.
 const { test, expect } = require('@playwright/test');
-const { ouvrir } = require('./outils');
+const { ouvrir, menuNiveaux } = require('./outils');
 const { FAUX, dejaConnecte } = require('./faux-firebase');
 
 const S = o => JSON.stringify(o);
@@ -51,17 +51,21 @@ test.describe('Pro allumé, sans abonnement', () => {
     await expect(page.locator('#map .node.etat-pro .etq').first()).toHaveText('Pro');
     await expect(page.locator('.chapters .chap.pro')).toHaveCount(6);
     await expect(page.locator('.chapters .chap.pro').first()).toContainText('7 niveaux');
-    await expect(page.locator('#proNiv')).toBeVisible();
-    await expect(page.locator('#proNivTxt')).toContainText('Les 40 autres');
-    await expect(page.locator('#cpBlocGratuit')).toBeVisible();
+    // lot 76 : plus de bandeau sous les niveaux ; Pro est dit une fois, dans le menu « Tous les niveaux »
+    await expect(page.locator('#proNiv')).toHaveCount(0);
+    await expect(page.locator('#cpBlocGratuit')).not.toHaveAttribute('hidden', '');
+    await menuNiveaux(page);
+    await expect(page.locator('.nivmenu-pro')).toContainText('Les niveaux 4 à 7 sont dans DJingood Pro.');
     // un niveau de Pro : la fenêtre Pro dit pour quoi elle s'ouvre
     await page.locator('#map .node').nth(3).click();
     await expect(page.locator('#pro')).toBeVisible();
     await expect(page.locator('#proContexteTxt')).toHaveText("Pour jouer « L'écho out »");
     await expect(page.locator('#proNbEx')).toHaveText('40');
     await page.keyboard.press('Escape');
-    // un chapitre de Pro
+    // un chapitre de Pro : le menu montre ses niveaux, sa ligne Pro ouvre la fenêtre
+    await menuNiveaux(page);
     await page.locator('.chapters .chap.pro').nth(3).click();
+    await page.locator('.nivmenu-pro .pro-mini').click();
     await expect(page.locator('#proContexteTxt')).toHaveText('Pour ouvrir le chapitre 5 : « Le calage » (après 14 ★ au chapitre 1)');
     expect(await page.evaluate(() => chapter)).toBe(1);
     expect(err).toEqual([]);
@@ -76,14 +80,14 @@ test.describe('Pro allumé, sans abonnement', () => {
     await expect(page.locator('#pro')).toBeVisible();
   });
 
-  test('un niveau de Pro affiché : « Continuer avec Pro », pas de démo, ni partie ni fiche', async ({ page }) => {
+  // lot 76 : un niveau de Pro affiché devient une carte (#nivFin) : ni « Jouer », ni démo, ni piste, ni table
+  test('un niveau de Pro affiché : la carte de fin, pas de démo, ni partie ni fiche', async ({ page }) => {
     const err = await ouvrir(page, { stockage: TROIS, avant: PRO });
     await page.evaluate(() => selectLesson(3));
-    await expect(page.locator('#startBtn')).toHaveText('Continuer avec Pro');
-    await expect(page.locator('#watchBtn')).toBeHidden();
-    await expect(page.locator('#expertBtn')).toBeHidden();
+    await expect(page.locator('#nivFin')).toBeVisible();
+    for (const s of ['#startBtn', '#watchBtn', '#expertBtn', '#hw']) await expect(page.locator(s)).toBeHidden();
     await expect(page.locator('#hint')).toContainText('dans DJingood Pro');
-    await page.locator('#startBtn').click();
+    await page.evaluate(() => startRun(false));
     await expect(page.locator('#pro')).toBeVisible();
     expect(await page.evaluate(() => [!!run, preparing])).toEqual([false, false]);
     await page.keyboard.press('Escape');
@@ -117,7 +121,8 @@ test.describe('Pro allumé, sans abonnement', () => {
     await expect(page.locator('#rProGo')).toBeVisible();
     await expect(page.locator('#next')).toBeHidden();
     await expect(page.locator('#retry')).not.toHaveClass(/\bgo\b/);
-    await page.locator('#rProGo').click();
+    // lot 76 : « Voir tout ce qu'il y a dans Pro » ouvre la fenêtre ; le gros bouton, lui, mène tout droit au paiement
+    await page.locator('#rProVoir').click();
     await expect(page.locator('#result')).toBeHidden();
     await expect(page.locator('#proContexteTxt')).toHaveText('Tu as fini les 3 niveaux gratuits');
     // déjà réussi avant, ou raté : la carte normale
@@ -270,7 +275,7 @@ test.describe('Le mois offert aux comptes déjà créés', () => {
     await page.evaluate(() => proOuvre(''));
     await page.locator('#proGo').click();
     await expect(page.locator('#proMsg')).toContainText('réservé aux comptes créés avant');
-    await expect(page.locator('#proGo')).toContainText('Passer à Pro');
+    await expect(page.locator('#proGo')).toContainText('Commencer mes 7 jours gratuits');   // lot 76 : l'essai de tout le monde
   });
 
   test('un compte créé après la limite ne voit ni le message ni l’offre, même avec des étoiles', async ({ page }) => {
@@ -281,7 +286,7 @@ test.describe('Le mois offert aux comptes déjà créés', () => {
     await expect(page.locator('#fond')).toBeHidden();
     await page.evaluate(() => proOuvre(''));
     await expect(page.locator('#proFond')).toBeHidden();
-    await expect(page.locator('#proGo')).toContainText('Passer à Pro');
+    await expect(page.locator('#proGo')).toContainText('Commencer mes 7 jours gratuits');   // lot 76 : l'essai de tout le monde
   });
 
   test('sans compte, pas de mois offert, même avec des étoiles', async ({ page }) => {

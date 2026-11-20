@@ -50,4 +50,7 @@ async function jouer(page, bouton = '#startBtn') {
   await expect(page.locator('#startBtn')).toHaveText('Arrêter', { timeout: 60000 });
 }
 
-module.exports = { ouvrir, envoyer, miseEnPlace, sansBandeau, jouer };
+// Lot 76 : les chapitres et tous les niveaux sont dans le menu « Tous les niveaux » : l'ouvrir s'il est fermé
+async function menuNiveaux(page){ if (await page.locator('#nivMenu').isHidden()) await page.locator('#nivTous').click(); }
+
+module.exports = { ouvrir, envoyer, miseEnPlace, sansBandeau, jouer, menuNiveaux };

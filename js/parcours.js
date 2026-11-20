@@ -200,7 +200,9 @@ function renderProgres(){
   const ch = n => CHAPTERS.find(c => c.n === n).title, max1 = BASE_LESSONS.length * 3;
   // lot 68 : un chapitre de Pro (sans abonnement) le dit, et son bouton ouvre la fenêtre Pro (goLesson)
   const open = (n, bank, len) => row(`${n} · ${ch(n)}`, chapitrePro(n) ? 'Avec DJingood Pro' : `${sumStars(bank)} ★ sur ${len * 3}`, sumStars(bank) / (len * 3), () => goLesson(n, firstTodo(bank, len)));
-  if (typeof cpEtoiles === 'function') row('Comprendre', `${cpEtoiles()} ★ sur ${CP_LECONS.length * 3}`, cpEtoiles() / (CP_LECONS.length * 3), () => { location.hash = '#apprendre'; setView('apprendre'); $('cpBloc').open = true; $('cpBloc').scrollIntoView({ block: 'start' }); });
+  if (typeof cpEtoiles === 'function') row('Comprendre', `${cpEtoiles()} ★ sur ${CP_LECONS.length * 3}`, cpEtoiles() / (CP_LECONS.length * 3), () => { location.hash = '#apprendre'; setView('apprendre');
+    // lot 76 : sur ordinateur, Comprendre est dans le menu « Tous les niveaux » ; sur un téléphone, il reste au-dessus
+    if (typeof cpMobile === 'function' && cpMobile()){ $('cpBloc').open = true; $('cpBloc').scrollIntoView({ block: 'start' }); } else setTimeout(nivMenuCp, 0); });   // après le clic : sinon il remonterait jusqu'à « un clic ailleurs ferme le menu » (gardien)
   open(1, stars, BASE_LESSONS.length);
   // Le chapitre 6 n'apparaît ici que s'il est prêt (CH6_PRET dans js/hotcues.js) : sinon on l'annoncerait à un
   // joueur qui ne pourrait jamais l'ouvrir, et son bouton ne mènerait nulle part.

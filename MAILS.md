@@ -154,6 +154,13 @@ Quand les étapes 1 à 8 sont faites, dis-le-moi :
    reste dans Brevo marquée « ne plus écrire » (elle sort de la liste) ;
 3. et seulement avec ton accord, on met en ligne.
 
+## Le mail de rappel des 7 jours gratuits (lot 76)
+
+Un autre mail, qui n'a rien à voir avec la liste « Mails de Vini » : deux jours avant la fin d'un essai gratuit de Pro,
+`api/rappel.js` prévient le joueur (la date, le montant, comment arrêter). C'est un mail de service, qui parle de son
+abonnement : il part même sans la case « Vini peut m'écrire ». Il part par Brevo, avec `BREVO_CLE`, depuis
+`noreply@djingood.fr`. Réglage dans Vercel : `CRON_SECRET` (voir STRIPE.md, section 5).
+
 ## Où lire les résultats
 
 - **Umami → Events** : `compte-propose` (la carte de fin a proposé le compte), `compte-propose-clic`, `mails-question`,

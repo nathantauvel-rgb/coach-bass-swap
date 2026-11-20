@@ -8,7 +8,7 @@ const { ouvrir, sansBandeau, jouer } = require('./outils');
 const { FAUX, dejaConnecte, ouvrirCompte, rouvrirCompte, lienClique } = require('./faux-firebase');
 
 const S = o => JSON.stringify(o);
-const MAILS = 'window.DJINGO_MAILS = true;';   // les mails allumés (ML_PRET reste faux tant que Brevo n'est pas réglé)
+const MAILS = 'window.DJINGO_MAILS = true;';   // les mails allumés (ML_PRET est vrai depuis le lot 76, mais le serveur des tests l'éteint)
 const reponse = page => page.evaluate(() => { try { return JSON.parse(localStorage.getItem('coach-mails') || 'null'); } catch (e) { return null; } });
 // Une session ouverte avec un compte par e-mail dont l'adresse n'est pas encore confirmée
 const pasConfirme = `try { sessionStorage.setItem('__faux_user', JSON.stringify({ uid: 'u2', displayName: 'Léa', email: 'lea@exemple.fr', emailVerified: false })); } catch (e) {}`;
@@ -454,4 +454,12 @@ test('chaque prochaine étape que le site peut envoyer est dans la liste de la f
   await ouvrir(page);
   const noms = await page.evaluate(() => [...BASE_LESSONS.map(l => l.title), ...Object.values(STAGES).map(s => s.title)]);
   expect(noms.filter(n => !NIVEAUX.includes(n))).toEqual([]);
+});
+
+// Lot 76 : les mails de Vini sont allumés en ligne ; le serveur des tests les éteint (comme Pro). La ligne doit garder la forme
+// que tests/serveur.js reconnaît.
+test('ML_PRET est allumé dans js/mails.js, et le serveur des tests l’éteint', async ({ request }) => {
+  const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'js', 'mails.js'), 'utf8');
+  expect(src).toMatch(/const ML_PRET = true;/);
+  expect(await (await request.get('/js/mails.js')).text()).toMatch(/const ML_PRET = false;/);
 });

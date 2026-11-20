@@ -1,6 +1,6 @@
 // Lot 48 : « Comprendre », sept petites leçons de théorie sans table, au doigt sur un téléphone.
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau } = require('./outils');
+const { ouvrir, sansBandeau, menuNiveaux } = require('./outils');
 const { FAUX } = require('./faux-firebase');
 // Lot 65 : niveau, « Ton oreille » (passée), table, temps par jour, le plan, puis le compte obligatoire
 async function questions(page) {
@@ -42,21 +42,22 @@ test.describe('Sur un ordinateur, rien n\'est imposé', () => {
     await expect(page.locator('#homeTitle')).not.toHaveText('Comprendre la musique');
     await expect(page.locator('#homeLien')).toBeHidden();
     await page.evaluate(() => { location.hash = '#apprendre'; });
-    await expect(page.locator('#cpBloc')).toBeVisible();
-    expect(await page.locator('#cpBloc').evaluate(d => d.open)).toBe(false);
-    await expect(page.locator('#cpBlocN')).toHaveText('0/21 ★');
-    await page.locator('#cpBloc summary').click();
-    await expect(page.locator('#cpChemin .cp-lbtn')).toHaveCount(7);
-    await expect(page.locator('#cpChemin .cp-lbtn b')).toHaveText(['Le temps', 'Compter jusqu’à 4', 'La vitesse', 'La phrase', 'Les parties d’un morceau', 'Grave, médium, aigu', 'La transition']);
-    await expect(page.locator('#cpChemin .cp-lbtn').nth(0)).toBeEnabled();
-    await expect(page.locator('#cpChemin .cp-lbtn').nth(1)).toBeDisabled();
+    // lot 76 : sur ordinateur, les leçons sont dans le menu « Tous les niveaux » (elles restent au-dessus sur un téléphone)
+    await expect(page.locator('#cpBloc')).toBeHidden();
+    await menuNiveaux(page);
+    await page.locator('#nivCp').click();
+    await expect(page.locator('#nivCpN')).toHaveText('0/21 ★');
+    await expect(page.locator('.nivgrille .nivcarte')).toHaveCount(7);
+    await expect(page.locator('.nivgrille .nivcarte .t')).toContainText(['Le temps', 'Compter jusqu’à 4', 'La vitesse', 'La phrase', 'Les parties d’un morceau', 'Grave, médium, aigu', 'La transition']);
+    await expect(page.locator('.nivgrille .nivcarte').nth(0)).not.toHaveClass(/ferme/);
+    await expect(page.locator('.nivgrille .nivcarte').nth(1)).toHaveClass(/ferme/);
     await expect(page.locator('#starTot')).toHaveText('0/150');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('Apprenti DJ et DJ confirmé : toutes les leçons sont ouvertes', async ({ page }) => {
     await ouvrir(page, { stockage: { 'coach-parcours': 'confirme' } });
-    await page.locator('#cpBloc summary').click();
-    for (let i = 0; i < 7; i++) await expect(page.locator('#cpChemin .cp-lbtn').nth(i)).toBeEnabled();
+    await menuNiveaux(page); await page.locator('#nivCp').click();
+    for (let i = 0; i < 7; i++) await expect(page.locator('.nivgrille .nivcarte').nth(i)).not.toHaveClass(/ferme/);
   });
 });
 

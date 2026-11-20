@@ -1,7 +1,7 @@
 // Lot 64 : la page « Apprendre » refaite : parcours linéaire (le niveau N+1 s'ouvre quand le niveau N est réussi, 2 étoiles),
 // cartes de niveau (réussi en vert, à faire en orange, verrouillé avec un cadenas), chapitres en rangée avec leur pourcentage.
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau } = require('./outils');
+const { ouvrir, sansBandeau, menuNiveaux } = require('./outils');
 const S = o => JSON.stringify(o);
 const etats = page => page.locator('.node').evaluateAll(els => els.map(e => (e.className.match(/etat-(\w+)/) || [])[1]));
 
@@ -70,10 +70,13 @@ test.describe('Le parcours linéaire', () => {
 });
 
 test.describe('Les chapitres', () => {
-  test('une rangée sur une ligne, la progression en pourcentage, un cadenas sur les chapitres fermés', async ({ page }) => {
+  // lot 76 : la rangée des chapitres est devenue une liste, dans le menu « Tous les niveaux » ; « Chapitre N · titre » est en
+  // tête de la barre
+  test('dans le menu, la progression en pourcentage, un cadenas sur les chapitres fermés', async ({ page }) => {
     await ouvrir(page, { verrou: true, stockage: { 'coach-lecons': S({ 0: 3, 1: 2, 2: 1 }) } });
+    await expect(page.locator('#chapBtn')).toBeVisible();
+    await menuNiveaux(page);
     await expect(page.locator('#chapters')).toBeVisible();
-    await expect(page.locator('#chapBtn')).toBeHidden();
     await expect(page.locator('.chap').nth(0)).toContainText('29 %');   // 6 étoiles sur 21
     await expect(page.locator('.chap').nth(1)).toHaveClass(/ferme/);
     await expect(page.locator('.chap').nth(1).locator('.cadenas')).toHaveCount(1);
@@ -85,16 +88,16 @@ test.describe('Les chapitres', () => {
     await expect(page.locator('.chap').nth(0).locator('.cv')).toHaveCount(0);
   });
 
-  test('sur téléphone : la rangée s’arrête sur le chapitre en cours, les cartes de niveau gardent leur largeur', async ({ page }) => {
+  // lot 76 : sur téléphone, les pastilles des niveaux remplissent la ligne de la barre ; le menu tient dans la largeur
+  test('sur téléphone : les 7 pastilles tiennent sur une ligne, le menu dans la largeur de l’écran', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     const erreurs = await ouvrir(page, { verrou: true, stockage: { 'coach-lecons': S({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 2 }), 'coach-chapitre': '5' } });
-    const [barre, carte, largeur] = await page.evaluate(() => {
-      const bar = $('chapters'), b = bar.getBoundingClientRect(), c = bar.querySelector('[aria-pressed="true"]').getBoundingClientRect();
-      return [[b.left, b.right], [c.left, c.right], document.querySelector('#map .node').getBoundingClientRect().width];
-    });
-    expect(carte[0]).toBeGreaterThanOrEqual(barre[0] - 1);
-    expect(carte[1]).toBeLessThanOrEqual(barre[1] + 1);
-    expect(largeur).toBeGreaterThanOrEqual(120);   // une ancienne règle les serrait à 84 px
+    const hauts = await page.locator('#map .node').evaluateAll(ns => new Set(ns.map(n => Math.round(n.getBoundingClientRect().top))).size);
+    expect(hauts).toBe(1);
+    await menuNiveaux(page);
+    const [menu, ecran] = await page.evaluate(() => [$('nivMenu').getBoundingClientRect().right, document.documentElement.clientWidth]);
+    expect(menu).toBeLessThanOrEqual(ecran);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(0);
     expect(erreurs).toEqual([]);
   });
 });

@@ -32,6 +32,72 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 76 « Le niveau d'abord » (19-20 nov. 2026) : FAIT, NON PUBLIÉ.** Demande : « trop de bordel sur la page Apprendre ».
+  Bilan annoté : `captures/audit-apprendre/` du dossier principal ; maquette validée (« beaucoup mieux rangé, beaucoup plus
+  esthétique ») : `captures/maquette-apprendre/` du dossier principal (`planche-v4.png` = la version retenue). Puis, sur la
+  conversion : « Go, laisse 7 jours gratuits avec la carte », et « oui, lance le lot 76 avec tout ce qui est compris
+  dedans » ; il veut les mails de Vini allumés (case non cochée d'avance : la loi l'interdit, expliqué). Copie
+  `Documents\coach-dj-lot76`, branche `lot-76-apprendre`, partie d'`origin/main` = `c0689e6` ; serveur `coach-dj-lot76`
+  (port 8781, **sans** `--tests` : Pro et les mails allumés, comme en ligne) ; tests sur `DJ_PORT=8782`.
+  Captures : `captures/lot76/` de la copie (script `captures76.js` dans le dossier temporaire de la session).
+  **Ce qui change :**
+  - **La barre** (`#nivHaut`, `index.html`) remplace Comprendre, la rangée des chapitres, la rangée des niveaux et le
+    bandeau `#proNiv` (supprimé, avec son code) : `#chapBtn` (« Chapitre N · titre », ouvre le menu), `#map` (les `.node`
+    deviennent des pastilles : numéro ou cadenas, nom au survol par `data-t`, `.t/.s/.etq` lus mais cachés), `#nivTous`.
+    En 1366 × 768, « Jouer » passe de 770 px à 336 px du haut, la piste tient dans l'écran.
+  - **Le menu « Tous les niveaux »** (`#nivMenu`, `nivMenu(o)`, `nivMenuRend`, `nivMenuDroite`, `nivVue`, `nivMenuCp` dans
+    `js/niveaux.js`) : à gauche `#nivCp` (Comprendre) puis `#chapters` (une ligne par chapitre ; « Avec DJingood Pro » écrit une
+    fois au-dessus des chapitres de Pro, plus d'étiquette sur chacun) ; à droite les cartes `.nivcarte` du chapitre choisi et
+    une seule ligne `.nivmenu-pro`. Un chapitre ouvert devient le chapitre en cours (le menu reste ouvert) ; un chapitre de Pro
+    montre ses niveaux sans changer de chapitre. Échap, la croix ou un clic ailleurs le ferment (`composedPath`).
+  - **Comprendre** : sur ordinateur, seulement dans le menu (`#cpBloc` caché sauf `#vLearn.cp-tel`, posé par `renderHud`
+    quand `cpMobile()`) ; « Comprendre » de Mes progrès ouvre le menu sur Comprendre (`parcours.js`).
+  - **La scène** : `stageIntoView(force)` ne fait plus défiler quand « Jouer » est déjà à l'écran (sur ordinateur) ; une partie
+    la fait toujours remonter (`setStartBtn`). Mode Expert (`#expertBtn`) est passé dans `.actionbar .opts`. La vraie musique
+    range ses titres dans « Comment faire ? » (`#lcredit`, `creditVrai` dans `js/audio.js`, classe `.stage.credit-vrai`) ; une
+    panne de la vraie musique reste affichée sous le titre.
+  - **La carte de fin** (`#nivFin`, `nivFinIci`, `nivFinRend`) : un niveau de Pro sans abonnement (`proIci`) n'est plus affiché
+    avec sa piste et sa table. « Ta première transition est faite. Bravo ! » après les 3 gratuits (sinon « … est dans
+    DJingood Pro ») ; les niveaux qui suivent ; « Rejouer » ; Comprendre ; l'offre (`proOffre`, `js/pro.js`).
+  - **7 jours gratuits, carte demandée** (`js/pro.js` : `PRO_ESSAI_JOURS`, `proSemaineDispo`, `proEssaiType`, `proOffre`,
+    `proOffresRend`, `proDemarre`, `semaineUtilisee`) : la carte de fin, la carte de résultat du niveau 3 (`#rProGo`
+    « Commencer mes 7 jours gratuits », `#rProEssai`, `#rProVoir`, carte resserrée pour que le bouton tienne en 1366 × 768)
+    et la fenêtre Pro (`#proSemaine`) le proposent. Le bouton mène tout droit au paiement (compte d'abord s'il n'y en a pas),
+    sans la grande fenêtre ; la règle du lot 68 reste (pas de paiement avant d'avoir joué). Les comptes d'avant Pro gardent
+    leur mois offert. `api/pro.js` : `payer` avec `essai: 'semaine'` → `trial_period_days: 7`, carte demandée,
+    `metadata.essai = 'semaine'` (le mois offert : `'mois-offert'`), 409 `essai-deja` pour un compte déjà abonné une fois ;
+    `etat` renvoie `essaiDispo` et `semaine`. « Mon compte » : « Essai gratuit jusqu'au … ».
+  - **Le mail de rappel** : `api/rappel.js`, lancé chaque jour à 8 h UTC par Vercel (`vercel.json`, « crons ») : les essais
+    `semaine` pas arrêtés, pas encore prévenus, qui finissent dans 20 à 60 h → un mail par Brevo (date, montant, comment
+    arrêter), puis `metadata.rappel` sur l'abonnement. C'est un mail de service (sans la case de Vini).
+  - **Les mails de Vini allumés** (`ML_PRET = true`, `js/mails.js`) ; textes : « Oui, Vini peut m'écrire », « 3 mails pour bien
+    démarrer, puis un par semaine au plus » (case, question, Mon compte, confidentialité). `tests/serveur.js --tests` les
+    éteint comme Pro (`ML_PRET_RE`) ; `tests/mails.spec.js` les allume (`DJINGO_MAILS`).
+  - `cgv.html` (« Les 7 jours gratuits », lead, accès, arrêter ; **date « 20 novembre 2026 » à remettre au jour de la mise en
+    ligne**), `confidentialite.html` (le mail de rappel, les 3 mails de bienvenue), `tests/CHECKLIST-FLX4.md` (point 41).
+  **20 nov. : il dit « Brevo c'est bon et Stripe aussi »** (puis : « oui j'ai mis BREVO_LISTE et CRON_SECRET dans vercel » : les réglages de Vercel sont faits). Demandé aussi : sur la carte de fin, ne pas montrer seulement 49,99 € à l'année (« ça peut refroidir ») → à faire après le gardien : deux choix, « Au mois · 4,99 € » coché d'office et « À l'année · 49,99 € », frise et carte de résultat au mois.
+  **20 nov. : le lot 77 « PostHog » est publié AVANT ce lot** (`origin/main` = `75526e7`). Avant de publier le 76 :
+  fusionner `origin/main` ; `confidentialite.html` se fusionne sans conflit, le seul conflit est CLAUDE.md (garder les deux
+  entrées) ; relancer toute la suite (`tests/posthog.spec.js` utilise `jouer()` de `tests/outils.js`, que ce lot change).
+  **À faire par l'utilisateur AVANT la mise en ligne** : dans Vercel, ajouter `CRON_SECRET` (une longue phrase au hasard) ;
+  dans Brevo, la liste « Mails de Vini », son numéro dans `BREVO_LISTE` (Vercel), et le scénario automatique (MAILS.md,
+  étapes 4, 6, 8 ; il dit avoir fait les 3 modèles) ; vérifier que Stripe propose Apple Pay / Google Pay. Après : un vrai essai
+  (commencer les 7 jours avec sa carte, puis annuler dans « Gérer mon abonnement »), et un mail de Vini reçu avec son compte.
+  **Tests** : `tests/niveau-dabord.spec.js` (19), `tests/rappel.spec.js` (5), 2 de plus dans `tests/pro.spec.js`, 1 dans
+  `tests/mails.spec.js` ; mis à jour : apprendre, rangement, comprendre, decoupe, pro (champs `essaiDispo` / `semaine`) ;
+  `menuNiveaux(page)` dans `tests/outils.js`. **Première suite complète : 867 sur 867.**
+  **Gardien (20 nov.) : feu rouge**, un seul blocage : Mes progrès → « Comprendre » ouvrait puis refermait le menu dans le
+  même clic (le clic remontait jusqu'à « un clic ailleurs ferme le menu »). **Corrigé** (`setTimeout(nivMenuCp, 0)` dans
+  `parcours.js`, test ajouté), avec ses autres remarques : la carte bancaire est dite (« Ta carte est demandée, mais rien n'est
+  prélevé ») sur l'offre, la carte de résultat et la fenêtre Pro ; plus de « un clic » (les CGV disent « deux clics ») : « sauf
+  si tu arrêtes avant (dans « Mon compte ») » ; un paiement qui ne s'ouvre pas depuis la carte de résultat (refermée) ouvre la
+  fenêtre Pro pour le dire (`proDitVu`) ; fenêtre de 861 à 1100 px : « Tous les niveaux » en icône seule, pastilles plus
+  serrées, nom du chapitre coupé (testé à 861, 900, 1000, 1100 px au chapitre 6) ; la frise reliée d'un point à l'autre ; le
+  rappel réessaie une fois de marquer l'abonnement ; STRIPE.md (section 5) et MAILS.md parlent de l'essai et de `CRON_SECRET`.
+  **Et la demande de l'utilisateur** : l'offre montre deux choix côte à côte, `.offre-f` « Au mois · 4,99 € » coché d'office
+  (`offreFormule = 'mois'`) et « À l'année · 49,99 € · 2 mois offerts » ; la carte de résultat dit « puis 4,99 € par mois »,
+  avec « Plutôt à l'année ? » (`#rProBascule`). La grande fenêtre Pro garde l'année d'office (interrupteur visible).
+  Captures refaites, planche `captures/lot76/planche-v2.png`. Fichiers concernés : 147 tests verts.
 - **Lot 75 « Le grand écran » (17 nov. 2026, nuit) : PUBLIÉ le 19 nov.** (« Oui, publie », après le second gardien ;
   `origin/main` = `99da6f5`, avance rapide depuis `4946b84`, puis cette note). Production vérifiée (Umami bloqué) : sur
   djingood.fr en 1920 × 913, page de 1600 px, accueil en deux colonnes, table des niveaux à ×1,2, bulle de Vini entière,
@@ -2897,7 +2963,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-tutos` (`{ vus: [identifiants] }`, les tutos vus jusqu'au bout, lot 56 ; l'ancien `vol` n'est plus écrit depuis le lot 60), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés, `{ v: 2, n, t, p, ex }` depuis le lot 72, `ex: true` = la collection d'exemple, qui ne consomme pas la fiche offerte ; ne suit pas le compte), `coach-missions` (lot 72 : `{ v: 2, total, paires: { 'clé>clé': missions faites }, ok }` ; avant, une seule paire `{ pair, done, total }`), `coach-musique` (favoris, vus récemment, fiche offerte, lot 72 ; ne suit pas le compte), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
+`coach-collection` (morceaux importés, `{ v: 2, n, t, p, ex }` depuis le lot 72, `ex: true` = la collection d'exemple, qui ne consomme pas la fiche offerte ; ne suit pas le compte), `coach-missions` (lot 72 : `{ v: 2, total, paires: { 'clé>clé': missions faites }, ok }` ; avant, une seule paire `{ pair, done, total }`), `coach-musique` (favoris, vus récemment, fiche offerte, lot 72 ; ne suit pas le compte), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe`), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert, semaine, essaiDispo }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; `semaine` = pendant les 7 jours gratuits, `essaiDispo` faux = ce compte a déjà été abonné, plus d’essai, lot 76 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester

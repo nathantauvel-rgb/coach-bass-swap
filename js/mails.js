@@ -29,7 +29,7 @@
    **ML_PRET** : tant qu'il est faux, rien des mails ne se voit (ni case, ni question, ni interrupteur), parce que
    Brevo n'est pas encore réglé (voir MAILS.md). La proposition de compte, elle, marche déjà.
    Chargé juste avant compte.js, qui appelle `mlRend`, `mlPret`, `mlChoix`, `mlEtat` et `mlQCache`. */
-const ML_PRET = false;
+const ML_PRET = true;   // lot 76 (19 nov. 2026) : allumé à la demande de l'utilisateur, une fois Brevo réglé (MAILS.md)
 const ML_KEY = 'coach-mails';                 // la réponse du joueur, suit le compte
 const ML_PROPOSE = 'coach-compte-propose';    // le dernier jour où la carte de fin a proposé le compte (reste sur cet ordinateur)
 const ML_API = '/api/mails';
@@ -157,7 +157,7 @@ function mlNon(){
 }
 
 /* ---------- Dans « Mon compte » ---------- */
-const ML_TXT = 'Un par semaine au plus : des astuces et les nouveautés. Tu peux aussi arrêter depuis n\'importe quel mail.';
+const ML_TXT = '3 mails pour bien démarrer, puis un par semaine au plus : des astuces et les nouveautés. Tu peux aussi arrêter depuis n\'importe quel mail.';
 const ML_TXT_ATTENTE = 'Presque fini : clique sur le lien que DJingood t\'a envoyé par mail pour confirmer ton adresse. Pas reçu ? Coupe puis rallume ce bouton.';
 // Appelé par cptRend : la case du formulaire de création, et l'interrupteur quand on est connecté
 function mlRend(){

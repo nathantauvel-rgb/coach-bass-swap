@@ -186,7 +186,7 @@
       <label class="cptch" id="cptChMdp"><span id="cptMdpLab">Ton mot de passe</span><span class="cptmdp"><input id="cptMdp" type="password" maxlength="100"><button type="button" id="cptOeil" aria-pressed="false">Voir</button></span></label>
       <div class="cptsousmdp"><p class="cptaide" id="cptAide"></p><button type="button" class="cptlien" id="cptOubli">Mot de passe oublié&nbsp;?</button></div>
       <button type="button" class="cptlien cptlienmail" id="cptLienBtn" hidden>Pas de mot de passe&nbsp;? Recevoir un lien de connexion</button>
-      <label class="cptaccord" id="cptAccord" hidden><input type="checkbox" id="cptMails"><span><b>Vini peut m'écrire</b><small>Des astuces pour progresser et les nouveautés de DJingood. Un mail par semaine au plus.</small></span></label>
+      <label class="cptaccord" id="cptAccord" hidden><input type="checkbox" id="cptMails"><span><b>Oui, Vini peut m'écrire</b><small>Des astuces pour progresser et les nouveautés de DJingood&nbsp;: 3 mails pour bien démarrer, puis un par semaine au plus. Tu arrêtes quand tu veux.</small></span></label>
       <button type="submit" class="rbtn go cptmain" id="cptGo">Créer mon compte</button>
       <p class="cptbas"><span id="cptBasTxt"></span> <button type="button" class="cptlien" id="cptBascule"></button></p>
     </form>
@@ -201,7 +201,7 @@
       <p class="cptsec">Réglages</p>
       <div class="cptgroupe">
         <div class="cptligne cptvol"><span class="cptligne-txt"><b id="cptVolNom">Volume du site</b><small class="volpct-txt"></small></span><input type="range" class="volcurseur" id="cptVol" min="0" max="100" step="5" aria-labelledby="cptVolNom"></div>
-        <div class="cptligne cptmails" id="cptMailsRow" hidden><span class="cptligne-txt"><b id="cptMailsNom">Les mails de Vini</b><small id="cptMailsTxt">Un par semaine au plus&nbsp;: des astuces et les nouveautés. Tu peux aussi arrêter depuis n'importe quel mail.</small></span><button type="button" class="inter" role="switch" id="cptMailsInter" aria-checked="false" aria-labelledby="cptMailsNom"></button></div>
+        <div class="cptligne cptmails" id="cptMailsRow" hidden><span class="cptligne-txt"><b id="cptMailsNom">Les mails de Vini</b><small id="cptMailsTxt">3 mails pour bien démarrer, puis un par semaine au plus&nbsp;: des astuces et les nouveautés. Tu peux aussi arrêter depuis n'importe quel mail.</small></span><button type="button" class="inter" role="switch" id="cptMailsInter" aria-checked="false" aria-labelledby="cptMailsNom"></button></div>
       </div>
       <div class="cptpied"><button type="button" class="cptsortir" id="cptOut">Se déconnecter</button></div>
     </div>
@@ -230,6 +230,7 @@
       <p class="pro-prix"><b id="proPrix">49,99 €</b><span id="proPar">/ an</span></p>
       <p class="pro-prix-detail" id="proDetail"></p>
       <p class="pro-fond" id="proFond" hidden><b>Ton premier mois est offert</b>, sans carte bancaire : merci d’avoir été là avant Pro. Ensuite, ce prix, seulement si tu continues.</p>
+      <p class="pro-semaine" id="proSemaine" hidden><b>7 jours gratuits</b>, puis ce prix. Ta carte est demandée, mais rien n’est prélevé avant le 7<sup>e</sup> jour&nbsp;; Vini t’envoie un mail 2 jours avant la fin de l’essai. Tu arrêtes quand tu veux, dans «&nbsp;Mon compte&nbsp;».</p>
       <div class="pro-essai" id="proEssai" hidden><b>D’abord, essaie avec ta table</b><p id="proEssaiTxt"></p><button type="button" class="pro-essai-go" id="proEssaiGo">Jouer le niveau 1 (gratuit)</button></div>
       <button type="button" class="pro-go" id="proGo">Passer à Pro<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       <button type="button" class="pro-lien pro-quandmeme" id="proQuandMeme" hidden>Passer à Pro quand même</button>
@@ -284,7 +285,7 @@
       <span class="cptvini" id="mlVini" aria-hidden="true"></span>
       <span><span class="lnum">Une petite question</span><h2 id="mlTitre" tabindex="-1">Je peux t'écrire&nbsp;?</h2></span>
     </div>
-    <p class="mltexte">Un mail par semaine au plus&nbsp;: des astuces pour progresser et les nouveautés de DJingood.</p>
+    <p class="mltexte">3 mails pour bien démarrer, puis un par semaine au plus&nbsp;: des astuces pour progresser et les nouveautés de DJingood.</p>
     <div class="cptpas"><button type="button" class="rbtn go cptmain" id="mlOui">Oui, écris-moi</button><button type="button" class="cptlien" id="mlNon">Non merci</button></div>
     <p class="qwhy" id="mlMsg" role="status" hidden></p>
     <p class="avsmall">Tu peux changer d'avis quand tu veux dans «&nbsp;Mon compte&nbsp;».</p>
@@ -572,22 +573,49 @@
   <div class="view" id="vLearn" hidden>
   <details class="cpbloc" id="cpBloc"><summary><span class="cpb-t"><b>Comprendre</b> · sans table</span><span class="pro-tag gratuit" id="cpBlocGratuit" hidden>Gratuit</span><span class="cpb-n" id="cpBlocN">0/21 ★</span></summary>
     <p class="cpb-sub">7 petites leçons pour entendre ce que fait un DJ. Juste ton doigt et le son.</p><ol class="cpchemin" id="cpChemin"></ol></details>
-  <div class="chapsel"><button type="button" class="chapbtn" id="chapBtn" aria-expanded="false" aria-controls="chapters">Chapitre 1</button><nav class="chapters" id="chapters" aria-label="Chapitres"></nav></div>
-
-  <nav class="map" id="map" aria-label="Niveaux"><span class="prog" id="mapProg" style="width:0"></span></nav>
-  <div class="pro-bandeau pro-niv" id="proNiv" hidden><img src="img/vini-logo.svg" alt=""><p><span id="proNivTitre">Les 3 premiers niveaux sont gratuits.</span><small id="proNivTxt"></small></p><button type="button" class="pro-mini" id="proNivBtn">Découvrir Pro</button></div>
+  <!-- Lot 76 « Le niveau d'abord » : une barre fine (le chapitre, ses niveaux en pastilles, « Tous les niveaux ») à la place
+       de Comprendre, de la rangée des chapitres, de la rangée des niveaux et du bandeau Pro. Le reste est dans le menu
+       « Tous les niveaux », qui s'ouvre sous la barre, comme le menu d'un site. Sur un téléphone, Comprendre reste au-dessus. -->
+  <div class="nivhaut" id="nivHaut">
+    <div class="nivbarre">
+      <button type="button" class="chapbtn" id="chapBtn" aria-expanded="false" aria-controls="nivMenu"><span class="cn">Chapitre 1</span><span class="sep"> · </span><strong>Les bases</strong></button>
+      <nav class="map" id="map" aria-label="Niveaux du chapitre"><span class="prog" id="mapProg" style="width:0"></span></nav>
+      <button type="button" class="nivtous" id="nivTous" aria-expanded="false" aria-controls="nivMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg><span class="nivtous-txt">Tous les niveaux</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    </div>
+    <div class="nivmenu" id="nivMenu" hidden>
+      <div class="nivmenu-g">
+        <p class="nivmenu-gt">Sans table</p>
+        <button type="button" class="nivmenu-ch" id="nivCp" aria-pressed="false"><span class="n"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></svg></span><span class="nom">Comprendre<small>Gratuit, juste le son</small></span><span class="d" id="nivCpN">0/21 ★</span></button>
+        <p class="nivmenu-gt">Avec ta table</p>
+        <nav class="chapters" id="chapters" aria-label="Chapitres"></nav>
+      </div>
+      <div class="nivmenu-d" id="nivMenuD"></div>
+      <button type="button" class="nivmenu-x" id="nivMenuX" aria-label="Fermer">×</button>
+    </div>
+  </div>
 
   <div class="pbanner" id="pBanner" hidden><span><b id="pTitle">Test de placement</b> · <span id="pText"></span></span><button type="button" id="pQuit">Quitter le test</button></div>
   <div class="pbanner" id="prBanner" hidden><span><b id="prTitle"></b> · <span id="prText"></span></span><button type="button" id="prQuit">Quitter</button></div>
 
   <section class="stage" id="stage">
+    <!-- Lot 76 : un niveau de Pro, sans abonnement, n'est plus affiché avec sa piste et sa table : une carte à la place.
+         Après les 3 niveaux gratuits, elle dit bravo ; sinon, elle dit que ce niveau est dans Pro. L'offre : 7 jours gratuits. -->
+    <div class="nivfin" id="nivFin" hidden>
+      <div class="nivfin-g"><img src="img/vini-logo.svg" alt=""><p class="nivfin-sur" id="nivFinSur"></p><h2 id="nivFinTitre"></h2>
+        <p class="nivfin-txt">La suite du chapitre :</p><div class="nivfin-suite" id="nivFinSuite"></div><p class="nivfin-txt" id="nivFinPuis"></p>
+        <div class="nivfin-btns"><button type="button" class="nivfin-sec" id="nivFinRejouer"></button></div>
+        <button type="button" class="linkbtn" id="nivFinCp"></button></div>
+      <div class="offre" id="nivFinOffre"></div>
+    </div>
     <div class="stage-head">
       <div class="consigne">
         <span class="lnum" id="lnum">Niveau 1</span>
         <h1 id="ltitle"></h1>
         <p class="goal" id="lgoal"></p>
-        <details class="howto"><summary>Comment faire ?</summary><p class="how" id="lhow"></p><p class="how lex" id="llex" hidden></p><span class="lfiches" id="lfiches" hidden></span><p class="how">Clavier : espace pour lancer B, E pour l'écho. Niveau réussi ? Refais le même geste dans rekordbox, avec ta musique.</p></details>
-        <div class="tags"><span class="styletag" id="styleTag">House · 124 BPM</span><span class="modetag" id="modeTag" hidden>À l'oreille</span><button type="button" class="xtoggle" id="expertBtn" aria-pressed="false" hidden>Mode Expert</button></div>
+        <details class="howto"><summary>Comment faire ?</summary><p class="how" id="lhow"></p><p class="how lex" id="llex" hidden></p><span class="lfiches" id="lfiches" hidden></span><p class="how">Clavier : espace pour lancer B, E pour l'écho. Niveau réussi ? Refais le même geste dans rekordbox, avec ta musique.</p><p class="how lcredit" id="lcredit" hidden></p></details>
+        <!-- Lot 76 : avec la vraie musique, les titres des morceaux (et leur source) passent dans « Comment faire ? » (#lcredit) ;
+             Mode Expert passe sous « Jouer », à côté du choix des morceaux -->
+        <div class="tags"><span class="styletag" id="styleTag">House · 124 BPM</span><span class="modetag" id="modeTag" hidden>À l'oreille</span></div>
         <!-- Chapitre 7 (lot 44) : la note du set, repliée -->
         <details class="setnotebox" id="setNoteBox" hidden><summary>Comment c'est noté ?</summary><p class="how setnote" id="setNoteTxt"></p></details>
         <div class="plan" id="plan" hidden><h3>Pendant le niveau</h3><ol id="planList"></ol><p id="planNote"></p></div>
@@ -683,6 +711,7 @@
           <div class="seg" id="styleOpts" role="group" aria-label="Style des morceaux" hidden><button type="button" data-style="vrai" aria-pressed="true">Vraie musique</button><button type="button" data-style="house" aria-pressed="false">House</button><button type="button" data-style="techno" aria-pressed="false">Techno</button><button type="button" data-style="afro" aria-pressed="false">Afro</button><button type="button" data-style="random" aria-pressed="false">Surprise</button></div></div>
         <div class="seg" id="modeSeg" hidden role="group" aria-label="Mode"><span class="sl">Mode</span>
           <button type="button" data-mode="guide" aria-pressed="true">Guidé</button><button type="button" class="earb" data-mode="ear" aria-pressed="false" id="earBtn">À l'oreille</button></div>
+        <button type="button" class="xtoggle" id="expertBtn" aria-pressed="false" hidden>Mode Expert</button>
       </div>
       <div class="btnrow"><button type="button" class="watch" id="watchBtn">Regarde d'abord</button><button type="button" class="start" id="startBtn">Jouer</button></div>
       </div>
@@ -703,7 +732,8 @@
         <div class="rtravail" id="rTravail" hidden><h3>À travailler</h3><p class="rquoi" id="rQuoi"></p><p class="rcout" id="rCout" hidden></p>
           <p class="rastuce" id="rAstuce" hidden><img src="img/vini-icone.svg" alt=""><span id="rAstuceTxt"></span></p></div>
         <div class="rpro" id="rPro" hidden><p class="rpro-t"><span class="pro-tag">Pro</span>La suite, avec DJingood Pro</p><ol class="rpro-niv" id="rProNiv"></ol>
-          <p class="rpro-txt">Puis 6 chapitres : à l’oreille, les vrais morceaux, les combos, le calage, les hot cues et le set noté sur 100.</p></div>
+          <p class="rpro-txt">Puis 6 chapitres : à l’oreille, les vrais morceaux, les combos, le calage, les hot cues et le set noté sur 100.</p>
+          <p class="rpro-essai" id="rProEssai" hidden><span id="rProEssaiTxt"></span> <button type="button" class="linkbtn rpro-bascule" id="rProBascule"></button></p><button type="button" class="linkbtn rpro-voir" id="rProVoir" hidden>Voir tout ce qu’il y a dans Pro</button></div>
         <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button><button type="button" class="rbtn rpro-go" id="rProGo" hidden>Continuer avec Pro</button></div>
         <div class="rplus"><button type="button" class="linkbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="linkbtn" id="slowBtn" hidden></button></div>
         <div class="rmeta"><span class="newbadge" id="rBadge" role="status" hidden></span><span class="goalline" id="rGoal"></span><span class="questline" id="rQuete" role="status" hidden></span></div>

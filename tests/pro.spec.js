@@ -218,15 +218,15 @@ test.describe('La fonction /api/pro', () => {
   });
   test('etat : cherche les abonnements de ce compte (l’identifiant vient du jeton), avec la clé secrète', async () => {
     let r = await appel({ action: 'etat', uid: 'quelqu-un-d-autre' });
-    expect(r.corps).toEqual({ pro: false, formule: null, jusqua: null, annule: false, offert: false });
+    expect(r.corps).toEqual({ pro: false, formule: null, jusqua: null, annule: false, offert: false, essaiDispo: true });
     expect(decodeURIComponent(stripe.appels[0].url)).toContain('/customers?limit=10&email=lea@exemple.fr');
     expect(decodeURIComponent(stripe.appels[1].url)).toContain("metadata['uid']:'u1'");
     expect(stripe.appels[0].cle).toBe('Bearer sk_test_secret');
     stripe.abonnements = [ABO({ status: 'canceled', created: 300 }), ABO(), ABO({ metadata: { uid: 'u2' } })];
     r = await appel({ action: 'etat' });
-    expect(r.corps).toEqual({ pro: true, formule: 'an', jusqua: 1826000000, annule: false, essai: false });
+    expect(r.corps).toEqual({ pro: true, formule: 'an', jusqua: 1826000000, annule: false, essai: false, semaine: false });
     stripe.abonnements = [ABO({ cancel_at_period_end: true, items: { data: [{ current_period_end: 1800000000, price: { id: 'price_mois' } }] } })];
-    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'mois', jusqua: 1800000000, annule: true, essai: false });
+    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'mois', jusqua: 1800000000, annule: true, essai: false, semaine: false });
   });
   test('payer : une page de paiement avec le bon prix, le compte, la case des conditions ; jamais deux abonnements', async () => {
     let r = await appel({ action: 'payer', formule: 'an' });
@@ -262,7 +262,7 @@ test.describe('La fonction /api/pro', () => {
   test('juste après le paiement (la recherche de Stripe ne voit rien encore) : Pro, « Gérer » marche, pas de second abonnement', async () => {
     stripe.abonnements = [];
     stripe.clients = { 'lea@exemple.fr': [{ id: 'cus_9', abos: [ABO({ customer: 'cus_9' })] }] };
-    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'an', jusqua: 1826000000, annule: false, essai: false });
+    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'an', jusqua: 1826000000, annule: false, essai: false, semaine: false });
     expect(stripe.appels.some(a => a.url.includes('/subscriptions/search'))).toBe(false);
     const g = await appel({ action: 'gerer' });
     expect(g.statusCode).toBe(200);
@@ -296,7 +296,33 @@ test.describe('La fonction /api/pro', () => {
   });
   test('etat pendant le mois offert : Pro, avec essai', async () => {
     stripe.abonnements = [ABO({ status: 'trialing', items: { data: [{ current_period_end: 1790000000, price: { id: 'price_mois' } }] } })];
-    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'mois', jusqua: 1790000000, annule: false, essai: true });
+    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'mois', jusqua: 1790000000, annule: false, essai: true, semaine: false });
+  });
+  // Lot 76 : 7 jours gratuits pour tout compte jamais abonné, carte demandée (le réglage par défaut de Stripe)
+  test('payer avec l’essai de 7 jours : 7 jours, carte demandée, marqué « semaine » ; une seule fois par compte', async () => {
+    let r = await appel({ action: 'payer', formule: 'an', essai: 'semaine' });
+    expect(r.statusCode).toBe(200);
+    const corps = decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps);
+    for (const morceau of ['subscription_data[trial_period_days]=7', 'subscription_data[metadata][essai]=semaine', 'subscription_data[metadata][uid]=u1',
+      'line_items[0][price]=price_an', 'consent_collection[terms_of_service]=required']) expect(corps).toContain(morceau);
+    expect(corps).not.toContain('payment_method_collection');   // la carte est demandée
+    expect(corps).not.toContain('missing_payment_method');
+    // un compte déjà abonné une fois : plus d'essai
+    stripe.appels = []; stripe.abonnements = [ABO({ status: 'canceled' })];
+    r = await appel({ action: 'payer', formule: 'an', essai: 'semaine' });
+    expect(r.statusCode).toBe(409); expect(r.corps).toEqual({ erreur: 'essai-deja' });
+    expect(stripe.appels.some(a => a.url.endsWith('/checkout/sessions'))).toBe(false);
+    // n'importe quoi d'autre dans `essai` : pas d'essai du tout
+    stripe.abonnements = [];
+    await appel({ action: 'payer', formule: 'mois', essai: 'mois' });
+    expect(decodeURIComponent(stripe.appels.filter(a => a.url.endsWith('/checkout/sessions')).pop().corps)).not.toContain('trial');
+  });
+  test('etat : essaiDispo dit si les 7 jours gratuits sont possibles ; pendant l’essai, semaine', async () => {
+    expect((await appel({ action: 'etat' })).corps).toMatchObject({ pro: false, essaiDispo: true });
+    stripe.clients = { 'lea@exemple.fr': [{ id: 'cus_5', abos: [ABO({ customer: 'cus_5', status: 'canceled' })] }] };
+    expect((await appel({ action: 'etat' })).corps).toMatchObject({ pro: false, essaiDispo: false });
+    stripe.clients = {}; stripe.abonnements = [ABO({ status: 'trialing', metadata: { uid: 'u1', essai: 'semaine' } })];
+    expect((await appel({ action: 'etat' })).corps).toEqual({ pro: true, formule: 'an', jusqua: 1826000000, annule: false, essai: true, semaine: true });
   });
   // Lot 68, règle de l'utilisateur (11 nov.) : le mois offert va aux comptes déjà créés, pas aux nouveaux
   test('le mois offert : seulement les comptes créés avant la limite, jamais abonnés ; la date vient de Firebase', async () => {

@@ -55,3 +55,14 @@ partir de la clé de test rangée dans un fichier de l'ordinateur, hors de tout 
    pour de vrai.
 3. Publication, seulement avec ton accord, puis Redeploy dans Vercel si les réglages ont changé après.
 4. Un vrai essai : un compte créé avant le 12 nov. voit le mois offert ; un nouveau compte voit 3 exercices gratuits.
+
+## 5. Les 7 jours gratuits et le mail de rappel (lot 76, nov. 2026)
+- Tout compte jamais abonné peut essayer Pro 7 jours. La carte est demandée par Stripe au début, rien n'est prélevé ; au
+  7e jour, la formule choisie démarre toute seule, sauf si elle a été arrêtée (« Gérer mon abonnement »). Un seul essai par
+  compte : `api/pro.js` le vérifie. Les comptes d'avant Pro gardent leur mois offert sans carte.
+- Le mail de rappel part deux jours avant la fin de l'essai : c'est `api/rappel.js`, que Vercel lance une fois par jour
+  (`vercel.json`, « crons »). Réglages dans Vercel : `CRON_SECRET` (une longue phrase au hasard, à ne donner à personne),
+  `STRIPE_CLE` et `BREVO_CLE` (déjà là). Pour voir s'il est passé : Vercel → projet → Settings → **Cron Jobs** (les journaux
+  de chaque passage).
+- Dans Stripe, rien à régler de plus. Les abonnements des essais portent `metadata.essai = semaine` (le mois offert :
+  `mois-offert`), et `metadata.rappel` une fois le mail parti.
