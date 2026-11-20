@@ -25,10 +25,10 @@
    compte, au plus une fois par jour (`mlPropose`, appelé par `finish`). Sur téléphone, c'est la fin des leçons
    « Comprendre » qui le propose (lot 48).
 
-   **ML_PRET** : tant qu'il est faux, rien des mails ne se voit (ni case, ni question, ni interrupteur), parce que
+   **ML_PRET** : tant qu'il est faux, rien des mails ne se voit (ni case, ni interrupteur), parce que
    Brevo n'est pas encore réglé (voir MAILS.md). La proposition de compte, elle, marche déjà.
    **Lot 78 (20 nov. 2026)** : la fenêtre « Je peux t'écrire ? », posée aux comptes créés avant le lot 54, est retirée.
-   Demande de l'utilisateur : « c'est quoi ce popup […] un truc à cocher comme ce qui existe partout ». Il reste la case
+   Demande de l'utilisateur : une simple case à cocher, comme sur tous les sites, pas une fenêtre. Il reste la case
    à la création du compte et l'interrupteur de « Mon compte », comme sur les autres sites. Les anciennes réponses
    « question » restent valables.
    Chargé juste avant compte.js, qui appelle `mlRend`, `mlPret`, `mlChoix` et `mlEtat`. */
@@ -144,7 +144,7 @@ function mlEtat(){
   if (mlRep() === 'attente'){ mlVerifie = 0; mlConfirme(); return; }
   mlAppel('etat').then(d => {
     const rep = d && d.oui ? 'oui' : 'non', avant = mlRep();
-    if (rep !== avant && (avant || rep === 'oui')) mlNote(rep, 'compte');   // sans réponse et pas inscrit : on garde la question
+    if (rep !== avant && (avant || rep === 'oui')) mlNote(rep, 'compte');   // sans réponse et pas inscrit : on ne note rien
     mlRend();
   }, () => {});
 }

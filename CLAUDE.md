@@ -33,8 +33,9 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 
 ## Pour reprendre (état au 28 oct. 2026)
 - **Lot 78 « Une simple case » (20 nov. 2026, soir) : FAIT, NON PUBLIÉ.** Demande : la fenêtre « Nathan, je peux
-  t'écrire ? » (posée toute seule sur l'accueil aux comptes créés avant les mails, lot 54, allumée au lot 76) : « c'est quoi
-  ce popup de merde […] un truc à cocher comme ce qui existe partout ». Copie `Documents\coach-dj-lot78`, branche
+  t'écrire ? » (posée toute seule sur l'accueil aux comptes créés avant les mails, lot 54, allumée au lot 76) ne lui plaît
+  pas du tout : il veut une simple case à cocher, comme sur tous les sites. Règle qui en découle : pour une fonction
+  banale (accord, réglage), la forme standard des sites, jamais une fenêtre qui s'ouvre toute seule. Copie `Documents\coach-dj-lot78`, branche
   `lot-78-case-mails` depuis `origin/main` = `b5c0c33` ; serveur `coach-dj-lot78` (port 8784, mails allumés) ; tests avec
   `DJ_PORT=8783`. Ce qui change : la fenêtre `#mlQ` et tout son code sont retirés (`js/mails.js`, `index.html`,
   `styles.css`, `pro.js`, `compte.js`, l'étape `mails-question` de `stats.js`) ; la case de la fenêtre du compte devient une

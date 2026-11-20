@@ -182,6 +182,18 @@ test.describe('Les comptes créés avant les mails (lot 78 : plus de fenêtre «
   });
 });
 
+test.describe('La réponse d’un autre compte', () => {
+  test('sur ce navigateur, elle ne compte pas : l’interrupteur reste éteint et rien ne part', async ({ page }) => {
+    const api = await fausseApi(page);
+    await ouvrir(page, { avant: dejaConnecte() + FAUX + MAILS, onglet: 'accueil', stockage: { 'coach-mails': S({ uid: 'autre', rep: 'oui', le: '2026-10-29', ou: 'creation' }) } });
+    await page.waitForTimeout(1500);
+    await ouvrirCompte(page);
+    await expect(page.locator('#cptMailsRow')).toBeVisible();
+    await expect(page.locator('#cptMailsInter')).toHaveAttribute('aria-checked', 'false');
+    await expect.poll(() => api.appels.map(a => a.action)).toEqual(['etat']);
+  });
+});
+
 test.describe('L’interrupteur de « Mon compte »', () => {
   const connecte = dejaConnecte() + FAUX + MAILS;
   const oui = { 'coach-mails': S({ uid: 'u1', rep: 'oui', le: '2026-10-29', ou: 'creation' }) };

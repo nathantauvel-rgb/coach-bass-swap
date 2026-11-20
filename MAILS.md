@@ -3,8 +3,8 @@
 Ce qu'il faut régler une fois pour que DJingood envoie ses mails (lot 54). Compte une heure, sans te presser.
 Les noms des menus de Brevo peuvent changer un peu : si tu ne trouves pas un écran, demande-moi, on le fait ensemble.
 
-**Règle à ne jamais oublier : on n'écrit qu'aux gens qui ont dit oui** (la case « Vini peut m'écrire », la question
-de Vini, ou l'interrupteur de « Mon compte »). Jamais d'import d'adresses depuis Firebase, jamais de mail aux comptes
+**Règle à ne jamais oublier : on n'écrit qu'aux gens qui ont dit oui** (la case « Recevoir les conseils de Vini par mail »
+en créant son compte, ou l'interrupteur de « Mon compte » ; la question de Vini aux anciens comptes est retirée au lot 78). Jamais d'import d'adresses depuis Firebase, jamais de mail aux comptes
 qui n'ont pas répondu. Et **un mail par semaine au plus**.
 
 ## D'abord : le lien de connexion par Brevo (lot 67 « Le mail qui arrive »)
@@ -110,7 +110,7 @@ Sans ça, les mails arrivent dans les indésirables (même problème qu'avec le 
 - **Contacts → Paramètres → Attributs de contact** : vérifie que `PRENOM` existe (texte), et crée :
   - `NIVEAU` (texte) : la prochaine étape du joueur au moment où il dit oui ;
   - `ACCORD_LE` (date) : le jour où il a dit oui (c'est la preuve demandée par la CNIL) ;
-  - `ACCORD_OU` (texte) : `creation`, `question` ou `compte`.
+  - `ACCORD_OU` (texte) : `creation` ou `compte` (`question` pour ceux qui ont dit oui avant le lot 78).
 
 ## 5. La clé d'API
 
@@ -163,7 +163,8 @@ abonnement : il part même sans la case « Vini peut m'écrire ». Il part par B
 
 ## Où lire les résultats
 
-- **Umami → Events** : `compte-propose` (la carte de fin a proposé le compte), `compte-propose-clic`, `mails-question`,
-  `mails-oui` et `mails-non` (avec `ou` : `creation`, `question` ou `compte`).
+- **Umami → Events** : `compte-propose` (la carte de fin a proposé le compte), `compte-propose-clic`,
+  `mails-oui` et `mails-non` (avec `ou` : `creation` ou `compte`). `mails-question` n'est plus compté depuis le lot 78
+  (la question est retirée).
 - **Brevo → Statistiques** de chaque mail : ouvertures, clics, désinscriptions. Si les désinscriptions montent, on
   écrit moins souvent.
