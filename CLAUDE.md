@@ -32,7 +32,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 76 « Le niveau d'abord » (19-20 nov. 2026) : FAIT, NON PUBLIÉ.** Demande : « trop de bordel sur la page Apprendre ».
+- **Lot 76 « Le niveau d'abord » (19-20 nov. 2026) : PUBLIÉ le 20 nov.** (« oui », après le second gardien ; `8c126e0`,
+  avance rapide depuis `75526e7`, puis cette note). **Production vérifiée** sur djingood.fr (statistiques bloquées) en
+  1366 × 768 et 1920 × 913 : barre `#nivHaut` à 92 px, « Jouer » à 336 px, plus de `#proNiv`, menu « Tous les niveaux » qui
+  s'ouvre, aucune erreur ; `ML_PRET = true` et `PRO_ESSAI_JOURS` en ligne ; `/api/rappel` sans secret → 401 ; CGV datées du
+  20 novembre 2026. Journal Notion **pas** mis à jour (pas d'accès à Notion dans cette session : ligne donnée à l'utilisateur).
+  **Reste, par l'utilisateur** : Vercel → Settings → Cron Jobs (`/api/rappel`) ; un vrai essai de 7 jours puis l'annuler ; un
+  mail de Vini reçu ; la FLX4 (points 2, 4, 38 et 41 de la checklist). Demande : « trop de bordel sur la page Apprendre ».
   Bilan annoté : `captures/audit-apprendre/` du dossier principal ; maquette validée (« beaucoup mieux rangé, beaucoup plus
   esthétique ») : `captures/maquette-apprendre/` du dossier principal (`planche-v4.png` = la version retenue). Puis, sur la
   conversion : « Go, laisse 7 jours gratuits avec la carte », et « oui, lance le lot 76 avec tout ce qui est compris
