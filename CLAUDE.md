@@ -33,8 +33,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 
 ## Pour reprendre (état au 28 oct. 2026)
 - **Lot 77 « PostHog » (20 nov. 2026) : PUBLIÉ le 20 nov., AVANT le lot 76** (« ok publie PostHog avant le lot 76 » :
-  mesurer quelques jours avant l'essai de 7 jours). Demande (session marketing, « vas-y pour brancher PostHog », conseillé
-  par un ami) : suivre chaque joueur de bout en bout, surtout le passage téléphone → ordinateur.
+  mesurer quelques jours avant l'essai de 7 jours). `592668d` (avance rapide depuis `c0689e6`), puis cette note.
+  **Production vérifiée** sur djingood.fr : `phOk`, bibliothèque 1.453.1 chargée, `persistence: 'memory'`, replays et
+  heatmaps coupés, aucun cookie ni clé `ph_` dans le stockage, pas de bandeau d'erreur ; envois `eu.i.posthog.com/e/` et
+  `/i/v0/e/` → 200, Umami toujours → 200. Un événement `verification-installation` envoyé à la main (à ignorer dans
+  PostHog), et une visite de vérification comptée dans Umami et PostHog.
+  Demande (session marketing, « vas-y pour brancher PostHog », conseillé par un ami) : suivre chaque joueur de bout en
+  bout, surtout le passage téléphone → ordinateur.
   Copie `Documents\coach-dj-lot77`, branche `lot-77-posthog`, partie d'`origin/main` = `c0689e6` (sans le lot 76, pas
   commité) ; tests sur `DJ_PORT=8783` (le gardien : 8785).
   **Ce qui change :**
