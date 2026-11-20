@@ -32,6 +32,39 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 77 « PostHog » (20 nov. 2026) : PUBLIÉ le 20 nov., AVANT le lot 76** (« ok publie PostHog avant le lot 76 » :
+  mesurer quelques jours avant l'essai de 7 jours). Demande (session marketing, « vas-y pour brancher PostHog », conseillé
+  par un ami) : suivre chaque joueur de bout en bout, surtout le passage téléphone → ordinateur.
+  Copie `Documents\coach-dj-lot77`, branche `lot-77-posthog`, partie d'`origin/main` = `c0689e6` (sans le lot 76, pas
+  commité) ; tests sur `DJ_PORT=8783` (le gardien : 8785).
+  **Ce qui change :**
+  - `js/stats.js` : bloc PostHog (`PH_ID`, `PH_HOTE` = eu.i.posthog.com, `PH_SRC` = eu-assets…/static/array.js, `phActif`,
+    `phEnvoie`, `phCharge`, `statQui`). `stat` envoie à PostHog (`capture`, objet vide si pas de détail) puis à Umami
+    (`statUmami`, l'ancien corps de `stat`) ; `statsVide` ne rejoue que vers Umami (sinon PostHog recevrait en double) ;
+    `stat1` part si Umami **ou** PostHog est actif. Réglages : `persistence: 'memory'` (ni cookie ni stockage, vérifié dans
+    Chrome avec la vraie bibliothèque 1.453.1 et un faux serveur local : `__loaded`, `identify`, envois vers `/e/`, aucun
+    cookie, rien dans localStorage / sessionStorage), `person_profiles: 'always'`, `autocapture: false`, pas
+    d'enregistrement de l'écran, pas de sondages ; cartes de clics, clics morts, erreurs et mesures de vitesse coupés dans
+    le code (remarque du gardien : sinon l'interface de PostHog peut les allumer). Même interrupteur qu'Umami
+    (`umami.disabled`), mêmes domaines. Avec `persistence: 'memory'`, chaque rechargement est un nouveau visiteur pour
+    PostHog : compter les visiteurs dans Umami, PostHog sert aux entonnoirs des comptes connectés.
+    `PH_ID` vide = éteint. **Clé reçue le 20 nov. et posée** (PostHog EU la reconnaît : `/array/<clé>/config` → 200,
+    une fausse clé → 404). Suite complète 848 sur 848 (avant la clé), puis posthog + stats + site 56 sur 56 avec la clé.
+  - `js/compte.js` (`cptChange`) : `statQui(cpt.uid)` avant `stat1('compte')`, `statQui('')` sur « personne » (ne délie
+    que si un compte était relié : le « personne » de Firebase au chargement ne fait rien). Jamais le prénom ni l'adresse.
+  - `confidentialite.html` : « Umami et PostHog », « sans aucun identifiant gardé sur ton appareil » (le site garde bien
+    `coach-stats` et `umami.disabled`), un paragraphe sur PostHog (enchaînement des étapes, « un code » du compte si
+    connecté, Europe, pas d'écran enregistré), état du bouton « (sans cookie) » au lieu de « sans savoir qui tu es », date
+    « 20 novembre 2026 ». `presentation.html` (FAQ « Qu'est-ce que DJingood sait de moi ? ») : plus « sans savoir qui tu es ».
+  - `STATISTIQUES.md` : section 5 (compte PostHog EU, clé, « Discard client IP data », entonnoir « Du téléphone à Pro »).
+  - `tests/posthog.spec.js` (6 tests, faux `window.posthog` posé avant le chargement). Le gardien a vérifié à la main la file
+    d'attente (scripts retardés, site servi sous le nom djingood.fr) : chaque envoi part une seule fois, dans l'ordre.
+  **Gardien (20 nov.) : feu orange, aucun blocage**, 848 sur 848 ; ses remarques de texte et de réglages corrigées.
+  **Pour le lot 76** : fusionner `origin/main` avant de le publier. `confidentialite.html` se fusionne sans conflit (lignes
+  différentes, le 76 ne change pas la date) ; le seul conflit est ce CLAUDE.md (garder les deux entrées). Le 76 change
+  `tests/outils.js`, dont `tests/posthog.spec.js` utilise `jouer()` : relancer toute la suite après la fusion.
+  **À faire par l'utilisateur dans PostHog** : « Discard client IP data » (sinon PostHog garde l'IP, ce que la page ne dit
+  pas), et laisser éteints replays, sondages et heatmaps dans l'interface.
 - **Lot 75 « Le grand écran » (17 nov. 2026, nuit) : PUBLIÉ le 19 nov.** (« Oui, publie », après le second gardien ;
   `origin/main` = `99da6f5`, avance rapide depuis `4946b84`, puis cette note). Production vérifiée (Umami bloqué) : sur
   djingood.fr en 1920 × 913, page de 1600 px, accueil en deux colonnes, table des niveaux à ×1,2, bulle de Vini entière,
@@ -2808,7 +2841,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `cgv.html`, `mentions-legales.html` — conditions de vente de DJingood Pro et mentions légales (lot 59, à compléter).
 - `api/pro.js`, `STRIPE.md` — l'abonnement DJingood Pro chez Stripe, et la marche à suivre pour le régler (lot 59).
 - `guide/` — le guide du débutant (lot 51) : une page d'entrée et cinq pages de questions, pour Google et les IA.
-- `STATISTIQUES.md` — marche à suivre de l'utilisateur pour Umami et pour lire les avis (lot 46).
+- `STATISTIQUES.md` — marche à suivre de l'utilisateur pour Umami et pour lire les avis (lot 46), et pour PostHog (section 5, lot 77 ; le code est en haut de `js/stats.js`).
 - `MAILS.md` — marche à suivre de l'utilisateur pour Brevo (mails de Vini, lot 54). `mails/` — les trois modèles à coller dans Brevo. `api/mails.js` — la fonction Vercel qui parle à Brevo (clé dans les réglages de Vercel, jamais dans le site).
 - `robots.txt`, `sitemap.xml`, `favicon.ico`, `.vercelignore` — pour Google et pour ce que Vercel publie (lot 50).
 - `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap), retiré du site : la page renvoie
@@ -2911,7 +2944,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/musique.spec.js` : « Ma musique » (lot 72 : liste, filtres, fiche, transition, favoris, vus récemment, adresses, sans abonnement, téléphone). `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Ma musique. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/mails.spec.js` : les mails de Vini et la fonction `api/mails.js` (lot 54) ; `tests/faux-firebase.js` : le faux Firebase partagé. `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/musique.spec.js` : « Ma musique » (lot 72 : liste, filtres, fiche, transition, favoris, vus récemment, adresses, sans abonnement, téléphone). `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Ma musique. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/posthog.spec.js` : PostHog reçoit les mêmes envois, compte relié, refus (lot 77, faux PostHog). `tests/mails.spec.js` : les mails de Vini et la fonction `api/mails.js` (lot 54) ; `tests/faux-firebase.js` : le faux Firebase partagé. `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

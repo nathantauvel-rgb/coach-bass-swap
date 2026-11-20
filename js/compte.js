@@ -206,9 +206,10 @@ function cptChange(u){
   // Firebase annonce « personne » dès qu'il a fini de charger, même si on n'a jamais été connecté : on ne
   // remet l'écran à l'accueil que si on vient vraiment de se déconnecter, sinon le formulaire qu'on est en
   // train de remplir disparaîtrait tout seul.
-  if (!u){ const avait = !!cpt; cpt = null; cptBloque = true; cptAttente = null;
+  if (!u){ const avait = !!cpt; cpt = null; cptBloque = true; cptAttente = null; statQui('');
     if (avait){ cptPas = 'accueil'; cptFait = ''; cptDemande = false; mlVu = ''; mlQCache(); try { cptBrut.del(CPT_KEY); } catch (e) {} } cptEtat(); if (typeof proCompte === 'function') proCompte(null); return; }
   cpt = { uid: u.uid, prenom: (u.displayName || '').trim().split(/\s+/)[0] || 'toi' };
+  statQui(cpt.uid);   // PostHog relie les étapes à ce compte (lot 77, stats.js), avant « compte » pour qu'elle en fasse partie
   stat1('compte');   // la première connexion sur ce navigateur (stats.js)
   if (!cptSauve || cptSauve.uid !== cpt.uid){ cptMaj = 0; cptSale = false; }   // un autre compte que la dernière fois
   cptNote(); cptEtat();
