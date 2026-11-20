@@ -32,6 +32,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 78 « Une simple case » (20 nov. 2026, soir) : FAIT, NON PUBLIÉ.** Demande : la fenêtre « Nathan, je peux
+  t'écrire ? » (posée toute seule sur l'accueil aux comptes créés avant les mails, lot 54, allumée au lot 76) : « c'est quoi
+  ce popup de merde […] un truc à cocher comme ce qui existe partout ». Copie `Documents\coach-dj-lot78`, branche
+  `lot-78-case-mails` depuis `origin/main` = `b5c0c33` ; serveur `coach-dj-lot78` (port 8784, mails allumés) ; tests avec
+  `DJ_PORT=8783`. Ce qui change : la fenêtre `#mlQ` et tout son code sont retirés (`js/mails.js`, `index.html`,
+  `styles.css`, `pro.js`, `compte.js`, l'étape `mails-question` de `stats.js`) ; la case de la fenêtre du compte devient une
+  case normale (style `.pp-case` des Premiers pas, plus d'encadré violet), avec le même texte partout : « Recevoir les
+  conseils de Vini par mail : 3 pour démarrer, puis un par semaine au plus. Désinscription en un clic. » ; une seconde
+  case (`#cptAccord0`) sous « Continuer avec Google » sur le premier écran (cochée = oui ; pas cochée = rien, pour ne pas
+  toucher à la réponse d'un compte qui revient) ; les deux cases restent d'accord. Les anciens comptes n'ont plus que
+  l'interrupteur de « Mon compte ». Tests : `tests/mails.spec.js` refait (plus de question ; Google avec et sans la case ;
+  anciens comptes : aucune fenêtre, l'interrupteur marche). Captures : `captures/lot78/` de la copie.
 - **Lot 76 « Le niveau d'abord » (19-20 nov. 2026) : PUBLIÉ le 20 nov.** (« oui », après le second gardien ; `8c126e0`,
   avance rapide depuis `75526e7`, puis cette note). **Production vérifiée** sur djingood.fr (statistiques bloquées) en
   1366 × 768 et 1920 × 913 : barre `#nivHaut` à 92 px, « Jouer » à 336 px, plus de `#proNiv`, menu « Tous les niveaux » qui

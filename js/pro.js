@@ -245,7 +245,7 @@ function proFondateurPropose(essais = 0){
   // vide et un abonné passerait pour un joueur d'avant Pro, gardien du lot 68) ; proMaj nous rappelle après sa réponse
   if (proUid() && !proReponse) return;
   // pas par-dessus autre chose : les questions de Vini, une partie, une autre fenêtre ; on réessaie un peu plus tard
-  const occupe = run || preparing || ['pp', 'ordi', 'mlQ', 'serie', 'pro', 'proMerci', 'compte', 'onb', 'quiz', 'cp', 'verif', 'reg'].some(id => $(id) && !$(id).hidden);
+  const occupe = run || preparing || ['pp', 'ordi', 'serie', 'pro', 'proMerci', 'compte', 'onb', 'quiz', 'cp', 'verif', 'reg'].some(id => $(id) && !$(id).hidden);
   if (occupe){ if (essais < 20) setTimeout(() => proFondateurPropose(essais + 1), 5000); return; }
   try { localStorage.setItem(FOND_CLE, '1'); } catch (e) {}
   const v = $('fondVini'); if (!v.firstChild) viniMettre(v, 'danse');

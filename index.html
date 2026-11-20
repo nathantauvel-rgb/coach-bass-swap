@@ -175,6 +175,7 @@
       <div class="rbrow"><button type="button" class="rbtn go" id="cptGardeCompte">Garder celle de mon compte</button><button type="button" class="ghost" id="cptGardeIci">Garder celle de cet ordinateur</button></div>
     </div>
     <button type="button" class="cptgoogle" id="cptIn"><img src="img/google.svg" alt="" width="22" height="22">Continuer avec Google</button>
+    <label class="pp-case cptaccord" id="cptAccord0" hidden><input type="checkbox" id="cptMails0"> <span>Recevoir les conseils de Vini par mail : 3 pour démarrer, puis un par semaine au plus. Désinscription en un clic.</span></label>
     <p class="cptou" id="cptOu"><span id="cptOuTxt">ou</span></p>
     <div class="cptpas" id="cptAccueil" hidden>
       <button type="button" class="ghost cptavecmail" id="cptVersCreer">Créer un compte avec mon e-mail</button>
@@ -186,7 +187,7 @@
       <label class="cptch" id="cptChMdp"><span id="cptMdpLab">Ton mot de passe</span><span class="cptmdp"><input id="cptMdp" type="password" maxlength="100"><button type="button" id="cptOeil" aria-pressed="false">Voir</button></span></label>
       <div class="cptsousmdp"><p class="cptaide" id="cptAide"></p><button type="button" class="cptlien" id="cptOubli">Mot de passe oublié&nbsp;?</button></div>
       <button type="button" class="cptlien cptlienmail" id="cptLienBtn" hidden>Pas de mot de passe&nbsp;? Recevoir un lien de connexion</button>
-      <label class="cptaccord" id="cptAccord" hidden><input type="checkbox" id="cptMails"><span><b>Oui, Vini peut m'écrire</b><small>Des astuces pour progresser et les nouveautés de DJingood&nbsp;: 3 mails pour bien démarrer, puis un par semaine au plus. Tu arrêtes quand tu veux.</small></span></label>
+      <label class="pp-case cptaccord" id="cptAccord" hidden><input type="checkbox" id="cptMails"> <span>Recevoir les conseils de Vini par mail : 3 pour démarrer, puis un par semaine au plus. Désinscription en un clic.</span></label>
       <button type="submit" class="rbtn go cptmain" id="cptGo">Créer mon compte</button>
       <p class="cptbas"><span id="cptBasTxt"></span> <button type="button" class="cptlien" id="cptBascule"></button></p>
     </form>
@@ -276,19 +277,6 @@
     <p class="mltexte">Ton plan du téléphone est là. Ici, tu vas brancher ta table.</p>
     <ol class="ordietapes" id="ordiEtapes"></ol>
     <div class="cptpas"><button type="button" class="rbtn go cptmain" id="ordiGo">C’est parti</button></div>
-  </div>
-</div>
-<div data-nosnippet class="quiz" id="mlQ" hidden role="dialog" aria-modal="true" aria-labelledby="mlTitre">
-  <div class="qcard cptcard">
-    <button type="button" class="rclose" id="mlFerme" aria-label="Fermer">×</button>
-    <div class="cpthead">
-      <span class="cptvini" id="mlVini" aria-hidden="true"></span>
-      <span><span class="lnum">Une petite question</span><h2 id="mlTitre" tabindex="-1">Je peux t'écrire&nbsp;?</h2></span>
-    </div>
-    <p class="mltexte">3 mails pour bien démarrer, puis un par semaine au plus&nbsp;: des astuces pour progresser et les nouveautés de DJingood.</p>
-    <div class="cptpas"><button type="button" class="rbtn go cptmain" id="mlOui">Oui, écris-moi</button><button type="button" class="cptlien" id="mlNon">Non merci</button></div>
-    <p class="qwhy" id="mlMsg" role="status" hidden></p>
-    <p class="avsmall">Tu peux changer d'avis quand tu veux dans «&nbsp;Mon compte&nbsp;».</p>
   </div>
 </div>
 <div data-nosnippet class="quiz" id="reg" hidden role="dialog" aria-modal="true" aria-labelledby="regTitle">

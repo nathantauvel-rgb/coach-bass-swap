@@ -4,10 +4,9 @@
 /* ---------- Les mails de Vini (lot 54, 29 oct. 2026) ----------
    Demande de l'utilisateur : relancer par mail les gens qui ont un compte, pour qu'ils reviennent.
    **On n'écrit qu'à ceux qui ont dit oui** (règle de la CNIL pour la prospection par mail : une case jamais cochée
-   d'avance). Trois façons de dire oui ou non :
-   - la case « Vini peut m'écrire » en créant son compte (`creation`) ;
-   - pour les comptes créés avant ce lot, la question « je peux t'écrire ? », posée une seule fois, sur l'accueil,
-     à la prochaine visite connectée (`question`). La fermer vaut « non » ;
+   d'avance). Deux façons de dire oui ou non :
+   - la case « Recevoir les conseils de Vini par mail » en créant son compte (`creation`) : dans le formulaire, et sous
+     « Continuer avec Google » sur le premier écran de la fenêtre (lot 78) ;
    - l'interrupteur « Les mails de Vini » dans « Mon compte » (`compte`), et le lien de désinscription de chaque mail
      (géré par Brevo ; `mlEtat` le relit en ouvrant « Mon compte »).
    **On n'écrit qu'à une adresse confirmée** (feu rouge du gardien : sans ça, n'importe qui pouvait créer un compte avec
@@ -28,7 +27,11 @@
 
    **ML_PRET** : tant qu'il est faux, rien des mails ne se voit (ni case, ni question, ni interrupteur), parce que
    Brevo n'est pas encore réglé (voir MAILS.md). La proposition de compte, elle, marche déjà.
-   Chargé juste avant compte.js, qui appelle `mlRend`, `mlPret`, `mlChoix`, `mlEtat` et `mlQCache`. */
+   **Lot 78 (20 nov. 2026)** : la fenêtre « Je peux t'écrire ? », posée aux comptes créés avant le lot 54, est retirée.
+   Demande de l'utilisateur : « c'est quoi ce popup […] un truc à cocher comme ce qui existe partout ». Il reste la case
+   à la création du compte et l'interrupteur de « Mon compte », comme sur les autres sites. Les anciennes réponses
+   « question » restent valables.
+   Chargé juste avant compte.js, qui appelle `mlRend`, `mlPret`, `mlChoix` et `mlEtat`. */
 const ML_PRET = true;   // lot 76 (19 nov. 2026) : allumé à la demande de l'utilisateur, une fois Brevo réglé (MAILS.md)
 const ML_KEY = 'coach-mails';                 // la réponse du joueur, suit le compte
 const ML_PROPOSE = 'coach-compte-propose';    // le dernier jour où la carte de fin a proposé le compte (reste sur cet ordinateur)
@@ -39,9 +42,6 @@ function mlActif(){ let t = false; try { t = window.DJINGO_MAILS === true; } cat
 
 let mlVu = '';          // le compte dont on a déjà regardé la réponse dans cette page
 let mlVoulu = null;     // la case au moment de créer le compte : true, false, ou null (pas de case à ce moment-là)
-let mlQT = 0;           // minuteur de la question
-let mlRate = false;     // le « oui » de la question n'a pas pu partir : fermer la fenêtre ne vaut plus « non »
-let mlFini = false;     // la question a eu sa réponse (lien de confirmation envoyé) : le bouton ne fait plus que fermer
 let mlLienPart = false;  // la case cochée à la création, avec une adresse à confirmer : le bandeau de bienvenue le dit (compte.js)
 let mlVerifie = 0;      // dernière fois qu'on a demandé à Firebase si l'adresse est confirmée (pas plus d'une fois par 10 s)
 
@@ -111,49 +111,18 @@ function mlPret(){
   if (!cpt || cptBloque || cptAttente || mlVu === cpt.uid || !mlActif()) return;
   mlVu = cpt.uid;
   const v = mlVoulu; mlVoulu = null;
-  if (v === true){ const u = mlUser(); if (u && !u.emailVerified) mlLienPart = true; mlVeut('creation').catch(() => mlQuestionBientot()); return; }   // raté : la question le rattrapera
-  if (v === false){ if (!mlRep()){ mlNote('non', 'creation'); mlAppel('non', { ou: 'creation' }).catch(() => {}); } return; }   // case pas cochée : on ne demandera pas
-  const r = mlRep();
-  if (r === 'attente') mlConfirme();
-  else if (!r) mlQuestionBientot();
+  if (v === true){ const u = mlUser(); if (u && !u.emailVerified) mlLienPart = true; mlVeut('creation').catch(() => {}); return; }   // raté : il reste l'interrupteur de « Mon compte »
+  if (v === false){ if (!mlRep()){ mlNote('non', 'creation'); mlAppel('non', { ou: 'creation' }).catch(() => {}); } return; }   // case pas cochée en créant son compte
+  if (mlRep() === 'attente') mlConfirme();
 }
-// La case, au moment où le joueur crée son compte (formulaire ou Google depuis « Créer mon compte »)
-function mlChoix(){ const a = $('cptAccord'); mlVoulu = mlActif() && cptPas === 'creer' && a && !a.hidden ? $('cptMails').checked : null; }
-
-/* ---------- La question, pour les comptes créés avant ----------
-   Sur l'accueil seulement, quand rien d'autre n'est ouvert et qu'aucune partie ne tourne : on réessaie toutes les
-   3 secondes jusqu'à ce que ce soit le bon moment. */
-function mlQuestionBientot(){ clearTimeout(mlQT); mlQT = setTimeout(mlQuestionEssaie, 1500); }
-function mlQuestionEssaie(){
-  if (!cpt || !mlActif() || mlRep() || !$('mlQ').hidden) return;
-  if (view !== 'accueil' || run || document.querySelector('[role="dialog"]:not([hidden])')){ mlQT = setTimeout(mlQuestionEssaie, 3000); return; }
-  mlRate = false; mlFini = false; mlMsg('');
-  $('mlOui').textContent = 'Oui, écris-moi'; $('mlNon').hidden = false;
-  $('mlTitre').textContent = cpt.prenom && cpt.prenom !== 'toi' ? cpt.prenom + ', je peux t\'écrire ?' : 'Je peux t\'écrire ?';
-  viniMettre($('mlVini'), 'calme');
-  $('mlQ').hidden = false; $('mlTitre').focus({ preventScroll: true });
-  stat1('mails-question');
-}
-function mlMsg(t){ const m = $('mlMsg'); m.textContent = t || ''; m.hidden = !t; }
-function mlQBoutons(off){ $('mlOui').disabled = !!off; $('mlNon').disabled = !!off; }
-function mlQCache(){ $('mlQ').hidden = true; mlQBoutons(false); }
-function mlOui(){
-  if (!cpt || mlFini){ mlQCache(); return; }
-  mlQBoutons(true); mlMsg('Un instant…');
-  mlVeut('question').then(r => {
-    if (r === 'oui'){ mlQCache(); viniSaute('home'); return; }
-    // adresse à confirmer : on le dit ici, et le bouton ne fait plus que fermer
-    mlFini = true; mlQBoutons(false); $('mlNon').hidden = true; $('mlOui').textContent = 'J\'ai compris';
-    mlMsg('C\'est presque fini : DJingood vient de t\'envoyer un mail. Clique sur le lien dedans pour confirmer ton adresse.');
-  }, () => { mlRate = true; mlQBoutons(false); mlMsg('Ça n’a pas marché (pas de connexion ?). Réessaie, ou plus tard dans « Mon compte ».'); });
-}
-// « Non merci », la croix, Échap, ou un clic à côté : c'est non, et on ne redemandera pas (sauf si le « oui » n'a pas pu
-// partir, ou s'il attend la confirmation de l'adresse : alors on ferme seulement)
-function mlNon(){
-  if ($('mlQ').hidden || $('mlNon').disabled) return;
-  // le « non » part aussi chez Brevo : l'adresse a pu y être inscrite depuis un autre appareil (Brevo répond 404 sinon, rien n'est créé)
-  if (!mlRate && !mlFini && cpt){ mlNote('non', 'question'); stat('mails-non', { ou: 'question' }); mlAppel('non', { ou: 'question' }).catch(() => {}); }
-  mlQCache();
+// La case, au moment où le joueur crée son compte : celle du formulaire (cochée ou non, c'est sa réponse), ou celle du
+// premier écran, sous « Continuer avec Google ». Celle-là sert aussi à ceux qui reviennent se connecter : seulement
+// cochée, elle compte (pas cochée, on ne touche pas à ce qu'ils avaient déjà répondu).
+function mlChoix(){
+  mlVoulu = null;
+  if (!mlActif()) return;
+  if (cptPas === 'creer' && !$('cptAccord').hidden) mlVoulu = $('cptMails').checked;
+  else if (cptPas === 'accueil' && !$('cptAccord0').hidden && $('cptMails0').checked) mlVoulu = true;
 }
 
 /* ---------- Dans « Mon compte » ---------- */
@@ -162,6 +131,7 @@ const ML_TXT_ATTENTE = 'Presque fini : clique sur le lien que DJingood t\'a env
 // Appelé par cptRend : la case du formulaire de création, et l'interrupteur quand on est connecté
 function mlRend(){
   const a = $('cptAccord'); if (a) a.hidden = !(mlActif() && !cpt && cptPas === 'creer');
+  const a0 = $('cptAccord0'); if (a0) a0.hidden = !(mlActif() && !cpt && !cptAttente && cptPas === 'accueil' && !cptAppli());   // sous le bouton Google
   const l = $('cptMailsRow'), b = $('cptMailsInter'), r = mlRep();
   if (l) l.hidden = !(mlActif() && cpt && !cptAttente);
   if (b && !b.disabled) b.setAttribute('aria-checked', String(r === 'oui' || r === 'attente'));
@@ -205,8 +175,6 @@ function mlPropose(st){
 
 $('rCompteGo').addEventListener('click', () => { $('rCompte').hidden = true; stat('compte-propose-clic'); openCompte(); cptVa('creer'); });
 $('cptMailsInter').addEventListener('click', mlBascule);
-$('mlOui').addEventListener('click', mlOui);
-$('mlNon').addEventListener('click', mlNon);
-$('mlFerme').addEventListener('click', mlNon);
-$('mlQ').addEventListener('click', e => { if (e.target === $('mlQ')) mlNon(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('mlQ').hidden){ e.stopPropagation(); mlNon(); } }, true);
+// une seule réponse : la case du premier écran et celle du formulaire disent la même chose
+$('cptMails0').addEventListener('change', e => { $('cptMails').checked = e.target.checked; });
+$('cptMails').addEventListener('change', e => { $('cptMails0').checked = e.target.checked; });

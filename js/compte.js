@@ -207,7 +207,7 @@ function cptChange(u){
   // remet l'écran à l'accueil que si on vient vraiment de se déconnecter, sinon le formulaire qu'on est en
   // train de remplir disparaîtrait tout seul.
   if (!u){ const avait = !!cpt; cpt = null; cptBloque = true; cptAttente = null; statQui('');
-    if (avait){ cptPas = 'accueil'; cptFait = ''; cptDemande = false; mlVu = ''; mlQCache(); try { cptBrut.del(CPT_KEY); } catch (e) {} } cptEtat(); if (typeof proCompte === 'function') proCompte(null); return; }
+    if (avait){ cptPas = 'accueil'; cptFait = ''; cptDemande = false; mlVu = ''; try { cptBrut.del(CPT_KEY); } catch (e) {} } cptEtat(); if (typeof proCompte === 'function') proCompte(null); return; }
   cpt = { uid: u.uid, prenom: (u.displayName || '').trim().split(/\s+/)[0] || 'toi' };
   statQui(cpt.uid);   // PostHog relie les étapes à ce compte (lot 77, stats.js), avant « compte » pour qu'elle en fasse partie
   stat1('compte');   // la première connexion sur ce navigateur (stats.js)
@@ -648,7 +648,7 @@ function openCompte(){
   if (!cptOn()) return;
   if (quiz) closeQuiz(); if (run) stopRun();
   cptDit(''); cptBoutons(false);
-  $('cptPrenom').value = ''; $('cptMail').value = ''; $('cptMdp').value = ''; $('cptMails').checked = false; cptOeil(false);
+  $('cptPrenom').value = ''; $('cptMail').value = ''; $('cptMdp').value = ''; $('cptMails').checked = false; $('cptMails0').checked = false; cptOeil(false);
   cptPas = 'accueil';
   $('compte').hidden = false; cptRend();   // cptSouci, lui, reste affiché par cptRend
   cptSdkAuth().then(cptRend, e => cptDit(cptErreur(e)));

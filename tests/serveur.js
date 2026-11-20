@@ -18,7 +18,7 @@ http.createServer((req, res) => {
     // tests l'allument eux-mêmes avec window.DJINGOOD_PRO ; le jour de l'ouverture, PRO_PRET = true ne casse donc aucun test.
     if (TESTS && rel === 'js/pro-pret.js') data = Buffer.from(String(data).replace(PRO_PRET_RE, 'const PRO_PRET = false;'));
     // Lot 76 : les mails de Vini sont allumés en ligne (ML_PRET), mais partent éteints pour les tests, comme Pro : sinon la
-    // question « Je peux t'écrire ? » s'ouvrirait sur l'accueil de chaque test connecté. tests/mails.spec.js les allume
+    // case et l'interrupteur des mails apparaîtraient dans chaque test du compte. tests/mails.spec.js les allume
     // lui-même (window.DJINGO_MAILS).
     if (TESTS && rel === 'js/mails.js') data = Buffer.from(String(data).replace(ML_PRET_RE, 'const ML_PRET = false;'));
     res.writeHead(200, { 'Content-Type': TYPES[path.extname(file)] || 'application/octet-stream' });
