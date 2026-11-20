@@ -38,12 +38,13 @@
     <p>Pour arrêter : l'interrupteur « Les mails de Vini » dans « Mon compte », ou le lien en bas de chaque mail. Brevo garde alors ton adresse seulement pour ne plus jamais t'écrire ; pour qu'elle soit effacée, écris-nous (voir tout en bas).</p>
 
     <h2 class="sub">Les statistiques de visite</h2>
-    <p>DJingood compte ses visites avec Umami, <b>sans cookie</b> et sans rien qui permette de te suivre sur d'autres sites. Ce sont des totaux : ils ne disent pas qui tu es, et ils servent seulement à améliorer le site. Ce qui est compté :</p>
+    <p>DJingood compte ses visites avec Umami et PostHog, <b>sans cookie</b>, sans aucun identifiant gardé sur ton appareil et sans rien qui permette de te suivre sur d'autres sites. Ça sert seulement à améliorer le site. Ce qui est compté :</p>
     <ul class="howlist">
       <li>les pages vues, le pays, le type d'appareil et de navigateur, et le site d'où tu arrives ;</li>
       <li>quelques étapes du jeu, par exemple « première partie jouée » ou « premier niveau réussi », avec le parcours choisi et le modèle de ta table (« autre table » si DJingood ne la connaît pas) ;</li>
       <li>tes réponses à « C'était clair ? » et la note de tes avis.</li>
     </ul>
+    <p>Umami ne garde que des totaux. PostHog, lui, voit l'enchaînement des étapes, pour savoir où les joueurs s'arrêtent : sans compte, tu redeviens un inconnu à chaque visite ; si tu es connecté, tes étapes sont reliées à l'identifiant de ton compte (un code, jamais ton prénom ni ton adresse), pour voir en combien de jours on progresse. PostHog garde ces données en Europe, et ne s'en sert pour rien d'autre. PostHog n'enregistre pas ton écran ni ce que tu tapes.</p>
     <p class="avsmall" id="statsEtat" role="status"></p>
     <div class="rbrow"><button type="button" class="ghost" id="statsBtn">Ne plus compter mes visites</button></div>
 
@@ -55,7 +56,7 @@
 
     <h2 class="sub">Une question ?</h2>
     <p>Pour supprimer ton compte ou poser une question, écris-nous avec le bouton <b>Mon avis</b> du site, en laissant ton adresse e-mail si tu veux une réponse.</p>
-    <p class="page-note">Mis à jour le 10 novembre 2026.</p>
+    <p class="page-note">Mis à jour le 20 novembre 2026.</p>
     <div class="rbrow" style="margin-top:22px"><a class="cta" href="index.html">Revenir au site</a></div>
   </section>
 </div>
@@ -65,7 +66,7 @@
   var b = document.getElementById('statsBtn'), e = document.getElementById('statsEtat');
   function rend(){ var non = statsRefuse();
     b.textContent = non ? 'Compter de nouveau mes visites' : 'Ne plus compter mes visites';
-    e.textContent = non ? 'Sur ce navigateur, tes visites ne sont plus comptées.' : 'Sur ce navigateur, tes visites sont comptées (sans cookie, sans savoir qui tu es).'; }
+    e.textContent = non ? 'Sur ce navigateur, tes visites ne sont plus comptées.' : 'Sur ce navigateur, tes visites sont comptées (sans cookie).'; }
   b.addEventListener('click', function(){ statsRefuser(!statsRefuse()); rend(); });
   rend();
 })();
