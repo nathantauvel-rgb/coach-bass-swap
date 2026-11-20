@@ -98,6 +98,17 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (`offreFormule = 'mois'`) et « À l'année · 49,99 € · 2 mois offerts » ; la carte de résultat dit « puis 4,99 € par mois »,
   avec « Plutôt à l'année ? » (`#rProBascule`). La grande fenêtre Pro garde l'année d'office (interrupteur visible).
   Captures refaites, planche `captures/lot76/planche-v2.png`. Fichiers concernés : 147 tests verts.
+  **20 nov., après-midi (session reprise après une coupure de crédit)** : planche v2 **validée** (« c'est parfait »). Lot
+  commité (`2b7ac29`), **`origin/main` fusionné** (lot 77, `0066d8d`, seul conflit ce CLAUDE.md : les deux entrées gardées).
+  Suite complète sur la version fusionnée : **879 sur 879** (`tests/niveau-dabord.spec.js` a 22 tests). **Second gardien :
+  feu orange, aucun blocage** (879 sur 879 de son côté, 10 scénarios de paiement justes, écrans 1366 / 1920 / 390 bons) ; ses
+  remarques de texte corrigées : l'aperçu du mail de rappel ne dit plus « un clic suffit » (« c'est dans ton compte, en deux
+  étapes »), les messages d'erreur de Pro ne disent plus « juste en dessous » (affichés aussi sous le bouton de la carte de
+  fin). Laissé : un compte déjà abonné une fois va droit à Stripe au mois depuis la carte de résultat (Stripe montre le prix) ;
+  `etat` interroge Stripe à chaque visite d'un compte non abonné ; `presentation.html` ne parle pas des 7 jours.
+  **Après la mise en ligne** : Vercel → Settings → Cron Jobs (`/api/rappel` doit y être) ; vrai essai (7 jours avec sa carte,
+  puis annuler) ; un mail de Vini reçu ; FLX4 : points 2, 4, 38 et 41 de la checklist. Si la publication glisse après le
+  20 nov., changer la date de `cgv.html` et `confidentialite.html`.
 - **Lot 77 « PostHog » (20 nov. 2026) : PUBLIÉ le 20 nov., AVANT le lot 76** (« ok publie PostHog avant le lot 76 » :
   mesurer quelques jours avant l'essai de 7 jours). `592668d` (avance rapide depuis `c0689e6`), puis cette note.
   **Production vérifiée** sur djingood.fr : `phOk`, bibliothèque 1.453.1 chargée, `persistence: 'memory'`, replays et

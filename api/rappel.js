@@ -63,7 +63,7 @@ function mailHtml(d, m){
   const p = 'font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;color:#1d2030;margin:0 0 16px';
   return '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<title>' + html(SUJET(d)) + '</title></head><body style="margin:0;padding:0;background:#f3f1fa">' +
-    '<div style="display:none;max-height:0;overflow:hidden;opacity:0">Tu veux continuer ? Rien à faire. Tu veux arrêter ? Un clic suffit.</div>' +
+    '<div style="display:none;max-height:0;overflow:hidden;opacity:0">Tu veux continuer ? Rien à faire. Tu veux arrêter ? C’est dans ton compte, en deux étapes.</div>' +
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f1fa"><tr><td align="center" style="padding:28px 12px">' +
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:14px">' +
     '<tr><td style="padding:28px 28px 8px;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:bold;color:#1d2030">' +

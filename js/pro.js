@@ -162,9 +162,9 @@ function proPayer(f, essai){
     if (e.message === 'deja-pro'){ proDitVu('Tu es déjà Pro !'); const u = proUser(); if (u) proVerifie(u); return; }
     if (e.message === 'essai-deja' && essai === 'semaine'){ semaineUtilisee = true; proFondateurPrix(); proOffresRend(); proDitVu('Ton essai gratuit a déjà servi : tu peux t’abonner tout de suite.'); return; }
     // le mois offert a déjà servi : ce compte a déjà eu un abonnement, donc pas de 7 jours gratuits non plus (lot 76)
-    if (e.message === 'essai-deja'){ fondUtilise = true; semaineUtilisee = true; proFondateurPrix(); proOffresRend(); proDitVu('Ton mois offert a déjà servi : tu peux t’abonner juste en dessous.'); return; }
+    if (e.message === 'essai-deja'){ fondUtilise = true; semaineUtilisee = true; proFondateurPrix(); proOffresRend(); proDitVu('Ton mois offert a déjà servi : tu peux t’abonner tout de suite.'); return; }
     // un compte trop récent pour le mois offert : il a droit aux 7 jours gratuits, comme tout le monde (lot 76)
-    if (e.message === 'essai-reserve'){ fondUtilise = true; proFondateurPrix(); proOffresRend(); proDitVu(proSemaineDispo() ? `Le mois offert est réservé aux comptes créés avant l’arrivée de Pro : tu peux essayer Pro ${PRO_ESSAI_JOURS} jours gratuitement juste en dessous.` : 'Le mois offert est réservé aux comptes créés avant l’arrivée de Pro : tu peux t’abonner juste en dessous.'); return; }
+    if (e.message === 'essai-reserve'){ fondUtilise = true; proFondateurPrix(); proOffresRend(); proDitVu(proSemaineDispo() ? `Le mois offert est réservé aux comptes créés avant l’arrivée de Pro : tu peux essayer Pro ${PRO_ESSAI_JOURS} jours gratuitement.` : 'Le mois offert est réservé aux comptes créés avant l’arrivée de Pro : tu peux t’abonner tout de suite.'); return; }
     proDitVu(e.message === 'pas-configure' ? "Le paiement n'est pas encore ouvert. Reviens bientôt !" : "La page de paiement ne s'ouvre pas. Vérifie ta connexion, puis réessaie.");
   });
 }
@@ -265,7 +265,7 @@ window.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('fond').h
 /* ---------- Lot 76 : 7 jours gratuits, carte demandée ----------
    Décision de l'utilisateur (19 nov. 2026, « Go, laisse 7 jours gratuits avec la carte ») : après les 3 niveaux gratuits,
    on propose d'essayer Pro 7 jours. La carte est demandée par Stripe au début, rien n'est prélevé ; au 7e jour, l'abonnement
-   choisi démarre tout seul, sauf s'il a été arrêté avant (« Gérer mon abonnement », un clic). Deux jours avant, un mail de
+   choisi démarre tout seul, sauf s'il a été arrêté avant (« Gérer mon abonnement », puis « Annuler »). Deux jours avant, un mail de
    service prévient (api/rappel.js). Un seul essai par compte : api/pro.js refuse (409 essai-deja) un compte qui a déjà eu un
    abonnement, et le dit dans etat (essaiDispo). Les joueurs d'avant Pro gardent leur mois offert, sans carte (plus haut).
    L'offre (proOffre) est sur la carte de fin d'Apprendre ; on y paie sans passer par la grande fenêtre Pro (proDemarre). */
