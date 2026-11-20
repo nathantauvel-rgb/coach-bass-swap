@@ -32,7 +32,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 78 « Une simple case » (20 nov. 2026, soir) : FAIT, NON PUBLIÉ.** Demande : la fenêtre « Nathan, je peux
+- **Lot 78 « Une simple case » (20 nov. 2026, soir) : PUBLIÉ le 21 nov.** (« ok c'est mieux, publie quand c'est fini » ;
+  875 tests sur 875, gardien feu vert, ses remarques corrigées ; `f1a43bd`, puis cette note ; **production vérifiée** sur
+  djingood.fr en 1366 × 768 : plus de `#mlQ`, case décochée sous « Continuer avec Google », aucune erreur). **Reste, par
+  lui** : un vrai essai (Google en cochant la case, puis le mail de Vini reçu). Demande : la fenêtre « Nathan, je peux
   t'écrire ? » (posée toute seule sur l'accueil aux comptes créés avant les mails, lot 54, allumée au lot 76) ne lui plaît
   pas du tout : il veut une simple case à cocher, comme sur tous les sites. Règle qui en découle : pour une fonction
   banale (accord, réglage), la forme standard des sites, jamais une fenêtre qui s'ouvre toute seule. Copie `Documents\coach-dj-lot78`, branche
