@@ -252,7 +252,7 @@ function mmQuand(iso){
 }
 function mmDepuis(ms){
   const s = (Date.now() - ms) / 1000; if (s < 60) return 'à l’instant'; if (s < 3600) return `il y a ${Math.floor(s / 60)} min`; if (s < 86400) return `il y a ${Math.floor(s / 3600)} h`;
-  const j = Math.floor(s / 86400); return j === 1 ? 'hier' : j < 7 ? `il y a ${j} jours` : new Date(ms).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  const j = Math.floor(s / 86400); return j === 1 ? 'hier' : j < 7 ? `il y a ${j} jours` : new Date(ms).toLocaleDateString(LOCALE, { day: 'numeric', month: 'short' });
 }
 
 /* ---------- Où on est dans la page ---------- */

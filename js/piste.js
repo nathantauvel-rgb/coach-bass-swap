@@ -26,7 +26,7 @@ function drawHighway(b){
     g.strokeStyle = ph ? COL.muted : COL.line; g.globalAlpha = ph ? .9 : bar ? .55 : .22; g.lineWidth = ph ? 2 : 1;
     g.beginPath(); g.moveTo(x, 26); g.lineTo(x, h - 8); g.stroke(); g.globalAlpha = 1;
   }
-  const fit = (t, max) => { if (g.measureText(t).width <= max) return t; while (t.length > 1 && g.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; };
+  const fit = (t, max) => { t = tr(t); if (g.measureText(t).width <= max) return t; while (t.length > 1 && g.measureText(t + '…').width > max) t = t.slice(0, -1); return t + '…'; };
   const block = (from, to, y, col, strong, label) => { const a = X(from), z = X(to); if (z < 0 || a > w) return;
     g.globalAlpha = strong ? .9 : .28; g.fillStyle = col; rr(g, a + 1, y, z - a - 2, H, H / 2); g.fill(); g.globalAlpha = 1;
     const lx = Math.max(a + 12, 52), room = Math.min(z, w) - lx - 12; g.font = '600 13px ' + COL.font;
@@ -118,7 +118,7 @@ function drawCompare(fr, i, launch){
   }
   $('cmpBox').hidden = false;
 }
-function say(t){ const el = $('tip'); if (el && t) el.textContent = t; const h = $('hint'); if (h && t && run && h.textContent !== t) h.textContent = t; }
+function say(t){ const el = $('tip'); if (el && t) el.textContent = t; const h = $('hint'); if (h && t && run && h.textContent !== tr(t)) h.textContent = t; }
 function pop(text, kind){ lastPopAt = performance.now(); lastAct = ''; say(text); const d = document.createElement('div'); d.className = 'pop ' + kind; d.textContent = text;
   // deux gestes au même instant (lancer B et couper A) : le second message se met sous le premier au lieu de l'écrire par-dessus
   const n = $('pops').children.length; if (n) d.style.top = `calc(42% + ${n * 44}px)`;

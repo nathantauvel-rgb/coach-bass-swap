@@ -45,9 +45,10 @@ const CPT_MAX = 400000;                       // au-delà, on n'envoie pas (gard
      ordre du chapitre 1). Il est posé à chaque chargement par `ordreMigre`. S'il voyageait et revenait absent d'un
      paquet, les étoiles seraient déplacées une deuxième fois, donc fausses.
    - `coach-stats` : les étapes déjà comptées par les statistiques sur ce navigateur (stats.js).
+   - `coach-langue` : la langue choisie, français ou anglais (lot 53).
    - `coach-compte-propose` : le jour où la carte de fin a proposé le compte (mails.js) ; ne sert qu'avant d'en avoir un.
    `coach-mails` (la réponse « Vini peut m'écrire », lot 54), elle, suit le compte : on ne repose pas la question ailleurs. */
-const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-musique', 'coach-bibliotheque', 'coach-sons', 'coach-volume', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
+const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-musique', 'coach-bibliotheque', 'coach-sons', 'coach-volume', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, 'coach-langue', CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
 const cptOn = () => !!(CPT_CFG && CPT_CFG.apiKey && CPT_CFG.projectId && CPT_CFG.appId);
 const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_LOCAL.includes(k);
 
@@ -185,7 +186,7 @@ function cptSdkAuth(){
     if (!cptFb) cptFb = {};
     cptFb.auth = firebase.auth();
     // Sans ça, Firebase envoie ses e-mails (mot de passe oublié) en anglais, quelle que soit la langue du joueur.
-    try { cptFb.auth.languageCode = 'fr'; } catch (e) {}
+    try { cptFb.auth.languageCode = LANGUE === 'en' ? 'en' : 'fr'; } catch (e) {}   // lot 80 : en anglais, ses mails en anglais
     cptFb.auth.onAuthStateChanged(cptChange);
   });
   cptPretAuth.catch(() => { cptPretAuth = null; });   // un échec ne doit pas bloquer les essais suivants
@@ -299,7 +300,7 @@ function cptPousse(){
   cptEnvoi = true; cptLent = false; cptEtat();
   const lent = setTimeout(() => { if (cptEnvoi){ cptLent = true; cptEtat(); } }, CPT_LENT);
   return cptFb.db.collection(CPT_DOC).doc(cpt.uid).set({ v: 1, prenom: cpt.prenom, maj, donnees: d })
-    .then(() => { cptMaj = maj; cptSale = false; cptNote(); cptHeure = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); return true; },
+    .then(() => { cptMaj = maj; cptSale = false; cptNote(); cptHeure = new Date().toLocaleTimeString(LOCALE, { hour: '2-digit', minute: '2-digit' }); return true; },
           e => { cptDit(cptErreur(e)); return false; })
     .then(ok => { clearTimeout(lent); cptEnvoi = false; cptLent = false; cptEtat(); return ok; });
 }
@@ -403,7 +404,7 @@ function cptLienBrevo(mail){
   const ctl = typeof AbortController === 'function' ? new AbortController() : null;
   const fin = ctl ? setTimeout(() => ctl.abort(), CPT_LIEN_ATTENTE) : 0;
   return fetch(CPT_LIEN_API, { method: 'POST', headers: { 'content-type': 'application/json' }, signal: ctl ? ctl.signal : undefined,
-    body: JSON.stringify({ mail, retour: location.origin + location.pathname }) })
+    body: JSON.stringify(Object.assign({ mail, retour: location.origin + location.pathname }, LANGUE === 'en' ? { langue: 'en' } : {})) })   // lot 80 : le mail en anglais
     .then(r => {
       clearTimeout(fin);
       // 429 avec { erreur: 'trop' } = notre limite ; un 429 sans ce corps vient de la protection de Vercel : Firebase prend le relais
@@ -585,10 +586,10 @@ function cptRend(){
 }
 // « Ta progression » dans « Mon compte » (lot 60) : les mêmes chiffres que la pastille de l'en-tête (renderHud), en phrases
 function cptRendProgres(){
-  const niv = ($('lvl').textContent || '').replace(/^Niv\.\s*/, ''), xp = parseInt($('xpTxt').textContent, 10) || 0;
+  const niv = ($('lvl').textContent || '').replace(/^(Niv\.|Lvl)\s*/, ''), xp = parseInt($('xpTxt').textContent, 10) || 0;   // « Lvl 3 » en anglais (lot 80)
   const [eu, tot] = ($('starTot').textContent || '0/0').split('/').map(n => parseInt(n, 10) || 0);
   const serie = typeof goalStreak === 'function' ? goalStreak() : 0;
-  $('cptProgNiv').textContent = 'Niveau ' + (niv || '1') + ' · ' + xp.toLocaleString('fr-FR') + ' XP';
+  $('cptProgNiv').textContent = 'Niveau ' + (niv || '1') + ' · ' + xp.toLocaleString(LOCALE) + ' XP';
   $('cptProgTxt').textContent = eu + (eu > 1 ? ' étoiles' : ' étoile') + ' sur ' + tot
     + (serie > 0 ? ' · série de ' + serie + (serie > 1 ? ' jours' : ' jour') : '');
 }

@@ -3945,3 +3945,19 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
   #map .node + .node::before{width:16px}
   #chapBtn strong{display:block;max-width:150px;overflow:hidden;text-overflow:ellipsis}
 }
+
+/* ---------- Lot 53 : le site en anglais ----------
+   La page reste cachée le temps de la traduire (classe posée dans le <head>, retirée par trPage). Le bouton FR / EN
+   montre l'autre langue (lot 80 : plus de carte « Switch to English »). */
+.trad body{visibility:hidden}
+.langbtn{font-weight:800;letter-spacing:.06em;cursor:pointer;color:var(--fg)}
+.langbtn:empty{display:none}
+.pp-lang{flex-shrink:0;min-height:44px;padding:0 6px;border:0;background:none;color:var(--muted);font:inherit;font-weight:800;letter-spacing:.06em;cursor:pointer}
+.pp-lang:hover{color:var(--fg)}
+/* lot 80 : « English » en toutes lettres (navigateur pas en français) : un peu plus visible, comme une pastille */
+.pp-lang.langbtn-mot{align-self:center;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:999px;color:var(--fg)}
+.pp-lang:focus-visible{outline:3px solid var(--brand-light);outline-offset:3px}
+@media (max-width:1039px){:root[lang="en"] .mx [data-k^="cfx"]::before{content:"FILTER"}}   /* lot 80 : comme la règle française, seulement sur petit écran */
+.pres-haut{display:flex;gap:8px;align-items:center}
+/* Lot 80 : le guide du débutant n'existe qu'en français : ses liens disparaissent en anglais */
+:root[lang="en"] .fr-seul{display:none}

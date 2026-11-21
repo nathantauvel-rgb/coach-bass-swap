@@ -94,6 +94,68 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     lit encore). Laissés : la croix d'un réglage ne garde pas les positions vues (comme avant le lot) ; sur téléphone, le nom
     « Native Instruments Traktor Kontrol S2 MK3 » est coupé dans le menu déroulant.
     **Attend : l'accord de l'utilisateur pour publier, après (conseillé) les points 39 et 40 de la checklist sur sa FLX4.**
+- **Lot 80 « Le site en anglais » : PUBLIÉ le 21 nov. 2026** (« ok publie quand c'est vert » ; `17b4ff1`, puis cette
+  note ; suite complète verte : 895 + le test de la barre d'espace du chapitre 6, instable sous la charge, passé 3 fois sur
+  3 seul ; **production vérifiée** sur djingood.fr en 1366 × 768 : `?lang=en` tout en anglais sans phrase oubliée, le
+  français identique (« Jouer » à 336 px, dictionnaire pas téléchargé), un navigateur en anglais voit « English » puis
+  l'anglais au clic, présentation et `terms.html` en anglais, aucune erreur). Liens pour les pubs :
+  https://djingood.fr/?lang=en et https://djingood.fr/presentation.html?lang=en. **Choix de l'utilisateur** (21 nov.) : ne
+  pas remplacer le français, seulement l'ajouter pour les anglophones ; pas de bascule automatique selon la langue du
+  navigateur (un Français au téléphone réglé en anglais l'aurait subie, et Google aurait pu montrer l'anglais) ; à la
+  place, **le bouton dit « English » en toutes lettres** aux navigateurs qui ne sont pas en français (`17b4ff1`).
+  Demande de départ : « ouvrir mon site au marché
+  international… pour commencer à faire de la pub en anglais », puis « Oui, lance-le ». Copie `Documents\coach-dj-lot80`,
+  branche `lot-80-anglais` partie d'`origin/main` = `1a96992` (sans suivi d'`origin/main`) ; serveur `coach-dj-lot80`
+  (port 8786, Pro allumé) dans le `.claude/launch.json` du dossier principal ; **tests avec `DJ_PORT=8787`** (pas 8786 :
+  Playwright réutiliserait ce serveur sans `--tests`, Pro allumé, et des tests échoueraient pour rien).
+  - **Base : le lot 53** (29 oct., compte « marketing », branche `lot-53-anglais`, jamais publié) fusionné dans `a1f71fa`.
+    Méthode gardée : `js/langue.js` traduit chaque texte au moment où il s'affiche, avec le dictionnaire `js/anglais.js`
+    (chargé seulement en anglais) ; en français rien ne change. Tout le détail technique du lot 53 (motifs `enMotif`,
+    `{#n}` / `{x}` / `{=x}`, pièges, vocabulaire : table = controller, platine = deck, potard = knob, temps = beat,
+    « la piste » = the track, LANCE B = START B) est dans le CLAUDE.md de la branche `lot-53-anglais` (entrée « Lot 53 »).
+  - **Fait dans ce lot** : le dictionnaire couvre maintenant tout ce qui a été ajouté depuis octobre (Pro, essai de
+    7 jours, Apprendre refait, Premiers pas, compte et lien, Ma musique, chapitres 4 à 7, Vérifier et Régler ma table,
+    présentation). Les nouvelles lignes sont entre les repères « Lot 80 : début / fin » à la fin de `js/anglais.js`.
+    Petits changements de code (inertes en français) : `LOCALE` dans `js/langue.js` (dates et nombres à l'anglaise dans
+    `pro.js`, `compte.js`, `objectif.js`, `rekordbox.js`), prix « 4,99 € » → « €4.99 » dans `tr()`, bulle des niveaux
+    (`niveaux.js`, `data-t`) passée par `tr()`, « Lvl 3 » relu dans `compte.js`.
+  - **Outils (hors Git)** : `captures/lot80/outils/` — `liste.js` (phrases sans traduction, par fichier, dans
+    `captures/lot80/manque/`), `fusionne.js` (range `captures/lot80/trad/*.txt` et `*.js` dans `js/anglais.js`, à relancer
+    après chaque traduction), `modeles.js` et `bouts.js` (phrases avec `${…}` et morceaux de modèles HTML), `releve.js` +
+    `analyse.js` (relève tout ce que le site écrit pendant toute la suite de tests, puis cherche ce qui n'a pas de
+    traduction ; il faut remettre provisoirement dans `ouvrir()` de `tests/outils.js` la ligne
+    `if (process.env.DJ_RELEVE) await require(process.env.DJ_RELEVE)(page);` et lancer la suite avec `DJ_RELEVE` = le chemin
+    de `releve.js` ; **ne jamais commiter cette ligne**, déjà retirée), `photos.js` et `planche.js` (captures anglaises,
+    `captures/lot80/planche.png`). **Pour traduire une phrase ajoutée plus tard** : l'ajouter à la main dans `js/anglais.js`
+    (entre les repères « Lot 80 »), ou via `trad/` + `fusionne.js` ; `tests/anglais.spec.js` signale toute phrase oubliée
+    sur les écrans qu'il visite (`window.__enManque`).
+  - **Pièges trouvés au lot 80** : un texte coupé en lettres avant d'être écrit (la bulle des tutos, `tuPrepare`) doit
+    passer par `tr()` avant la découpe ; `dataset.*` ne passe pas par `tr()` (la bulle des niveaux : `tr()` ajouté) ; un
+    texte relu à l'écran (`compte.js` relisait « Niv. 3 ») ; les motifs génériques (`{x}, en {y}`) découpent des pages
+    entières : toujours une expression précise ; une règle CSS anglaise doit vivre dans le même `@media` que la française.
+  - **Fait aussi (21 nov., soir)** : les Tutos (visibles avec Pro, donc en ligne) traduits ; côté serveur, le site en
+    anglais envoie `langue: 'en'` : `api/lien.js` (mail du lien en anglais, lien `&lang=en`), `api/pro.js` (page Stripe et
+    portail en anglais, case des conditions vers `terms.html`, `metadata.langue = 'en'` sur l'abonnement), `api/rappel.js`
+    (rappel des 7 jours en anglais si `metadata.langue = 'en'`) ; Firebase `languageCode` suit la langue ; **mails de Vini :
+    ni case ni interrupteur en anglais** (`ML_PRET_EN = false` dans `js/mails.js` : ils n'existent qu'en français) ; pages
+    légales anglaises `terms.html`, `privacy.html`, `legal-notice.html` (traductions, « la version française fait foi »),
+    les liens du site y mènent en anglais (`EN_PAGES` / `trLiens` dans `js/langue.js`) ; liens du guide (français seulement)
+    cachés en anglais (`.fr-seul`). En français, rien de tout ça ne change.
+  - **Fait aussi** : relevé de toute la suite traduit ; tests anglais ajoutés (`tests/anglais.spec.js`, bloc « Lot 80 » :
+    les 7 chapitres, la fenêtre Pro, les tutos, la case des mails, les pages légales ; et dans `lien.spec.js`,
+    `rappel.spec.js`, `pro.spec.js` : les mails et Stripe en anglais) ; commits `a1f71fa` + `8aee9f1` ; planche
+    `captures/lot80/planche.png` envoyée à l'utilisateur.
+  - **21 nov. (session reprise, « REPREND »)** : suite complète 896 sur 896 ; **gardien : feu orange, aucun blocage**
+    (français identique à la version en ligne sur 14 écrans, aucun secret, interrupteurs inchangés). Ses remarques
+    corrigées (`8933626`) : **plus de carte « Switch to English »** (elle s'ouvrait toute seule et cachait le bouton des
+    Premiers pas ; règle « composants standards » : le bouton FR / EN suffit, à remettre seulement s'il le demande), lien
+    téléphone → ordinateur avec `?lang=en`, prénoms plus traduits (« Nathan » → « Alex », « Aurore » → « Dawn »),
+    `tests/images-presentation.js` (texte attendu en argument), étape `anglais` dans `STATISTIQUES.md`. Suite complète
+    relancée après ces corrections (`captures/lot80/suite2-shard*.log`).
+  - **Reste, par lui** : avec sa FLX4, les points 2, 3, 4, 5, 32 et 41 de `tests/CHECKLIST-FLX4.md` (et le point 4 une
+    fois avec `?lang=en`) ; plus tard, à décider avec lui : adresse anglaise, TVA, relecture. Puis, avec lui : l'adresse anglaise (djingood.com conseillée), la TVA à
+    l'étranger (Royaume-Uni dès la 1re vente), prix en dollars ou non, relecture par un anglophone, mails de Vini en anglais
+    (liste Brevo à part), les balises de partage (og:) restent en français.
 - **Lot 78 « Une simple case » (20 nov. 2026, soir) : PUBLIÉ le 21 nov.** (« ok c'est mieux, publie quand c'est fini » ;
   875 tests sur 875, gardien feu vert, ses remarques corrigées ; `f1a43bd`, puis cette note ; **production vérifiée** sur
   djingood.fr en 1366 × 768 : plus de `#mlQ`, case décochée sous « Continuer avec Google », aucune erreur). **Reste, par
@@ -2994,7 +3056,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `styles.css` — toute l'apparence (thème sombre « Cabine »).
 - `js/` — le code, découpé le 13 oct. 2026 (lot 2) sans changer une ligne. **Tous les fichiers partagent
   la même portée** (scripts classiques, pas des modules) et **l'ordre de chargement compte** :
-  `erreurs` (bandeau d'erreur) → `stats` (statistiques Umami, lot 46) → `pro-pret` (l’interrupteur de Pro, `PRO_PRET`, lot 68 ; aussi lu par `presentation.html`) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
+  `erreurs` (bandeau d'erreur) → `langue` (français ou anglais, `tr()`, lots 53 et 80) → `anglais` (le dictionnaire anglais, chargé seulement en anglais) → `stats` (statistiques Umami, lot 46) → `pro-pret` (l’interrupteur de Pro, `PRO_PRET`, lot 68 ; aussi lu par `presentation.html`) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `set` (chapitre 7 « Le set », lot 44) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) → `comprendre` (leçons sans table, lot 48) → `tutos` (l'onglet « Tutos », lot 56) →
   `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `mails` (les mails de Vini, lot 54) → `compte` (se connecter avec Google) → `pro` (DJingood Pro, lot 59) →
@@ -3005,6 +3067,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   Étape suivante possible, non commencée : de vrais modules avec import/export.
 - `confidentialite.html` — « Ce que DJingood garde sur toi » (lot 46), avec le bouton qui refuse les statistiques.
 - `cgv.html`, `mentions-legales.html` — conditions de vente de DJingood Pro et mentions légales (lot 59, à compléter).
+- `terms.html`, `privacy.html`, `legal-notice.html` — leurs traductions anglaises (lot 80 ; la version française fait foi,
+  chaque page le dit) : à tenir à jour en même temps que `cgv.html`, `confidentialite.html` et `mentions-legales.html`.
+  En anglais, les liens du site y mènent (`EN_PAGES` dans `js/langue.js`). `img/en/` : les captures anglaises de la page
+  de présentation (`node tests/images-presentation.js en`, avec un serveur `--tests`).
 - `api/pro.js`, `STRIPE.md` — l'abonnement DJingood Pro chez Stripe, et la marche à suivre pour le régler (lot 59).
 - `guide/` — le guide du débutant (lot 51) : une page d'entrée et cinq pages de questions, pour Google et les IA.
 - `STATISTIQUES.md` — marche à suivre de l'utilisateur pour Umami et pour lire les avis (lot 46), et pour PostHog (section 5, lot 77 ; le code est en haut de `js/stats.js`).
@@ -3096,7 +3162,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-tutos` (`{ vus: [identifiants] }`, les tutos vus jusqu'au bout, lot 56 ; l'ancien `vol` n'est plus écrit depuis le lot 60), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés, `{ v: 2, n, t, p, ex }` depuis le lot 72, `ex: true` = la collection d'exemple, qui ne consomme pas la fiche offerte ; ne suit pas le compte), `coach-missions` (lot 72 : `{ v: 2, total, paires: { 'clé>clé': missions faites }, ok }` ; avant, une seule paire `{ pair, done, total }`), `coach-musique` (favoris, vus récemment, fiche offerte, lot 72 ; ne suit pas le compte), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; `ecran` : les commandes passées exprès d'une table réglée à la main, à l'écran, lot 73 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe` ; `autre` : le nom tapé d'une table pas dans la liste, lot 73), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert, semaine, essaiDispo }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; `semaine` = pendant les 7 jours gratuits, `essaiDispo` faux = ce compte a déjà été abonné, plus d’essai, lot 76 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
+`coach-collection` (morceaux importés, `{ v: 2, n, t, p, ex }` depuis le lot 72, `ex: true` = la collection d'exemple, qui ne consomme pas la fiche offerte ; ne suit pas le compte), `coach-missions` (lot 72 : `{ v: 2, total, paires: { 'clé>clé': missions faites }, ok }` ; avant, une seule paire `{ pair, done, total }`), `coach-musique` (favoris, vus récemment, fiche offerte, lot 72 ; ne suit pas le compte), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; `ecran` : les commandes passées exprès d'une table réglée à la main, à l'écran, lot 73 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe` ; `autre` : le nom tapé d'une table pas dans la liste, lot 73), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert, semaine, essaiDispo }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; `semaine` = pendant les 7 jours gratuits, `essaiDispo` faux = ce compte a déjà été abonné, plus d’essai, lot 76 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré), `coach-langue` (`en` ou `fr` : la langue choisie, lots 53 et 80 ; posée par `?lang=`, le bouton FR / EN ou la carte « Switch to English » ; ne suit pas le compte, gardée par « Tout recommencer à zéro »). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester

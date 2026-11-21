@@ -11,6 +11,8 @@ module.exports = defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     viewport: { width: 1366, height: 768 },
+    // un navigateur réglé en français, comme le public du site (lot 53)
+    locale: 'fr-FR',
     launchOptions: { args: ['--autoplay-policy=no-user-gesture-required'] }
   },
   webServer: { command: 'node tests/serveur.js --tests', url: `http://localhost:${PORT}/index.html`, reuseExistingServer: true }

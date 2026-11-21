@@ -44,6 +44,7 @@ const EXPEDITEUR = { name: 'DJingood', email: 'noreply@djingood.fr' };
 const SITES = ['https://djingood.fr', 'https://www.djingood.fr', 'https://coach-bass-swap.vercel.app'];
 const MAX = 3;   // liens par adresse et par heure (heure pleine, UTC)
 const SUJET = 'Ton lien pour te connecter à DJingood';
+const SUJET_EN = 'Your link to sign in to DJingood';   // lot 80 : le site en anglais envoie { langue: 'en' }
 
 const mailOk = v => typeof v === 'string' && v.trim().length <= 200 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 // Un prénom : des lettres, et au plus un espace, un tiret ou une apostrophe entre deux lettres (comme api/mails.js)
@@ -82,11 +83,11 @@ async function compte1(nom, jeton){
   return v > 0 ? v : NaN;
 }
 // Le lien du mail : directement sur la page de DJingood, avec ce que Firebase a mis dans le sien. Sinon, le sien tel quel.
-function lienDirect(oob, retour){
+function lienDirect(oob, retour, langue = 'fr'){
   try {
     const u = new URL(oob), p = u.searchParams;
     if (p.get('mode') === 'signIn' && p.get('oobCode') && p.get('apiKey'))
-      return retour + '?apiKey=' + encodeURIComponent(p.get('apiKey')) + '&oobCode=' + encodeURIComponent(p.get('oobCode')) + '&mode=signIn&lang=fr';
+      return retour + '?apiKey=' + encodeURIComponent(p.get('apiKey')) + '&oobCode=' + encodeURIComponent(p.get('oobCode')) + '&mode=signIn&lang=' + (langue === 'en' ? 'en' : 'fr');
   } catch (e) {}
   return /^https:\/\//.test(String(oob)) ? String(oob) : '';
 }
@@ -125,13 +126,26 @@ async function google(chemin, jeton, corps){
 }
 
 // Le mail. Texte validé par Nathan le 10 nov. 2026. Pas d'image (bloquées par défaut, et mal vues d'un domaine neuf).
-function mailTexte(prenom, lien){
+// Lot 80 : la même chose en anglais, pour ceux qui ont choisi l'anglais sur le site.
+const EN = {
+  salut: p => p ? 'Hi ' + p + '!' : 'Hi!',
+  texte: (p, lien) => EN.salut(p) + '\n\nHere is your link to sign in to DJingood:\n' + lien +
+    '\n\nOpen it on the computer where you will plug in your controller: your plan and your progress will be there.\n\n' +
+    'This link only works once. Didn’t ask for anything? Ignore this email: nothing happens without a click.\n\nVini, from DJingood\nhttps://djingood.fr',
+  apercu: 'One click, and your plan is on your computer.', voici: 'Here is your link to sign in to DJingood.', bouton: 'Sign me in',
+  ouvre: 'Open it on the computer where you will plug in your controller: your plan and your progress will be there.',
+  unefois: 'This link only works once. Didn’t ask for anything? Ignore this email: nothing happens without a click.',
+  signe: 'Vini, from DJingood', panne: 'Button not working? Copy this link into your browser:'
+};
+function mailTexte(prenom, lien, langue = 'fr'){
+  if (langue === 'en') return EN.texte(prenom, lien);
   return (prenom ? 'Salut ' + prenom + ' !' : 'Salut !') + '\n\nVoici ton lien pour te connecter à DJingood :\n' + lien +
     '\n\nOuvre-le sur l’ordinateur où tu brancheras ta table : tu y retrouveras ton plan et ta progression.\n\n' +
     'Ce lien ne sert qu’une fois. Tu n’as rien demandé ? Ignore ce mail : rien ne se passe sans clic.\n\nVini, de DJingood\nhttps://djingood.fr';
 }
-function mailHtml(prenom, lien){
+function mailHtml(prenom, lien, langue = 'fr'){
   const l = html(lien), p = 'font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;color:#1d2030;margin:0 0 16px';
+  if (langue === 'en') return mailHtmlEn(prenom, l, p);
   return '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<title>' + html(SUJET) + '</title></head><body style="margin:0;padding:0;background:#f3f1fa">' +
     '<div style="display:none;max-height:0;overflow:hidden;opacity:0">Un clic, et tu retrouves ton plan sur l’ordinateur.</div>' +
@@ -154,6 +168,30 @@ function mailHtml(prenom, lien){
     'DJingood · <a href="https://djingood.fr" style="color:#8a8ea0">djingood.fr</a></td></tr>' +
     '</table></td></tr></table></body></html>';
 }
+// Le même mail en anglais (lot 80) : même mise en page, mêmes couleurs
+function mailHtmlEn(prenom, l, p){
+  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>' + html(SUJET_EN) + '</title></head><body style="margin:0;padding:0;background:#f3f1fa">' +
+    '<div style="display:none;max-height:0;overflow:hidden;opacity:0">' + html(EN.apercu) + '</div>' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f1fa"><tr><td align="center" style="padding:28px 12px">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:14px">' +
+    '<tr><td style="padding:28px 28px 8px;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:bold;color:#1d2030">' +
+    '<span style="color:#7c4dff">DJ</span>ingood</td></tr>' +
+    '<tr><td style="padding:12px 28px 4px">' +
+    '<p style="' + p + ';font-size:18px;font-weight:bold">' + html(EN.salut(prenom)) + '</p>' +
+    '<p style="' + p + '">' + html(EN.voici) + '</p>' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 22px"><tr><td style="border-radius:10px;background:#7c4dff">' +
+    '<a href="' + l + '" style="display:inline-block;padding:14px 28px;font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:10px">' + html(EN.bouton) + '</a>' +
+    '</td></tr></table>' +
+    '<p style="' + p + '">' + html(EN.ouvre) + '</p>' +
+    '<p style="' + p + ';font-size:14px;color:#5b5f73">' + html(EN.unefois) + '</p>' +
+    '<p style="' + p + '">' + html(EN.signe) + '</p>' +
+    '<p style="' + p + ';font-size:13px;color:#5b5f73">' + html(EN.panne) + '<br>' +
+    '<a href="' + l + '" style="color:#5b3fd6;word-break:break-all">' + l + '</a></p>' +
+    '</td></tr><tr><td style="padding:4px 28px 24px;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8a8ea0">' +
+    'DJingood · <a href="https://djingood.fr" style="color:#8a8ea0">djingood.fr</a></td></tr>' +
+    '</table></td></tr></table></body></html>';
+}
 
 async function handler(req, res){
   if (req.method !== 'POST') return repond(res, 405, { erreur: 'methode' });
@@ -163,7 +201,7 @@ async function handler(req, res){
   let b = req.body;
   if (typeof b === 'string'){ try { b = JSON.parse(b); } catch (e) { b = null; } }
   if (!b || typeof b !== 'object' || !mailOk(b.mail)) return repond(res, 400, { erreur: 'adresse' });
-  const mail = b.mail.trim().toLowerCase(), retour = retourOk(b.retour);
+  const mail = b.mail.trim().toLowerCase(), retour = retourOk(b.retour), langue = b.langue === 'en' ? 'en' : 'fr';
 
   let jeton;
   try { jeton = await module.exports.jetonAcces(c); } catch (e) { return repond(res, 502, { erreur: 'google' }); }
@@ -187,13 +225,13 @@ async function handler(req, res){
 
     // 3. Le lien, fabriqué par Firebase sans qu'il l'envoie
     const oob = await google('/accounts:sendOobCode', jeton, { requestType: 'EMAIL_SIGNIN', email: u.email, continueUrl: retour, canHandleCodeInApp: true, returnOobLink: true });
-    const lien = oob.ok && oob.d ? lienDirect(oob.d.oobLink, retour) : '';
+    const lien = oob.ok && oob.d ? lienDirect(oob.d.oobLink, retour, langue) : '';
     if (!lien) return repond(res, 502, { erreur: 'google', statut: oob.status });
 
     // 4. Brevo l'envoie, avec notre texte
     const prenom = prenomOk(u.displayName);
     const r = await fetch(BREVO, { method: 'POST', headers: { 'api-key': cle, accept: 'application/json', 'content-type': 'application/json' },
-      body: JSON.stringify({ sender: EXPEDITEUR, to: [{ email: u.email }], subject: SUJET, htmlContent: mailHtml(prenom, lien), textContent: mailTexte(prenom, lien), tags: ['lien-connexion'] }) });
+      body: JSON.stringify({ sender: EXPEDITEUR, to: [{ email: u.email }], subject: langue === 'en' ? SUJET_EN : SUJET, htmlContent: mailHtml(prenom, lien, langue), textContent: mailTexte(prenom, lien, langue), tags: ['lien-connexion'] }) });
     if (!r.ok){
       // la raison donnée par Brevo (« Key not found », « unrecognised IP address »…), pour savoir quoi régler ; jamais la clé
       const d = await r.json().catch(() => null);

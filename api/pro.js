@@ -168,11 +168,14 @@ async function handler(req, res){
       }
       // lot 76 : les 7 jours gratuits, une seule fois par compte (un compte qui a déjà eu un abonnement paie tout de suite)
       if (semaine && await dejaAbonne(qui, cle)) return repond(res, 409, { erreur: 'essai-deja' });
+      // lot 80 : le site en anglais envoie { langue: 'en' } : la page de Stripe en anglais, et l'abonnement le retient
+      // (metadata.langue) pour que le mail de rappel de l'essai (api/rappel.js) parte en anglais
+      const en = b.langue === 'en';
       const s = await stripe('/checkout/sessions', cle, { corps: Object.assign({
-        mode: 'subscription', locale: 'fr', allow_promotion_codes: 'true',
+        mode: 'subscription', locale: en ? 'en' : 'fr', allow_promotion_codes: 'true',
         line_items: { 0: { price: prix[b.formule], quantity: 1 } },
         client_reference_id: qui.uid, customer_email: qui.email,
-        metadata: { uid: qui.uid }, subscription_data: Object.assign({ metadata: Object.assign({ uid: qui.uid }, essai ? { essai: 'mois-offert' } : semaine ? { essai: 'semaine' } : {}) },
+        metadata: { uid: qui.uid }, subscription_data: Object.assign({ metadata: Object.assign({ uid: qui.uid }, essai ? { essai: 'mois-offert' } : semaine ? { essai: 'semaine' } : {}, en ? { langue: 'en' } : {}) },
           // le mois offert : 30 jours, sans carte ; sans carte ajoutée d'ici là, l'abonnement s'arrête (rien n'est prélevé)
           essai ? { trial_period_days: 30, trial_settings: { end_behavior: { missing_payment_method: 'cancel' } } } : {},
           // lot 76 : 7 jours gratuits, la carte est demandée (le réglage par défaut de Stripe) ; Stripe écrit lui-même sur sa
@@ -182,7 +185,9 @@ async function handler(req, res){
         // la case à cocher obligatoire : les conditions de vente, et l'accès tout de suite (le joueur renonce au délai de
         // rétractation de 14 jours, comme la loi le permet pour un contenu numérique ouvert immédiatement)
         consent_collection: { terms_of_service: 'required' },
-        custom_text: { terms_of_service_acceptance: { message: `J'accepte les [conditions de vente](${site}/cgv.html). Je demande l'accès à DJingood Pro tout de suite et je renonce à mon délai de rétractation de 14 jours.` } }
+        custom_text: { terms_of_service_acceptance: { message: en
+          ? `I accept the [terms of sale](${site}/terms.html). I ask for access to DJingood Pro right away and I waive my 14-day right of withdrawal.`
+          : `J'accepte les [conditions de vente](${site}/cgv.html). Je demande l'accès à DJingood Pro tout de suite et je renonce à mon délai de rétractation de 14 jours.` } }
       }, essai ? { payment_method_collection: 'if_required' } : {}) });
       return repond(res, 200, { url: s.url });
     }
@@ -197,7 +202,7 @@ async function handler(req, res){
     if (b.action === 'gerer'){
       const s = await abonnement(qui, cle);
       if (!s || !s.customer) return repond(res, 404, { erreur: 'pas-abonne' });
-      const p = await stripe('/billing_portal/sessions', cle, { corps: { customer: typeof s.customer === 'string' ? s.customer : s.customer.id, return_url: site + '/#apprendre', locale: 'fr' } });
+      const p = await stripe('/billing_portal/sessions', cle, { corps: { customer: typeof s.customer === 'string' ? s.customer : s.customer.id, return_url: site + '/#apprendre', locale: b.langue === 'en' ? 'en' : 'fr' } });
       return repond(res, 200, { url: p.url });
     }
   } catch (e) { return repond(res, 502, { erreur: 'stripe', statut: e.statut || 0 }); }

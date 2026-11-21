@@ -94,6 +94,7 @@ Dans l'ordre où un joueur les rencontre :
 
 | Étape | Quand |
 |---|---|
+| `anglais` | Il a ouvert le site en anglais (bouton EN, ou une adresse avec `?lang=en`), une fois par navigateur (lots 53 et 80) |
 | `sans-midi` | Le navigateur ne peut pas parler à une table (iPhone, appli TikTok, Safari, Firefox) |
 | `premiers-pas-fin` | Il a répondu aux questions de Vini (avec son parcours et s'il a une table) |
 | `premiers-pas-passes` | Il a appuyé sur « Passer » (avant le lot 65, qui a retiré « Passer ») |

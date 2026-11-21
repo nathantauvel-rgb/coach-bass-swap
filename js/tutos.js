@@ -673,6 +673,7 @@ function tuMajTable(x, vNom, live){
 
 /* ---------- Vini parle : le texte s'écrit lettre par lettre, la musique attend ---------- */
 function tuPrepare(t){
+  t = tr(t);   // lot 80 : en anglais, la phrase est traduite avant d'être coupée en lettres (comme ppBulle, lot 53)
   const el = $('tuBulle'), sr = document.createElement('span'), vu = document.createElement('span'), tx = tu.texte;
   el.textContent = ''; sr.className = 'tu-sr'; sr.textContent = t; vu.setAttribute('aria-hidden', 'true');
   tx.spans = []; tx.temps = []; tx.vus = 0;

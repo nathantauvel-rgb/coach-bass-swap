@@ -215,7 +215,7 @@ function midiAideRemplir(box){
 }
 // Le lien du site, sans ce qui suit # (on arrive à l'accueil). Sans presse-papiers (refusé ou absent), le lien s'écrit en
 // toutes lettres pour qu'on le recopie.
-const midiLien = () => location.origin + location.pathname;
+const midiLien = () => location.origin + location.pathname + (LANGUE === 'en' ? '?lang=en' : '');   // lot 80 : même langue sur l'ordinateur
 async function midiCopieLien(b, box){
   let ok = false; try { await navigator.clipboard.writeText(midiLien()); ok = true; } catch (e) {}
   if (ok){ b.textContent = 'Lien copié !'; setTimeout(() => { b.textContent = 'Copier le lien'; }, 2500); return; }
@@ -269,13 +269,13 @@ function updateSetup(){
   const box = $('setup'), btn = $('startBtn');
   // lot 68 : un niveau de Pro (sans abonnement) : pas de position de départ, le bouton ouvre la fenêtre Pro (setStartBtn)
   if (!run && proIci()){ box.hidden = true; btn.disabled = false; btn.classList.remove('ready'); setStartBtn(false); return; }
-  if (run || !needSetup()){ box.hidden = true; if (!run){ btn.disabled = false; btn.classList.remove('ready'); if (btn.textContent !== 'Préparation…') btn.textContent = 'Jouer'; } return; }
+  if (run || !needSetup()){ box.hidden = true; if (!run){ btn.disabled = false; btn.classList.remove('ready'); if (btn.textContent !== tr('Préparation…')) btn.textContent = 'Jouer'; } return; }
   const l = LESSONS[li], ul = $('setupList'); ul.innerHTML = '';
   for (const k of l.depart || l.user){
     const v = l.init[k], p = map[k] ? phys[k] : null, ok = map[k] ? inPlace(k, v, p) : null;
     const li2 = document.createElement('li'); li2.className = ok === true || onScreen(k) ? 'ok' : ok === false ? 'wrong' : '';
     const ic = document.createElement('span'); ic.className = 'ic'; ic.textContent = onScreen(k) ? '•' : ok === true ? '✓' : ok === false ? '!' : '?';
-    const nm = document.createElement('span'); nm.innerHTML = '<b></b> '; nm.querySelector('b').textContent = CTRL_LABEL[k]; nm.appendChild(document.createTextNode(': ' + targetText(k, v))); nm.prepend(pictoOf(k, v));
+    const nm = document.createElement('span'); nm.innerHTML = '<b></b>'; nm.querySelector('b').textContent = CTRL_LABEL[k]; nm.appendChild(document.createTextNode(' : ' + targetText(k, v))); nm.prepend(pictoOf(k, v));
     const wh = document.createElement('span'); wh.className = 'what';
     // lot 73 : un bouton qu'une table réglée à la main n'a pas encore montré se règle en cliquant sur « Jouer » (regAvantDeJouer)
     const aRegler = onScreen(k) && typeof regManque === 'function' && regManque(l).includes(k);

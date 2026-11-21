@@ -56,6 +56,20 @@ test.describe('La fonction /api/rappel', () => {
     expect(decodeURIComponent(marque.corps)).toContain('metadata[rappel]=2026-11-23T08:00:00.000Z');
   });
 
+  // Lot 80 : un essai commencé sur le site en anglais (api/pro.js écrit metadata.langue = 'en')
+  test('un essai commencé en anglais : le rappel part en anglais', async () => {
+    f.abos = [ABO({ metadata: { uid: 'u1', essai: 'semaine', langue: 'en' } })];
+    const r = await appel();
+    expect(r.corps).toEqual({ vus: 1, envoyes: 1, erreurs: 0 });
+    const d = JSON.parse(brevo()[0].corps);
+    expect(d.subject).toBe('Your DJingood Pro trial ends Wednesday, November 25');
+    expect(d.sender).toEqual({ name: 'Vini from DJingood', email: 'noreply@djingood.fr' });
+    for (const t of ['Wednesday, November 25', '€49.99 for the year', 'Want to keep going?', 'Manage my subscription', 'Cancel subscription']) expect(d.textContent).toContain(t);
+    expect(d.htmlContent).toContain('<html lang="en">');
+    expect(d.htmlContent).toContain('€49.99 for the year');
+    expect(d.textContent).not.toMatch(/Salut|abonnement|essai/);
+  });
+
   test('pas de mail : le mois offert, un essai arrêté, déjà prévenu, trop tôt ou trop tard', async () => {
     f.abos = [
       ABO({ id: 'sub_a', metadata: { uid: 'u1', essai: 'mois-offert' } }),

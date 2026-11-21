@@ -437,8 +437,8 @@ async function cpEnvoieLien(b){
     }
     setTimeout(() => { b.disabled = false; b.textContent = 'M’envoyer le lien'; }, 5000); return;
   }
-  const url = location.origin + location.pathname;
-  if (navigator.share){ try { await navigator.share({ title: 'DJingood', text: 'À ouvrir sur mon ordinateur, avec ma table DJ', url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+  const url = location.origin + location.pathname + (LANGUE === 'en' ? '?lang=en' : '');   // lot 80 : l'ordinateur s'ouvre dans la même langue
+  if (navigator.share){ try { await navigator.share({ title: 'DJingood', text: tr('À ouvrir sur mon ordinateur, avec ma table DJ'), url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
   let ok = false; try { await navigator.clipboard.writeText(url); ok = true; } catch (e) {}
   b.textContent = ok ? 'Lien copié !' : url; if (ok) setTimeout(() => { b.textContent = 'M’envoyer le lien'; }, 2500);
 }
