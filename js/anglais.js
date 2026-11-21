@@ -1118,4 +1118,1627 @@ enMotifFin(/^((?:Intro|Outro|Drop|Break|Phrase|Swap|Écho|Hot cue|Boucle|Quantiz
 
 enMotif('{#n} dB', '{n} dB');
 
+
+/* ---------- Lot 80 : début ---------- */
+// Écrit pendant le lot 80 (novembre 2026) : ce que le site a gagné depuis le lot 53. Une ligne se corrige à la main.
+enPareil("PRO", "DJingood Pro", "HOT CUES", "Pause", "Pixabay", "Pro", "Deep House", "Ambient House", "Deep House Instrumental", "Luxury Life", "Fashion Diva House", "Filter House", "House - July", "Pioneer XDJ-RR", "Satin", "Mirage", "Warm-up", "Afro sunset", "Lune Basse", "Kalia Moon", "Terre rouge", "Moussa K.", "Soleil noir", "Kora Club", "Ilé Ayo", "Sahel Drive", "Savane", "Cuivres", "Paloma Vee", "Noé Marlo", "Lumière noire", "Fil rouge", "Saint-Ange", "Fièvre", "Dernier métro", "Grand bleu", "Oslo Nuit", "Melodic House & Techno", "Marée haute", "Acier Doux", "Mira Sol", "House & Nu Disco", "Les Jumeaux Disco", "Boule à facettes", "Bain de minuit", "Possible", "Playlist", "FADER ↓", "FADER ↑", "LOW ↓", "LOW ↑", "HI ↓", "MID ↓", "HI ↑", "MID ↑", "3 min", "2 min");
+
+/* ---------- index.html (lot 80) ---------- */
+enDe({
+  "Mixe comme<br><span class=\"pro-accent\">un vrai DJ.</span>": "Mix like<br><span class=\"pro-accent\">a real DJ.</span>",
+  "L'entraînement et Ma musique<small>Variations, à l'oreille, mini-sets, et ce qui va avec chaque morceau de ta collection rekordbox.</small>": "Practice and My music<small>Variations, by ear, mini-sets, and what goes with each track in your rekordbox collection.</small>",
+  "<b>Ton premier mois est offert</b>, sans carte bancaire : merci d'avoir été là avant Pro. Ensuite, ce prix, seulement si tu continues.": "<b>Your first month is free</b>, no credit card needed: thanks for being here before Pro. After that, this price, only if you keep going.",
+  "<b>7 jours gratuits</b>, puis ce prix. Ta carte est demandée, mais rien n'est prélevé avant le 7<sup>e</sup> jour&nbsp;; Vini t'envoie un mail 2 jours avant la fin de l'essai. Tu arrêtes quand tu veux, dans «&nbsp;Mon compte&nbsp;».": "<b>7 days free</b>, then this price. We ask for your card, but nothing is charged before the 7<sup>th</sup> day; Vini emails you 2 days before your trial ends. Cancel anytime in \"My account\".",
+  "Bienvenue dans <span class=\"pro-accent\">Pro</span> !": "Welcome to <span class=\"pro-accent\">Pro</span>!",
+  "Tu gardes toutes tes étoiles et ton niveau. Et pour te remercier, <b>ton premier mois de Pro est offert</b>&nbsp;: tous les chapitres, tous les tutos.": "You keep all your stars and your level. And to thank you, <b>your first month of Pro is free</b>: every chapter, every tutorial.",
+  "<span class=\"pro-tag\">Pro</span>Avec DJingood Pro, comme les 7 chapitres et tous les tutos.": "<span class=\"pro-tag\">Pro</span>With DJingood Pro, like the 7 chapters and all the tutorials.",
+  "<span class=\"pro-tag\">Pro</span>Gratuit : l'import, et la fiche d'un morceau. Tout le reste avec DJingood Pro.": "<span class=\"pro-tag\">Pro</span>Free: the import, and one track's card. Everything else with DJingood Pro.",
+  "Dans rekordbox, ouvre le menu <b>Fichier</b>.": "In rekordbox, open the <b>File</b> menu.",
+  "Choisis <b>« Exporter la collection au format xml »</b>, et enregistre le fichier.": "Choose <b>\"Export Collection in xml format\"</b>, and save the file.",
+  "Comprendre<small>Gratuit, juste le son</small>": "Understand<small>Free, just the sound</small>",
+  "<span class=\"pro-tag\">Pro</span>La suite, avec DJingood Pro": "<span class=\"pro-tag\">Pro</span>The rest, with DJingood Pro",
+  "<b>Garde ta progression.</b><span>Crée ton compte&nbsp;: tes étoiles et ta série te suivent sur tous tes appareils.</span>": "<b>Keep your progress.</b><span>Create your account: your stars and your streak follow you on all your devices.</span>",
+  "Ton rapport pour l'équipe": "Your report for the team",
+  "← Retour": "← Back",
+  "Recevoir les conseils de Vini par mail : 3 pour démarrer, puis un par semaine au plus. Désinscription en un clic.": "Get Vini's tips by email: 3 to get started, then one a week at most. Unsubscribe in one click.",
+  "Créer un compte avec mon e-mail": "Create an account with my email",
+  "Pas de mot de passe ? Recevoir un lien de connexion": "No password? Get a sign-in link",
+  "Abonnement": "Subscription",
+  "Réglages": "Settings",
+  "Volume du site": "Site volume",
+  "Les mails de Vini": "Vini's emails",
+  "Mixe comme": "Mix like",
+  "un vrai DJ.": "a real DJ.",
+  "Toute la formation DJingood : les exercices avec ta table, les tutos de Vini, l'entraînement.": "The whole DJingood course: the exercises with your controller, Vini's tutorials, practice.",
+  "Les 7 chapitres": "All 7 chapters",
+  "exercices de plus : le swap des basses, le calage, les hot cues, le set noté sur 100.": "more exercises: the bass swap, beatmatching, hot cues, the set scored out of 100.",
+  "Tous les tutos de Vini": "All of Vini's tutorials",
+  "de plus aujourd'hui, et un nouveau chaque mois.": "more today, and a new one every month.",
+  "Variations, à l'oreille, mini-sets, et ce qui va avec chaque morceau de ta collection rekordbox.": "Variations, by ear, mini-sets, and what goes with each track in your rekordbox collection.",
+  "Mensuel": "Monthly",
+  "Annuel": "Yearly",
+  "/ an": "/ year",
+  ", sans carte bancaire : merci d'avoir été là avant Pro. Ensuite, ce prix, seulement si tu continues.": ", no credit card needed: thanks for being here before Pro. After that, this price, only if you keep going.",
+  "7 jours gratuits": "7 days free",
+  ", puis ce prix. Ta carte est demandée, mais rien n'est prélevé avant le 7": ", then this price. We ask for your card, but nothing is charged before the 7",
+  "jour ; Vini t'envoie un mail 2 jours avant la fin de l'essai. Tu arrêtes quand tu veux, dans « Mon compte ».": "day; Vini emails you 2 days before your trial ends. Cancel anytime in \"My account\".",
+  "D'abord, essaie avec ta table": "First, try it with your controller",
+  "Passer à Pro quand même": "Go Pro anyway",
+  "Sans engagement": "No commitment",
+  "Paiement sécurisé par Stripe": "Secure payment by Stripe",
+  "Conditions de vente": "Terms of sale",
+  "Mentions légales": "Legal notice",
+  "Pas maintenant": "Not now",
+  "Ce que tu débloques": "What you unlock",
+  "Tous les tutos, et un nouveau chaque mois.": "All the tutorials, and a new one every month.",
+  "LES BASES": "THE BASICS",
+  "La fin du chapitre 1": "The end of chapter 1",
+  "4 niveaux": "4 levels",
+  "À L'OREILLE": "BY EAR",
+  "7 niveaux": "7 levels",
+  "CALAGE": "BEATMATCHING",
+  "LE SET": "THE SET",
+  "7 niveaux, noté sur 100": "7 levels, scored out of 100",
+  "Bienvenue dans": "Welcome to",
+  "Tous les tutos sont ouverts.": "All the tutorials are unlocked.",
+  "Voir les tutos": "See the tutorials",
+  "Merci d'avoir été là dès le début !": "Thanks for being here from the start!",
+  "DJingood passe à un abonnement, DJingood Pro.": "DJingood is moving to a subscription, DJingood Pro.",
+  "Tu gardes toutes tes étoiles et ton niveau. Et pour te remercier,": "You keep all your stars and your level. And to thank you,",
+  "ton premier mois de Pro est offert": "your first month of Pro is free",
+  "tous les chapitres, tous les tutos.": "every chapter, every tutorial.",
+  "Sans carte bancaire. À la fin du mois, tu choisis de continuer ou non.": "No credit card. At the end of the month, you choose whether to continue.",
+  "Ce message ne s'affiche qu'une fois. L'offre reste dans la fenêtre Pro.": "This message only shows once. The offer stays in the Pro window.",
+  "Tu es connecté": "You're signed in",
+  "Bienvenue sur ordinateur !": "Welcome to DJingood on your computer!",
+  "Ton plan du téléphone est là. Ici, tu vas brancher ta table.": "The plan from your phone is here. Now you'll plug in your controller.",
+  "Relevé de ta table": "Your controller report",
+  "Copier le relevé": "Copy the report",
+  "Tutos": "Tutorials",
+  "Revoir le guide": "See the guide again",
+  "Son": "Sound",
+  "Le volume de tout le site : exercices, tutos, leçons.": "The volume for the whole site: exercises, tutorials, lessons.",
+  "Petits sons du jeu": "Little game sounds",
+  "Réussi, raté, étoiles, coffres.": "Success, miss, stars, chests.",
+  "Mon avis : ce qui t'a bloqué, ce qui t'a plu": "Feedback: what got you stuck, what you liked",
+  "Ou fais le défi du jour (gratuit)": "Or do the daily challenge (free)",
+  "Sur ton ordinateur": "On your computer",
+  "Donner mon avis": "Give feedback",
+  "Entraînement": "Practice",
+  "Mixe ta musique": "Mix your music",
+  "Choisis un morceau de ta collection rekordbox : je te trouve ceux qui vont avec, et je t'explique comment faire la transition.": "Pick a track from your rekordbox collection: I'll find the ones that go with it, and explain how to do the transition.",
+  "Avec DJingood Pro, comme les 7 chapitres et tous les tutos.": "With DJingood Pro, like the 7 chapters and all the tutorials.",
+  "Choisis un morceau que tu aimes : je te trouve ceux qui vont avec dans ta collection, et je t'explique comment faire la transition.": "Pick a track you love: I'll find the ones in your collection that go with it, and explain how to do the transition.",
+  "Gratuit : l'import, et la fiche d'un morceau. Tout le reste avec DJingood Pro.": "Free: the import, and one track's card. Everything else with DJingood Pro.",
+  "Importer ma collection rekordbox": "Import my rekordbox collection",
+  "Comment exporter ma collection depuis rekordbox ?": "How do I export my collection from rekordbox?",
+  "Dans rekordbox, ouvre le menu": "In rekordbox, open the menu",
+  "Fichier": "File",
+  "Choisis": "Choose",
+  "« Exporter la collection au format xml »": "\"Export Collection in xml format\"",
+  ", et enregistre le fichier.": ", and save the file.",
+  "Reviens ici, appuie sur « Importer ma collection rekordbox » et choisis ce fichier.": "Come back here, press \"Import my rekordbox collection\" and choose that file.",
+  "Mettre à jour": "Update",
+  "Réimporte ta collection rekordbox pour voir aussi tes playlists, la date d'ajout de tes morceaux et ce que tu as déjà joué.": "Re-import your rekordbox collection to also see your playlists, when you added your tracks, and what you've already played.",
+  "Mes morceaux": "My tracks",
+  "Vus récemment": "Recently viewed",
+  "Chercher un titre ou un artiste": "Search for a title or an artist",
+  "Filtres": "Filters",
+  "Trier par": "Sort by",
+  "Les techniques des DJ, expliquées par Vini. Tu écoutes, tu regardes la table, et tu comprends pourquoi ça marche.": "DJ techniques, explained by Vini. You listen, you watch the controller, and you understand why it works.",
+  "« Le fondu au fader » est gratuit.": "\"The fader fade\" is free.",
+  "Les autres, et un nouveau chaque mois, sont dans DJingood Pro.": "The others, and a new one every month, are in DJingood Pro.",
+  "Tuto": "Tutorial",
+  "‹ Tous les tutos": "‹ All tutorials",
+  "Chapitres du tuto": "Tutorial chapters",
+  "Écoute": "Listen",
+  "Tuto suivant": "Next tutorial",
+  "Revoir le tuto": "Watch the tutorial again",
+  "Lecteur du tuto": "Tutorial player",
+  "Plan précédent": "Previous shot",
+  "Plan suivant": "Next shot",
+  "Réécouter": "Listen again",
+  "Niveaux du chapitre": "Chapter levels",
+  "Tous les niveaux": "All levels",
+  "Sans table": "No controller",
+  "Gratuit, juste le son": "Free, just the sound",
+  "Avec ta table": "With your controller",
+  "La suite du chapitre :": "The rest of the chapter:",
+  "La suite, avec DJingood Pro": "The rest, with DJingood Pro",
+  "Puis 6 chapitres : à l'oreille, les vrais morceaux, les combos, le calage, les hot cues et le set noté sur 100.": "Then 6 chapters: by ear, real tracks, combos, beatmatching, hot cues, and the set scored out of 100.",
+  "Voir tout ce qu'il y a dans Pro": "See everything in Pro",
+  "Crée ton compte : tes étoiles et ta série te suivent sur tous tes appareils.": "Create your account: your stars and your streak follow you on all your devices.",
+  "« Deep House » puis « Ambient House »": "\"Deep House\" then \"Ambient House\"",
+  "Les bases : Guidé, un geste à la fois": "The basics: Guided, one move at a time",
+  "sors de la boucle de B (pad EXIT), avant le temps 64": "exit B's loop (EXIT pad), before beat 64",
+  "B attend": "B is waiting",
+  "hot cue 1 posé sur son drop": "hot cue 1 set on its drop",
+  "sans table": "no controller",
+  "sur ton téléphone": "on your phone",
+  "avec ta table": "with your controller",
+  "soit 4,17 € par mois": "that's €4.17 a month",
+});
+
+/* ---------- js/premiers.js (lot 80) ---------- */
+enDe({
+  "Oui, j'en ai une": "Yes, I have one",
+  "Tu la brancheras sur ton ordinateur": "You'll plug it into your computer",
+  "Pas encore": "Not yet",
+  "Je commence au doigt, sur mon téléphone": "I'll start with my finger, on my phone",
+  "Laquelle ?": "Which one?",
+  "Super ! On la branchera sur ton ordinateur, je t'enverrai le lien.": "Great! We'll plug it into your computer, I'll send you the link.",
+  "Pas de souci : on commence sur ton téléphone, au doigt.": "No problem: we'll start on your phone, with your finger.",
+  "Voir mon plan": "See my plan",
+  "Garder mon plan": "Keep my plan",
+  "Commencer la leçon 1": "Start lesson 1",
+  "Salut, moi c'est Vini ! Je vais t'apprendre à mixer. En une minute, je te fais ton plan.": "Hi, I'm Vini! I'm going to teach you how to mix. In one minute, I'll make your plan.",
+  "Ton plan est prêt ! Le début est gratuit.": "Your plan is ready! The start is free.",
+  "Ton plan est prêt !": "Your plan is ready!",
+  "Crée ton compte gratuit pour garder ton plan. Je t'envoie aussi un lien pour l'ouvrir sur ton ordinateur.": "Create your free account to keep your plan. I'll also send you a link to open it on your computer.",
+  "Crée ton compte gratuit pour garder ton plan et ta progression.": "Create your free account to keep your plan and your progress.",
+  "pas encore faits": "not done yet",
+  "passés sans répondre": "skipped without answering",
+  "une table": "a controller",
+  "(branchée, pas dans la liste)": "(plugged in, not in the list)",
+  "(pas dans la liste)": "(not in the list)",
+  "compte pas encore créé": "account not created yet",
+  "Écoute les 4 premiers, puis tape sur chaque « boum » !": "Listen to the first 4, then tap on every \"boom\"!",
+  "Ton oreille ! Touche le rond : je lance 4 « boum », puis tape en rythme sur les 8 suivants.": "Your ear! Touch the circle: I'll play 4 \"booms\", then tap in rhythm on the next 8.",
+  "Tu as l'oreille, bravo ! Tu peux réessayer, ou continuer.": "You've got the ear, well done! You can try again, or keep going.",
+  "Pas de souci : c'est exactement ce qu'on va travailler ensemble.": "No problem: that's exactly what we'll work on together.",
+  "Taper sur le temps (ou la barre d'espace)": "Tap on the beat (or the space bar)",
+  "Passer cette question": "Skip this question",
+  "Le temps, la phrase, les basses : 7 leçons de 2 minutes, au doigt.": "The beat, the phrase, the bass: 7 two-minute lessons, with your finger.",
+  "Les 7 gestes du DJ": "The DJ's 7 moves",
+  "Lancer, fader, couper les basses, filtre, écho… en jouant.": "Starting a track, the fader, cutting the bass, filter, echo… all by playing.",
+  "Ensuite": "Next",
+  "Les mêmes gestes, sans compte à rebours.": "The same moves, without a countdown.",
+  "Ta première vraie transition": "Your first real transition",
+  "Propre, en rythme, sur de la vraie musique.": "Clean, on beat, on real music.",
+  "Révise les bases": "Review the basics",
+  "7 leçons de 2 minutes, au doigt : va vite si tu connais.": "7 two-minute lessons, with your finger: go fast if you know them.",
+  "Le Mode Expert": "Expert Mode",
+  "Les 7 gestes, notés à la milliseconde.": "The 7 moves, scored to the millisecond.",
+  "Les combos et le calage": "Combos and beatmatching",
+  "Plusieurs gestes d'affilée, et deux tempos à caler.": "Several moves in a row, and two tempos to match.",
+  "Des transitions vraiment propres": "Really clean transitions",
+  "Jusqu'à ton premier set, noté sur 100.": "All the way to your first set, scored out of 100.",
+  "Plusieurs morceaux enchaînés, noté sur 100.": "Several tracks in a row, scored out of 100.",
+  "Le calage à l'oreille": "Beatmatching by ear",
+  "Sans BPM affiché, comme en club.": "No BPM on screen, like in a club.",
+  "Un set à 100 sur 100": "A set at 100 out of 100",
+  "Hot cues, boucles, et plus aucune aide.": "Hot cues, loops, and no more help.",
+  "Tes 3 premiers gestes": "Your first 3 moves",
+  "Lancer au bon moment, le fader, la coupure : ta première transition, avec ta table.": "Starting at the right time, the fader, the cut: your first transition, with your controller.",
+  "Tes 3 premiers gestes, en Mode Expert": "Your first 3 moves, in Expert Mode",
+  "Lancer, le fader, la coupure : sans aide, notés à la milliseconde.": "Starting, the fader, the cut: no help, scored to the millisecond.",
+  "Le swap des basses, le calage, les hot cues, jusqu'au set noté sur 100.": "The bass swap, beatmatching, hot cues, all the way to the set scored out of 100.",
+  "Les 4 autres gestes": "The other 4 moves",
+  "L'écho, le filtre, le swap des basses, la transition complète.": "The echo, the filter, the bass swap, the full transition.",
+  "Jusqu'au set noté sur 100": "All the way to the set scored out of 100",
+  "Les vrais morceaux, le calage, les hot cues.": "Real tracks, beatmatching, hot cues.",
+  "Plusieurs gestes d'affilée, deux tempos à caler, jusqu'au set.": "Several moves in a row, two tempos to match, all the way to the set.",
+  "Le set et le calage": "The set and beatmatching",
+  "Plusieurs morceaux enchaînés, sans BPM affiché, comme en club.": "Several tracks in a row, no BPM on screen, like in a club.",
+  "À ton rythme": "At your own pace",
+  "En moins de 2 semaines": "In less than 2 weeks",
+  "Dans 2 semaines": "In 2 weeks",
+  "Gratuit": "Free",
+  "On part bien !": "Off to a good start!",
+  "On va l'entraîner ensemble.": "We'll train it together.",
+  "Écris ton prénom : c'est comme ça que je t'appellerai.": "Type your first name: that's what I'll call you.",
+  "Tu as déjà un compte avec cette adresse. Je t'envoie un lien pour te connecter…": "You already have an account with this address. I'm sending you a sign-in link…",
+  "Tu as déjà un compte avec cette adresse : je t'ai envoyé un lien pour te connecter (regarde aussi dans les spams). Ouvre-le sur ce téléphone, ou choisis « J'ai déjà un compte ».": "You already have an account with this address: I sent you a sign-in link (check your spam too). Open it on this phone, or choose \"I already have an account\".",
+  "Tu as déjà un compte avec cette adresse, et je t'ai déjà envoyé 3 liens dans l'heure : regarde dans ta boîte de réception et dans tes spams.": "You already have an account with this address, and I've already sent you 3 links in the last hour: check your inbox and your spam.",
+  "Tu as déjà un compte avec cette adresse : choisis « J'ai déjà un compte » juste en dessous.": "You already have an account with this address: choose \"I already have an account\" just below.",
+  "Ton compte est créé : ton plan et ta progression sont gardés.": "Your account is created: your plan and your progress are saved.",
+  "Le lien n'a pas pu partir": "The link couldn't be sent",
+  "J'envoie ton lien pour l'ordinateur…": "Sending your link for the computer…",
+  "Sur ton ordinateur, ouvre djingood.fr et choisis « J'ai déjà un compte », avec la même adresse : je t'enverrai un lien là-bas.": "On your computer, open djingood.fr and choose \"I already have an account\", with the same address: I'll send you a link there.",
+  "Ils sont dans ta boîte de réception ou dans tes spams : ouvre le plus récent sur ton PC. Tu pourras en redemander un plus tard.": "They're in your inbox or your spam: open the most recent one on your computer. You can ask for another one later.",
+  "Ta table, ce sera sur ordinateur. Ouvre ce mail sur ton PC : tu seras connecté tout de suite.": "Your controller is for the computer. Open this email on your computer: you'll be signed in right away.",
+});
+
+/* ---------- js/niveaux.js (lot 80) ---------- */
+enDe({
+  "Ici, B n'a que 16 temps d'intro. Sur la piste, B en pointillé montre où il tomberait si tu le lançais maintenant : lance-le quand le début de son drop s'aligne sur la fin de A.": "Here, B has only 16 beats of intro. On the track, the dotted B shows where it would land if you started it now: start it when the beginning of its drop lines up with the end of A.",
+  "A a un break au milieu : la musique se vide, puis repart de plus belle. Repère sur la piste la vraie fin du morceau (le break n'en est pas une), puis lance B (32 temps d'intro) pour que son drop tombe quand A s'arrête.": "A has a break in the middle: the music empties out, then comes back even bigger. On the track, find where the song really ends (the break isn't the end), then start B (32 beats of intro) so its drop lands when A stops.",
+  "Structure inconnue : lis la piste et lance B au bon moment.": "Unknown structure: read the track and start B at the right time.",
+  "À chaque partie, l'outro de A et l'intro de B changent de longueur. Lis la piste de A pour trouver sa fin, regarde la longueur de l'intro de B, et lance B pour que son drop tombe quand A s'arrête.": "Every game, A's outro and B's intro change length. Read A's track to find where it ends, check how long B's intro is, and start B so its drop lands when A stops.",
+  "Outro (mélodie)": "Outro (melody)",
+  "Intro (mélodie)": "Intro (melody)",
+  "Intros, breaks, mélodies": "Intros, breaks, melodies",
+  "Découvrir": "Discover",
+  "7 petites leçons pour entendre ce que fait un DJ. Juste ton doigt et le son. Gratuit.": "7 short lessons to hear what a DJ does. Just your finger and the sound. Free.",
+  "Ta première transition est faite. Bravo !": "Your first transition is done. Well done!",
+  "Chapitre 3 : plus de compte à rebours. Lis la piste : elle montre l'intro, le break et la fin de chaque morceau. La démo montre le bon moment.": "Chapter 3: no more countdown. Read the track: it shows the intro, the break and the end of each song. The demo shows the right moment.",
+  "Lis la piste": "Read the track",
+  "Lis la piste et agis au bon moment.": "Read the track and act at the right moment.",
+  "Tu n'as pas lancé B : repère la fin de A sur la piste, puis lance B pour que son drop tombe dessus.": "You didn't start B: find the end of A on the track, then start B so its drop lands right on it.",
+  "Tu t'es fait piéger par le break de A : la musique s'est vidée, mais ce n'était pas la fin. Sur la piste, on voyait que A repartait à fond après le break.": "A's break fooled you: the music emptied out, but it wasn't the end. On the track, you could see A coming back full blast after the break.",
+  "Ta première transition !": "Your first transition!",
+  "49,99 € par an": "€49.99 a year",
+  "Plutôt au mois (4,99 €) ?": "Monthly instead (€4.99)?",
+  "Plutôt à l'année (49,99 €, 2 mois offerts) ?": "Yearly instead (€49.99, 2 months free)?",
+});
+
+/* ---------- js/parcours.js (lot 80) ---------- */
+enDe({
+  "Ma musique": "My music",
+  "Avec DJingood Pro": "With DJingood Pro",
+  "Lire la structure des morceaux, éviter le piège du break, une seule mélodie à la fois : comme dans rekordbox.": "Reading track structure, avoiding the break trap, one melody at a time: just like in rekordbox.",
+  "Avec ta musique : importe ta collection rekordbox, choisis un morceau, et prépare la transition avec un de ceux qui vont avec.": "With your music: import your rekordbox collection, pick a track, and prepare the transition with one that goes with it.",
+  "Les 7 gestes, avec ta table : ouvre le lien sur ton ordinateur, tu seras déjà connecté.": "The 7 moves, with your controller: open the link on your computer, you'll already be signed in.",
+  "Les 7 gestes, avec ta table : ouvre djingood.fr sur ton ordinateur.": "The 7 moves, with your controller: open djingood.fr on your computer.",
+  "Tes gestes gratuits sont faits, bravo ! La suite t'attend dans DJingood Pro.": "Your free moves are done, well done! The rest is waiting for you in DJingood Pro.",
+});
+
+/* ---------- js/compte.js (lot 80) ---------- */
+enDe({
+  "Ta progression est revenue.": "Your progress is back.",
+  "Ton compte est créé : ta progression est enregistrée.": "Your account is created: your progress is saved.",
+  "Ta progression est enregistrée sur ton compte.": "Your progress is saved to your account.",
+  "C'est noté !": "Got it!",
+  "La progression de cet ordinateur est maintenant sur ton compte.": "This computer's progress is now on your account.",
+  "Écris l'adresse de ton compte, comme toi@exemple.fr : je t'envoie un lien pour te connecter.": "Type your account's email address, like you@example.com: I'll send you a link to sign in.",
+  "C'est envoyé ! Ouvre le lien sur cet appareil : tu seras connecté. Pas dans ta boîte de réception ? Regarde dans les spams, puis indique à ta messagerie que ce n'est pas un spam : sinon, le lien ne s'ouvre pas.": "Sent! Open the link on this device: you'll be signed in. Not in your inbox? Check your spam folder, then tell your email app it's not spam: otherwise, the link won't open.",
+  "Ce lien a déjà servi ou il est trop vieux. Écris ton adresse, puis « Recevoir un lien de connexion » : je t'en envoie un nouveau.": "This link has already been used or is too old. Type your address, then \"Get a sign-in link\": I'll send you a new one.",
+  "C'est envoyé ! Regarde dans ta boîte mail, et surtout dans les spams. Si le lien n'y est pas cliquable, dis à ta messagerie que ce n'est pas un spam : il s'activera.": "Sent! Check your inbox, and especially your spam folder. If the link isn't clickable there, tell your email app it's not spam: it will start working.",
+  "Je t'ai déjà envoyé 3 liens dans l'heure : regarde dans ta boîte de réception et dans tes spams, il y est. Tu pourras en redemander un plus tard.": "I've already sent you 3 links in the last hour: check your inbox and your spam, it's there. You can ask for another one later.",
+  "La connexion par e-mail n'est pas activée dans Firebase (Authentication → Sign-in method → E-mail/Mot de passe, et « Lien envoyé par e-mail »).": "Email sign-in isn't turned on in Firebase (Authentication → Sign-in method → Email/Password, and \"Email link\").",
+  "Ce lien a déjà servi ou il est trop vieux. Demande-en un nouveau.": "This link has already been used or is too old. Ask for a new one.",
+  "Content de te revoir !": "Good to see you again!",
+  "Connexion par lien": "Sign in with a link",
+  "ou avec ton e-mail": "or with your email",
+  "Choisis un mot de passe": "Choose a password",
+  "Déjà un compte ?": "Already have an account?",
+  "Pas encore de compte ?": "Don't have an account yet?",
+  "Créer un compte": "Create an account",
+  "Tes étoiles et ta série te suivent sur tous tes appareils.": "Your stars and your streak follow you on all your devices.",
+  "Écris l'adresse où tu as reçu le lien : c'est la sécurité de la connexion sans mot de passe.": "Type the address where you got the link: that's what keeps password-free sign-in secure.",
+  "Toi": "You",
+  "Ta progression est enregistrée au fur et à mesure.": "Your progress is saved as you go.",
+  "DJingood enregistre ton prénom, ton adresse et ta progression. Ton adresse ne sert à t'écrire que si tu coches la case.": "DJingood saves your first name, your email address and your progress. Your address is only used to email you if you tick the box.",
+  "Pour les mails de Vini, clique sur le lien qu'on vient de t'envoyer.": "For Vini's emails, click the link we just sent you.",
+  "Quand tu veux": "Whenever you want",
+  "Branche ta table en USB": "Plug in your controller over USB",
+  "Reconnue": "Recognized",
+  "Je la reconnaîtrai toute seule": "I'll recognize it on my own",
+  "Ton premier niveau": "Your first level",
+});
+
+/* ---------- js/mails.js (lot 80) ---------- */
+enDe({
+  "3 mails pour bien démarrer, puis un par semaine au plus : des astuces et les nouveautés. Tu peux aussi arrêter depuis n'importe quel mail.": "3 emails to get off to a good start, then one a week at most: tips and what's new. You can also stop from any email.",
+  "Presque fini : clique sur le lien que DJingood t'a envoyé par mail pour confirmer ton adresse. Pas reçu ? Coupe puis rallume ce bouton.": "Almost done: click the link DJingood emailed you to confirm your address. Didn't get it? Turn this switch off and on again.",
+  "DJingood vient de t'envoyer un mail : clique sur le lien dedans pour confirmer ton adresse.": "DJingood just sent you an email: click the link inside to confirm your address.",
+  "C'est noté : Vini t'écrira, un mail par semaine au plus.": "Got it: Vini will email you, one email a week at most.",
+  "C'est noté : Vini ne t'écrira plus.": "Got it: Vini won't email you anymore.",
+});
+
+/* ---------- js/pro.js (lot 80) ---------- */
+enDe({
+  "Découvrir Pro": "Discover Pro",
+  "Continuer avec Pro": "Continue with Pro",
+  "Prendre mon mois offert": "Claim my free month",
+  "4,99 € par mois": "€4.99 a month",
+  "Aller à Ma musique": "Go to My music",
+  "Sans engagement : tu arrêtes quand tu veux.": "No commitment: cancel anytime.",
+  "Pour t'entraîner sans limite": "To practice without limits",
+  "Pour mixer ta propre musique": "To mix your own music",
+  "M'envoyer le lien pour l'ordi": "Send me the link for my computer",
+  "Jouer le niveau 1 (gratuit)": "Play level 1 (free)",
+  "Un instant : on prépare ton mois offert…": "One moment: we're setting up your free month…",
+  "Un instant : on prépare ton essai gratuit…": "One moment: we're setting up your free trial…",
+  "Un instant : on ouvre la page de paiement…": "One moment: opening the payment page…",
+  "Tu es déjà Pro !": "You're already Pro!",
+  "Ton essai gratuit a déjà servi : tu peux t'abonner tout de suite.": "You've already used your free trial: you can subscribe right away.",
+  "Ton mois offert a déjà servi : tu peux t'abonner tout de suite.": "You've already used your free month: you can subscribe right away.",
+  "Le mois offert est réservé aux comptes créés avant l'arrivée de Pro : tu peux t'abonner tout de suite.": "The free month is only for accounts created before Pro launched: you can subscribe right away.",
+  "Le paiement n'est pas encore ouvert. Reviens bientôt !": "Payment isn't open yet. Come back soon!",
+  "La page de paiement ne s'ouvre pas. Vérifie ta connexion, puis réessaie.": "The payment page won't open. Check your connection, then try again.",
+  "Crée ton compte : ton mois offert et ta progression y seront gardés.": "Create your account: your free month and your progress will be kept there.",
+  "Crée ton compte : il garde ton essai gratuit et ta progression, sur ton ordinateur comme sur ton téléphone.": "Create your account: it keeps your free trial and your progress, on your computer and on your phone.",
+  "Crée ton compte : il garde ton abonnement, sur ton ordinateur comme sur ton téléphone.": "Create your account: it keeps your subscription, on your computer and on your phone.",
+  "Le chapitre 3 s'ouvre avec 10 ★ au chapitre 2.": "Chapter 3 unlocks with 10 ★ in chapter 2.",
+  "On va s'entraîner ?": "Shall we practice?",
+  "On mixe ta musique ?": "Shall we mix your music?",
+  "On reprend où tu en étais ?": "Pick up where you left off?",
+  "Passer à Pro": "Go Pro",
+  "Pour toi": "For you",
+  "49,99 € pour l'année (soit 4,17 € par mois)": "€49.99 for the year (that's €4.17 a month)",
+  "Ton premier mois est offert": "Your first month is free",
+  "Sans carte bancaire : merci d'avoir été là avant Pro. Ensuite, 4,99 € par mois ou 49,99 € par an, seulement si tu continues.": "No credit card: thanks for being here before Pro. After that, €4.99 a month or €49.99 a year, only if you keep going.",
+  "Continue avec DJingood Pro": "Keep going with DJingood Pro",
+  "Formule": "Plan",
+  "Au mois": "Monthly",
+  "À l'année": "Yearly",
+  "2 mois offerts": "2 months free",
+  "Vini t'envoie un mail pour te prévenir.": "Vini emails you a reminder.",
+  "Les tutos de Vini": "Vini's tutorials",
+  "L'entraînement et Ma musique": "Practice and My music",
+  "Essai gratuit": "Free trial",
+  "Mois offert": "Free month",
+  "4,99 € par mois, ou 49,99 € par an.": "€4.99 a month, or €49.99 a year.",
+  "Gérer mon abonnement": "Manage my subscription",
+  "La page de l'abonnement ne s'ouvre pas. Vérifie ta connexion, puis réessaie.": "The subscription page won't open. Check your connection, then try again.",
+});
+
+/* ---------- js/midi.js (lot 80) ---------- */
+enDe({
+  "Ici, pas de compte à rebours : écoute la musique (ou lis la piste) et fais chaque geste au bon moment.": "No countdown here: listen to the music (or read the track) and do each move at the right moment.",
+});
+
+/* ---------- js/table.js (lot 80) ---------- */
+enDe({
+  "(réglée pas à pas)": "(set up step by step)",
+  "chapitre 3,": "chapter 3,",
+  "chapitre 4,": "chapter 4,",
+  "Utilisée dans :": "Used in:",
+  "(d'origine)": "(default)",
+  "(appris)": "(learned)",
+});
+
+/* ---------- js/sons.js (lot 80) ---------- */
+enDe({
+  "Son : coupé": "Sound: off",
+  "Régler le son": "Adjust the sound",
+  "Remettre le son": "Turn the sound back on",
+  "Couper le son": "Mute the sound",
+});
+
+/* ---------- js/morceaux.js (lot 80) ---------- */
+enDe({
+  "calcul en arrière-plan indisponible": "background processing unavailable",
+  "Ton navigateur bloque le calcul en arrière-plan : chaque lancement prendra quelques secondes.": "Your browser is blocking background processing: each start will take a few seconds.",
+});
+
+/* ---------- js/commandes.js (lot 80) ---------- */
+enDe({
+  "(posé ; clic droit pour l'effacer)": "(set; right-click to clear it)",
+  "(vide : un clic le pose)": "(empty: one click sets it)",
+});
+
+/* ---------- js/entrainement.js (lot 80) ---------- */
+enDe({
+  "Défi réussi ! Reviens demain pour le suivant : ta série t'attend.": "Challenge complete! Come back tomorrow for the next one: your streak is waiting.",
+  "Le défi du jour reprend tes niveaux gratuits, sur d'autres morceaux.": "The daily challenge replays your free levels, on other tracks.",
+  "Joue d'abord un niveau gratuit dans <a href=\"#apprendre\">Apprendre</a> : le défi du jour le reprendra, sur d'autres morceaux.": "First play a free level in <a href=\"#apprendre\">Learn</a>: the daily challenge will replay it, on other tracks.",
+  "Le reste de l'entraînement est dans DJingood Pro.": "The rest of practice is in DJingood Pro.",
+});
+
+/* ---------- js/comprendre.js (lot 80) ---------- */
+enDe({
+  "Envoi…": "Sending…",
+  "Pas dans ta boîte de réception ? Regarde dans les spams, puis indique à ta messagerie que ce n'est pas un spam : sinon, le lien ne s'ouvre pas.": "Not in your inbox? Check your spam folder, then tell your email app it's not spam: otherwise, the link won't open.",
+  "Déjà envoyé : regarde tes mails": "Already sent: check your email",
+  "Pas parti : réessaie": "Not sent: try again",
+});
+
+/* ---------- js/quiz.js (lot 80) ---------- */
+enDe({
+  "À essayer": "To try",
+  "Dans rekordbox, sur la forme d'onde, à quoi reconnaît-on le drop ?": "In rekordbox, on the waveform, how do you spot the drop?",
+  "Bonne réponse": "Right answer",
+  "bonne réponse": "right answer",
+});
+
+/* ---------- js/calage.js (lot 80) ---------- */
+enDe({
+  "Entendre le décalage": "Hear the drift",
+  "Écoute A et B ensemble : calés, ou B en avance, ou B en retard ?": "Listen to A and B together: in sync, B ahead, or B behind?",
+  "Cinq écoutes, sans toucher à la table. Calés, les deux grosses caisses tombent ensemble : un seul coup, net. B en avance : son coup arrive juste avant celui de A, on entend « ta-boum ». B en retard : c'est l'inverse, « boum-ta ». Réponds avec les trois boutons au-dessus de la table.": "Five listens, without touching the controller. In sync, the two kick drums land together: a single, clean hit. B ahead: its hit comes just before A's, you hear \"ta-boom\". B behind: it's the other way around, \"boom-ta\". Answer with the three buttons above the controller.",
+  "Pousser, freiner": "Push, brake",
+  "B part un peu à côté : rattrape-le à la molette, puis garde-le calé.": "B starts a little off: catch it with the jog wheel, then keep it in sync.",
+  "B a le même tempo que A, mais il est parti un peu trop tôt ou trop tard. Tourne la molette de B : dans le sens des aiguilles d'une montre, tu le pousses ; dans l'autre sens, tu le freines. Le compteur au-dessus de la table dit de combien il est décalé : vise moins de 15 ms, et garde-le là jusqu'à la fin.": "B has the same tempo as A, but it started a little too early or too late. Turn B's jog wheel: clockwise, you push it; counterclockwise, you brake it. The counter above the controller tells you how far off it is: aim for less than 15 ms, and keep it there until the end.",
+  "La bonne vitesse": "The right speed",
+  "B va un peu plus vite que A : règle son tempo, puis cale-le.": "B is a little faster than A: set its tempo, then sync it up.",
+  "B est à 126 BPM, A à 124 : même bien parti, il prend de l'avance petit à petit. Ramène-le à 124 avec le curseur TEMPO de B (vers le haut, il ralentit), puis rattrape le décalage à la molette.": "B is at 126 BPM, A at 124: even with a good start, it slowly drifts ahead. Bring it back to 124 with B's TEMPO slider (up slows it down), then catch the drift with the jog wheel.",
+  "La vitesse à l'oreille": "Speed by ear",
+  "Plus de BPM affiché : entends si B accélère ou ralentit, et corrige.": "No more BPM on screen: hear whether B is speeding up or slowing down, and correct it.",
+  "B n'a pas le même tempo que A, mais cette fois aucun chiffre ne te dit lequel va le plus vite. Écoute : si le compteur grimpe vers « en avance », B est trop rapide ; s'il descend vers « en retard », il est trop lent. Corrige au TEMPO, puis à la molette.": "B doesn't have the same tempo as A, but this time no number tells you which one is faster. Listen: if the counter climbs toward \"ahead\", B is too fast; if it drops toward \"behind\", it's too slow. Correct with TEMPO, then with the jog wheel.",
+  "Prépare B au casque sans que la salle l'entende, puis fais-le entrer sur la phrase.": "Prepare B in your headphones without the crowd hearing it, then bring it in on the phrase.",
+  "B joue fader en bas : la salle n'entend que A. Allume CUE 🎧 de B pour l'écouter au casque, règle son tempo et cale-le. Au temps 64, monte son fader : il doit entrer déjà calé. Sans sortie casque sur ta table, B est joué tout bas dans les enceintes.": "B plays with its fader down: the crowd only hears A. Turn on B's CUE 🎧 to listen to it in your headphones, set its tempo and sync it up. At beat 64, bring up its fader: it should come in already in sync. If your controller has no headphone output, B plays very quietly through the speakers.",
+  "Lancer et caler": "Start and sync",
+  "Tout toi-même : lance B, règle sa vitesse, cale-le, puis échange les basses.": "All by yourself: start B, set its speed, sync it up, then swap the lows.",
+  "B n'est pas lancé : appuie sur LANCE B (PLAY de droite) au début d'une mesure, vers le temps 32. Il part à l'instant exact, sans calage automatique. Règle son tempo (4 BPM d'écart), cale-le, puis au temps 64 échange les basses : LOW de A normal → coupé, LOW de B coupé → normal.": "B isn't playing: press START B (right PLAY) at the start of a bar, around beat 32. It starts at that exact moment, with no automatic sync. Set its tempo (4 BPM apart), sync it up, then at beat 64 swap the lows: A's LOW normal → cut, B's LOW cut → normal.",
+  "Le final : ni BPM, ni compteur, ni repère. Lance, cale et échange les basses à l'oreille.": "The finale: no BPM, no counter, no marker. Start, sync and swap the lows by ear.",
+  "Comme le niveau précédent, mais sans aucune aide à l'écran : ni BPM, ni compteur, ni repère sur la piste. Lance B vers le temps 32, cale-le au tempo et à la molette en écoutant, puis échange les basses au temps 64.": "Like the previous level, but with no help on screen at all: no BPM, no counter, no marker on the track. Start B around beat 32, sync it with the tempo and the jog wheel by listening, then swap the lows at beat 64.",
+  "B est lancé : cale-le !": "B is playing: sync it up!",
+  "Oui, calés !": "Yes, in sync!",
+  "Lance B quand tu le sens.": "Start B when you feel it.",
+  "Écoute, cale, et échange les basses au bon moment.": "Listen, sync, and swap the lows at the right moment.",
+  "Lance B au début d'une mesure !": "Start B at the start of a bar!",
+  "Calé : garde-le comme ça.": "In sync: keep it like that.",
+  "B est en avance : freine-le.": "B is ahead: brake it.",
+  "B est en retard : pousse-le.": "B is behind: push it.",
+  "Le compteur s'allume quand B joue": "The counter lights up when B plays",
+  "Calés : bien entendu.": "In sync: well heard.",
+  "En avance : le coup de B arrive juste avant celui de A.": "Ahead: B's hit comes just before A's.",
+  "En retard : le coup de B arrive juste après celui de A.": "Behind: B's hit comes just after A's.",
+  "Calés : un seul coup, net.": "In sync: a single, clean hit.",
+  "Règle d'abord son tempo, puis rattrape le décalage à la molette.": "Set its tempo first, then catch the drift with the jog wheel.",
+  "Rattrape-le à la molette, par petites touches.": "Catch it with the jog wheel, in small nudges.",
+  "B n'a jamais été calé 4 temps de suite.": "B was never in sync for 4 beats in a row.",
+  "Le fader de B n'est jamais monté : B n'est pas entré.": "B's fader never went up: B never came in.",
+});
+
+/* ---------- js/combos.js (lot 80) ---------- */
+enDe({
+  "Filtre et swap": "Filter and swap",
+  "Efface A au filtre, puis échange les basses pile sur la phrase.": "Fade A out with the filter, then swap the lows right on the phrase.",
+  "B arrive tout seul, basses coupées. Quand « FILTRE » touche la ligne, tourne le CFX de A vers la droite, lentement : il doit être à fond au moment du swap. Au swap, dans le même geste : LOW de A normal → coupé, LOW de B coupé → normal.": "B comes in on its own, lows cut. When \"FILTER\" touches the line, turn A's CFX to the right, slowly: it should be all the way up at the swap. At the swap, in the same move: A's LOW normal → cut, B's LOW cut → normal.",
+  "B arrive, basses coupées": "B comes in, lows cut",
+  "Le filtre commence, lentement": "The filter starts, slowly",
+  "Filtre à fond, swap des basses": "Filter all the way, bass swap",
+  "B a pris toute la place": "B has taken over",
+  "La transition éclair": "The lightning transition",
+  "Toute la transition en 16 temps : lance, monte, échange, coupe.": "The whole transition in 16 beats: start, raise, swap, cut.",
+  "Le LOW de B est déjà coupé (position de départ). Lance B sur la ligne : il démarre 16 temps avant son drop. Monte son fader en 8 temps, puis, au drop, fais le swap des basses et baisse A d'un coup.": "B's LOW is already cut (starting position). Start B on the line: it starts 16 beats before its drop. Bring up its fader over 8 beats, then, at the drop, do the bass swap and pull A down in one go.",
+  "B part 16 temps avant son drop": "B starts 16 beats before its drop",
+  "Swap et A coupé : drop de B !": "Swap and A cut: B's drop!",
+  "Écho et drop, sans filet": "Echo and drop, no safety net",
+  "Écho sur A, coupure, et B lancé sur son drop : sans compte à rebours.": "Echo on A, cut, and B started on its drop: no countdown.",
+  "Pas de compte à rebours : compte les phrases dans ta tête. Sur le dernier temps de la phrase de A, active l'écho (ON de l'effet ou touche E). Sur le premier temps de la phrase suivante, coupe A et lance B, déjà calé sur son drop, dans le même geste.": "No countdown: count the phrases in your head. On the last beat of A's phrase, turn on the echo (the effect's ON button or the E key). On the first beat of the next phrase, cut A and start B, already cued on its drop, in the same move.",
+  "Compte la fin de la phrase": "Count to the end of the phrase",
+  "Écho sur le dernier temps": "Echo on the last beat",
+  "A coupé, B lancé sur son drop": "A cut, B started on its drop",
+  "B tombe dans l'écho": "B drops into the echo",
+  "Le grand mix": "The big mix",
+  "Une longue transition propre : B entre, swap, filtre, et A sort avant le drop.": "A long, clean transition: B comes in, swap, filter, and A goes out before the drop.",
+  "Le LOW de B est déjà coupé (position de départ). Lance B sur la ligne et monte son fader. Au début de la phrase suivante, fais le swap des basses, puis efface A au filtre, lentement, jusqu'à « À FOND ». Baisse enfin le fader de A : il doit être à zéro au drop de B.": "B's LOW is already cut (starting position). Start B on the line and bring up its fader. At the start of the next phrase, do the bass swap, then fade A out with the filter, slowly, up to \"FULL\". Finally, pull down A's fader: it should be at zero at B's drop.",
+  "Swap, et le filtre commence": "Swap, and the filter starts",
+  "Filtre à fond": "Filter all the way",
+  "A est sorti : drop de B !": "A is out: B's drop!",
+  "Filtre trop brusque !": "Filter too sudden!",
+  "Filtre à fond trop tard": "Filter full too late",
+  "B à fond… un peu tard": "B full… a little late",
+  "A sorti en retard": "A out late",
+  "A joue encore au drop !": "A is still playing at the drop!",
+  "Tu as tourné le filtre vers la gauche : pour effacer A, tourne vers la droite.": "You turned the filter to the left: to fade A out, turn it to the right.",
+  "Le filtre n'a jamais été tourné.": "The filter was never turned.",
+  "Filtre monté en douceur, et à fond à temps.": "Filter raised smoothly, and all the way up in time.",
+  "A jouait encore au drop de B : baisse son fader avant.": "A was still playing at B's drop: pull its fader down before then.",
+  "A n'a jamais été coupé : baisse son fader d'un coup au drop.": "A was never cut: pull its fader down in one go at the drop.",
+  "A coupé pile au drop.": "A cut right at the drop.",
+  "Coupure et lancement en même temps.": "Cut and start at the same time.",
+});
+
+/* ---------- js/hotcues.js (lot 80) ---------- */
+enDe({
+  "Sans filet": "No safety net",
+  "Poser un repère": "Set a cue point",
+  "Pose le hot cue 1 de B pile sur le premier temps de son drop.": "Set B's hot cue 1 right on the first beat of its drop.",
+  "B joue la fin de son intro, A est baissé. Quand le drop de B arrive (le bloc « Drop » sur la piste), appuie sur le pad 1 de B, en mode HOT CUE : c'est ton repère. Quantize est allumé : le repère se range sur le temps le plus proche, mais ton appui est noté en millisecondes.": "B is playing the end of its intro, A is down. When B's drop arrives (the \"Drop\" block on the track), press B's pad 1, in HOT CUE mode: that's your cue point. Quantize is on: the cue point snaps to the nearest beat, but your press is scored in milliseconds.",
+  "Écoute la fin de l'intro de B (A est baissé)": "Listen to the end of B's intro (A is down)",
+  "Au premier temps du drop de B : pad 1 de B, en mode HOT CUE": "On the first beat of B's drop: B's pad 1, in HOT CUE mode",
+  "B démarre : écoute la fin de son intro": "B starts: listen to the end of its intro",
+  "Le drop de B approche": "B's drop is coming",
+  "Pad 1 de B sur le drop : le repère est posé": "B's pad 1 on the drop: the cue point is set",
+  "Ce repère servira à lancer B pile sur son drop": "This cue point will start B right on its drop",
+  "Lancer depuis le repère": "Start from the cue point",
+  "Sur la phrase de A, lance B depuis son hot cue et coupe A, au même instant.": "On A's phrase, start B from its hot cue and cut A, at the same instant.",
+  "Le hot cue 1 de B est posé sur son drop, B attend. Au temps 64 (début de la phrase de A), appuie sur le pad 1 de B : il part directement sur son drop. Dans le même geste, baisse le fader de A d'un coup.": "B's hot cue 1 is set on its drop, B is waiting. At beat 64 (start of A's phrase), press B's pad 1: it starts straight on its drop. In the same move, pull A's fader down in one go.",
+  "B attend, arrêté sur son hot cue 1 (son drop)": "B is waiting, stopped on its hot cue 1 (its drop)",
+  "Au temps 64 : pad 1 de B, et fader de A en haut → en bas d'un coup, dans le même geste": "At beat 64: B's pad 1, and A's fader up → down in one go, in the same move",
+  "B attend, arrêté sur son hot cue 1": "B is waiting, stopped on its hot cue 1",
+  "Pad 1 de B et A coupé : B part directement sur son drop": "B's pad 1 and A cut: B starts straight on its drop",
+  "Pas d'intro : la transition est nette": "No intro: the transition is clean",
+  "B attend en boucle": "B waits in a loop",
+  "B tourne sur une boucle de 4 temps : sors-en pour que son drop tombe sur la phrase de A.": "B is spinning on a 4-beat loop: exit it so its drop lands on A's phrase.",
+  "B tourne sur la dernière mesure de son intro, juste avant son drop. Compte les mesures de A : sors de la boucle (pad 4 « EXIT » en mode BOUCLE) pendant la dernière mesure avant le temps 64. B finit sa mesure et tombe sur son drop pile au début de la phrase. Au temps 64, A se coupe tout seul.": "B is looping the last bar of its intro, just before its drop. Count A's bars: exit the loop (pad 4 \"EXIT\" in LOOP mode) during the last bar before beat 64. B finishes its bar and lands on its drop right at the start of the phrase. At beat 64, A cuts out on its own.",
+  "B tourne sur une boucle de 4 temps (pads de B en mode BOUCLE)": "B is spinning on a 4-beat loop (B's pads in LOOP mode)",
+  "Entre les temps 60 et 64 : pad EXIT de B, pour sortir de la boucle": "Between beats 60 and 64: B's EXIT pad, to exit the loop",
+  "B finit sa mesure et tombe sur son drop au temps 64": "B finishes its bar and lands on its drop at beat 64",
+  "B tourne sur la dernière mesure de son intro": "B is looping the last bar of its intro",
+  "Compte les mesures de A": "Count A's bars",
+  "Dernière mesure avant la phrase : on sort de la boucle": "Last bar before the phrase: exit the loop",
+  "B finit sa mesure et tombe sur son drop": "B finishes its bar and lands on its drop",
+  "A se coupe tout seul : ici, seul le drop de B compte": "A cuts out on its own: here, only B's drop counts",
+  "Prolonger l'outro": "Extend the outro",
+  "A s'arrête au temps 96, trop tôt pour B : boucle sa fin, puis coupe A sur le drop de B.": "A stops at beat 96, too early for B: loop its end, then cut A on B's drop.",
+  "Le morceau A finit au temps 96, mais le drop de B n'arrive qu'au temps 104. Avant la fin de A, pose une boucle de 8 temps sur A (pad « 8 » en mode BOUCLE), au début d'une mesure, sans dépasser la fin : A tourne au lieu de s'arrêter. Au drop de B (temps 104), baisse le fader de A d'un coup.": "Track A ends at beat 96, but B's drop only arrives at beat 104. Before A ends, set an 8-beat loop on A (pad \"8\" in LOOP mode), at the start of a bar, without going past the end: A loops instead of stopping. At B's drop (beat 104), pull A's fader down in one go.",
+  "Avant le temps 96 (fin de A), au début d'une mesure : pad 8 de A, en mode BOUCLE": "Before beat 96 (end of A), at the start of a bar: A's pad 8, in LOOP mode",
+  "Au drop de B (temps 104) : fader de A en haut → en bas, d'un coup": "At B's drop (beat 104): A's fader up → down, in one go",
+  "B démarre, mais son drop n'arrive qu'au temps 104": "B starts, but its drop only arrives at beat 104",
+  "Boucle de 8 sur A, au début d'une mesure": "8-beat loop on A, at the start of a bar",
+  "A aurait dû s'arrêter ici : il tourne en boucle": "A should have stopped here: it's looping",
+  "Drop de B : A coupé d'un coup": "B's drop: A cut in one go",
+  "Boucle A sur 16 temps, puis 8, puis 4, et coupe-le pile sur le drop de B. Quantize éteint.": "Loop A over 16 beats, then 8, then 4, and cut it right on B's drop. Quantize off.",
+  "Quantize est éteint : la boucle part exactement quand tu appuies. Temps 64 : boucle de 16 sur A. Temps 80 : raccourcis à 8. Temps 96 : raccourcis à 4, la tension monte. Temps 112 : le drop de B arrive, baisse le fader de A d'un coup.": "Quantize is off: the loop starts exactly when you press. Beat 64: 16-beat loop on A. Beat 80: shorten it to 8. Beat 96: shorten it to 4, the tension builds. Beat 112: B's drop arrives, pull A's fader down in one go.",
+  "Temps 64 : pad 16 de A (boucle de 16 temps)": "Beat 64: A's pad 16 (16-beat loop)",
+  "Temps 80 : pad 8 de A (la boucle raccourcit)": "Beat 80: A's pad 8 (the loop gets shorter)",
+  "Temps 96 : pad 4 de A": "Beat 96: A's pad 4",
+  "Temps 112, drop de B : fader de A en haut → en bas, d'un coup": "Beat 112, B's drop: A's fader up → down, in one go",
+  "Boucle de 16 sur A": "16-beat loop on A",
+  "Raccourcie à 8 : ça s'accélère": "Shortened to 8: it speeds up",
+  "Raccourcie à 4 : la tension monte": "Shortened to 4: the tension builds",
+  "Drop de B : A coupé": "B's drop: A cut",
+  "Le double drop": "The double drop",
+  "Fais tomber le drop de B en même temps que celui de A, et échange les basses. Quantize éteint.": "Make B's drop land at the same time as A's, and swap the lows. Quantize off.",
+  "A arrive sur son drop au temps 64. Le hot cue 1 de B est posé sur son propre drop. Au temps 64, appuie sur le pad 1 de B : les deux drops tombent ensemble. Dans le même geste, échange les basses : LOW de A normal → coupé, LOW de B coupé → normal.": "A reaches its drop at beat 64. B's hot cue 1 is set on its own drop. At beat 64, press B's pad 1: both drops land together. In the same move, swap the lows: A's LOW normal → cut, B's LOW cut → normal.",
+  "Au temps 64, quand A arrive sur son drop : pad 1 de B (B part sur son drop)": "At beat 64, when A reaches its drop: B's pad 1 (B starts on its drop)",
+  "Dans le même geste : LOW de A normal → coupé, LOW de B coupé → normal": "In the same move: A's LOW normal → cut, B's LOW cut → normal",
+  "A arrive sur son drop au temps 64": "A reaches its drop at beat 64",
+  "B part de son hot cue : deux drops ensemble": "B starts from its hot cue: two drops together",
+  "Une seule basse à la fois : celle de B": "Only one bassline at a time: B's",
+  "Le final, sans repère : boucle la fin de A, lance B depuis son hot cue sur la phrase et coupe A.": "The finale, no markers: loop the end of A, start B from its hot cue on the phrase and cut A.",
+  "A s'arrête au temps 96. Avant la fin, boucle ses 8 derniers temps (pad 8 de A), puis, au début de la phrase suivante (temps 104), lance B depuis son hot cue (posé sur son drop) et coupe A dans le même geste. Quantize éteint, et aucun repère sur la piste.": "A stops at beat 96. Before the end, loop its last 8 beats (A's pad 8), then, at the start of the next phrase (beat 104), start B from its hot cue (set on its drop) and cut A in the same move. Quantize off, and no markers on the track.",
+  "Avant le temps 96 (fin de A) : une boucle de 8 sur A, au début d'une mesure": "Before beat 96 (end of A): an 8-beat loop on A, at the start of a bar",
+  "Au temps 104 : pad 1 de B, et fader de A en haut → en bas d'un coup, dans le même geste": "At beat 104: B's pad 1, and A's fader up → down in one go, in the same move",
+  "Boucle de 8 sur A, avant sa fin": "8-beat loop on A, before it ends",
+  "B lancé de son hot cue, A coupé": "B started from its hot cue, A cut",
+  "Aucun repère : tout se fait à l'oreille": "No markers: it's all by ear",
+  "Repère déjà posé. Pour le reposer : SHIFT + pad sur ta table (clic droit à l'écran), puis appuie de nouveau.": "Cue point already set. To set it again: SHIFT + pad on your controller (right-click on screen), then press again.",
+  "Le drop de B tombe sur la phrase !": "B's drop lands on the phrase!",
+  "Trop tard : B tourne encore dans sa boucle !": "Too late: B is still looping!",
+  "Ta boucle dépassait la fin de A : silence !": "Your loop went past the end of A: silence!",
+  "A est arrivé au bout : silence ! Il fallait boucler sa fin.": "A reached the end: silence! You needed to loop its end.",
+  "pose le repère (pad 1 de B)": "set the cue point (B's pad 1)",
+  "lance B (pad 1)": "start B (pad 1)",
+  "coupe A": "cut A",
+  "le drop de B arrive": "B's drop is coming",
+  "boucle la fin de A (pad 8)": "loop the end of A (pad 8)",
+  "boucle de 16 sur A": "16-beat loop on A",
+  "boucle à 8": "loop to 8",
+  "boucle à 4": "loop to 4",
+  "échange les basses": "swap the lows",
+  "Écoute, compte les mesures, et agis au bon moment.": "Listen, count the bars, and act at the right moment.",
+  "Écoute B tourner, et compte les mesures de A.": "Listen to B loop, and count A's bars.",
+  "Écoute, et prépare-toi.": "Listen, and get ready.",
+  "FIN DE A": "END OF A",
+  "A s'est arrêté : silence": "A stopped: silence",
+  "Tu n'as pas posé de hot cue : appuie sur le pad 1 de B quand son drop arrive.": "You didn't set a hot cue: press B's pad 1 when its drop arrives.",
+  "Le repère est sur le premier temps du drop.": "The cue point is on the first beat of the drop.",
+  "B n'est jamais sorti de sa boucle : sors-en (EXIT) pendant la dernière mesure avant le temps 64.": "B never exited its loop: exit it (EXIT) during the last bar before beat 64.",
+  "Le drop de B est tombé pile sur la phrase de A.": "B's drop landed right on A's phrase.",
+  "Tu n'as pas bouclé A.": "You didn't loop A.",
+});
+
+/* ---------- js/set.js (lot 80) ---------- */
+enDe({
+  "Au casque": "In the headphones",
+  "La montée": "The climb",
+  "Velours": "Velvet",
+  "Intro avec basse": "Intro with bass",
+  "Intro courte": "Short intro",
+  "Néon": "Neon",
+  "Minuit": "Midnight",
+  "Lumière": "Light",
+  "Comète": "Comet",
+  "Aurore": "Dawn",
+  "Orbite": "Orbit",
+  "Écume": "Foam",
+  "Saphir": "Sapphire",
+  "Nuage": "Cloud",
+  "Opale": "Opal",
+  "Zénith": "Zenith",
+  "un swap des basses": "a bass swap",
+  "un filtre": "a filter",
+  "un écho": "an echo",
+  "une coupure sèche": "a hard cut",
+  "Coupe les basses du morceau qui sort (LOW à gauche) et ouvre celles du morceau qui entre, dans le même geste.": "Cut the lows of the outgoing track (LOW to the left) and open those of the incoming track, in the same move.",
+  "Tourne le filtre du morceau qui sort vers la droite, lentement, avant de baisser son fader.": "Turn the outgoing track's filter to the right, slowly, before pulling down its fader.",
+  "Allume l'écho sur le dernier temps du morceau qui sort, puis coupe son fader d'un coup.": "Turn on the echo on the last beat of the outgoing track, then cut its fader in one go.",
+  "Baisse d'un coup le fader du morceau qui sort, au moment où l'autre arrive sur son drop.": "Pull the outgoing track's fader down in one go, just as the other one hits its drop.",
+  "Premier enchaînement": "First mix",
+  "Enchaîne trois morceaux sans jamais arrêter la musique.": "Mix three tracks in a row without ever stopping the music.",
+  "Le premier morceau joue sur la platine A. Lance le suivant sur B (PLAY de droite) au début d'une phrase, quand une ligne PHRASE touche MAINTENANT. Cale-le à la molette, monte son fader, puis fais sortir le premier avant la fin de son outro. Le troisième se charge tout seul sur A : recommence. Les trois morceaux ont le même tempo.": "The first track plays on deck A. Start the next one on B (right PLAY) at the start of a phrase, when a PHRASE line touches NOW. Sync it with the jog wheel, bring up its fader, then take the first one out before the end of its outro. The third one loads by itself on A: do it again. All three tracks have the same tempo.",
+  "Les tempos bougent": "The tempos move",
+  "Trois morceaux qui n'ont pas le même tempo : règle chacun avant de le faire entrer.": "Three tracks with different tempos: set each one before bringing it in.",
+  "Chaque morceau a son tempo, affiché sur sa platine. Avant de monter le fader du morceau qui entre, règle son TEMPO pour qu'il ait le même BPM que celui qui joue, puis cale-le à la molette.": "Each track has its own tempo, shown on its deck. Before bringing up the incoming track's fader, set its TEMPO so it has the same BPM as the one playing, then sync it with the jog wheel.",
+  "Transitions imposées": "Set transitions",
+  "Quatre morceaux, et une technique pour chaque transition : swap, filtre, puis écho.": "Four tracks, and one technique for each transition: swap, filter, then echo.",
+  "La feuille de route donne la technique de chaque transition. Swap : coupe les basses du morceau qui sort et ouvre celles du morceau qui entre, dans le même geste. Filtre : tourne le filtre du morceau qui sort vers la droite, lentement, avant de baisser son fader. Écho : allume l'écho sur le dernier temps, puis coupe le morceau qui sort.": "The roadmap gives the technique for each transition. Swap: cut the lows of the outgoing track and open those of the incoming track, in the same move. Filter: turn the outgoing track's filter to the right, slowly, before pulling down its fader. Echo: turn on the echo on the last beat, then cut the outgoing track.",
+  "Morceaux pièges": "Trick tracks",
+  "Une intro courte, un break, une intro avec basse, puis de la techno : lis chaque morceau.": "A short intro, a break, an intro with bass, then some techno: read each track.",
+  "Regarde la piste avant de lancer. « Intro courte » : 16 temps seulement. « Break » : la musique se vide au milieu, ce n'est pas la fin. « Intro avec basse » : coupe son LOW avant de le faire entrer. Le dernier morceau est de la techno, plus rapide. Plus de BPM affiché sur les platines.": "Look at the track view before starting. \"Short intro\": only 16 beats. \"Break\": the music empties out in the middle, it's not the end. \"Intro with bass\": cut its LOW before bringing it in. The last track is techno, faster. No more BPM on the decks.",
+  "Prépare chaque morceau au casque avant de le faire entrer. Plus de compteur de décalage.": "Prepare each track in your headphones before bringing it in. No more drift counter.",
+  "Lance le morceau suivant fader en bas et allume son CUE 🎧 : tu l'entends au casque, la salle ne l'entend pas. Cale-le à l'oreille (tempo, puis molette), puis monte son fader sur une phrase. Sans sortie casque sur ta table, il est joué tout bas dans les enceintes.": "Start the next track with its fader down and turn on its CUE 🎧: you hear it in your headphones, the crowd doesn't. Sync it by ear (tempo, then jog wheel), then bring up its fader on a phrase. If your controller has no headphone output, it plays very quietly through the speakers.",
+  "Cinq morceaux de plus en plus rapides : fais monter la soirée de 120 à 128 BPM, en douceur.": "Five tracks, faster and faster: take the party from 120 to 128 BPM, smoothly.",
+  "Chaque morceau est 2 BPM plus rapide que le précédent. Cale-le sur celui qui joue, puis, une fois seul, ramène-le petit à petit à son vrai tempo : la soirée monte toute seule. Le tempo ne doit jamais sauter d'un coup, et la soirée doit finir à 126 BPM ou plus.": "Each track is 2 BPM faster than the one before. Sync it to the one playing, then, once it's alone, bring it back little by little to its real tempo: the party rises on its own. The tempo must never jump all at once, and the party must end at 126 BPM or more.",
+  "Le grand set": "The big set",
+  "Le final : six morceaux surprise, de 120 à 130 BPM, sans aucune aide.": "The finale: six surprise tracks, from 120 to 130 BPM, with no help at all.",
+  "Ni BPM, ni compteur de décalage, ni phrases dessinées, ni note en direct : la piste s'arrête à MAINTENANT. Les morceaux changent à chaque partie. Tout se fait à l'oreille : lancer sur la phrase, caler, échanger les basses, faire sortir. La note s'affiche à la fin.": "No BPM, no drift counter, no drawn phrases, no live score: the track view stops at NOW. The tracks change every game. It's all by ear: start on the phrase, sync, swap the lows, take tracks out. Your score shows at the end.",
+  "de 120 à 130 BPM": "from 120 to 130 BPM",
+  "tempos à trouver": "tempos to find",
+  "Six morceaux surprise, de 120 à 130 BPM : ils changent à chaque partie.": "Six surprise tracks, from 120 to 130 BPM: they change every game.",
+  "Tu pars de 100 points.": "You start with 100 points.",
+  "Basses (25) : jamais deux basses en même temps plus de 2 temps.": "Bass (25): never two basslines at the same time for more than 2 beats.",
+  "Volume (20) : pas de trou de son pendant une transition.": "Volume (20): no drop in sound during a transition.",
+  "Phrase (20) : chaque morceau part au bon moment (son drop tombe pile à la fin du précédent), et les basses changent de morceau sur une phrase.": "Phrase (20): each track starts at the right moment (its drop lands right at the end of the previous one), and the bass changes tracks on a phrase.",
+  "Les deux platines jouent chacune leur tour : le morceau suivant se charge tout seul sur la platine qui vient de se libérer.": "The two decks take turns: the next track loads by itself on the deck that just freed up.",
+  "Les morceaux n'ont pas pu se préparer : réessaie.": "The tracks couldn't be prepared: try again.",
+  "Démonstration : écoute comment les morceaux s'enchaînent.": "Demo: listen to how the tracks flow into each other.",
+  "Astuce : la barre d'espace lance le morceau qui attend.": "Tip: the space bar starts the waiting track.",
+  "Sans filet : à toi, à l'oreille.": "No safety net: your turn, by ear.",
+  "Ta table est branchée : la table à l'écran est rangée.": "Your controller is plugged in: the on-screen controller is hidden.",
+  "La table à l'écran est affichée.": "The on-screen controller is shown.",
+  "Ranger la table": "Hide the controller",
+  "Pas calés !": "Not in sync!",
+  "Deux basses ensemble !": "Two basslines at once!",
+  "La musique s'est arrêtée !": "The music stopped!",
+  "Le son a baissé !": "The sound dropped!",
+  "Basses pas sur la phrase": "Bass swap not on the phrase",
+  "Le tempo a sauté !": "The tempo jumped!",
+  "Pas écouté au casque": "Not checked in the headphones",
+  "à la fin": "at the end",
+  "Ensuite :": "Next:",
+  "Coupe les basses du morceau qui entre (LOW à gauche) tant que l'autre a les siennes.": "Cut the lows of the incoming track (LOW to the left) while the other one still has its own.",
+  "Monte le morceau qui entre avant de baisser celui qui sort.": "Bring up the incoming track before pulling down the outgoing one.",
+  "Lance le morceau suivant avant la fin de celui qui joue : regarde où finit son outro sur la piste.": "Start the next track before the one playing ends: look where its outro ends on the track view.",
+  "Lance le morceau suivant pour que son drop tombe pile à la fin de celui qui joue : regarde où il tomberait, en pointillé sur la piste. Attention aux intros courtes et aux breaks.": "Start the next track so its drop lands right at the end of the one playing: look where it would land, dotted on the track view. Watch out for short intros and breaks.",
+  "Compte les mesures : lance le morceau suivant pour que son drop tombe pile à la fin de celui qui joue (une intro courte part plus tard).": "Count the bars: start the next track so its drop lands right at the end of the one playing (a short intro starts later).",
+  "Échange les basses au début d'une phrase.": "Swap the lows at the start of a phrase.",
+  "Allume CUE 🎧 du morceau qui entre, et cale-le avant de monter son fader.": "Turn on the incoming track's CUE 🎧, and sync it before bringing up its fader.",
+  "Bouge le tempo petit à petit, sur plusieurs mesures.": "Move the tempo little by little, over several bars.",
+  "Après chaque transition, ramène doucement le morceau à son vrai tempo : la soirée monte toute seule.": "After each transition, gently bring the track back to its real tempo: the party rises on its own.",
+  "Lance le morceau suivant avant la fin de celui qui joue.": "Start the next track before the one playing ends.",
+  "C'est ton premier record": "It's your first record",
+  "Aucune erreur : la musique n'a jamais faibli.": "No mistakes: the music never faltered.",
+});
+
+/* ---------- js/rekordbox.js (lot 80) ---------- */
+enDe({
+  "Soirée samedi": "Saturday night",
+  "Coups de cœur": "Favorites",
+  "Nouveautés": "New arrivals",
+  "Fais un swap des basses !": "Do a bass swap!",
+  "Caler, puis swap des basses": "Sync, then bass swap",
+  "Cale-les, puis échange les basses !": "Sync them, then swap the lows!",
+  "Le filtre qui ouvre": "The opening filter",
+  "Fais monter l'énergie avec le filtre !": "Build the energy with the filter!",
+  "Fais un écho out !": "Do an echo out!",
+  "tempos éloignés": "tempos far apart",
+  "même tonalité": "same key",
+  "tonalités voisines": "neighboring keys",
+  "tonalités cousines": "related keys",
+  "descente d'énergie": "energy drop",
+  "tonalités qui frottent": "clashing keys",
+  "Parfait": "Perfect",
+  "Très bien": "Very good",
+  "Bien": "Good",
+  "Moyen": "Medium",
+  "Difficile": "Hard",
+  "Tout d'affilée, sans t'arrêter, du début à la fin. Recommence jusqu'à ce que ça sonne propre trois fois de suite.": "All in one go, without stopping, from start to finish. Do it again until it sounds clean three times in a row.",
+  "à l'instant": "just now",
+  "<span class=\"mm-l-va\">Ta fiche offerte ›</span>": "<span class=\"mm-l-va\">Your free card ›</span>",
+  "<span class=\"mm-l-va\">Ce qui va avec ›</span>": "<span class=\"mm-l-va\">What goes with it ›</span>",
+  "Retirer de tes favoris": "Remove from your favorites",
+  "Ajouter à tes favoris": "Add to your favorites",
+  "· <em>jamais joué</em>": "· <em>never played</em>",
+  "<div class=\"mm-l-tete\" aria-hidden=\"true\"><span></span><span>Titre</span><span>Style</span><span>Tempo</span><span>Tonalité</span><span>Ajouté</span><span></span></div>": "<div class=\"mm-l-tete\" aria-hidden=\"true\"><span></span><span>Title</span><span>Style</span><span>Tempo</span><span>Key</span><span>Added</span><span></span></div>",
+  "<p class=\"mm-vide\">Aucun morceau ne correspond. <button type=\"button\" class=\"linkbtn\" data-mm=\"effacer\">Effacer les filtres</button></p>": "<p class=\"mm-vide\">No track matches. <button type=\"button\" class=\"linkbtn\" data-mm=\"effacer\">Clear the filters</button></p>",
+  "Ajoutés depuis moins d'un mois": "Added less than a month ago",
+  "Jamais joués": "Never played",
+  "Mes favoris": "My favorites",
+  "Ajoutés récemment": "Recently added",
+  "Titre": "Title",
+  "Les plus joués": "Most played",
+  "C'est la collection d'exemple : ouvre les fiches que tu veux. Avec ta vraie collection, la fiche d'un morceau est offerte.": "This is the sample collection: open any cards you want. With your real collection, one track's card is free.",
+  "Ta fiche offerte t'a plu ? Avec Pro, je fais pareil pour tous tes morceaux.": "Did you like your free card? With Pro, I do the same for all your tracks.",
+  "Choisis le morceau que tu préfères : sa fiche est offerte.": "Pick your favorite track: its card is free.",
+  "Aucun morceau ne correspond : enlève un filtre.": "No track matches: remove a filter.",
+  "Choisis un morceau que tu aimes : je te montre ceux qui vont avec.": "Pick a track you love: I'll show you the ones that go with it.",
+  "différent": "different",
+  "Retirer cette paire de tes favoris": "Remove this pair from your favorites",
+  "Garder cette paire": "Keep this pair",
+  "Jamais joué": "Never played",
+  "<p class=\"mm-vide\">rekordbox n'a pas encore analysé ce morceau : il me manque son tempo ou sa tonalité. Analyse-le dans rekordbox, puis réexporte ta collection.</p>": "<p class=\"mm-vide\">rekordbox hasn't analyzed this track yet: I'm missing its tempo or its key. Analyze it in rekordbox, then export your collection again.</p>",
+  "<p class=\"mm-vide\">Aucun morceau de ta collection ne va vraiment avec celui-là (tempo trop loin, ou tonalité qui frotte). Essaie avec un autre.</p>": "<p class=\"mm-vide\">No track in your collection really goes with this one (tempo too far, or clashing key). Try another one.</p>",
+  "Toutes": "All",
+  "Garder": "Keep",
+  "Monter": "Build up",
+  "Calmer": "Calm down",
+  "Même style": "Same style",
+  "<p class=\"mm-vide\">Aucun morceau avec ces réglages.</p>": "<p class=\"mm-vide\">No track with these settings.</p>",
+  "Voir l'autre": "See the other one",
+  "Ce morceau n'est pas encore analysé par rekordbox.": "This track hasn't been analyzed by rekordbox yet.",
+  "Le premier, c'est un sans-faute.": "The first one is flawless.",
+  "Il me manque des infos sur ces morceaux.": "I'm missing some info about these tracks.",
+  "Paire gardée": "Pair kept",
+  "<span class=\"mm-st off\">Pas commencée</span>": "<span class=\"mm-st off\">Not started</span>",
+  "<p class=\"mm-vide\">Pas encore de paire gardée : touche ♥ sur une paire qui te plaît.</p>": "<p class=\"mm-vide\">No pair kept yet: tap ♥ on a pair you like.</p>",
+  "<p class=\"mm-vide\">Pas encore de morceau aimé : touche ♥ dans la liste de tes morceaux.</p>": "<p class=\"mm-vide\">No liked track yet: tap ♥ in your track list.</p>",
+  "Touche ♥ sur un morceau ou une paire : je les garde ici.": "Tap ♥ on a track or a pair: I'll keep them here.",
+  "Tes paires gardées et tes morceaux aimés.": "Your kept pairs and your liked tracks.",
+  "<p class=\"mm-vide\">Rien pour l'instant : ouvre la fiche d'un morceau.</p>": "<p class=\"mm-vide\">Nothing yet: open a track's card.</p>",
+  "Tout ce que tu as regardé, du plus récent au plus ancien. Clique pour y revenir.": "Everything you've looked at, from newest to oldest. Click to go back to it.",
+  "Rien pour l'instant : ouvre la fiche d'un morceau.": "Nothing yet: open a track's card.",
+  "Montre-moi ta collection rekordbox : je te trouve les morceaux qui vont ensemble.": "Show me your rekordbox collection: I'll find the tracks that go together.",
+  "C'est la collection d'exemple.": "This is the sample collection.",
+  "Ouvre les fiches que tu veux. Avec ta vraie collection, la fiche d'un morceau est offerte ; pour toutes les autres, les favoris et les missions, c'est DJingood Pro.": "Open any cards you want. With your real collection, one track's card is free; for all the others, favorites and missions, it's DJingood Pro.",
+  "Ta première fiche est offerte.": "Your first card is free.",
+  "Choisis le morceau que tu préfères : je te montre ceux qui vont avec, et la technique pour chaque transition.": "Pick your favorite track: I'll show you the ones that go with it, and the technique for each transition.",
+  "Tu as déjà vu ta fiche offerte.": "You've already seen your free card.",
+  "Avec DJingood Pro : ce qui va avec pour tous tes morceaux, la technique pour chaque transition, tes favoris et les missions.": "With DJingood Pro: what goes with it for all your tracks, the technique for each transition, your favorites and the missions.",
+  "Ta propre musique, c'est dans DJingood Pro : choisis un morceau, je te trouve ceux qui vont avec.": "Your own music is in DJingood Pro: pick a track, I'll find the ones that go with it.",
+});
+
+/* ---------- js/verif.js (lot 80) ---------- */
+enDe({
+  "Potard CFX (filtre) de A": "A's CFX knob (filter)",
+  "PLAY de la platine gauche": "PLAY on the left deck",
+  "PLAY de la platine droite": "PLAY on the right deck",
+  "ON de l'effet": "The effect's ON",
+  "Ta table est-elle reconnue ?": "Is your controller recognized?",
+  "Branche ta table en USB, rekordbox fermé. Le site doit la reconnaître tout seul.": "Plug in your controller over USB, with rekordbox closed. The site should recognize it on its own.",
+  "Monte le fader de A jusqu'en haut, puis descends-le jusqu'en bas. Pareil pour celui de B.": "Push A's fader all the way up, then all the way down. Same for B's.",
+  "Les potards LOW": "The LOW knobs",
+  "Tourne le LOW de A tout à gauche, puis tout à droite. Pareil pour celui de B.": "Turn A's LOW all the way left, then all the way right. Same for B's.",
+  "Le MID et le filtre": "The MID and the filter",
+  "Tourne le MID de A d'un bout à l'autre, puis le potard CFX de A (le filtre, sous les effets).": "Turn A's MID from one end to the other, then A's CFX knob (the filter, below the effects).",
+  "Les boutons": "The buttons",
+  "Appuie sur PLAY de la platine gauche, puis sur PLAY de la platine droite, puis sur ON de l'effet.": "Press PLAY on the left deck, then PLAY on the right deck, then the effect's ON.",
+  "Le crossfader": "The crossfader",
+  "Bouge le crossfader (le fader horizontal, en bas au milieu) d'un bout à l'autre.": "Move the crossfader (the horizontal fader, at the bottom in the middle) from one end to the other.",
+  "Le potard HI de A": "A's HI knob",
+  "Tourne le potard HI de la platine gauche (le plus haut des trois potards d'égaliseur).": "Turn the HI knob of the left deck (the highest of the three EQ knobs).",
+  "Le potard HI de B": "B's HI knob",
+  "Tourne le potard HI de la platine droite.": "Turn the HI knob of the right deck.",
+  "Le potard TRIM de A": "A's TRIM knob",
+  "Tourne le potard TRIM de la platine gauche (tout en haut, au-dessus du HI).": "Turn the TRIM knob of the left deck (at the very top, above HI).",
+  "Le tempo de A": "A's tempo",
+  "Bouge le fader TEMPO de la platine gauche (le fader vertical, sur le côté de la molette).": "Move the TEMPO fader of the left deck (the vertical fader, beside the jog wheel).",
+  "La molette de A": "A's jog wheel",
+  "Tourne la grande molette de la platine gauche par le bord, sans appuyer dessus.": "Turn the big jog wheel of the left deck by its edge, without pressing on it.",
+  "Le bouton CUE de A": "A's CUE button",
+  "Appuie deux fois sur CUE de la platine gauche (juste au-dessus de PLAY).": "Press CUE on the left deck twice (just above PLAY).",
+  "Le pad 1 de A": "A's pad 1",
+  "Appuie sur HOT CUE au-dessus des pads de gauche, puis deux fois sur le premier pad (en haut à gauche).": "Press HOT CUE above the left pads, then press the first pad twice (top left).",
+  "BEAT SYNC de A": "A's BEAT SYNC",
+  "Appuie deux fois sur BEAT SYNC de la platine gauche.": "Press BEAT SYNC on the left deck twice.",
+  "Débrancher, rebrancher": "Unplug, plug back in",
+  "Débranche le câble USB de la table, attends deux secondes, puis rebranche-le.": "Unplug the controller's USB cable, wait two seconds, then plug it back in.",
+  "Le dessin de la table": "The controller drawing",
+  "Compare ce dessin à ta vraie table : chaque commande est-elle au bon endroit, avec le bon nom ?": "Compare this drawing to your real controller: is each control in the right place, with the right name?",
+  "Oui, tout est bon": "Yes, it's all good",
+  "Non, il y a une erreur": "No, there's a mistake",
+  "Le son dans le casque": "Sound in the headphones",
+  "Branche un casque sur la table, puis appuie sur « Écouter » : tu dois entendre quelques secondes de musique.": "Plug headphones into the controller, then press \"Listen\": you should hear a few seconds of music.",
+  "Oui, j'entends bien": "Yes, I can hear it",
+  "Non, rien dans le casque": "No, nothing in the headphones",
+  "Le Mode Expert, au casque": "Expert Mode, with headphones",
+  "Joue 5 fois le niveau 1 « Le bon moment » en Mode Expert, au casque de la table, en appuyant sur PLAY bien en rythme. Tes scores tournent autour de :": "Play level 1 \"The right moment\" 5 times in Expert Mode, with headphones on the controller, pressing PLAY right on the beat. Your scores are around:",
+  "Plus de 80": "Over 80",
+  "Entre 60 et 80": "Between 60 and 80",
+  "Moins de 60": "Under 60",
+  "Le site dit le plus souvent :": "The site most often says:",
+  "Ça varie": "It varies",
+  "La vraie musique": "Real music",
+  "Joue le niveau du bouton ci-dessous avec la vraie musique, au casque. Quand A et B jouent ensemble, les grosses caisses tombent-elles en même temps ?": "Play the level from the button below with real music, with headphones. When A and B play together, do the kick drums land at the same time?",
+  "Oui, c'est calé": "Yes, it's in sync",
+  "Non, ça « galope »": "No, it \"gallops\"",
+  "Et les deux morceaux ensemble :": "And the two tracks together:",
+  "Sonnent bien": "Sound good",
+  "Sonnent faux": "Sound off",
+  "Les petits sons du jeu": "The little game sounds",
+  "Pendant ces parties, les petits sons du jeu (réussi, raté, étoiles) étaient :": "During these games, the little game sounds (success, miss, stars) were:",
+  "Bien dosés": "Just right",
+  "Trop forts": "Too loud",
+  "Gênants en Mode Expert": "Distracting in Expert Mode",
+  "Vérification terminée": "Check complete",
+  "Une table est branchée": "A controller is plugged in",
+  "Elle est réglée et prête à jouer": "It's set up and ready to play",
+  "C'est une DDJ-FLX4, prête à jouer sans réglage": "It's a DDJ-FLX4, ready to play with no setup",
+  "Table débranchée": "Controller unplugged",
+  "Table rebranchée et reconnue": "Controller plugged back in and recognized",
+  "(pas encore réglé : bouge-le, le site l'apprend)": "(not set up yet: move it, the site learns it)",
+  "Fait :": "Done:",
+  "En attente :": "Waiting:",
+  "Branche ta table pour faire cette étape.": "Plug in your controller to do this step.",
+  "J'écoute ta table…": "Listening to your controller…",
+  "Tout répond ✓": "Everything responds ✓",
+  "Aucune table vue pour l'instant.": "No controller seen yet.",
+  "Aller jouer le niveau 1 en Mode Expert": "Go play level 1 in Expert Mode",
+  "Rapport copié ! Colle-le dans un message.": "Report copied! Paste it into a message.",
+  "Revoir ma vérification de la table": "See my controller check again",
+  "Elle reprend là où tu t'étais arrêté.": "It picks up where you left off.",
+});
+
+/* ---------- js/reglage.js (lot 80) ---------- */
+enDe({
+  "le fader de volume de gauche": "the left volume fader",
+  "Monte puis descends le fader de volume de la platine A : le curseur vertical à gauche du centre.": "Move deck A's volume fader up and down: the vertical slider left of center.",
+  "le fader de volume de droite": "the right volume fader",
+  "Monte puis descends le fader de volume de la platine B : le curseur vertical à droite du centre.": "Move deck B's volume fader up and down: the vertical slider right of center.",
+  "le potard LOW de gauche": "the left LOW knob",
+  "Tourne le potard des basses de la platine A. Il s'appelle LOW (ou BASS) : c'est le plus bas des potards de son, juste au-dessus du fader.": "Turn deck A's bass knob. It's called LOW (or BASS): it's the lowest of the sound knobs, just above the fader.",
+  "le potard LOW de droite": "the right LOW knob",
+  "Tourne le potard des basses de la platine B.": "Turn deck B's bass knob.",
+  "le potard MID de gauche": "the left MID knob",
+  "Tourne le potard MID de la platine A, juste au-dessus du LOW.": "Turn deck A's MID knob, just above the LOW.",
+  "le filtre de gauche": "the left filter",
+  "Tourne le filtre de la platine A. Selon les tables, il s'appelle CFX, FILTER ou COLOR.": "Turn deck A's filter. Depending on the controller, it's called CFX, FILTER or COLOR.",
+  "le bouton PLAY de droite": "the right PLAY button",
+  "Appuie sur le bouton PLAY de la platine B (souvent marqué ▶).": "Press deck B's PLAY button (often marked ▶).",
+  "le bouton de l'effet": "the effect button",
+  "Appuie sur le bouton qui allume les effets : ON, FX ON ou BEAT FX selon les tables. Pas de bouton d'effet ? À l'écran, le bouton ECHO ou la touche E font pareil.": "Press the button that turns on the effects: ON, FX ON or BEAT FX depending on the controller. No effect button? On screen, the ECHO button or the E key do the same.",
+  "pas reconnu": "not recognized",
+  "rien reçu": "nothing received",
+  "Relevé copié ! Colle-le dans un message (Ctrl + V) et envoie-le-nous.": "Report copied! Paste it into a message (Ctrl + V) and send it to us.",
+  "Ta table est prête": "Your controller is ready",
+  "Rien n'a été reconnu": "Nothing was recognized",
+  "Voici ce que le site a reconnu. Ce qui manque se fera à l'écran, à la souris. Tu pourras tout refaire depuis « Ma table ».": "Here's what the site recognized. Whatever's missing will be done on screen, with the mouse. You can redo everything from \"My controller\".",
+  "Vérifie que ta table est bien branchée, puis recommence. Tu peux aussi jouer à la souris.": "Check that your controller is plugged in properly, then start again. You can also play with the mouse.",
+  "Quelque chose cloche ? « Copier le relevé », et envoie-le-nous : on verra ce que ta table envoie.": "Something wrong? \"Copy the report\", and send it to us: we'll see what your controller sends.",
+  "à l'écran": "on screen",
+  "Ta table est débranchée : rebranche-la pour continuer.": "Your controller is unplugged: plug it back in to continue.",
+  "Reconnu !": "Recognized!",
+  "J'attends que tu appuies dessus sur ta table…": "Waiting for you to press it on your controller…",
+  "J'attends que tu le bouges sur ta table…": "Waiting for you to move it on your controller…",
+  "Ta table est réglée : bouge une commande pour la voir réagir.": "Your controller is set up: move a control to see it react.",
+  "Tu as branché une DDJ-FLX4, mais les réglages sont ceux de ton autre table. On reprend ceux de la FLX4 ?": "You plugged in a DDJ-FLX4, but the settings are your other controller's. Shall we switch back to the FLX4's?",
+  "Ceux de ta table réglée à la main seront remplacés.": "The settings of your hand-tuned controller will be replaced.",
+  "Reprendre les réglages de la FLX4": "Switch back to the FLX4 settings",
+  "Prendre ses réglages": "Use its settings",
+});
+
+/* ---------- presentation.html (lot 80) ---------- */
+enDe({
+  "<b>3 exercices gratuits</b> · puis 4,99 € par mois, sans engagement · rien à installer": "<b>3 free exercises</b> · then €4.99 a month, no commitment · nothing to install",
+  "Presque rien : pas de publicité, pas de cookie. Le site compte ses visites sans cookie, sans jamais garder ton prénom ni ton adresse dans ses statistiques, et ton avis ne part que si tu l'envoies. Tout est expliqué dans <a href=\"confidentialite.html\">Ce que DJingood garde sur toi</a>.": "Almost nothing: no ads, no cookies. The site counts its visits without cookies, without ever keeping your first name or your email address in its statistics, and your feedback is only sent if you send it. It's all explained in <a href=\"confidentialite.html\">What DJingood keeps about you</a>.",
+  "Gratuit pour apprendre": "Free to learn",
+  "rien à installer": "nothing to install",
+  "compte facultatif": "account optional",
+  "3 exercices gratuits": "3 free exercises",
+  "· puis 4,99 € par mois, sans engagement": "· then €4.99 a month, no commitment",
+  "Mixer ta musique": "Mix your music",
+  "Importe ta collection rekordbox : pour chaque morceau, le site te montre ceux qui vont bien après, la technique pour faire la transition, et des missions à faire dans rekordbox.": "Import your rekordbox collection: for each track, the site shows you the ones that go well next, the technique for the transition, and missions to do in rekordbox.",
+  "La fiche d'un morceau : les morceaux de la collection qui vont avec, et la technique pour chaque transition": "A track's card: the tracks in your collection that go with it, and the technique for each transition",
+  "Le prix": "Pricing",
+  "Combien ça coûte ?": "How much does it cost?",
+  "Pour commencer : gratuit": "To start: free",
+  "Les 7 leçons « Comprendre », sans table. Tes 3 premiers exercices avec ta table. Le défi du jour et un tuto. Dans « Ma musique », l'import de ta collection et la fiche d'un de tes morceaux.": "The 7 \"Understand\" lessons, no controller needed. Your first 3 exercises with your controller. The daily challenge and a tutorial. In \"My music\", importing your collection and the card for one of your tracks.",
+  "DJingood Pro : 4,99 € par mois": "DJingood Pro: €4.99 a month",
+  "Ou 49,99 € par an, sans engagement. Les 7 chapitres, tous les tutos de Vini, l'entraînement et Ma musique.": "Or €49.99 a year, no commitment. All 7 chapters, all of Vini's tutorials, practice and My music.",
+  "Oui : les leçons, l'entraînement et Comprendre sont gratuits.": "Yes: the lessons, practice and Understand are free.",
+  "Pour commencer, oui : les 7 leçons « Comprendre », tes 3 premiers exercices avec ta table, le défi du jour, un tuto, et dans « Ma musique » l'import de ta collection et la fiche d'un de tes morceaux sont gratuits. La suite (les 7 chapitres, tous les tutos, l'entraînement, le reste de Ma musique) est dans DJingood Pro, à 4,99 € par mois ou 49,99 € par an, sans engagement : tu arrêtes en deux clics.": "To start, yes: the 7 \"Understand\" lessons, your first 3 exercises with your controller, the daily challenge, a tutorial, and in \"My music\" importing your collection and the card for one of your tracks are free. The rest (all 7 chapters, all the tutorials, practice, the rest of My music) is in DJingood Pro, at €4.99 a month or €49.99 a year, no commitment: you cancel in two clicks.",
+  "Les niveaux se jouent sur de vrais morceaux de house libres de droits, choisis sur Pixabay. Tu peux aussi choisir des morceaux fabriqués par le site, en house, techno ou afro. Ensuite, l'onglet « Ma musique » te fait travailler avec ta propre musique : pour chaque morceau de ta collection rekordbox, ceux qui vont avec et la technique pour faire la transition.": "The levels are played on real royalty-free house tracks, picked on Pixabay. You can also choose tracks made by the site, in house, techno or afro. Then, the \"My music\" tab has you work with your own music: for each track in your rekordbox collection, the ones that go with it and the technique for the transition.",
+  "Le site reconnaît tout seul une quinzaine de tables de débutant (Pioneer DDJ-FLX4, DDJ-400, DDJ-SB3, DDJ-200 et XDJ-RR, Hercules Inpulse 200, 300 et 500 et Starlight, Numark Mixtrack Platinum FX et Pro FX, Party Mix et DJ2GO2 Touch, Roland DJ-505, Reloop Mixage). Si tu branches une table qu'il ne connaît pas encore, il te propose de la régler pas à pas : il te montre chaque commande, tu la bouges, il la reconnaît. Une commande que ta table n'a pas se fait à la souris. Les réglages de ces tables viennent de leur documentation : dis-nous si quelque chose ne marche pas avec la tienne.": "The site recognizes about fifteen beginner controllers on its own (Pioneer DDJ-FLX4, DDJ-400, DDJ-SB3, DDJ-200 and XDJ-RR, Hercules Inpulse 200, 300 and 500 and Starlight, Numark Mixtrack Platinum FX and Pro FX, Party Mix and DJ2GO2 Touch, Roland DJ-505, Reloop Mixage). If you plug in a controller it doesn't know yet, it offers to set it up step by step: it shows you each control, you move it, it recognizes it. A control your controller doesn't have is done with the mouse. The settings for these controllers come from their documentation: let us know if something doesn't work with yours.",
+  "Presque rien : pas de publicité, pas de cookie. Le site compte ses visites sans cookie, sans jamais garder ton prénom ni ton adresse dans ses statistiques, et ton avis ne part que si tu l'envoies. Tout est expliqué dans": "Almost nothing: no ads, no cookies. The site counts its visits without cookies, without ever keeping your first name or your email address in its statistics, and your feedback is only sent if you send it. It's all explained in",
+});
+
+/* ---------- js/tutos.js (lot 80) ---------- */
+enDe({
+  "Quand l'utiliser": "When to use it",
+  "Pas à pas": "Step by step",
+  "Les erreurs": "Mistakes",
+  "break de A": "A's break",
+  "dernière phrase de A": "A's last phrase",
+  "fin de A": "end of A",
+  "« Deep House » (alexrockbeat) et « Deep House Instrumental » (arnaud136), sur Pixabay": "\"Deep House\" (alexrockbeat) and \"Deep House Instrumental\" (arnaud136), on Pixabay",
+  "« Luxury Life » et « Fashion Diva House » (kulakovka), sur Pixabay": "\"Luxury Life\" and \"Fashion Diva House\" (kulakovka), on Pixabay",
+  "« Luxury Life » (kulakovka) et « House - July » (Easy_Eva), sur Pixabay": "\"Luxury Life\" (kulakovka) and \"House - July\" (Easy_Eva), on Pixabay",
+  "Écoute d'abord la transition en entier. Je t'explique juste après.": "First, listen to the whole transition. I'll explain right after.",
+  "ÉCHO": "ECHO",
+  "RÉVERBE": "REVERB",
+  "FILTRE se ferme": "FILTER closes",
+  "FILTRE s'ouvre": "FILTER opens",
+  "La boucle qui attend": "The waiting loop",
+  "B patiente en boucle juste avant son drop, puis part pile quand A se termine.": "B waits in a loop just before its drop, then takes off right when A ends.",
+  "↑ 2 temps de drop s'échappent": "↑ 2 beats of the drop slip out",
+  "↑ la boucle déborde : B prend du retard": "↑ the loop spills over: B falls behind",
+  "Écoute… et suis le trait blanc sur la piste : c'est là où on en est.": "Listen… and follow the white line on the track: that's where we are.",
+  "Tu as entendu ? B tournait en rond sous A, et son drop est parti pile quand A s'est arrêté. C'est ça, la boucle qui attend.": "Did you hear it? B was going round in circles under A, and its drop took off right when A stopped. That's the waiting loop.",
+  "La boucle, c'est la salle d'attente de B : il tourne en rond juste avant son drop, et c'est toi qui choisis quand il part.": "The loop is B's waiting room: it goes round in circles just before its drop, and you decide when it goes.",
+  "Elle te sauve quand B arrive trop vite à son drop, ou quand A dure plus longtemps que prévu.": "It saves you when B gets to its drop too fast, or when A lasts longer than planned.",
+  "Le secret, c'est 32 temps : une phrase entière. Quand B sort de sa boucle, il retombe pile sur une phrase de A.": "The secret is 32 beats: a whole phrase. When B leaves its loop, it lands right on one of A's phrases.",
+  "1 phrase = 32 temps = 8 mesures de 4 temps": "1 phrase = 32 beats = 8 bars of 4 beats",
+  "Lance B au casque, pile sur le premier temps d'une phrase de A.": "Start B in your headphones, right on the first beat of one of A's phrases.",
+  "Compte 32 temps. Au début de la phrase suivante, appuie sur IN.": "Count 32 beats. At the start of the next phrase, press IN.",
+  "Encore 32 temps. Juste avant le drop de B, appuie sur OUT : B repart en arrière, il tourne en boucle.": "Another 32 beats. Just before B's drop, press OUT: B jumps back, it loops.",
+  "Pendant que B tourne, monte doucement son fader. Il attend sous A, sans ses basses.": "While B loops, slowly bring up its fader. It waits under A, without its lows.",
+  "A finit sa dernière phrase. Sur le 1, appuie sur EXIT et baisse A d'un coup : le drop de B tombe pile.": "A finishes its last phrase. On the 1, press EXIT and pull A down in one go: B's drop lands right on time.",
+  "Erreur n° 1": "Mistake #1",
+  "Tu appuies sur IN 2 temps trop tard : ta boucle mord sur le drop. Écoute bien la fin du tour.": "You press IN 2 beats too late: your loop bites into the drop. Listen closely to the end of the loop.",
+  "Le drop a démarré, puis il est reparti en arrière. Maintenant, la bonne :": "The drop started, then jumped back. Now, the right way:",
+  "Erreur n° 2": "Mistake #2",
+  "Sans Quantize, tu appuies sur OUT un poil trop tard : ta boucle fait 32 temps et quart. Écoute après le tour.": "Without Quantize, you press OUT a hair too late: your loop is 32 and a quarter beats. Listen after the loop.",
+  "Les grosses caisses ne tombent plus ensemble : ça galope. Allume Quantize : IN et OUT se posent tout seuls sur le temps. La bonne :": "The kick drums don't land together anymore: it gallops. Turn on Quantize: IN and OUT snap to the beat on their own. The right way:",
+  "Bravo, tu connais la boucle qui attend ! Garde ces trois lignes en tête.": "Well done, you know the waiting loop! Keep these three lines in mind.",
+  "**32 temps**, c'est une phrase : ta boucle fait 32 temps, pas un de plus.": "**32 beats** is a phrase: your loop is 32 beats, not one more.",
+  "<b>32 temps</b>, c'est une phrase : ta boucle fait 32 temps, pas un de plus.": "<b>32 beats</b> is a phrase: your loop is 32 beats, not one more.",
+  "**IN** au début d'une phrase de B, **OUT** juste avant son drop. Avec Quantize allumé.": "**IN** at the start of one of B's phrases, **OUT** just before its drop. With Quantize on.",
+  "<b>IN</b> au début d'une phrase de B, <b>OUT</b> juste avant son drop. Avec Quantize allumé.": "<b>IN</b> at the start of one of B's phrases, <b>OUT</b> just before its drop. With Quantize on.",
+  "**EXIT** sur le 1 quand A se termine : le drop de B tombe pile.": "**EXIT** on the 1 when A ends: B's drop lands right on time.",
+  "<b>EXIT</b> sur le 1 quand A se termine : le drop de B tombe pile.": "<b>EXIT</b> on the 1 when A ends: B's drop lands right on time.",
+  "La boucle qui prolonge l'outro": "The loop that extends the outro",
+  "A finit avant le drop de B ? Tu boucles la fin de A, le temps que B arrive.": "A ends before B's drop? Loop the end of A, while B gets there.",
+  "↑ A est fini : il ne reste que B, sans ses basses": "↑ A is over: only B is left, without its lows",
+  "↑ le trou : A s'est arrêté trop tôt": "↑ the gap: A stopped too early",
+  "Écoute… et suis le trait blanc sur la piste.": "Listen… and follow the white line on the track.",
+  "Tu as entendu ? A est arrivé au bout, mais il a continué à tourner sur ses 16 derniers temps, le temps que B arrive à son drop.": "Did you hear it? A reached the end, but it kept looping its last 16 beats, while B got to its drop.",
+  "Le problème : B met longtemps à arriver à son drop, et A se termine avant. Écoute ce qui se passe sans boucle :": "The problem: B takes a long time to reach its drop, and A ends first. Listen to what happens without a loop:",
+  "Tout retombe : pendant 32 temps, il ne reste que B, sans ses basses, tout maigre. La boucle qui prolonge l'outro bouche ce trou.": "Everything falls flat: for 32 beats, there's only B left, without its lows, really thin. The loop that extends the outro fills that gap.",
+  "Lance B au casque sur une phrase de A, puis monte son fader pendant la fin de A.": "Start B in your headphones on one of A's phrases, then bring up its fader during the end of A.",
+  "16 temps avant la fin de A, appuie sur IN.": "16 beats before the end of A, press IN.",
+  "Sur la fin de A, appuie sur OUT : A repart 16 temps en arrière, et tourne en boucle sous la montée de B.": "At the end of A, press OUT: A jumps back 16 beats, and loops under B's build-up.",
+  "Pas besoin d'EXIT : quand le drop de B arrive, baisse A d'un coup.": "No need for EXIT: when B's drop arrives, pull A down in one go.",
+  "L'erreur": "The mistake",
+  "Tu appuies sur EXIT trop tôt : A repart vers sa fin… et s'arrête avant le drop de B.": "You press EXIT too early: A heads to its end… and stops before B's drop.",
+  "Tu as entendu le trou ? Garde la boucle jusqu'au drop de B. La bonne :": "Did you hear the gap? Keep the loop until B's drop. The right way:",
+  "Bravo ! Avec cette boucle, plus de trou entre deux morceaux.": "Well done! With this loop, no more gaps between two tracks.",
+  "Si A finit avant le drop de B, **boucle la fin de A**.": "If A ends before B's drop, **loop the end of A**.",
+  "Si A finit avant le drop de B, <b>boucle la fin de A</b>.": "If A ends before B's drop, <b>loop the end of A</b>.",
+  "**IN** 16 temps avant la fin, **OUT** sur la fin : A tourne sous B jusqu'à son drop.": "**IN** 16 beats before the end, **OUT** at the end: A loops under B until its drop.",
+  "<b>IN</b> 16 temps avant la fin, <b>OUT</b> sur la fin : A tourne sous B jusqu'à son drop.": "<b>IN</b> 16 beats before the end, <b>OUT</b> at the end: A loops under B until its drop.",
+  "Pas d'EXIT : au drop de B, **baisse A** d'un coup.": "No EXIT: at B's drop, **pull A down** in one go.",
+  "Pas d'EXIT : au drop de B, <b>baisse A</b> d'un coup.": "No EXIT: at B's drop, <b>pull A down</b> in one go.",
+  "La montée en boucle": "The loop build-up",
+  "Une boucle qui raccourcit (8, 4, 2, 1 temps) fait monter la tension avant le drop.": "A loop that gets shorter (8, 4, 2, 1 beats) builds the tension before the drop.",
+  "↑ trop vite : la boucle bégaie 18 temps": "↑ too fast: the loop stutters for 18 beats",
+  "Écoute d'abord la montée en entier. Je t'explique juste après.": "First, listen to the whole build-up. I'll explain right after.",
+  "Écoute… la boucle de A raccourcit, raccourcit… et boum.": "Listen… A's loop gets shorter, and shorter… and boom.",
+  "Tu as senti la tension monter ? La boucle de A est passée de 8 temps à 4, puis 2, puis 1, puis un demi… et le drop de B a tout libéré.": "Did you feel the tension rise? A's loop went from 8 beats to 4, then 2, then 1, then a half… and B's drop released it all.",
+  "La montée, c'est pour le moment fort de ton set : juste avant un gros drop, comme un roulement de tambour.": "The build-up is for the big moment of your set: just before a big drop, like a drum roll.",
+  "Le secret : chaque ½X tombe à la fin d'un tour, deux tours à chaque fois. Le tout dure une phrase, et le drop tombe pile sur la suivante.": "The secret: each ½X lands at the end of a loop, two loops each time. The whole thing lasts one phrase, and the drop lands right on the next one.",
+  "8 + 8 + 4 + 4 + 2 + 2 + 1 + 1 + 4 × ½ = 32 temps": "8 + 8 + 4 + 4 + 2 + 2 + 1 + 1 + 4 × ½ = 32 beats",
+  "Au début de la dernière phrase de A, pose une boucle de 8 temps : IN, puis OUT 8 temps plus tard.": "At the start of A's last phrase, set an 8-beat loop: IN, then OUT 8 beats later.",
+  "Après deux tours, appuie sur ½X : la boucle passe à 4 temps.": "After two loops, press ½X: the loop goes to 4 beats.",
+  "Continue : ½X tous les deux tours. 2 temps, puis 1, puis un demi.": "Keep going: ½X every two loops. 2 beats, then 1, then a half.",
+  "Sur le 1 de la phrase suivante, baisse A et monte B d'un coup : le drop explose.": "On the 1 of the next phrase, pull A down and bring B up in one go: the drop explodes.",
+  "Tu raccourcis trop vite : ta boucle arrive à un demi-temps bien avant le drop. Écoute :": "You shorten too fast: your loop gets to half a beat long before the drop. Listen:",
+  "Ça bégaie pendant 8 secondes, et la tension retombe. Deux tours à chaque fois, pas plus vite. La bonne :": "It stutters for 8 seconds, and the tension drops. Two loops each time, no faster. The right way:",
+  "Bravo ! La montée, c'est ton arme pour les gros drops.": "Well done! The build-up is your weapon for big drops.",
+  "Une boucle de **8 temps** au début de la dernière phrase de A.": "An **8-beat** loop at the start of A's last phrase.",
+  "Une boucle de <b>8 temps</b> au début de la dernière phrase de A.": "An <b>8-beat</b> loop at the start of A's last phrase.",
+  "**½X tous les deux tours** : 8, 4, 2, 1, un demi.": "**½X every two loops**: 8, 4, 2, 1, a half.",
+  "<b>½X tous les deux tours</b> : 8, 4, 2, 1, un demi.": "<b>½X every two loops</b>: 8, 4, 2, 1, a half.",
+  "Le drop de B **pile sur le 1** de la phrase suivante.": "B's drop **right on the 1** of the next phrase.",
+  "Le drop de B <b>pile sur le 1</b> de la phrase suivante.": "B's drop <b>right on the 1</b> of the next phrase.",
+  "La boucle de secours": "The rescue loop",
+  "B est parti en retard ? Une boucle de 4 temps sur A rattrape tout.": "B started late? A 4-beat loop on A makes up for everything.",
+  "↑ le trou : 8 temps sans A avant le drop": "↑ the gap: 8 beats without A before the drop",
+  "↑ la boucle déborde après la fin de A : un trou à chaque tour": "↑ the loop spills past the end of A: a gap on every loop",
+  "B était parti en retard, mais tu n'as rien entendu : A a répété sa dernière mesure, le temps que le drop de B arrive.": "B had started late, but you didn't hear a thing: A repeated its last bar, while B's drop arrived.",
+  "Tu as lancé B 8 temps trop tard ? Ça arrive à tout le monde. Son drop tombera 8 temps après la fin de A. Écoute :": "You started B 8 beats too late? It happens to everyone. Its drop will land 8 beats after the end of A. Listen:",
+  "Tu entends le trou ? La boucle de secours gagne ces 8 temps, et personne ne s'en rend compte.": "Hear the gap? The rescue loop wins back those 8 beats, and nobody notices.",
+  "Oups : B part 8 temps après le début d'une phrase de A. Son drop arrivera en retard.": "Oops: B starts 8 beats after the start of one of A's phrases. Its drop will come late.",
+  "Sur la dernière mesure de A, 4 temps avant la fin, appuie sur IN.": "On A's last bar, 4 beats before the end, press IN.",
+  "Sur la fin de A, appuie sur OUT : A répète sa dernière mesure. Deux tours, et tu as gagné 8 temps.": "At the end of A, press OUT: A repeats its last bar. Two loops, and you've won back 8 beats.",
+  "Au drop de B, baisse A d'un coup. Sauvé !": "At B's drop, pull A down in one go. Saved!",
+  "Tu appuies sur IN 2 temps trop tard : ta boucle déborde après la fin de A. Écoute :": "You press IN 2 beats too late: your loop spills past the end of A. Listen:",
+  "Un trou à chaque tour ! Ta boucle doit finir pile sur la fin de A. La bonne :": "A gap on every loop! Your loop has to end right at the end of A. The right way:",
+  "Bravo ! Un B parti en retard ne te fait plus peur.": "Well done! A late B doesn't scare you anymore.",
+  "B parti en retard ? **Boucle la fin de A** pour gagner du temps.": "B started late? **Loop the end of A** to win back time.",
+  "B parti en retard ? <b>Boucle la fin de A</b> pour gagner du temps.": "B started late? <b>Loop the end of A</b> to win back time.",
+  "Une boucle de **4 temps** qui tourne deux fois : **8 temps** de gagnés.": "A **4-beat** loop that plays twice: **8 beats** won back.",
+  "Une boucle de <b>4 temps</b> qui tourne deux fois : <b>8 temps</b> de gagnés.": "A <b>4-beat</b> loop that plays twice: <b>8 beats</b> won back.",
+  "Ta boucle finit **pile sur la fin de A**, et au drop de B tu baisses A.": "Your loop ends **right at the end of A**, and at B's drop you pull A down.",
+  "Ta boucle finit <b>pile sur la fin de A</b>, et au drop de B tu baisses A.": "Your loop ends <b>right at the end of A</b>, and at B's drop you pull A down.",
+  "Le fondu au fader": "The fader fade",
+  "B monte tout doucement pendant la dernière phrase de A, et son drop tombe quand A disparaît.": "B comes up very slowly during A's last phrase, and its drop lands when A disappears.",
+  "↑ B arrive d'un coup": "↑ B comes in all at once",
+  "↑ A est parti : il ne reste que la montée de B": "↑ A is gone: only B's build-up is left",
+  "Tu as entendu ? B est monté tout doucement pendant la fin de A, et on n'a pas entendu la couture. C'est le fondu au fader.": "Did you hear it? B came up very slowly during the end of A, and you couldn't hear the seam. That's the fader fade.",
+  "C'est la transition la plus simple : un morceau monte pendant que l'autre descend, juste avec les faders.": "It's the simplest transition: one track comes up while the other goes down, just with the faders.",
+  "Le secret : B monte doucement pendant la dernière phrase de A, et son drop tombe pile quand A s'arrête.": "The secret: B comes up slowly during A's last phrase, and its drop lands right when A stops.",
+  "Lance B au casque, au début de l'avant-dernière phrase de A.": "Start B in your headphones, at the start of A's second-to-last phrase.",
+  "Au début de la dernière phrase de A, monte le fader de B, tout doucement : en 24 temps.": "At the start of A's last phrase, bring up B's fader, very slowly: over 24 beats.",
+  "Sur les 8 derniers temps, baisse A. Le drop de B tombe pile quand A disparaît.": "Over the last 8 beats, pull A down. B's drop lands right when A disappears.",
+  "Tu montes B d'un coup. Écoute le début de la phrase :": "You bring B up all at once. Listen to the start of the phrase:",
+  "Ça saute : tout le monde l'a entendu. Monte-le doucement, sur 24 temps. La bonne :": "It jumps: everybody heard it. Bring it up slowly, over 24 beats. The right way:",
+  "Tu baisses A trop tôt. Écoute la fin de la phrase :": "You pull A down too early. Listen to the end of the phrase:",
+  "Il ne reste que la montée de B, toute maigre. Garde A jusqu'au drop de B. La bonne :": "Only B's build-up is left, really thin. Keep A until B's drop. The right way:",
+  "Bravo, tu connais le fondu au fader ! Garde ces trois lignes en tête.": "Well done, you know the fader fade! Keep these three lines in mind.",
+  "B monte **doucement**, pendant la dernière phrase de A : pas d'un coup.": "B comes up **slowly**, during A's last phrase: not all at once.",
+  "B monte <b>doucement</b>, pendant la dernière phrase de A : pas d'un coup.": "B comes up <b>slowly</b>, during A's last phrase: not all at once.",
+  "**A descend sur les 8 derniers temps**, pas avant.": "**A goes down over the last 8 beats**, not before.",
+  "<b>A descend sur les 8 derniers temps</b>, pas avant.": "<b>A goes down over the last 8 beats</b>, not before.",
+  "Le **drop de B** tombe pile quand A disparaît.": "**B's drop** lands right when A disappears.",
+  "Le <b>drop de B</b> tombe pile quand A disparaît.": "<b>B's drop</b> lands right when A disappears.",
+  "Au drop de B, les basses changent de morceau, sur le 1 : jamais deux basses en même temps.": "At B's drop, the bass changes tracks, on the 1: never two basslines at the same time.",
+  "↑ deux basses en même temps : ça devient boueux": "↑ two basslines at the same time: it gets muddy",
+  "↑ 2 temps de basses doublées": "↑ 2 beats of doubled bass",
+  "Tu as entendu ? Au drop de B, les basses ont changé de morceau d'un coup, sur le 1. C'est le swap des basses.": "Did you hear it? At B's drop, the bass changed tracks all at once, on the 1. That's the bass swap.",
+  "Deux basses en même temps, ça fait de la bouillie : les graves des deux morceaux se marchent dessus.": "Two basslines at the same time make mush: the lows of both tracks step on each other.",
+  "Le swap, c'est échanger les basses : celles de A partent, celles de B arrivent, au même instant, sur le 1.": "The swap means exchanging the lows: A's go out, B's come in, at the same instant, on the 1.",
+  "Coupe le LOW de B, tout à gauche. Puis lance B au casque, sur une phrase de A.": "Cut B's LOW, all the way left. Then start B in your headphones, on one of A's phrases.",
+  "Monte son fader pendant sa montée : on l'entend, mais sans ses basses.": "Bring up its fader during its build-up: you hear it, but without its lows.",
+  "Au drop de B, sur le 1 : coupe le LOW de A et ouvre celui de B, en même temps.": "At B's drop, on the 1: cut A's LOW and open B's, at the same time.",
+  "A finit sa phrase sans ses basses. À la fin, baisse-le.": "A finishes its phrase without its lows. At the end, pull it down.",
+  "Tu oublies le swap. Écoute le drop de B :": "You forget the swap. Listen to B's drop:",
+  "Ça cogne et ça bave : deux basses ensemble. La bonne :": "It thumps and smears: two basslines together. The right way:",
+  "Tu ouvres le LOW de B à l'heure, mais tu coupes celui de A 2 temps trop tard. Écoute bien le drop :": "You open B's LOW on time, but you cut A's 2 beats too late. Listen closely to the drop:",
+  "Les basses se sont doublées pendant 2 temps. Les deux potards en même temps, sur le 1. La bonne :": "The bass doubled for 2 beats. Both knobs at the same time, on the 1. The right way:",
+  "Bravo, tu sais faire le swap des basses !": "Well done, you can do the bass swap!",
+  "**Jamais deux basses** en même temps.": "**Never two basslines** at the same time.",
+  "<b>Jamais deux basses</b> en même temps.": "<b>Never two basslines</b> at the same time.",
+  "Le **LOW de B coupé** avant de le lancer.": "**B's LOW cut** before you start it.",
+  "Le <b>LOW de B coupé</b> avant de le lancer.": "<b>B's LOW cut</b> before you start it.",
+  "Au **drop de B**, sur le 1 : LOW de A coupé, LOW de B ouvert.": "At **B's drop**, on the 1: A's LOW cut, B's LOW open.",
+  "Au <b>drop de B</b>, sur le 1 : LOW de A coupé, LOW de B ouvert.": "At <b>B's drop</b>, on the 1: A's LOW cut, B's LOW open.",
+  "Le mix aux 3 bandes": "The 3-band mix",
+  "Les aigus, puis les médiums, puis les basses : B entre bande par bande pendant que A s'efface.": "The highs, then the mids, then the lows: B comes in band by band while A fades away.",
+  "↑ deux morceaux entiers en même temps : tout se mélange": "↑ two full tracks at the same time: it all blurs together",
+  "Tu as entendu ? B est entré par petits morceaux : ses aigus, puis ses médiums, puis ses basses. Et A s'effaçait de la même façon.": "Did you hear it? B came in bit by bit: its highs, then its mids, then its lows. And A faded away the same way.",
+  "Le swap échange les basses. Le mix aux 3 bandes va plus loin : les aigus, puis les médiums, puis les basses, une bande toutes les 2 mesures.": "The swap exchanges the lows. The 3-band mix goes further: the highs, then the mids, then the lows, one band every 2 bars.",
+  "C'est plus long et plus doux : parfait quand deux morceaux se ressemblent.": "It's longer and smoother: perfect when two tracks sound alike.",
+  "Avant de lancer B, coupe ses trois potards : HI, MID et LOW tout à gauche. Puis lance-le au casque.": "Before starting B, cut its three knobs: HI, MID and LOW all the way left. Then start it in your headphones.",
+  "Monte son fader : on n'entend presque rien, c'est normal.": "Bring up its fader: you can hardly hear anything, that's normal.",
+  "Au drop de B, échange les aigus : HI de A à gauche, HI de B au milieu.": "At B's drop, swap the highs: A's HI to the left, B's HI to the middle.",
+  "2 mesures plus tard, les médiums.": "2 bars later, the mids.",
+  "Encore 2 mesures : les basses. A n'est plus qu'un souffle : baisse-le à la fin de sa phrase.": "Another 2 bars: the lows. A is just a whisper now: pull it down at the end of its phrase.",
+  "Tu ouvres B en entier d'un coup, et A reste entier. Écoute :": "You open B fully all at once, and A stays full. Listen:",
+  "Deux morceaux entiers : tout se mélange. Une bande à la fois. La bonne :": "Two full tracks: it all blurs together. One band at a time. The right way:",
+  "Bravo, tu sais mixer aux 3 bandes !": "Well done, you can do a 3-band mix!",
+  "**HI, puis MID, puis LOW** : une bande toutes les 2 mesures.": "**HI, then MID, then LOW**: one band every 2 bars.",
+  "<b>HI, puis MID, puis LOW</b> : une bande toutes les 2 mesures.": "<b>HI, then MID, then LOW</b>: one band every 2 bars.",
+  "Ce que B gagne, **A le perd au même moment**.": "Whatever B gains, **A loses at the same moment**.",
+  "Ce que B gagne, <b>A le perd au même moment</b>.": "Whatever B gains, <b>A loses at the same moment</b>.",
+  "Les **basses en dernier**, sur le 1.": "The **lows last**, on the 1.",
+  "Les <b>basses en dernier</b>, sur le 1.": "The <b>lows last</b>, on the 1.",
+  "Sur le 1, A disparaît et le drop de B arrive, d'un coup : pas de mélange.": "On the 1, A disappears and B's drop arrives, all at once: no blending.",
+  "↑ 2 temps de silence": "↑ 2 beats of silence",
+  "↑ A traîne 2 temps sur le drop de B": "↑ A drags 2 beats into B's drop",
+  "Tu as entendu ? Sur le 1, A a disparu et le drop de B est arrivé, d'un coup. C'est la coupure sèche.": "Did you hear it? On the 1, A disappeared and B's drop arrived, all at once. That's the hard cut.",
+  "C'est la transition la plus franche : pas de mélange, on passe d'un morceau à l'autre en un instant.": "It's the most direct transition: no blending, you go from one track to the other in an instant.",
+  "Tout se joue sur un seul temps : le 1 où A finit sa phrase et où B lâche son drop.": "It all comes down to a single beat: the 1 where A ends its phrase and B lets its drop go.",
+  "Lance B au casque, 64 temps avant la fin de A : son drop tombera pile à la fin.": "Start B in your headphones, 64 beats before the end of A: its drop will land right at the end.",
+  "Prépare tes deux mains : une sur le fader de A, une sur celui de B. Compte la dernière phrase de A…": "Get both hands ready: one on A's fader, one on B's. Count A's last phrase…",
+  "… et sur le 1 : A en bas, B en haut, en même temps.": "… and on the 1: A down, B up, at the same time.",
+  "Tu coupes A 2 temps trop tôt. Écoute :": "You cut A 2 beats too early. Listen:",
+  "Un trou ! La salle l'a entendu. Les deux mains en même temps. La bonne :": "A gap! The crowd heard it. Both hands at the same time. The right way:",
+  "Tu coupes A 2 temps trop tard. Écoute :": "You cut A 2 beats too late. Listen:",
+  "A a mordu sur le drop de B. Sur le 1, pile. La bonne :": "A bit into B's drop. On the 1, exactly. The right way:",
+  "Bravo, tu connais la coupure sèche !": "Well done, you know the hard cut!",
+  "**Sur le 1** : A en bas, B en haut, en même temps.": "**On the 1**: A down, B up, at the same time.",
+  "<b>Sur le 1</b> : A en bas, B en haut, en même temps.": "<b>On the 1</b>: A down, B up, at the same time.",
+  "Lance B pour que **son drop tombe pile** à la fin de A.": "Start B so that **its drop lands right** at the end of A.",
+  "Lance B pour que <b>son drop tombe pile</b> à la fin de A.": "Start B so that <b>its drop lands right</b> at the end of A.",
+  "Ni **trou**, ni **chevauchement**.": "No **gap**, no **overlap**.",
+  "Ni <b>trou</b>, ni <b>chevauchement</b>.": "No <b>gap</b>, no <b>overlap</b>.",
+  "La dernière mesure de A rebondit en échos, pendant que le drop de B arrive dessous.": "A's last bar bounces away in echoes, while B's drop arrives underneath.",
+  "↑ A s'arrête net": "↑ A stops dead",
+  "↑ A se noie dans ses échos": "↑ A drowns in its echoes",
+  "Tu as entendu ? A ne s'est pas arrêté net : sa dernière mesure a rebondi en échos, et le drop de B est arrivé dessous. C'est l'écho out.": "Did you hear it? A didn't stop dead: its last bar bounced away in echoes, and B's drop arrived underneath. That's the echo out.",
+  "L'écho répète le son, de plus en plus bas, comme dans la montagne. Il continue même quand le fader de A est en bas.": "The echo repeats the sound, quieter and quieter, like in the mountains. It keeps going even when A's fader is down.",
+  "L'écho out fait partir A en douceur, surtout quand B arrive avec un gros drop.": "The echo out takes A out smoothly, especially when B comes in with a big drop.",
+  "Sur la table : l'effet ECHO du BEAT FX, réglé sur 3/4 de temps": "On the controller: the BEAT FX ECHO effect, set to 3/4 of a beat",
+  "Au début de la dernière phrase de A, monte doucement le fader de B.": "At the start of A's last phrase, slowly bring up B's fader.",
+  "Sur la dernière mesure de A, allume l'écho : les 4 derniers temps rebondissent.": "On A's last bar, turn on the echo: the last 4 beats bounce.",
+  "Sur le 1, baisse A d'un coup. Laisse l'écho allumé : il continue tout seul, sous le drop de B.": "On the 1, pull A down in one go. Leave the echo on: it keeps going on its own, under B's drop.",
+  "Quand les échos se sont éteints, tu peux éteindre l'effet.": "When the echoes have died out, you can turn off the effect.",
+  "Sans écho, A s'arrête net. Écoute :": "Without echo, A stops dead. Listen:",
+  "Ça coupe, c'est sec. Avec l'écho :": "It cuts, it's abrupt. With the echo:",
+  "Tu allumes l'écho 3 mesures trop tôt. Écoute :": "You turn on the echo 3 bars too early. Listen:",
+  "A se noie dans ses répétitions avant même la fin : c'est brouillon. Une seule mesure suffit. La bonne :": "A drowns in its repeats before it even ends: it's messy. One bar is enough. The right way:",
+  "Bravo, tu connais l'écho out !": "Well done, you know the echo out!",
+  "L'écho sur **la dernière mesure** de A, pas avant.": "The echo on **A's last bar**, not before.",
+  "L'écho sur <b>la dernière mesure</b> de A, pas avant.": "The echo on <b>A's last bar</b>, not before.",
+  "Sur le 1, **A en bas** : l'écho continue tout seul.": "On the 1, **A down**: the echo keeps going on its own.",
+  "Sur le 1, <b>A en bas</b> : l'écho continue tout seul.": "On the 1, <b>A down</b>: the echo keeps going on its own.",
+  "Tu éteins l'écho **quand les répétitions se sont tues**.": "You turn off the echo **when the repeats have gone quiet**.",
+  "Tu éteins l'écho <b>quand les répétitions se sont tues</b>.": "You turn off the echo <b>when the repeats have gone quiet</b>.",
+  "La sortie dans la réverbe": "The reverb exit",
+  "A s'envole dans un nuage de réverbe, et le drop de B arrive pendant qu'il s'éteint.": "A floats away in a cloud of reverb, and B's drop arrives as it fades.",
+  "RÉVERBE off": "REVERB off",
+  "↑ la réverbe s'est coupée avec A": "↑ the reverb cut out with A",
+  "↑ tout devient flou, trop tôt": "↑ everything gets blurry, too early",
+  "Tu as entendu ? A s'est envolé dans un nuage, comme dans une immense salle, pendant que B arrivait. C'est la sortie dans la réverbe.": "Did you hear it? A floated away in a cloud, like in a huge hall, while B came in. That's the reverb exit.",
+  "La réverbe, c'est le son d'une grande salle : il ne se répète pas comme l'écho, il s'étale et s'éteint doucement.": "Reverb is the sound of a big hall: it doesn't repeat like the echo, it spreads out and fades slowly.",
+  "Elle fait disparaître A dans un souffle : parfait quand B commence par un gros drop.": "It makes A vanish in a whoosh: perfect when B starts with a big drop.",
+  "Sur la table : l'effet REVERB du BEAT FX": "On the controller: the BEAT FX REVERB effect",
+  "2 mesures avant la fin de A, allume la réverbe.": "2 bars before the end of A, turn on the reverb.",
+  "Sur le 1, baisse A. La réverbe continue de résonner : laisse-la allumée !": "On the 1, pull A down. The reverb keeps ringing: leave it on!",
+  "Tu éteins la réverbe en même temps que tu baisses A. Écoute :": "You turn off the reverb at the same time as you pull A down. Listen:",
+  "Le nuage a disparu d'un coup : c'est comme couper net. Laisse l'effet allumé. La bonne :": "The cloud vanished all at once: it's like cutting dead. Leave the effect on. The right way:",
+  "Tu allumes la réverbe 4 mesures trop tôt. Écoute :": "You turn on the reverb 4 bars too early. Listen:",
+  "A devient flou bien avant la fin : on ne comprend plus rien. 2 mesures suffisent. La bonne :": "A gets blurry long before the end: you can't make anything out. 2 bars are enough. The right way:",
+  "Bravo, tu sais sortir dans la réverbe !": "Well done, you know the reverb exit!",
+  "La réverbe sur les **2 dernières mesures** de A.": "The reverb on A's **last 2 bars**.",
+  "La réverbe sur les <b>2 dernières mesures</b> de A.": "The reverb on A's <b>last 2 bars</b>.",
+  "Sur le 1, **A en bas**, mais la réverbe **reste allumée**.": "On the 1, **A down**, but the reverb **stays on**.",
+  "Sur le 1, <b>A en bas</b>, mais la réverbe <b>reste allumée</b>.": "On the 1, <b>A down</b>, but the reverb <b>stays on</b>.",
+  "Tu l'éteins **quand le nuage s'est éteint**.": "You turn it off **when the cloud has faded**.",
+  "Tu l'éteins <b>quand le nuage s'est éteint</b>.": "You turn it off <b>when the cloud has faded</b>.",
+  "B entre tout fin, juste ses aigus, et s'ouvre petit à petit jusqu'à son drop. A, lui, se referme.": "B comes in really thin, just its highs, and opens up little by little until its drop. A, meanwhile, closes up.",
+  "FILTRE ouvert": "FILTER open",
+  "↑ B s'ouvre d'un coup, trop tôt": "↑ B opens all at once, too early",
+  "Tu as entendu ? B est arrivé tout fin, juste ses aigus, puis il s'est ouvert jusqu'à son drop. A, lui, s'est refermé. C'est la transition au filtre.": "Did you hear it? B came in really thin, just its highs, then it opened up until its drop. A, meanwhile, closed up. That's the filter transition.",
+  "Le filtre enlève une partie du son. Tourné à droite, il ne garde que les aigus : le morceau devient tout fin. À gauche, il ne garde que les graves : il devient sourd.": "The filter removes part of the sound. Turned right, it keeps only the highs: the track gets really thin. Turned left, it keeps only the lows: it gets muffled.",
+  "Avec lui, B peut entrer tôt sans gêner A : il est trop fin pour se battre avec lui.": "With it, B can come in early without getting in A's way: it's too thin to fight with it.",
+  "Le filtre au milieu = le son normal": "The filter in the middle = normal sound",
+  "Avant de lancer B, tourne son filtre presque tout à droite. Puis lance-le au casque.": "Before starting B, turn its filter almost all the way right. Then start it in your headphones.",
+  "Au début de la dernière phrase de A, monte le fader de B : on n'entend que ses aigus.": "At the start of A's last phrase, bring up B's fader: you only hear its highs.",
+  "Pendant toute la phrase, ramène doucement le filtre de B vers le milieu.": "Throughout the phrase, slowly bring B's filter back to the middle.",
+  "Sur les 16 derniers temps, tourne le filtre de A vers la gauche : il s'assourdit. Sur le 1, baisse-le.": "Over the last 16 beats, turn A's filter to the left: it gets muffled. On the 1, pull it down.",
+  "Tu ouvres le filtre de B d'un coup, sans attendre la fin de la phrase. Écoute :": "You open B's filter all at once, without waiting for the end of the phrase. Listen:",
+  "B débarque en entier, trop tôt, et se bat avec A. Tourne doucement, sur toute la phrase. La bonne :": "B barges in fully, too early, and fights with A. Turn slowly, over the whole phrase. The right way:",
+  "Bravo, tu sais faire entrer un morceau au filtre !": "Well done, you can bring a track in with the filter!",
+  "B entre **filtré** : seulement ses aigus.": "B comes in **filtered**: only its highs.",
+  "B entre <b>filtré</b> : seulement ses aigus.": "B comes in <b>filtered</b>: only its highs.",
+  "Tu l'**ouvres doucement**, sur toute la dernière phrase de A.": "You **open it slowly**, over A's whole last phrase.",
+  "Tu l'<b>ouvres doucement</b>, sur toute la dernière phrase de A.": "You <b>open it slowly</b>, over A's whole last phrase.",
+  "A se **referme** pendant ce temps, puis il part sur le 1.": "Meanwhile A **closes up**, then goes out on the 1.",
+  "A se <b>referme</b> pendant ce temps, puis il part sur le 1.": "Meanwhile A <b>closes up</b>, then goes out on the 1.",
+  "Le volume et les basses": "Volume and bass",
+  "Le fader, le swap des basses, les 3 bandes, la coupure : les transitions de base, faites proprement.": "The fader, the bass swap, the 3 bands, the cut: the basic transitions, done properly.",
+  "Les effets": "Effects",
+  "L'écho, la réverbe, le filtre : faire partir un morceau en douceur, en faire entrer un autre.": "Echo, reverb, filter: taking a track out smoothly, bringing another one in.",
+  "Les boucles": "Loops",
+  "IN, OUT, EXIT et ½X : faire attendre un morceau, en prolonger un autre, faire monter la tension, rattraper un retard.": "IN, OUT, EXIT and ½X: making a track wait, extending another, building tension, catching up when you're late.",
+  "↺ la boucle repart": "↺ the loop restarts",
+  "· sans basses": "· no lows",
+  "· filtré": "· filtered",
+  "écho…": "echo…",
+  "réverbe…": "reverb…",
+  "Version ratée": "Wrong version",
+  "Version réussie": "Right version",
+  "Lecture": "Play",
+  "Je prépare la musique…": "Getting the music ready…",
+  "La musique ne se charge pas. Vérifie ta connexion, puis rouvre le tuto.": "The music won't load. Check your connection, then open the tutorial again.",
+  "MONTÉE": "BUILD-UP",
+  "Vu": "Seen",
+  "Un tuto": "A tutorial",
+  "Tu as vu tous les tutos. Bravo !": "You've watched all the tutorials. Well done!",
+});
+
+/* ---------- 01-index (lot 80, motifs) ---------- */
+// index.html : les étiquettes écrites avec un nombre ou un nom
+enDe({ 'Ma musique': 'My music' });
+enMotif('Son : {#n} %', 'Sound: {n}%');
+enMotif('Ma table : {x}', 'My controller: {x}');
+enMotif('{x}, {#n} étoile(s) sur 3, verrouillé', '{x}, {n} star(s) out of 3, locked');
+enMotif('{x}, {#n} étoile(s) sur 3, avec DJingood Pro', '{x}, {n} star(s) out of 3, with DJingood Pro');
+enMotif('Chapitre {#n} : {x}, {#m} niveaux, avec DJingood Pro', 'Chapter {n}: {x}, {m} levels, with DJingood Pro');
+enMotif('{x} : avec DJingood Pro', '{x}: with DJingood Pro');
+
+/* ---------- 02-premiers (lot 80, motifs) ---------- */
+// js/premiers.js : les morceaux du formulaire de compte, et les phrases avec un prénom
+enDe({
+  "Continuer sans compte pour l'instant": 'Continue without an account for now',
+  "Pas de mot de passe : je t'envoie un lien pour te connecter.": "No password: I'll send you a link to sign in.",
+  'DJingood garde ton prénom, ton adresse et ta progression.': 'DJingood keeps your first name, your email address and your progress.'
+});
+enMotif("C'est bon, {=p} ! Ton plan est gardé sur ton compte.", "All set, {p}! Your plan is saved to your account.");
+enMotif("C'est bon ! Ton plan est gardé sur ton compte.", "All set! Your plan is saved to your account.");
+
+/* ---------- 03-niveaux (lot 80, motifs) ---------- */
+// js/niveaux.js : phrases avec un nombre ou un titre de niveau
+enDe({
+  'Swap en retard': 'Swap late', 'Swap en avance': 'Swap early',
+  'Coupé en retard': 'Cut late', 'Coupé trop tôt': 'Cut too early',
+  '4,99 € par mois': '€4.99 a month'
+});
+enMotif('Verrouillé : {#n}/{#m} ★ au chapitre {#c}', 'Locked: {n}/{m} ★ in chapter {c}');
+enMotif('Encore {#n} ★ au chapitre {#c}', '{n} more ★ in chapter {c}');
+enMotif("Ce chapitre est dans DJingood Pro : ses {#n} niveaux s'ouvrent avec l'abonnement.", 'This chapter is in DJingood Pro: its {n} levels unlock with the subscription.');
+enMotif('Les niveaux {#n} à {#m} sont dans DJingood Pro.', 'Levels {n} to {m} are in DJingood Pro.');
+enMotif("Réussis d'abord « {x} » (2 étoiles) : « {y} » s'ouvrira juste après.", 'First pass "{x}" (2 stars): "{y}" unlocks right after.');
+enMotif("Réussis d'abord « {x} » (2 étoiles) : « {y} » viendra ensuite : les niveaux s'ouvrent un par un.", 'First pass "{x}" (2 stars): "{y}" comes after that: levels unlock one at a time.');
+enMotif('Chapitre 1 · {x} · {#n} ★ sur 9', 'Chapter 1 · {x} · {n} ★ of 9');
+enMotif('« {x} » est dans DJingood Pro', '"{x}" is in DJingood Pro');
+enMotif("Puis {#n} chapitres, jusqu'au set noté sur 100.", 'Then {n} chapters, all the way to the set scored out of 100.');
+enMotif("Et {#n} autres chapitres, jusqu'au set noté sur 100.", 'And {n} more chapters, all the way to the set scored out of 100.');
+enMotif('Rejouer « {x} »', 'Replay "{x}"');
+enMotif('Jouer « {x} » (gratuit)', 'Play "{x}" (free)');
+enMotif('Les leçons Comprendre restent gratuites ({#n}/{#m} ★)', 'The Understand lessons stay free ({n}/{m} ★)');
+enMotif('Ce niveau est dans DJingood Pro. Les {#n} premiers niveaux du chapitre 1 sont gratuits.', 'This level is in DJingood Pro. The first {n} levels of chapter 1 are free.');
+enMotif('{x} · {#n} BPM', '{x} · {n} BPM');
+enMotif('Swap {x} trop tard.', 'Swap {x} too late.');
+enMotif('Swap {x} trop tôt.', 'Swap {x} too early.');
+enMotif('Tu as fini les {#n} niveaux gratuits', "You've finished the {n} free levels");
+enMotif('Commencer mes {#n} jours gratuits', 'Start my {n}-day free trial');
+enMotif("{#n} jours gratuits, puis {x}. Ta carte est demandée, mais rien n'est prélevé avant le {#m}e jour ; un mail te prévient 2 jours avant.", "{n} days free, then {x}. We ask for your card, but nothing is charged before day {m}; an email reminds you 2 days before.");
+// la bulle d'un niveau sur la carte (data-t) et son nom lu à voix haute
+enMotif('{#n}. {x} · réussi', '{n}. {x} · done');
+enMotif('{#n}. {x} · avec Pro', '{n}. {x} · with Pro');
+enMotif('{#n}. {x} · pas encore ouvert', '{n}. {x} · not open yet');
+enMotif(/^(\d+)\. ([^<>·]{1,60})$/, (m, n, x) => `${n}. ${tr(x)}`);
+enMotif('Niveau {#n} : {x}, {#s} étoile(s) sur 3, avec DJingood Pro', 'Level {n}: {x}, {s} {s:star:stars} out of 3, with DJingood Pro');
+enMotif('Niveau {#n} : {x}, {#s} étoile(s) sur 3, verrouillé', 'Level {n}: {x}, {s} {s:star:stars} out of 3, locked');
+
+/* ---------- 04-parcours (lot 80, motifs) ---------- */
+// js/parcours.js : phrases avec un nombre
+enMotif('Tes {#n} premiers gestes', 'Your first {n} moves');
+enMotif('Lancer au bon moment, le fader, la coupure : les {#n} premiers niveaux, gratuits. En Mode Expert, sans aucune aide, chaque geste noté à la milliseconde.', 'Starting at the right time, the fader, the cut: the first {n} levels, free. In Expert Mode, with no help at all, every move scored to the millisecond.');
+enMotif("Bravo, tu as fini les {#n} niveaux gratuits. La suite : l'écho, le filtre, le swap des basses, puis la transition complète.", "Well done, you've finished the {n} free levels. Next up: the echo, the filter, the bass swap, then the full transition.");
+enMotif('encore {#n} étoiles au chapitre {#c}', '{n} more stars in chapter {c}');
+enMotif('encore {#n} étoile au chapitre {#c}', '{n} more star in chapter {c}');
+enMotif('{x} · {#n} sur {#m} {y}', '{x} · {n} of {m} {y}');
+
+/* ---------- 05-compte (lot 80, motifs) ---------- */
+// js/compte.js : phrases avec un prénom, une heure ou des chiffres
+enDe({ 'erreur inconnue': 'unknown error', 'Bienvenue !': 'Welcome!' });
+enMotif('Ton mot de passe est trop court : il en faut au moins {#n} caractères.', 'Your password is too short: it needs at least {n} characters.');
+enMotif('{#n} caractères minimum', '{n} characters minimum');
+enMotif("Ça n'a pas marché : {x}", "That didn't work: {x}");
+enMotif("Ton compte a déjà une progression ({x}), et cet ordinateur en a une autre ({y}). Laquelle tu gardes ? L'autre sera remplacée. Rien n'est enregistré tant que tu n'as pas choisi.", 'Your account already has progress ({x}), and this computer has different progress ({y}). Which one do you keep? The other one will be replaced. Nothing is saved until you choose.');
+enMotif(/^(\d+) étoiles? et (\d+) badges?$/, (m, e, b) => `${e} ${+e === 1 ? 'star' : 'stars'} and ${b} ${+b === 1 ? 'badge' : 'badges'}`);
+enMotif('Progression enregistrée à {=h}', 'Progress saved at {h}');
+enMotif('Bienvenue {=p} !', 'Welcome {p}!');
+enMotif('Content de te revoir, {=p} !', 'Good to see you again, {p}!');
+enMotif('Bienvenue sur ordinateur, {=p} !', 'Welcome to DJingood on your computer, {p}!');
+enMotif('Ta table : {=t}', 'Your controller: {t}');
+enMotif('Bienvenue {=p} ! Ton compte est créé. À partir de maintenant, ta progression est enregistrée dessus.', 'Welcome {p}! Your account is created. From now on, your progress is saved to it.');
+enMotif('{#n} leçons sur 7', '{n} lessons of 7');
+enMotif('{#n} leçon sur 7', '{n} lesson of 7');
+// « Ta progression » dans « Mon compte »
+enMotif('Niveau {#n} · {=x} XP', 'Level {n} · {x} XP');
+enMotif(/^(\d+) étoiles? sur (\d+)(?: · série de (\d+) jours?)?$/, (m, e, t, s) => `${e} ${+e === 1 ? 'star' : 'stars'} of ${t}` + (s ? ` · ${s}-day streak` : ''));
+
+/* ---------- 07-pro (lot 80, motifs) ---------- */
+// js/pro.js : phrases avec un titre, un nombre, un prix ou une date (dates déjà en anglais : LOCALE, js/langue.js)
+enDe({
+  "Aller à l'entraînement": 'Go to practice', "Aujourd'hui": 'Today',
+  '<s>59,88 €</s> soit 4,17 € par mois · 2 mois offerts': "<s>€59.88</s> that's €4.17 a month · 2 months free",
+  '/ mois': '/ month'
+});
+enMotif('Pour regarder « {x} »', 'To watch "{x}"');
+enMotif('Pour jouer « {x} »', 'To play "{x}"');
+enMotif('Pour ouvrir le chapitre {#n} : « {x} » (après {#s} ★ au chapitre {#c})', 'To open chapter {n}: "{x}" (after {s} ★ in chapter {c})');
+enMotif('Pour ouvrir le chapitre {#n} : « {x} »', 'To open chapter {n}: "{x}"');
+enMotif('{#n} exercices, {#m} tutos, et un nouveau tuto chaque mois.', '{n} exercises, {m} tutorials, and a new tutorial every month.');
+enMotif('Tes {#n} premiers exercices sont gratuits, sur ordinateur. Vérifie que ta table marche avec DJingood avant de payer quoi que ce soit.', 'Your first {n} exercises are free, on a computer. Check that your controller works with DJingood before paying anything.');
+enMotif('Tes {#n} premiers exercices sont gratuits. Vérifie que ta table marche avec DJingood avant de payer quoi que ce soit.', 'Your first {n} exercises are free. Check that your controller works with DJingood before paying anything.');
+enMotif("Le mois offert est réservé aux comptes créés avant l'arrivée de Pro : tu peux essayer Pro {#n} jours gratuitement.", 'The free month is only for accounts created before Pro launched: you can try Pro free for {n} days.');
+enMotif("Le chapitre {#n} s'ouvre avec 14 ★ au chapitre 1 (tu en as {#m}).", 'Chapter {n} unlocks with 14 ★ in chapter 1 (you have {m}).');
+enMotif('On continue avec « {x} » ?', 'Shall we continue with "{x}"?');
+enMotif('{x} On continue avec « {y} » ?', '{x} Shall we continue with "{y}"?');
+enMotif('Jouer « {x} »', 'Play "{x}"');
+enMotif("« {x} » s'ouvre quand les niveaux d'avant sont réussis.", '"{x}" unlocks once the levels before it are passed.');
+enMotif('On ouvre « {x} » ?', 'Shall we open "{x}"?');
+enMotif('Aller au chapitre {#n}', 'Go to chapter {n}');
+enMotif('On commence par « {x} » ?', 'Shall we start with "{x}"?');
+enMotif('Regarder « {x} »', 'Watch "{x}"');
+enMotif('Tout DJingood est ouvert : les 7 chapitres et tous les tutos. {x}', 'All of DJingood is unlocked: the 7 chapters and all the tutorials. {x}');
+enMotif('Pour toi, {=p}', 'For you, {p}');
+enMotif('Essaie Pro {#n} jours, gratuitement', 'Try Pro free for {n} days');
+enMotif("Tout s'ouvre : les {#n} exercices, les tutos de Vini, l'entraînement. Ta carte est demandée, mais rien n'est prélevé.", "Everything unlocks: the {n} exercises, Vini's tutorials, practice. We ask for your card, but nothing is charged.");
+enMotif('Jour {#n}', 'Day {n}');
+enMotif('{x}, sauf si tu arrêtes avant (dans « Mon compte »).', '{x}, unless you cancel before then (in "My account").');
+enMotif("Les {#n} exercices, jusqu'au set noté sur 100", 'All {n} exercises, up to the set scored out of 100');
+// l'abonnement dans « Mon compte »
+enMotif("Essai gratuit jusqu'au {=d}", 'Free trial until {d}');
+enMotif("Mois offert jusqu'au {=d}", 'Free month until {d}');
+enMotif("{x} · s'arrête le {=d}", '{x} · ends on {d}');
+enMotif('{x} · renouvelé le {=d}', '{x} · renews on {d}');
+enMotif("s'arrête le {=d}", 'ends on {d}');
+enMotif('renouvelé le {=d}', 'renews on {d}');
+// l'objectif de la semaine (js/objectif.js) : le jour est déjà écrit en anglais
+enMotif('{=d} : objectif atteint', '{d}: goal reached');
+
+/* ---------- 08-divers (lot 80, motifs) ---------- */
+// petits fichiers : le bandeau d'erreur, Ma table
+enMotif('Un problème est survenu : {=m} (envoie une capture de ce message pour que je corrige).', 'Something went wrong: {m} (send a screenshot of this message so I can fix it).');
+enMotif('{=t} (réglée pas à pas)', '{t} (set up step by step)');
+enMotif('Utilisée dans : {x}.', 'Used in: {x}.');
+
+/* ---------- 09-entrainement (lot 80, motifs) ---------- */
+// S'entraîner, Comprendre, le quiz, les Premiers pas, Ma table : phrases avec un nombre, un titre ou une adresse
+enDe({
+  'Pas dans ta boîte de réception ?': 'Not in your inbox?',
+  "Regarde dans les spams, puis indique à ta messagerie que ce n'est pas un spam : sinon, le lien ne s'ouvre pas.": "Check your spam folder, then tell your email app it's not spam: otherwise, the link won't open.",
+  "<b>Pas dans ta boîte de réception ?</b> Regarde dans les spams, puis indique à ta messagerie que ce n'est pas un spam : sinon, le lien ne s'ouvre pas.": "<b>Not in your inbox?</b> Check your spam folder, then tell your email app it's not spam: otherwise, the link won't open.",
+  'Copier le lien': 'Copy the link', 'Renvoyer': 'Send again',
+  "Il faut 2 étoiles pour valider le défi : rejoue !": 'You need 2 stars to pass the challenge: play again!',
+  "Retour à l'entraînement": 'Back to practice', 'Une autre variation': 'Another variation', "Une autre à l'oreille": 'Another one by ear',
+  'Pas encore : suis la grosse caisse et compte 8 mesures.': 'Not yet: follow the kick drum and count 8 bars.'
+});
+// S'entraîner
+enMotif(/^(\d+) (jouée|jouées|réussie|réussies)$/, (m, n, w) => `${n} ${/^jou/.test(w) ? 'played' : 'passed'}`);
+enMotif(/^([^<>]{1,80}), en (House|Techno|Afro house|Vraie musique|vraie musique)$/, (m, t, s) => `${tr(t)}, in ${tr(s)}`);
+enMotif(/^Défi réussi · (\d+) jours? d'affilée$/, (m, n) => `Challenge complete · ${n} ${+n === 1 ? 'day' : 'days'} in a row`);
+enMotif(/^(\d+) variations? jouées?$/, (m, n) => `${n} ${+n === 1 ? 'variation' : 'variations'} played`);
+enMotif(/^(\d+) réussies? à l'oreille$/, (m, n) => `${n} passed by ear`);
+enMotif('{#n} ★ sur 9 · nouveau record !', '{n} ★ of 9 · new record!');
+enMotif('{#n} ★ sur 9 · record : {#m} ★', '{n} ★ of 9 · record: {m} ★');
+enMotif('{x} : pas réussi', '{x}: not passed');
+enMotif('Défi réussi ! Et un mini-set pour battre ton record de {#n} ★ sur 9 ?', 'Challenge complete! How about a mini-set to beat your record of {n} ★ out of 9?');
+enMotif("Le défi du jour t'attend : « {x} », en {y}.", 'The daily challenge is waiting: "{x}", in {y}.');
+enMotif("Aujourd'hui : {x}, en {y}.", 'Today: {x}, in {y}.');
+enMotif(/^Réussi (\d+) jours? d'affilée\.$/, (m, n) => `Done ${n} ${+n === 1 ? 'day' : 'days'} in a row.`);
+enMotif('Record : {#n}/9 ★', 'Record: {n}/9 ★');
+enMotif("L'entraînement reprend les niveaux que tu as déjà joués dans Apprendre ({#n} sur {#m}), sur d'autres morceaux.", "Practice replays the levels you've already played in Learn ({n} of {m}), on other tracks.");
+enMotif('Mini-set · transition {#n} sur 3', 'Mini-set · transition {n} of 3');
+enMotif('Transition {#n} sur 3', 'Transition {n} of 3');
+// Comprendre (les leçons sur le téléphone)
+enMotif('{#n} leçons sur {#m}', '{n} lessons of {m}');
+enMotif('{#n} leçon sur {#m}', '{n} lesson of {m}');
+enMotif('Leçon {#n} : {x}, pas encore ouverte', 'Lesson {n}: {x}, not open yet');
+enMotif(/^Leçon (\d+) : ([\s\S]+?), (\d+) étoiles? sur 3$/, (m, n, x, s) => `Lesson ${n}: ${tr(x)}, ${s} ${+s === 1 ? 'star' : 'stars'} out of 3`);
+enMotif('Leçon {#n} : {x}', 'Lesson {n}: {x}');
+enMotif('Leçon {#n} · {x}', 'Lesson {n} · {x}');
+enMotif('{x} · {#n} min', '{x} · {n} min');
+enMotif('Envoyé à {=m}', 'Sent to {m}');
+// le quiz et les badges
+enMotif('Tu en es à {#n} sur {#m} {x}.', "You're at {n} of {m} {x}.");
+enMotif('Nouveaux badges : {x}', 'New badges: {x}');
+enMotif('Nouveau badge : {x}', 'New badge: {x}');
+// Ma table
+enMotif("Ça, c'est déjà le réglage de « {x} » : une même commande de ta table ne peut pas servir à deux endroits. Bouge celle que tu veux régler, ou refais « Régler ma table pas à pas » pour tout remettre en ordre.", 'That\'s already the setting for "{x}": one control on your controller can\'t be used in two places. Move the one you want to set up, or redo "Set up my controller step by step" to put everything back in order.');
+// les Premiers pas
+enMotif('La {=m}, super ! On la branchera sur ton ordinateur.', "The {m}, great! We'll plug it into your computer.");
+enMotif('{#n} sur 8 pile : tu as le rythme !', "{n} of 8 right on the beat: you've got rhythm!");
+enMotif("{#n} sur 8 pile : c'est un bon début.", "{n} of 8 right on the beat: that's a good start.");
+enMotif("{#n} sur 8 pile : on va l'entraîner ensemble.", "{n} of 8 right on the beat: we'll train it together.");
+enMotif('Les {#n} autres exercices', 'The other {n} exercises');
+enMotif('Ton oreille : {#n} « boum » sur 8 pile. {x}', 'Your ear: {n} "booms" of 8 right on the beat. {x}');
+enMotif("Ton lien pour l'ordinateur est parti à {=m}", 'Your link for the computer was sent to {m}');
+enMotif("Je t'ai déjà envoyé 3 liens dans l'heure, à {=m}", "I've already sent you 3 links in the last hour, to {m}");
+
+/* ---------- 10-calage-combos (lot 80, motifs) ---------- */
+// chapitres 4 et 5 : phrases avec un nombre de temps, des millisecondes ou un BPM
+enDe({ 'calés': 'in sync' });
+enMotif('Prépare-toi à lancer B vers le temps {#n}.', 'Get ready to start B around beat {n}.');
+enMotif("Tu n'as pas lancé B : appuie sur LANCE B (PLAY de droite) vers le temps {#n}.", "You didn't start B: press START B (right PLAY) around beat {n}.");
+enMotif('B lancé {#n} temps tard : cale-le vite !', 'B started {n} {n:beat:beats} late: sync it up fast!');
+enMotif('B lancé {#n} temps tôt : cale-le vite !', 'B started {n} {n:beat:beats} early: sync it up fast!');
+enMotif('Oui : {x} ({#n} ms)', 'Yes: {x} ({n} ms)');
+enMotif("Non : c'était « {x} »", 'No: it was "{x}"');
+enMotif('Écoute {#n} sur {#m} : calés, B en avance, ou B en retard ?', 'Listen {n} of {m}: in sync, B ahead, or B behind?');
+enMotif('Dans {#n} temps : échange les basses !', 'In {n} {n:beat:beats}: swap the lows!');
+enMotif('Dans {#n} temps : monte le fader de B !', "In {n} {n:beat:beats}: bring up B's fader!");
+enMotif('Calé · {#n} ms', 'In sync · {n} ms');
+enMotif('{x} de {#n} ms : bien entendu.', '{x} by {n} ms: well heard.');
+enMotif(/^Tu as répondu « (.+?) », c'était « (.+?) »(?: \((\d+) ms\))?\.(?: (.+))?$/, (m, a, b, ms, suite) => `You answered "${tr(a)}", it was "${tr(b)}"${ms ? ` (${ms} ms)` : ''}.` + (suite ? ' ' + tr(suite) : ''));
+enMotif(/^Tu n'as répondu qu'à (\d+) écoutes? sur (\d+)\.$/, (m, n, t) => `You only answered ${n} ${+n === 1 ? 'listen' : 'listens'} of ${t}.`);
+enMotif('B est resté calé (moins de {#n} ms) {#p} % du temps.', 'B stayed in sync (under {n} ms) {p}% of the time.');
+enMotif('B est resté calé {#p} % du temps, et presque calé (moins de {#n} ms) {#q} % du temps. Encore un peu de précision.', 'B stayed in sync {p}% of the time, and almost in sync (under {n} ms) {q}% of the time. A bit more precision.');
+enMotif("B n'est resté calé que {#p} % du temps. {x}", 'B only stayed in sync {p}% of the time. {x}');
+enMotif('Calé en {#n} temps.', 'In sync in {n} {n:beat:beats}.');
+enMotif('Calé en {#n} temps : vise moins de {#m}.', 'In sync in {n} {n:beat:beats}: aim for under {m}.');
+enMotif('B finit à {#n} BPM, comme A.', 'B ends at {n} BPM, like A.');
+enMotif('B finit à {#n} BPM : il va encore trop vite (A est à {#m}).', "B ends at {n} BPM: it's still too fast (A is at {m}).");
+enMotif('B finit à {#n} BPM : il est encore trop lent (A est à {#m}).', "B ends at {n} BPM: it's still too slow (A is at {m}).");
+enMotif('B est entré au temps {#n}, déjà calé.', 'B came in at beat {n}, already in sync.');
+enMotif('B est entré décalé de {#n} ms : cale-le au casque avant de monter son fader.', 'B came in {n} ms off: sync it in your headphones before bringing up its fader.');
+enMotif('B est entré au temps {#n} : vise le temps {#m}.', 'B came in at beat {n}: aim for beat {m}.');
+// chapitre 4
+enMotif("B à fond au temps {#n}, à l'heure.", 'B full at beat {n}, on time.');
+enMotif('B à fond au temps {#n} : vise le temps {#m}.', 'B full at beat {n}: aim for beat {m}.');
+enMotif("A n'était pas complètement filtré au temps {#n}.", "A wasn't fully filtered at beat {n}.");
+enMotif('Blanc de {#n} temps entre la coupure et B.', 'A gap of {n} {n:beat:beats} between the cut and B.');
+enMotif('Deux basses ensemble pendant {#n} temps : ouvre B et coupe A dans le même geste.', 'Two basslines together for {n} {n:beat:beats}: open B and cut A in the same move.');
+
+/* ---------- 11-hotcues (lot 80, motifs) ---------- */
+// chapitre 6 : phrases avec des temps, des millisecondes, « en retard » / « trop tôt »
+const enRetard = s => ({ 'en retard': 'late', 'trop tard': 'too late', 'trop tôt': 'too early', 'en avance': 'early', 'après': 'after', 'avant': 'before' }[s] || s);
+const enTemps = n => +n === 1 ? 'beat' : 'beats';
+enDe({ 'BOUCLE': 'LOOP' });
+enMotif('Pile ! ({#n} ms)', 'Spot on! ({n} ms)');
+enMotif(/^(\d+) ms (en retard|trop tôt)$/, (m, n, s) => `${n} ms ${enRetard(s)}`);
+enMotif(/^Le drop est tombé (\d+) temps (trop tard|trop tôt)$/, (m, n, s) => `The drop landed ${n} ${enTemps(n)} ${enRetard(s)}`);
+enMotif('A coupé pile ! ({#n} ms)', 'A cut spot on! ({n} ms)');
+enMotif(/^A coupé (\d+) ms (en retard|trop tôt)$/, (m, n, s) => `A cut ${n} ms ${enRetard(s)}`);
+enMotif('Dans {#n} temps : la dernière mesure avant la phrase. Sors de la boucle (pad EXIT) pendant cette mesure.', 'In {n} {n:beat:beats}: the last bar before the phrase. Exit the loop (EXIT pad) during this bar.');
+enMotif('↻ Boucle de {#n} temps', '↻ {n}-beat loop');
+enMotif("A n'a pas été coupé : baisse son fader d'un coup au temps {#n}.", "A wasn't cut: pull its fader down in one go at beat {n}.");
+enMotif('A coupé pile au temps {#n} ({#m} ms).', 'A cut right at beat {n} ({m} ms).');
+enMotif(/^A coupé (\d+) ms (en retard|trop tôt) \(vise le temps (\d+)\)\.$/, (m, a, s, t) => `A cut ${a} ms ${enRetard(s)} (aim for beat ${t}).`);
+enMotif("Tu n'as pas lancé B : appuie sur son pad 1 (hot cue) au temps {#n}.", "You didn't start B: press its pad 1 (hot cue) at beat {n}.");
+enMotif('B lancé depuis son hot cue pile sur le temps {#n} ({#m} ms).', 'B started from its hot cue right on beat {n} ({m} ms).');
+enMotif(/^B lancé (\d+) ms (en retard|trop tôt)\.$/, (m, a, s) => `B started ${a} ms ${enRetard(s)}.`);
+enMotif('Appui pile sur le drop ({#n} ms).', 'Pressed right on the drop ({n} ms).');
+enMotif(/^Appui (\d+) ms (en retard|trop tôt) par rapport au drop\.$/, (m, a, s) => `Pressed ${a} ms ${enRetard(s)} relative to the drop.`);
+enMotif(/^Le repère est (\d+) temps (après|avant) le drop : écoute le moment où tout entre\.$/, (m, n, s) => `The cue point is ${n} ${enTemps(n)} ${enRetard(s)} the drop: listen for the moment everything comes in.`);
+enMotif(/^Le drop de B est tombé (\d+) temps (trop tard|trop tôt) : sors de la boucle pendant la dernière mesure avant la phrase \(entre les temps 60 et 64\)\.$/, (m, n, s) => `B's drop landed ${n} ${enTemps(n)} ${enRetard(s)}: exit the loop during the last bar before the phrase (between beats 60 and 64).`);
+enMotif("Ta boucle dépassait la fin de A (temps {#n}) : il est arrivé au bout quand même. Elle doit finir au temps {#m} au plus tard.", 'Your loop went past the end of A (beat {n}): it reached the end anyway. It has to end by beat {m} at the latest.');
+enMotif('A est arrivé au bout de son morceau : silence. Boucle sa fin avant le temps {#n}.', 'A reached the end of its track: silence. Loop its end before beat {n}.');
+enMotif("Boucle de {#n} temps posée au début d'une mesure (temps {#m}) : A ne s'arrête pas.", "{n}-beat loop set at the start of a bar (beat {m}): A doesn't stop.");
+enMotif("Boucle posée au temps {#n}, pas au début d'une mesure : ça boite.", 'Loop set at beat {n}, not at the start of a bar: it limps.');
+enMotif("Boucle posée pile au temps {#n} ({#m} ms) : A ne s'arrête pas.", "Loop set right at beat {n} ({m} ms): A doesn't stop.");
+enMotif(/^Boucle posée (\d+) ms (en retard|trop tôt) par rapport au temps (\d+) : on entend le raccord\.$/, (m, a, s, b) => `Loop set ${a} ms ${enRetard(s)} relative to beat ${b}: you can hear the seam.`);
+enMotif('Pas de boucle de {#n} temps (au temps {#m}).', 'No {n}-beat loop (at beat {m}).');
+enMotif('Boucle de {#n} pile au temps {#m} ({#k} ms).', '{n}-beat loop right at beat {m} ({k} ms).');
+enMotif(/^Boucle de (\d+) (\d+) ms (en retard|trop tôt)\.$/, (m, t, a, s) => `${t}-beat loop ${a} ms ${enRetard(s)}.`);
+
+/* ---------- 12-set (lot 80, motifs) ---------- */
+// chapitre 7 : phrases avec un nom de morceau, une platine, des temps, des points
+enDe({ 'MAINTENANT': 'NOW' });
+enMotif('de {#n} à {#m} BPM', 'from {n} to {m} BPM');
+enMotif('{#n} morceaux · {x} · environ {=d}', '{n} tracks · {x} · about {d}');
+enMotif('Calage (35 points) : quand on entend les deux morceaux, ils restent calés à moins de {#n} ms.', 'Sync (35 points): when you can hear both tracks, they stay in sync within {n} ms.');
+enMotif('Musique arrêtée : −{#n}. Morceau pas joué : −{#m}.', 'Music stopped: −{n}. Track not played: −{m}.');
+enMotif('Technique pas respectée : −{#n}.', 'Technique not followed: −{n}.');
+enMotif("Morceau pas écouté au casque avant d'entrer : −{#n}.", 'Track not checked in the headphones before coming in: −{n}.');
+enMotif("Tempo qui saute d'un coup : −{#n}. Soirée finie sous {#b} BPM : −{#m}.", 'Tempo jumping all at once: −{n}. Party ending under {b} BPM: −{m}.');
+enMotif('★★★ à partir de {#n}, ★★ à partir de {#m}.', '★★★ from {n}, ★★ from {m}.');
+enMotif('« {x} » joue. Prépare « {y} » sur B.', '"{x}" is playing. Prepare "{y}" on B.');
+enMotif("« {x} » n'est pas parti au bon moment", '"{x}" didn\'t start at the right moment');
+enMotif('« {x} » termine le set : laisse-le jouer.', '"{x}" ends the set: let it play.');
+enMotif('« {x} » joue seul. Le morceau suivant arrive sur la platine {=k}.', '"{x}" is playing alone. The next track is coming on deck {k}.');
+enMotif("« {x} » est dans son break : ce n'est pas la fin, il va repartir. Attends avant de lancer « {y} ».", '"{x}" is in its break: it\'s not the end, it will come back. Wait before starting "{y}".');
+enMotif(/^Lance « (.+?) » sur la platine ([AB]) pour que son drop tombe pile à la fin de « (.+?) »( \(regarde où il tomberait, en pointillé\))?(, fader en bas et CUE 🎧 allumé)?\.$/,
+  (m, n, k, c, p, q) => `Start "${tr(n)}" on deck ${k} so its drop lands right at the end of "${tr(c)}"${p ? ' (look where it would land, dotted)' : ''}${q ? ', fader down and CUE 🎧 on' : ''}.`);
+enMotif('« {x} » est calé : monte son fader sur une phrase.', '"{x}" is in sync: bring up its fader on a phrase.');
+enMotif('Cale « {x} » au casque (tempo, puis molette), puis monte son fader.', 'Sync "{x}" in your headphones (tempo, then jog wheel), then bring up its fader.');
+enMotif('Cale « {x} » (tempo, puis molette), puis monte son fader sur une phrase.', 'Sync "{x}" (tempo, then jog wheel), then bring up its fader on a phrase.');
+enMotif('Tourne le filtre de « {x} » vers la droite, puis baisse son fader.', 'Turn the filter of "{x}" to the right, then pull down its fader.');
+enMotif("Allume l'écho sur le dernier temps de « {x} », puis coupe son fader.", 'Turn on the echo on the last beat of "{x}", then cut its fader.');
+enMotif("Coupe « {x} » d'un coup quand « {y} » arrive sur son drop.", 'Cut "{x}" in one go when "{y}" hits its drop.');
+enMotif('Échange les basses sur une phrase, puis fais sortir « {x} ».', 'Swap the lows on a phrase, then take "{x}" out.');
+enMotif('« {x} » attend sur la platine {=k}', '"{x}" is waiting on deck {k}');
+// le nom d'un morceau sur la piste (canvas) : « Néon » · 124,0 BPM · s'il part maintenant
+enMotif(/^« (.+?) »( · [\d,]+ BPM)?( · s'il part maintenant)?$/, (m, x, b, s) => `"${tr(x)}"${b ? b.replace(',', '.') : ''}${s ? ' · if it starts now' : ''}`);
+enMotif("« {x} » et « {y} » n'étaient pas calés pendant {#n} s.", '"{x}" and "{y}" were out of sync for {n} s.');
+enMotif("Cale « {x} » avant de monter son fader : le tempo d'abord, puis la molette.", 'Sync "{x}" before bringing up its fader: tempo first, then the jog wheel.');
+enMotif('Deux basses en même temps pendant {#n} temps, entre « {x} » et « {y} ».', 'Two basslines at the same time for {n} {n:beat:beats}, between "{x}" and "{y}".');
+enMotif('Le son de « {x} » a baissé pendant {#n} temps.', 'The sound of "{x}" dropped for {n} {n:beat:beats}.');
+enMotif('Le son a baissé pendant {#n} temps, entre « {x} » et « {y} ».', 'The sound dropped for {n} {n:beat:beats}, between "{x}" and "{y}".');
+enMotif("La musique s'est arrêtée après « {x} ».", 'The music stopped after "{x}".');
+enMotif(/^« (.+?) » n'est pas parti au bon moment \((\d+) temps (trop tard|trop tôt)\) : son drop doit tomber pile à la fin de « (.+?) »\.$/,
+  (m, b, d, s, a) => `"${tr(b)}" didn't start at the right moment (${d} ${+d === 1 ? 'beat' : 'beats'} ${s === 'trop tard' ? 'too late' : 'too early'}): its drop has to land right at the end of "${tr(a)}".`);
+enMotif("Les basses sont passées de « {x} » à « {y} » {#n} temps à côté d'une phrase.", 'The bass passed from "{x}" to "{y}" {n} {n:beat:beats} off a phrase.');
+enMotif('Entre « {x} » et « {y} », il fallait {z}.', 'Between "{x}" and "{y}", you needed {z}.');
+enMotif('« {x} » est entré sans avoir été écouté au casque.', '"{x}" came in without being checked in the headphones.');
+enMotif("Le tempo de « {x} » a sauté d'un coup.", 'The tempo of "{x}" jumped all at once.');
+enMotif('La soirée a fini à {#n} BPM, au lieu de {#m} ou plus.', 'The party ended at {n} BPM, instead of {m} or more.');
+enMotif("{#n} morceaux n'ont pas été joués.", "{n} tracks weren't played.");
+enMotif("« {x} » n'a pas été joué.", '"{x}" wasn\'t played.');
+enMotif(/^Ça t'a coûté (\d+) points?\.$/, (m, n) => `That cost you ${n} ${+n === 1 ? 'point' : 'points'}.`);
+enMotif("C'est ton nouveau record (avant : {=a})", "It's your new record (before: {a})");
+enMotif('Ton record : {=a}', 'Your record: {a}');
+
+/* ---------- 13-rekordbox (lot 80, motifs) ---------- */
+// Ma musique : les morceaux de texte des modèles, et les phrases avec un titre, un nombre ou une date
+enDe({
+  'Toutes': 'All', 'Le code de rekordbox : 8A, 9B…': 'The rekordbox code: 8A, 9B…', 'Tous les styles': 'All styles',
+  'Playlist rekordbox': 'rekordbox playlist', 'Tes playlists, lues dans ton export.': 'Your playlists, read from your export.',
+  'Afficher seulement': 'Show only', 'Effacer les filtres': 'Clear the filters', 'Technique': 'Technique',
+  'Ce qui va bien après': 'What goes well next', 'Ambiance': 'Vibe', '‹ Mes morceaux': '‹ My tracks', 'Le morceau qui joue': 'The track playing',
+  "Il me manque le tempo ou la tonalité d'un de ces deux morceaux : analyse-les dans rekordbox, puis réexporte ta collection.": "I'm missing the tempo or the key of one of these two tracks: analyze them in rekordbox, then export your collection again.",
+  'Choisir une autre transition': 'Choose another transition', '‹ Précédente': '‹ Previous', 'Suivante ›': 'Next ›',
+  'La technique conseillée': 'The recommended technique', 'Sur ta table, dans rekordbox': 'On your controller, in rekordbox',
+  'Paires gardées': 'Kept pairs', 'Morceaux aimés': 'Liked tracks', 'Paire': 'Pair', 'Fiche': 'Card', 'Ce qui va après': 'What goes next',
+  'Exemple': 'Example', 'Ce que tu vas obtenir': "What you'll get",
+  'Pour chaque morceau de ta collection : ceux qui vont le mieux après, pourquoi, et la technique pour faire la transition.': 'For each track in your collection: the ones that go best next, why, and the technique for the transition.',
+  'Paire du jour': 'Pair of the day', 'Préparer ›': 'Prepare ›', 'Écouter': 'Listen', "M'entraîner sur le site": 'Practice on the site',
+  'Voir le tuto': 'Watch the tutorial', 'Faite': 'Done', 'Facile': 'Easy', 'le même': 'the same',
+  "montée d'énergie": 'energy boost', 'même tempo': 'same tempo', 'tempos proches': 'close tempos',
+  'hier': 'yesterday', "aujourd'hui": 'today',
+  'Ajouté': 'Added', 'Titre': 'Title', 'Ce qui va avec ›': 'What goes with it ›', 'Ta fiche offerte ›': 'Your free card ›', 'jamais joué': 'never played'
+});
+// « Tempos proches (124 et 126 BPM), tonalités voisines (8A et 9A) : … »
+enMotif(/^(.+?) \(([\d,.]+) et ([\d,.]+) BPM\), (.+?) \((\S+) et (\S+)\) : ([\s\S]+)$/, (m, t, a, b, c, ka, kb, fin) => `${tr(t)} (${a.replace(',', '.')} and ${b.replace(',', '.')} BPM), ${tr(c)} (${ka} and ${kb}): ${tr(fin)}`);
+enMotif("tu peux mélanger longtemps. Coupe les basses de « {=b} », lance-le sur le 1 d'une phrase, puis échange les basses d'un seul geste.", 'you can mix for a long time. Cut the lows of "{b}", start it on the 1 of a phrase, then swap the lows in a single move.');
+enMotif('cale « {=b} » sur le tempo de « {=a} » avant de mélanger, puis échange les basses.', 'match "{b}" to the tempo of "{a}" before mixing, then swap the lows.');
+enMotif("« {=b} » fait monter l'énergie. Fais-le entrer filtre fermé, et ouvre-le pendant une phrase.", '"{b}" builds the energy. Bring it in with the filter closed, and open it over a phrase.');
+enMotif("trop loin pour un long mélange. Fais partir « {=a} » dans l'écho, et lance « {=b} » sur le 1 de la phrase.", 'too far apart for a long blend. Send "{a}" out on the echo, and start "{b}" on the 1 of the phrase.');
+// dates : « 12 août », « 12 août 2025 », « Ajouté le … »
+const enMois = { 'janv.': 'Jan', 'févr.': 'Feb', 'mars': 'Mar', 'avr.': 'Apr', 'mai': 'May', 'juin': 'Jun', 'juil.': 'Jul', 'août': 'Aug', 'sept.': 'Sep', 'oct.': 'Oct', 'nov.': 'Nov', 'déc.': 'Dec' };
+const enDate = (d, mo, y) => `${enMois[mo] || mo} ${d}${y ? ', ' + y : ''}`;
+enMotif(/^(\d{1,2}) (janv\.|févr\.|mars|avr\.|mai|juin|juil\.|août|sept\.|oct\.|nov\.|déc\.)(?: (\d{4}))?$/, (m, d, mo, y) => enDate(d, mo, y));
+enMotif(/^Ajouté le (\d{1,2}) (janv\.|févr\.|mars|avr\.|mai|juin|juil\.|août|sept\.|oct\.|nov\.|déc\.)(?: (\d{4}))?$/, (m, d, mo, y) => 'Added ' + enDate(d, mo, y));
+enMotif('Ajouté {x}', 'Added {x}');
+enMotif('il y a {#n} jours', '{n} days ago');
+enMotif('il y a {#n} min', '{n} min ago');
+enMotif('il y a {#n} h', '{n} h ago');
+enMotif(/^Afficher (\d+) morceaux? de plus \((\d+) restants?\)$/, (m, n, r) => `Show ${n} more ${+n === 1 ? 'track' : 'tracks'} (${r} left)`);
+enMotif('De {#n} à {#m} BPM', 'From {n} to {m} BPM');
+enMotif(/^(\d+) (?:morceau correspond|morceaux correspondent)\. Choisis-en un !$/, (m, n) => `${n} ${+n === 1 ? 'track matches' : 'tracks match'}. Pick one!`);
+enMotif('Tonalité {=k}', 'Key {k}');
+enMotif('Voir les {#n} autres', 'See the other {n}');
+enMotif('Rien ne va vraiment après « {x} ». Essaie un autre morceau !', 'Nothing really goes after "{x}". Try another track!');
+enMotif("Voilà les morceaux de ta collection qui vont le mieux après « {x} ». Le premier, c'est un sans-faute.", 'Here are the tracks in your collection that go best after "{x}". The first one is flawless.');
+enMotif('Voilà les morceaux de ta collection qui vont le mieux après « {x} ».', 'Here are the tracks in your collection that go best after "{x}".');
+enMotif('‹ Ce qui va après « {x} »', '‹ What goes after "{x}"');
+enMotif('Platine {=k}', 'Deck {k}');
+enMotif('Bravo, les {#n} missions sont faites ! Nouveau badge : {x}.', 'Well done, all {n} missions are done! New badge: {x}.');
+enMotif('Bravo, les {#n} missions sont faites !', 'Well done, all {n} missions are done!');
+enMotif('Mission {#n} sur {#m}', 'Mission {n} of {m}');
+enMotif(/^« (.+?) » puis « (.+?) » : (.+?), (.+?)\. ([\s\S]+)$/, (m, a, b, t, c, dit) => `"${tr(a)}" then "${tr(b)}": ${tr(t)}, ${tr(c)}. ${tr(dit)}`);
+enMotif(/^(\d+) (?:favori n'est plus|favoris ne sont plus) dans ta collection\.$/, (m, n) => `${n} ${+n === 1 ? 'favorite is' : 'favorites are'} no longer in your collection.`);
+enMotif(/^Tes paires gardées et tes morceaux aimés\. Il te reste (\d+) paires? à terminer !$/, (m, n) => `Your kept pairs and your liked tracks. You have ${n} ${+n === 1 ? 'pair' : 'pairs'} left to finish!`);
+enMotif('Tu as vu ta fiche offerte : « {x} ».', 'You\'ve seen your free card: "{x}".');
+enMotif('· {#n} avec tempo et tonalité', '· {n} with tempo and key');
+
+/* ---------- 14-verif-reglage (lot 80, motifs) ---------- */
+// Vérifier ma table, Régler ma table : phrases avec une étape, un nom de table ou une commande
+enMotif('canal {#c}, note {#n}', 'channel {c}, note {n}');
+enMotif('canal {#c}, numéro {#n}', 'channel {c}, number {n}');
+enMotif('Vérifier ma table · étape {#n} sur {#m}', 'Check my controller · step {n} of {m}');
+enMotif('Reçu : {=x}… continue.', 'Received: {x}… keep going.');
+enMotif('Aller jouer « {x} »', 'Go play "{x}"');
+enMotif(/^(\d+) étapes? sans souci sur (\d+)(?:, (\d+) à regarder)?\. Copie le rapport et envoie-le : il contient tout ce que le site a relevé sur ta table\.$/,
+  (m, ok, n, ko) => `${ok} ${+ok === 1 ? 'step' : 'steps'} with no problem out of ${n}${ko ? `, ${ko} to look at` : ''}. Copy the report and send it: it contains everything the site recorded about your controller.`);
+enMotif('Reprendre la vérification (étape {#n} sur {#m})', 'Resume the check (step {n} of {m})');
+enMotif('Faite le {=d} : tu peux la revoir et copier le rapport.', 'Done on {d}: you can see it again and copy the report.');
+enMotif(/^Ça, c'est (.+?), déjà reconnu\. (Appuie plutôt sur|Bouge plutôt) (.+?)\.$/, (m, a, v, b) => `That's ${tr(a)}, already recognized. ${v === 'Bouge plutôt' ? 'Move' : 'Press'} ${tr(b)} instead.`);
+enMotif('Régler ma table · {#n} sur {#m}', 'Set up my controller · {n} of {m}');
+enMotif('Régler ma table · {=t}', 'Set up my controller · {t}');
+enMotif('DJingood connaît maintenant les réglages de la {=t}. On les prend à la place de ceux que tu as réglés à la main ?', 'DJingood now knows the settings of the {t}. Shall we use them instead of the ones you set up by hand?');
+enMotif('Tu as branché une {=t} : DJingood connaît ses réglages. On les prend ? Ceux de ta table réglée à la main seront remplacés.', 'You plugged in a {t}: DJingood knows its settings. Shall we use them? The settings of your hand-tuned controller will be replaced.');
+enMotif('Tu as branché une {=t} : DJingood connaît ses réglages. On les prend ?', 'You plugged in a {t}: DJingood knows its settings. Shall we use them?');
+enMotif('Nouvelle table : « {=t} ». DJingood ne la connaît pas encore : règle-la en une minute, en bougeant chaque commande quand il te le demande.', 'New controller: "{t}". DJingood doesn\'t know it yet: set it up in one minute, by moving each control when it asks you to.');
+
+/* ---------- 16-chapitres (lot 80, motifs) ---------- */
+// les chapitres : « titre : sous-titre » (bulle et nom lu à voix haute de la carte des chapitres)
+enDe({
+  'Caler deux morceaux soi-même, sans SYNC': 'Beatmatch two tracks yourself, without SYNC',
+  'Partir au bon endroit, gagner du temps': 'Start in the right place, save time',
+  'Des morceaux enchaînés, sans pause': 'Tracks mixed in a row, without a break',
+  'Hot cues et boucles': 'Hot cues and loops'
+});
+enMotif(/^(Les bases|La maîtrise|Les vrais morceaux|Les combos|Le calage|Hot cues et boucles|Le set) : ([^<>]+)$/, (m, t, s) => `${tr(t)}: ${tr(s)}`);
+
+/* ---------- 17-tutos (lot 80, motifs) ---------- */
+// les tutos : la table dessinée et les étiquettes de la piste
+enPareil('BEAT FX', 'Fashion Diva');
+enDe({
+  'La table DJ : platine A, table de mixage, platine B': 'The DJ controller: deck A, mixer, deck B',
+  'montée de B': "B's build-up", 'intro de B': "B's intro", 'sans basses': 'no lows', 'filtré': 'filtered',
+  'LOW = les basses': 'LOW = the lows', 'tout à gauche = coupé': 'all the way left = cut', 'HI = les aigus': 'HI = the highs',
+  'MID = les voix, les mélodies': 'MID = vocals, melodies'
+});
+// les tutos : phrases avec un numéro, un titre ou une durée
+enMotif('Étape {#n} sur {#m}', 'Step {n} of {m}');
+enMotif('Mesure {#n} sur 8', 'Bar {n} of 8');
+enMotif('Plan {#n} / {#m}', 'Shot {n} / {m}');
+enMotif('Tuto suivant : {x}', 'Next tutorial: {x}');
+enMotif('{x} · tuto {#n} sur {#m}', '{x} · tutorial {n} of {m}');
+enMotif('{=d} · avec Vini', '{d} · with Vini');
+enMotif("Ici, je t'explique les techniques des DJ, une par une. Commence par « {x} » !", 'Here, I explain DJ techniques, one at a time. Start with "{x}"!');
+enMotif('Prochain tuto conseillé : « {x} ».', 'Next suggested tutorial: "{x}".');
+enMotif('Musique : {x}', 'Music: {x}');
+enMotif('{x} est gratuit.', '{x} is free.');
+enMotif('{x} sont gratuits.', '{x} are free.');
+
+/* ---------- 18-releve (lot 80, motifs) ---------- */
+// ce que le relevé de toute la suite de tests a trouvé en plus (phrases construites au vol)
+enDe({
+  'B au casque': 'B in the headphones',
+  'Fais le niveau du mieux possible. Tu peux regarder la démo avant.': 'Do the level as well as you can. You can watch the demo first.',
+  "Ferme rekordbox, Serato, djay et VirtualDJ : sur Windows, une table ne parle qu'à un seul logiciel à la fois. Puis débranche ta table et rebranche-la.": 'Close rekordbox, Serato, djay and VirtualDJ: on Windows, a controller can only talk to one program at a time. Then unplug your controller and plug it back in.',
+  "Ferme rekordbox, Serato, djay et VirtualDJ : sur Windows, une table ne parle qu'à un seul logiciel à la fois. Puis recharge la page.": 'Close rekordbox, Serato, djay and VirtualDJ: on Windows, a controller can only talk to one program at a time. Then reload the page.',
+  'GRATUIT': 'FREE', 'Pas commencée': 'Not started', 'Intro (avec basse)': 'Intro (with bass)', 'Intro avec basse': 'Intro with bass',
+  "Le défi du jour reprend tes niveaux gratuits, sur d'autres morceaux. Le reste de l'entraînement est dans DJingood Pro.": 'The daily challenge replays your free levels, on other tracks. The rest of practice is in DJingood Pro.',
+  "rekordbox n'a pas encore analysé ce morceau : il me manque son tempo ou sa tonalité. Analyse-le dans rekordbox, puis réexporte ta collection.": "rekordbox hasn't analyzed this track yet: I'm missing its tempo or its key. Analyze it in rekordbox, then export your collection again.",
+  'Tempo le plus lent': 'Slowest tempo', 'Tempo le plus rapide': 'Fastest tempo',
+  "Toujours refusé. Ton navigateur a refusé l'accès à ta table. Pour l'autoriser :": 'Still refused. Your browser refused access to your controller. To allow it:',
+  "Voici ce que le site a reconnu. Ce qui manque se fera à l'écran, à la souris. Tu pourras tout refaire depuis « Ma table ». Quelque chose cloche ? « Copier le relevé », et envoie-le-nous : on verra ce que ta table envoie.": 'Here\'s what the site recognized. Whatever\'s missing will be done on screen, with the mouse. You can redo everything from "My controller". Something wrong? "Copy the report", and send it to us: we\'ll see what your controller sends.'
+});
+enPareil('DROP', 'DROP B', 'PHRASE', 'FADER', 'IN', 'OUT', 'record');
+enDe({ 'filtre': 'filter', 'Raté': 'Missed', 'Légende de la démo': 'Demo legend' });
+// le set : la pénalité écrite à la suite (« … (−15) », ou « … ! −15 » dans la bulle qui saute)
+enMotif(/^([\s\S]+?) \(−(\d+)\)$/, (m, x, n) => `${tr(x)} (−${n})`);
+enMotif(/^([\s\S]+?[!.]) −(\d+)$/, (m, x, n) => `${tr(x)} −${n}`);
+// le set : la feuille de route (« Néon, après un filtre »)
+enMotif(/^([^,<>]{1,30}), après (un swap des basses|un filtre|un écho|une coupure sèche)$/, (m, t, x) => `${tr(t)}, after ${tr(x)}`);
+// le calage : le compteur de chaque platine
+enMotif(/^([AB]) calé \((\d+) ms\)$/, (m, k, n) => `${k} in sync (${n} ms)`);
+// Régler ma table : une commande reconnue, ou pas encore réglée
+enMotif("C'est noté : {x} ✓", 'Got it: {x} ✓');
+enMotif("{x} (pas encore réglé : bouge-le, le site l'apprend)", '{x} (not set up yet: move it, the site learns it)');
+enDe({
+  "Joue d'abord un niveau gratuit dans <a href=\"#apprendre\">Apprendre</a> : le défi du jour le reprendra, sur d'autres morceaux. Le reste de l'entraînement est dans DJingood Pro.":
+    'First play a free level in <a href="#apprendre">Learn</a>: the daily challenge will replay it, on other tracks. The rest of practice is in DJingood Pro.',
+  // les mots dessinés sur les cartes des tutos
+  'BASSES': 'BASS', '3 BANDES': '3 BANDS', 'COUPURE': 'CUT', 'SECOURS': 'RESCUE'
+});
+// Régler ma table : le bilan, une ligne par commande (« ✓ Le fader de volume de gauche : reconnu »)
+enMotif(/^([✓•]) (.+?) : (reconnu|à l'écran|pas reconnu|rien reçu)$/, (m, s, nom, e) => `${s} ${tr(nom)}: ${tr(e)}`);
+// Ma musique : filtres, playlists, favoris
+enMotif('{#n} à {#m} BPM', '{n} to {m} BPM');
+enMotif('Enlever le filtre : {x}', 'Remove the filter: {x}');
+enMotif('Playlist « {x} »', 'Playlist "{x}"');
+enMotif(/^([^<>()]{1,40}) \((\d+)\)$/, (m, x, n) => `${tr(x)} (${n})`);
+enMotif('Ajouter à tes favoris : {=x}', 'Add to your favorites: {x}');
+enMotif('Retirer de tes favoris : {=x}', 'Remove from your favorites: {x}');
+enMotif(/^(\d+) lectures?$/, (m, n) => `${n} ${+n === 1 ? 'play' : 'plays'}`);   // Ma musique : combien de fois le morceau a été joué
+enMotif('{#n} morceaux ·', '{n} tracks ·');
+enMotif('{#n} morceau ·', '{n} track ·');
+enMotif(/^([^<>·]{1,40}) ·$/, (m) => m);   // un nom d'artiste suivi de « · » (avant « jamais joué ») : rien à traduire
+// le calage (chapitre 5) : le compteur et les écoutes
+enMotif('B en retard de {#n} ms', 'B behind by {n} ms');
+enMotif('B en avance de {#n} ms', 'B ahead by {n} ms');
+enMotif('Écoute {#n} sur {#m}…', 'Listen {n} of {m}…');
+enMotif(/^Écoute (\d+) : (.+?)(?: \((\d+) ms\))?$/, (m, n, x, ms) => `Listen ${n}: ${tr(x)}${ms ? ` (${ms} ms)` : ''}`);
+// les corrections
+enMotif('A est sorti au temps {#n}, avant le drop.', 'A went out at beat {n}, before the drop.');
+enMotif('Filtre lancé au temps {#n}.', 'Filter started at beat {n}.');
+enMotif('Les {#n} autres, et un nouveau chaque mois, sont dans DJingood Pro.', 'The other {n}, and a new one every month, are in DJingood Pro.');
+// le set : les règles de la note, en une seule phrase (« Tu pars de 100 points. Calage (35 points) : … »)
+enMotif('Musique arrêtée : −{#n}.', 'Music stopped: −{n}.');
+enMotif('Morceau pas joué : −{#n}.', 'Track not played: −{n}.');
+enMotif("Tempo qui saute d'un coup : −{#n}.", 'Tempo jumping all at once: −{n}.');
+enMotif('Soirée finie sous {#b} BPM : −{#m}.', 'Party ending under {b} BPM: −{m}.');
+enMotifFin(/^(Tu pars de 100 points\. [\s\S]+)$/, (m, s) => s.split(/(?<=\.) (?=[A-ZÀ-Ý★])/).map(tr).join(' '));
+// Comprendre : le conseil des écouteurs sans fil, ajouté à la fin du résultat
+enMotif(/^([\s\S]+?) Tes frappes arrivent toutes un peu tard : avec des écouteurs sans fil, le son a du retard\. Essaie avec le haut-parleur\.$/,
+  (m, a) => tr(a) + ' Your taps all come in a little late: with wireless headphones, the sound lags. Try with the speaker.');
+/* ---------- Lot 80 : fin ---------- */
+
 trPage();

@@ -26,6 +26,7 @@
 const STRIPE = 'https://api.stripe.com/v1';
 const BREVO = 'https://api.brevo.com/v3/smtp/email';
 const EXPEDITEUR = { name: 'Vini de DJingood', email: 'noreply@djingood.fr' };
+const EXPEDITEUR_EN = { name: 'Vini from DJingood', email: 'noreply@djingood.fr' };   // lot 80
 const FENETRE = [20 * 3600, 60 * 3600];   // secondes avant la fin de l'essai
 const PAGES = 10;                         // au plus 10 pages de 100 abonnements en essai par passage
 const pro = require('./pro.js');          // formulaire : les paramètres de Stripe s'envoient comme un formulaire
@@ -51,6 +52,55 @@ function montant(s){
   return iv === 'year' ? e + ' pour l’année' : iv === 'month' ? e + ' par mois' : e;
 }
 const SUJET = d => 'Ton essai de DJingood Pro se termine ' + d;
+
+/* Lot 80 : le même mail en anglais, pour un essai commencé sur le site en anglais (metadata.langue = 'en', écrit par
+   api/pro.js). La date et le montant s'écrivent à l'anglaise : « Thursday, November 26 », « €4.99 a month ». */
+const jourEn = s => new Date(s * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'Europe/Paris' });
+function montantEn(s){
+  const p = s && s.items && s.items.data && s.items.data[0] && s.items.data[0].price;
+  if (!p || typeof p.unit_amount !== 'number') return '';
+  const sym = { eur: '€', usd: '$', gbp: '£' }[String(p.currency || 'eur').toLowerCase()] || '€';
+  const e = sym + (p.unit_amount / 100).toFixed(2), iv = p.recurring && p.recurring.interval;
+  return iv === 'year' ? e + ' for the year' : iv === 'month' ? e + ' a month' : e;
+}
+const SUJET_EN = d => 'Your DJingood Pro trial ends ' + d;
+const RAPPEL_EN = {
+  apercu: 'Want to keep going? Nothing to do. Want to stop? It’s in your account, in two steps.',
+  fin: (d, m) => `Your free DJingood Pro trial ends on ${d}. On that day, your subscription starts${m ? ': ' + m + ', charged to the card you gave' : ''}.`,
+  continuer: 'Want to keep going?', rien: 'You don’t have to do anything.',
+  arreter: 'Want to stop?',
+  comment: 'On djingood.fr, open your account (top right), then “Manage my subscription” and “Cancel subscription”. Nothing will be charged, and Pro stays open until the end of the trial.',
+  bouton: 'Go to DJingood', signe: 'Vini, from DJingood',
+  pied: 'You’re getting this email because you started a free DJingood Pro trial.'
+};
+function mailTexteEn(d, m){
+  return 'Hi!\n\n' + RAPPEL_EN.fin(d, m) + '\n\n' + RAPPEL_EN.continuer + ' ' + RAPPEL_EN.rien + '\n\n' +
+    RAPPEL_EN.arreter + ' ' + RAPPEL_EN.comment + '\n\nhttps://djingood.fr\n\n' + RAPPEL_EN.signe + '\n';
+}
+function mailHtmlEn(d, m){
+  const p = 'font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;color:#1d2030;margin:0 0 16px';
+  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>' + html(SUJET_EN(d)) + '</title></head><body style="margin:0;padding:0;background:#f3f1fa">' +
+    '<div style="display:none;max-height:0;overflow:hidden;opacity:0">' + html(RAPPEL_EN.apercu) + '</div>' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f1fa"><tr><td align="center" style="padding:28px 12px">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:14px">' +
+    '<tr><td style="padding:28px 28px 8px;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:bold;color:#1d2030">' +
+    '<span style="color:#7c4dff">DJ</span>ingood</td></tr>' +
+    '<tr><td style="padding:12px 28px 4px">' +
+    '<p style="' + p + ';font-size:18px;font-weight:bold">Hi!</p>' +
+    '<p style="' + p + '">Your free DJingood Pro trial ends on <b>' + html(d) + '</b>. On that day, your subscription starts' +
+    (m ? ': <b>' + html(m) + '</b>, charged to the card you gave' : '') + '.</p>' +
+    '<p style="' + p + '"><b>' + html(RAPPEL_EN.continuer) + '</b> ' + html(RAPPEL_EN.rien) + '</p>' +
+    '<p style="' + p + '"><b>' + html(RAPPEL_EN.arreter) + '</b> ' + html(RAPPEL_EN.comment) + '</p>' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 22px"><tr><td style="border-radius:10px;background:#7c4dff">' +
+    '<a href="https://djingood.fr/?lang=en" style="display:inline-block;padding:14px 28px;font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:10px">' + html(RAPPEL_EN.bouton) + '</a>' +
+    '</td></tr></table>' +
+    '<p style="' + p + '">' + html(RAPPEL_EN.signe) + '</p>' +
+    '</td></tr><tr><td style="padding:4px 28px 24px;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8a8ea0">' +
+    html(RAPPEL_EN.pied) + ' · <a href="https://djingood.fr/?lang=en" style="color:#8a8ea0">djingood.fr</a></td></tr>' +
+    '</table></td></tr></table></body></html>';
+}
+
 function mailTexte(d, m){
   return 'Salut !\n\n' +
     `Ton essai gratuit de DJingood Pro se termine ${d}. Ce jour-là, ton abonnement démarre${m ? ' : ' + m + ', prélevés sur la carte que tu as donnée' : ''}.\n\n` +
@@ -110,9 +160,11 @@ async function handler(req, res){
           let mail = s.customer && typeof s.customer === 'object' ? s.customer.email : '';
           if (!mail && typeof s.customer === 'string') mail = (await stripe('/customers/' + encodeURIComponent(s.customer), cle)).email || '';
           if (!mail){ bilan.erreurs++; continue; }
-          const dj = jour(s.trial_end), m = montant(s);
+          const en = !!s.metadata && s.metadata.langue === 'en';   // lot 80 : essai commencé sur le site en anglais
+          const dj = en ? jourEn(s.trial_end) : jour(s.trial_end), m = en ? montantEn(s) : montant(s);
           const r = await fetch(BREVO, { method: 'POST', headers: { 'api-key': brevo, accept: 'application/json', 'content-type': 'application/json' },
-            body: JSON.stringify({ sender: EXPEDITEUR, to: [{ email: mail }], subject: SUJET(dj), htmlContent: mailHtml(dj, m), textContent: mailTexte(dj, m), tags: ['rappel-essai'] }) });
+            body: JSON.stringify({ sender: en ? EXPEDITEUR_EN : EXPEDITEUR, to: [{ email: mail }], subject: en ? SUJET_EN(dj) : SUJET(dj),
+              htmlContent: en ? mailHtmlEn(dj, m) : mailHtml(dj, m), textContent: en ? mailTexteEn(dj, m) : mailTexte(dj, m), tags: ['rappel-essai'] }) });
           if (!r.ok){ bilan.erreurs++; continue; }
           // jamais deux mails pour le même essai ; Stripe qui répond mal : on réessaie une fois (gardien : sans la marque, le
           // mail repartirait le lendemain, rare mais possible)
@@ -134,4 +186,7 @@ module.exports.aPrevenir = aPrevenir;
 module.exports.montant = montant;
 module.exports.mailHtml = mailHtml;
 module.exports.mailTexte = mailTexte;
+module.exports.mailHtmlEn = mailHtmlEn;
+module.exports.mailTexteEn = mailTexteEn;
+module.exports.montantEn = montantEn;
 module.exports.FENETRE = FENETRE;

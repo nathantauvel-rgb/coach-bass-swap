@@ -243,6 +243,23 @@ test.describe('La fonction /api/pro', () => {
     r = await appel({ action: 'payer', formule: 'mois' });
     expect(r.statusCode).toBe(409); expect(r.corps).toEqual({ erreur: 'deja-pro' });
   });
+  // Lot 80 : le site en anglais envoie { langue: 'en' }
+  test('payer en anglais : la page de Stripe en anglais, la case vers terms.html, l’abonnement retient la langue ; le portail aussi', async () => {
+    let r = await appel({ action: 'payer', formule: 'mois', essai: 'semaine', langue: 'en' });
+    expect(r.statusCode).toBe(200);
+    let corps = decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps);
+    for (const morceau of ['locale=en', 'subscription_data[metadata][langue]=en', 'subscription_data[metadata][essai]=semaine', 'https://djingood.fr/terms.html', 'I waive my 14-day right of withdrawal'])
+      expect(corps).toContain(morceau);
+    expect(corps).not.toContain('renonce');
+    // sans langue (le site en français) : rien ne change
+    stripe.appels = [];
+    r = await appel({ action: 'payer', formule: 'mois' });
+    corps = decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps);
+    expect(corps).toContain('locale=fr'); expect(corps).not.toContain('[langue]'); expect(corps).toContain('/cgv.html');
+    stripe.abonnements = [ABO()];
+    await appel({ action: 'gerer', langue: 'en' });
+    expect(decodeURIComponent(stripe.appels[stripe.appels.length - 1].corps)).toContain('locale=en');
+  });
   test('session : seulement la sienne ; gerer : seulement pour un abonné ; Stripe en panne : 502', async () => {
     expect((await appel({ action: 'session', id: '../../v1/customers' })).statusCode).toBe(400);
     stripe.session = { client_reference_id: 'u2', subscription: ABO() };

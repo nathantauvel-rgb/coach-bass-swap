@@ -355,7 +355,7 @@ function renderHud(){
     b.innerHTML = `<span class="dot">${ouvert && !pro ? i + 1 : NIV_CADENAS}</span><span class="t"></span><span class="s"><b>${'★'.repeat(st)}</b>${'★'.repeat(3 - st)}</span><span class="etq">${pro ? 'Pro' : etat === 'reussi' ? 'Réussi' : etat === 'encours' ? 'À faire' : 'Verrouillé'}</span>`;
     b.querySelector('.t').textContent = l.title;
     // lot 76 : dans la barre, la pastille montre seulement son numéro ; son nom s'affiche au survol de la souris
-    b.dataset.t = `${i + 1}. ${l.title}` + (etat === 'reussi' ? ' · réussi' : pro ? ' · avec Pro' : etat === 'verrou' ? ' · pas encore ouvert' : '');
+    b.dataset.t = tr(`${i + 1}. ${l.title}` + (etat === 'reussi' ? ' · réussi' : pro ? ' · avec Pro' : etat === 'verrou' ? ' · pas encore ouvert' : ''));   // en anglais, la bulle est traduite (lot 80)
     b.setAttribute('aria-label', `Niveau ${i + 1} : ${l.title}, ${st} étoile(s) sur 3` + (pro ? ', avec DJingood Pro' : ouvert ? '' : ', verrouillé'));
     b.addEventListener('click', () => { if (placement) return; nivMenu(false); if (niveauPro(chapter, i)){ proOuvre('', { n: chapter, i }); return; } if (!niveauOuvert(i)){ niveauRefuse(i, b); return; } selectLesson(i); }); map.appendChild(b); });
   $('mapProg').style.width = lastDone < 0 ? '0' : (Math.min(lastDone, LESSONS.length - 1) / (LESSONS.length - 1) * (100 - 100 / LESSONS.length)) + '%';

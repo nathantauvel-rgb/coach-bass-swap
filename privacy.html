@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DJingood · Privacy</title>
+<meta name="description" content="What DJingood keeps about you: your progress, your account if you create one, cookie-free visit statistics, and the feedback you choose to send.">
+<link rel="canonical" href="https://djingood.fr/privacy.html">
+<meta name="theme-color" content="#0B0E16">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" href="img/icone-192.png" type="image/png" sizes="192x192">
+<link rel="icon" href="img/vini-icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/icone-180.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Lot 80 : la traduction anglaise de confidentialite.html (la version française fait foi). À tenir à jour avec elle. -->
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="index.html?lang=en#accueil"><img class="blogo" src="img/vini-logo.svg" alt="" width="40" height="40"><div><div class="brand-name"><span class="dj">DJ</span>ingood</div><div class="brand-sub">Transitions, one move at a time</div></div></a>
+  </header>
+  <section class="page">
+    <span class="lnum">Privacy</span>
+    <h1>What DJingood keeps about you</h1>
+    <p class="avsmall">This is an English translation of our <a href="confidentialite.html" lang="fr">French privacy page</a>. If the two versions differ, the French version applies.</p>
+    <p class="lead">In short: no ads, no cookies, and nothing is sold. Here's everything the site records, and where.</p>
+
+    <h2 class="sub">On your computer</h2>
+    <p>Your progress (stars, XP, badges, quests), your answers to the first questions and your controller settings are saved in your browser. They stay there, except for what's described below. To erase everything: <b>Feedback</b>, then <b>Start over from scratch</b>.</p>
+
+    <h2 class="sub">Your account</h2>
+    <p>To keep your plan, DJingood asks you to create an account at the end of the first questions. Your email address (or your Google account), your first name and your progress are saved with Firebase, the Google service that runs the accounts. They're used to find your progress again on another device. There's no password to remember: to sign in, DJingood emails you a link (for example to open DJingood on your computer). This email is sent through Brevo, the French company that sends our emails: it receives your address and your first name only to send it to you, and uses them for nothing else (if Brevo doesn't answer, Firebase sends it). So that nobody can fill your inbox with links, DJingood counts the links sent to each address over an hour, in a small counter that doesn't contain your address in plain text. Your address is only used to write to you about anything else if you say yes, or for your DJingood Pro subscription (below). "Start over from scratch" also erases your online progress; to delete your address, write to us (see the very bottom).</p>
+
+    <h2 class="sub">Vini's emails</h2>
+    <p>Vini's emails (tips to get better, and what's new) only go to people who said yes, and for now they only exist in French: the English site doesn't offer them yet. If you said yes on the French site, you get three emails to get started (the same day, two days later, a week later), then <b>one email a week at most</b>. If your account was created with an email address, you first get a link to confirm it: DJingood only writes to a confirmed address.</p>
+    <p>For that, your address, your first name, your next step, the day you said yes and where (the box, Vini's question or the switch) are sent to Brevo, the French company that sends these emails for DJingood and uses them for nothing else.</p>
+    <p>To stop: the "Vini's emails" switch in "My account", or the link at the bottom of each email. Brevo then keeps your address only so it never writes to you again; to have it erased, write to us (see the very bottom).</p>
+
+    <h2 class="sub">Visit statistics</h2>
+    <p>DJingood counts its visits with Umami and PostHog, <b>without cookies</b>, without any identifier kept on your device and without anything that could track you on other sites. It's only used to improve the site. What's counted:</p>
+    <ul class="howlist">
+      <li>pages viewed, country, type of device and browser, and the site you came from;</li>
+      <li>a few game steps, for example "first game played" or "first level passed", with the path you chose and your controller model ("other controller" if DJingood doesn't know it);</li>
+      <li>your answers to "Was it clear?" and the rating in your feedback.</li>
+    </ul>
+    <p>Umami only keeps totals. PostHog sees the sequence of steps, to know where players stop: without an account, you're a stranger again on each visit; if you're signed in, your steps are linked to your account identifier (a code, never your first name or your address), to see how many days it takes to progress. PostHog keeps this data in Europe, and uses it for nothing else. PostHog doesn't record your screen or what you type.</p>
+    <p class="avsmall" id="statsEtat" role="status"></p>
+    <div class="rbrow"><button type="button" class="ghost" id="statsBtn">Stop counting my visits</button></div>
+
+    <h2 class="sub">When you send feedback</h2>
+    <p>With the <b>Feedback</b> button, your feedback goes to the DJingood team: your text, your rating, the date, the screen you were on, your path, the name of your controller and your browser, and your account identifier if you're signed in (not your address). Only the team can read it.</p>
+
+    <h2 class="sub">If you subscribe to DJingood Pro</h2>
+    <p>Payment is made through <b>Stripe</b>, which collects payments for DJingood: your card, your name and your billing address go to Stripe, never to DJingood. Stripe also keeps your email address and your DJingood account identifier, to know you're subscribed and to send you your invoices. If you start the 7 free days, DJingood emails you two days before the end of the trial, to remind you of the date and the amount of the first payment: it's sent through Brevo, which receives your address only for that. It's an email about your subscription: it's sent even if you haven't said yes to Vini's emails. On your computer, DJingood only remembers whether your subscription is active, and until when. The terms of sale, shown when you pay, give the rest.</p>
+
+    <h2 class="sub">A question?</h2>
+    <p>To delete your account or ask a question, write to us with the site's <b>Feedback</b> button, leaving your email address if you'd like an answer.</p>
+    <p class="page-note">Updated on November 21, 2026.</p>
+    <div class="rbrow" style="margin-top:22px"><a class="cta" href="index.html?lang=en">Back to the site</a></div>
+  </section>
+</div>
+<script src="js/stats.js"></script>
+<script>
+(function(){
+  var b = document.getElementById('statsBtn'), e = document.getElementById('statsEtat');
+  function rend(){ var non = statsRefuse();
+    b.textContent = non ? 'Count my visits again' : 'Stop counting my visits';
+    e.textContent = non ? 'On this browser, your visits are no longer counted.' : 'On this browser, your visits are counted (without cookies).'; }
+  b.addEventListener('click', function(){ statsRefuser(!statsRefuse()); rend(); });
+  rend();
+})();
+</script>
+</body>
+</html>

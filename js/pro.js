@@ -68,7 +68,7 @@ function proAppel(action, o = {}){
   return u.getIdToken().then(jeton => {
     const ctl = window.AbortController ? new AbortController() : null, t = setTimeout(() => { if (ctl) ctl.abort(); }, PRO_LENT);
     return fetch(PRO_API, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + jeton },
-      body: JSON.stringify(Object.assign({ action }, o)), signal: ctl ? ctl.signal : undefined })
+      body: JSON.stringify(Object.assign({ action }, o, LANGUE === 'en' ? { langue: 'en' } : {})), signal: ctl ? ctl.signal : undefined })   // lot 80 : Stripe en anglais
       .then(r => r.json().catch(() => ({})).then(d => { if (!r.ok) throw new Error((d && d.erreur) || 'erreur ' + r.status); return d; }))
       .finally(() => clearTimeout(t));
   });
@@ -330,7 +330,7 @@ function proDemarre(q){
 }
 
 /* ---------- Dans « Mon compte » ---------- */
-const proDate = s => new Date(s * 1000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+const proDate = s => new Date(s * 1000).toLocaleDateString(LOCALE, { day: 'numeric', month: 'long', year: 'numeric' });
 // Appelé par cptRend (compte.js) et à chaque nouvelle réponse de Stripe
 function proCompteRend(){
   const box = $('cptPro'); if (!box) return;

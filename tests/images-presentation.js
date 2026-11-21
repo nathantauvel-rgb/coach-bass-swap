@@ -2,13 +2,17 @@
 // Usage : node tests/images-presentation.js     (le serveur de test est lancé tout seul)
 // À relancer quand l'écran d'un niveau, l'accueil ou « Ma musique » change. Avec Pro allumé (PRO_PRET), lancer d'abord le serveur
 // de test (node tests/serveur.js --tests) : sinon « Ma musique » est photographiée comme pour un joueur sans abonnement.
+// Lot 80 : node tests/images-presentation.js en  → les mêmes images, le site en anglais, dans img/en/ (js/langue.js les
+// montre sur la page de présentation anglaise).
 const { chromium } = require('@playwright/test'), path = require('path'), fs = require('fs'), { spawn } = require('child_process');
-const OUT = path.join(__dirname, '..', 'img'), BASE = `http://localhost:${process.env.DJ_PORT || 8766}`, S = o => JSON.stringify(o);
+const EN = process.argv[2] === 'en';
+const OUT = path.join(__dirname, '..', 'img', EN ? 'en' : ''), BASE = `http://localhost:${process.env.DJ_PORT || 8766}`, S = o => JSON.stringify(o);
 const jour = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const VENU = { 'coach-guide-vu': '1', 'coach-fiches': S(['play', 'fader', 'low', 'cfx', 'echo', 'mid']), 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 3, 2: 2 }), 'coach-ordre': '2', 'coach-badges': S(['pas', 'timing']),
   'coach-objectif': S({ min: 10, jours: { [jour()]: 420 }, faits: [], best: 0 }),
   // une quête finie : Vini annonce un coffre (message valable à toute heure, contrairement à « Bonjour » ou « Bonsoir »)
-  'coach-quetes': S({ jour: jour(), ids: ['parties2', 'reussies2', 'trois3'], cpt: { parties: 2, reussies: 1 }, ouverts: [], xp: 0 }), 'coach-accueil': S({ passe: true, fini: jour() }) };
+  'coach-quetes': S({ jour: jour(), ids: ['parties2', 'reussies2', 'trois3'], cpt: { parties: 2, reussies: 1 }, ouverts: [], xp: 0 }), 'coach-accueil': S({ passe: true, fini: jour() }),
+  ...(EN ? { 'coach-langue': 'en' } : {}) };
 const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-FLX4', onmidimessage: null }]]); navigator.requestMIDIAccess = () => Promise.resolve({ inputs, outputs: new Map(), onstatechange: null });
   window.__midi = { envoyer: (...d) => { for (const i of inputs.values()) if (i.onmidimessage) i.onmidimessage({ data: d }); } }; };
 (async () => {
@@ -18,7 +22,9 @@ const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-
   const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
   const page = async (hash, stockage = VENU) => { const ctx = await b.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1 }), p = await ctx.newPage();
     await p.addInitScript(d => { try { for (const [k, v] of Object.entries(d)) localStorage.setItem(k, v); } catch (e) {} }, stockage); await p.addInitScript(fausseTable); await p.addInitScript(() => { window.DJINGOOD_LIBRE = true; });   // lot 64 : niveaux tous ouverts pour les photos
-    await p.goto(BASE + '/index.html#' + hash); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(600); return p; };
+    await p.goto(BASE + '/index.html#' + hash); await p.evaluate(() => document.fonts.ready);
+    await p.waitForFunction(() => !document.documentElement.classList.contains('trad'), null, { timeout: 15000 });   // lot 80 : la page anglaise est traduite
+    await p.waitForTimeout(600); return p; };
   // haut : hauteur maximale de l'image, en pixels (le reste de l'élément est coupé)
   const shot = async (p, nom, sel, haut = 0) => { await p.evaluate(() => { const c = document.getElementById('confetti'); if (c) c.style.visibility = 'hidden'; });
     const el = p.locator(sel), o = { path: path.join(OUT, nom), type: 'jpeg', quality: 82 };
@@ -29,7 +35,7 @@ const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-
   let p = await page('apprendre');
   await p.evaluate(() => { for (const [c, n, v] of [[0, 19, 127], [1, 19, 127], [0, 15, 64], [1, 15, 0]]) window.__midi.envoyer(0xB0 + c, n, v); });
   await p.locator('.node').nth(5).click(); await p.waitForTimeout(400);
-  await p.locator('#startBtn').click(); await p.waitForFunction(() => document.getElementById('startBtn').textContent === 'Arrêter', null, { timeout: 60000 });
+  await p.locator('#startBtn').click(); await p.waitForFunction(() => document.getElementById('startBtn').textContent === (EN ? 'Stop' : 'Arrêter'), null, { timeout: 60000 });
   await p.waitForFunction(() => beatNow() >= 58, null, { timeout: 60000, polling: 'raf' });
   await shot(p, 'apprendre.jpg', '#stage'); await p.context().close();
   // 2. L'accueil : la prochaine étape et l'objectif du jour

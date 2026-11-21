@@ -95,20 +95,26 @@ test.describe('Choisir l\'anglais', () => {
 });
 
 test.describe('En anglais, rien ne reste en français', () => {
-  test('Premiers pas : Vini parle anglais, lettre par lettre, et le parcours mène au niveau 1', async ({ page }) => {
-    const erreurs = await ouvrir(page, { onglet: 'accueil', stockage: { ...EN, 'coach-accueil': null, 'coach-guide-vu': null, 'coach-fiches': null } });
+  // Lot 80 : le déroulé d'aujourd'hui (niveau, oreille, table, objectif, puis le plan)
+  test('Premiers pas : Vini parle anglais, lettre par lettre, et le parcours mène au plan', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: 'accueil', midi: { branchee: false }, stockage: { ...EN, 'coach-accueil': null, 'coach-guide-vu': null, 'coach-fiches': null } });
     await expect(page.locator('#pp')).toBeVisible();
-    await expect(page.locator('#ppAsk')).toHaveText("Hi, I'm Vini! I'm going to teach you how to mix. First, three quick questions to set up your path.");
+    await expect(page.locator('#ppAsk')).toHaveText("Hi, I'm Vini! I'm going to teach you how to mix. In one minute, I'll make your plan.");
     await expect(page.locator('#ppGo')).toHaveText("Let's go");
     await page.locator('#ppGo').click();
     await expect(page.locator('.pp-opt[data-v="debut"]')).toContainText('Total beginner');
     await page.locator('.pp-opt[data-v="debut"]').click();
     await expect(page.locator('#ppAsk')).toHaveText("Perfect, we'll start from scratch. Every button, one at a time!");
     await page.locator('#ppGo').click();
-    await page.locator('.pp-opt[data-v="souris"]').click();
+    await expect(page.locator('#ppOrPasse')).toHaveText('Skip this question');
+    await page.locator('#ppOrPasse').click();
+    await page.locator('#ppOpts .pp-opt').nth(1).click();   // pas encore de table : à la souris
     await page.locator('#ppGo').click();
-    await page.locator('.pp-opt[data-v="10"]').click();
+    await page.locator('#ppOpts .pp-opt').nth(1).click();   // 10 min par jour
     await expect(page.locator('#ppNote')).toContainText('With 10 min a day, your first real clean transition in 2 weeks!');
+    await page.locator('#ppGo').click();
+    await expect(page.locator('#ppAsk')).toHaveText(/^Your plan is ready!/);
+    await expect(page.locator('.pp-frise')).toBeVisible();
     expect(await manque(page)).toEqual([]);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
@@ -181,5 +187,62 @@ test.describe('En anglais, rien ne reste en français', () => {
     await expect(page.locator('#cp')).toContainText('Lesson complete!');
     expect(await manque(page)).toEqual([]);
     expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+});
+
+// Lot 80 : tout ce que le site a gagné depuis le lot 53 (Pro, les 7 chapitres, les tutos, Ma musique, les pages légales)
+test.describe('Lot 80 : le reste du site en anglais', () => {
+  const PRO = 'window.DJINGOOD_PRO = true; window.DJINGOOD_TUTOS = true;';
+  test('les 7 chapitres : chaque niveau, sa consigne et « How do I do it? », sans une phrase en français', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: EN });
+    await page.evaluate(async () => {
+      for (const c of [1, 2, 3, 4, 5, 6, 7]) for (let i = 0; i < lessonsOf(c).length; i++){ goLesson(c, i); await new Promise(r => setTimeout(r, 40)); }
+    });
+    expect(await manque(page)).toEqual([]);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('la fenêtre Pro : les prix à l’anglaise, les liens vers les pages anglaises', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: EN, avant: PRO, onglet: 'accueil' });
+    await page.evaluate(() => proOuvre(''));
+    await expect(page.locator('#pro')).toBeVisible();
+    await expect(page.locator('#pro')).toContainText('€49.99');
+    await expect(page.locator('#pro')).not.toContainText('49,99');
+    expect(await page.locator('#pro a').evaluateAll(l => l.map(a => a.getAttribute('href')).filter(h => /\.html$/.test(h)))).toEqual(['terms.html', 'legal-notice.html']);
+    expect(await manque(page)).toEqual([]);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('les tutos : la liste, puis chaque tuto plan par plan, la bulle de Vini en anglais', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: EN, avant: 'window.DJINGOOD_TUTOS = true;', onglet: 'tutos' });   // Pro éteint : tous les tutos s'ouvrent
+    await expect(page.locator('.tu-carte').first()).toBeVisible();
+    for (const id of await page.evaluate(() => TUTOS.map(t => t.id))){
+      await page.evaluate(id => { tuOuvre(id); for (let i = 0; i < tu.t.plans.length; i++) tuAller(i, { direct: true }); }, id);
+      // la bulle (lettre par lettre) dit la même chose que sa version lue à voix haute, en anglais
+      const [vu, lu] = await page.evaluate(() => [[...document.querySelectorAll('#tuBulle [aria-hidden] span')].map(s => s.textContent).join(''), document.querySelector('#tuBulle .tu-sr').textContent]);
+      expect(vu).toBe(lu); expect(lu).not.toMatch(/ tu | ta | les /);
+      await page.locator('#tuRetour').click();
+    }
+    expect(await manque(page)).toEqual([]);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('pas de case « mails de Vini » en anglais (ils n’existent qu’en français) ; le lien de connexion est demandé en anglais', async ({ page }) => {
+    const erreurs = await ouvrir(page, { stockage: EN, onglet: 'accueil', avant: 'window.DJINGO_MAILS = true;' });
+    expect(await page.evaluate(() => [ML_PRET_EN, mlActif()])).toEqual([false, false]);
+    let corps = null;
+    await page.route('**/api/lien', r => { corps = JSON.parse(r.request().postData() || '{}'); r.fulfill({ status: 200, contentType: 'application/json', body: '{"envoye":true}' }); });
+    expect(await page.evaluate(() => cptLienBrevo('lea@exemple.fr'))).toBe(true);
+    expect(corps).toMatchObject({ mail: 'lea@exemple.fr', langue: 'en' });
+    expect(erreurs).toEqual([]);
+  });
+  test('les pages légales en anglais, et la présentation avec ses captures anglaises', async ({ page }) => {
+    for (const [p, titre] of [['terms.html', 'The DJingood Pro subscription'], ['privacy.html', 'What DJingood keeps about you'], ['legal-notice.html', 'Who makes DJingood']]){
+      await page.goto('/' + p);
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+      await expect(page.locator('h1')).toHaveText(titre);
+      await expect(page.locator('.page')).toContainText('the French version applies');
+    }
+    await page.goto('/presentation.html?lang=en');
+    await page.waitForFunction(() => !document.documentElement.classList.contains('trad'));
+    expect(await page.locator('img[src^="img/"]').evaluateAll(l => l.map(i => i.getAttribute('src')).filter(s => /\.jpg$/.test(s)))).toEqual(['img/en/apprendre.jpg', 'img/en/accueil.jpg', 'img/en/vrai.jpg']);
+    expect(await manque(page)).toEqual([]);
   });
 });

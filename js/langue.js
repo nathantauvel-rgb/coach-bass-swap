@@ -17,6 +17,9 @@ const LANGUE = (() => {
   if (q === 'en' || q === 'fr'){ try { localStorage.setItem('coach-langue', q); } catch (e) {} return q; }
   return garde === 'en' ? 'en' : 'fr';
 })();
+// Les dates, les heures et les grands nombres s'écrivent à l'anglaise en anglais (lot 80 : pro.js, compte.js, objectif.js,
+// rekordbox.js s'en servent à la place de 'fr-FR')
+const LOCALE = LANGUE === 'en' ? 'en-US' : 'fr-FR';
 const EN = Object.create(null);  // phrase française (espaces simplifiés) → phrase anglaise ; rempli par js/anglais.js
 const EN_MOTIFS = [];            // [expression, fonction] : phrases qui contiennent un nombre ou un nom
 const EN_CACHE = new Map();
@@ -88,6 +91,10 @@ function tr(s){
   if (LANGUE !== 'en' || typeof s !== 'string') return s;
   // un pourcentage à la française (« 0,0 % », le tempo d'une platine) : « 0.0% »
   if (/^\s*[-+−]?\d+,\d+\s?%\s*$/.test(s)) return s.replace(',', '.').replace(/\s?%/, '%');
+  // un prix à la française (« 4,99 € ») : « €4.99 » (lot 80)
+  if (/^\s*\d+(?:,\d+)?\s?€\s*$/.test(s)) return s.replace(/(\d+)(?:,(\d+))?\s?€/, (m, e, c) => '€' + e + (c ? '.' + c : ''));
+  // un nombre à virgule tout seul (« 124,0 », le tempo écrit sur une platine) : « 124.0 » (lot 80)
+  if (/^\s*[-+−]?\d+,\d+\s*$/.test(s)) return s.replace(',', '.');
   if (!/[A-Za-zÀ-ÿ]/.test(s)) return s;
   const c = EN_CACHE.get(s); if (c !== undefined) return c;
   const m = s.match(/^([\s  ]*)([\s\S]*?)([\s  ]*)$/), cle = trCle(m[2]);
@@ -151,11 +158,13 @@ function trPose(){
     const t = trHtml(v);
     B.innerHTML.set.call(this, t === null ? v : t);
     if (t === null && typeof v === 'string' && /[A-Za-zÀ-ÿ]{2}/.test(v.replace(/<[^>]*>/g, ''))) trDom(this);
+    if (typeof v === 'string' && /\.html/.test(v)) trLiens(this);
   } });
   Element.prototype.insertAdjacentHTML = function(ou, h){
-    const t = trHtml(h);
+    const t = trHtml(h), cible = ou === 'beforebegin' || ou === 'afterend' ? this.parentNode : this;
     B.insertAdjacentHTML.call(this, ou, t === null ? h : t);
-    if (t === null) trDom(ou === 'beforebegin' || ou === 'afterend' ? this.parentNode : this);
+    if (t === null) trDom(cible);
+    if (typeof h === 'string' && /\.html/.test(h)) trLiens(cible);
   };
   Element.prototype.setAttribute = function(n, v){ return B.setAttribute.call(this, n, TR_ATTRS.includes(n) ? tr(v) : v); };
   Element.prototype.append = function(...a){ return B.append.apply(this, a.map(tr)); };
@@ -167,12 +176,23 @@ function trPose(){
 }
 if (LANGUE === 'en'){ document.documentElement.lang = 'en'; trPose(); }
 
+// Les pages légales ont leur traduction anglaise (lot 80 : terms.html, privacy.html, legal-notice.html) : en anglais, les
+// liens du site y mènent. La version française fait foi, et chaque page anglaise la cite.
+const EN_PAGES = { 'cgv.html': 'terms.html', 'confidentialite.html': 'privacy.html', 'mentions-legales.html': 'legal-notice.html' };
+// Les captures du site sur la page de présentation : leur version anglaise (img/en/, faite par tests/images-presentation.js en)
+const EN_IMAGES = { 'img/apprendre.jpg': 'img/en/apprendre.jpg', 'img/accueil.jpg': 'img/en/accueil.jpg', 'img/vrai.jpg': 'img/en/vrai.jpg' };
+function trLiens(root){
+  if (LANGUE !== 'en' || !trBrut || !root || typeof root.querySelectorAll !== 'function') return;
+  root.querySelectorAll('a[href]').forEach(a => { const h = a.getAttribute('href'); if (EN_PAGES[h]) trBrut.setAttribute.call(a, 'href', EN_PAGES[h]); });
+  root.querySelectorAll('img[src]').forEach(i => { const s = i.getAttribute('src'); if (EN_IMAGES[s]) trBrut.setAttribute.call(i, 'src', EN_IMAGES[s]); });
+}
+
 // Appelé par js/anglais.js une fois le dictionnaire rempli : traduit la page déjà écrite et son titre
 // La page reste cachée jusque-là (classe « trad » posée dans le <head>), pour ne pas montrer le français une seconde.
 function trPage(){
   if (LANGUE !== 'en') return;
   EN_CACHE.clear(); EN_SORTIES = null;
-  try { trDom(document.body); const t = tr(document.title); if (t !== document.title) document.title = t; }
+  try { trDom(document.body); trLiens(document.body); const t = tr(document.title); if (t !== document.title) document.title = t; }
   finally { document.documentElement.classList.remove('trad'); }
 }
 

@@ -32,6 +32,39 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 80 « Le site en anglais » (21 nov. 2026) : EN COURS, NON PUBLIÉ.** Demande : « ouvrir mon site au marché
+  international… pour commencer à faire de la pub en anglais », puis « Oui, lance-le ». Copie `Documents\coach-dj-lot80`,
+  branche `lot-80-anglais` partie d'`origin/main` = `1a96992` (sans suivi d'`origin/main`) ; serveur `coach-dj-lot80`
+  (port 8786, Pro allumé) dans le `.claude/launch.json` du dossier principal ; **tests avec `DJ_PORT=8787`** (pas 8786 :
+  Playwright réutiliserait ce serveur sans `--tests`, Pro allumé, et des tests échoueraient pour rien).
+  - **Base : le lot 53** (29 oct., compte « marketing », branche `lot-53-anglais`, jamais publié) fusionné dans `a1f71fa`.
+    Méthode gardée : `js/langue.js` traduit chaque texte au moment où il s'affiche, avec le dictionnaire `js/anglais.js`
+    (chargé seulement en anglais) ; en français rien ne change. Tout le détail technique du lot 53 (motifs `enMotif`,
+    `{#n}` / `{x}` / `{=x}`, pièges, vocabulaire : table = controller, platine = deck, potard = knob, temps = beat,
+    « la piste » = the track, LANCE B = START B) est dans le CLAUDE.md de la branche `lot-53-anglais` (entrée « Lot 53 »).
+  - **Fait dans ce lot** : le dictionnaire couvre maintenant tout ce qui a été ajouté depuis octobre (Pro, essai de
+    7 jours, Apprendre refait, Premiers pas, compte et lien, Ma musique, chapitres 4 à 7, Vérifier et Régler ma table,
+    présentation). Les nouvelles lignes sont entre les repères « Lot 80 : début / fin » à la fin de `js/anglais.js`.
+    Petits changements de code (inertes en français) : `LOCALE` dans `js/langue.js` (dates et nombres à l'anglaise dans
+    `pro.js`, `compte.js`, `objectif.js`, `rekordbox.js`), prix « 4,99 € » → « €4.99 » dans `tr()`, bulle des niveaux
+    (`niveaux.js`, `data-t`) passée par `tr()`, « Lvl 3 » relu dans `compte.js`.
+  - **Outils (hors Git)** : `captures/lot80/outils/` — `liste.js` (phrases sans traduction, par fichier, dans
+    `captures/lot80/manque/`), `fusionne.js` (range `captures/lot80/trad/*.txt` et `*.js` dans `js/anglais.js`, à relancer
+    après chaque traduction), `modeles.js` et `bouts.js` (phrases avec `${…}` et morceaux de modèles HTML), `releve.js`
+    (relève tout ce que le site écrit pendant toute la suite de tests, via `DJ_RELEVE` ; **la ligne « RELEVE-LOT80 » de
+    `tests/outils.js` est provisoire : la retirer avant de commiter**).
+  - **Fait aussi (21 nov., soir)** : les Tutos (visibles avec Pro, donc en ligne) traduits ; côté serveur, le site en
+    anglais envoie `langue: 'en'` : `api/lien.js` (mail du lien en anglais, lien `&lang=en`), `api/pro.js` (page Stripe et
+    portail en anglais, case des conditions vers `terms.html`, `metadata.langue = 'en'` sur l'abonnement), `api/rappel.js`
+    (rappel des 7 jours en anglais si `metadata.langue = 'en'`) ; Firebase `languageCode` suit la langue ; **mails de Vini :
+    ni case ni interrupteur en anglais** (`ML_PRET_EN = false` dans `js/mails.js` : ils n'existent qu'en français) ; pages
+    légales anglaises `terms.html`, `privacy.html`, `legal-notice.html` (traductions, « la version française fait foi »),
+    les liens du site y mènent en anglais (`EN_PAGES` / `trLiens` dans `js/langue.js`) ; liens du guide (français seulement)
+    cachés en anglais (`.fr-seul`). En français, rien de tout ça ne change.
+  - **Reste** : finir le relevé (`analyse.js`) et traduire ce qu'il trouve, retirer la ligne RELEVE-LOT80, suite complète
+    des tests, captures 1366 × 768, gardien, accord. Puis, avec lui : l'adresse anglaise (djingood.com conseillée), la TVA à
+    l'étranger (Royaume-Uni dès la 1re vente), prix en dollars ou non, relecture par un anglophone, mails de Vini en anglais
+    (liste Brevo à part), les balises de partage (og:) restent en français.
 - **Lot 78 « Une simple case » (20 nov. 2026, soir) : PUBLIÉ le 21 nov.** (« ok c'est mieux, publie quand c'est fini » ;
   875 tests sur 875, gardien feu vert, ses remarques corrigées ; `f1a43bd`, puis cette note ; **production vérifiée** sur
   djingood.fr en 1366 × 768 : plus de `#mlQ`, case décochée sous « Continuer avec Google », aucune erreur). **Reste, par

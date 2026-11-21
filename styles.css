@@ -3917,5 +3917,7 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
 .langoffre div{display:flex;gap:8px;flex-wrap:wrap}
 .langoffre button{flex:1 1 auto;min-height:44px;border-radius:12px;font:inherit;font-weight:800;cursor:pointer;border:1px solid var(--line);background:none;color:var(--fg)}
 .langoffre .langoui{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
-:root[lang="en"] .mx [data-k^="cfx"]::before{content:"FILTER"}
+@media (max-width:1039px){:root[lang="en"] .mx [data-k^="cfx"]::before{content:"FILTER"}}   /* lot 80 : comme la règle française, seulement sur petit écran */
 .pres-haut{display:flex;gap:8px;align-items:center}
+/* Lot 80 : le guide du débutant n'existe qu'en français : ses liens disparaissent en anglais */
+:root[lang="en"] .fr-seul{display:none}

@@ -38,7 +38,10 @@ const ML_PROPOSE = 'coach-compte-propose';    // le dernier jour où la carte de
 const ML_API = '/api/mails';
 const ML_LENT = 8000;                         // au-delà, on considère que la fonction ne répond pas
 const ML_REPS = ['oui', 'non', 'attente'];
-function mlActif(){ let t = false; try { t = window.DJINGO_MAILS === true; } catch (e) {} return (ML_PRET || t) && cptOn(); }   // DJINGO_MAILS : pour les tests
+// Lot 80 : en anglais, ni case ni interrupteur tant que les mails de Vini n'existent pas en anglais (ils partiraient en
+// français) : passer ML_PRET_EN à true le jour où une liste et des mails anglais sont prêts dans Brevo.
+const ML_PRET_EN = false;
+function mlActif(){ let t = false; try { t = window.DJINGO_MAILS === true; } catch (e) {} return (ML_PRET || t) && cptOn() && (LANGUE !== 'en' || ML_PRET_EN); }   // DJINGO_MAILS : pour les tests
 
 let mlVu = '';          // le compte dont on a déjà regardé la réponse dans cette page
 let mlVoulu = null;     // la case au moment de créer le compte : true, false, ou null (pas de case à ce moment-là)

@@ -64,7 +64,7 @@ function openSerie(){
   for (let i = 0; i < 7; i++){ const d = new Date(lundi); d.setDate(lundi.getDate() + i); const k = dayKey(d), fait = goal.faits.includes(k), li = document.createElement('li'), l = document.createElement('span'), rond = document.createElement('i');
     li.className = (fait ? 'fait' : '') + (k === dayKey() ? ' auj' : ''); l.textContent = SEM_LETTRES[i];
     if (fait) rond.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12.5l4 4 8-8.5"/></svg>';
-    li.setAttribute('aria-label', d.toLocaleDateString('fr-FR', { weekday: 'long' }) + (fait ? ' : objectif atteint' : '')); li.append(l, rond); ol.appendChild(li); }
+    li.setAttribute('aria-label', d.toLocaleDateString(LOCALE, { weekday: 'long' }) + (fait ? ' : objectif atteint' : '')); li.append(l, rond); ol.appendChild(li); }
   if (!$('serieVini').firstChild) viniMettre($('serieVini'), 'danse'); else viniHumeur($('serieVini'), 'danse');
   $('serie').hidden = false; $('serieGo').focus({ preventScroll: true }); son('serie');
 }

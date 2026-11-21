@@ -198,6 +198,24 @@ test.describe('La fonction /api/lien', () => {
     expect(b[0].corps.htmlContent).not.toMatch(/<img|<script/i);
   });
 
+  // Lot 80 : le site en anglais envoie { langue: 'en' }
+  test('le site en anglais : le mail part en anglais, et le lien ramène sur le site en anglais', async () => {
+    const r = await appel(JSON.stringify({ mail: 'lea@exemple.fr', retour: 'https://djingood.fr/', langue: 'en' }));
+    expect(r.statusCode).toBe(200);
+    const [b] = brevo();
+    expect(b.corps.subject).toBe('Your link to sign in to DJingood');
+    expect(b.corps.textContent).toContain('Hi Léa!');
+    expect(b.corps.textContent).toContain('?apiKey=AIza-essai&oobCode=CODE-123&mode=signIn&lang=en');
+    expect(b.corps.htmlContent).toContain('<html lang="en">');
+    expect(b.corps.htmlContent).toContain('Sign me in');
+    expect(b.corps.htmlContent).not.toMatch(/Salut|Me connecter|ordinateur|<img|<script/i);
+    // une autre langue : le français, comme avant
+    g.appels.length = 0;
+    await appel(JSON.stringify({ mail: 'lea@exemple.fr', retour: 'https://djingood.fr/', langue: 'de' }));
+    expect(brevo()[0].corps.subject).toBe('Ton lien pour te connecter à DJingood');
+    expect(brevo()[0].corps.textContent).toContain('&lang=fr');
+  });
+
   test('le lien ramène toujours sur une page de DJingood, jamais sur une adresse donnée par celui qui appelle', async () => {
     for (const [retour, attendu] of [['https://arnaque.example/djingood.fr', 'https://djingood.fr/'], ['javascript:alert(1)', 'https://djingood.fr/'],
       ['https://djingood.fr.arnaque.example/', 'https://djingood.fr/'], ['https://www.djingood.fr/index.html?x=1#y', 'https://www.djingood.fr/index.html'],
