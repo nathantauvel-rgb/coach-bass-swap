@@ -94,6 +94,214 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     lit encore). Laissés : la croix d'un réglage ne garde pas les positions vues (comme avant le lot) ; sur téléphone, le nom
     « Native Instruments Traktor Kontrol S2 MK3 » est coupé dans le menu déroulant.
     **Attend : l'accord de l'utilisateur pour publier, après (conseillé) les points 39 et 40 de la checklist sur sa FLX4.**
+- **Lot 78 « Une simple case » (20 nov. 2026, soir) : PUBLIÉ le 21 nov.** (« ok c'est mieux, publie quand c'est fini » ;
+  875 tests sur 875, gardien feu vert, ses remarques corrigées ; `f1a43bd`, puis cette note ; **production vérifiée** sur
+  djingood.fr en 1366 × 768 : plus de `#mlQ`, case décochée sous « Continuer avec Google », aucune erreur). **Reste, par
+  lui** : un vrai essai (Google en cochant la case, puis le mail de Vini reçu). Demande : la fenêtre « Nathan, je peux
+  t'écrire ? » (posée toute seule sur l'accueil aux comptes créés avant les mails, lot 54, allumée au lot 76) ne lui plaît
+  pas du tout : il veut une simple case à cocher, comme sur tous les sites. Règle qui en découle : pour une fonction
+  banale (accord, réglage), la forme standard des sites, jamais une fenêtre qui s'ouvre toute seule. Copie `Documents\coach-dj-lot78`, branche
+  `lot-78-case-mails` depuis `origin/main` = `b5c0c33` ; serveur `coach-dj-lot78` (port 8784, mails allumés) ; tests avec
+  `DJ_PORT=8783`. Ce qui change : la fenêtre `#mlQ` et tout son code sont retirés (`js/mails.js`, `index.html`,
+  `styles.css`, `pro.js`, `compte.js`, l'étape `mails-question` de `stats.js`) ; la case de la fenêtre du compte devient une
+  case normale (style `.pp-case` des Premiers pas, plus d'encadré violet), avec le même texte partout : « Recevoir les
+  conseils de Vini par mail : 3 pour démarrer, puis un par semaine au plus. Désinscription en un clic. » ; une seconde
+  case (`#cptAccord0`) sous « Continuer avec Google » sur le premier écran (cochée = oui ; pas cochée = rien, pour ne pas
+  toucher à la réponse d'un compte qui revient) ; les deux cases restent d'accord. Les anciens comptes n'ont plus que
+  l'interrupteur de « Mon compte ». Tests : `tests/mails.spec.js` refait (plus de question ; Google avec et sans la case ;
+  anciens comptes : aucune fenêtre, l'interrupteur marche). Captures : `captures/lot78/` de la copie.
+- **Lot 76 « Le niveau d'abord » (19-20 nov. 2026) : PUBLIÉ le 20 nov.** (« oui », après le second gardien ; `8c126e0`,
+  avance rapide depuis `75526e7`, puis cette note). **Production vérifiée** sur djingood.fr (statistiques bloquées) en
+  1366 × 768 et 1920 × 913 : barre `#nivHaut` à 92 px, « Jouer » à 336 px, plus de `#proNiv`, menu « Tous les niveaux » qui
+  s'ouvre, aucune erreur ; `ML_PRET = true` et `PRO_ESSAI_JOURS` en ligne ; `/api/rappel` sans secret → 401 ; CGV datées du
+  20 novembre 2026. Journal Notion **pas** mis à jour (pas d'accès à Notion dans cette session : ligne donnée à l'utilisateur).
+  **Reste, par l'utilisateur** : Vercel → Settings → Cron Jobs (`/api/rappel`) ; un vrai essai de 7 jours puis l'annuler ; un
+  mail de Vini reçu ; la FLX4 (points 2, 4, 38 et 41 de la checklist). Demande : « trop de bordel sur la page Apprendre ».
+  Bilan annoté : `captures/audit-apprendre/` du dossier principal ; maquette validée (« beaucoup mieux rangé, beaucoup plus
+  esthétique ») : `captures/maquette-apprendre/` du dossier principal (`planche-v4.png` = la version retenue). Puis, sur la
+  conversion : « Go, laisse 7 jours gratuits avec la carte », et « oui, lance le lot 76 avec tout ce qui est compris
+  dedans » ; il veut les mails de Vini allumés (case non cochée d'avance : la loi l'interdit, expliqué). Copie
+  `Documents\coach-dj-lot76`, branche `lot-76-apprendre`, partie d'`origin/main` = `c0689e6` ; serveur `coach-dj-lot76`
+  (port 8781, **sans** `--tests` : Pro et les mails allumés, comme en ligne) ; tests sur `DJ_PORT=8782`.
+  Captures : `captures/lot76/` de la copie (script `captures76.js` dans le dossier temporaire de la session).
+  **Ce qui change :**
+  - **La barre** (`#nivHaut`, `index.html`) remplace Comprendre, la rangée des chapitres, la rangée des niveaux et le
+    bandeau `#proNiv` (supprimé, avec son code) : `#chapBtn` (« Chapitre N · titre », ouvre le menu), `#map` (les `.node`
+    deviennent des pastilles : numéro ou cadenas, nom au survol par `data-t`, `.t/.s/.etq` lus mais cachés), `#nivTous`.
+    En 1366 × 768, « Jouer » passe de 770 px à 336 px du haut, la piste tient dans l'écran.
+  - **Le menu « Tous les niveaux »** (`#nivMenu`, `nivMenu(o)`, `nivMenuRend`, `nivMenuDroite`, `nivVue`, `nivMenuCp` dans
+    `js/niveaux.js`) : à gauche `#nivCp` (Comprendre) puis `#chapters` (une ligne par chapitre ; « Avec DJingood Pro » écrit une
+    fois au-dessus des chapitres de Pro, plus d'étiquette sur chacun) ; à droite les cartes `.nivcarte` du chapitre choisi et
+    une seule ligne `.nivmenu-pro`. Un chapitre ouvert devient le chapitre en cours (le menu reste ouvert) ; un chapitre de Pro
+    montre ses niveaux sans changer de chapitre. Échap, la croix ou un clic ailleurs le ferment (`composedPath`).
+  - **Comprendre** : sur ordinateur, seulement dans le menu (`#cpBloc` caché sauf `#vLearn.cp-tel`, posé par `renderHud`
+    quand `cpMobile()`) ; « Comprendre » de Mes progrès ouvre le menu sur Comprendre (`parcours.js`).
+  - **La scène** : `stageIntoView(force)` ne fait plus défiler quand « Jouer » est déjà à l'écran (sur ordinateur) ; une partie
+    la fait toujours remonter (`setStartBtn`). Mode Expert (`#expertBtn`) est passé dans `.actionbar .opts`. La vraie musique
+    range ses titres dans « Comment faire ? » (`#lcredit`, `creditVrai` dans `js/audio.js`, classe `.stage.credit-vrai`) ; une
+    panne de la vraie musique reste affichée sous le titre.
+  - **La carte de fin** (`#nivFin`, `nivFinIci`, `nivFinRend`) : un niveau de Pro sans abonnement (`proIci`) n'est plus affiché
+    avec sa piste et sa table. « Ta première transition est faite. Bravo ! » après les 3 gratuits (sinon « … est dans
+    DJingood Pro ») ; les niveaux qui suivent ; « Rejouer » ; Comprendre ; l'offre (`proOffre`, `js/pro.js`).
+  - **7 jours gratuits, carte demandée** (`js/pro.js` : `PRO_ESSAI_JOURS`, `proSemaineDispo`, `proEssaiType`, `proOffre`,
+    `proOffresRend`, `proDemarre`, `semaineUtilisee`) : la carte de fin, la carte de résultat du niveau 3 (`#rProGo`
+    « Commencer mes 7 jours gratuits », `#rProEssai`, `#rProVoir`, carte resserrée pour que le bouton tienne en 1366 × 768)
+    et la fenêtre Pro (`#proSemaine`) le proposent. Le bouton mène tout droit au paiement (compte d'abord s'il n'y en a pas),
+    sans la grande fenêtre ; la règle du lot 68 reste (pas de paiement avant d'avoir joué). Les comptes d'avant Pro gardent
+    leur mois offert. `api/pro.js` : `payer` avec `essai: 'semaine'` → `trial_period_days: 7`, carte demandée,
+    `metadata.essai = 'semaine'` (le mois offert : `'mois-offert'`), 409 `essai-deja` pour un compte déjà abonné une fois ;
+    `etat` renvoie `essaiDispo` et `semaine`. « Mon compte » : « Essai gratuit jusqu'au … ».
+  - **Le mail de rappel** : `api/rappel.js`, lancé chaque jour à 8 h UTC par Vercel (`vercel.json`, « crons ») : les essais
+    `semaine` pas arrêtés, pas encore prévenus, qui finissent dans 20 à 60 h → un mail par Brevo (date, montant, comment
+    arrêter), puis `metadata.rappel` sur l'abonnement. C'est un mail de service (sans la case de Vini).
+  - **Les mails de Vini allumés** (`ML_PRET = true`, `js/mails.js`) ; textes : « Oui, Vini peut m'écrire », « 3 mails pour bien
+    démarrer, puis un par semaine au plus » (case, question, Mon compte, confidentialité). `tests/serveur.js --tests` les
+    éteint comme Pro (`ML_PRET_RE`) ; `tests/mails.spec.js` les allume (`DJINGO_MAILS`).
+  - `cgv.html` (« Les 7 jours gratuits », lead, accès, arrêter ; **date « 20 novembre 2026 » à remettre au jour de la mise en
+    ligne**), `confidentialite.html` (le mail de rappel, les 3 mails de bienvenue), `tests/CHECKLIST-FLX4.md` (point 41).
+  **20 nov. : il dit « Brevo c'est bon et Stripe aussi »** (puis : « oui j'ai mis BREVO_LISTE et CRON_SECRET dans vercel » : les réglages de Vercel sont faits). Demandé aussi : sur la carte de fin, ne pas montrer seulement 49,99 € à l'année (« ça peut refroidir ») → à faire après le gardien : deux choix, « Au mois · 4,99 € » coché d'office et « À l'année · 49,99 € », frise et carte de résultat au mois.
+  **20 nov. : le lot 77 « PostHog » est publié AVANT ce lot** (`origin/main` = `75526e7`). Avant de publier le 76 :
+  fusionner `origin/main` ; `confidentialite.html` se fusionne sans conflit, le seul conflit est CLAUDE.md (garder les deux
+  entrées) ; relancer toute la suite (`tests/posthog.spec.js` utilise `jouer()` de `tests/outils.js`, que ce lot change).
+  **À faire par l'utilisateur AVANT la mise en ligne** : dans Vercel, ajouter `CRON_SECRET` (une longue phrase au hasard) ;
+  dans Brevo, la liste « Mails de Vini », son numéro dans `BREVO_LISTE` (Vercel), et le scénario automatique (MAILS.md,
+  étapes 4, 6, 8 ; il dit avoir fait les 3 modèles) ; vérifier que Stripe propose Apple Pay / Google Pay. Après : un vrai essai
+  (commencer les 7 jours avec sa carte, puis annuler dans « Gérer mon abonnement »), et un mail de Vini reçu avec son compte.
+  **Tests** : `tests/niveau-dabord.spec.js` (19), `tests/rappel.spec.js` (5), 2 de plus dans `tests/pro.spec.js`, 1 dans
+  `tests/mails.spec.js` ; mis à jour : apprendre, rangement, comprendre, decoupe, pro (champs `essaiDispo` / `semaine`) ;
+  `menuNiveaux(page)` dans `tests/outils.js`. **Première suite complète : 867 sur 867.**
+  **Gardien (20 nov.) : feu rouge**, un seul blocage : Mes progrès → « Comprendre » ouvrait puis refermait le menu dans le
+  même clic (le clic remontait jusqu'à « un clic ailleurs ferme le menu »). **Corrigé** (`setTimeout(nivMenuCp, 0)` dans
+  `parcours.js`, test ajouté), avec ses autres remarques : la carte bancaire est dite (« Ta carte est demandée, mais rien n'est
+  prélevé ») sur l'offre, la carte de résultat et la fenêtre Pro ; plus de « un clic » (les CGV disent « deux clics ») : « sauf
+  si tu arrêtes avant (dans « Mon compte ») » ; un paiement qui ne s'ouvre pas depuis la carte de résultat (refermée) ouvre la
+  fenêtre Pro pour le dire (`proDitVu`) ; fenêtre de 861 à 1100 px : « Tous les niveaux » en icône seule, pastilles plus
+  serrées, nom du chapitre coupé (testé à 861, 900, 1000, 1100 px au chapitre 6) ; la frise reliée d'un point à l'autre ; le
+  rappel réessaie une fois de marquer l'abonnement ; STRIPE.md (section 5) et MAILS.md parlent de l'essai et de `CRON_SECRET`.
+  **Et la demande de l'utilisateur** : l'offre montre deux choix côte à côte, `.offre-f` « Au mois · 4,99 € » coché d'office
+  (`offreFormule = 'mois'`) et « À l'année · 49,99 € · 2 mois offerts » ; la carte de résultat dit « puis 4,99 € par mois »,
+  avec « Plutôt à l'année ? » (`#rProBascule`). La grande fenêtre Pro garde l'année d'office (interrupteur visible).
+  Captures refaites, planche `captures/lot76/planche-v2.png`. Fichiers concernés : 147 tests verts.
+  **20 nov., après-midi (session reprise après une coupure de crédit)** : planche v2 **validée** (« c'est parfait »). Lot
+  commité (`2b7ac29`), **`origin/main` fusionné** (lot 77, `0066d8d`, seul conflit ce CLAUDE.md : les deux entrées gardées).
+  Suite complète sur la version fusionnée : **879 sur 879** (`tests/niveau-dabord.spec.js` a 22 tests). **Second gardien :
+  feu orange, aucun blocage** (879 sur 879 de son côté, 10 scénarios de paiement justes, écrans 1366 / 1920 / 390 bons) ; ses
+  remarques de texte corrigées : l'aperçu du mail de rappel ne dit plus « un clic suffit » (« c'est dans ton compte, en deux
+  étapes »), les messages d'erreur de Pro ne disent plus « juste en dessous » (affichés aussi sous le bouton de la carte de
+  fin). Laissé : un compte déjà abonné une fois va droit à Stripe au mois depuis la carte de résultat (Stripe montre le prix) ;
+  `etat` interroge Stripe à chaque visite d'un compte non abonné ; `presentation.html` ne parle pas des 7 jours.
+  **Après la mise en ligne** : Vercel → Settings → Cron Jobs (`/api/rappel` doit y être) ; vrai essai (7 jours avec sa carte,
+  puis annuler) ; un mail de Vini reçu ; FLX4 : points 2, 4, 38 et 41 de la checklist. Si la publication glisse après le
+  20 nov., changer la date de `cgv.html` et `confidentialite.html`.
+- **Lot 77 « PostHog » (20 nov. 2026) : PUBLIÉ le 20 nov., AVANT le lot 76** (« ok publie PostHog avant le lot 76 » :
+  mesurer quelques jours avant l'essai de 7 jours). `592668d` (avance rapide depuis `c0689e6`), puis cette note.
+  **Production vérifiée** sur djingood.fr : `phOk`, bibliothèque 1.453.1 chargée, `persistence: 'memory'`, replays et
+  heatmaps coupés, aucun cookie ni clé `ph_` dans le stockage, pas de bandeau d'erreur ; envois `eu.i.posthog.com/e/` et
+  `/i/v0/e/` → 200, Umami toujours → 200. Un événement `verification-installation` envoyé à la main (à ignorer dans
+  PostHog), et une visite de vérification comptée dans Umami et PostHog.
+  Demande (session marketing, « vas-y pour brancher PostHog », conseillé par un ami) : suivre chaque joueur de bout en
+  bout, surtout le passage téléphone → ordinateur.
+  Copie `Documents\coach-dj-lot77`, branche `lot-77-posthog`, partie d'`origin/main` = `c0689e6` (sans le lot 76, pas
+  commité) ; tests sur `DJ_PORT=8783` (le gardien : 8785).
+  **Ce qui change :**
+  - `js/stats.js` : bloc PostHog (`PH_ID`, `PH_HOTE` = eu.i.posthog.com, `PH_SRC` = eu-assets…/static/array.js, `phActif`,
+    `phEnvoie`, `phCharge`, `statQui`). `stat` envoie à PostHog (`capture`, objet vide si pas de détail) puis à Umami
+    (`statUmami`, l'ancien corps de `stat`) ; `statsVide` ne rejoue que vers Umami (sinon PostHog recevrait en double) ;
+    `stat1` part si Umami **ou** PostHog est actif. Réglages : `persistence: 'memory'` (ni cookie ni stockage, vérifié dans
+    Chrome avec la vraie bibliothèque 1.453.1 et un faux serveur local : `__loaded`, `identify`, envois vers `/e/`, aucun
+    cookie, rien dans localStorage / sessionStorage), `person_profiles: 'always'`, `autocapture: false`, pas
+    d'enregistrement de l'écran, pas de sondages ; cartes de clics, clics morts, erreurs et mesures de vitesse coupés dans
+    le code (remarque du gardien : sinon l'interface de PostHog peut les allumer). Même interrupteur qu'Umami
+    (`umami.disabled`), mêmes domaines. Avec `persistence: 'memory'`, chaque rechargement est un nouveau visiteur pour
+    PostHog : compter les visiteurs dans Umami, PostHog sert aux entonnoirs des comptes connectés.
+    `PH_ID` vide = éteint. **Clé reçue le 20 nov. et posée** (PostHog EU la reconnaît : `/array/<clé>/config` → 200,
+    une fausse clé → 404). Suite complète 848 sur 848 (avant la clé), puis posthog + stats + site 56 sur 56 avec la clé.
+  - `js/compte.js` (`cptChange`) : `statQui(cpt.uid)` avant `stat1('compte')`, `statQui('')` sur « personne » (ne délie
+    que si un compte était relié : le « personne » de Firebase au chargement ne fait rien). Jamais le prénom ni l'adresse.
+  - `confidentialite.html` : « Umami et PostHog », « sans aucun identifiant gardé sur ton appareil » (le site garde bien
+    `coach-stats` et `umami.disabled`), un paragraphe sur PostHog (enchaînement des étapes, « un code » du compte si
+    connecté, Europe, pas d'écran enregistré), état du bouton « (sans cookie) » au lieu de « sans savoir qui tu es », date
+    « 20 novembre 2026 ». `presentation.html` (FAQ « Qu'est-ce que DJingood sait de moi ? ») : plus « sans savoir qui tu es ».
+  - `STATISTIQUES.md` : section 5 (compte PostHog EU, clé, « Discard client IP data », entonnoir « Du téléphone à Pro »).
+  - `tests/posthog.spec.js` (6 tests, faux `window.posthog` posé avant le chargement). Le gardien a vérifié à la main la file
+    d'attente (scripts retardés, site servi sous le nom djingood.fr) : chaque envoi part une seule fois, dans l'ordre.
+  **Gardien (20 nov.) : feu orange, aucun blocage**, 848 sur 848 ; ses remarques de texte et de réglages corrigées.
+  **Pour le lot 76** : fusionner `origin/main` avant de le publier. `confidentialite.html` se fusionne sans conflit (lignes
+  différentes, le 76 ne change pas la date) ; le seul conflit est ce CLAUDE.md (garder les deux entrées). Le 76 change
+  `tests/outils.js`, dont `tests/posthog.spec.js` utilise `jouer()` : relancer toute la suite après la fusion.
+  **À faire par l'utilisateur dans PostHog** : « Discard client IP data » (sinon PostHog garde l'IP, ce que la page ne dit
+  pas), et laisser éteints replays, sondages et heatmaps dans l'interface.
+- **Lot 75 « Le grand écran » (17 nov. 2026, nuit) : PUBLIÉ le 19 nov.** (« Oui, publie », après le second gardien ;
+  `origin/main` = `99da6f5`, avance rapide depuis `4946b84`, puis cette note). Production vérifiée (Umami bloqué) : sur
+  djingood.fr en 1920 × 913, page de 1600 px, accueil en deux colonnes, table des niveaux à ×1,2, bulle de Vini entière,
+  aucune erreur ; en 1366 × 768, pages de 1012 px, table à ×1, comme avant. **Reste** : rien d'obligatoire ; à son
+  prochain passage sur son écran 1920, lui demander si la table agrandie se manie bien à la souris et avec la FLX4.
+  (« Oui, termine-le » le 18 nov. = finir tests et gardien.) **Le 18-19 nov.** : suite complète
+  sur la version fusionnée, 838 tests sur 838 ; deux retouches de l'accueil : (a) point 9 du bloc, à toutes les tailles, la
+  bulle de Vini ne passe plus sous son disque (défaut en ligne depuis le lot 62, « Prêt pou… » coupé, vu aussi en 1366 sur
+  la version en ligne) : écart de 54 px dès 1100 px de large, 30 px sur téléphone, et entre les deux l'écart d'avant avec la
+  bulle DEVANT le disque (`z-index`) ; (b) accueil en deux colonnes au-dessus de 1600 px : rapport 1,6 / 1 au lieu de
+  1,3 / 1, pour que le bouton de l'étape tienne sur une ligne (le plus long : « Chapitre 7, niveau 1 : Premier
+  enchaînement »). **Second passage du gardien (19 nov.) : feu orange, aucun blocage** (bloc du 74 intact, table agrandie
+  vérifiée aux chapitres 1 à 7 en 1920 × 913) ; sa remarque sur la bulle (écart de 54 px qui serrait le texte et faisait
+  défiler de 7 px entre 761 et ~1000 px) est corrigée par le seuil de 1100 px, 140 tests de l'accueil relancés, verts.
+  `tests/grand-ecran.spec.js` a maintenant 23 tests. Captures finales : `captures/lot75/final/` et `captures/lot75/planche.png`
+  (envoyée à l'utilisateur) ; script `captures75.js` dans le dossier temporaire de la session du 18 nov. Remarque laissée :
+  en 1920 px, l'accueil sans quêtes (« Changer de parcours ») garde un grand vide entre le texte et Vini (voulu par un test).
+  Ce qui suit est l'entrée d'avant, gardée telle quelle. Question de l'utilisateur
+  (écran de 1920 px) : « pourquoi les pages ne prennent pas toute la largeur ? très dérangeant ». Maquette faite sur le vrai
+  site (`captures/maquette-grand-ecran/` du dossier principal, hors Git : `grand-ecran.css`, `planche.png`), validée
+  « Oui, ce sera le 75 ». Copie `Documents\coach-dj-lot75`, branche `lot-75-grand-ecran`, partie d'`origin/main` =
+  `97cc85c`, puis **mise à jour le 18 nov. sur `origin/main` = `4946b84` (lot 74 publié)** : avance rapide, les
+  changements du 75 remis par-dessus, conflits résolus en gardant les deux blocs (74 puis 75 à la fin de `styles.css` ;
+  attention, la fusion avait perdu l'accolade qui ferme la dernière règle « téléphone » du 74, remise à la main).
+  Serveur `coach-dj-lot75` (port 8779). **Ce qui
+  change** : un bloc « Lot 75 » à la fin de `styles.css`, rien d'autre (aucun JavaScript). Au-dessus de 1600 px de large
+  seulement : `.wrap.app` à 1648 px (1600 de contenu), en-tête et pages alignés ; accueil en deux colonnes (étape + quêtes,
+  seulement quand les quêtes s'affichent) ; Comprendre sur 7 colonnes ; Ma table schéma + explication côte à côte ;
+  Mes progrès (badges à droite) ; Ma musique (le morceau qui joue à gauche, collant) ; S'entraîner (défi et cartes à
+  droite) ; et la table des niveaux agrandie en deux paliers : `zoom:1.2` dès 900 px de haut, `zoom:1.3` dès 1000 px
+  (mesuré le 18 nov. avec la table du lot 74 pendant de vraies parties ; pire cas, chapitre 5 niveau 1 : en 913 px de haut,
+  la hauteur d'une fenêtre Chrome normale sur un écran 1920 × 1080, les pads de B finissent à 881 px en ×1,2 ; en ×1,3 ils
+  dépassaient ; en 880 px de haut, même ×1,2 dépasse). Tests neufs : `tests/grand-ecran.spec.js` (15 tests : largeurs,
+  colonnes, fader et crossfader à la souris sous le zoom, LANCE B visible pendant une partie en 1920 × 1080 et en
+  1920 × 913 (chapitres 1 et 5), rien ne change en 1366 et 1536 px, pas de zoom en 1600 × 880, colonne centrée en 2560 px).
+  Captures : `captures/lot75/` de la copie (`f1920x1080-*`, `f1920x913-*` après la fusion). Avant la fusion : 832 tests sur
+  832, **gardien du 18 nov. : feu orange, aucun blocage** (sa remarque principale, le seuil de 1000 px trop haut pour une
+  fenêtre normale, est réglée par le palier à 900 px). **Reste** : toute la suite sur la version fusionnée, un second
+  passage du gardien, puis l'accord de l'utilisateur. Scripts de contrôle du gardien : `verif75.js` et `verif75b.js` dans
+  le dossier temporaire de la session du 17 nov.
+- **Lot 74 « La table en relief » (17 nov. 2026, nuit) : PUBLIÉ le 18 nov.** (« Oui, publie », après le second passage du
+  gardien, feu orange sans blocage ; `origin/main` = `37cbb22`, avance rapide depuis `97cc85c`, puis cette note). Production
+  vérifiée (Umami bloqué) : la nouvelle table sur djingood.fr, 392 px de haut, aucune erreur ; Journal Notion à jour. Demande : « cette
+  partie fait cheap » (la table dessinée des niveaux), puis « un peu plus réaliste avec les contours, 3D ». Maquette v2
+  validée (« Oui cette maquette elle est superbe ») : `captures/maquette-table-visuel/index.html` du dossier principal (hors
+  Git ; v1 gardée dans `v1-index.html`). Copie `Documents\coach-dj-lot74`, branche `lot-74-table-relief`, partie
+  d'`origin/main` = `97cc85c` (le lot 73, jamais commité, n'y est pas : les deux ajoutent un bloc à la fin de `styles.css`,
+  à fusionner à la main). Serveur `coach-dj-lot74` (port 8777) dans `.claude/launch.json`. Captures :
+  `captures/lot74/` de la copie. **Ce qui change (apparence seulement, mêmes identifiants, même fonctionnement)** : bloc
+  « Lot 74 » à la fin de `styles.css` (couleurs `--t-*` dans `:root`) ; potards en relief (`js/controles.js` : ombre, jupe
+  crantée, tête bombée, aiguille de r = 4 à 17, `KNOB_R`) avec les dégradés `#kJupe` / `#kTete` (`svg.kdefs` dans
+  `index.html`) ; PLAY de A en icône SVG, casque en icône SVG au lieu de l'émoji 🎧 ; LANCE B devient un PLAY rond
+  (`class="rb launch"`, texte dans un `<span>`) : bleu tant que le niveau s'en sert, dôme allumé quand on peut appuyer ;
+  vumètres en petites lampes (`<b>` autour du `<i>`) ; écran du BPM (`js/commandes.js` n'écrit plus que le nombre, « BPM »
+  vient du CSS, « – – – » quand la platine ne joue pas). Disposition : lettre de la platine dans le coin, écran du BPM
+  au-dessus du tempo, CUE au-dessus de PLAY et les pads à côté (en miroir sur B), au set CUE et PLAY côte à côte. Une
+  commande éteinte perd sa lumière de couleur (opacité .42, plus de gris). **Hauteur** : 392 px au lieu de 460 ; en
+  1366 × 768 pendant une partie, LANCE B, les pads et le crossfader se voient (avant, pads et crossfader étaient sous le bas
+  de l'écran ; au set, LANCE B aussi). Sur un écran de moins de 820 px de haut, le nom « LANCE B » sous le bouton se cache
+  pendant la partie (la bulle de Vini le dit), et le bouton garde son nom (`aria-label="LANCE B"`). **Gardien du
+  17 nov. : feu rouge** (819 tests verts ; l'anneau blanc du geste à faire, une ombre de 3 px, était caché par la bague des
+  boutons ronds autour de LANCE B ; plus l'onglet des pads au contour orange ou bleu, la molette tenue pas blanche, le nom de
+  LANCE B perdu pour un lecteur d'écran). **Tout corrigé** : l'anneau du geste est un `outline` au-dessus de tout dans la
+  table (`.table3 [data-g].focus`, décalé de 8 px autour des boutons ronds) ; 88 tests de la table verts ensuite. **Second passage du
+  gardien : feu orange, aucun blocage** (819 tests sur 819 ; restent deux détails d'apparence : la pastille « B » sur le coin
+  de l'anneau de la molette de B, et le CUE casque sans relief quand il porte l'anneau, déjà le cas avant). **Reste** : un essai avec la vraie FLX4 (points 4, 23, 32 et 37 de
+  `tests/CHECKLIST-FLX4.md`), pas encore fait. **Suite** : le lot 75 « Le grand écran » (copie `Documents\coach-dj-lot75`), à
+  fusionner par-dessus.
+- **Question du 17 nov. (devenue le lot 75, copie `Documents\coach-dj-lot75`)** : « pourquoi les pages ne prennent pas toute la largeur ? » (écran de
+  1920 px). Raison : `.wrap.app > :not(.top){max-width:1012px}` et l'en-tête à 1280 px (lot 61, pensé pour 1366 px). Piste
+  proposée : une mise en page grand écran page par page (pas juste enlever la limite), avec une maquette en 1920 × 1080.
 - **Lot 72 « Ma musique » (16 nov. 2026, soir) : PUBLIÉ le 16 nov.** (« Oui, publie », après le gardien orange sans
   blocage ; `origin/main` = `7f1f9b1`, avance rapide depuis `c1a794b`, puis cette note). Production vérifiée (Umami bloqué) :
   onglet « Ma musique » (`#musique`), offre gratuite annoncée, collection d'exemple, fiche, bouton retour, `#vrai`, CGV du
@@ -2799,7 +3007,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - `cgv.html`, `mentions-legales.html` — conditions de vente de DJingood Pro et mentions légales (lot 59, à compléter).
 - `api/pro.js`, `STRIPE.md` — l'abonnement DJingood Pro chez Stripe, et la marche à suivre pour le régler (lot 59).
 - `guide/` — le guide du débutant (lot 51) : une page d'entrée et cinq pages de questions, pour Google et les IA.
-- `STATISTIQUES.md` — marche à suivre de l'utilisateur pour Umami et pour lire les avis (lot 46).
+- `STATISTIQUES.md` — marche à suivre de l'utilisateur pour Umami et pour lire les avis (lot 46), et pour PostHog (section 5, lot 77 ; le code est en haut de `js/stats.js`).
 - `MAILS.md` — marche à suivre de l'utilisateur pour Brevo (mails de Vini, lot 54). `mails/` — les trois modèles à coller dans Brevo. `api/mails.js` — la fonction Vercel qui parle à Brevo (clé dans les réglages de Vercel, jamais dans le site).
 - `robots.txt`, `sitemap.xml`, `favicon.ico`, `.vercelignore` — pour Google et pour ce que Vercel publie (lot 50).
 - `coach.html` — ancien mode libre (bibliothèque rekordbox, coach de swap), retiré du site : la page renvoie
@@ -2888,7 +3096,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-tutos` (`{ vus: [identifiants] }`, les tutos vus jusqu'au bout, lot 56 ; l'ancien `vol` n'est plus écrit depuis le lot 60), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`,
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés, `{ v: 2, n, t, p, ex }` depuis le lot 72, `ex: true` = la collection d'exemple, qui ne consomme pas la fiche offerte ; ne suit pas le compte), `coach-missions` (lot 72 : `{ v: 2, total, paires: { 'clé>clé': missions faites }, ok }` ; avant, une seule paire `{ pair, done, total }`), `coach-musique` (favoris, vus récemment, fiche offerte, lot 72 ; ne suit pas le compte), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; `ecran` : les commandes passées exprès d'une table réglée à la main, à l'écran, lot 73 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe` ; `autre` : le nom tapé d'une table pas dans la liste, lot 73), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
+`coach-collection` (morceaux importés, `{ v: 2, n, t, p, ex }` depuis le lot 72, `ex: true` = la collection d'exemple, qui ne consomme pas la fiche offerte ; ne suit pas le compte), `coach-missions` (lot 72 : `{ v: 2, total, paires: { 'clé>clé': missions faites }, ok }` ; avant, une seule paire `{ pair, done, total }`), `coach-musique` (favoris, vus récemment, fiche offerte, lot 72 ; ne suit pas le compte), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; `ecran` : les commandes passées exprès d'une table réglée à la main, à l'écran, lot 73 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe` ; `autre` : le nom tapé d'une table pas dans la liste, lot 73), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert, semaine, essaiDispo }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; `semaine` = pendant les 7 jours gratuits, `essaiDispo` faux = ce compte a déjà été abonné, plus d’essai, lot 76 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester
@@ -2902,7 +3110,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/musique.spec.js` : « Ma musique » (lot 72 : liste, filtres, fiche, transition, favoris, vus récemment, adresses, sans abonnement, téléphone). `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/table-debut.spec.js` : la table dès le début (test, réglage des 3 premiers boutons, liste, avant un niveau ; lot 73). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Ma musique. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/mails.spec.js` : les mails de Vini et la fonction `api/mails.js` (lot 54) ; `tests/faux-firebase.js` : le faux Firebase partagé. `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/musique.spec.js` : « Ma musique » (lot 72 : liste, filtres, fiche, transition, favoris, vus récemment, adresses, sans abonnement, téléphone). `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/table-debut.spec.js` : la table dès le début (test, réglage des 3 premiers boutons, liste, avant un niveau ; lot 73). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Ma musique. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/posthog.spec.js` : PostHog reçoit les mêmes envois, compte relié, refus (lot 77, faux PostHog). `tests/mails.spec.js` : les mails de Vini et la fonction `api/mails.js` (lot 54) ; `tests/faux-firebase.js` : le faux Firebase partagé. `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,

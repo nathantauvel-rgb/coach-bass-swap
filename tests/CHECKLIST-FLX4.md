@@ -56,6 +56,7 @@ sont ouverts, par exemple http://localhost:8766/?tout=1#apprendre ou https://dji
 | 38 | Lot 64 : un profil neuf **sans** `?tout=1`, chapitre 1 | Seul le niveau 1 est ouvert ; après 2 étoiles avec la table, le niveau 2 s'ouvre ; toucher un niveau fermé ne l'ouvre pas et Vini dit lequel réussir d'abord ; les chapitres fermés disent « Encore N ★ au chapitre 1 » | |
 | 39 | Lot 73 : les Premiers pas en nouveau venu (fenêtre de navigation privée), la FLX4 branchée, jusqu'à l'écran de la table | Tout tient au-dessus de « Continuer » sans faire défiler ; « Continuer » reste grisé tant que le fader de gauche n'a pas fait la moitié de sa course ; le fader dessiné suit le vrai ; tourner le filtre (CFX) après le fader ne fait pas dire « Le dessin ne bouge pas ? » | |
 | 40 | Lot 73 : même écran, rekordbox ouvert avec la table (sur Windows) | Au bout d'environ 12 secondes sans rien recevoir, Vini dit de fermer rekordbox ; une fois rekordbox fermé et la table rebranchée, le test reprend | |
+| 41 | Lot 76 : la page « Apprendre », la table branchée, sur l'écran du PC (les points 39 et 40 sont ceux du lot 73, pas encore en ligne) | Sans descendre, on voit la barre du chapitre, le niveau et « Jouer » ; cliquer une pastille choisit le niveau sans faire défiler la page ; « Tous les niveaux » s'ouvre et se ferme (Échap, la croix) ; pendant une partie avec la table, la scène remonte comme avant et tout répond | |
 
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 

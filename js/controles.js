@@ -2,13 +2,16 @@
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* ---------- Potards et faders ---------- */
-const SWEEP = 2.356, controls = {};
+const SWEEP = 2.356, KNOB_R = 26.5, controls = {};
 function arc(cx, cy, r, a0, a1){ const p = a => [cx + r * Math.sin(a), cy - r * Math.cos(a)]; if (Math.abs(a1 - a0) < .001) return '';
   const [x0, y0] = p(Math.min(a0, a1)), [x1, y1] = p(Math.max(a0, a1));
   return `M${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 ${Math.abs(a1 - a0) > Math.PI ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`; }
 function buildControls(){
   document.querySelectorAll('.knob').forEach(el => {
-    el.innerHTML = `<svg viewBox="0 0 60 60" aria-hidden="true"><path class="trk" d="${arc(30, 30, 25, -SWEEP, SWEEP)}"/><path class="arc"/><circle class="body" cx="30" cy="30" r="17"/><line class="ptr" x1="30" y1="30" x2="30" y2="17"/></svg><span class="kv"></span>`;
+    // lot 74 : un potard en relief (son ombre, une jupe crantée, une tête bombée), dégradés #kJupe et #kTete d'index.html
+    el.innerHTML = `<svg viewBox="0 0 60 60" aria-hidden="true"><path class="trk" d="${arc(30, 30, KNOB_R, -SWEEP, SWEEP)}"/><path class="arc"/>`
+      + `<circle class="ombre" cx="30" cy="33" r="20"/><circle class="body" cx="30" cy="30" r="19.5"/><circle class="dents" cx="30" cy="30" r="17.6"/><circle class="tete" cx="30" cy="30" r="13.5"/>`
+      + `<line class="ptr" x1="30" y1="26" x2="30" y2="13"/></svg><span class="kv"></span>`;
     controls[el.dataset.k] = el; });
   document.querySelectorAll('.fader').forEach(el => { controls[el.dataset.k] = el; });
   for (const k in controls){
@@ -33,8 +36,9 @@ function renderControl(k){
   el._v = v;
   el.style.setProperty('--v', v); el.setAttribute('aria-valuenow', String(Math.round(v * 100)));
   if (el.classList.contains('knob')){
-    const a = -SWEEP + v * 2 * SWEEP; el.querySelector('.arc').setAttribute('d', arc(30, 30, 25, 0, a));
-    const p = el.querySelector('.ptr'); p.setAttribute('x2', (30 + 13 * Math.sin(a)).toFixed(2)); p.setAttribute('y2', (30 - 13 * Math.cos(a)).toFixed(2));
+    const a = -SWEEP + v * 2 * SWEEP; el.querySelector('.arc').setAttribute('d', arc(30, 30, KNOB_R, 0, a));
+    const p = el.querySelector('.ptr'), sa = Math.sin(a), ca = Math.cos(a);
+    p.setAttribute('x1', (30 + 4 * sa).toFixed(2)); p.setAttribute('y1', (30 - 4 * ca).toFixed(2)); p.setAttribute('x2', (30 + 17 * sa).toFixed(2)); p.setAttribute('y2', (30 - 17 * ca).toFixed(2));
     const db = k.startsWith('trim') ? trimDb(v) : lowDb(v);
     const t = k.startsWith('cfx') ? cfxText(v) : v < .04 ? 'coupé' : (db > 0 ? '+' : '') + db.toFixed(0) + ' dB'; el.querySelector('.kv').textContent = t; el.setAttribute('aria-valuetext', t);
   }

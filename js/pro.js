@@ -27,14 +27,16 @@ const PRO_PRIX = {
 
 /* ---------- Ce qu'on sait de l'abonnement ----------
    coach-pro : { uid, actif, formule, jusqua (secondes), annule, essai, offert } du dernier compte vérifié sur cet ordinateur
-   (essai : pendant le mois offert ; offert : le mois offert l'attend, lot 68). */
-const proVide = uid => ({ uid: uid || '', actif: false, formule: null, jusqua: null, annule: false, essai: false, offert: false });
+   (essai : pendant le mois offert ; offert : le mois offert l'attend, lot 68). Lot 76 : semaine (pendant les 7 jours
+   gratuits) et essaiDispo (faux = ce compte a déjà eu un abonnement : plus d'essai gratuit). */
+const proVide = uid => ({ uid: uid || '', actif: false, formule: null, jusqua: null, annule: false, essai: false, offert: false, semaine: false, essaiDispo: true });
 let proEtat = (() => {
   try {
     const d = JSON.parse(localStorage.getItem(PRO_CLE));
     if (!d || typeof d !== 'object' || typeof d.uid !== 'string' || !d.uid) return proVide();
     return { uid: d.uid, actif: d.actif === true, formule: PRO_FORMULES.includes(d.formule) ? d.formule : null,
-      jusqua: typeof d.jusqua === 'number' && isFinite(d.jusqua) ? d.jusqua : null, annule: d.annule === true, essai: d.essai === true, offert: d.offert === true };
+      jusqua: typeof d.jusqua === 'number' && isFinite(d.jusqua) ? d.jusqua : null, annule: d.annule === true, essai: d.essai === true, offert: d.offert === true,
+      semaine: d.semaine === true, essaiDispo: d.essaiDispo !== false };
   } catch (e) { return proVide(); }
 })();
 // Le compte de cet ordinateur : celui qui est connecté, sinon le dernier (la session se reprend au chargement)
@@ -43,7 +45,8 @@ const proActif = () => proEtat.actif && !!proEtat.uid && proEtat.uid === proUid(
 const proLibre = t => !proVerrou() || !!t.gratuit || proActif();
 function proMaj(d, uid){
   proEtat = d && d.pro ? { uid, actif: true, formule: PRO_FORMULES.includes(d.formule) ? d.formule : null,
-    jusqua: typeof d.jusqua === 'number' ? d.jusqua : null, annule: !!d.annule, essai: !!d.essai } : Object.assign(proVide(uid), { offert: !!(d && d.offert) });
+    jusqua: typeof d.jusqua === 'number' ? d.jusqua : null, annule: !!d.annule, essai: !!d.essai, semaine: !!d.semaine, essaiDispo: false }
+    : Object.assign(proVide(uid), { offert: !!(d && d.offert), essaiDispo: !(d && d.essaiDispo === false) });
   try { localStorage.setItem(PRO_CLE, JSON.stringify(proEtat)); } catch (e) {}
   proReponse = true;
   proRafraichit(); proCompteRend(); proFondateurPlusTard();
@@ -99,7 +102,8 @@ function proPrix(){
   const [p, par, d] = PRO_PRIX[proFormule];
   $('proPrix').textContent = p; $('proPar').textContent = par; $('proDetail').innerHTML = d;   // nos propres textes
 }
-function proDit(t){ $('proMsg').textContent = t; $('proMsg').hidden = !t; }
+// lot 76 : le message s'écrit aussi sous l'offre de la carte de fin (.offre-msg), d'où l'on paie sans ouvrir la fenêtre
+function proDit(t){ for (const m of [$('proMsg'), ...document.querySelectorAll('.offre-msg')]){ m.textContent = t; m.hidden = !t; } }
 /* Lot 68 : ce qu'on voulait quand la fenêtre s'est ouverte, pour le dire en haut (« Pour jouer « L'écho out » ») et le
    proposer juste après le paiement. id = un tuto ; q = { n, i } (un niveau), { chap }, { vue: 'entrainer' | 'vrai' },
    { fin: true } (la fin des niveaux gratuits). */
@@ -144,30 +148,37 @@ $('proEssaiGo').addEventListener('click', e => {
 });
 $('proQuandMeme').addEventListener('click', () => { $('proEssai').hidden = true; $('proQuandMeme').hidden = true; $('proGo').hidden = false; $('proGo').focus(); });
 function proFerme(){ $('pro').hidden = true; document.body.classList.remove('pro-ouvert'); }
-// essai : le mois offert aux joueurs d'avant Pro (api/pro.js vérifie qu'il ne sert qu'une fois par compte)
+// essai : true = le mois offert aux joueurs d'avant Pro ; 'semaine' = les 7 jours gratuits (lot 76). api/pro.js vérifie
+// que l'un comme l'autre ne sert qu'une fois par compte.
+const proBoutons = on => { for (const b of [$('proGo'), ...document.querySelectorAll('.offre-go'), $('rProGo')]) if (b) b.disabled = !on; };
+// Lot 76 : on peut payer depuis la carte de résultat (déjà refermée) ou une offre : si aucun message n'est à l'écran, la
+// fenêtre Pro s'ouvre pour dire ce qui s'est passé (gardien : sinon, rien ne se passait)
+function proDitVu(t){ const vu = !$('pro').hidden || [...document.querySelectorAll('.offre-msg')].some(m => !!m.parentElement.offsetParent); if (!vu) proOuvre(''); proDit(t); }
 function proPayer(f, essai){
-  $('proGo').disabled = true; proDit(essai ? 'Un instant : on prépare ton mois offert…' : 'Un instant : on ouvre la page de paiement…');
-  stat('pro-payer', { formule: f, essai: !!essai });
-  proAppel('payer', essai ? { formule: f, essai: true } : { formule: f }).then(d => proVaVers(d.url)).catch(e => {
-    $('proGo').disabled = false;
-    if (e.message === 'deja-pro'){ proDit('Tu es déjà Pro !'); const u = proUser(); if (u) proVerifie(u); return; }
-    if (e.message === 'essai-deja'){ fondUtilise = true; proFondateurPrix(); proDit('Ton mois offert a déjà servi : tu peux t’abonner juste en dessous.'); return; }
-    if (e.message === 'essai-reserve'){ fondUtilise = true; proFondateurPrix(); proDit('Le mois offert est réservé aux comptes créés avant l’arrivée de Pro : tu peux t’abonner juste en dessous.'); return; }
-    proDit(e.message === 'pas-configure' ? "Le paiement n'est pas encore ouvert. Reviens bientôt !" : "La page de paiement ne s'ouvre pas. Vérifie ta connexion, puis réessaie.");
+  proBoutons(false); proDit(essai === true ? 'Un instant : on prépare ton mois offert…' : essai === 'semaine' ? 'Un instant : on prépare ton essai gratuit…' : 'Un instant : on ouvre la page de paiement…');
+  stat('pro-payer', { formule: f, essai: essai === 'semaine' ? 'semaine' : !!essai });
+  proAppel('payer', essai ? { formule: f, essai } : { formule: f }).then(d => proVaVers(d.url)).catch(e => {
+    proBoutons(true);
+    if (e.message === 'deja-pro'){ proDitVu('Tu es déjà Pro !'); const u = proUser(); if (u) proVerifie(u); return; }
+    if (e.message === 'essai-deja' && essai === 'semaine'){ semaineUtilisee = true; proFondateurPrix(); proOffresRend(); proDitVu('Ton essai gratuit a déjà servi : tu peux t’abonner tout de suite.'); return; }
+    // le mois offert a déjà servi : ce compte a déjà eu un abonnement, donc pas de 7 jours gratuits non plus (lot 76)
+    if (e.message === 'essai-deja'){ fondUtilise = true; semaineUtilisee = true; proFondateurPrix(); proOffresRend(); proDitVu('Ton mois offert a déjà servi : tu peux t’abonner tout de suite.'); return; }
+    // un compte trop récent pour le mois offert : il a droit aux 7 jours gratuits, comme tout le monde (lot 76)
+    if (e.message === 'essai-reserve'){ fondUtilise = true; proFondateurPrix(); proOffresRend(); proDitVu(proSemaineDispo() ? `Le mois offert est réservé aux comptes créés avant l’arrivée de Pro : tu peux essayer Pro ${PRO_ESSAI_JOURS} jours gratuitement.` : 'Le mois offert est réservé aux comptes créés avant l’arrivée de Pro : tu peux t’abonner tout de suite.'); return; }
+    proDitVu(e.message === 'pas-configure' ? "Le paiement n'est pas encore ouvert. Reviens bientôt !" : "La page de paiement ne s'ouvre pas. Vérifie ta connexion, puis réessaie.");
   });
 }
 // Il faut un compte pour retrouver son abonnement : sans compte, on le crée, puis on enchaîne sur le paiement (proCompte)
 function proAvecCompte(f, essai){
   if (proUser()){ proPayer(f, essai); return; }
   proApres = { f, essai }; proFerme(); openCompte(); cptVa('creer');
-  cptDit(essai ? 'Crée ton compte : ton mois offert et ta progression y seront gardés.' : 'Crée ton compte : il garde ton abonnement, sur ton ordinateur comme sur ton téléphone.');
+  cptDit(essai === true ? 'Crée ton compte : ton mois offert et ta progression y seront gardés.' : essai === 'semaine' ? 'Crée ton compte : il garde ton essai gratuit et ta progression, sur ton ordinateur comme sur ton téléphone.' : 'Crée ton compte : il garde ton abonnement, sur ton ordinateur comme sur ton téléphone.');
 }
-$('proGo').addEventListener('click', () => proAvecCompte(proFormule, proFondateur()));
+$('proGo').addEventListener('click', () => proAvecCompte(proFormule, proEssaiType()));
 document.querySelectorAll('#pro .pro-bascule button').forEach(b => b.addEventListener('click', () => { proFormule = b.dataset.f; proPrix(); }));
 $('proFermer').addEventListener('click', proFerme);
 $('proPlusTard').addEventListener('click', proFerme);
 $('proBandeauBtn').addEventListener('click', () => proOuvre(''));
-$('proNivBtn').addEventListener('click', () => proOuvre(''));   // lot 68 : la ligne sous les niveaux
 $('rbProBtn').addEventListener('click', () => proOuvre('', { vue: 'vrai' }));   // lot 68 : Ma musique (ancien « Passer au vrai », lot 72)
 window.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
@@ -223,9 +234,10 @@ let fondUtilise = false;   // api/pro.js a répondu que le mois offert a déjà 
 const proFondateur = () => proVerrou() && !proActif() && !fondUtilise && proEtat.offert === true && !!proEtat.uid && proEtat.uid === proUid();
 const fondVu = () => { try { return localStorage.getItem(FOND_CLE) === '1'; } catch (e) { return true; } };
 // La fenêtre Pro d'un joueur d'avant Pro : le bouton prend le mois offert
+// Lot 76 : sinon, les 7 jours gratuits si ce compte n'a jamais été abonné (#proSemaine)
 function proFondateurPrix(){
-  const f = proFondateur(); $('proFond').hidden = !f;
-  $('proGo').firstChild.textContent = f ? 'Prendre mon mois offert' : 'Passer à Pro';
+  const f = proFondateur(), s = !f && proSemaineDispo(); $('proFond').hidden = !f; $('proSemaine').hidden = !s;
+  $('proGo').firstChild.textContent = f ? 'Prendre mon mois offert' : s ? `Commencer mes ${PRO_ESSAI_JOURS} jours gratuits` : 'Passer à Pro';
 }
 function proFondateurPropose(essais = 0){
   if (!proFondateur() || fondVu()) return;
@@ -233,7 +245,7 @@ function proFondateurPropose(essais = 0){
   // vide et un abonné passerait pour un joueur d'avant Pro, gardien du lot 68) ; proMaj nous rappelle après sa réponse
   if (proUid() && !proReponse) return;
   // pas par-dessus autre chose : les questions de Vini, une partie, une autre fenêtre ; on réessaie un peu plus tard
-  const occupe = run || preparing || ['pp', 'ordi', 'mlQ', 'serie', 'pro', 'proMerci', 'compte', 'onb', 'quiz', 'cp', 'verif', 'reg'].some(id => $(id) && !$(id).hidden);
+  const occupe = run || preparing || ['pp', 'ordi', 'serie', 'pro', 'proMerci', 'compte', 'onb', 'quiz', 'cp', 'verif', 'reg'].some(id => $(id) && !$(id).hidden);
   if (occupe){ if (essais < 20) setTimeout(() => proFondateurPropose(essais + 1), 5000); return; }
   try { localStorage.setItem(FOND_CLE, '1'); } catch (e) {}
   const v = $('fondVini'); if (!v.firstChild) viniMettre(v, 'danse');
@@ -250,6 +262,73 @@ $('fondPlusTard').addEventListener('click', fondFerme);
 $('fondX').addEventListener('click', fondFerme);
 window.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('fond').hidden){ fondFerme(); e.stopImmediatePropagation(); } }, true);
 
+/* ---------- Lot 76 : 7 jours gratuits, carte demandée ----------
+   Décision de l'utilisateur (19 nov. 2026, « Go, laisse 7 jours gratuits avec la carte ») : après les 3 niveaux gratuits,
+   on propose d'essayer Pro 7 jours. La carte est demandée par Stripe au début, rien n'est prélevé ; au 7e jour, l'abonnement
+   choisi démarre tout seul, sauf s'il a été arrêté avant (« Gérer mon abonnement », puis « Annuler »). Deux jours avant, un mail de
+   service prévient (api/rappel.js). Un seul essai par compte : api/pro.js refuse (409 essai-deja) un compte qui a déjà eu un
+   abonnement, et le dit dans etat (essaiDispo). Les joueurs d'avant Pro gardent leur mois offert, sans carte (plus haut).
+   L'offre (proOffre) est sur la carte de fin d'Apprendre ; on y paie sans passer par la grande fenêtre Pro (proDemarre). */
+const PRO_ESSAI_JOURS = 7;
+let semaineUtilisee = false;   // api/pro.js a répondu que l'essai a déjà servi pour ce compte
+const proSemaineDispo = () => proVerrou() && !proActif() && !proFondateur() && !semaineUtilisee && !(proEtat.uid && proEtat.uid === proUid() && proEtat.essaiDispo === false);
+const proEssaiType = () => proFondateur() ? true : proSemaineDispo() ? 'semaine' : false;
+// La formule choisie sous l'offre. Le mois d'office (demande de l'utilisateur, 20 nov. 2026 : « 49,99 € à l'année, ça peut
+// refroidir ») ; l'année reste à côté, bien visible. La grande fenêtre Pro, elle, garde l'année d'office.
+let offreFormule = 'mois';
+// Ce qu'on paie au bout de l'essai, ou tout de suite
+const offrePrix = () => offreFormule === 'an' ? '49,99 € pour l’année (soit 4,17 € par mois)' : '4,99 € par mois';
+function proOffre(box, q){
+  if (!box) return;
+  box.innerHTML = ''; box._q = q || {};
+  const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+  const f = proFondateur(), s = !f && proSemaineDispo();
+  if (f){
+    box.append(el('p', 'offre-t', 'Ton premier mois est offert'),
+      el('p', 'offre-sous', 'Sans carte bancaire : merci d’avoir été là avant Pro. Ensuite, 4,99 € par mois ou 49,99 € par an, seulement si tu continues.'));
+  } else {
+    box.appendChild(el('p', 'offre-t', s ? `Essaie Pro ${PRO_ESSAI_JOURS} jours, gratuitement` : 'Continue avec DJingood Pro'));
+    // les deux formules, côte à côte : au mois (d'office) ou à l'année
+    const choix = el('div', 'offre-choix'); choix.setAttribute('role', 'group'); choix.setAttribute('aria-label', 'Formule');
+    for (const [fo, nom, prix, plus] of [['mois', 'Au mois', '4,99 €', ''], ['an', 'À l’année', '49,99 €', '2 mois offerts']]){
+      const b = el('button', 'offre-f'); b.type = 'button'; b.dataset.f = fo; b.setAttribute('aria-pressed', String(offreFormule === fo));
+      b.append(el('span', 'offre-f-nom', nom), el('b', '', prix)); if (plus) b.appendChild(el('small', '', plus));
+      b.addEventListener('click', e => { e.stopPropagation(); offreFormule = fo; proOffresRend(); });
+      choix.appendChild(b);
+    }
+    box.appendChild(choix);
+    if (s){
+      const ol = el('ol', 'offre-frise');
+      for (const [q1, t] of [['Aujourd’hui', `Tout s’ouvre : les ${proNbExercices()} exercices, les tutos de Vini, l’entraînement. Ta carte est demandée, mais rien n’est prélevé.`],
+        [`Jour ${PRO_ESSAI_JOURS - 2}`, 'Vini t’envoie un mail pour te prévenir.'],
+        [`Jour ${PRO_ESSAI_JOURS}`, `${offrePrix()}, sauf si tu arrêtes avant (dans « Mon compte »).`]]){
+        const li = el('li'); li.append(el('b', '', q1), el('span', '', t)); ol.appendChild(li); }
+      box.appendChild(ol);
+    } else {
+      const ul = el('ul', 'offre-liste');
+      for (const t of [`Les ${proNbExercices()} exercices, jusqu’au set noté sur 100`, 'Les tutos de Vini', 'L’entraînement et Ma musique']) ul.appendChild(el('li', '', t));
+      box.appendChild(ul);
+    }
+  }
+  const go = el('button', 'offre-go', f ? 'Prendre mon mois offert' : s ? `Commencer mes ${PRO_ESSAI_JOURS} jours gratuits` : 'Continuer avec Pro'); go.type = 'button';
+  go.addEventListener('click', () => proDemarre(box._q));
+  box.appendChild(go);
+  box.appendChild(el('p', 'offre-p', 'Sans engagement · Paiement sécurisé par Stripe'));
+  const m = el('p', 'offre-msg'); m.setAttribute('role', 'status'); m.hidden = true;
+  box.appendChild(m);
+}
+// Redessine les offres affichées (la formule a changé, ou Stripe a répondu)
+function proOffresRend(){ document.querySelectorAll('.offre').forEach(b => { if (b.offsetParent || !b.closest('[hidden]')) proOffre(b, b._q); }); if (typeof finEssaiTexte === 'function') finEssaiTexte(); }
+// « Commencer mes 7 jours gratuits » : tout droit vers la page de paiement de Stripe (en créant d'abord le compte, s'il le
+// faut), sans la grande fenêtre Pro. La règle du lot 68 reste : jamais pousser à payer avant d'avoir joué avec sa table.
+function proDemarre(q){
+  if (!proVerrou()) return;
+  stat('pro-offre', { essai: String(proEssaiType()) });
+  if (!proAJoue()){ proOuvre('', q); return; }
+  proVoulu.ecrire(proPour('', q || {}).voulu);
+  proAvecCompte(proFondateur() ? 'mois' : offreFormule, proEssaiType());
+}
+
 /* ---------- Dans « Mon compte » ---------- */
 const proDate = s => new Date(s * 1000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 // Appelé par cptRend (compte.js) et à chaque nouvelle réponse de Stripe
@@ -260,7 +339,7 @@ function proCompteRend(){
   if (box.hidden) return;
   const actif = proActif(), e = proEtat;
   box.classList.toggle('actif', actif);
-  $('cptProTxt').textContent = actif && e.essai ? `Mois offert${e.jusqua ? " jusqu'au " + proDate(e.jusqua) : ''}`   // lot 68 : le mois offert des joueurs d'avant Pro
+  $('cptProTxt').textContent = actif && e.essai ? `${e.semaine ? 'Essai gratuit' : 'Mois offert'}${e.jusqua ? " jusqu'au " + proDate(e.jusqua) : ''}`   // lot 68 : le mois offert des joueurs d'avant Pro ; lot 76 : les 7 jours gratuits
     : actif ? [e.formule === 'an' ? "À l'année" : e.formule === 'mois' ? 'Au mois' : '', e.jusqua ? (e.annule ? "s'arrête le " : 'renouvelé le ') + proDate(e.jusqua) : ''].filter(Boolean).join(' · ')
     : '4,99 € par mois, ou 49,99 € par an.';
   $('cptProBtn').textContent = actif ? 'Gérer mon abonnement' : 'Découvrir Pro';

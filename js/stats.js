@@ -25,7 +25,7 @@ const STATS_DOMAINES = ['djingood.fr', 'www.djingood.fr', 'coach-bass-swap.verce
 const STATS_KEY = 'coach-stats', STATS_NON = 'umami.disabled';
 // Les étapes comptées une fois par navigateur, dans l'ordre où un joueur les rencontre
 const STATS_ETAPES = ['sans-midi', 'premiers-pas-fin', 'premiers-pas-passes', 'comprendre-1', 'comprendre-fin', 'table-branchee', 'table-choisie', 'table-test', 'table-muet', 'table-reglee', 'premiere-partie', 'premiere-reussite', 'reglage-avant-niveau',
-  'chapitre-1', 'chapitre-2', 'chapitre-3', 'chapitre-4', 'chapitre-5', 'chapitre-6', 'chapitre-7', 'compte-propose', 'compte', 'mails-question', 'quiz-oreille', 'plan-vu', 'mur-vu', 'mur-sans-compte', 'lien-ordi-envoye', 'ordi-depuis-lien', 'rekordbox', 'ma-musique-fiche', 'ma-musique-paire', 'revenu', 'jours-7', 'pro', 'essai-fini', 'fondateur-vu'];   // pro : abonné (lot 59) ; essai-fini : les 3 niveaux gratuits réussis, fondateur-vu : le mois offert proposé (lot 68)
+  'chapitre-1', 'chapitre-2', 'chapitre-3', 'chapitre-4', 'chapitre-5', 'chapitre-6', 'chapitre-7', 'compte-propose', 'compte', 'quiz-oreille', 'plan-vu', 'mur-vu', 'mur-sans-compte', 'lien-ordi-envoye', 'ordi-depuis-lien', 'rekordbox', 'ma-musique-fiche', 'ma-musique-paire', 'revenu', 'jours-7', 'pro', 'essai-fini', 'fondateur-vu'];   // pro : abonné (lot 59) ; essai-fini : les 3 niveaux gratuits réussis, fondateur-vu : le mois offert proposé (lot 68)
 let statsFaits = []; try { statsFaits = JSON.parse(localStorage.getItem(STATS_KEY) || '[]'); } catch (e) {}
 if (!Array.isArray(statsFaits)) statsFaits = [];
 statsFaits = statsFaits.filter(n => STATS_ETAPES.includes(n));
@@ -34,18 +34,70 @@ const statsRefuse = () => { try { return !!localStorage.getItem(STATS_NON); } ca
 const statsPret = () => { try { return !!(window.umami && typeof window.umami.track === 'function'); } catch (e) { return false; } };
 // Vrai si ce qui est envoyé arrivera quelque part : le vrai site avec un identifiant, ou le faux Umami des tests
 const statsActif = () => !statsRefuse() && (statsPret() || (!!STATS_ID && STATS_DOMAINES.includes(location.hostname)));
+
+/* ---------- PostHog (lot 77) ----------
+   Reçoit exactement les mêmes envois qu'Umami (tout ce qui passe par `stat` et `stat1`), mais relie les étapes d'un même
+   joueur entre elles : on voit, joueur par joueur, jusqu'où il va et en combien de jours (entonnoirs, rétention), ce
+   qu'Umami ne sait pas faire. Mêmes règles qu'Umami :
+   - sans cookie et sans rien écrire sur l'appareil (`persistence: 'memory'`) : sans compte, un visiteur redevient un
+     inconnu à chaque chargement de la page ;
+   - avec un compte, ses étapes sont reliées à l'identifiant du compte (`statQui`, appelé par compte.js), jamais à son
+     prénom ni à son adresse ;
+   - seulement sur le vrai site (STATS_DOMAINES), et le même bouton de confidentialite.html (`umami.disabled`) le coupe ;
+   - serveurs en Europe (eu.i.posthog.com) ; ni enregistrement de l'écran, ni clics comptés tout seuls, ni sondages, ni
+     cartes de clics, ni erreurs, ni mesures de vitesse (coupés ici, même si on les allume dans l'interface de PostHog).
+   - PH_ID vide : rien n'est chargé, rien ne part. La clé « phc_… » est publique par nature (elle est lue par le navigateur
+     de chaque visiteur) : elle peut être dans le dépôt, comme STATS_ID.
+   Les tests posent un faux `window.posthog` (capture, identify, reset) avant le chargement, comme le faux Umami. */
+const PH_ID = 'phc_yiqSs64RRKZtKUjV94N2juozMocLRCzTZEKBy9iLBgbZ';
+const PH_HOTE = 'https://eu.i.posthog.com';
+const PH_SRC = 'https://eu-assets.i.posthog.com/static/array.js';
+let phOk = false, phFile = [], phQui = '';   // phFile : envoyés avant que PostHog soit arrivé ; phQui : le compte relié
+const phActif = () => !statsRefuse() && (phOk || (!!PH_ID && STATS_DOMAINES.includes(location.hostname)));
+function phEnvoie(m, a){   // m : 'capture', 'identify' ou 'reset'
+  if (!phActif()) return;
+  if (!phOk){ if (phFile.length < 50) phFile.push([m, a]); return; }
+  try { window.posthog[m].apply(window.posthog, a); } catch (e) {}
+}
+function phCharge(){
+  try { if (window.posthog && typeof window.posthog.capture === 'function'){ phOk = true; return; } } catch (e) {}   // le faux des tests
+  if (!phActif()) return;
+  const s = document.createElement('script'); s.async = true; s.crossOrigin = 'anonymous'; s.src = PH_SRC;
+  s.onload = () => {
+    try {
+      window.posthog.init(PH_ID, { api_host: PH_HOTE, persistence: 'memory', person_profiles: 'always',
+        autocapture: false, capture_pageview: true, capture_pageleave: true, disable_session_recording: true, disable_surveys: true,
+        enable_heatmaps: false, capture_dead_clicks: false, capture_exceptions: false, capture_performance: false });
+      phOk = true;
+    } catch (e) { return; }
+    const f = phFile; phFile = []; f.forEach(([m, a]) => phEnvoie(m, a));
+  };
+  document.head.appendChild(s);
+}
+// Le compte connecté (compte.js) : ses étapes sont reliées à son identifiant ; '' à la déconnexion (rien si personne ne l'était)
+function statQui(uid){
+  uid = typeof uid === 'string' ? uid : '';
+  if (uid === phQui) return;
+  const avant = phQui; phQui = uid;
+  if (uid) phEnvoie('identify', [uid]); else if (avant) phEnvoie('reset', []);
+}
+
 function stat(nom, d){
+  phEnvoie('capture', [nom, d || {}]);
+  statUmami(nom, d);
+}
+function statUmami(nom, d){
   if (!statsActif()) return;
   if (!statsPret()){ if (statsFile.length < 50) statsFile.push([nom, d]); return; }
   try { if (d) window.umami.track(nom, d); else window.umami.track(nom); } catch (e) {}
 }
 // Une étape du jeu : une seule fois par navigateur, et seulement si elle part vraiment (sinon elle resterait marquée pour rien)
 function stat1(nom, d){
-  if (!STATS_ETAPES.includes(nom) || statsFaits.includes(nom) || !statsActif()) return;
+  if (!STATS_ETAPES.includes(nom) || statsFaits.includes(nom) || !(statsActif() || phActif())) return;
   statsFaits.push(nom); try { localStorage.setItem(STATS_KEY, JSON.stringify(statsFaits)); } catch (e) {}
   stat(nom, d);
 }
-function statsVide(){ const f = statsFile; statsFile = []; f.forEach(([n, d]) => stat(n, d)); }
+function statsVide(){ const f = statsFile; statsFile = []; f.forEach(([n, d]) => statUmami(n, d)); }
 function statsCharge(){
   if (!statsActif()) return;
   if (statsPret()){ statsVide(); return; }
@@ -58,3 +110,4 @@ function statsCharge(){
 // Le bouton de confidentialite.html
 function statsRefuser(non){ try { if (non) localStorage.setItem(STATS_NON, '1'); else localStorage.removeItem(STATS_NON); } catch (e) {} }
 statsCharge();
+phCharge();

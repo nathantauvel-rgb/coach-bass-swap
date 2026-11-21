@@ -16,13 +16,18 @@
 
    Actions (POST, JSON) :
    - `etat`    : { pro, formule ('mois' | 'an' | null), jusqua (secondes), annule (s'arrête à la fin de la période),
-                 essai (pendant le mois offert), offert (pas abonné : le mois offert l'attend, compte d'avant la limite
-                 jamais abonné, lot 68) } ;
+                 essai (pendant un essai gratuit), semaine (pendant les 7 jours gratuits, lot 76), offert (pas abonné : le
+                 mois offert l'attend, compte d'avant la limite jamais abonné, lot 68), essaiDispo (pas abonné : jamais
+                 abonné, donc les 7 jours gratuits sont possibles, lot 76) } ;
    - `payer`   : { formule, essai? } → { url } de la page de paiement de Stripe (409 si déjà Pro). Avec `essai: true`
                  (lot 68) : le mois offert aux comptes créés avant la limite (FONDATEURS_AVANT, plus bas), 30 jours sans
                  carte bancaire ; si aucune carte n'est ajoutée, l'abonnement s'arrête tout seul à la fin. 403
                  `essai-reserve` pour un compte plus récent ; une seule fois par compte : 409 `essai-deja` si ce compte a
-                 déjà eu un abonnement, quel qu'il soit ;
+                 déjà eu un abonnement, quel qu'il soit. Avec `essai: 'semaine'` (lot 76, décision de l'utilisateur du
+                 19 nov. 2026) : 7 jours gratuits pour tout compte jamais abonné, **carte demandée** par Stripe au début ;
+                 au 7e jour, l'abonnement démarre tout seul (sauf s'il a été arrêté). 409 `essai-deja` sinon. L'abonnement
+                 porte `metadata.essai` ('semaine' ou 'mois-offert') : api/rappel.js prévient par mail 2 jours avant la fin
+                 des essais 'semaine' ;
    - `session` : { id } → comme `etat`, juste après le paiement (la recherche de Stripe met jusqu'à une minute à voir un
                  nouvel abonnement ; la session de paiement, elle, le connaît tout de suite) ;
    - `gerer`   : { url } de la page « Gérer mon abonnement » de Stripe (changer de formule, de carte, factures, arrêter :
@@ -55,7 +60,8 @@ const finPeriode = s => s.current_period_end || (s.items && s.items.data && s.it
 function etatDe(s, prix){
   if (!s || !ACTIFS.includes(s.status)) return { pro: false, formule: null, jusqua: null, annule: false };
   const p = s.items && s.items.data && s.items.data[0] && s.items.data[0].price && s.items.data[0].price.id;
-  return { pro: true, formule: p === prix.an ? 'an' : p === prix.mois ? 'mois' : null, jusqua: finPeriode(s), annule: !!s.cancel_at_period_end, essai: s.status === 'trialing' };
+  return { pro: true, formule: p === prix.an ? 'an' : p === prix.mois ? 'mois' : null, jusqua: finPeriode(s), annule: !!s.cancel_at_period_end, essai: s.status === 'trialing',
+    semaine: s.status === 'trialing' && !!s.metadata && s.metadata.essai === 'semaine' };
 }
 /* L'abonnement de ce compte : le plus récent qui est encore actif.
    Deux chemins, parce que **la recherche de Stripe met jusqu'à une minute à voir un nouvel abonnement** (vu avec le vrai
@@ -143,26 +149,35 @@ async function handler(req, res){
   try {
     if (b.action === 'etat'){
       const e = etatDe(await abonnement(qui, cle), prix);
-      if (!e.pro) e.offert = await offertA(m[1], qui, cle);   // lot 68 : le mois offert des comptes déjà créés
+      if (!e.pro){
+        e.offert = await offertA(m[1], qui, cle);   // lot 68 : le mois offert des comptes déjà créés
+        // lot 76 : les 7 jours gratuits, pour un compte jamais abonné (Stripe qui répond mal : on le propose, payer revérifie)
+        try { e.essaiDispo = !(await dejaAbonne(qui, cle)); } catch (er) { e.essaiDispo = true; }
+      }
       return repond(res, 200, e);
     }
 
     if (b.action === 'payer'){
       if (!FORMULES.includes(b.formule)) return repond(res, 400, { erreur: 'formule' });
       if (await abonnement(qui, cle)) return repond(res, 409, { erreur: 'deja-pro' });
-      const essai = b.essai === true;
+      const essai = b.essai === true, semaine = b.essai === 'semaine';
       if (essai){
         let f; try { f = await fondateur(m[1], qui); } catch (e) { return repond(res, 502, { erreur: 'google' }); }
         if (!f) return repond(res, 403, { erreur: 'essai-reserve' });   // un compte créé après la limite : pas de mois offert
         if (await dejaAbonne(qui, cle)) return repond(res, 409, { erreur: 'essai-deja' });
       }
+      // lot 76 : les 7 jours gratuits, une seule fois par compte (un compte qui a déjà eu un abonnement paie tout de suite)
+      if (semaine && await dejaAbonne(qui, cle)) return repond(res, 409, { erreur: 'essai-deja' });
       const s = await stripe('/checkout/sessions', cle, { corps: Object.assign({
         mode: 'subscription', locale: 'fr', allow_promotion_codes: 'true',
         line_items: { 0: { price: prix[b.formule], quantity: 1 } },
         client_reference_id: qui.uid, customer_email: qui.email,
-        metadata: { uid: qui.uid }, subscription_data: Object.assign({ metadata: { uid: qui.uid } },
+        metadata: { uid: qui.uid }, subscription_data: Object.assign({ metadata: Object.assign({ uid: qui.uid }, essai ? { essai: 'mois-offert' } : semaine ? { essai: 'semaine' } : {}) },
           // le mois offert : 30 jours, sans carte ; sans carte ajoutée d'ici là, l'abonnement s'arrête (rien n'est prélevé)
-          essai ? { trial_period_days: 30, trial_settings: { end_behavior: { missing_payment_method: 'cancel' } } } : {}),
+          essai ? { trial_period_days: 30, trial_settings: { end_behavior: { missing_payment_method: 'cancel' } } } : {},
+          // lot 76 : 7 jours gratuits, la carte est demandée (le réglage par défaut de Stripe) ; Stripe écrit lui-même sur sa
+          // page « 7 jours gratuits » et la date du premier paiement
+          semaine ? { trial_period_days: 7 } : {}),
         success_url: site + '/?pro=merci&session={CHECKOUT_SESSION_ID}#apprendre', cancel_url: site + '/#apprendre',
         // la case à cocher obligatoire : les conditions de vente, et l'accès tout de suite (le joueur renonce au délai de
         // rétractation de 14 jours, comme la loi le permet pour un contenu numérique ouvert immédiatement)

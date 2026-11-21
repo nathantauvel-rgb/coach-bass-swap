@@ -1,4 +1,4 @@
-// Lot 54 « Vini t'écrit » : l'accord pour les mails (case, question, interrupteur), l'adresse confirmée avant d'écrire,
+// Lot 54 « Vini t'écrit » : l'accord pour les mails (case, interrupteur ; la question des anciens comptes est retirée au lot 78), l'adresse confirmée avant d'écrire,
 // la carte de fin qui propose le compte, et la fonction api/mails.js qui parle à Brevo. Le faux Firebase est celui des
 // tests du compte ; /api/mails est remplacée par une fausse réponse (page.route), Brevo et les clés de Google par des
 // faux côté Node.
@@ -8,7 +8,7 @@ const { ouvrir, sansBandeau, jouer } = require('./outils');
 const { FAUX, dejaConnecte, ouvrirCompte, rouvrirCompte, lienClique } = require('./faux-firebase');
 
 const S = o => JSON.stringify(o);
-const MAILS = 'window.DJINGO_MAILS = true;';   // les mails allumés (ML_PRET reste faux tant que Brevo n'est pas réglé)
+const MAILS = 'window.DJINGO_MAILS = true;';   // les mails allumés (ML_PRET est vrai depuis le lot 76, mais le serveur des tests l'éteint)
 const reponse = page => page.evaluate(() => { try { return JSON.parse(localStorage.getItem('coach-mails') || 'null'); } catch (e) { return null; } });
 // Une session ouverte avec un compte par e-mail dont l'adresse n'est pas encore confirmée
 const pasConfirme = `try { sessionStorage.setItem('__faux_user', JSON.stringify({ uid: 'u2', displayName: 'Léa', email: 'lea@exemple.fr', emailVerified: false })); } catch (e) {}`;
@@ -38,10 +38,12 @@ const creer = async (page, coche) => {
 };
 
 test.describe('Tant que les mails ne sont pas allumés', () => {
-  test('ni case, ni question, ni interrupteur, et rien n’est envoyé', async ({ page }) => {
+  test('ni case, ni interrupteur, et rien n’est envoyé', async ({ page }) => {
     const api = await fausseApi(page);
     const err = await ouvrir(page, { avant: FAUX, onglet: 'accueil' });
-    await ouvrirCompte(page); await page.locator('#cptVersCreer').click();
+    await ouvrirCompte(page);
+    await expect(page.locator('#cptAccord0')).toBeHidden();
+    await page.locator('#cptVersCreer').click();
     await expect(page.locator('#cptAccord')).toBeHidden();
     await expect(page.locator('#cptNote')).toContainText('Rien d’autre, et rien n’est partagé');
     await page.locator('#cptPrenom').fill('Léa'); await page.locator('#cptMail').fill('lea@exemple.fr'); await page.locator('#cptMdp').fill('secret123');
@@ -51,7 +53,6 @@ test.describe('Tant que les mails ne sont pas allumés', () => {
     await expect(page.locator('#cptMailsRow')).toBeHidden();
     await page.locator('#cptClose').click();
     await page.waitForTimeout(2500);
-    await expect(page.locator('#mlQ')).toBeHidden();
     expect(api.appels).toEqual([]);
     expect(await page.evaluate(() => window.__verifEnvois || 0)).toBe(0);
     expect(err).toEqual([]); await sansBandeau(page);
@@ -59,13 +60,23 @@ test.describe('Tant que les mails ne sont pas allumés', () => {
 });
 
 test.describe('La case « Vini peut m’écrire »', () => {
-  test('seulement en créant un compte, jamais cochée d’avance, et elle dit ce que sont les mails', async ({ page }) => {
+  test('une case normale, jamais cochée d’avance, qui dit ce que sont les mails (lot 78)', async ({ page }) => {
     await ouvrir(page, { avant: FAUX + MAILS, onglet: 'accueil' });
     await ouvrirCompte(page);
-    await expect(page.locator('#cptAccord')).toBeHidden();               // accueil de la fenêtre
+    // premier écran : la case est sous « Continuer avec Google »
+    await expect(page.locator('#cptAccord')).toBeHidden();
+    await expect(page.locator('#cptAccord0')).toBeVisible();
+    await expect(page.locator('#cptMails0')).not.toBeChecked();
+    await expect(page.locator('#cptAccord0')).toContainText('Recevoir les conseils de Vini par mail : 3 pour démarrer, puis un par semaine au plus');
+    expect(await page.locator('#cptMails0').evaluate(e => getComputedStyle(e).appearance)).not.toBe('none');   // une vraie case, pas un dessin
+    // cochée ici, elle l'est aussi dans le formulaire
+    await page.locator('#cptAccord0').click();
     await page.locator('#cptVersCreer').click();
+    await expect(page.locator('#cptAccord0')).toBeHidden();
     await expect(page.locator('#cptAccord')).toBeVisible();
-    await expect(page.locator('#cptAccord')).toContainText('Des astuces pour progresser et les nouveautés de DJingood');
+    await expect(page.locator('#cptMails')).toBeChecked();
+    await page.locator('#cptAccord').click();
+    await expect(page.locator('#cptAccord')).toContainText('Recevoir les conseils de Vini par mail');
     await expect(page.locator('#cptMails')).not.toBeChecked();
     await expect(page.locator('#cptNote')).toContainText('ne sert à t’écrire que si tu coches la case');
     await page.locator('#cptBascule').click();                             // « J'ai déjà un compte »
@@ -103,113 +114,83 @@ test.describe('La case « Vini peut m’écrire »', () => {
     expect(err).toEqual([]); await sansBandeau(page);
   });
 
-  test('avec Google (premier écran, pas de case) : Vini pose la question juste après, et l’adresse part tout de suite', async ({ page }) => {
+  test('avec Google, case cochée sous le bouton : l’adresse part tout de suite', async ({ page }) => {
     const api = await fausseApi(page);
     await ouvrir(page, { avant: FAUX + MAILS, onglet: 'accueil' });
     await ouvrirCompte(page);
+    await page.locator('#cptAccord0').click();
     await page.locator('#cptIn').click();
     await expect(page.locator('#compte')).toBeHidden({ timeout: 15000 });
-    await page.locator('#mlOui').click({ timeout: 10000 });
     await expect.poll(() => api.appels.length).toBe(1);
-    expect(api.appels[0]).toMatchObject({ action: 'oui', ou: 'question', prenom: 'Nathan', jeton: 'Bearer jeton-u1' });
+    expect(api.appels[0]).toMatchObject({ action: 'oui', ou: 'creation', prenom: 'Nathan', jeton: 'Bearer jeton-u1' });
     expect(await page.evaluate(() => window.__verifEnvois || 0)).toBe(0);
     await expect.poll(() => reponse(page)).toMatchObject({ uid: 'u1', rep: 'oui' });
   });
 
-  test('pas cochée : seulement un « non », pas de lien, et Vini ne posera pas la question', async ({ page }) => {
+  test('avec Google, case pas cochée : rien ne part, et aucune fenêtre ne demande après', async ({ page }) => {
+    const api = await fausseApi(page);
+    const err = await ouvrir(page, { avant: FAUX + MAILS, onglet: 'accueil' });
+    await ouvrirCompte(page);
+    await page.locator('#cptIn').click();
+    await expect(page.locator('#compte')).toBeHidden({ timeout: 15000 });
+    await page.waitForTimeout(3500);
+    expect(await page.locator('[role="dialog"]:not([hidden])').count()).toBe(0);
+    expect(api.appels).toEqual([]);
+    expect(await reponse(page)).toBe(null);
+    expect(err).toEqual([]); await sansBandeau(page);
+  });
+
+  test('pas cochée dans le formulaire : seulement un « non », pas de lien', async ({ page }) => {
     const api = await fausseApi(page);
     await ouvrir(page, { avant: FAUX + MAILS, onglet: 'accueil' });
     await creer(page, false);
     await expect.poll(() => reponse(page)).toMatchObject({ uid: 'm1', rep: 'non', ou: 'creation' });
     await expect(page.locator('#compte')).toBeHidden();
     await page.waitForTimeout(2500);
-    await expect(page.locator('#mlQ')).toBeHidden();
     expect(api.appels.map(a => [a.action, a.ou])).toEqual([['non', 'creation']]);
     expect(await page.evaluate(() => window.__verifEnvois || 0)).toBe(0);
   });
 });
 
-test.describe('La question, pour les comptes créés avant', () => {
+test.describe('Les comptes créés avant les mails (lot 78 : plus de fenêtre « Je peux t’écrire ? »)', () => {
   const connecte = dejaConnecte() + FAUX + MAILS;
 
-  test('posée une fois sur l’accueil ; « Non merci » : on ne redemande pas', async ({ page }) => {
+  test('aucune fenêtre ne s’ouvre sur l’accueil, et rien n’est envoyé', async ({ page }) => {
     const api = await fausseApi(page);
     const err = await ouvrir(page, { avant: connecte, onglet: 'accueil' });
-    await expect(page.locator('#mlQ')).toBeVisible({ timeout: 8000 });
-    await expect(page.locator('#mlTitre')).toHaveText('Nathan, je peux t\'écrire ?');
-    await expect(page.locator('#mlQ .mltexte')).toContainText('des astuces pour progresser et les nouveautés');
-    await page.locator('#mlNon').click();
-    await expect(page.locator('#mlQ')).toBeHidden();
-    expect(await reponse(page)).toMatchObject({ uid: 'u1', rep: 'non', ou: 'question' });
-    await page.reload();
-    await page.waitForTimeout(3500);
-    await expect(page.locator('#mlQ')).toBeHidden();
-    // le « non » part aussi chez Brevo (l'adresse a pu y être inscrite depuis un autre appareil)
-    expect(api.appels.map(a => [a.action, a.ou])).toEqual([['non', 'question']]);
+    await page.waitForTimeout(4000);
+    expect(await page.locator('[role="dialog"]:not([hidden])').count()).toBe(0);
+    expect(await page.locator('#mlQ').count()).toBe(0);
+    expect(api.appels).toEqual([]);
+    expect(await reponse(page)).toBe(null);
     expect(err).toEqual([]); await sansBandeau(page);
   });
 
-  test('« Oui, écris-moi » : l’adresse part chez Brevo', async ({ page }) => {
+  test('ils peuvent dire oui avec l’interrupteur de « Mon compte »', async ({ page }) => {
     const api = await fausseApi(page);
     await ouvrir(page, { avant: connecte, onglet: 'accueil' });
-    await page.locator('#mlOui').click({ timeout: 8000 });
-    await expect(page.locator('#mlQ')).toBeHidden();
-    expect(api.appels).toHaveLength(1);
-    expect(api.appels[0]).toMatchObject({ action: 'oui', ou: 'question', prenom: 'Nathan', jeton: 'Bearer jeton-u1' });
-    expect(await reponse(page)).toMatchObject({ uid: 'u1', rep: 'oui', ou: 'question' });
+    await page.waitForTimeout(1500);
+    await ouvrirCompte(page);
+    await expect(page.locator('#cptMailsRow')).toBeVisible();
+    await expect(page.locator('#cptMailsInter')).toHaveAttribute('aria-checked', 'false');
+    await expect.poll(() => api.appels.map(a => a.action)).toEqual(['etat']);
+    await page.locator('#cptMailsInter').click();
+    await expect(page.locator('#cptMailsInter')).toHaveAttribute('aria-checked', 'true');
+    await expect(page.locator('#cptMsg')).toContainText('Vini t’écrira');
+    expect(api.appels.map(a => [a.action, a.ou])).toEqual([['etat', undefined], ['oui', 'compte']]);
+    expect(await reponse(page)).toMatchObject({ uid: 'u1', rep: 'oui', ou: 'compte' });
   });
+});
 
-  test('« Oui » avec une adresse pas confirmée : le lien part, Vini le dit, et fermer ne vaut pas « non »', async ({ page }) => {
+test.describe('La réponse d’un autre compte', () => {
+  test('sur ce navigateur, elle ne compte pas : l’interrupteur reste éteint et rien ne part', async ({ page }) => {
     const api = await fausseApi(page);
-    await ouvrir(page, { avant: pasConfirme + FAUX + MAILS, onglet: 'accueil' });
-    await page.locator('#mlOui').click({ timeout: 8000 });
-    await expect(page.locator('#mlMsg')).toContainText('Clique sur le lien dedans pour confirmer ton adresse');
-    await expect(page.locator('#mlOui')).toHaveText('J\'ai compris');
-    await expect(page.locator('#mlNon')).toBeHidden();
-    expect(await page.evaluate(() => window.__verifEnvois || 0)).toBe(1);
-    await page.keyboard.press('Escape');
-    await expect(page.locator('#mlQ')).toBeHidden();
-    expect(await reponse(page)).toMatchObject({ uid: 'u2', rep: 'attente', ou: 'question' });
-    expect(api.appels).toEqual([]);
-    // tant qu'elle n'est pas confirmée, rien ne part, même en revenant
-    await page.reload(); await page.waitForTimeout(2500);
-    expect(api.appels).toEqual([]);
-    await expect(page.locator('#mlQ')).toBeHidden();
-  });
-
-  test('Échap vaut « non »', async ({ page }) => {
-    await fausseApi(page);
-    await ouvrir(page, { avant: connecte, onglet: 'accueil' });
-    await expect(page.locator('#mlQ')).toBeVisible({ timeout: 8000 });
-    await page.keyboard.press('Escape');
-    await expect(page.locator('#mlQ')).toBeHidden();
-    expect(await reponse(page)).toMatchObject({ rep: 'non', ou: 'question' });
-  });
-
-  test('pas de réseau : on le dit, et fermer ne vaut pas « non »', async ({ page }) => {
-    await fausseApi(page, { panne: true });
-    await ouvrir(page, { avant: connecte, onglet: 'accueil' });
-    await page.locator('#mlOui').click({ timeout: 8000 });
-    await expect(page.locator('#mlMsg')).toContainText('Ça n’a pas marché');
-    await expect(page.locator('#mlQ')).toBeVisible();
-    await page.locator('#mlFerme').click();
-    await expect(page.locator('#mlQ')).toBeHidden();
-    expect(await reponse(page)).toBe(null);
-  });
-
-  test('pas pendant une autre page : elle attend le retour à l’accueil', async ({ page }) => {
-    await fausseApi(page);
-    await ouvrir(page, { avant: connecte, onglet: 'progres' });
-    await page.waitForTimeout(3500);
-    await expect(page.locator('#mlQ')).toBeHidden();
-    await page.evaluate(() => { location.hash = '#accueil'; });
-    await expect(page.locator('#mlQ')).toBeVisible({ timeout: 8000 });
-  });
-
-  test('la réponse d’un autre compte, sur ce navigateur, ne compte pas', async ({ page }) => {
-    await fausseApi(page);
-    await ouvrir(page, { avant: connecte, onglet: 'accueil', stockage: { 'coach-mails': S({ uid: 'autre', rep: 'oui', le: '2026-10-29', ou: 'creation' }) } });
-    await expect(page.locator('#mlQ')).toBeVisible({ timeout: 8000 });
+    await ouvrir(page, { avant: dejaConnecte() + FAUX + MAILS, onglet: 'accueil', stockage: { 'coach-mails': S({ uid: 'autre', rep: 'oui', le: '2026-10-29', ou: 'creation' }) } });
+    await page.waitForTimeout(1500);
+    await ouvrirCompte(page);
+    await expect(page.locator('#cptMailsRow')).toBeVisible();
+    await expect(page.locator('#cptMailsInter')).toHaveAttribute('aria-checked', 'false');
+    await expect.poll(() => api.appels.map(a => a.action)).toEqual(['etat']);
   });
 });
 
@@ -454,4 +435,12 @@ test('chaque prochaine étape que le site peut envoyer est dans la liste de la f
   await ouvrir(page);
   const noms = await page.evaluate(() => [...BASE_LESSONS.map(l => l.title), ...Object.values(STAGES).map(s => s.title)]);
   expect(noms.filter(n => !NIVEAUX.includes(n))).toEqual([]);
+});
+
+// Lot 76 : les mails de Vini sont allumés en ligne ; le serveur des tests les éteint (comme Pro). La ligne doit garder la forme
+// que tests/serveur.js reconnaît.
+test('ML_PRET est allumé dans js/mails.js, et le serveur des tests l’éteint', async ({ request }) => {
+  const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'js', 'mails.js'), 'utf8');
+  expect(src).toMatch(/const ML_PRET = true;/);
+  expect(await (await request.get('/js/mails.js')).text()).toMatch(/const ML_PRET = false;/);
 });

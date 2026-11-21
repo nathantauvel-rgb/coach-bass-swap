@@ -1,19 +1,21 @@
 // Lot 11 : un écran = une chose à faire (chapitres et style repliés, « Mes progrès », carte de résultat).
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau } = require('./outils');
+const { ouvrir, sansBandeau, menuNiveaux } = require('./outils');
 
 const S = o => JSON.stringify(o);
 
 test.describe('Écran d\'un niveau', () => {
-  // Lot 64 : les chapitres sont une rangée toujours visible (plus de menu déroulant), avec leur progression en pourcentage
-  test('les chapitres tiennent sur une ligne, toujours visibles, sans les chapitres pas encore écrits', async ({ page }) => {
+  // Lot 64 : les chapitres avec leur progression en pourcentage ; lot 76 : une ligne chacun, dans le menu « Tous les niveaux »
+  test('les chapitres sont dans le menu « Tous les niveaux », une ligne chacun, sans les chapitres pas encore écrits', async ({ page }) => {
     const erreurs = await ouvrir(page, { stockage: { 'coach-lecons': S({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 2 }) } });
     await expect(page.locator('#chapBtn')).toHaveText('Chapitre 1 · Les bases');
+    await expect(page.locator('#chapters')).toBeHidden();
+    await menuNiveaux(page);
     await expect(page.locator('#chapters')).toBeVisible();
     await expect(page.locator('.chap')).toHaveCount(7);
     await expect(page.locator('.chap').nth(0)).toContainText('67 %');   // 14 étoiles sur 21
     const lignes = await page.locator('.chap').evaluateAll(els => new Set(els.map(e => Math.round(e.getBoundingClientRect().top))).size);
-    expect(lignes).toBe(1);
+    expect(lignes).toBe(7);
     await page.locator('.chap').nth(1).click();
     await expect(page.locator('#chapters')).toBeVisible();
     await expect(page.locator('#chapBtn')).toHaveText('Chapitre 2 · La maîtrise');
@@ -51,6 +53,7 @@ test.describe('Changer de chapitre', () => {
   test('depuis le niveau 6 du chapitre 1, ouvrir le chapitre 4 (4 niveaux seulement) marche sans erreur', async ({ page }) => {
     const erreurs = await ouvrir(page, { stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3, 1: 3, 2: 3, 3: 3, 4: 2 }) } });
     await page.locator('.node').nth(5).click();
+    await menuNiveaux(page);
     await page.locator('#chapters .chap', { hasText: 'Les combos' }).click();
     await expect(page.locator('#chapBtn')).toHaveText('Chapitre 4 · Les combos');
     await expect(page.locator('.node')).toHaveCount(4);

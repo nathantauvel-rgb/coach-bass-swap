@@ -54,12 +54,35 @@ https://djingood.fr/?utm_source=tiktok
 
 Umami rangera alors ces visiteurs sous « tiktok ».
 
+## 5. PostHog : suivre chaque joueur du téléphone jusqu'à l'abonnement (lot 77, 10 minutes, une seule fois)
+
+Umami donne des totaux. PostHog reçoit **les mêmes étapes**, mais les relie entre elles pour chaque joueur : tu vois
+combien de gens passent d'une étape à la suivante, et en combien de jours. Surtout, avec un compte, PostHog relie la visite
+sur le téléphone (où le compte est créé) à la visite sur l'ordinateur (où le lien du mail est ouvert) : c'est le seul
+moyen de mesurer le passage du téléphone à l'ordinateur.
+
+Comme Umami : sans cookie, sans aucun identifiant gardé sur l'appareil, seulement sur le vrai site, et le bouton de la page de
+confidentialité le coupe (donc si tu as déjà fait l'étape 3, tes propres visites ne sont pas comptées non plus).
+Pas d'enregistrement de l'écran.
+
+1. Va sur https://eu.posthog.com/signup : **bien la version EU** (les données restent en Europe). Crée le compte.
+2. Quand PostHog propose d'installer un bout de code : passe cette étape, il est déjà dans le site.
+3. **Settings** → **Project** → copie la **Project API key** (elle commence par `phc_`) et donne-la à Claude.
+   Ce n'est pas un secret (elle est lue par le navigateur de chaque visiteur) : elle peut aller dans le chat, contrairement
+   à la clé Stripe. Claude la met dans `PH_ID`, en haut de `js/stats.js`.
+4. Toujours dans **Settings** → **Project** : active **Discard client IP data** (PostHog ne garde pas l'adresse IP).
+5. Après la mise en ligne, crée l'entonnoir : **Product analytics** → **New insight** → **Funnel**, avec ces étapes dans
+   l'ordre : `mur-vu` → `compte` → `lien-ordi-envoye` → `ordi-depuis-lien` → `table-branchee` → `premiere-reussite` →
+   `essai-fini` → `pro`. Fenêtre de conversion : **14 jours**. Enregistre-le sous le nom « Du téléphone à Pro ».
+
 ## Où lire quoi
 
 | Tu veux savoir… | Où regarder |
 |---|---|
 | Combien de visiteurs, d'où, sur quel appareil | Umami → ton site → **Overview** |
 | Où les joueurs s'arrêtent | Umami → **Events** (ou **Reports → Funnel** avec les étapes ci-dessous) |
+| Combien passent du téléphone à l'ordinateur, puis à Pro, et en combien de jours | PostHog → l'entonnoir « Du téléphone à Pro » |
+| Le chemin d'un joueur en particulier | PostHog → **People** → un joueur (identifiant du compte) → ses événements |
 | Les niveaux pas clairs | Umami → **Events** → `clair` → propriétés `niveau` et `reponse` |
 | Ce que les joueurs écrivent | Firebase → **Firestore Database** → collection `avis` |
 | La progression des inscrits | Firebase → **Firestore Database** → collection `joueurs` |
