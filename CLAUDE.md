@@ -32,6 +32,40 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 81 « La caisse » : FAIT, PAS PUBLIÉ (21 nov. 2026)**. Né de l'analyse d'une vidéo YouTube sur les ventes d'un SaaS
+  (`Documents\MARKETING\07-video-saas.md`). Décisions de l'utilisateur, mot pour mot : « Ok pour l'année d'office, rattrapage
+  à 34,99 € pendant 48 h, Non pour le prix mensuel et annuel on n'y change rien en temps normal, Oui propose l'essai de 7 jours
+  plus tôt, Dès la première réussite c'est très bien, On fait pas de offrir à du jingo pro pour le moment, Et on ne change pas
+  l'option payante au moment de payer ». Copie `Documents\coach-dj-lot81`, branche `lot-81-caisse` depuis `388b216`, serveur
+  `coach-dj-lot81` (port 8791), tests avec `DJ_PORT=8796`. Ce qui change :
+  1. **L'année d'office** sur la carte de fin (`proOffre`, `offreFormule = 'an'`), en premier, affichée « 4,17 €/mois » avec
+     « 49,99 € par an » dessous ; le mois à côté (« 4,99 €/mois », « payé chaque mois »). Même chose sur la carte de résultat
+     du niveau 3 (`finEssaiTexte`). Remplace le mois d'office du 20 nov. Les prix ne changent pas.
+  2. **Le rattrapage** : quelqu'un qui a ouvert la page de paiement sans payer voit, pendant 48 h et une seule fois, « Ta
+     première année à 34,99 € » (au lieu de 49,99 €) avec la vraie date limite. C'est `api/pro.js` qui calcule la fenêtre
+     (`rattrapageJusqua` : la PREMIÈRE page de paiement Stripe de ce compte depuis `RATTRAPAGE_DEPUIS`, 21 nov. 2026 ;
+     réglable avec `PRO_RATTRAPAGE_DEPUIS` dans Vercel) ; `etat` renvoie `rattrapage` (secondes), `payer` avec
+     `rattrapage: true` la revérifie (410 `rattrapage-fini`) et applique le coupon `djingood-rattrapage-1` (−15 €,
+     « repeating » 1 mois pour passer la facture à 0 € de l'essai), **créé tout seul chez Stripe au premier usage** (rien à
+     régler à la main). Avec le rattrapage, pas de champ « code promo » (Stripe refuse les deux). L'essai de 7 jours reste.
+     Retour de Stripe sans payer : `cancel_url` = `/?pro=retour#apprendre` ; si la carte de fin n'est pas à l'écran, la fenêtre
+     Pro se rouvre avec l'offre (`proRattrapageMontre`). Le mail du 5e jour (`api/rappel.js`) dit « 34,99 € pour ta première
+     année » (metadata `rattrapage`). Badge « −30 % » dans la fenêtre Pro pendant l'offre.
+  3. **L'essai dès la première réussite** (`essaiTot`, niveaux.js) : niveaux 1 et 2 réussis (2 ★ ou plus), une table branchée
+     (`midiCount > 0`), l'essai encore possible : bloc « Ça marche avec ta table ! » à la place de « Garde ta progression » ;
+     « Voir l'essai gratuit » ouvre la fenêtre Pro (après paiement : le niveau suivant). « Niveau suivant » reste le bouton
+     principal. Le niveau 3 garde sa grande carte.
+  4. **Le plan rappelé dans l'offre** (`proPlan`) : « Ton plan : Pioneer DDJ-FLX4 · 10 min par jour » + « Dans 2 semaines : ta
+     première vraie transition. » (réponses des Premiers pas, `accueil`) ; pas pendant le rattrapage (place).
+  5. **« Comment tu as connu DJingood ? »** sur « Bienvenue dans Pro » seulement (TikTok, Instagram, YouTube, Google, Un ami,
+     Autre) → `stat('pro-source', { d })` (Umami et PostHog), une fois (`coach-source-pro`).
+  6. **presentation.html** : titre « Ta première vraie transition, en deux semaines. » (le résultat), la phrase dessous dit
+     comment. Statistiques nouvelles : `essai-tot`, `rattrapage-vu`, `pro-source`. **Pages légales** : `cgv.html` / `terms.html`
+     ont un paragraphe « La première année à 34,99 € » et le renouvellement dit « au prix de ta formule (49,99 € par an après
+     une première année à 34,99 €) » au lieu de « au même prix » ; `confidentialite.html` / `privacy.html` citent la question. Tout est traduit en anglais (bloc « Lot 81 »
+     à la fin de `js/anglais.js`). Tests : `tests/caisse.spec.js` (15), 4 de plus dans `tests/pro.spec.js`, ceux du lot 76
+     mis à l'année d'office ; point 42 de la checklist FLX4. Captures : `captures/lot81/apres/` (scripts `apres.js`,
+     `mesure.js` : la carte de fin tient en 1366 × 768, bas à 741 px, 758 px pendant le rattrapage).
 - **Lot 80 « Le site en anglais » : PUBLIÉ le 21 nov. 2026** (« ok publie quand c'est vert » ; `17b4ff1`, puis cette
   note ; suite complète verte : 895 + le test de la barre d'espace du chapitre 6, instable sous la charge, passé 3 fois sur
   3 seul ; **production vérifiée** sur djingood.fr en 1366 × 768 : `?lang=en` tout en anglais sans phrase oubliée, le

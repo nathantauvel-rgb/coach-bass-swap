@@ -45,11 +45,14 @@ async function stripe(chemin, cle, corps){
 // Le jour de la fin de l'essai, en français, heure de Paris : « jeudi 26 novembre »
 const jour = s => new Date(s * 1000).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' });
 // Ce qui sera prélevé : « 49,99 € pour l'année » ou « 4,99 € par mois », lu sur le prix de l'abonnement (jamais deviné)
+// Lot 81 : un abonnement pris avec le rattrapage (metadata.rattrapage, api/pro.js) paie sa première année 15 € de moins
+const rattrape = s => !!(s && s.metadata && s.metadata.rattrapage === '1');
+const premierMontant = (s, p) => p.unit_amount - (rattrape(s) && p.recurring && p.recurring.interval === 'year' ? require('./pro.js').RATTRAPAGE_REMISE : 0);
 function montant(s){
   const p = s && s.items && s.items.data && s.items.data[0] && s.items.data[0].price;
   if (!p || typeof p.unit_amount !== 'number') return '';
-  const e = (p.unit_amount / 100).toFixed(2).replace('.', ',') + ' €', iv = p.recurring && p.recurring.interval;
-  return iv === 'year' ? e + ' pour l’année' : iv === 'month' ? e + ' par mois' : e;
+  const e = (premierMontant(s, p) / 100).toFixed(2).replace('.', ',') + ' €', iv = p.recurring && p.recurring.interval;
+  return iv === 'year' ? e + (rattrape(s) ? ' pour ta première année' : ' pour l’année') : iv === 'month' ? e + ' par mois' : e;
 }
 const SUJET = d => 'Ton essai de DJingood Pro se termine ' + d;
 
@@ -60,8 +63,8 @@ function montantEn(s){
   const p = s && s.items && s.items.data && s.items.data[0] && s.items.data[0].price;
   if (!p || typeof p.unit_amount !== 'number') return '';
   const sym = { eur: '€', usd: '$', gbp: '£' }[String(p.currency || 'eur').toLowerCase()] || '€';
-  const e = sym + (p.unit_amount / 100).toFixed(2), iv = p.recurring && p.recurring.interval;
-  return iv === 'year' ? e + ' for the year' : iv === 'month' ? e + ' a month' : e;
+  const e = sym + (premierMontant(s, p) / 100).toFixed(2), iv = p.recurring && p.recurring.interval;
+  return iv === 'year' ? e + (rattrape(s) ? ' for your first year' : ' for the year') : iv === 'month' ? e + ' a month' : e;
 }
 const SUJET_EN = d => 'Your DJingood Pro trial ends ' + d;
 const RAPPEL_EN = {

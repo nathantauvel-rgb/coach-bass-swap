@@ -154,19 +154,21 @@ test.describe('La carte de fin et les 7 jours gratuits', () => {
     await expect(o.locator('.offre-t')).toHaveText('Essaie Pro 7 jours, gratuitement');
     await expect(o.locator('.offre-frise li')).toHaveCount(3);
     await expect(o.locator('.offre-frise li').nth(1)).toContainText('Jour 5');
-    // au mois d'office (« 49,99 € à l'année, ça peut refroidir »), l'année à côté ; la carte bancaire est dite
+    // lot 81 : l'année d'office (4,17 € par mois, 49,99 € par an), en premier ; le mois à côté ; la carte bancaire est dite
     await expect(o.locator('.offre-f')).toHaveCount(2);
-    await expect(o.locator('.offre-f[aria-pressed="true"]')).toContainText('Au mois');
-    await expect(o.locator('.offre-f[data-f="an"]')).toContainText('2 mois offerts');
+    await expect(o.locator('.offre-f').first()).toHaveAttribute('data-f', 'an');
+    await expect(o.locator('.offre-f[aria-pressed="true"]')).toContainText('À l’année');
+    await expect(o.locator('.offre-f[data-f="an"]')).toContainText('4,17 €/mois');
+    await expect(o.locator('.offre-f[data-f="an"]')).toContainText('49,99 € par an');
     await expect(o.locator('.offre-frise li').nth(0)).toContainText('Ta carte est demandée, mais rien n’est prélevé');
-    await expect(o.locator('.offre-frise li').nth(2)).toContainText('4,99 € par mois, sauf si tu arrêtes avant (dans « Mon compte »)');
+    await expect(o.locator('.offre-frise li').nth(2)).toContainText('49,99 € pour l’année, sauf si tu arrêtes avant (dans « Mon compte »)');
     await expect(o.locator('.offre-go')).toHaveText('Commencer mes 7 jours gratuits');
     await expect(o.locator('.offre-p')).toContainText('Sans engagement');
-    // la formule à l'année
-    await o.locator('.offre-f[data-f="an"]').click();
-    await expect(o.locator('.offre-f[data-f="an"]')).toHaveAttribute('aria-pressed', 'true');
-    await expect(o.locator('.offre-frise li').nth(2)).toContainText('49,99 € pour l’année (soit 4,17 € par mois), sauf si tu arrêtes avant');
+    // la formule au mois
     await o.locator('.offre-f[data-f="mois"]').click();
+    await expect(o.locator('.offre-f[data-f="mois"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(o.locator('.offre-frise li').nth(2)).toContainText('4,99 € par mois, sauf si tu arrêtes avant');
+    await o.locator('.offre-f[data-f="an"]').click();
     // « Rejouer » : le niveau gratuit le moins bien noté
     await expect(page.locator('#nivFinRejouer')).toHaveText('Rejouer « La coupure sèche »');
     await page.locator('#nivFinRejouer').click();
@@ -197,7 +199,7 @@ test.describe('La carte de fin et les 7 jours gratuits', () => {
     await page.locator('#cptGo').click();
     await page.waitForURL(/paye=1/, { timeout: 15000 });
     const payer = api.appels.find(a => a.action === 'payer');
-    expect([payer.formule, payer.essai]).toEqual(['mois', 'semaine']);
+    expect([payer.formule, payer.essai]).toEqual(['an', 'semaine']);   // lot 81 : l'année d'office
   });
 
   test('connecté, l’essai déjà servi : le site le dit et propose de s’abonner tout de suite', async ({ page }) => {
@@ -216,7 +218,7 @@ test.describe('La carte de fin et les 7 jours gratuits', () => {
     await ouvrir(page, { avant: dejaConnecte() + FAUX + PRO, stockage: TROIS });
     await page.evaluate(() => selectLesson(3));
     await expect(page.locator('#nivFinOffre .offre-t')).toHaveText('Continue avec DJingood Pro');
-    await expect(page.locator('#nivFinOffre .offre-f')).toHaveText([/Au mois4,99 €/, /À l’année49,99 €/]);
+    await expect(page.locator('#nivFinOffre .offre-f')).toHaveText([/À l’année4,17 €\/mois49,99 € par an/, /Au mois4,99 €\/mois/]);
     await expect(page.locator('#nivFinOffre .offre-frise')).toHaveCount(0);
     await expect(page.locator('#nivFinOffre .offre-go')).toHaveText('Continuer avec Pro');
   });
@@ -225,10 +227,12 @@ test.describe('La carte de fin et les 7 jours gratuits', () => {
     await ouvrir(page, { avant: FAUX + PRO, stockage: TROIS });
     await page.evaluate(() => { selectLesson(2); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
     await expect(page.locator('#rProGo')).toHaveText('Commencer mes 7 jours gratuits');
-    await expect(page.locator('#rProEssai')).toContainText('7 jours gratuits, puis 4,99 € par mois. Ta carte est demandée');
-    await page.locator('#rProBascule').click();
-    await expect(page.locator('#rProEssai')).toContainText('puis 49,99 € par an');
+    // lot 81 : l'année d'office
+    await expect(page.locator('#rProEssai')).toContainText('7 jours gratuits, puis 49,99 € pour l’année (soit 4,17 € par mois). Ta carte est demandée');
     await expect(page.locator('#rProBascule')).toHaveText('Plutôt au mois (4,99 €) ?');
+    await page.locator('#rProBascule').click();
+    await expect(page.locator('#rProEssai')).toContainText('puis 4,99 € par mois');
+    await expect(page.locator('#rProBascule')).toHaveText('Plutôt à l’année (49,99 €, 2 mois offerts) ?');
     await page.locator('#rProBascule').click();
     await page.locator('#rProVoir').click();
     await expect(page.locator('#pro')).toBeVisible();

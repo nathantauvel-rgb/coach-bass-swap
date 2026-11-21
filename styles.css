@@ -3917,3 +3917,18 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
 .pres-haut{display:flex;gap:8px;align-items:center}
 /* Lot 80 : le guide du débutant n'existe qu'en français : ses liens disparaissent en anglais */
 :root[lang="en"] .fr-seul{display:none}
+
+/* ---------- Lot 81 « La caisse » : l'offre reprend le plan, le rattrapage, d'où viennent ceux qui paient ---------- */
+.offre-plan{margin:-8px 0 14px;padding:8px 12px;border-radius:12px;background:var(--brand-soft);font-size:14px;line-height:1.35}
+.offre-plan b{display:block;font-weight:900}
+.offre-plan span{display:block;color:var(--muted);font-weight:700}
+.rpro-ratt{margin:10px 0 0;font-size:14px;font-weight:900;line-height:1.45;color:var(--brand-light)}
+.rpro-ratt[hidden]{display:none}
+.pro-source{margin:30px 0 0;max-width:660px}
+.pro-source[hidden],.pro-source-choix[hidden],.pro-source-merci[hidden]{display:none}
+.pro-source p{margin:0 0 12px;font-size:16px;font-weight:800;color:var(--muted)}
+.pro-source-choix{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.pro-source-choix button{padding:9px 16px;border-radius:999px;border:2px solid var(--line);background:transparent;color:var(--fg);font:800 15px var(--sans);cursor:pointer}
+.pro-source-choix button:hover{border-color:var(--brand-light)}
+.pro-source-choix button:focus-visible{outline:3px solid var(--brand-light);outline-offset:2px}
+.pro-source .pro-source-merci{color:var(--fg)}

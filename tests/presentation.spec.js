@@ -7,7 +7,7 @@ test.describe('Page de présentation', () => {
     page.on('pageerror', e => erreurs.push(String(e)));
     page.on('response', r => { if (r.url().startsWith('http://localhost') && r.status() >= 400) rates.push(r.url()); });
     await page.goto('/presentation.html');
-    await expect(page.locator('h1')).toHaveText('Apprends à mixer sur ta table, un geste à la fois.');
+    await expect(page.locator('h1')).toHaveText('Ta première vraie transition, en deux semaines.');   // lot 81 : le titre dit le résultat
     for (const img of await page.locator('img').all()) {
       await img.scrollIntoViewIfNeeded();
       await expect.poll(() => img.evaluate(i => i.complete && i.naturalWidth > 0)).toBe(true);

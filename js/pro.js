@@ -29,14 +29,16 @@ const PRO_PRIX = {
    coach-pro : { uid, actif, formule, jusqua (secondes), annule, essai, offert } du dernier compte vérifié sur cet ordinateur
    (essai : pendant le mois offert ; offert : le mois offert l'attend, lot 68). Lot 76 : semaine (pendant les 7 jours
    gratuits) et essaiDispo (faux = ce compte a déjà eu un abonnement : plus d'essai gratuit). */
-const proVide = uid => ({ uid: uid || '', actif: false, formule: null, jusqua: null, annule: false, essai: false, offert: false, semaine: false, essaiDispo: true });
+// Lot 81 : rattrapage = la fin (en secondes) de l'offre de rattrapage de ce compte (api/pro.js), ou null
+const proVide = uid => ({ uid: uid || '', actif: false, formule: null, jusqua: null, annule: false, essai: false, offert: false, semaine: false, essaiDispo: true, rattrapage: null });
+const proNombre = x => typeof x === 'number' && isFinite(x) ? x : null;
 let proEtat = (() => {
   try {
     const d = JSON.parse(localStorage.getItem(PRO_CLE));
     if (!d || typeof d !== 'object' || typeof d.uid !== 'string' || !d.uid) return proVide();
     return { uid: d.uid, actif: d.actif === true, formule: PRO_FORMULES.includes(d.formule) ? d.formule : null,
       jusqua: typeof d.jusqua === 'number' && isFinite(d.jusqua) ? d.jusqua : null, annule: d.annule === true, essai: d.essai === true, offert: d.offert === true,
-      semaine: d.semaine === true, essaiDispo: d.essaiDispo !== false };
+      semaine: d.semaine === true, essaiDispo: d.essaiDispo !== false, rattrapage: proNombre(d.rattrapage) };
   } catch (e) { return proVide(); }
 })();
 // Le compte de cet ordinateur : celui qui est connecté, sinon le dernier (la session se reprend au chargement)
@@ -46,7 +48,7 @@ const proLibre = t => !proVerrou() || !!t.gratuit || proActif();
 function proMaj(d, uid){
   proEtat = d && d.pro ? { uid, actif: true, formule: PRO_FORMULES.includes(d.formule) ? d.formule : null,
     jusqua: typeof d.jusqua === 'number' ? d.jusqua : null, annule: !!d.annule, essai: !!d.essai, semaine: !!d.semaine, essaiDispo: false }
-    : Object.assign(proVide(uid), { offert: !!(d && d.offert), essaiDispo: !(d && d.essaiDispo === false) });
+    : Object.assign(proVide(uid), { offert: !!(d && d.offert), essaiDispo: !(d && d.essaiDispo === false), rattrapage: proNombre(d && d.rattrapage) });
   try { localStorage.setItem(PRO_CLE, JSON.stringify(proEtat)); } catch (e) {}
   proReponse = true;
   proRafraichit(); proCompteRend(); proFondateurPlusTard();
@@ -79,6 +81,9 @@ function proVaVers(url){ if (typeof url === 'string' && /^https?:\/\//.test(url)
 /* ---------- Le retour de Stripe, et chaque connexion ----------
    Après le paiement, Stripe renvoie sur /?pro=merci&session=cs_…#tutos. */
 let proRetour = (() => { const m = /[?&]pro=merci&session=(cs_[A-Za-z0-9_]+)/.exec(location.search); return m ? m[1] : ''; })();
+// Lot 81 : revenu de la page de paiement sans payer (Stripe renvoie sur /?pro=retour#apprendre) : on montrera le rattrapage
+let proAnnule = /[?&]pro=retour(&|$)/.test(location.search);
+if (proAnnule){ try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} }
 let proApres = null;   // { f: formule, essai } choisis avant de créer son compte : on enchaîne sur le paiement une fois connecté
 // Appelé par compte.js (cptChange) à chaque connexion ou déconnexion
 function proCompte(u){
@@ -88,7 +93,7 @@ function proCompte(u){
     const id = proRetour; proRetour = '';
     try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
     proAppel('session', { id }).then(d => { proMaj(d, u.uid); if (d.pro) proMerci(); }, () => proVerifie(u));
-  } else proVerifie(u);
+  } else proVerifie(u).then(() => { if (proAnnule){ proAnnule = false; proRattrapageMontre(); } });
   if (proApres){ const a = proApres; proApres = null; proPayer(a.f, a.essai); }
 }
 function proVerifie(u){ return proAppel('etat').then(d => proMaj(d, u.uid), () => {}); }
@@ -99,8 +104,34 @@ const proVoulu = { lire(){ try { return sessionStorage.getItem('djingood-pro-vou
   ecrire(id){ try { if (id) sessionStorage.setItem('djingood-pro-voulu', id); else sessionStorage.removeItem('djingood-pro-voulu'); } catch (e) {} } };
 function proPrix(){
   document.querySelectorAll('#pro .pro-bascule button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === proFormule)));
-  const [p, par, d] = PRO_PRIX[proFormule];
+  const r = proRattrapage(), eco = document.querySelector('#pro .pro-eco');
+  if (eco) eco.textContent = r ? '−30 %' : '−17 %';   // lot 81 : 34,99 € au lieu de 49,99 €
+  const [p, par, d] = proFormule === 'an' && r ? ['34,99 €', '/ 1re année', `<s>49,99 €</s> ${proRattrapageFin()} · ensuite 49,99 € par an`] : PRO_PRIX[proFormule];   // lot 81
   $('proPrix').textContent = p; $('proPar').textContent = par; $('proDetail').innerHTML = d;   // nos propres textes
+}
+/* ---------- Lot 81 : le rattrapage ----------
+   Décision de l'utilisateur (21 nov. 2026) : « rattrapage à 34,99 € pendant 48 h ». Quelqu'un qui a ouvert la page de
+   paiement sans payer voit, pendant 48 heures et une seule fois, sa première année à 34,99 € au lieu de 49,99 €. C'est
+   api/pro.js qui sait si l'offre court encore et jusqu'à quand (etat → rattrapage) ; payer la revérifie. Pas de fenêtre qui
+   s'ouvre toute seule (règle du 20 nov.) : l'offre est dans la carte de fin, la carte de résultat du niveau 3 et la fenêtre
+   Pro. Seule exception, en revenant de Stripe sans payer : si la carte de fin n'est pas à l'écran, la fenêtre Pro qu'on
+   vient de quitter se rouvre avec l'offre (c'est l'écran d'où l'on venait). */
+let rattrapageFini = false;   // api/pro.js a répondu que l'offre est finie
+const proRattrapage = () => proVerrou() && !proActif() && !proFondateur() && !rattrapageFini && !!proEtat.uid && proEtat.uid === proUid()
+  && typeof proEtat.rattrapage === 'number' && proEtat.rattrapage * 1000 > Date.now();
+// « jusqu'au dimanche 23 novembre à 14 h 05 » (en anglais : la date et l'heure à l'anglaise, LOCALE)
+function proRattrapageFin(){
+  const t = new Date(proEtat.rattrapage * 1000), d = t.toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long' });
+  // l'heure ne se coupe jamais en fin de ligne (« 9 h » / « 51 »)
+  const h = LANGUE === 'en' ? t.toLocaleTimeString(LOCALE, { hour: 'numeric', minute: '2-digit' }) : t.getHours() + ' h ' + String(t.getMinutes()).padStart(2, '0');
+  return `jusqu’au ${d} à ${h}`;
+}
+function proRattrapageMontre(){
+  if (!proRattrapage()) return;
+  stat1('rattrapage-vu');
+  const fin = $('nivFinOffre');
+  if (fin && fin.offsetParent) return;   // la carte de fin le montre déjà
+  if ($('pro').hidden) proOuvre('');
 }
 // lot 76 : le message s'écrit aussi sous l'offre de la carte de fin (.offre-msg), d'où l'on paie sans ouvrir la fenêtre
 function proDit(t){ for (const m of [$('proMsg'), ...document.querySelectorAll('.offre-msg')]){ m.textContent = t; m.hidden = !t; } }
@@ -110,6 +141,8 @@ function proDit(t){ for (const m of [$('proMsg'), ...document.querySelectorAll('
 function proPour(id, q = {}){
   if (id){ const t = TUTOS.find(x => x.id === id); return { voulu: id, contexte: t ? `Pour regarder « ${t.titre} »` : '', depuis: 'tuto' }; }
   if (q.fin) return { voulu: 'niv:1:' + NIV_GRATUITS, contexte: `Tu as fini les ${NIV_GRATUITS} niveaux gratuits`, depuis: 'fin' };
+  // lot 81 : l'essai proposé dès la première réussite (essaiTot, niveaux.js) ; après le paiement, on reprend au niveau suivant
+  if (q.tot) return { voulu: 'niv:1:' + (q.i || 0), contexte: '', depuis: 'reussite' };
   if (q.n != null && lessonsOf(q.n)[q.i]) return { voulu: `niv:${q.n}:${q.i}`, contexte: `Pour jouer « ${lessonsOf(q.n)[q.i].title} »`, depuis: 'niveau' };
   // un chapitre qui demande encore des étoiles le dit dès maintenant, avant de payer (gardien du lot 68)
   if (q.chap){ const c = CHAPTERS.find(x => x.n === q.chap); return { voulu: 'chap:' + q.chap, contexte: c ? `Pour ouvrir le chapitre ${c.n} : « ${c.title} »` + (proChapOuvert(c.n) ? '' : c.n === 3 ? ' (après 10 ★ au chapitre 2)' : ' (après 14 ★ au chapitre 1)') : '', depuis: 'chapitre' }; }
@@ -156,10 +189,12 @@ const proBoutons = on => { for (const b of [$('proGo'), ...document.querySelecto
 function proDitVu(t){ const vu = !$('pro').hidden || [...document.querySelectorAll('.offre-msg')].some(m => !!m.parentElement.offsetParent); if (!vu) proOuvre(''); proDit(t); }
 function proPayer(f, essai){
   proBoutons(false); proDit(essai === true ? 'Un instant : on prépare ton mois offert…' : essai === 'semaine' ? 'Un instant : on prépare ton essai gratuit…' : 'Un instant : on ouvre la page de paiement…');
-  stat('pro-payer', { formule: f, essai: essai === 'semaine' ? 'semaine' : !!essai });
-  proAppel('payer', essai ? { formule: f, essai } : { formule: f }).then(d => proVaVers(d.url)).catch(e => {
+  const ratt = f === 'an' && essai !== true && proRattrapage();   // lot 81 : l'année à 34,99 €
+  stat('pro-payer', Object.assign({ formule: f, essai: essai === 'semaine' ? 'semaine' : !!essai }, ratt ? { rattrapage: true } : {}));
+  proAppel('payer', Object.assign({ formule: f }, essai ? { essai } : {}, ratt ? { rattrapage: true } : {})).then(d => proVaVers(d.url)).catch(e => {
     proBoutons(true);
     if (e.message === 'deja-pro'){ proDitVu('Tu es déjà Pro !'); const u = proUser(); if (u) proVerifie(u); return; }
+    if (e.message === 'rattrapage-fini'){ rattrapageFini = true; proPrix(); proOffresRend(); proDitVu('L’offre à 34,99 € est terminée : tu peux continuer au prix normal.'); return; }
     if (e.message === 'essai-deja' && essai === 'semaine'){ semaineUtilisee = true; proFondateurPrix(); proOffresRend(); proDitVu('Ton essai gratuit a déjà servi : tu peux t’abonner tout de suite.'); return; }
     // le mois offert a déjà servi : ce compte a déjà eu un abonnement, donc pas de 7 jours gratuits non plus (lot 76)
     if (e.message === 'essai-deja'){ fondUtilise = true; semaineUtilisee = true; proFondateurPrix(); proOffresRend(); proDitVu('Ton mois offert a déjà servi : tu peux t’abonner tout de suite.'); return; }
@@ -217,7 +252,20 @@ function proMerci(){
   $('proMerciGo').textContent = s[1];
   $('proMerci').hidden = false; document.body.classList.add('pro-ouvert');
   stat1('pro');   // une seule fois par navigateur (stats.js)
+  // lot 81 : « Comment tu as connu DJingood ? », seulement après le paiement (ça sert aux statistiques, pas au joueur)
+  const deja = (() => { try { return !!localStorage.getItem(SOURCE_CLE); } catch (e) { return false; } })();
+  $('proSource').hidden = deja; $('proSourceChoix').hidden = false; $('proSourceMerci').hidden = true;
 }
+/* Lot 81 : d'où viennent ceux qui paient. Une seule réponse par navigateur (coach-source-pro), envoyée à Umami et PostHog
+   (stat, stats.js) sous le nom pro-source. TikTok n'a qu'un lien en bio : sans cette question, on ne sait pas d'où vient un
+   abonné. */
+const SOURCE_CLE = 'coach-source-pro', SOURCES = ['tiktok', 'instagram', 'youtube', 'google', 'ami', 'autre'];
+document.querySelectorAll('#proSourceChoix button').forEach(b => b.addEventListener('click', () => {
+  const s = SOURCES.includes(b.dataset.s) ? b.dataset.s : 'autre';
+  stat('pro-source', { d: s });
+  try { localStorage.setItem(SOURCE_CLE, s); } catch (e) {}
+  $('proSourceChoix').hidden = true; $('proSourceMerci').hidden = false;
+}));
 function proMerciFerme(){ $('proMerci').hidden = true; document.body.classList.remove('pro-ouvert'); }
 $('proMerciGo').addEventListener('click', () => {
   const s = proSuite(proVoulu.lire()); proVoulu.ecrire(''); proMerciFerme(); s[2]();
@@ -273,24 +321,43 @@ const PRO_ESSAI_JOURS = 7;
 let semaineUtilisee = false;   // api/pro.js a répondu que l'essai a déjà servi pour ce compte
 const proSemaineDispo = () => proVerrou() && !proActif() && !proFondateur() && !semaineUtilisee && !(proEtat.uid && proEtat.uid === proUid() && proEtat.essaiDispo === false);
 const proEssaiType = () => proFondateur() ? true : proSemaineDispo() ? 'semaine' : false;
-// La formule choisie sous l'offre. Le mois d'office (demande de l'utilisateur, 20 nov. 2026 : « 49,99 € à l'année, ça peut
-// refroidir ») ; l'année reste à côté, bien visible. La grande fenêtre Pro, elle, garde l'année d'office.
-let offreFormule = 'mois';
-// Ce qu'on paie au bout de l'essai, ou tout de suite
-const offrePrix = () => offreFormule === 'an' ? '49,99 € pour l’année (soit 4,17 € par mois)' : '4,99 € par mois';
+/* La formule choisie sous l'offre. Lot 81 (décision de l'utilisateur du 21 nov. 2026, « ok pour l'année d'office ») :
+   l'année d'office, en premier, affichée en prix par mois (4,17 €) avec son prix réel juste dessous (49,99 € par an) ; le
+   mois juste à côté. Remplace le mois d'office du 20 nov. (« 49,99 € à l'année, ça peut refroidir » : afficher 4,17 € par
+   mois y répond). La grande fenêtre Pro avait déjà l'année d'office. */
+let offreFormule = 'an';
+// Ce qu'on paie au bout de l'essai, ou tout de suite (lot 81 : 34,99 € la première année pendant le rattrapage ; le prix par
+// mois de l'année, 4,17 €, est déjà sur le bouton de la formule, d'où la phrase courte : la carte de fin tient dans 768 px)
+const offrePrix = (long = false) => offreFormule === 'an' ? (proRattrapage() ? '34,99 € pour ta première année' : long ? '49,99 € pour l’année (soit 4,17 € par mois)' : '49,99 € pour l’année') : '4,99 € par mois';
+/* Lot 81 : l'offre reprend le plan des Premiers pas (« Ton plan : Pioneer DDJ-FLX4 · 10 min par jour », « Dans 2 semaines : ta
+   première vraie transition. »), pour qu'elle ait l'air faite pour lui. Rien si les questions ont été passées. La table n'est
+   nommée que si c'est une table connue (son nom est le même dans les deux langues). */
+const PLAN_BUT = { debut: 'ta première vraie transition', apprenti: 'des transitions vraiment propres', confirme: 'un set à 100 sur 100' };
+const PLAN_QUAND = { 5: 'À ton rythme', 10: 'Dans 2 semaines', 15: 'En moins de 2 semaines' };
+function proPlan(){
+  try {
+    if (typeof accueil === 'undefined' || !accueil || accueil.passe) return null;
+    const t = accueil.table === 'table' && accueil.modele && accueil.modele !== 'autre' && accueil.modele !== 'inconnue' ? ppNomDe(accueil.modele) : '', m = accueil.min;
+    const haut = t && m ? `Ton plan : ${t} · ${m} min par jour` : t ? `Ton plan : ${t}` : m ? `Ton plan : ${m} min par jour` : '';
+    const but = PLAN_BUT[accueil.niveau] && PLAN_QUAND[m] ? `${PLAN_QUAND[m]} : ${PLAN_BUT[accueil.niveau]}.` : '';
+    return haut || but ? [haut, but] : null;
+  } catch (e) { return null; }
+}
 function proOffre(box, q){
   if (!box) return;
   box.innerHTML = ''; box._q = q || {};
   const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
-  const f = proFondateur(), s = !f && proSemaineDispo();
+  const f = proFondateur(), s = !f && proSemaineDispo(), r = !f && proRattrapage();
   if (f){
     box.append(el('p', 'offre-t', 'Ton premier mois est offert'),
       el('p', 'offre-sous', 'Sans carte bancaire : merci d’avoir été là avant Pro. Ensuite, 4,99 € par mois ou 49,99 € par an, seulement si tu continues.'));
   } else {
-    box.appendChild(el('p', 'offre-t', s ? `Essaie Pro ${PRO_ESSAI_JOURS} jours, gratuitement` : 'Continue avec DJingood Pro'));
-    // les deux formules, côte à côte : au mois (d'office) ou à l'année
+    box.appendChild(el('p', 'offre-t', r ? 'Ta première année à 34,99 €' : s ? `Essaie Pro ${PRO_ESSAI_JOURS} jours, gratuitement` : 'Continue avec DJingood Pro'));
+    if (r) box.appendChild(el('p', 'offre-sous', `Au lieu de 49,99 €, ${proRattrapageFin()}.`));
+    else { const p = proPlan(); if (p){ const e = el('p', 'offre-plan'); if (p[0]) e.appendChild(el('b', '', p[0])); if (p[1]) e.appendChild(el('span', '', p[1])); box.appendChild(e); } }
+    // les deux formules, côte à côte : l'année (d'office, lot 81) ou le mois
     const choix = el('div', 'offre-choix'); choix.setAttribute('role', 'group'); choix.setAttribute('aria-label', 'Formule');
-    for (const [fo, nom, prix, plus] of [['mois', 'Au mois', '4,99 €', ''], ['an', 'À l’année', '49,99 €', '2 mois offerts']]){
+    for (const [fo, nom, prix, plus] of [['an', 'À l’année', r ? '34,99 €' : '4,17 €/mois', r ? 'la 1re année' : '49,99 € par an'], ['mois', 'Au mois', '4,99 €/mois', 'payé chaque mois']]){
       const b = el('button', 'offre-f'); b.type = 'button'; b.dataset.f = fo; b.setAttribute('aria-pressed', String(offreFormule === fo));
       b.append(el('span', 'offre-f-nom', nom), el('b', '', prix)); if (plus) b.appendChild(el('small', '', plus));
       b.addEventListener('click', e => { e.stopPropagation(); offreFormule = fo; proOffresRend(); });

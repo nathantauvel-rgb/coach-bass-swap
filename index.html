@@ -256,6 +256,10 @@
   <h2 id="proMerciTitre">Bienvenue dans <span class="pro-accent">Pro</span> !</h2>
   <p class="pro-sous" id="proMerciTxt">Tous les tutos sont ouverts.</p>
   <button type="button" class="pro-go" id="proMerciGo">Voir les tutos</button>
+  <!-- Lot 81 : d'où viennent ceux qui paient, demandé seulement après le paiement (js/pro.js, SOURCE_CLE) -->
+  <div class="pro-source" id="proSource" hidden><p>Une dernière question&nbsp;: comment tu as connu DJingood&nbsp;?</p>
+    <div class="pro-source-choix" id="proSourceChoix" role="group" aria-label="Comment tu as connu DJingood"><button type="button" data-s="tiktok">TikTok</button><button type="button" data-s="instagram">Instagram</button><button type="button" data-s="youtube">YouTube</button><button type="button" data-s="google">Google</button><button type="button" data-s="ami">Un ami</button><button type="button" data-s="autre">Autre</button></div>
+    <p class="pro-source-merci" id="proSourceMerci" role="status" hidden>Merci, ça m’aide beaucoup&nbsp;!</p></div>
 </div>
 <div data-nosnippet class="quiz" id="fond" hidden role="dialog" aria-modal="true" aria-labelledby="fondTitre">
   <div class="qcard cptcard fondcard">
@@ -725,11 +729,14 @@
           <p class="rastuce" id="rAstuce" hidden><img src="img/vini-icone.svg" alt=""><span id="rAstuceTxt"></span></p></div>
         <div class="rpro" id="rPro" hidden><p class="rpro-t"><span class="pro-tag">Pro</span>La suite, avec DJingood Pro</p><ol class="rpro-niv" id="rProNiv"></ol>
           <p class="rpro-txt">Puis 6 chapitres : à l’oreille, les vrais morceaux, les combos, le calage, les hot cues et le set noté sur 100.</p>
+          <p class="rpro-ratt" id="rProRattrapage" hidden></p>
           <p class="rpro-essai" id="rProEssai" hidden><span id="rProEssaiTxt"></span> <button type="button" class="linkbtn rpro-bascule" id="rProBascule"></button></p><button type="button" class="linkbtn rpro-voir" id="rProVoir" hidden>Voir tout ce qu’il y a dans Pro</button></div>
         <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button><button type="button" class="rbtn rpro-go" id="rProGo" hidden>Continuer avec Pro</button></div>
         <div class="rplus"><button type="button" class="linkbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="linkbtn" id="slowBtn" hidden></button></div>
         <div class="rmeta"><span class="newbadge" id="rBadge" role="status" hidden></span><span class="goalline" id="rGoal"></span><span class="questline" id="rQuete" role="status" hidden></span></div>
         <div class="rcompte" id="rCompte" hidden><img src="img/vini-icone.svg" alt=""><p><b>Garde ta progression.</b><span>Crée ton compte&nbsp;: tes étoiles et ta série te suivent sur tous tes appareils.</span></p><button type="button" class="rbtn" id="rCompteGo">Créer mon compte</button></div>
+        <!-- Lot 81 : l'essai de 7 jours, dès la première réussite avec sa table (essaiTot, js/niveaux.js) -->
+        <div class="rcompte ressai" id="rEssai" hidden><img src="img/vini-icone.svg" alt=""><p><b>Ça marche avec ta table&nbsp;!</b><span id="rEssaiTxt"></span></p><button type="button" class="rbtn" id="rEssaiGo">Voir l’essai gratuit</button></div>
         <details class="rtout" id="rTout"><summary id="rToutSum">Voir le détail</summary>
           <ul class="details" id="rDetails"></ul>
           <details class="cmp" id="cmpBox"><summary>Voir mon geste et le geste idéal</summary><canvas id="cmp" aria-label="Comparaison entre ton geste et le geste idéal"></canvas>

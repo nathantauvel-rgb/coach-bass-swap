@@ -792,7 +792,7 @@ function finish(){
   questLigne(questNote({ st, expert: !!r.expert, ear: !!r.ear, ch: r.ch }));   // après pracStep : le défi du jour est à jour
   const fresh = goalFresh;
   quizOffer(st); avisPartie(r.ch, st); goalNote(); slowOffer(st); resultatBoutons(st); mlPropose(st);   // le compte, après une réussite (mails.js)
-  finEssai(r.ch, st, before);
+  finEssai(r.ch, st, before); essaiTot(r.ch, st);   // lot 81 : l'essai de 7 jours, dès la première réussite
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
   if (fresh) openSerie();   // objectif du jour atteint avec cette partie : l'écran de la série passe devant (avec son propre son)
   else if (st >= 2){ for (let i = 0; i < st; i++) setTimeout(() => son('etoile', i), 120 + i * 180); setTimeout(() => son('fin'), 160 + st * 180); }
@@ -824,12 +824,33 @@ function finEssaiTexte(){
   const e = proEssaiType();
   $('rProGo').textContent = e === true ? 'Prendre mon mois offert' : e === 'semaine' ? `Commencer mes ${PRO_ESSAI_JOURS} jours gratuits` : 'Continuer avec Pro';
   $('rProEssai').hidden = e !== 'semaine'; $('rProVoir').hidden = false;
-  // au mois d'office, comme l'offre de la carte de fin (offreFormule, pro.js) ; l'année est à un clic
+  // lot 81 : l'année d'office, comme l'offre de la carte de fin (offreFormule, pro.js) ; le mois est à un clic. Pendant le
+  // rattrapage, l'année à 34,99 € et sa date limite.
+  const r = typeof proRattrapage === 'function' && e !== true && proRattrapage();
+  $('rProRattrapage').hidden = !r;
+  if (r) $('rProRattrapage').textContent = `Ta première année à 34,99 € au lieu de 49,99 €, ${proRattrapageFin()}.`;
   if (e === 'semaine'){
-    $('rProEssaiTxt').textContent = `${PRO_ESSAI_JOURS} jours gratuits, puis ${offreFormule === 'an' ? '49,99 € par an' : '4,99 € par mois'}. Ta carte est demandée, mais rien n’est prélevé avant le ${PRO_ESSAI_JOURS}e jour ; un mail te prévient 2 jours avant.`;
-    $('rProBascule').textContent = offreFormule === 'an' ? 'Plutôt au mois (4,99 €) ?' : 'Plutôt à l’année (49,99 €, 2 mois offerts) ?';
+    $('rProEssaiTxt').textContent = `${PRO_ESSAI_JOURS} jours gratuits, puis ${offrePrix(true)}. Ta carte est demandée, mais rien n’est prélevé avant le ${PRO_ESSAI_JOURS}e jour ; un mail te prévient 2 jours avant.`;
+    $('rProBascule').textContent = offreFormule === 'an' ? 'Plutôt au mois (4,99 €) ?' : r ? 'Plutôt à l’année (34,99 € la 1re année) ?' : 'Plutôt à l’année (49,99 €, 2 mois offerts) ?';
   }
 }
+/* ---------- Lot 81 : l'essai de 7 jours, dès la première réussite ----------
+   Décision de l'utilisateur (21 nov. 2026, « Oui propose l'essai de 7 jours plus tôt. Dès la première réussite c'est très
+   bien ») : une partie réussie (2 étoiles ou plus) aux niveaux 1 et 2, avec une table branchée, propose aussi d'essayer Pro
+   7 jours. La règle du lot 68 tient : on vient de jouer avec sa table, on sait que le site marche avec elle. C'est une
+   proposition à côté, pas le bouton principal (« Niveau suivant » reste le bouton orange) ; elle prend la place de « Garde ta
+   progression » (créer son compte), puisque l'essai fait créer le compte. Le bouton ouvre la fenêtre Pro (l'année d'office,
+   le mois à côté, l'essai expliqué). Le niveau 3 garde sa grande carte (finEssai). */
+function essaiTot(ch, st){
+  const ici = proBloque() && !prac && !placement && ch === 1 && li < NIV_GRATUITS - 1 && st >= 2 && midiCount > 0
+    && typeof proSemaineDispo === 'function' && proSemaineDispo();
+  $('rEssai').hidden = !ici;
+  if (!ici) return;
+  $('rCompte').hidden = true;
+  $('rEssaiTxt').textContent = `Essaie tout DJingood ${PRO_ESSAI_JOURS} jours, gratuitement : les ${proNbExercices()} exercices, les tutos de Vini, l’entraînement.`;
+  stat1('essai-tot');
+}
+$('rEssaiGo').addEventListener('click', () => { $('result').hidden = true; proOuvre('', { tot: true, n: 1, i: li + 1 }); });
 $('rProBascule').addEventListener('click', () => { offreFormule = offreFormule === 'an' ? 'mois' : 'an'; proOffresRend(); finEssaiTexte(); });
 $('rProGo').addEventListener('click', () => { $('result').hidden = true; if (typeof proDemarre === 'function') proDemarre({ fin: true }); else proOuvre('', { fin: true }); });
 $('rProVoir').addEventListener('click', () => { $('result').hidden = true; proOuvre('', { fin: true }); });

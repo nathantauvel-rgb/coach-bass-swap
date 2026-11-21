@@ -31,7 +31,13 @@
    - `session` : { id } → comme `etat`, juste après le paiement (la recherche de Stripe met jusqu'à une minute à voir un
                  nouvel abonnement ; la session de paiement, elle, le connaît tout de suite) ;
    - `gerer`   : { url } de la page « Gérer mon abonnement » de Stripe (changer de formule, de carte, factures, arrêter :
-                 la loi de 2023 demande que s'arrêter soit aussi simple que s'abonner). */
+                 la loi de 2023 demande que s'arrêter soit aussi simple que s'abonner).
+   Lot 81 (« La caisse », décision de l'utilisateur du 21 nov. 2026) : **le rattrapage**. Quelqu'un qui a ouvert la page de
+   paiement sans payer a droit, pendant 48 heures et une seule fois, à sa première année à 34,99 € au lieu de 49,99 €. La date
+   limite est vraie (une fausse urgence est interdite) : c'est ce fichier qui la calcule, à partir de la première page de
+   paiement ouverte par ce compte chez Stripe (rattrapageJusqua), jamais à partir de ce que le site envoie. `etat` la donne
+   (`rattrapage`, en secondes) ; `payer` avec `rattrapage: true` (l'année seulement) la revérifie (410 `rattrapage-fini`
+   sinon) et applique la remise de 15 € (couponRattrapage). Le retour de Stripe sans payer : /?pro=retour#apprendre. */
 const mails = require('./mails.js');   // la vérification du jeton Firebase, la même que pour les mails
 const STRIPE = 'https://api.stripe.com/v1';
 const ACTIFS = ['active', 'trialing', 'past_due'];   // past_due : un paiement a échoué, Stripe réessaie ; Pro reste ouvert
@@ -131,6 +137,43 @@ async function dejaAbonne(qui, cle){
   return false;
 }
 
+/* ---------- Lot 81 : le rattrapage ----------
+   La fenêtre de 48 heures s'ouvre à la PREMIÈRE page de paiement que ce compte a ouverte depuis la mise en ligne du lot 81
+   (RATTRAPAGE_DEPUIS) ; elle ne se rouvre jamais. Stripe ne sait pas chercher une page de paiement par compte : on parcourt
+   celles créées depuis cette date (100 par page, 5 pages au plus) et on garde celles qui portent l'identifiant du compte
+   (`client_reference_id`). Plus de 500 pages de paiement depuis la mise en ligne : on ne sait plus dire laquelle était la
+   première, donc pas de rattrapage (jamais une date limite qu'on ne peut pas prouver). */
+const RATTRAPAGE_HEURES = 48;
+const RATTRAPAGE_REMISE = 1500;   // en centimes : 49,99 € − 15 € = 34,99 € la première année
+const RATTRAPAGE_COUPON = 'djingood-rattrapage-1';
+const RATTRAPAGE_DEPUIS = () => { const t = Date.parse(process.env.PRO_RATTRAPAGE_DEPUIS || ''); return isFinite(t) ? t : Date.parse('2026-11-21T00:00:00+01:00'); };
+async function rattrapageJusqua(qui, cle){
+  const depuis = Math.floor(RATTRAPAGE_DEPUIS() / 1000);
+  let apres = '', premiere = null;
+  for (let page = 0; page < 5; page++){
+    const d = await stripe('/checkout/sessions?limit=100&created[gte]=' + depuis + (apres ? '&starting_after=' + encodeURIComponent(apres) : ''), cle);
+    const liste = d.data || [];
+    for (const s of liste) if (s && s.client_reference_id === qui.uid && typeof s.created === 'number' && (premiere === null || s.created < premiere)) premiere = s.created;
+    if (!d.has_more || !liste.length){ apres = ''; break; }
+    apres = liste[liste.length - 1].id;
+  }
+  if (apres || premiere === null) return null;
+  const fin = premiere + RATTRAPAGE_HEURES * 3600;
+  return fin * 1000 > module.exports.maintenant() ? fin : null;
+}
+/* La remise elle-même : un coupon de 15 €, créé chez Stripe la première fois qu'on en a besoin (rien à régler à la main).
+   « repeating » sur 1 mois, et pas « once » : avec les 7 jours gratuits, Stripe émet d'abord une facture à 0 € qui pourrait
+   consommer un coupon « once » ; un coupon de 1 mois couvre la première vraie facture (au 7e jour, ou tout de suite sans
+   essai) et jamais le renouvellement, un an plus tard. */
+async function couponRattrapage(cle){
+  try { await stripe('/coupons/' + RATTRAPAGE_COUPON, cle); }
+  catch (e){
+    if (e.statut !== 404) throw e;
+    await stripe('/coupons', cle, { corps: { id: RATTRAPAGE_COUPON, amount_off: RATTRAPAGE_REMISE, currency: 'eur', duration: 'repeating', duration_in_months: 1, name: 'DJingood −15 €' } });
+  }
+  return RATTRAPAGE_COUPON;
+}
+
 async function handler(req, res){
   if (req.method !== 'POST') return repond(res, 405, { erreur: 'methode' });
   const cle = process.env.STRIPE_CLE, prix = { mois: process.env.STRIPE_PRIX_MOIS, an: process.env.STRIPE_PRIX_AN };
@@ -152,7 +195,10 @@ async function handler(req, res){
       if (!e.pro){
         e.offert = await offertA(m[1], qui, cle);   // lot 68 : le mois offert des comptes déjà créés
         // lot 76 : les 7 jours gratuits, pour un compte jamais abonné (Stripe qui répond mal : on le propose, payer revérifie)
-        try { e.essaiDispo = !(await dejaAbonne(qui, cle)); } catch (er) { e.essaiDispo = true; }
+        let jamais = null;
+        try { jamais = !(await dejaAbonne(qui, cle)); e.essaiDispo = jamais; } catch (er) { e.essaiDispo = true; }
+        // lot 81 : le rattrapage, pour un compte jamais abonné, pendant ses 48 heures (Stripe qui répond mal : pas d'offre)
+        if (jamais === true){ try { const r = await rattrapageJusqua(qui, cle); if (r) e.rattrapage = r; } catch (er) {} }
       }
       return repond(res, 200, e);
     }
@@ -160,7 +206,9 @@ async function handler(req, res){
     if (b.action === 'payer'){
       if (!FORMULES.includes(b.formule)) return repond(res, 400, { erreur: 'formule' });
       if (await abonnement(qui, cle)) return repond(res, 409, { erreur: 'deja-pro' });
-      const essai = b.essai === true, semaine = b.essai === 'semaine';
+      const essai = b.essai === true, semaine = b.essai === 'semaine', rattrapage = b.rattrapage === true;
+      // lot 81 : le rattrapage, c'est l'année, et jamais avec le mois offert
+      if (rattrapage && (b.formule !== 'an' || essai)) return repond(res, 400, { erreur: 'rattrapage' });
       if (essai){
         let f; try { f = await fondateur(m[1], qui); } catch (e) { return repond(res, 502, { erreur: 'google' }); }
         if (!f) return repond(res, 403, { erreur: 'essai-reserve' });   // un compte créé après la limite : pas de mois offert
@@ -168,27 +216,35 @@ async function handler(req, res){
       }
       // lot 76 : les 7 jours gratuits, une seule fois par compte (un compte qui a déjà eu un abonnement paie tout de suite)
       if (semaine && await dejaAbonne(qui, cle)) return repond(res, 409, { erreur: 'essai-deja' });
+      // lot 81 : le rattrapage (l'année à 34,99 €), revérifié ici : la fenêtre de 48 heures, et jamais abonné
+      let coupon = '';
+      if (rattrapage){
+        if (!(await rattrapageJusqua(qui, cle)) || await dejaAbonne(qui, cle)) return repond(res, 410, { erreur: 'rattrapage-fini' });
+        coupon = await couponRattrapage(cle);
+      }
       // lot 80 : le site en anglais envoie { langue: 'en' } : la page de Stripe en anglais, et l'abonnement le retient
       // (metadata.langue) pour que le mail de rappel de l'essai (api/rappel.js) parte en anglais
       const en = b.langue === 'en';
       const s = await stripe('/checkout/sessions', cle, { corps: Object.assign({
-        mode: 'subscription', locale: en ? 'en' : 'fr', allow_promotion_codes: 'true',
+        // lot 81 : Stripe refuse les codes promo ET une remise sur la même page : avec le rattrapage, la remise seulement
+        mode: 'subscription', locale: en ? 'en' : 'fr',
         line_items: { 0: { price: prix[b.formule], quantity: 1 } },
         client_reference_id: qui.uid, customer_email: qui.email,
-        metadata: { uid: qui.uid }, subscription_data: Object.assign({ metadata: Object.assign({ uid: qui.uid }, essai ? { essai: 'mois-offert' } : semaine ? { essai: 'semaine' } : {}, en ? { langue: 'en' } : {}) },
+        metadata: { uid: qui.uid }, subscription_data: Object.assign({ metadata: Object.assign({ uid: qui.uid }, essai ? { essai: 'mois-offert' } : semaine ? { essai: 'semaine' } : {}, en ? { langue: 'en' } : {}, rattrapage ? { rattrapage: '1' } : {}) },
           // le mois offert : 30 jours, sans carte ; sans carte ajoutée d'ici là, l'abonnement s'arrête (rien n'est prélevé)
           essai ? { trial_period_days: 30, trial_settings: { end_behavior: { missing_payment_method: 'cancel' } } } : {},
           // lot 76 : 7 jours gratuits, la carte est demandée (le réglage par défaut de Stripe) ; Stripe écrit lui-même sur sa
           // page « 7 jours gratuits » et la date du premier paiement
           semaine ? { trial_period_days: 7 } : {}),
-        success_url: site + '/?pro=merci&session={CHECKOUT_SESSION_ID}#apprendre', cancel_url: site + '/#apprendre',
+        // lot 81 : revenir de Stripe sans payer le dit au site (pro=retour), qui montre alors le rattrapage
+        success_url: site + '/?pro=merci&session={CHECKOUT_SESSION_ID}#apprendre', cancel_url: site + '/?pro=retour#apprendre',
         // la case à cocher obligatoire : les conditions de vente, et l'accès tout de suite (le joueur renonce au délai de
         // rétractation de 14 jours, comme la loi le permet pour un contenu numérique ouvert immédiatement)
         consent_collection: { terms_of_service: 'required' },
         custom_text: { terms_of_service_acceptance: { message: en
           ? `I accept the [terms of sale](${site}/terms.html). I ask for access to DJingood Pro right away and I waive my 14-day right of withdrawal.`
           : `J'accepte les [conditions de vente](${site}/cgv.html). Je demande l'accès à DJingood Pro tout de suite et je renonce à mon délai de rétractation de 14 jours.` } }
-      }, essai ? { payment_method_collection: 'if_required' } : {}) });
+      }, essai ? { payment_method_collection: 'if_required' } : {}, coupon ? { discounts: { 0: { coupon } } } : { allow_promotion_codes: 'true' }) });
       return repond(res, 200, { url: s.url });
     }
 
@@ -213,3 +269,5 @@ module.exports = handler;
 module.exports.formulaire = formulaire;
 module.exports.cles = () => mails.cles();   // remplacé par les tests (pas de réseau vers Google)
 module.exports.creation = creation;   // remplacé par les tests (pas de réseau vers Google)
+module.exports.maintenant = () => Date.now();   // lot 81 : remplacé par les tests (la fenêtre de 48 heures du rattrapage)
+module.exports.RATTRAPAGE_REMISE = RATTRAPAGE_REMISE;   // api/rappel.js : le montant du mail de rappel

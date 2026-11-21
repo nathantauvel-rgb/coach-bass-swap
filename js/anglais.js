@@ -2740,4 +2740,45 @@ enMotif(/^([\s\S]+?) Tes frappes arrivent toutes un peu tard : avec des écouteu
   (m, a) => tr(a) + ' Your taps all come in a little late: with wireless headphones, the sound lags. Try with the speaker.');
 /* ---------- Lot 80 : fin ---------- */
 
+/* ---------- Lot 81 « La caisse » : l'année d'office, le rattrapage, l'essai dès la première réussite, le plan, la source ---------- */
+enPareil('TikTok', 'Instagram', 'YouTube');
+enDe({
+  // index.html : l'essai sur la carte de résultat, la question après le paiement
+  'Ça marche avec ta table !': 'It works with your controller!',
+  "Voir l'essai gratuit": 'See the free trial',
+  'Une dernière question : comment tu as connu DJingood ?': 'One last question: how did you hear about DJingood?',
+  'Comment tu as connu DJingood': 'How did you hear about DJingood',
+  'Un ami': 'A friend',
+  'Autre': 'Other',
+  "Merci, ça m'aide beaucoup !": 'Thanks, that really helps!',
+  // presentation.html : le titre dit le résultat
+  'Ta première vraie transition, en deux semaines.': 'Your first real transition, in two weeks.',
+  "Tu as une table et tu n'y connais rien ? Apprends à mixer sur ta table, un geste à la fois, avec ta musique.": "Got a controller and don't know the first thing about it? Learn to mix on your controller, one move at a time, with your own music.",
+  // js/pro.js : les formules, le rattrapage
+  '4,17 €/mois': '€4.17/month',
+  '49,99 € par an': '€49.99 a year',
+  "49,99 € pour l'année": '€49.99 for the year',
+  'la 1re année': 'the 1st year',
+  '4,99 €/mois': '€4.99/month',
+  'payé chaque mois': 'billed monthly',
+  '34,99 €': '€34.99',
+  '/ 1re année': '/ 1st year',
+  'Ta première année à 34,99 €': 'Your first year for €34.99',
+  '34,99 € pour ta première année': '€34.99 for your first year',
+  "L'offre à 34,99 € est terminée : tu peux continuer au prix normal.": 'The €34.99 offer has ended: you can continue at the regular price.',
+  // js/niveaux.js
+  "Plutôt à l'année (34,99 € la 1re année) ?": 'Yearly instead (€34.99 the 1st year)?'
+});
+enMotif("<s>49,99 €</s> jusqu'au {=d} à {=h} · ensuite 49,99 € par an", '<s>€49.99</s> until {d} at {h} · then €49.99 a year');
+enMotif("Au lieu de 49,99 €, jusqu'au {=d} à {=h}.", 'Instead of €49.99, until {d} at {h}.');
+enMotif("Ta première année à 34,99 € au lieu de 49,99 €, jusqu'au {=d} à {=h}.", 'Your first year for €34.99 instead of €49.99, until {d} at {h}.');
+enMotif("Essaie tout DJingood {#n} jours, gratuitement : les {#m} exercices, les tutos de Vini, l'entraînement.", "Try all of DJingood free for {n} days: the {m} exercises, Vini's tutorials, practice.");
+// le plan des Premiers pas, rappelé dans l'offre (proPlan) : le nom de la table est le même dans les deux langues
+enMotif('Ton plan : {=t} · {#m} min par jour', 'Your plan: {t} · {m} min a day');
+enMotif('Ton plan : {#m} min par jour', 'Your plan: {m} min a day');
+enMotif('Ton plan : {=t}', 'Your plan: {t}');
+{ const quand = { 'À ton rythme': 'At your own pace', 'Dans 2 semaines': 'In 2 weeks', 'En moins de 2 semaines': 'In under 2 weeks' };
+  const but = { 'ta première vraie transition': 'your first real transition', 'des transitions vraiment propres': 'truly clean transitions', 'un set à 100 sur 100': 'a 100/100 set' };
+  for (const q in quand) for (const b in but) EN[trCle(`${q} : ${b}.`)] = `${quand[q]}: ${but[b]}.`; }
+
 trPage();

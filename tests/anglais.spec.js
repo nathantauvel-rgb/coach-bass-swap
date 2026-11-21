@@ -32,7 +32,7 @@ test.describe('La page de présentation', () => {
     const erreurs = [];
     page.on('pageerror', e => erreurs.push(String(e)));
     await page.goto('/presentation.html?lang=en');
-    await expect(page.locator('h1')).toHaveText('Learn to mix on your controller, one move at a time.');
+    await expect(page.locator('h1')).toHaveText('Your first real transition, in two weeks.');   // lot 81 : le titre dit le résultat
     await expect(page.locator('#langBtn')).toHaveText('FR');
     await expect(page).toHaveTitle('Learning to mix as a beginner · How DJingood works');
     expect(await manque(page)).toEqual([]);

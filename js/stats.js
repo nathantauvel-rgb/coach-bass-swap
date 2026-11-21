@@ -25,7 +25,7 @@ const STATS_DOMAINES = ['djingood.fr', 'www.djingood.fr', 'coach-bass-swap.verce
 const STATS_KEY = 'coach-stats', STATS_NON = 'umami.disabled';
 // Les étapes comptées une fois par navigateur, dans l'ordre où un joueur les rencontre
 const STATS_ETAPES = ['anglais', 'sans-midi', 'premiers-pas-fin', 'premiers-pas-passes', 'comprendre-1', 'comprendre-fin', 'table-branchee', 'premiere-partie', 'premiere-reussite',
-  'chapitre-1', 'chapitre-2', 'chapitre-3', 'chapitre-4', 'chapitre-5', 'chapitre-6', 'chapitre-7', 'compte-propose', 'compte', 'quiz-oreille', 'plan-vu', 'mur-vu', 'mur-sans-compte', 'lien-ordi-envoye', 'ordi-depuis-lien', 'rekordbox', 'ma-musique-fiche', 'ma-musique-paire', 'revenu', 'jours-7', 'pro', 'essai-fini', 'fondateur-vu'];   // pro : abonné (lot 59) ; essai-fini : les 3 niveaux gratuits réussis, fondateur-vu : le mois offert proposé (lot 68)
+  'chapitre-1', 'chapitre-2', 'chapitre-3', 'chapitre-4', 'chapitre-5', 'chapitre-6', 'chapitre-7', 'compte-propose', 'compte', 'quiz-oreille', 'plan-vu', 'mur-vu', 'mur-sans-compte', 'lien-ordi-envoye', 'ordi-depuis-lien', 'rekordbox', 'ma-musique-fiche', 'ma-musique-paire', 'revenu', 'jours-7', 'pro', 'essai-fini', 'fondateur-vu', 'essai-tot', 'rattrapage-vu'];   // pro : abonné (lot 59) ; essai-fini : les 3 niveaux gratuits réussis, fondateur-vu : le mois offert proposé (lot 68) ; essai-tot : l'essai proposé dès la première réussite, rattrapage-vu : l'offre à 34,99 € montrée (lot 81)
 let statsFaits = []; try { statsFaits = JSON.parse(localStorage.getItem(STATS_KEY) || '[]'); } catch (e) {}
 if (!Array.isArray(statsFaits)) statsFaits = [];
 statsFaits = statsFaits.filter(n => STATS_ETAPES.includes(n));

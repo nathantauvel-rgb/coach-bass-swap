@@ -184,7 +184,8 @@ test.describe('La fonction /api/pro', () => {
     fn.creation = async () => { if (stripe.creationPanne) throw new Error('google 500'); return stripe.creation; };
     // abonnements : ce que la RECHERCHE voit (avec une minute de retard chez le vrai Stripe) ;
     // clients : { adresse: [{ id, abos: [...] }] }, ce que les LISTES voient tout de suite
-    stripe = { appels: [], abonnements: [], clients: {}, session: null, statut: 200, creation: null, creationPanne: false };
+    // lot 81 : pages = les pages de paiement déjà ouvertes, par paquets de 100 (la liste de Stripe) ; coupon = la remise existe
+    stripe = { appels: [], abonnements: [], clients: {}, session: null, statut: 200, creation: null, creationPanne: false, pages: [], coupon: false };
     global.fetch = async (url, o = {}) => {
       stripe.appels.push({ url, methode: o.method, cle: o.headers && o.headers.Authorization, corps: o.body || '' });
       const ok = stripe.statut === 200, rep = d => ({ ok, status: stripe.statut, json: async () => d });
@@ -195,6 +196,12 @@ test.describe('La fonction /api/pro', () => {
         return rep({ data: c ? c.abos : [] });
       }
       if (url.includes('/subscriptions/search')) return rep({ data: stripe.abonnements });
+      if (url.includes('/checkout/sessions?')){
+        const apres = q.get('starting_after'), i = apres ? stripe.pages.findIndex(pg => pg.some(s => s.id === apres)) + 1 : 0;
+        return rep({ data: stripe.pages[i] || [], has_more: i < stripe.pages.length - 1 });
+      }
+      if (url.includes('/coupons/')) return stripe.coupon ? rep({ id: 'djingood-rattrapage-1' }) : { ok: false, status: 404, json: async () => ({}) };
+      if (url.endsWith('/coupons')){ stripe.coupon = true; return rep({ id: 'djingood-rattrapage-1' }); }
       if (url.includes('/checkout/sessions/')) return rep(stripe.session);
       if (url.endsWith('/checkout/sessions')) return rep({ url: 'https://checkout.stripe.com/c/pay/cs_test_1' });
       if (url.endsWith('/billing_portal/sessions')) return rep({ url: 'https://billing.stripe.com/p/session/1' });
@@ -368,6 +375,84 @@ test.describe('La fonction /api/pro', () => {
     expect(await etat()).toMatchObject({ offert: true });
     delete process.env.PRO_FONDATEURS_AVANT;
   });
+  // Lot 81 : le rattrapage, 34,99 € la première année pendant 48 heures après la première page de paiement ouverte
+  test.describe('le rattrapage', () => {
+    const T = Date.parse('2026-11-25T12:00:00Z'), s = Math.floor(T / 1000), H = 3600;
+    const vraiMaintenant = fn.maintenant;
+    test.beforeEach(() => { fn.maintenant = () => T; });
+    test.afterEach(() => { fn.maintenant = vraiMaintenant; delete process.env.PRO_RATTRAPAGE_DEPUIS; });
+    const page = (uid, il, id = 'cs_' + uid + il) => ({ id, client_reference_id: uid, created: s - il * H });
+
+    test('etat : la fin de l’offre, 48 h après la PREMIÈRE page de paiement de ce compte ; jamais pour un autre compte', async () => {
+      const etat = async () => (await appel({ action: 'etat' })).corps;
+      expect(await etat()).not.toHaveProperty('rattrapage');   // jamais ouvert la page de paiement : pas d'offre
+      stripe.pages = [[page('u2', 1)]];
+      expect(await etat()).not.toHaveProperty('rattrapage');   // celle d'un autre compte ne compte pas
+      stripe.pages = [[page('u1', 2), page('u2', 1)]];
+      expect((await etat()).rattrapage).toBe(s - 2 * H + 48 * H);
+      // la liste de Stripe passe par la date de mise en ligne du lot 81
+      expect(decodeURIComponent(stripe.appels.filter(a => a.url.includes('/checkout/sessions?')).pop().url)).toContain('created[gte]=' + Math.floor(Date.parse('2026-11-21T00:00:00+01:00') / 1000));
+      // une page plus ancienne, sur la page suivante de la liste : c'est elle qui compte, et ses 48 h sont passées
+      stripe.pages = [[page('u1', 2)], [page('u1', 50)]];
+      expect(await etat()).not.toHaveProperty('rattrapage');
+      // déjà abonné une fois : plus d'offre
+      stripe.pages = [[page('u1', 2)]]; stripe.abonnements = [ABO({ status: 'canceled' })];
+      expect(await etat()).not.toHaveProperty('rattrapage');
+      // plus de 500 pages de paiement depuis la mise en ligne : on ne sait plus laquelle était la première, pas d'offre
+      stripe.abonnements = []; stripe.pages = Array.from({ length: 6 }, (_, k) => [page('u1', 1, 'cs_p' + k)]);
+      expect(await etat()).not.toHaveProperty('rattrapage');
+      // Stripe en panne pour cette liste seulement : pas d'offre, le reste de la réponse arrive
+      stripe.pages = [[page('u1', 2)]];
+      const f = global.fetch; global.fetch = async (u, o) => u.includes('/checkout/sessions?') ? { ok: false, status: 500, json: async () => ({}) } : f(u, o);
+      expect(await etat()).toMatchObject({ pro: false, essaiDispo: true });
+      expect(await etat()).not.toHaveProperty('rattrapage');
+    });
+
+    test('payer avec le rattrapage : l’année, la remise de 15 € (créée la première fois), l’essai gardé, pas de code promo en plus', async () => {
+      stripe.pages = [[page('u1', 3)]];
+      let r = await appel({ action: 'payer', formule: 'an', essai: 'semaine', rattrapage: true });
+      expect(r.statusCode).toBe(200);
+      const creation = stripe.appels.find(a => a.url.endsWith('/coupons'));
+      expect(decodeURIComponent(creation.corps)).toBe('id=djingood-rattrapage-1&amount_off=1500&currency=eur&duration=repeating&duration_in_months=1&name=DJingood −15 €');
+      let corps = decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps);
+      for (const m of ['discounts[0][coupon]=djingood-rattrapage-1', 'subscription_data[metadata][rattrapage]=1', 'subscription_data[trial_period_days]=7', 'line_items[0][price]=price_an'])
+        expect(corps).toContain(m);
+      expect(corps).not.toContain('allow_promotion_codes');
+      // la remise existe déjà : on ne la recrée pas
+      stripe.appels = [];
+      await appel({ action: 'payer', formule: 'an', rattrapage: true });
+      expect(stripe.appels.some(a => a.url.endsWith('/coupons'))).toBe(false);
+      // sans rattrapage : les codes promo, comme avant, et le retour sans payer le dit au site
+      stripe.appels = [];
+      await appel({ action: 'payer', formule: 'an' });
+      corps = decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps);
+      expect(corps).toContain('allow_promotion_codes=true'); expect(corps).not.toContain('discounts'); expect(corps).not.toContain('rattrapage');
+      expect(corps).toContain('cancel_url=https://djingood.fr/?pro=retour#apprendre');
+    });
+
+    test('payer avec le rattrapage : refusé au mois, avec le mois offert, après les 48 h ou pour un ancien abonné', async () => {
+      stripe.pages = [[page('u1', 3)]];
+      expect((await appel({ action: 'payer', formule: 'mois', rattrapage: true })).corps).toEqual({ erreur: 'rattrapage' });
+      expect((await appel({ action: 'payer', formule: 'an', essai: true, rattrapage: true })).statusCode).toBe(400);
+      stripe.pages = [[page('u1', 49)]];
+      let r = await appel({ action: 'payer', formule: 'an', rattrapage: true });
+      expect(r.statusCode).toBe(410); expect(r.corps).toEqual({ erreur: 'rattrapage-fini' });
+      stripe.pages = [[page('u1', 3)]]; stripe.clients = { 'lea@exemple.fr': [{ id: 'cus_4', abos: [ABO({ customer: 'cus_4', status: 'canceled' })] }] };
+      r = await appel({ action: 'payer', formule: 'an', rattrapage: true });
+      expect(r.statusCode).toBe(410);
+      expect(stripe.appels.some(a => a.url.endsWith('/checkout/sessions'))).toBe(false);
+    });
+
+    test('le mail de rappel du 5e jour annonce 34,99 € pour un abonnement pris avec le rattrapage', async () => {
+      const { montant, montantEn } = require('../api/rappel.js');
+      const abo = (meta, iv = 'year', u = 4999) => ({ metadata: meta, items: { data: [{ price: { unit_amount: u, currency: 'eur', recurring: { interval: iv } } }] } });
+      expect(montant(abo({ rattrapage: '1' }))).toBe('34,99 € pour ta première année');
+      expect(montantEn(abo({ rattrapage: '1' }))).toBe('€34.99 for your first year');
+      expect(montant(abo({}))).toBe('49,99 € pour l’année');
+      expect(montant(abo({ rattrapage: '1' }, 'month', 499))).toBe('4,99 € par mois');
+    });
+  });
+
   test('la vraie lecture de la date demande à Firebase avec le jeton du joueur et la clé publique du site', async () => {
     const vraie = vraieCreation, appels = [];
     global.fetch = async (url, o) => { appels.push({ url, corps: JSON.parse(o.body) }); return { ok: true, json: async () => ({ users: [{ localId: 'u1', createdAt: '1760000000000' }] }) }; };
