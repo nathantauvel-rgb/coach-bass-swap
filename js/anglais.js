@@ -89,7 +89,7 @@ enDe({
   "Tu changes d'ordinateur ou de téléphone sans rien reperdre": 'Switch computers or phones without losing anything',
   'Même si tu vides ton navigateur, ta progression revient': 'Even if you clear your browser, your progress comes back',
   'Créer mon compte': 'Create my account', "J'ai déjà un compte": 'I already have an account',
-  'Ton prénom': 'Your first name', 'Nathan': 'Alex', 'Ton e-mail': 'Your email', 'toi@exemple.fr': 'you@example.com',
+  'Ton prénom': 'Your first name', 'Ton e-mail': 'Your email', 'toi@exemple.fr': 'you@example.com',
   'Ton mot de passe': 'Your password', 'Voir': 'Show', 'Mot de passe oublié ?': 'Forgot your password?', 'ou': 'or',
   'Continuer avec Google': 'Continue with Google', 'Se déconnecter': 'Sign out',
   'Régler ma table': 'Set up my controller', "Je n'ai pas cette commande": "I don't have this control", 'Enregistrer': 'Save',
@@ -1121,7 +1121,7 @@ enMotif('{#n} dB', '{n} dB');
 
 /* ---------- Lot 80 : début ---------- */
 // Écrit pendant le lot 80 (novembre 2026) : ce que le site a gagné depuis le lot 53. Une ligne se corrige à la main.
-enPareil("PRO", "DJingood Pro", "HOT CUES", "Pause", "Pixabay", "Pro", "Deep House", "Ambient House", "Deep House Instrumental", "Luxury Life", "Fashion Diva House", "Filter House", "House - July", "Pioneer XDJ-RR", "Satin", "Mirage", "Warm-up", "Afro sunset", "Lune Basse", "Kalia Moon", "Terre rouge", "Moussa K.", "Soleil noir", "Kora Club", "Ilé Ayo", "Sahel Drive", "Savane", "Cuivres", "Paloma Vee", "Noé Marlo", "Lumière noire", "Fil rouge", "Saint-Ange", "Fièvre", "Dernier métro", "Grand bleu", "Oslo Nuit", "Melodic House & Techno", "Marée haute", "Acier Doux", "Mira Sol", "House & Nu Disco", "Les Jumeaux Disco", "Boule à facettes", "Bain de minuit", "Possible", "Playlist", "FADER ↓", "FADER ↑", "LOW ↓", "LOW ↑", "HI ↓", "MID ↓", "HI ↑", "MID ↑", "3 min", "2 min");
+enPareil("PRO", "DJingood Pro", "HOT CUES", "Pause", "Pixabay", "Pro", "Deep House", "Ambient House", "Deep House Instrumental", "Luxury Life", "Fashion Diva House", "Filter House", "House - July", "Pioneer XDJ-RR", "Satin", "Aurore", "Mirage", "Warm-up", "Afro sunset", "Lune Basse", "Kalia Moon", "Terre rouge", "Moussa K.", "Soleil noir", "Kora Club", "Ilé Ayo", "Sahel Drive", "Savane", "Cuivres", "Paloma Vee", "Noé Marlo", "Lumière noire", "Fil rouge", "Saint-Ange", "Fièvre", "Dernier métro", "Grand bleu", "Oslo Nuit", "Melodic House & Techno", "Marée haute", "Acier Doux", "Mira Sol", "House & Nu Disco", "Les Jumeaux Disco", "Boule à facettes", "Bain de minuit", "Possible", "Playlist", "FADER ↓", "FADER ↑", "LOW ↓", "LOW ↑", "HI ↓", "MID ↓", "HI ↑", "MID ↑", "3 min", "2 min");
 
 /* ---------- index.html (lot 80) ---------- */
 enDe({
@@ -1706,7 +1706,6 @@ enDe({
   "Minuit": "Midnight",
   "Lumière": "Light",
   "Comète": "Comet",
-  "Aurore": "Dawn",
   "Orbite": "Orbit",
   "Écume": "Foam",
   "Saphir": "Sapphire",

@@ -216,25 +216,11 @@ function langueBoutons(){
     b.onclick = () => langueChange(autre);
   });
 }
-// Un navigateur qui n'est pas en français et aucun choix gardé : on propose l'anglais, en anglais
-function langueOffreVue(){
-  let garde = null;
-  try { garde = localStorage.getItem('coach-langue'); } catch (e) {}
-  if (garde || LANGUE === 'en') return false;
-  const ls = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || '']).map(x => String(x).toLowerCase());
-  return !ls.some(x => x.startsWith('fr'));
-}
+// Lot 80 : plus de carte « Switch to English » qui s'ouvrait toute seule (elle cachait le bouton des Premiers pas, et la
+// règle de l'utilisateur du 20 nov. 2026 veut la forme de tous les sites pour un réglage) : le bouton FR / EN suffit, et
+// les pubs en anglais mènent directement à ?lang=en.
 function langueOffre(){
   langueBoutons();
   if (LANGUE === 'en' && typeof stat1 === 'function') stat1('anglais');
-  if (!langueOffreVue() || document.getElementById('langOffre')) return;
-  const d = document.createElement('div');
-  d.id = 'langOffre'; d.className = 'langoffre'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Language');
-  d.innerHTML = '<p lang="en"><b>DJingood is in French.</b> Want it in English?</p>'
-    + '<div><button type="button" class="langoui" lang="en">Switch to English</button>'
-    + '<button type="button" class="langnon" lang="fr">Garder le français</button></div>';
-  d.querySelector('.langoui').onclick = () => langueChange('en');
-  d.querySelector('.langnon').onclick = () => { try { localStorage.setItem('coach-langue', 'fr'); } catch (e) {} d.remove(); };
-  document.body.appendChild(d);
 }
 document.addEventListener('DOMContentLoaded', langueOffre);

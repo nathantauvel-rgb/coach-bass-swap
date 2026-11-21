@@ -63,26 +63,19 @@ test.describe('Choisir l\'anglais', () => {
     expect(erreurs).toEqual([]);
   });
 
-  test('un navigateur en anglais se voit proposer l\'anglais, une seule fois', async ({ browser }) => {
+  // Lot 80 : plus de carte qui s'ouvre toute seule (règle « composants standards ») : le bouton EN des Premiers pas suffit
+  test('un navigateur en anglais : aucune fenêtre ; le bouton EN des Premiers pas passe le site en anglais', async ({ browser }) => {
     const ctx = await browser.newContext({ locale: 'en-US' }), page = await ctx.newPage();
-    await page.addInitScript(() => { try { if (!sessionStorage.getItem('__pret')){ localStorage.setItem('coach-accueil', '{"passe":true,"fini":"2026-10-16"}'); sessionStorage.setItem('__pret', '1'); } } catch (e) {} });
-    await page.goto('/index.html#accueil');
-    const carte = page.locator('#langOffre');
-    await expect(carte).toBeVisible();
-    await expect(carte).toContainText('DJingood is in French. Want it in English?');
-    await carte.getByRole('button', { name: 'Garder le français' }).click();
-    await expect(carte).toHaveCount(0);
-    expect(await page.evaluate(() => localStorage.getItem('coach-langue'))).toBe('fr');
-    await page.reload();
-    await expect(page.locator('#tabs')).toBeVisible();
+    await page.goto('/index.html');
+    await expect(page.locator('#pp')).toBeVisible();
     await expect(page.locator('#langOffre')).toHaveCount(0);
-    // « Switch to English », depuis un autre navigateur neuf
-    const ctx2 = await browser.newContext({ locale: 'en-GB' }), p2 = await ctx2.newPage();
-    await p2.goto('/index.html');
-    await p2.locator('#langOffre').getByRole('button', { name: 'Switch to English' }).click();
-    await expect(p2.locator('html')).toHaveAttribute('lang', 'en');
-    await expect(p2.locator('#ppAsk')).toContainText("Hi, I'm Vini!");
-    await ctx.close(); await ctx2.close();
+    await expect(page.locator('#ppGo')).toBeVisible();
+    await expect(page.locator('#ppLang')).toHaveText('EN');
+    await page.locator('#ppLang').click();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.locator('#ppAsk')).toContainText("Hi, I'm Vini!");
+    expect(await page.evaluate(() => localStorage.getItem('coach-langue'))).toBe('en');
+    await ctx.close();
   });
 
   test('un navigateur en français ne voit pas la proposition', async ({ browser }) => {

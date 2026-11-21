@@ -210,7 +210,7 @@ function midiAideRemplir(box){
 }
 // Le lien du site, sans ce qui suit # (on arrive à l'accueil). Sans presse-papiers (refusé ou absent), le lien s'écrit en
 // toutes lettres pour qu'on le recopie.
-const midiLien = () => location.origin + location.pathname;
+const midiLien = () => location.origin + location.pathname + (LANGUE === 'en' ? '?lang=en' : '');   // lot 80 : même langue sur l'ordinateur
 async function midiCopieLien(b, box){
   let ok = false; try { await navigator.clipboard.writeText(midiLien()); ok = true; } catch (e) {}
   if (ok){ b.textContent = 'Lien copié !'; setTimeout(() => { b.textContent = 'Copier le lien'; }, 2500); return; }

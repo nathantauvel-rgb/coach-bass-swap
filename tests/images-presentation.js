@@ -35,7 +35,7 @@ const fausseTable = () => { const inputs = new Map([['1', { id: '1', name: 'DDJ-
   let p = await page('apprendre');
   await p.evaluate(() => { for (const [c, n, v] of [[0, 19, 127], [1, 19, 127], [0, 15, 64], [1, 15, 0]]) window.__midi.envoyer(0xB0 + c, n, v); });
   await p.locator('.node').nth(5).click(); await p.waitForTimeout(400);
-  await p.locator('#startBtn').click(); await p.waitForFunction(() => document.getElementById('startBtn').textContent === (EN ? 'Stop' : 'Arrêter'), null, { timeout: 60000 });
+  await p.locator('#startBtn').click(); await p.waitForFunction(t => document.getElementById('startBtn').textContent === t, EN ? 'Stop' : 'Arrêter', { timeout: 60000 });   // le texte attendu passe en argument (la page ne connaît pas EN)
   await p.waitForFunction(() => beatNow() >= 58, null, { timeout: 60000, polling: 'raf' });
   await shot(p, 'apprendre.jpg', '#stage'); await p.context().close();
   // 2. L'accueil : la prochaine étape et l'objectif du jour

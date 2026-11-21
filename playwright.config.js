@@ -11,7 +11,7 @@ module.exports = defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     viewport: { width: 1366, height: 768 },
-    // un navigateur réglé en français, comme le public du site : sinon la carte « Switch to English » (lot 53) s'affiche partout
+    // un navigateur réglé en français, comme le public du site (lot 53)
     locale: 'fr-FR',
     launchOptions: { args: ['--autoplay-policy=no-user-gesture-required'] }
   },
