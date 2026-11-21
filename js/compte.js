@@ -45,9 +45,10 @@ const CPT_MAX = 400000;                       // au-delà, on n'envoie pas (gard
      ordre du chapitre 1). Il est posé à chaque chargement par `ordreMigre`. S'il voyageait et revenait absent d'un
      paquet, les étoiles seraient déplacées une deuxième fois, donc fausses.
    - `coach-stats` : les étapes déjà comptées par les statistiques sur ce navigateur (stats.js).
+   - `coach-langue` : la langue choisie, français ou anglais (lot 53).
    - `coach-compte-propose` : le jour où la carte de fin a proposé le compte (mails.js) ; ne sert qu'avant d'en avoir un.
    `coach-mails` (la réponse « Vini peut m'écrire », lot 54), elle, suit le compte : on ne repose pas la question ailleurs. */
-const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-musique', 'coach-bibliotheque', 'coach-sons', 'coach-volume', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
+const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-musique', 'coach-bibliotheque', 'coach-sons', 'coach-volume', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, 'coach-langue', CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
 const cptOn = () => !!(CPT_CFG && CPT_CFG.apiKey && CPT_CFG.projectId && CPT_CFG.appId);
 const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_LOCAL.includes(k);
 

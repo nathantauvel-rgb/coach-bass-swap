@@ -264,13 +264,13 @@ function updateSetup(){
   const box = $('setup'), btn = $('startBtn');
   // lot 68 : un niveau de Pro (sans abonnement) : pas de position de départ, le bouton ouvre la fenêtre Pro (setStartBtn)
   if (!run && proIci()){ box.hidden = true; btn.disabled = false; btn.classList.remove('ready'); setStartBtn(false); return; }
-  if (run || !needSetup()){ box.hidden = true; if (!run){ btn.disabled = false; btn.classList.remove('ready'); if (btn.textContent !== 'Préparation…') btn.textContent = 'Jouer'; } return; }
+  if (run || !needSetup()){ box.hidden = true; if (!run){ btn.disabled = false; btn.classList.remove('ready'); if (btn.textContent !== tr('Préparation…')) btn.textContent = 'Jouer'; } return; }
   const l = LESSONS[li], ul = $('setupList'); ul.innerHTML = '';
   for (const k of l.depart || l.user){
     const v = l.init[k], p = map[k] ? phys[k] : null, ok = map[k] ? inPlace(k, v, p) : null;
     const li2 = document.createElement('li'); li2.className = ok === true || onScreen(k) ? 'ok' : ok === false ? 'wrong' : '';
     const ic = document.createElement('span'); ic.className = 'ic'; ic.textContent = onScreen(k) ? '•' : ok === true ? '✓' : ok === false ? '!' : '?';
-    const nm = document.createElement('span'); nm.innerHTML = '<b></b> '; nm.querySelector('b').textContent = CTRL_LABEL[k]; nm.appendChild(document.createTextNode(': ' + targetText(k, v))); nm.prepend(pictoOf(k, v));
+    const nm = document.createElement('span'); nm.innerHTML = '<b></b>'; nm.querySelector('b').textContent = CTRL_LABEL[k]; nm.appendChild(document.createTextNode(' : ' + targetText(k, v))); nm.prepend(pictoOf(k, v));
     const wh = document.createElement('span'); wh.className = 'what';
     wh.textContent = onScreen(k) ? 'à l\'écran : ta table n\'en a pas' : ok === true ? 'en place' : ok === null ? 'bouge-le un peu' : k.startsWith('fader') ? (p < v ? 'monte-le' : 'descends-le') : (p < v ? 'tourne à droite' : 'tourne à gauche');
     if (!map[k] && !tableCfg){ wh.textContent = ''; const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'learn' + (learnKey === k ? ' on' : '');

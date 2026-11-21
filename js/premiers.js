@@ -638,7 +638,8 @@ function ppBulle(texte){
   const el = $('ppAsk');
   if (el.dataset.t === texte) return false;
   ppTapeFin(); el.dataset.t = texte; el.textContent = '';
-  for (const ch of texte){ const s = document.createElement('span'); s.className = 'pp-c'; s.textContent = ch; el.appendChild(s); }
+  // en anglais, la phrase est traduite avant d'être coupée en lettres (lot 53)
+  for (const ch of tr(texte)){ const s = document.createElement('span'); s.className = 'pp-c'; s.textContent = ch; el.appendChild(s); }
   return true;
 }
 // v : le Vini qui parle ; fin : appelée quand tout est écrit
