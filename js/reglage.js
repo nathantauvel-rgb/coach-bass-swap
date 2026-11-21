@@ -46,8 +46,8 @@ const reg = { active: false, i: 0, got: {}, seen: {}, last: {}, msg: '', wait: f
 const REG_ECART = 12;   // sur 127 : environ un dixième de la course d'un potard ou d'un fader
 let tableLater = false;   // « Plus tard » : le bandeau ne revient qu'au prochain chargement de la page
 const capFirst = t => t.charAt(0).toUpperCase() + t.slice(1);
-// Le schéma est celui des fiches (même dessin, identifiants préfixés rg- pour ne pas les mélanger)
-$('regSvg').innerHTML = $('onbSvg').innerHTML.replace(/id="sv-/g, 'id="rg-');
+// Le schéma est celui des fiches (même dessin, identifiants préfixés rg- pour ne pas les mélanger, ses dégradés aussi : lot 73)
+$('regSvg').innerHTML = $('onbSvg').innerHTML.replace(/(id="|url\(#)sv-/g, '$1rg-');
 // La table à régler : la première qui n'est pas une FLX4 (ou la FLX4 elle-même, si on la règle à la main)
 const regName = () => midiNames.find(n => !isFlx4(n)) || midiNames[0] || '';
 const regKind = (k, m) => MIDI_CC.includes(k) || !!(m && m.cc);

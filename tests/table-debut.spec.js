@@ -29,6 +29,11 @@ test.describe('Ta table, dès le début : aux Premiers pas', () => {
     await expect(page.locator('#ppAsk')).toHaveText('Je la reconnais : ta Pioneer DDJ-FLX4 ! Bouge le fader de gauche, pour voir.');
     await expect(page.locator('#ppTestLien')).toHaveText('Le dessin ne bouge pas ?');
     await expect(page.locator('#ppGo')).toBeDisabled();
+    // le dessin est la table en relief (comme celle des niveaux) : chaque copie a ses propres dégradés, sinon elle s'afficherait
+    // sans couleurs (ceux du dessin d'origine sont dans une fenêtre cachée)
+    const degrades = await page.evaluate(() => ['ppTestSvg', 'regSvg'].map(id => { const h = document.getElementById(id).innerHTML;
+      return [/url\(#sv-/.test(h), (h.match(/url\(#(pt|rg)-g\w+\)/g) || []).length > 10, !!document.getElementById(id === 'regSvg' ? 'rg-gFace' : 'pt-gFace')]; }));
+    expect(degrades).toEqual([[false, true, true], [false, true, true]]);
     // le fader de droite bouge sur le dessin, mais ne fait pas le test ; PLAY de B ne lance rien pendant le test
     const capB = () => page.locator('#pt-faderB rect').last().getAttribute('y');
     const avant = await capB();

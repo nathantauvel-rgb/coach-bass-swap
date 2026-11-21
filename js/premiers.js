@@ -327,7 +327,7 @@ function ppTestBloc(){
     + '<div class="pp-test-etat"><p class="regstate" id="ppTestEtat" role="status"></p><button type="button" class="pp-lien" id="ppTestLien"></button></div>'
     + '<svg class="onb-svg pp-svg" id="ppTestSvg" viewBox="0 0 600 270" aria-hidden="true"></svg>';
   $('ppOpts').appendChild(box);
-  const svg = $('ppTestSvg'); svg.innerHTML = $('onbSvg').innerHTML.replace(/id="sv-/g, 'id="pt-'); onbHighlight(null, svg, 'pt-');
+  const svg = $('ppTestSvg'); svg.innerHTML = $('onbSvg').innerHTML.replace(/(id="|url\(#)sv-/g, '$1pt-'); onbHighlight(null, svg, 'pt-');
   $('ppTestLien').addEventListener('click', ppTestLien);
   if (mode === 'test' && !ppT.recu) ppPlusTard(PP_TEST_MUET, () => { if (!ppT.recu && ppTestActif()){ ppT.muet = true; ppTestRendu(); ppMaj(); } });
   if (mode === 'regle'){

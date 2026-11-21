@@ -3449,6 +3449,75 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
   .pp-test-s{margin-top:-4px;font-size:14px}
 }
 @media (prefers-reduced-motion:reduce){.pp-test,.pp-statut{animation:none}}
+/* La petite table dessinée (#onbSvg, et ses copies : « Régler ma table », « Avant de jouer », le test des Premiers pas) : en relief,
+   comme celle des niveaux depuis le lot 74. « T'as pas mis à jour le design des platines, sur le site elles ont changé »
+   (21 nov. 2026). Mêmes identifiants qu'avant (sv-, rg-, pt-) : rien ne change dans le fonctionnement. Couleurs : les --t-*. */
+.onb-svg{background:none}
+.rs-face1{stop-color:var(--t-face-1)} .rs-face2{stop-color:var(--t-face-2)}
+.rs-mix1{stop-color:var(--t-mix-1)} .rs-mix2{stop-color:var(--t-mix-2)}
+.rs-j1{stop-color:var(--t-jante-1)} .rs-j2{stop-color:var(--t-jante-2)} .rs-j3{stop-color:var(--t-jante-3)} .rs-j4{stop-color:var(--t-jante-4)} .rs-j5{stop-color:var(--t-jante-7)}
+.rs-p1{stop-color:var(--t-plateau-1)} .rs-p2{stop-color:var(--t-plateau-2)}
+.rs-r1{stop-color:var(--t-plateau-reflet)} .rs-r2{stop-color:var(--t-plateau-reflet);stop-opacity:0}
+.rs-m1{stop-color:var(--t-metal-1)} .rs-m2{stop-color:var(--t-metal-2)} .rs-m3{stop-color:var(--t-metal-3)} .rs-mt{stop-color:var(--ink)}
+.rs-g1{stop-color:var(--t-gomme-1)} .rs-g2{stop-color:var(--t-gomme-2)} .rs-g3{stop-color:var(--t-gomme-3)}
+.rs-pad1{stop-color:var(--t-pad-1)} .rs-pad2{stop-color:var(--t-pad-2)}
+.rs-b1{stop-color:var(--t-btn-1)} .rs-b2{stop-color:var(--t-btn-2)}
+/* le corps, les platines gravées, la plaque de la table de mixage et ses vis */
+.onb-svg .rl-cote{fill:var(--t-cote);stroke:var(--t-cote-bord)}
+.onb-svg .rl-face{stroke:var(--t-face-bas)}
+.onb-svg .rl-lum{stroke:var(--t-lumiere-forte);stroke-width:1.5;stroke-linecap:round}
+.onb-svg .rl-zone{fill:none;stroke:var(--t-sillon);stroke-width:1.5}
+.onb-svg .rl-zone-lum{fill:none;stroke:var(--t-lumiere);stroke-width:1.5}
+.onb-svg .rl-mix{stroke:var(--t-noir)}
+.onb-svg .rl-mix-cote{fill:var(--t-gomme-bord);stroke:var(--t-noir)}
+.onb-svg .rl-mix-lum{stroke:var(--t-mix-haut);stroke-width:1.5;stroke-linecap:round}
+.onb-svg .rl-vis{fill:var(--t-vis-2);stroke:var(--t-vis-3)}
+.onb-svg .rl-vis-c{fill:var(--t-vis-1)}
+.onb-svg .rl-sep{stroke:var(--t-ombre);stroke-width:1.5}
+.onb-svg .rl-sep-lum{stroke:var(--t-lumiere);stroke-width:1.5}
+/* les molettes : le creux, la jante, le plateau à sillons, l'écran et son anneau à la couleur de la platine */
+.onb-svg .rl-creux{fill:var(--t-creux);stroke:var(--t-vitre)}
+.onb-svg .rl-jog-cote{fill:var(--t-jog-cote);stroke:var(--t-noir)}
+.onb-svg .rl-jante{stroke:var(--t-noir)}
+.onb-svg .rl-sillon{fill:none;stroke:var(--t-plateau-sillon);stroke-width:1.5}
+.onb-svg .rl-ecran-bord{fill:var(--t-ecran-bord);stroke:var(--t-lumiere)}
+.onb-svg .rl-ecran{fill:var(--t-ecran);stroke-width:3.5}
+.onb-svg .rl-ledA{stroke:var(--a)} .onb-svg .rl-ledB{stroke:var(--b)}
+.onb-svg .rl-mk{stroke:var(--fg);stroke-width:4;stroke-linecap:round}
+.onb-svg .rl-tag{stroke:var(--t-noir)}
+.onb-svg .rl-tagA{fill:var(--a)} .onb-svg .rl-tagB{fill:var(--b)}
+.onb-svg text.rl-tagt{fill:var(--ink);font-size:13px;font-weight:900}
+.onb-svg text.rl-lab{fill:var(--t-serig);font-size:9.5px;font-weight:900;letter-spacing:.1em}
+/* les faders : une fente creusée, des graduations, un bouton de métal qui dépasse ; les vumètres éteints */
+.onb-svg .rl-slot{fill:var(--t-creux);stroke:var(--t-ombre)}
+.onb-svg .rl-grad{stroke:var(--t-grad);stroke-width:1}
+.onb-svg .rl-notch{stroke:var(--t-serig);stroke-width:1.5}
+.onb-svg .rl-cap{stroke:var(--t-metal-bord);stroke-width:.8;filter:drop-shadow(0 2px 0 var(--t-metal-cote)) drop-shadow(0 4px 3px var(--t-ombre))}
+.onb-svg .rl-vu{fill:var(--t-creux)}
+.onb-svg .rl-vu-led{stroke:var(--t-vu-eteint);stroke-width:3;stroke-dasharray:3.5 2}
+/* les potards : l'ombre, la jupe crantée, la tête bombée */
+.onb-svg .rl-k-ombre{fill:var(--t-ombre)}
+.onb-svg .rl-kb{stroke:var(--t-noir)}
+.onb-svg .rl-kd{fill:none;stroke:var(--t-sillon);stroke-width:1.6;stroke-dasharray:1 1}
+.onb-svg .rl-kt{stroke:var(--t-tete-bord);stroke-width:.6}
+/* CUE et PLAY : des dômes de gomme dans leur bague ; ON (l'effet) ; les pads dans leur bac */
+.onb-svg .rl-rb{stroke:var(--t-anneau);stroke-width:2}
+.onb-svg .rl-rb-cote{fill:var(--t-gomme-cote);stroke:var(--t-noir)}
+.onb-svg .rl-ico{fill:var(--t-serig)}
+.onb-svg text.rl-cue{fill:var(--t-serig);font-size:8.5px;font-weight:900;letter-spacing:.04em}
+.onb-svg .rl-btn{stroke:var(--t-gomme-bord)}
+.onb-svg .rl-btn-cote{fill:var(--t-gomme-cote);stroke:var(--t-gomme-bord)}
+.onb-svg .rl-bac{fill:var(--t-creux)}
+.onb-svg .rl-pad{stroke:var(--t-gomme-bord)}
+.onb-svg .rl-pad-cote{fill:var(--t-pad-cote)}
+.onb-svg text.rl-padt{fill:var(--t-serig);font-size:11px;font-weight:800}
+/* la commande montrée s'éclaire (l'anneau qui pulse dit laquelle) ; un bouton pressé s'allume en blanc. Après les règles
+   ci-dessus, pour passer devant elles. */
+.onb-svg .hl{fill:var(--xp)}
+.onb-svg .rl-kb.hl + .rl-kd + .rl-kt{fill:var(--xp)}
+.onb-svg .rl-kb.hl + .rl-kd + .rl-kt + .ndl{stroke:var(--ink)}
+.onb-svg .press{fill:var(--fg)}
+.onb-svg :is(.hl,.press) ~ .rl-ico,.onb-svg :is(.hl,.press) ~ text.rl-btnt{fill:var(--ink)}
 /* ---------- Lot 74 : la table en relief (maquette validée par l'utilisateur le 17 nov. 2026) ----------
    « Cette partie fait cheap », puis « un peu plus réaliste avec les contours, 3D ». Avant : trois cadres emboîtés, des molettes
    et des potards minuscules, et les commandes inutiles du niveau en gris-beige délavé. Maintenant : un seul bloc, la façade

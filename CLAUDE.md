@@ -44,8 +44,17 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (le nom de table tapé), le texte grisé du champ passé par `setAttribute` (une propriété `.placeholder` n'est pas traduite).
   Vérifié : relevé des tests (`captures/lot73/outils/releve.js` + `analyse.js`, outils du lot 80) et
   `captures/lot73/outils/vini-en.js` (les 132 phrases que Vini tape lettre par lettre) ; 4 tests anglais ajoutés à
-  `tests/table-debut.spec.js` (bloc « en anglais »). Le dessin du test reste l'ancien dessin plat des fiches (pas la table en
-  relief du lot 74) : question posée à l'utilisateur. À la publication : retoucher le point 41 de la checklist (« les points
+  `tests/table-debut.spec.js` (bloc « en anglais »). **Même jour, soir : la petite table dessinée passe en relief** (« les
+  planches sont très bien ; par contre t'as pas mis à jour le design des platines, sur le site elles ont changé ») :
+  `#onbSvg` d'`index.html` redessiné comme la table des niveaux du lot 74 (façade et épaisseur, platines gravées, molettes
+  à jante et anneau orange / bleu, tempo, CUE au-dessus de PLAY, pads, plaque de mixage vissée, potards à jupe crantée,
+  faders de métal, ON en haut à droite comme sur la FLX4). Mêmes identifiants et mêmes positions des commandes (`sv-`,
+  `rg-`, `pt-`) ; dégradés `sv-g…` dans le dessin, renommés avec lui dans ses copies (`premiers.js`, `reglage.js` :
+  `(id="|url\(#)sv-`) ; potards dessinés par `drawOnbKnobs` (`guide.js`) ; l'anneau qui pulse entoure toute la commande
+  (`onbHighlight` lit la boîte du groupe) ; couleurs : bloc « La petite table dessinée » à la fin du bloc Lot 73 de
+  `styles.css` (les `--t-*` du lot 74). Ça change aussi les fiches « Découvre ce bouton » et « Régler ma table » (même
+  dessin). Planche refaite (`captures/lot73/planche.png` ; l'ancienne : `planche-plat.png`), un test ajouté (chaque copie a ses
+  dégradés). À la publication : retoucher le point 41 de la checklist (« les points
   39 et 40 sont ceux du lot 73, pas encore en ligne »). Ci-dessous, le détail du 17 nov. Demande de l'utilisateur après
   l'analyse Umami du 9-16 nov. (24 tables branchées, 7 « Ta première transition ! ») et des messages TikTok (XDJ-AZ, XDJ-RR,
   Traktor S2 MK3 « pas détectées ») ; maquette validée (« Ça me va », `captures/maquette-table-debut/` du dossier principal),
