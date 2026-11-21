@@ -32,7 +32,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 73 « Ta table, dès le début » (17 nov. 2026, nuit) : FAIT, NON PUBLIÉ.** Copie
+- **Lot 73 « Ta table, dès le début » (17 nov. 2026, nuit) : PUBLIÉ le 21 nov. 2026** (« publie », sans l'essai FLX4 ; `e5d07d8`, puis cette note ; suite complète 917 sur 917, gardien feu orange sans blocage ; **production vérifiée** en 1366 × 768, français et `?lang=en` : test du fader avec une fausse FLX4, dessin en relief, aucune erreur, rien resté en français). **Reste, par lui** : les points 39 et 40 de la checklist sur sa FLX4 (et une fiche « Découvre ce bouton » table branchée : les aiguilles des potards). Petites remarques du gardien laissées : règles `.onb-svg .body/.part/.jog` inutiles (styles.css), « le curseur vertical à droite du centre » de « Régler ma table » (il y a maintenant aussi les tempos dessinés). Copie
   `Documents\coach-dj-lot73`, branche `lot-73-table-debut` (partie d'`origin/main` = `97cc85c`).
   **21 nov. 2026 (« LOT 73 ») : remis à jour pour être publiable.** Commité (`3cd1705`), fusionné avec `origin/main` = `1a96992`
   (lots 74 à 78, `5745251`), 893 tests sur 893 (`DJ_PORT=8775`), captures refaites en 1366 × 768 (`captures/lot73/planche.png`,
