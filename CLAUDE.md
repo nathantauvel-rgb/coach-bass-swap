@@ -32,7 +32,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 80 « Le site en anglais » (21 nov. 2026) : EN COURS, NON PUBLIÉ.** Demande : « ouvrir mon site au marché
+- **Lot 80 « Le site en anglais » : PUBLIÉ le 21 nov. 2026** (« ok publie quand c'est vert » ; `17b4ff1`, puis cette
+  note ; suite complète verte : 895 + le test de la barre d'espace du chapitre 6, instable sous la charge, passé 3 fois sur
+  3 seul ; **production vérifiée** sur djingood.fr en 1366 × 768 : `?lang=en` tout en anglais sans phrase oubliée, le
+  français identique (« Jouer » à 336 px, dictionnaire pas téléchargé), un navigateur en anglais voit « English » puis
+  l'anglais au clic, présentation et `terms.html` en anglais, aucune erreur). Liens pour les pubs :
+  https://djingood.fr/?lang=en et https://djingood.fr/presentation.html?lang=en. **Choix de l'utilisateur** (21 nov.) : ne
+  pas remplacer le français, seulement l'ajouter pour les anglophones ; pas de bascule automatique selon la langue du
+  navigateur (un Français au téléphone réglé en anglais l'aurait subie, et Google aurait pu montrer l'anglais) ; à la
+  place, **le bouton dit « English » en toutes lettres** aux navigateurs qui ne sont pas en français (`17b4ff1`).
+  Demande de départ : « ouvrir mon site au marché
   international… pour commencer à faire de la pub en anglais », puis « Oui, lance-le ». Copie `Documents\coach-dj-lot80`,
   branche `lot-80-anglais` partie d'`origin/main` = `1a96992` (sans suivi d'`origin/main`) ; serveur `coach-dj-lot80`
   (port 8786, Pro allumé) dans le `.claude/launch.json` du dossier principal ; **tests avec `DJ_PORT=8787`** (pas 8786 :
@@ -74,7 +83,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     les 7 chapitres, la fenêtre Pro, les tutos, la case des mails, les pages légales ; et dans `lien.spec.js`,
     `rappel.spec.js`, `pro.spec.js` : les mails et Stripe en anglais) ; commits `a1f71fa` + `8aee9f1` ; planche
     `captures/lot80/planche.png` envoyée à l'utilisateur.
-  - **Reste** : la suite complète (relancée après la coupure de la session), le gardien, l'accord. Puis, avec lui : l'adresse anglaise (djingood.com conseillée), la TVA à
+  - **21 nov. (session reprise, « REPREND »)** : suite complète 896 sur 896 ; **gardien : feu orange, aucun blocage**
+    (français identique à la version en ligne sur 14 écrans, aucun secret, interrupteurs inchangés). Ses remarques
+    corrigées (`8933626`) : **plus de carte « Switch to English »** (elle s'ouvrait toute seule et cachait le bouton des
+    Premiers pas ; règle « composants standards » : le bouton FR / EN suffit, à remettre seulement s'il le demande), lien
+    téléphone → ordinateur avec `?lang=en`, prénoms plus traduits (« Nathan » → « Alex », « Aurore » → « Dawn »),
+    `tests/images-presentation.js` (texte attendu en argument), étape `anglais` dans `STATISTIQUES.md`. Suite complète
+    relancée après ces corrections (`captures/lot80/suite2-shard*.log`).
+  - **Reste, par lui** : avec sa FLX4, les points 2, 3, 4, 5, 32 et 41 de `tests/CHECKLIST-FLX4.md` (et le point 4 une
+    fois avec `?lang=en`) ; plus tard, à décider avec lui : adresse anglaise, TVA, relecture. Puis, avec lui : l'adresse anglaise (djingood.com conseillée), la TVA à
     l'étranger (Royaume-Uni dès la 1re vente), prix en dollars ou non, relecture par un anglophone, mails de Vini en anglais
     (liste Brevo à part), les balises de partage (og:) restent en français.
 - **Lot 78 « Une simple case » (20 nov. 2026, soir) : PUBLIÉ le 21 nov.** (« ok c'est mieux, publie quand c'est fini » ;
