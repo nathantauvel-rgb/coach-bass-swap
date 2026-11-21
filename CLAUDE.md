@@ -32,7 +32,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 81 « La caisse » : FAIT, PAS PUBLIÉ (21 nov. 2026)**. Né de l'analyse d'une vidéo YouTube sur les ventes d'un SaaS
+- **Lot 81 « La caisse » : PUBLIÉ le 21 nov. 2026** (« Oui, publie » ; `c922a3f`, puis cette note = `origin/main` ; production vérifiée en 1366 × 768, en français et en anglais : année d'office, plan, essai dès le niveau 1, question après paiement, nouveau titre, CGV ; `/api/pro` répond). **Reste, par lui** : un essai sans payer avec son compte (page de paiement, flèche « ← » de Stripe, « 34,99 € » et la date, rouvrir Stripe : −15 € et 7 jours gratuits, repartir sans payer ; ce premier passage crée la remise chez Stripe) ; points 42, 38, 2 de la checklist FLX4. La fenêtre Pro qui se rouvre au retour de Stripe a été gardée (question posée, il a répondu « Oui, publie »). Né de l'analyse d'une vidéo YouTube sur les ventes d'un SaaS
   (`Documents\MARKETING\07-video-saas.md`). Décisions de l'utilisateur, mot pour mot : « Ok pour l'année d'office, rattrapage
   à 34,99 € pendant 48 h, Non pour le prix mensuel et annuel on n'y change rien en temps normal, Oui propose l'essai de 7 jours
   plus tôt, Dès la première réussite c'est très bien, On fait pas de offrir à du jingo pro pour le moment, Et on ne change pas
