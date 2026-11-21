@@ -418,6 +418,16 @@ test.describe('La fonction /api/pro', () => {
       for (const m of ['discounts[0][coupon]=djingood-rattrapage-1', 'subscription_data[metadata][rattrapage]=1', 'subscription_data[trial_period_days]=7', 'line_items[0][price]=price_an'])
         expect(corps).toContain(m);
       expect(corps).not.toContain('allow_promotion_codes');
+      // la page avec la remise se ferme au plus tard 24 h après (limite de Stripe), et jamais après la fin de l'offre
+      expect(corps).toContain('expires_at=' + (s + 86400));
+      // gardien : l'offre finit dans 12 min : la page se ferme 30 min après (le minimum de Stripe)
+      stripe.appels = []; stripe.pages = [[page('u1', 47.8)]];
+      await appel({ action: 'payer', formule: 'an', rattrapage: true });
+      expect(decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps)).toContain('expires_at=' + (s + 1800));
+      stripe.appels = []; stripe.pages = [[page('u1', 30)]];   // il reste 18 h : la page se ferme à la fin de l'offre
+      await appel({ action: 'payer', formule: 'an', rattrapage: true });
+      expect(decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps)).toContain('expires_at=' + (s - 30 * H + 48 * H));
+      stripe.pages = [[page('u1', 3)]];
       // la remise existe déjà : on ne la recrée pas
       stripe.appels = [];
       await appel({ action: 'payer', formule: 'an', rattrapage: true });
@@ -426,7 +436,7 @@ test.describe('La fonction /api/pro', () => {
       stripe.appels = [];
       await appel({ action: 'payer', formule: 'an' });
       corps = decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps);
-      expect(corps).toContain('allow_promotion_codes=true'); expect(corps).not.toContain('discounts'); expect(corps).not.toContain('rattrapage');
+      expect(corps).toContain('allow_promotion_codes=true'); expect(corps).not.toContain('discounts'); expect(corps).not.toContain('rattrapage'); expect(corps).not.toContain('expires_at');
       expect(corps).toContain('cancel_url=https://djingood.fr/?pro=retour#apprendre');
     });
 

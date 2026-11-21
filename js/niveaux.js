@@ -791,8 +791,10 @@ function finish(){
   if (prac) pracStep(st);
   questLigne(questNote({ st, expert: !!r.expert, ear: !!r.ear, ch: r.ch }));   // après pracStep : le défi du jour est à jour
   const fresh = goalFresh;
-  quizOffer(st); avisPartie(r.ch, st); goalNote(); slowOffer(st); resultatBoutons(st); mlPropose(st);   // le compte, après une réussite (mails.js)
-  finEssai(r.ch, st, before); essaiTot(r.ch, st);   // lot 81 : l'essai de 7 jours, dès la première réussite
+  // le compte, après une réussite (mails.js) ; lot 81 : l'essai de 7 jours, dès la première réussite, prend sa place (et la
+  // proposition du compte n'est alors ni comptée ni consommée pour la journée, gardien du lot 81)
+  quizOffer(st); avisPartie(r.ch, st); goalNote(); slowOffer(st); resultatBoutons(st); if (!essaiTot(r.ch, st)) mlPropose(st);
+  finEssai(r.ch, st, before);
   renderHud(); if (st >= 2) confetti(st === 3 ? 160 : 60);
   if (fresh) openSerie();   // objectif du jour atteint avec cette partie : l'écran de la série passe devant (avec son propre son)
   else if (st >= 2){ for (let i = 0; i < st; i++) setTimeout(() => son('etoile', i), 120 + i * 180); setTimeout(() => son('fin'), 160 + st * 180); }
@@ -828,7 +830,7 @@ function finEssaiTexte(){
   // rattrapage, l'année à 34,99 € et sa date limite.
   const r = typeof proRattrapage === 'function' && e !== true && proRattrapage();
   $('rProRattrapage').hidden = !r;
-  if (r) $('rProRattrapage').textContent = `Ta première année à 34,99 € au lieu de 49,99 €, ${proRattrapageFin()}.`;
+  if (r){ $('rProRattrapage').textContent = `Ta première année à 34,99 € au lieu de 49,99 €, ${proRattrapageFin()}.`; stat1('rattrapage-vu'); }
   if (e === 'semaine'){
     $('rProEssaiTxt').textContent = `${PRO_ESSAI_JOURS} jours gratuits, puis ${offrePrix(true)}. Ta carte est demandée, mais rien n’est prélevé avant le ${PRO_ESSAI_JOURS}e jour ; un mail te prévient 2 jours avant.`;
     $('rProBascule').textContent = offreFormule === 'an' ? 'Plutôt au mois (4,99 €) ?' : r ? 'Plutôt à l’année (34,99 € la 1re année) ?' : 'Plutôt à l’année (49,99 €, 2 mois offerts) ?';
@@ -845,10 +847,11 @@ function essaiTot(ch, st){
   const ici = proBloque() && !prac && !placement && ch === 1 && li < NIV_GRATUITS - 1 && st >= 2 && midiCount > 0
     && typeof proSemaineDispo === 'function' && proSemaineDispo();
   $('rEssai').hidden = !ici;
-  if (!ici) return;
+  if (!ici) return false;
   $('rCompte').hidden = true;
   $('rEssaiTxt').textContent = `Essaie tout DJingood ${PRO_ESSAI_JOURS} jours, gratuitement : les ${proNbExercices()} exercices, les tutos de Vini, l’entraînement.`;
   stat1('essai-tot');
+  return true;
 }
 $('rEssaiGo').addEventListener('click', () => { $('result').hidden = true; proOuvre('', { tot: true, n: 1, i: li + 1 }); });
 $('rProBascule').addEventListener('click', () => { offreFormule = offreFormule === 'an' ? 'mois' : 'an'; proOffresRend(); finEssaiTexte(); });

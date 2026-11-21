@@ -106,6 +106,7 @@ function proPrix(){
   document.querySelectorAll('#pro .pro-bascule button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.f === proFormule)));
   const r = proRattrapage(), eco = document.querySelector('#pro .pro-eco');
   if (eco) eco.textContent = r ? '−30 %' : '−17 %';   // lot 81 : 34,99 € au lieu de 49,99 €
+  if (r) stat1('rattrapage-vu');   // proPrix n'est appelé que pour la fenêtre Pro, qui s'affiche juste après
   const [p, par, d] = proFormule === 'an' && r ? ['34,99 €', '/ 1re année', `<s>49,99 €</s> ${proRattrapageFin()} · ensuite 49,99 € par an`] : PRO_PRIX[proFormule];   // lot 81
   $('proPrix').textContent = p; $('proPar').textContent = par; $('proDetail').innerHTML = d;   // nos propres textes
 }
@@ -353,7 +354,7 @@ function proOffre(box, q){
       el('p', 'offre-sous', 'Sans carte bancaire : merci d’avoir été là avant Pro. Ensuite, 4,99 € par mois ou 49,99 € par an, seulement si tu continues.'));
   } else {
     box.appendChild(el('p', 'offre-t', r ? 'Ta première année à 34,99 €' : s ? `Essaie Pro ${PRO_ESSAI_JOURS} jours, gratuitement` : 'Continue avec DJingood Pro'));
-    if (r) box.appendChild(el('p', 'offre-sous', `Au lieu de 49,99 €, ${proRattrapageFin()}.`));
+    if (r){ box.appendChild(el('p', 'offre-sous', `Au lieu de 49,99 €, ${proRattrapageFin()}.`)); stat1('rattrapage-vu'); }
     else { const p = proPlan(); if (p){ const e = el('p', 'offre-plan'); if (p[0]) e.appendChild(el('b', '', p[0])); if (p[1]) e.appendChild(el('span', '', p[1])); box.appendChild(e); } }
     // les deux formules, côte à côte : l'année (d'office, lot 81) ou le mois
     const choix = el('div', 'offre-choix'); choix.setAttribute('role', 'group'); choix.setAttribute('aria-label', 'Formule');
@@ -368,7 +369,7 @@ function proOffre(box, q){
       const ol = el('ol', 'offre-frise');
       for (const [q1, t] of [['Aujourd’hui', `Tout s’ouvre : les ${proNbExercices()} exercices, les tutos de Vini, l’entraînement. Ta carte est demandée, mais rien n’est prélevé.`],
         [`Jour ${PRO_ESSAI_JOURS - 2}`, 'Vini t’envoie un mail pour te prévenir.'],
-        [`Jour ${PRO_ESSAI_JOURS}`, `${offrePrix()}, sauf si tu arrêtes avant (dans « Mon compte »).`]]){
+        [`Jour ${PRO_ESSAI_JOURS}`, `${offrePrix()}, sauf si tu arrêtes avant (dans « Mon compte »).`]]){   // lot 81 : le « » » ne tombe plus seul en début de ligne
         const li = el('li'); li.append(el('b', '', q1), el('span', '', t)); ol.appendChild(li); }
       box.appendChild(ol);
     } else {

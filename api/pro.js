@@ -217,10 +217,15 @@ async function handler(req, res){
       // lot 76 : les 7 jours gratuits, une seule fois par compte (un compte qui a déjà eu un abonnement paie tout de suite)
       if (semaine && await dejaAbonne(qui, cle)) return repond(res, 409, { erreur: 'essai-deja' });
       // lot 81 : le rattrapage (l'année à 34,99 €), revérifié ici : la fenêtre de 48 heures, et jamais abonné
-      let coupon = '';
+      let coupon = '', expire = 0;
       if (rattrapage){
-        if (!(await rattrapageJusqua(qui, cle)) || await dejaAbonne(qui, cle)) return repond(res, 410, { erreur: 'rattrapage-fini' });
+        const fin = await rattrapageJusqua(qui, cle);
+        if (!fin || await dejaAbonne(qui, cle)) return repond(res, 410, { erreur: 'rattrapage-fini' });
         coupon = await couponRattrapage(cle);
+        // la page de paiement avec la remise se ferme à la fin de l'offre (Stripe : au moins 30 min, au plus 24 h après sa
+        // création) ; sans ça, une page ouverte à la 47e heure resterait payable 24 h de plus (gardien du lot 81)
+        const t = Math.floor(module.exports.maintenant() / 1000);
+        expire = Math.max(t + 1800, Math.min(fin, t + 86400));
       }
       // lot 80 : le site en anglais envoie { langue: 'en' } : la page de Stripe en anglais, et l'abonnement le retient
       // (metadata.langue) pour que le mail de rappel de l'essai (api/rappel.js) parte en anglais
@@ -244,7 +249,7 @@ async function handler(req, res){
         custom_text: { terms_of_service_acceptance: { message: en
           ? `I accept the [terms of sale](${site}/terms.html). I ask for access to DJingood Pro right away and I waive my 14-day right of withdrawal.`
           : `J'accepte les [conditions de vente](${site}/cgv.html). Je demande l'accès à DJingood Pro tout de suite et je renonce à mon délai de rétractation de 14 jours.` } }
-      }, essai ? { payment_method_collection: 'if_required' } : {}, coupon ? { discounts: { 0: { coupon } } } : { allow_promotion_codes: 'true' }) });
+      }, essai ? { payment_method_collection: 'if_required' } : {}, coupon ? { discounts: { 0: { coupon } }, expires_at: expire } : { allow_promotion_codes: 'true' }) });
       return repond(res, 200, { url: s.url });
     }
 

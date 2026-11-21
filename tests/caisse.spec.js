@@ -59,9 +59,12 @@ test.describe('L’année d’office et le plan', () => {
 test.describe('Le rattrapage', () => {
   test('pendant les 48 h : la carte de fin propose l’année à 34,99 €, avec sa vraie date limite ; payer l’envoie à Stripe', async ({ page }) => {
     const api = await fausseApi(page, { etat: { rattrapage: dans(40) } });
+    await page.addInitScript(UMAMI);
     const err = await ouvrir(page, { avant: dejaConnecte() + FAUX + PRO, stockage: TROIS });
     const o = await finCarte(page);
     await expect(o.locator('.offre-t')).toHaveText('Ta première année à 34,99 €');
+    // gardien : l'offre vue sur la carte de fin compte aussi (pas seulement au retour de Stripe)
+    expect(await page.evaluate(() => window.__stats.some(x => x[0] === 'rattrapage-vu'))).toBe(true);
     await expect(o.locator('.offre-sous')).toContainText('Au lieu de 49,99 €, jusqu’au ');
     const fin = await page.evaluate(() => proRattrapageFin());
     await expect(o.locator('.offre-sous')).toHaveText(`Au lieu de 49,99 €, ${fin}.`);
@@ -143,7 +146,8 @@ test.describe('Le rattrapage', () => {
 });
 
 test.describe('L’essai dès la première réussite', () => {
-  const carte = (st = 3, i = 0) => (page => page.evaluate(([st, i]) => { selectLesson(i); $('result').hidden = false; resultatCarte(st, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(st); mlPropose(st); finEssai(1, st, 0); essaiTot(1, st); }, [st, i]));
+  // dans le même ordre que finish (niveaux.js) : l'essai d'abord ; s'il est proposé, pas de proposition de compte
+  const carte = (st = 3, i = 0) => (page => page.evaluate(([st, i]) => { selectLesson(i); $('result').hidden = false; resultatCarte(st, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(st); if (!essaiTot(1, st)) mlPropose(st); finEssai(1, st, 0); }, [st, i]));
 
   test('niveau 1 réussi avec une table branchée : l’essai proposé à côté, à la place de « Garde ta progression » ; « Niveau suivant » reste le bouton principal', async ({ page }) => {
     await page.addInitScript(UMAMI);
@@ -157,6 +161,8 @@ test.describe('L’essai dès la première réussite', () => {
     await expect(page.locator('#next')).toBeVisible();
     await expect(page.locator('#rPro')).toBeHidden();
     expect(await page.evaluate(() => window.__stats.some(x => x[0] === 'essai-tot'))).toBe(true);
+    // gardien : la proposition du compte n'est ni comptée ni consommée pour la journée
+    expect(await page.evaluate(() => [window.__stats.some(x => x[0] === 'compte-propose'), localStorage.getItem('coach-compte-propose')])).toEqual([false, null]);
     // le bouton ouvre la fenêtre Pro (l'année d'office, l'essai expliqué) ; après le paiement, on reprend au niveau 2
     await page.locator('#rEssaiGo').click();
     await expect(page.locator('#result')).toBeHidden();
@@ -209,6 +215,8 @@ test.describe('Après le paiement', () => {
     expect(await page.evaluate(() => localStorage.getItem('coach-source-pro'))).toBe('tiktok');
     await page.evaluate(() => { proMerciFerme(); proMerci(); });
     await expect(page.locator('#proSource')).toBeHidden();
+    // gardien : la réponse reste sur cet appareil, elle ne part pas dans le compte avec la progression
+    expect(await page.evaluate(() => [cptSuivie('coach-source-pro'), cptSuivie('coach-lecons')])).toEqual([false, true]);
     expect(err).toEqual([]);
   });
 
