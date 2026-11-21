@@ -208,11 +208,19 @@ function trSans(el, n, v){
   else (trBrut ? trBrut.setAttribute : Element.prototype.setAttribute).call(el, n, v);
 }
 const P_TEXTE = Object.getOwnPropertyDescriptor(Node.prototype, 'textContent');
-// Le bouton FR / EN de l'en-tête et des Premiers pas : il montre l'autre langue
+// Le navigateur est-il réglé en français (une de ses langues) ?
+function langueNavigateurFr(){
+  try { return (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || '']).some(x => /^fr/i.test(String(x))); }
+  catch (e) { return true; }
+}
+// Le bouton FR / EN de l'en-tête et des Premiers pas : il montre l'autre langue. Lot 80 (choix de l'utilisateur, 21 nov.) :
+// pour un navigateur qui n'est pas en français, il dit « English » en toutes lettres, plus visible, sans fenêtre.
 function langueBoutons(){
   const autre = LANGUE === 'en' ? 'fr' : 'en', titre = autre === 'en' ? 'Read DJingood in English' : 'Lire DJingood en français';
+  const texte = autre === 'en' && !langueNavigateurFr() ? 'English' : autre.toUpperCase();
   document.querySelectorAll('.langbtn').forEach(b => {
-    trSans(b, null, autre.toUpperCase()); trSans(b, 'title', titre); trSans(b, 'aria-label', titre); trSans(b, 'lang', autre);
+    trSans(b, null, texte); trSans(b, 'title', titre); trSans(b, 'aria-label', titre); trSans(b, 'lang', autre);
+    b.classList.toggle('langbtn-mot', texte.length > 2);
     b.onclick = () => langueChange(autre);
   });
 }

@@ -70,7 +70,7 @@ test.describe('Choisir l\'anglais', () => {
     await expect(page.locator('#pp')).toBeVisible();
     await expect(page.locator('#langOffre')).toHaveCount(0);
     await expect(page.locator('#ppGo')).toBeVisible();
-    await expect(page.locator('#ppLang')).toHaveText('EN');
+    await expect(page.locator('#ppLang')).toHaveText('English');   // lot 80 : en toutes lettres pour un navigateur pas en français
     await page.locator('#ppLang').click();
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await expect(page.locator('#ppAsk')).toContainText("Hi, I'm Vini!");
