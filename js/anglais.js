@@ -2740,4 +2740,117 @@ enMotif(/^([\s\S]+?) Tes frappes arrivent toutes un peu tard : avec des écouteu
   (m, a) => tr(a) + ' Your taps all come in a little late: with wireless headphones, the sound lags. Try with the speaker.');
 /* ---------- Lot 80 : fin ---------- */
 
+/* ---------- Lot 73 : début (la table, dès le début : Premiers pas, liste des tables, « Avant de jouer ») ---------- */
+// les tables ajoutées à la liste (tables.js) et leur marque : des noms, gardés tels quels
+enPareil('Native Instruments', 'Pioneer DDJ-FLX2', 'Pioneer DDJ-FLX6', 'Pioneer DDJ-FLX10', 'Pioneer DDJ-REV1', 'Pioneer XDJ-AZ',
+  'Pioneer XDJ-RX3', 'Pioneer XDJ-RR', 'Hercules DJControl Inpulse T7', 'Numark NS4FX', 'Roland DJ-202',
+  'Native Instruments Traktor Kontrol S2 MK3', 'Native Instruments Traktor Kontrol S3', 'Native Instruments Traktor Kontrol S4 MK3',
+  'DDJ-FLX2', 'DDJ-FLX6', 'DDJ-FLX10', 'DDJ-REV1', 'XDJ-AZ', 'XDJ-RX3', 'XDJ-RR', 'DDJ-400', 'DDJ-SB3', 'DDJ-200', 'DJ-505', 'DJ-202',
+  'DJControl Inpulse 200', 'DJControl Inpulse 300', 'DJControl Inpulse 500', 'MIXTRACK PLATINUM FX', 'DDJ-400, XDJ-RR');
+enDe({
+  // Premiers pas : le champ « Une autre table » et ce qui attend la table choisie
+  'La marque et le modèle de ta table': "Your controller's brand and model",
+  'Sa marque et son modèle, par exemple Denon MC7000': 'Its brand and model, for example Denon MC7000',
+  'Reconnue toute seule': 'Recognized on its own',
+  'Branchée · réglée': 'Plugged in · set up',
+  'reconnu': 'recognized',   // (d'avant le lot 73) le bilan d'un réglage : « ✓ Le potard LOW de gauche : reconnu »
+  "Branche-la en USB : je la reconnais sans réglage, et on vérifie ensemble qu'elle répond.": "Plug it in over USB: I recognize it with no setup, and we check together that it responds.",
+  "Branche-la sur ton ordinateur : je la reconnais sans réglage, et on vérifie ensemble qu'elle répond.": "Plug it into your computer: I recognize it with no setup, and we check together that it responds.",
+  'Son mode MIDI, puis 30 secondes de réglage': 'Its MIDI mode, then 30 seconds of setup',
+  'Débranche-la, tiens le bouton FLX de gauche enfoncé et rebranche-la : ses pads clignotent en vert (il lui faut sa dernière mise à jour). Ensuite, je te guide bouton par bouton.':
+    'Unplug it, hold down the left FLX button and plug it back in: its pads flash green (it needs its latest update). Then I guide you button by button.',
+  'Pas encore compatible': 'Not compatible yet',
+  "Elle n'envoie pas de MIDI, le langage des tables DJ : ton navigateur ne peut pas me la montrer. Tous les exercices marchent à la souris en attendant.":
+    "It doesn't send MIDI, the language of DJ controllers: your browser can't show it to me. Every exercise works with the mouse in the meantime.",
+  "Elle n'envoie pas de MIDI, le langage des tables DJ : ton navigateur ne peut pas me la montrer. Tous les exercices marchent au doigt et à la souris en attendant.":
+    "It doesn't send MIDI, the language of DJ controllers: your browser can't show it to me. Every exercise works by touch or with the mouse in the meantime.",
+  '30 secondes de réglage': '30 seconds of setup',
+  '30 secondes de réglage sur ton ordi': '30 seconds of setup on your computer',
+  'La première fois que tu la branches, je te guide bouton par bouton.': 'The first time you plug it in, I guide you button by button.',
+  'Je te guiderai pour la régler': "I'll guide you through setting it up",
+  "Quand tu la brancheras, je te guide bouton par bouton. Dis-moi laquelle : ça m'aide à savoir quelles tables ajouter.":
+    "When you plug it in, I guide you button by button. Tell me which one: it helps me know which controllers to add.",
+  "Sur ton ordinateur, je te guide bouton par bouton. Dis-moi laquelle : ça m'aide à savoir quelles tables ajouter.":
+    "On your computer, I guide you button by button. Tell me which one: it helps me know which controllers to add.",
+  // Premiers pas : ce que dit Vini, table branchée
+  "Ta table m'envoie des signaux, mais pas ceux que j'attendais. On règle ce bouton ensemble ?": "Your controller is sending me signals, but not the ones I expected. Shall we set up this button together?",
+  'On règle ce bouton ensemble : bouge le fader de gauche sur ta table.': "Let's set up this button together: move the left fader on your controller.",
+  'Bien ! Maintenant, le fader de droite.': 'Nice! Now, the right fader.',
+  'Dernier bouton : le PLAY de droite.': 'Last button: the right PLAY.',
+  'Je vois ta table, mais je ne la connais pas encore. On règle ses 3 premiers boutons : 30 secondes !': "I can see your controller, but I don't know it yet. Let's set up its first 3 buttons: 30 seconds!",
+  "C'est réglé ! Tes 3 premiers exercices marcheront avec ta table.": 'All set! Your first 3 exercises will work with your controller.',
+  'Pas de souci : tu joueras à la souris en attendant.': "No problem: you'll play with the mouse in the meantime.",
+  'Pas de souci : si un bouton ne répond pas dans un exercice, tu pourras jouer à la souris.': "No problem: if a button doesn't respond in an exercise, you can play with the mouse.",
+  "Je l'ai vu bouger : ta table et moi, on se parle !": 'I saw it move: your controller and I are talking!',
+  "Tu as bougé le fader ? Rien ne m'arrive de ta table. Si rekordbox (ou un autre logiciel de DJ) est ouvert, ferme-le, puis débranche ta table et rebranche-la.":
+    'Did you move the fader? Nothing is reaching me from your controller. If rekordbox (or another DJ app) is open, close it, then unplug your controller and plug it back in.',
+  "Ce bouton-là, je ne le connais pas encore. Si c'est ton fader de gauche, clique sur « Le dessin ne bouge pas ? ».": 'I don\'t know that button yet. If it\'s your left fader, click "The drawing doesn\'t move?".',
+  // Premiers pas : le test de 5 secondes et le réglage des 3 premiers boutons
+  'Bouge le fader de gauche': 'Move the left fader',
+  'Monte-le tout en haut, puis redescends-le : regarde le dessin.': 'Push it all the way up, then bring it back down: watch the drawing.',
+  "Rien ne m'arrive de ta table pour l'instant.": 'Nothing is reaching me from your controller yet.',
+  'Le dessin ne bouge pas ?': "The drawing doesn't move?",
+  "Je n'ai pas ce bouton": "I don't have this button",
+  'On verra ça dans les exercices': "We'll see in the exercises",
+  'Ta table répond !': 'Your controller responds!',
+  "Si ton fader ne répond pas, clique sur « Je joue à la souris cette fois » dans l'exercice. Tu pourras régler ta table depuis « Ma table ».":
+    'If your fader doesn\'t respond, click "I\'ll play with the mouse this time" in the exercise. You can set up your controller from "My controller".',
+  'Elle et moi, on se parle : tes exercices marcheront avec elle.': "We're talking: your exercises will work with it.",
+  "C'est réglé !": 'All set!',
+  'On la réglera plus tard': "We'll set it up later",
+  "Tes 3 premiers exercices marcheront avec ta table. Les autres boutons, je te les ferai régler juste avant l'exercice qui s'en sert.":
+    "Your first 3 exercises will work with your controller. I'll have you set up the other buttons right before the exercise that uses them.",
+  'Tu joueras à la souris en attendant. Tu pourras régler ta table depuis « Ma table ».': 'You\'ll play with the mouse in the meantime. You can set up your controller from "My controller".',
+  // l'arrivée sur l'ordinateur par le lien (compte.js) et la position de départ d'un niveau (midi.js)
+  'Réglée': 'Set up',
+  'À régler : 30 secondes': 'To set up: 30 seconds',
+  'tu le régleras en cliquant sur « Jouer »': 'you\'ll set it up when you click "Play"',
+  // « Ta table n'apparaît pas ? » (midi.js) : l'XDJ-RR et les Traktor ajoutés
+  "Table tout-en-un, avec un écran (XDJ-AZ, XDJ-RR, XDJ-RX3, XDJ-XZ…) : vérifie qu'elle est en mode ordinateur. Sur l'XDJ-AZ : bouton SOURCE, puis SOFTWARE CONTROL.":
+    "All-in-one system with a screen (XDJ-AZ, XDJ-RR, XDJ-RX3, XDJ-XZ…): check that it's in computer mode. On the XDJ-AZ: SOURCE button, then SOFTWARE CONTROL.",
+  "Table tout-en-un, avec un écran (XDJ-AZ, XDJ-RR, XDJ-RX3, XDJ-XZ…) : passe-la en mode ordinateur. Sur l'XDJ-AZ : bouton SOURCE, puis SOFTWARE CONTROL. Traktor S2 MK3 ou S3 : débranche-la, puis rebranche-la en tenant le bouton FLX de gauche (son mode MIDI).":
+    'All-in-one system with a screen (XDJ-AZ, XDJ-RR, XDJ-RX3, XDJ-XZ…): switch it to computer mode. On the XDJ-AZ: SOURCE button, then SOFTWARE CONTROL. Traktor S2 MK3 or S3: unplug it, then plug it back in while holding the left FLX button (its MIDI mode).',
+  "Sur Windows, certaines tables demandent d'installer leur pilote, sur le site de la marque (souvent les tables tout-en-un, comme l'XDJ-AZ ou l'XDJ-RR). La DDJ-FLX4 et la plupart des petites tables n'en ont pas besoin.":
+    "On Windows, some controllers need their driver installed, from the brand's website (often all-in-one systems, like the XDJ-AZ or the XDJ-RR). The DDJ-FLX4 and most small controllers don't need one.",
+  // Régler ma table : un seul bouton à la fois, « Avant de jouer », l'arrivée sur l'ordinateur
+  'le potard MID de droite': 'the right MID knob', 'le potard HI de gauche': 'the left HI knob', 'le potard HI de droite': 'the right HI knob',
+  'le potard TRIM de gauche': 'the left TRIM knob', 'le potard TRIM de droite': 'the right TRIM knob', 'le filtre de droite': 'the right filter',
+  'le crossfader': 'the crossfader', 'le tempo de gauche': 'the left tempo fader', 'le tempo de droite': 'the right tempo fader',
+  'le bouton PLAY de gauche': 'the left PLAY button', 'le bouton CUE de gauche': 'the left CUE button', 'le bouton CUE de droite': 'the right CUE button',
+  'le CUE casque de gauche': 'the left headphone CUE', 'le CUE casque de droite': 'the right headphone CUE', 'une autre commande': 'another control',
+  'Avant de jouer': 'Before you play',
+  "Ces boutons se feront à l'écran": 'These buttons will be done on screen',
+  "C'est noté pour ta table. Ce qui manque se fera à l'écran, à la souris.": "Got it for your controller. Whatever's missing will be done on screen, with the mouse.",
+  "Pas de souci : tu les feras à l'écran, à la souris. Tu pourras les régler plus tard depuis « Ma table ».": 'No problem: you\'ll do them on screen, with the mouse. You can set them up later from "My controller".',
+  "Voici ce que le site a reconnu. Les autres boutons, je te les ferai régler juste avant l'exercice qui s'en sert.": "Here's what the site recognized. I'll have you set up the other buttons right before the exercise that uses them.",
+  'Continuer à la souris': 'Continue with the mouse',
+  // la page de présentation
+  'Une table DJ branchée en USB, et un casque ou des enceintes. Le site reconnaît tout seul une quinzaine de tables de débutant (Pioneer, Hercules, Numark, Roland, Reloop) ; une autre table se règle en 30 secondes, dès le premier branchement.':
+    'A DJ controller plugged in over USB, and headphones or speakers. The site recognizes about fifteen beginner controllers on its own (Pioneer, Hercules, Numark, Roland, Reloop); any other controller takes 30 seconds to set up, the first time you plug it in.',
+  "Le site reconnaît tout seul une quinzaine de tables de débutant (Pioneer DDJ-FLX4, DDJ-400, DDJ-SB3, DDJ-200 et XDJ-RR, Hercules Inpulse 200, 300 et 500 et Starlight, Numark Mixtrack Platinum FX et Pro FX, Party Mix et DJ2GO2 Touch, Roland DJ-505, Reloop Mixage). Si tu branches une table qu'il ne connaît pas encore, il la règle avec toi dès le début, en 30 secondes : il te montre un bouton, tu le bouges, il le reconnaît ; les autres boutons se règlent juste avant l'exercice qui s'en sert. Une commande que ta table n'a pas se fait à la souris. Les Traktor S2 MK3 et S3 ont un mode MIDI (on les branche en tenant le bouton FLX de gauche) : elles devraient pouvoir se régler aussi, dis-nous si ça marche ; la S4 MK3 n'en a pas, elle ne peut pas encore servir. Les réglages de ces tables viennent de leur documentation : dis-nous si quelque chose ne marche pas avec la tienne.":
+    "The site recognizes about fifteen beginner controllers on its own (Pioneer DDJ-FLX4, DDJ-400, DDJ-SB3, DDJ-200 and XDJ-RR, Hercules Inpulse 200, 300 and 500 and Starlight, Numark Mixtrack Platinum FX and Pro FX, Party Mix and DJ2GO2 Touch, Roland DJ-505, Reloop Mixage). If you plug in a controller it doesn't know yet, it sets it up with you right from the start, in 30 seconds: it shows you a button, you move it, it recognizes it; the other buttons get set up right before the exercise that uses them. A control your controller doesn't have is done with the mouse. The Traktor S2 MK3 and S3 have a MIDI mode (you plug them in while holding the left FLX button): they should be able to be set up too, let us know if it works; the S4 MK3 doesn't have one, so it can't be used yet. The settings for these controllers come from their documentation: let us know if something doesn't work with yours."
+});
+// ce que dit Vini d'une table choisie dans la liste, selon ce qui l'attend
+enMotif('Ah, la {=n}… Je ne sais pas encore lui parler.', "Ah, the {n}… I don't know how to talk to it yet.");
+enMotif('Ah, la {=n}… Je ne sais pas encore lui parler. Tout marche au doigt et à la souris en attendant.', "Ah, the {n}… I don't know how to talk to it yet. Everything works by touch or with the mouse in the meantime.");
+enMotif('La {=n} ! Sur ton ordinateur, on la passera en mode MIDI, puis on la réglera ensemble.', "The {n}! On your computer, we'll switch it to MIDI mode, then set it up together.");
+enMotif('La {=n} ! Branche-la en mode MIDI, et on la réglera ensemble.', "The {n}! Plug it in in MIDI mode, and we'll set it up together.");
+enMotif('La {=n} ! On la réglera ensemble sur ton ordinateur : 30 secondes.', "The {n}! We'll set it up together on your computer: 30 seconds.");
+enMotif('La {=n} ! Je ne la connais pas encore : quand tu la brancheras, on la réglera ensemble, en 30 secondes.', "The {n}! I don't know it yet: when you plug it in, we'll set it up together, in 30 seconds.");
+enMotif('Je la reconnais : ta {=n} ! Bouge le fader de gauche, pour voir.', "I recognize it: your {n}! Move the left fader, let's see.");
+// une table tout-en-un : la phrase de son statut, suivie du conseil du mode ordinateur
+enMotif(/^(.+?) C'est une table tout-en-un : mets-la en mode ordinateur\.$/, (m, a) => tr(a) + " It's an all-in-one system: switch it to computer mode.");
+// Régler ma table : une commande déjà réglée à la main (le mode qui garde les autres réglages)
+enMotif(/^Ça, c'est (.+?), déjà réglé\. (Appuie plutôt sur|Bouge plutôt) (.+?)\.$/, (m, a, v, b) => `That's ${tr(a)}, already set up. ${v === 'Bouge plutôt' ? 'Move' : 'Press'} ${tr(b)} instead.`);
+enMotif('Avant de jouer · {#n} sur {#m}', 'Before you play · {n} of {m}');
+enMotif(/^Ce niveau se sert d'un bouton que ta table ne m'a pas encore montré\. (.+)$/, (m, a) => "This level uses a button your controller hasn't shown me yet. " + tr(a));
+// la fin d'un réglage : le bilan, puis « Quelque chose cloche ? … » (les deux phrases se suivent dans le même paragraphe)
+enMotif(/^(.+?) Quelque chose cloche \? « Copier le relevé », et envoie-le-nous : on verra ce que ta table envoie\.$/,
+  (m, a) => tr(a) + ' Something wrong? "Copy the report", and send it to us: we\'ll see what your controller sends.');
+enMotif('Nouvelle table : « {=t} ». DJingood ne la connaît pas encore : règle-la pas à pas, en bougeant chaque commande quand il te le demande.', 'New controller: "{t}". DJingood doesn\'t know it yet: set it up step by step, by moving each control when it asks you to.');
+enMotif('Recopie ce lien : {=u}', 'Copy this link: {u}');   // (d'avant le lot 73) le lien de Chrome, quand la copie n'a pas marché
+// le rapport des testeurs : une table tapée qui n'est pas dans la liste
+enMotif(/^une table \(pas dans la liste : (.{1,40})\)$/, (m, x) => `a controller (not in the list: ${x})`);
+/* ---------- Lot 73 : fin ---------- */
+
 trPage();

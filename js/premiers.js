@@ -201,7 +201,7 @@ function ppTableOpts(add){
   box.append(t, sel); $('ppOpts').appendChild(box);
   // lot 73 : son nom quand elle n'est pas dans la liste, puis ce qui attend la table choisie
   const au = document.createElement('input'); au.type = 'text'; au.id = 'ppAutreNom'; au.className = 'pp-autre'; au.maxLength = 40; au.autocomplete = 'off';
-  au.placeholder = 'Sa marque et son modèle, par exemple Denon MC7000'; au.setAttribute('aria-label', 'La marque et le modèle de ta table'); au.value = r.autre || '';
+  au.setAttribute('placeholder', 'Sa marque et son modèle, par exemple Denon MC7000'); au.setAttribute('aria-label', 'La marque et le modèle de ta table'); au.value = r.autre || '';
   au.addEventListener('input', () => { r.autre = ppNettoie(au.value); });
   const stt = document.createElement('div'); stt.id = 'ppStatut'; stt.className = 'pp-statut'; stt.hidden = true;
   $('ppOpts').append(au, stt);

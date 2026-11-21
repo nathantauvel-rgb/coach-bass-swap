@@ -32,8 +32,21 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 73 « Ta table, dès le début » (17 nov. 2026, nuit) : FAIT, NON PUBLIÉ, rien de commité.** Copie
-  `Documents\coach-dj-lot73`, branche `lot-73-table-debut` (partie d'`origin/main` = `97cc85c`). Demande de l'utilisateur après
+- **Lot 73 « Ta table, dès le début » (17 nov. 2026, nuit) : FAIT, NON PUBLIÉ.** Copie
+  `Documents\coach-dj-lot73`, branche `lot-73-table-debut` (partie d'`origin/main` = `97cc85c`).
+  **21 nov. 2026 (« LOT 73 ») : remis à jour pour être publiable.** Commité (`3cd1705`), fusionné avec `origin/main` = `1a96992`
+  (lots 74 à 78, `5745251`), 893 tests sur 893 (`DJ_PORT=8775`), captures refaites en 1366 × 768 (`captures/lot73/planche.png`,
+  la n° 9 montre « Avant de jouer » sur le niveau 1 gratuit). Gardien : feu rouge, **parce que le lot 80 (le site en anglais)
+  est parti en ligne pendant ce temps** : refusionné avec `origin/main` = `388b216` (`d8b0fbe` ; `STATS_ETAPES` = `anglais` + les
+  étapes du lot 73), puis **traduit** : bloc « Lot 73 : début / fin » à la fin de `js/anglais.js` (noms des tables, statuts,
+  phrases de Vini, test du fader, réglage des 3 boutons, « Avant de jouer », aide, présentation ; plus trois oublis d'avant :
+  « reconnu » du bilan d'un réglage, « … Quelque chose cloche ? » après un bilan, « Recopie ce lien : … »), `privacy.html`
+  (le nom de table tapé), le texte grisé du champ passé par `setAttribute` (une propriété `.placeholder` n'est pas traduite).
+  Vérifié : relevé des tests (`captures/lot73/outils/releve.js` + `analyse.js`, outils du lot 80) et
+  `captures/lot73/outils/vini-en.js` (les 132 phrases que Vini tape lettre par lettre) ; 4 tests anglais ajoutés à
+  `tests/table-debut.spec.js` (bloc « en anglais »). Le dessin du test reste l'ancien dessin plat des fiches (pas la table en
+  relief du lot 74) : question posée à l'utilisateur. À la publication : retoucher le point 41 de la checklist (« les points
+  39 et 40 sont ceux du lot 73, pas encore en ligne »). Ci-dessous, le détail du 17 nov. Demande de l'utilisateur après
   l'analyse Umami du 9-16 nov. (24 tables branchées, 7 « Ta première transition ! ») et des messages TikTok (XDJ-AZ, XDJ-RR,
   Traktor S2 MK3 « pas détectées ») ; maquette validée (« Ça me va », `captures/maquette-table-debut/` du dossier principal),
   « Oui, lance le lot ». Ce qui change :

@@ -361,3 +361,74 @@ test.describe('Ta table, dès le début : arrivée sur l’ordinateur par le lie
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
 });
+
+// Le site en anglais (lot 80, en ligne le 21 nov.) : tout ce que le lot 73 ajoute doit être traduit. window.__enManque liste
+// ce qu'un écran anglais a laissé en français ; le nom d'une table inconnue (AUTRE) est un nom, il reste tel quel.
+test.describe('Ta table, dès le début : en anglais', () => {
+  const EN = { ...NOUVEAU, 'coach-langue': 'en' };
+  const manque = page => page.evaluate(nom => [...window.__enManque].filter(s => !s.includes(nom)), AUTRE);
+  test('table reconnue : le test du fader de gauche, en anglais', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: '', stockage: EN, midi: { branchee: true } });
+    await ecranTable(page);
+    await expect(page.locator('#ppTestT')).toHaveText('Move the left fader');
+    await expect(page.locator('#ppAsk')).toHaveText("I recognize it: your Pioneer DDJ-FLX4! Move the left fader, let's see.");
+    await expect(page.locator('#ppTestLien')).toHaveText("The drawing doesn't move?");
+    await bouger(page, 0, 19, [5, 40, 90]);
+    await expect(page.locator('#ppTestT')).toHaveText('Your controller responds!');
+    await expect(page.locator('#ppAsk')).toHaveText('I saw it move: your controller and I are talking!');
+    expect(await manque(page)).toEqual([]);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+
+  test('table inconnue : ses 3 premiers boutons, en anglais', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: '', stockage: EN, midi: { branchee: AUTRE } });
+    await ecranTable(page);
+    await expect(page.locator('#ppAsk')).toHaveText("I can see your controller, but I don't know it yet. Let's set up its first 3 buttons: 30 seconds!");
+    await expect(page.locator('#ppTestN')).toHaveText('1 of 3');
+    await expect(page.locator('#ppTestT')).toHaveText('The left volume fader');
+    await expect(page.locator('#ppTestLien')).toHaveText("I don't have this button");
+    await bouger(page, 0, 7);
+    await expect(page.locator('#ppAsk')).toHaveText('Nice! Now, the right fader.');
+    await bouger(page, 0, 8);
+    await expect(page.locator('#ppAsk')).toHaveText('Last button: the right PLAY.');
+    await appuyer(page, 0, 40);
+    await expect(page.locator('#ppTestT')).toHaveText('All set!');
+    await expect(page.locator('#ppTestS')).toHaveText("Your first 3 exercises will work with your controller. I'll have you set up the other buttons right before the exercise that uses them.");
+    expect(await manque(page)).toEqual([]);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+
+  test('la liste : ce qui attend chaque table, et « Une autre table », en anglais', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: '', stockage: EN, midi: { branchee: false } });
+    await ecranTable(page);
+    await choix(page, 0);
+    for (const [id, titre] of [['ddjflx2', '30 seconds of setup'], ['traktors2mk3', 'Its MIDI mode, then 30 seconds of setup'], ['traktors4mk3', 'Not compatible yet'], ['xdjrr', 'Recognized on its own'], ['autre', "I'll guide you through setting it up"]]){
+      await page.locator('#ppModele').selectOption(id);
+      await expect(page.locator('#ppStatut')).toContainText(titre);
+    }
+    await expect(page.locator('#ppAutreNom')).toHaveAttribute('placeholder', 'Its brand and model, for example Denon MC7000');
+    await expect(page.locator('#ppAutreNom')).toHaveAttribute('aria-label', "Your controller's brand and model");
+    expect(await manque(page)).toEqual([]);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+
+  test('« Avant de jouer » et la position de départ, en anglais', async ({ page }) => {
+    const erreurs = await ouvrir(page, { midi: { branchee: AUTRE }, stockage: { 'coach-langue': 'en', 'coach-table': S({ nom: AUTRE }), 'coach-midi-map': S({ faderA: { ch: 0, n: 7 }, faderB: { ch: 0, n: 8 }, playB: { ch: 0, n: 40 } }) } });
+    await page.locator('.node').nth(5).click();   // niveau 6 : le swap des basses (les deux LOW, pas encore montrés)
+    await expect(page.locator('#setupList')).toContainText(`you'll set it up when you click "Play"`);
+    await page.locator('#startBtn').click();
+    await expect(page.locator('#regKick')).toHaveText('Before you play · 1 of 2');
+    await expect(page.locator('#regTitle')).toHaveText('The left LOW knob');
+    await expect(page.locator('#regText')).toHaveText(/^This level uses a button your controller hasn't shown me yet\. Turn deck A's bass knob\./);
+    await bouger(page, 0, 7);   // le fader de gauche, déjà réglé : refusé
+    await expect(page.locator('#regState')).toContainText("That's the left volume fader, already set up. Move the left LOW knob instead.");
+    await bouger(page, 0, 20);
+    await expect(page.locator('#regKick')).toHaveText('Before you play · 2 of 2');
+    await page.locator('#regSkip').click();   // « Je n'ai pas cette commande »
+    await expect(page.locator('#regTitle')).toHaveText('All set!');
+    await expect(page.locator('#regText')).toHaveText("Got it for your controller. Whatever's missing will be done on screen, with the mouse. Something wrong? \"Copy the report\", and send it to us: we'll see what your controller sends.");
+    expect(await manque(page)).toEqual([]);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+
+});
