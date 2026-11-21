@@ -118,15 +118,14 @@ test.describe('Ma table : pourquoi la table n\'apparaît pas', () => {
 });
 
 test.describe('Premiers pas : la table branchée que le navigateur ne voit pas', () => {
-  test('« J’ai une table » sans table vue : l\'aide est proposée, repliée ; à la souris, elle disparaît', async ({ page }) => {
+  test('« J’ai une table » sans table vue : l\'aide est proposée, ouverte (lot 73) ; à la souris, elle disparaît', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: { branchee: false } });
     await ecranTable(page);
     await expect(page.locator('#ppAide')).toBeHidden();
     await page.locator('#ppOpts .pp-opt').nth(0).click();
     await expect(page.locator('#ppAide')).toBeVisible();
     await expect(page.locator('#ppAide summary')).toHaveText('Elle est branchée, mais je ne la vois pas ?');
-    await expect(page.locator('#ppAide')).not.toHaveAttribute('open', '');
-    await page.locator('#ppAide summary').click();
+    await expect(page.locator('#ppAide')).toHaveAttribute('open', '');
     await expect(page.locator('#ppAide')).toContainText('Ferme rekordbox');
     await page.locator('#ppOpts .pp-opt').nth(1).click();
     await expect(page.locator('#ppAide')).toBeHidden();

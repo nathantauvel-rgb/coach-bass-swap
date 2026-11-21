@@ -4,7 +4,7 @@
 /* ---------- Démarrage ---------- */
 buildControls(); buildCommandes();
 // lot 68 : sur un niveau de Pro (sans abonnement), le bouton ouvre la fenêtre Pro avant toute fiche « Découvre ce bouton »
-$('startBtn').addEventListener('click', () => run ? stopRun() : proIci() ? proOuvre('', { n: chapter, i: li }) : withFiches(() => startRun()));
+$('startBtn').addEventListener('click', () => run ? stopRun() : proIci() ? proOuvre('', { n: chapter, i: li }) : regAvantDeJouer(() => withFiches(() => startRun())));   // lot 73 : une table réglée à la main règle d'abord les boutons qui manquent
 $('watchBtn').addEventListener('click', () => { if (!run && !proIci()) withFiches(() => startRun(true)); });
 const styleShow = () => { const b = document.querySelector(`#styleOpts [data-style="${styleChoice}"]`); $('styleBtn').textContent = styleChoice === 'vrai' ? 'Morceaux : vraie musique' : 'Morceaux : ' + (b ? b.textContent : 'House'); };
 const styleMenu = open => { $('styleOpts').hidden = !open; $('styleBtn').setAttribute('aria-expanded', String(open)); };

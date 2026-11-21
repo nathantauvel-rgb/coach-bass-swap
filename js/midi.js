@@ -31,7 +31,9 @@ const isFlx4 = name => /FLX4/i.test(String(name));
 const baseName = name => String(name).replace(/^\d+-\s*/, '');
 // Autre table que la FLX4 (clé coach-table) : son nom, tel que le navigateur le donne, et `modele` (identifiant de sa fiche) quand ses réglages viennent
 // de sa fiche (tables.js) plutôt que d'un réglage pas à pas. Ses réglages ne reprennent rien de la FLX4.
-let tableCfg = null; try { const t = JSON.parse(localStorage.getItem('coach-table') || 'null'); if (t && typeof t.nom === 'string' && t.nom.trim() && t.nom.length <= 200){ tableCfg = { nom: t.nom }; if (typeof t.modele === 'string' && modeleId(t.modele)) tableCfg.modele = t.modele; } } catch (e) {}
+let tableCfg = null; try { const t = JSON.parse(localStorage.getItem('coach-table') || 'null'); if (t && typeof t.nom === 'string' && t.nom.trim() && t.nom.length <= 200){ tableCfg = { nom: t.nom }; if (typeof t.modele === 'string' && modeleId(t.modele)) tableCfg.modele = t.modele;
+  // lot 73 : les commandes passées exprès (« Je n'ai pas cette commande ») d'une table réglée à la main : elles se font à l'écran
+  if (Array.isArray(t.ecran)){ const e = t.ecran.filter(k => MIDI_CC.includes(k) || MIDI_NOTE.includes(k)); if (e.length) tableCfg.ecran = Array.from(new Set(e)); } } } catch (e) {}
 // Correspondance enregistrée. FLX4 : chaque entrée invalide ou manquante reprend le réglage d'origine, et les doublons y reviennent aussi.
 // Autre table (`perso`) : une entrée invalide, manquante ou en double est absente, et la commande se fait à l'écran.
 function cleanMap(s, perso = false){
@@ -130,6 +132,8 @@ function onMidi(e){
     if (want && taken && view === 'table') tableDejaPris(pris);
     if (want && !taken){ map = Object.assign({}, map, { [learnKey]: { ch, n: d1 } }); try { localStorage.setItem('coach-midi-map', JSON.stringify(map)); } catch (_) {}
       if (type === 0xB0) phys[learnKey] = val; learnKey = null; updateSetup(); if (onb.active) renderOnb(); if (view === 'table'){ tableNote = ''; renderTable(); } } return; }
+  // Lot 73 : le test de 5 secondes des Premiers pas (« Bouge le fader de gauche ») écoute la table, et elle ne pilote rien d'autre
+  if (typeof ppTestMidi === 'function' && ppTestMidi(type, ch, d1, d2)) return;
   // Page « Ma table » : on montre ce qui bouge, sans piloter les niveaux ni l'écho
   if (view === 'table'){ tableMidi(type, ch, d1, d2, val); return; }
   // Une table pas encore réglée ne pilote rien : ses numéros ne sont pas ceux de la FLX4
@@ -151,7 +155,7 @@ async function initMidi(){
     // table débranchée : ses positions ne sont plus fiables, on les oublie jusqu'au prochain mouvement
     const refresh = () => { const ins = [...acc.inputs.values()]; ins.forEach(i => { i.onmidimessage = onMidi; }); midiNames = ins.map(i => String(i.name || 'Table MIDI'));
       if (!ins.length) for (const k of Object.keys(phys)) delete phys[k]; midiCount = ins.length; modeleAuto(); renderPill();
-      updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) renderReg(); verifBranche(); ppMidi();
+      updateSetup(); if (onb.active) renderOnb(); if (view === 'table') renderTable(); renderTableBar(); if (reg.active) regRendu(); verifBranche(); ppMidi();
       const b = ppBranchee(); if (b) stat1('table-branchee', { table: b.id === 'inconnue' ? 'autre table' : b.nom }); };   // jamais le nom brut d'un appareil inconnu (« iPad de Lou »)
     acc.onstatechange = refresh; refresh(); midiAideMaj();
   } catch (e){ midiEtat = 'refuse'; renderPill(); setTimeout(midiAideMaj); }   // plus tard : une erreur levée tout de suite arrive avant `let view` (demarrage.js)
@@ -190,11 +194,12 @@ function midiAide(){
     points: ['Clique sur le cadenas, à gauche de l’adresse du site.', 'Mets « Appareils MIDI » sur « Autoriser ».', 'Recharge la page.'].concat(/Firefox\//.test(navigator.userAgent) ? ['Sur Firefox, le plus simple est d’ouvrir DJingood dans Chrome ou Edge.'] : []) };
   const rb = 'Ferme rekordbox, Serato, djay et VirtualDJ : sur Windows, une table ne parle qu’à un seul logiciel à la fois.';
   if (midiCount) return { titre: 'Ta table ne réagit pas ?', texte: 'Le navigateur la voit, mais rien ne bouge quand tu touches une commande ?',
-    points: [rb + ' Puis recharge la page.', 'Table tout-en-un, avec un écran (XDJ-AZ, XDJ-RX3, XDJ-XZ…) : vérifie qu’elle est en mode ordinateur. Sur l’XDJ-AZ : bouton SOURCE, puis SOFTWARE CONTROL.'] };
-  return { titre, texte: 'Le navigateur ne voit aucune table. Vérifie, dans l’ordre :', points: [rb + ' Puis débranche ta table et rebranche-la.',
+    points: [rb + ' Puis recharge la page.', 'Table tout-en-un, avec un écran (XDJ-AZ, XDJ-RR, XDJ-RX3, XDJ-XZ…) : vérifie qu’elle est en mode ordinateur. Sur l’XDJ-AZ : bouton SOURCE, puis SOFTWARE CONTROL.'] };
+  // lot 73 : « Réessayer » redemande au navigateur (sur l'écran de la table des Premiers pas, l'aide est ouverte d'office)
+  return { titre, texte: 'Le navigateur ne voit aucune table. Vérifie, dans l’ordre :', encore: true, points: [rb + ' Puis débranche ta table et rebranche-la.',
     'Branche-la directement sur l’ordinateur, sans hub, avec le câble livré avec (certains câbles ne font que charger). Si elle a une prise de courant, allume-la.',
-    'Table tout-en-un, avec un écran (XDJ-AZ, XDJ-RX3, XDJ-XZ…) : passe-la en mode ordinateur. Sur l’XDJ-AZ : bouton SOURCE, puis SOFTWARE CONTROL.',
-    'Sur Windows, certaines tables demandent d’installer leur pilote, sur le site de la marque (c’est le cas de l’XDJ-AZ). La DDJ-FLX4 et la plupart des petites tables n’en ont pas besoin.'] };
+    'Table tout-en-un, avec un écran (XDJ-AZ, XDJ-RR, XDJ-RX3, XDJ-XZ…) : passe-la en mode ordinateur. Sur l’XDJ-AZ : bouton SOURCE, puis SOFTWARE CONTROL. Traktor S2 MK3 ou S3 : débranche-la, puis rebranche-la en tenant le bouton FLX de gauche (son mode MIDI).',
+    'Sur Windows, certaines tables demandent d’installer leur pilote, sur le site de la marque (souvent les tables tout-en-un, comme l’XDJ-AZ ou l’XDJ-RR). La DDJ-FLX4 et la plupart des petites tables n’en ont pas besoin.'] };
 }
 // Remplit `box` avec l'aide qui correspond à la situation ; renvoie l'aide (son titre sert de résumé)
 function midiAideRemplir(box){
@@ -272,7 +277,9 @@ function updateSetup(){
     const ic = document.createElement('span'); ic.className = 'ic'; ic.textContent = onScreen(k) ? '•' : ok === true ? '✓' : ok === false ? '!' : '?';
     const nm = document.createElement('span'); nm.innerHTML = '<b></b> '; nm.querySelector('b').textContent = CTRL_LABEL[k]; nm.appendChild(document.createTextNode(': ' + targetText(k, v))); nm.prepend(pictoOf(k, v));
     const wh = document.createElement('span'); wh.className = 'what';
-    wh.textContent = onScreen(k) ? 'à l\'écran : ta table n\'en a pas' : ok === true ? 'en place' : ok === null ? 'bouge-le un peu' : k.startsWith('fader') ? (p < v ? 'monte-le' : 'descends-le') : (p < v ? 'tourne à droite' : 'tourne à gauche');
+    // lot 73 : un bouton qu'une table réglée à la main n'a pas encore montré se règle en cliquant sur « Jouer » (regAvantDeJouer)
+    const aRegler = onScreen(k) && typeof regManque === 'function' && regManque(l).includes(k);
+    wh.textContent = aRegler ? 'tu le régleras en cliquant sur « Jouer »' : onScreen(k) ? 'à l\'écran : ta table n\'en a pas' : ok === true ? 'en place' : ok === null ? 'bouge-le un peu' : k.startsWith('fader') ? (p < v ? 'monte-le' : 'descends-le') : (p < v ? 'tourne à droite' : 'tourne à gauche');
     if (!map[k] && !tableCfg){ wh.textContent = ''; const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'learn' + (learnKey === k ? ' on' : '');
       bt.textContent = learnKey === k ? LEARN_TXT[k] : 'Apprendre ce contrôle'; bt.addEventListener('click', () => { learnKey = k; updateSetup(); }); wh.appendChild(bt); }
     li2.append(ic, nm, wh); ul.appendChild(li2);

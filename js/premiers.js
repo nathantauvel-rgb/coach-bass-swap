@@ -43,11 +43,18 @@ const PP_POSES = {
 };
 // La tête de lecture de la barre d'avancement, en % : le drop de la forme d'onde est au bout, « Voir mon plan » l'y amène
 const PP_POS = { salut: 5, niveau: 24, oreille: 40, table: 56, objectif: 72, plan: 100, compte: 100, envoye: 100 };
-// Les tables que le site connaît, rangées par marque, toutes sur un pied d'égalité (la FLX4 avec les autres Pioneer)
-const ppMarque = nom => nom.split(' ')[0];
-const PP_LISTE = [{ id: 'flx4', nom: 'Pioneer DDJ-FLX4' }].concat(MODELES.map(m => ({ id: m.id, nom: m.nom })))
-  .sort((a, b) => ppMarque(a.nom).localeCompare(ppMarque(b.nom)) || a.nom.localeCompare(b.nom));
+// Les tables de la liste, rangées par marque, toutes sur un pied d'égalité (la FLX4 avec les autres Pioneer). Lot 73 : aussi celles
+// qui n'ont pas encore de fiche (tables.js), et pour chacune ce qui l'attend (statut : 'ok' = reconnue toute seule, 'regler',
+// 'midi' ou 'non' ; tout : table tout-en-un)
+const ppMarque = nom => /^Native Instruments /.test(nom) ? 'Native Instruments' : nom.split(' ')[0];
+const PP_LISTE = [{ id: 'flx4', nom: 'Pioneer DDJ-FLX4', statut: 'ok' }]
+  .concat(MODELES.map(m => ({ id: m.id, nom: m.nom, statut: 'ok', tout: TABLES_TOUT_EN_UN.includes(m.id) })), TABLES_SANS_FICHE)
+  .sort((a, b) => ppMarque(a.nom).localeCompare(ppMarque(b.nom)) || a.nom.localeCompare(b.nom, 'fr', { numeric: true }));
 const ppNomDe = id => (PP_LISTE.find(t => t.id === id) || {}).nom || '';
+// sans « Native Instruments » devant (« Traktor Kontrol S2 MK3 ») : pour la bulle de Vini
+const ppNomCourt = id => ppNomDe(id).replace(/^Native Instruments /, '');
+// Le nom tapé quand la table n'est pas dans la liste (lot 73) : des lettres, des chiffres et quelques signes, 40 au plus
+const ppNettoie = t => String(t || '').replace(/[^\p{L}\p{N} .+'’&/-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 40);
 // La table branchée en ce moment : { nom, id } (id : 'flx4', celui d'une fiche, ou 'inconnue'), ou null
 function ppBranchee(){
   if (!midiCount) return null;
@@ -93,9 +100,11 @@ else { const v = accueil.niveau, t = accueil.table, m = accueil.modele, o = accu
     table: PP_TABLES.some(x => x[0] === t) ? t : t === 'flx4' || t === 'autre' ? 'table' : null,
     modele: typeof m === 'string' && (m === 'autre' || m === 'inconnue' || !!ppNomDe(m)) ? m : t === 'flx4' ? 'flx4' : '',
     min: PP_MINUTES.some(x => x[0] === accueil.min) ? accueil.min : null, passe: accueil.passe === true, fini: typeof accueil.fini === 'string' ? accueil.fini.slice(0, 10) : '',
-    oreille: Number.isInteger(o) && o >= 0 && o <= 8 ? o : null, mur: accueil.mur === true }; }
+    oreille: Number.isInteger(o) && o >= 0 && o <= 8 ? o : null, mur: accueil.mur === true, autre: typeof accueil.autre === 'string' ? ppNettoie(accueil.autre) : '' }; }
 // vue : la table a été reconnue au branchement ; oreille : le score du test (null : pas fait), oreillePasse : passé exprès
-const ppVide = () => ({ niveau: null, table: null, modele: '', min: null, vue: false, oreille: null, oreillePasse: false });
+// lot 73 : autre = le nom tapé (table pas dans la liste) ; teste = le fader de gauche a bougé (ou testePasse : « Je n'ai pas
+// ce bouton », on verra dans les exercices) ; regle = 'fait' ou 'rien' quand une table inconnue a été réglée (ou pas) à cet écran
+const ppVide = () => ({ niveau: null, table: null, modele: '', min: null, vue: false, oreille: null, oreillePasse: false, autre: '', teste: false, testePasse: false, regle: '' });
 // entree : l'entrée du premier écran a déjà été jouée ; attente : la bulle attend que Vini ait atterri ; vol : son saut vers le coin ;
 // vh : Vini sur la table du premier écran ; sort : on quitte le premier écran ; fini : « Commencer » a été cliqué
 // mail : l'adresse du compte créé ici ; lien : 'envoi', 'ok' ou 'rate' (le lien pour l'ordinateur) ; envoi : création en cours ;
@@ -123,11 +132,12 @@ function openPremiers(){
   if (!$('ppFill').firstChild) ppOndeInit();
   $('pp').hidden = false; document.documentElement.classList.add('pp-open');
   // le quiz est déjà fait, le compte manque (rechargement, ou retour plus tard) : on reprend sur le plan
-  if (accueil && accueil.mur){ Object.assign(pp.rep, { niveau: accueil.niveau, table: accueil.table, modele: accueil.modele, min: accueil.min, oreille: accueil.oreille });
+  if (accueil && accueil.mur){ Object.assign(pp.rep, { niveau: accueil.niveau, table: accueil.table, modele: accueil.modele, min: accueil.min, oreille: accueil.oreille, autre: accueil.autre || '' });
     pp.entree = true; pp.i = PP_I('plan'); }
   ppRender(0);
 }
 function ppClose(){
+  if (typeof regAnnulePp === 'function') regAnnulePp();   // lot 73 : un réglage de table pas fini n'est pas gardé
   ppAnnule(); ppTapeFin(); ppOrStop(); ppMusiqueArret();
   pp.on = false; $('pp').hidden = true; document.documentElement.classList.remove('pp-open');
   $('ppScene').textContent = ''; pp.vh = null;
@@ -138,8 +148,12 @@ function ppClose(){
 function ppVersPlan(){
   const r = pp.rep, v = $('ppVini');
   pp.sort = true; $('ppGo').disabled = true;
-  ppSave({ niveau: r.niveau, table: r.table, modele: r.modele, min: r.min, oreille: r.oreille, mur: ppCompteManque(), fini: dayKey() });
+  ppSave(Object.assign({ niveau: r.niveau, table: r.table, modele: r.modele, min: r.min, oreille: r.oreille, mur: ppCompteManque(), fini: dayKey() },
+    r.table === 'table' && r.modele === 'autre' && r.autre ? { autre: r.autre } : {}));
   stat1('premiers-pas-fin', { parcours: r.niveau, table: r.table === 'table' ? 'oui' : 'non' });
+  // lot 73 : la table choisie dans la liste (pas branchée) ou tapée, pour savoir quelles tables ajouter d'abord
+  if (r.table === 'table' && r.modele && !r.vue){ const t = PP_LISTE.find(x => x.id === r.modele);
+    stat1('table-choisie', { table: r.modele === 'autre' ? 'autre : ' + (r.autre || 'pas dit') : ppNomDe(r.modele), statut: r.modele === 'autre' ? 'autre' : t ? t.statut : '' }); }
   goalSet(r.min);
   ppAnnule(); ppAvance(100);
   const attente = ppMusiqueDrop();
@@ -162,14 +176,16 @@ function ppTermine(sansCompte){
 }
 const ppPret = () => { const r = pp.rep, id = PP_ETAPES[pp.i];
   return id === 'salut' || id === 'plan' || id === 'envoye' || (id === 'compte' && !pp.envoi) || (id === 'niveau' && r.niveau !== null)
-    || (id === 'oreille' && (r.oreille !== null || r.oreillePasse) && !(ppOr && !ppOr.fin)) || (id === 'table' && r.table !== null) || (id === 'objectif' && r.min !== null); };
+    || (id === 'oreille' && (r.oreille !== null || r.oreillePasse) && !(ppOr && !ppOr.fin)) || (id === 'table' && r.table !== null && ppTableOk()) || (id === 'objectif' && r.min !== null); };
 /* L'écran de la table. Une table branchée est reconnue toute seule (ppMidi est appelé par initMidi à chaque branchement) ;
    sinon « J'ai une table » ouvre la liste par marque, qui sert seulement à savoir si DJingood la connaît déjà. */
 function ppTableOpts(add){
   const r = pp.rep, b = ppBranchee();
   if (b){ r.table = 'table'; r.modele = b.id; r.vue = true;
-    add({ v: 'table', txt: b.nom, sub: b.id === 'inconnue' ? 'Branchée · je ne la connais pas encore' : 'Branchée et reconnue', ic: ppMiniTable(), big: true, pick: () => {} });
+    add({ v: 'table', txt: b.nom, sub: ppTableSous(b), ic: ppMiniTable(), big: true, pick: () => {} });
+    ppTestBloc();   // lot 73 : le test de 5 secondes, ou le réglage des 3 premiers boutons
     return; }
+  if (typeof regAnnulePp === 'function') regAnnulePp();
   if (r.vue){ r.vue = false; r.modele = ''; }   // elle vient d'être débranchée
   const tel = cpMobile();
   PP_TABLES.forEach(([v, txt, sub]) => add({ v, txt: tel ? PP_TABLES_TEL[v][0] : txt, sub: tel ? PP_TABLES_TEL[v][1] : sub, ic: PP_IC[v], pick: () => { r.table = v; if (v === 'souris') r.modele = ''; } }));
@@ -183,23 +199,30 @@ function ppTableOpts(add){
   sel.value = r.modele || '';
   sel.addEventListener('change', () => { r.modele = sel.value; ppMaj(); ppSautille(); });
   box.append(t, sel); $('ppOpts').appendChild(box);
+  // lot 73 : son nom quand elle n'est pas dans la liste, puis ce qui attend la table choisie
+  const au = document.createElement('input'); au.type = 'text'; au.id = 'ppAutreNom'; au.className = 'pp-autre'; au.maxLength = 40; au.autocomplete = 'off';
+  au.placeholder = 'Sa marque et son modèle, par exemple Denon MC7000'; au.setAttribute('aria-label', 'La marque et le modèle de ta table'); au.value = r.autre || '';
+  au.addEventListener('input', () => { r.autre = ppNettoie(au.value); });
+  const stt = document.createElement('div'); stt.id = 'ppStatut'; stt.className = 'pp-statut'; stt.hidden = true;
+  $('ppOpts').append(au, stt);
   if (tel) return;   // sur un téléphone, rien à brancher : l'aide de la table attendra l'ordinateur (lot 65)
   // Lot 45 : la table est branchée mais le navigateur ne la voit pas, ou l'accès a été refusé (midi.js)
   const d = document.createElement('details'), sm = document.createElement('summary'), body = document.createElement('div');
   d.className = 'pp-aide'; d.id = 'ppAide'; body.className = 'taide-in'; midiAideRemplir(body);
   sm.textContent = midiEtat === 'refuse' ? 'Comment l’autoriser ?' : midiEtat === 'absent' ? (midiIos() ? 'Ouvrir DJingood sur un ordinateur' : 'Ouvrir DJingood dans Chrome') : 'Elle est branchée, mais je ne la vois pas ?';
-  d.open = midiEtat === 'refuse' || midiEtat === 'absent';
+  d.open = true;   // lot 73 : ouverte d'office (elle ne se montre que s'il dit avoir une table et qu'aucune n'est vue, ou si le navigateur bloque)
   d.append(sm, body); $('ppOpts').appendChild(d);
 }
 // L'aide se montre quand on dit avoir une table et qu'aucune n'est vue, quand l'accès a été refusé, ou quand le navigateur ne
 // sait pas parler aux tables (Safari) ; jamais à la souris
-const ppAideVue = r => r.table !== 'souris' && (midiEtat === 'refuse' || midiEtat === 'absent' || (midiEtat === 'pret' && r.table === 'table'));
+// lot 73 : jamais pour une table choisie « pas encore compatible » (le navigateur ne peut pas la voir, quoi qu'on fasse)
+const ppAideVue = r => { const t = r.modele && PP_LISTE.find(x => x.id === r.modele);
+  return r.table !== 'souris' && !(t && t.statut === 'non') && (midiEtat === 'refuse' || midiEtat === 'absent' || (midiEtat === 'pret' && r.table === 'table')); };
 function ppTableDit(){
   const r = pp.rep, b = ppBranchee();
-  if (b) return b.id === 'inconnue' ? `Je vois ta table, mais je ne la connais pas encore : je te montrerai comment la régler, ça prend deux minutes.`
-    : `Je la reconnais : ta ${b.nom} est prête à jouer !`;
+  if (b) return ppTableDitBranchee(b);
   // sur un téléphone (lot 65) : rien à brancher ici, la table ira sur l'ordinateur
-  if (cpMobile()) return r.table === 'table' ? (r.modele && r.modele !== 'autre' ? `La ${ppNomDe(r.modele)}, super ! On la branchera sur ton ordinateur.` : 'Super ! On la branchera sur ton ordinateur, je t’enverrai le lien.')
+  if (cpMobile()) return r.table === 'table' ? (r.modele && r.modele !== 'autre' ? ppTableDitListe(r.modele, true) : 'Super ! On la branchera sur ton ordinateur, je t’enverrai le lien.')
     : r.table === 'souris' ? 'Pas de souci : on commence sur ton téléphone, au doigt.' : 'Tu as une table DJ ?';
   if (r.table === 'souris') return 'Aucun problème : tout se joue à la souris. Tu brancheras une table plus tard.';
   // ce que le navigateur a répondu (lot 45) : il ne peut pas voir de table, il attend qu'on l'autorise, ou on l'a refusé
@@ -209,8 +232,189 @@ function ppTableDit(){
   if (midiEtat === 'refuse') return 'Ton navigateur m’a refusé l’accès à ta table. Regarde juste en dessous comment l’autoriser.';
   if (r.table !== 'table') return 'Tu as une table DJ ?';
   if (r.modele === 'autre') return 'Pas de souci : quand tu la brancheras, je te montrerai comment la régler.';
-  if (r.modele) return `Je connais la ${ppNomDe(r.modele)} : je la reconnaîtrai dès que tu la brancheras.`;
+  if (r.modele) return ppTableDitListe(r.modele, false);
   return 'Branche-la en USB, je t’attends ! Tu peux aussi continuer : je la reconnaîtrai plus tard.';
+}
+// Ce que dit Vini d'une table choisie dans la liste (pas branchée), selon ce qui l'attend (lot 73)
+function ppTableDitListe(id, tel){
+  const t = PP_LISTE.find(x => x.id === id), nom = ppNomCourt(id), st = t ? t.statut : 'ok';
+  if (st === 'non') return `Ah, la ${nom}… Je ne sais pas encore lui parler.` + (tel ? ' Tout marche au doigt et à la souris en attendant.' : '');
+  if (st === 'midi') return tel ? `La ${nom} ! Sur ton ordinateur, on la passera en mode MIDI, puis on la réglera ensemble.` : `La ${nom} ! Branche-la en mode MIDI, et on la réglera ensemble.`;
+  if (st === 'regler') return tel ? `La ${nom} ! On la réglera ensemble sur ton ordinateur : 30 secondes.` : `La ${nom} ! Je ne la connais pas encore : quand tu la brancheras, on la réglera ensemble, en 30 secondes.`;
+  return tel ? `La ${nom}, super ! On la branchera sur ton ordinateur.` : `Je connais la ${nom} : je la reconnaîtrai dès que tu la brancheras.`;
+}
+// Ce qui attend la table choisie (lot 73) : une carte sous la liste, avec une phrase honnête
+const PP_ST_IC = {
+  ok: PP_IC.coche,
+  regler: ppTrait('<path d="M5 10h14M23 10h4M5 22h6M15 22h12"/><circle cx="21" cy="10" r="3"/><circle cx="13" cy="22" r="3"/>'),
+  midi: ppTrait('<path d="M11 4v7M21 4v7"/><rect x="7" y="11" width="18" height="8" rx="3"/><path d="M16 19v5a4 4 0 0 1-4 4"/>'),
+  non: ppTrait('<path d="M16 5 4 26h24z"/><path d="M16 13v6M16 22.5h.01"/>'),
+  autre: ppTrait('<circle cx="16" cy="16" r="12"/><path d="M12.5 12.5a3.5 3.5 0 1 1 4.9 3.2c-1 .4-1.4 1.2-1.4 2.2V19"/><path d="M16 23h.01"/>')
+};
+function ppStatutDe(id){
+  const tel = cpMobile(), t = PP_LISTE.find(x => x.id === id), tout = t && t.tout ? ' C’est une table tout-en-un : mets-la en mode ordinateur.' : '';
+  if (id === 'autre') return ['autre', 'Je te guiderai pour la régler', (tel ? 'Sur ton ordinateur, ' : 'Quand tu la brancheras, ') + 'je te guide bouton par bouton. Dis-moi laquelle : ça m’aide à savoir quelles tables ajouter.'];
+  if (!t) return null;
+  if (t.statut === 'ok') return ['ok', 'Reconnue toute seule', (tel ? 'Branche-la sur ton ordinateur : ' : 'Branche-la en USB : ') + 'je la reconnais sans réglage, et on vérifie ensemble qu’elle répond.' + tout];
+  if (t.statut === 'midi') return ['midi', 'Son mode MIDI, puis 30 secondes de réglage', 'Débranche-la, tiens le bouton FLX de gauche enfoncé et rebranche-la : ses pads clignotent en vert (il lui faut sa dernière mise à jour). Ensuite, je te guide bouton par bouton.'];
+  if (t.statut === 'non') return ['non', 'Pas encore compatible', 'Elle n’envoie pas de MIDI, le langage des tables DJ : ton navigateur ne peut pas me la montrer. Tous les exercices marchent ' + (tel ? 'au doigt et ' : '') + 'à la souris en attendant.'];
+  return ['regler', '30 secondes de réglage' + (tel ? ' sur ton ordi' : ''), 'La première fois que tu la branches, je te guide bouton par bouton.' + tout];
+}
+function ppStatutRemplir(box, id){
+  const s = ppStatutDe(id); box.textContent = ''; if (!s){ box.hidden = true; return; }
+  box.className = 'pp-statut pp-st-' + s[0];
+  const ic = document.createElement('span'), t = document.createElement('span'), b = document.createElement('b'), p = document.createElement('span');
+  ic.className = 'pp-st-ic'; ic.setAttribute('aria-hidden', 'true'); ic.innerHTML = PP_ST_IC[s[0]]; b.textContent = s[1]; p.textContent = s[2];
+  t.append(b, p); box.append(ic, t);
+}
+
+/* ---------- Lot 73 : la table, dès le début ----------
+   Maquette captures/maquette-table-debut du dossier principal, validée le 16 nov. 2026 (« Ça me va »). Sur un ordinateur, une
+   table branchée est testée ou réglée avant le premier exercice, pour que les exercices marchent quand on y arrive :
+   - reconnue (la FLX4, ou une table qui a sa fiche) : un test de 5 secondes, « Bouge le fader de gauche ». Le dessin suit la
+     table, et « Continuer » attend que le fader ait fait la moitié de sa course. « Le dessin ne bouge pas ? » : on règle ce
+     bouton-là, et lui seul (reglage.js, en gardant tous les autres réglages de la table).
+   - inconnue : on règle tout de suite les 3 boutons des 3 exercices gratuits (REG_PREMIERS : les deux faders et le PLAY de
+     droite) ; les autres se règleront juste avant le premier niveau qui s'en sert (regAvantDeJouer, reglage.js).
+   Le dessin est celui des fiches (#onbSvg), copié ici avec le préfixe pt-. Sur un téléphone, rien à brancher : pas de test. */
+const PP_TEST_COURSE = .5;   // la moitié de la course du fader
+let ppT = null;   // le test en cours : mini, maxi (positions du fader de gauche), vus (les autres numéros qui bougent), indice,
+                  // recu (la table a envoyé quelque chose), muet (rien reçu au bout de PP_TEST_MUET ms)
+const PP_TEST_MUET = 12000;
+const ppTestZero = () => { ppT = { mini: null, maxi: null, vus: {}, indice: false, recu: false, muet: false }; };
+ppTestZero();
+// Où en est l'écran de la table : '' (rien à tester : pas de table branchée, un téléphone, ou une table que le bandeau propose
+// de changer), 'test', 'teste', 'regle' (un réglage en cours, ou une table inconnue qui va être réglée) ou 'fait'
+function ppTestMode(){
+  const b = ppBranchee(), r = pp.rep;
+  if (!b || cpMobile()) return '';
+  if (typeof reg !== 'undefined' && reg.active && reg.ou === 'pp') return 'regle';
+  if (r.regle) return 'fait';
+  if (r.teste) return 'teste';
+  if (b.id === 'inconnue') return tableEtat() === 'nouvelle' ? 'regle' : '';
+  return tableOn() ? 'test' : '';
+}
+const ppTableOk = () => ['', 'teste', 'fait'].includes(ppTestMode());
+const ppTestActif = () => pp.on && !pp.fini && PP_ETAPES[pp.i] === 'table' && ppTestMode() === 'test';
+const ppTableSous = b => b.id !== 'inconnue' ? 'Branchée et reconnue' : pp.rep.regle === 'fait' ? 'Branchée · réglée' : 'Branchée · je ne la connais pas encore';
+const ppTableStat = () => { const b = ppBranchee(); return !b ? '' : b.id === 'inconnue' ? 'autre table' : b.nom; };
+// Ce que dit Vini quand la table est branchée
+function ppTableDitBranchee(b){
+  const m = ppTestMode(), r = pp.rep;
+  if (m === 'regle'){
+    // (gardien du lot 73 : « des signaux » seulement si la table a vraiment envoyé quelque chose)
+    if (reg.garde) return ppT.recu ? 'Ta table m’envoie des signaux, mais pas ceux que j’attendais. On règle ce bouton ensemble ?' : 'On règle ce bouton ensemble : bouge le fader de gauche sur ta table.';
+    const k = reg.active && reg.steps[reg.i] ? reg.steps[reg.i].k : 'faderA';
+    return { faderB: 'Bien ! Maintenant, le fader de droite.', playB: 'Dernier bouton : le PLAY de droite.' }[k] || 'Je vois ta table, mais je ne la connais pas encore. On règle ses 3 premiers boutons : 30 secondes !';
+  }
+  if (m === 'fait') return r.regle === 'fait' ? 'C’est réglé ! Tes 3 premiers exercices marcheront avec ta table.' : 'Pas de souci : tu joueras à la souris en attendant.';
+  if (m === 'teste') return r.testePasse ? 'Pas de souci : si un bouton ne répond pas dans un exercice, tu pourras jouer à la souris.' : 'Je l’ai vu bouger : ta table et moi, on se parle !';
+  if (m === 'test'){
+    // gardien du lot 73 : la cause n° 1 d'une table muette sur Windows, c'est un logiciel de DJ qui la garde pour lui
+    if (ppT.muet) return 'Tu as bougé le fader ? Rien ne m’arrive de ta table. Si rekordbox (ou un autre logiciel de DJ) est ouvert, ferme-le, puis débranche ta table et rebranche-la.';
+    // un bouton que ses réglages ne connaissent pas (le filtre d'une FLX4, par exemple) : ce n'est peut-être pas une panne
+    if (ppT.indice) return 'Ce bouton-là, je ne le connais pas encore. Si c’est ton fader de gauche, clique sur « Le dessin ne bouge pas ? ».';
+    return `Je la reconnais : ta ${b.nom} ! Bouge le fader de gauche, pour voir.`;
+  }
+  return b.id === 'inconnue' ? 'Je vois ta table, mais je ne la connais pas encore : je te montrerai comment la régler, ça prend deux minutes.' : `Je la reconnais : ta ${b.nom} est prête à jouer !`;
+}
+// Le bloc du test (ou du réglage), sous la carte de la table
+function ppTestBloc(){
+  const mode = ppTestMode(); if (!mode) return;
+  const box = document.createElement('div'); box.className = 'pp-test'; box.id = 'ppTest';
+  // le texte d'état et le lien de secours au-dessus du dessin : sur un écran bas, « Continuer » cache le bas du bloc (gardien du lot 73)
+  box.innerHTML = '<div class="pp-test-h"><span class="pp-test-n" id="ppTestN" hidden></span><p class="pp-test-t" id="ppTestT"></p></div><p class="pp-test-s" id="ppTestS"></p>'
+    + '<div class="pp-test-etat"><p class="regstate" id="ppTestEtat" role="status"></p><button type="button" class="pp-lien" id="ppTestLien"></button></div>'
+    + '<svg class="onb-svg pp-svg" id="ppTestSvg" viewBox="0 0 600 270" aria-hidden="true"></svg>';
+  $('ppOpts').appendChild(box);
+  const svg = $('ppTestSvg'); svg.innerHTML = $('onbSvg').innerHTML.replace(/id="sv-/g, 'id="pt-'); onbHighlight(null, svg, 'pt-');
+  $('ppTestLien').addEventListener('click', ppTestLien);
+  if (mode === 'test' && !ppT.recu) ppPlusTard(PP_TEST_MUET, () => { if (!ppT.recu && ppTestActif()){ ppT.muet = true; ppTestRendu(); ppMaj(); } });
+  if (mode === 'regle'){
+    if (reg.active && reg.ou === 'pp') reg.svg = svg;   // l'écran a été refait pendant le réglage : le schéma est neuf
+    else regDemarre({ cles: REG_PREMIERS, ou: 'pp', svg, pre: 'pt-', apres: ppRegFinNouvelle });
+  }
+  ppTestRendu();
+}
+// « Le dessin ne bouge pas ? » (on règle le fader de gauche, et lui seul) ou « Je n'ai pas ce bouton »
+function ppTestLien(){
+  const m = ppTestMode();
+  if (m === 'test'){ if (regDemarre({ cles: ['faderA'], ou: 'pp', svg: $('ppTestSvg'), pre: 'pt-', garde: true, apres: ppRegFinMuet })){ ppTestRendu(); ppMaj(); } }
+  else if (m === 'regle') regPasse();
+}
+function ppTestRendu(){
+  if (!$('ppTest')) return;
+  const m = ppTestMode(), r = pp.rep, n = $('ppTestN'), t = $('ppTestT'), s = $('ppTestS'), e = $('ppTestEtat'), lien = $('ppTestLien'), svg = $('ppTestSvg');
+  const b = ppBranchee(), sous = $('ppOpts').querySelector('.pp-big .pp-sub'); if (b && sous) sous.textContent = ppTableSous(b);
+  $('ppTest').classList.toggle('pp-test-ok', m === 'teste' || m === 'fait');
+  n.hidden = true; lien.hidden = false; svg.style.display = ''; e.className = 'regstate';
+  if (m === 'test'){
+    t.textContent = 'Bouge le fader de gauche'; s.textContent = 'Monte-le tout en haut, puis redescends-le : regarde le dessin.';
+    e.className = 'regstate' + (ppT.muet ? ' warn' : '');
+    e.textContent = ppT.muet ? 'Rien ne m’arrive de ta table pour l’instant.' : 'J’attends que tu le bouges sur ta table…';
+    lien.textContent = 'Le dessin ne bouge pas ?'; onbHighlight('faderA', svg, 'pt-');
+  } else if (m === 'regle' && reg.active){
+    const st = reg.steps[reg.i] || reg.steps[reg.steps.length - 1];
+    if (reg.steps.length > 1){ n.hidden = false; n.textContent = `${Math.min(reg.i + 1, reg.steps.length)} sur ${reg.steps.length}`; }
+    t.textContent = capFirst(st.name); s.textContent = st.text;
+    e.className = 'regstate' + (reg.wait ? ' ok' : reg.msg ? ' warn' : ''); e.textContent = regEtatTexte(st);
+    lien.textContent = 'Je n’ai pas ce bouton'; onbHighlight(st.k, svg, 'pt-');
+  } else {
+    onbHighlight(null, svg, 'pt-'); lien.hidden = true; e.textContent = '';
+    // « Je n'ai pas ce bouton » sur une table reconnue : ses réglages ne changent pas, le site attendra toujours ce fader
+    // (gardien du lot 73) : on dit la vérité, avec l'issue de secours des exercices
+    if (m === 'teste'){ t.textContent = r.testePasse ? 'On verra ça dans les exercices' : 'Ta table répond !';
+      s.textContent = r.testePasse ? 'Si ton fader ne répond pas, clique sur « Je joue à la souris cette fois » dans l’exercice. Tu pourras régler ta table depuis « Ma table ».' : 'Elle et moi, on se parle : tes exercices marcheront avec elle.'; }
+    else { const ok = r.regle === 'fait'; t.textContent = ok ? 'C’est réglé !' : 'On la réglera plus tard';
+      s.textContent = ok ? 'Tes 3 premiers exercices marcheront avec ta table. Les autres boutons, je te les ferai régler juste avant l’exercice qui s’en sert.'
+        : 'Tu joueras à la souris en attendant. Tu pourras régler ta table depuis « Ma table ».';
+      svg.style.display = ok ? '' : 'none'; }
+  }
+}
+// Le réglage avance (reglage.js l'appelle à chaque étape et à chaque message)
+function ppRegRendu(){ if (!pp.on || PP_ETAPES[pp.i] !== 'table') return; ppTestRendu(); ppMaj(); }
+function ppRegFinNouvelle(n){
+  pp.rep.regle = n ? 'fait' : 'rien';
+  if (n) stat1('table-reglee', { boutons: n });
+  if (!pp.on || PP_ETAPES[pp.i] !== 'table') return;
+  ppTestRendu(); ppMaj();
+  if (n){ viniJoie($('ppVini')); son('reussi'); }
+}
+function ppRegFinMuet(n){
+  pp.rep.teste = true; pp.rep.testePasse = !n;
+  if (n) stat1('table-muet', { table: ppTableStat() });
+  if (!pp.on || PP_ETAPES[pp.i] !== 'table') return;
+  ppTestRendu(); ppMaj();
+  if (n){ viniJoie($('ppVini')); son('reussi'); }
+}
+// Pendant le test, la table ne pilote rien : chaque commande connue bouge sur le dessin, et le fader de gauche fait le test.
+// Renvoie true quand le message est pour le test (midi.js n'en fait rien d'autre).
+function ppTestMidi(type, ch, d1, d2){
+  if (!ppTestActif()) return false;
+  const svg = $('ppTestSvg'); if (!svg) return true;
+  if (!ppT.recu){ ppT.recu = true; if (ppT.muet){ ppT.muet = false; ppTestRendu(); ppMaj(); } }
+  if (type === 0xB0){
+    const k = MIDI_CC.find(x => midiSame(map[x], ch, d1));
+    // la position réelle est retenue : au premier exercice, la table est déjà « en place »
+    if (k){ phys[k] = d2 / 127; onbSchemaSet(svg, 'pt-', k, d2 / 127); if (k === 'faderA') ppTestBouge(d2 / 127); return true; }
+    const kb = MIDI_NOTE.find(x => map[x] && map[x].cc && midiSame(map[x], ch, d1)); if (kb){ if (d2 >= 64) onbSchemaPress(svg, 'pt-', kb); return true; }
+    if (!msgFin(d1)) ppTestAutre(ch, d1, d2);
+  } else if (type === 0x90 && d2 > 0){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1)); if (k) onbSchemaPress(svg, 'pt-', k); }
+  return true;
+}
+function ppTestBouge(v){
+  ppT.mini = ppT.mini == null ? v : Math.min(ppT.mini, v); ppT.maxi = ppT.maxi == null ? v : Math.max(ppT.maxi, v);
+  if (ppT.maxi - ppT.mini < PP_TEST_COURSE) return;
+  pp.rep.teste = true; stat1('table-test', { table: ppTableStat() });
+  ppTestRendu(); ppMaj(); viniJoie($('ppVini')); son('reussi');
+}
+// La table parle avec un numéro que ses réglages ne connaissent pas (un potard ou un fader qui va d'un bout à l'autre, pas une
+// molette qui tourne autour de 64) : Vini propose « Le dessin ne bouge pas ? »
+function ppTestAutre(ch, d1, d2){
+  const vus = (ppT.vus[ch + ':' + d1] = ppT.vus[ch + ':' + d1] || new Set()).add(d2);
+  // seulement tant que le fader de gauche n'a rien envoyé : s'il bouge, c'est qu'il est bien réglé
+  if (ppT.indice || ppT.mini != null || vus.size < 6 || Math.max(...vus) - Math.min(...vus) < 40) return;
+  ppT.indice = true; ppMaj();
 }
 // Une table vient d'être branchée ou débranchée pendant l'écran de la table : on le refait, et Vini saute de joie quand il la voit
 // (le navigateur prévient plusieurs fois pour un seul branchement : on ne refait l'écran que si la table a changé)
@@ -218,6 +422,9 @@ let ppVu = '';
 function ppMidi(){ const b = ppBranchee(), k = b ? b.nom : '';
   if (typeof ordiMaj === 'function') ordiMaj();   // la carte « Bienvenue sur ordinateur » suit la table (lot 65)
   if (k === ppVu) return; ppVu = k;
+  // lot 73 : une autre table (ou plus de table) : son test et son réglage repartent de zéro
+  if (typeof regAnnulePp === 'function') regAnnulePp();
+  Object.assign(pp.rep, { teste: false, testePasse: false, regle: '' }); ppTestZero();
   if (!pp.on || PP_ETAPES[pp.i] !== 'table' || pp.fini) return;
   ppRender(0);
   if (b){ viniJoie($('ppVini')); son('reussi'); ppPlusTard(380, () => ppEclats($('ppOpts').querySelector('.pp-opt'), 36, .7)); } }
@@ -243,6 +450,7 @@ function ppOption(o, k){
 function ppRender(sens, vol){
   const id = PP_ETAPES[pp.i], r = pp.rep, body = $('ppBody'), box = $('ppOpts');
   ppAnnule(); ppTapeFin(); if (id !== 'oreille') ppOrStop();
+  if (id !== 'table' && typeof regAnnulePp === 'function') regAnnulePp();   // lot 73 : on quitte l'écran de la table, son réglage s'arrête
   $('ppBack').hidden = pp.i === 0 || id === 'envoye';
   $('ppSon').hidden = pp.i === 0;
   ppAvance(PP_POS[id]); ppMusiqueEtape();
@@ -289,6 +497,9 @@ function ppMaj(){
   $('ppOpts').querySelectorAll('.pp-opt').forEach(b => b.setAttribute('aria-pressed', String(sel !== null && sel !== undefined && String(sel) === b.dataset.v)));
   const liste = $('ppListe'); if (liste) liste.hidden = r.table !== 'table';
   const aide = $('ppAide'); if (aide) aide.hidden = !ppAideVue(r);
+  // lot 73 : le nom d'une table qui n'est pas dans la liste, et ce qui attend la table choisie
+  const autre = $('ppAutreNom'); if (autre) autre.hidden = !(r.table === 'table' && r.modele === 'autre');
+  const stt = $('ppStatut'); if (stt){ stt.hidden = !(r.table === 'table' && r.modele); if (!stt.hidden) ppStatutRemplir(stt, r.modele); }
   const texte = id === 'salut' ? 'Salut, moi c’est Vini ! Je vais t’apprendre à mixer. En une minute, je te fais ton plan.'
     : id === 'niveau' ? (r.niveau === null ? 'Tu en es où avec le mix ?' : PP_NIVEAUX.find(x => x[0] === r.niveau)[3])
     : id === 'oreille' ? ppOrTexte()
@@ -324,7 +535,7 @@ function ppResume(){
   if (accueil.passe) return 'passés sans répondre';
   const niv = PP_NIVEAUX.find(x => x[0] === accueil.niveau);
   const tab = accueil.table === 'souris' ? 'pas encore de table' : accueil.table !== 'table' ? ''
-    : 'une table' + (accueil.modele === 'inconnue' ? ' (branchée, pas dans la liste)' : accueil.modele === 'autre' ? ' (pas dans la liste)' : accueil.modele ? ' : ' + ppNomDe(accueil.modele) : '');
+    : 'une table' + (accueil.modele === 'inconnue' ? ' (branchée, pas dans la liste)' : accueil.modele === 'autre' ? ' (pas dans la liste' + (accueil.autre ? ' : ' + accueil.autre : '') + ')' : accueil.modele ? ' : ' + ppNomDe(accueil.modele) : '');
   return [niv ? niv[1] : '', tab, accueil.min ? accueil.min + ' min par jour' : '', accueil.oreille !== null ? 'oreille ' + accueil.oreille + '/8' : '',
     accueil.mur ? 'compte pas encore créé' : ''].filter(Boolean).join(' · ');
 }

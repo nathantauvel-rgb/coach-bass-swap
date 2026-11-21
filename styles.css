@@ -3392,3 +3392,48 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
   .mm-ap-p{flex-wrap:wrap}
   .mm-ap-tech{white-space:normal;flex-basis:100%;padding-left:62px}
 }
+
+/* ---------- Lot 73 : la table, dès le début (Premiers pas) ----------
+   Le test de 5 secondes ou le réglage des 3 premiers boutons, sous la carte de la table branchée ; et, sous la liste, ce qui
+   attend la table choisie (reconnue, à régler, mode MIDI, pas compatible) et le nom d'une table qui n'est pas dans la liste. */
+.pp-test{display:flex;flex-direction:column;gap:10px;padding:14px 16px 12px;border-radius:18px;background:var(--panel);border:2px solid var(--line);animation:pp-monte .35s ease-out}
+.pp-test.pp-test-ok{border-color:var(--ok)}
+.pp-test-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pp-test-n{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-light);background:var(--brand-soft);border:1px solid var(--brand-line);border-radius:99px;padding:3px 10px}
+.pp-test-n[hidden]{display:none}
+.pp-test-t{margin:0;font-size:18px;font-weight:900;line-height:1.3}
+.pp-test-ok .pp-test-t{color:var(--ok)}
+.pp-test-s{margin:-6px 0 0;font-size:15px;font-weight:600;line-height:1.45;color:var(--muted)}
+/* le dessin rétrécit avec la hauteur de l'écran : tout le bloc reste au-dessus de « Continuer » (gardien du lot 73, 1366 × 650) */
+.pp-svg{max-height:clamp(110px, calc(100vh - 500px), 230px)}
+.pp-test-etat{display:flex;align-items:center;justify-content:space-between;gap:6px 12px;flex-wrap:wrap}
+.pp-test-etat .regstate{flex:1 1 220px;padding:9px 12px;font-size:15px}
+.pp-test-etat .regstate:empty{display:none}
+.pp-lien{border:0;background:none;color:var(--muted);font:inherit;font-size:14.5px;font-weight:800;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px 6px}
+.pp-lien:hover{color:var(--fg)}
+.pp-lien[hidden]{display:none}
+.pp-autre{min-height:52px;padding:0 14px;border:2px solid var(--line);border-radius:14px;background:var(--panel-2);color:var(--fg);font:inherit;font-size:17px;font-weight:700}
+.pp-autre:focus-visible{outline:3px solid var(--brand-light);outline-offset:3px}
+.pp-autre[hidden],.pp-statut[hidden]{display:none}
+.pp-statut{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:18px;border:2px solid var(--line);background:var(--panel);animation:pp-monte .35s ease-out}
+.pp-st-ic{width:32px;height:32px;flex:none;color:var(--brand-light)}
+.pp-st-ic svg{width:100%;height:100%}
+.pp-statut b{display:block;font-size:16.5px;font-weight:900}
+.pp-statut span span{display:block;margin-top:3px;font-size:15px;font-weight:600;line-height:1.45;color:var(--muted)}
+.pp-st-ok{border-color:var(--ok)} .pp-st-ok .pp-st-ic{color:var(--ok)}
+.pp-st-regler,.pp-st-autre{border-color:var(--brand-line);background:var(--brand-soft)}
+.pp-st-midi,.pp-st-non{border-color:var(--mid);background:var(--medal-bg)} .pp-st-midi .pp-st-ic,.pp-st-non .pp-st-ic{color:var(--mid)}
+/* écran bas (un portable de 768 px ne laisse qu'environ 650 px à la page) : Vini, la carte de la table et les espaces se serrent */
+@media (max-height:860px){
+  .pp-col:has(#ppTest){gap:14px}
+  .pp-body:has(#ppTest){gap:12px}
+  .pp-body:has(#ppTest) .pp-head .vini{width:74px;height:80px}
+  .pp-body:has(#ppTest) .pp-bubble{font-size:17px;padding:10px 14px}
+  .pp-body:has(#ppTest) .pp-bubble::before{top:18px}
+  .pp-body:has(#ppTest) .pp-opt.pp-big{min-height:66px;padding:9px 14px}
+  .pp-body:has(#ppTest) .pp-opt.pp-big .pp-ic{width:72px;height:36px}
+  .pp-test{gap:8px;padding:11px 14px 12px}
+  .pp-test-t{font-size:17px}
+  .pp-test-s{margin-top:-4px;font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){.pp-test,.pp-statut{animation:none}}

@@ -82,3 +82,21 @@ const modeleDe = name => MODELES.find(f => f.re.test(String(name))) || null;
 // Les réglages d'une fiche, au format de coach-midi-map
 // (avec `plus` : les commandes de la table complète, lot 39 ; celles que le site ne connaît pas sont écartées par cleanMap)
 function modeleMap(f){ const out = {}; for (const [k, [ch, n]] of Object.entries(Object.assign({}, f.plus, f.cmd))) out[k] = { ch, n }; return out; }
+/* ---------- Les tables sans fiche (lot 73) ----------
+   Pour la liste des Premiers pas : des tables que les joueurs ont souvent, avec une phrase honnête sur ce qui les attend.
+   statut : 'regler' (une table MIDI : 30 secondes de réglage la première fois qu'on la branche) ; 'midi' (Traktor S2 MK3 et
+   S3 : elles parlent MIDI seulement si on les branche en tenant le bouton FLX de gauche, avec leur dernière mise à jour,
+   d'après l'aide de Native Instruments) ; 'non' (Traktor S4 MK3 : pas de mode MIDI, le navigateur ne peut pas la voir).
+   tout : table tout-en-un, avec un écran, à mettre en mode ordinateur. Aucune n'a été essayée avec DJingood. */
+const TABLES_SANS_FICHE = [
+  { id: 'ddjflx2', nom: 'Pioneer DDJ-FLX2', statut: 'regler' }, { id: 'ddjflx6', nom: 'Pioneer DDJ-FLX6', statut: 'regler' },
+  { id: 'ddjflx10', nom: 'Pioneer DDJ-FLX10', statut: 'regler' }, { id: 'ddjrev1', nom: 'Pioneer DDJ-REV1', statut: 'regler' },
+  { id: 'xdjaz', nom: 'Pioneer XDJ-AZ', statut: 'regler', tout: true }, { id: 'xdjrx3', nom: 'Pioneer XDJ-RX3', statut: 'regler', tout: true },
+  { id: 'inpulset7', nom: 'Hercules DJControl Inpulse T7', statut: 'regler' }, { id: 'ns4fx', nom: 'Numark NS4FX', statut: 'regler' },
+  { id: 'dj202', nom: 'Roland DJ-202', statut: 'regler' },
+  { id: 'traktors2mk3', nom: 'Native Instruments Traktor Kontrol S2 MK3', statut: 'midi' },
+  { id: 'traktors3', nom: 'Native Instruments Traktor Kontrol S3', statut: 'midi' },
+  { id: 'traktors4mk3', nom: 'Native Instruments Traktor Kontrol S4 MK3', statut: 'non' }
+];
+// Les tables tout-en-un qui ont leur fiche (elles aussi se mettent en mode ordinateur)
+const TABLES_TOUT_EN_UN = ['xdjrr'];

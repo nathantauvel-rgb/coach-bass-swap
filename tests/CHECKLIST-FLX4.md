@@ -54,6 +54,8 @@ sont ouverts, par exemple http://localhost:8766/?tout=1#apprendre ou https://dji
 | 36 | Lot 60 : le volume du site (haut-parleur en haut à droite), à 20 % puis à 100 %, pendant un niveau | Les enceintes ET le casque de la table baissent puis montent ensemble ; avec CUE casque de B, B garde le même niveau par rapport au reste ; à 50 % (le réglage de départ), le son est-il assez fort avec les boutons de volume de la table montés ? | |
 | 37 | Lot 63 : la table dessinée refaite, pendant un niveau (chapitre 1, niveau 7) puis dans « Ma table » | Les commandes du niveau se voient bien (les autres sont grisées, pas invisibles) ; faders, potards et molettes bougent dans le même sens que la table ; rien n'est trop petit pour être lu à 1366 × 768 | |
 | 38 | Lot 64 : un profil neuf **sans** `?tout=1`, chapitre 1 | Seul le niveau 1 est ouvert ; après 2 étoiles avec la table, le niveau 2 s'ouvre ; toucher un niveau fermé ne l'ouvre pas et Vini dit lequel réussir d'abord ; les chapitres fermés disent « Encore N ★ au chapitre 1 » | |
+| 39 | Lot 73 : les Premiers pas en nouveau venu (fenêtre de navigation privée), la FLX4 branchée, jusqu'à l'écran de la table | Tout tient au-dessus de « Continuer » sans faire défiler ; « Continuer » reste grisé tant que le fader de gauche n'a pas fait la moitié de sa course ; le fader dessiné suit le vrai ; tourner le filtre (CFX) après le fader ne fait pas dire « Le dessin ne bouge pas ? » | |
+| 40 | Lot 73 : même écran, rekordbox ouvert avec la table (sur Windows) | Au bout d'environ 12 secondes sans rien recevoir, Vini dit de fermer rekordbox ; une fois rekordbox fermé et la table rebranchée, le test reprend | |
 
 Pour chaque ligne, noter : fonctionne, ne fonctionne pas, ou comportement bizarre (et lequel).
 
