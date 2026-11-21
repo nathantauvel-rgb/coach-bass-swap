@@ -682,7 +682,8 @@ function ordiMaj(){
   const n = Object.keys(cpStars).length, b = ppBranchee(), k = nextStage(), st = k && STAGES[k];
   const lignes = [
     [n > 0, 'Comprendre la musique', n > 0 ? `${n} leçon${n > 1 ? 's' : ''} sur 7` : 'Quand tu veux'],
-    [!!b, b ? 'Ta table : ' + b.nom : 'Branche ta table en USB', b ? 'Reconnue' : 'Je la reconnaîtrai toute seule'],
+    // lot 73 : une table que le site ne connaît pas se règle (ses 3 premiers boutons) en cliquant sur « C'est parti »
+    [!!b && tableOn(), b ? 'Ta table : ' + b.nom : 'Branche ta table en USB', b ? (tableOn() ? (b.id === 'inconnue' ? 'Réglée' : 'Reconnue') : 'À régler : 30 secondes') : 'Je la reconnaîtrai toute seule'],
     [false, st ? st.title : 'Ton premier niveau', '']
   ];
   const ol = $('ordiEtapes'); ol.textContent = '';
@@ -700,7 +701,12 @@ function ordiFerme(aller){
   try { sessionStorage.removeItem(CPT_ORDI); } catch (e) {}
   if (aller){ const k = nextStage(); if (k && STAGES[k]) STAGES[k].go(); }
 }
-$('ordiGo').addEventListener('click', () => ordiFerme(true));
+// lot 73 : une table inconnue branchée règle d'abord ses 3 premiers boutons (le reste, juste avant l'exercice qui s'en sert)
+// (une seule fois : si le réglage a été fermé sans rien reconnaître, « C'est parti » continue à la souris, gardien du lot 73)
+let ordiRegEssaye = false;
+$('ordiGo').addEventListener('click', () => {
+  if (!ordiRegEssaye && tableEtat() === 'nouvelle' && regDemarre({ cles: REG_PREMIERS, quoi: 'court', apres: () => ordiFerme(true), apresTexte: 'C’est parti' })){ ordiRegEssaye = true; return; }
+  ordiFerme(true); });
 $('ordiFerme').addEventListener('click', () => ordiFerme(false));
 $('ordi').addEventListener('click', e => { if (e.target === $('ordi')) ordiFerme(false); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('ordi').hidden){ e.stopPropagation(); ordiFerme(false); } }, true);

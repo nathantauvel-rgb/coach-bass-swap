@@ -41,8 +41,11 @@ let guideSeen = false; try { guideSeen = localStorage.getItem('coach-guide-vu') 
 const ONB_KNOBS = [['TRIM', 34], ['HI', 62], ['MID', 88], ['LOW', 114], ['CFX', 146]];
 (function drawOnbKnobs(){ const g = $('sv-knobs'); let h = '';
   for (const [lab, y] of ONB_KNOBS){ for (const [x, side] of [[266, 'A'], [334, 'B']]){ const id = `sv-${lab.toLowerCase()}${side}`;
-      h += `<circle class="part" id="${id}" cx="${x}" cy="${y}" r="10"/><line class="ndl" id="${id}-n" data-cx="${x}" data-cy="${y}" x1="${x}" y1="${y}" x2="${x}" y2="${y - 8}"/>`; }
-    h += `<text x="300" y="${y + 4}" text-anchor="middle">${lab}</text>`; }
+      // lot 73 : en relief comme ceux des niveaux (lot 74) : son ombre, la jupe crantée (c'est elle qui s'éclaire), la tête, l'aiguille
+      h += `<circle class="rl-k-ombre" cx="${x}" cy="${y + 2}" r="11"/><circle class="rl-kb" id="${id}" cx="${x}" cy="${y}" r="10" fill="url(#sv-gJupe)"/>`
+        + `<circle class="rl-kd" cx="${x}" cy="${y}" r="8.6"/><circle class="rl-kt" cx="${x}" cy="${y}" r="6.6" fill="url(#sv-gTete)"/>`
+        + `<line class="ndl" id="${id}-n" data-cx="${x}" data-cy="${y}" x1="${x}" y1="${y - 1}" x2="${x}" y2="${y - 9}"/>`; }
+    h += `<text class="rl-lab" x="300" y="${y + 3.5}" text-anchor="middle">${lab}</text>`; }
   g.innerHTML = h; })();
 // Le schéma suit la table (lot 19) : le fader dessiné monte ou descend, l'aiguille du potard tourne, le bouton s'allume.
 // v de 0 (en bas, tout à gauche) à 1 (en haut, tout à droite). Sert aux fiches (préfixe sv-) et à « Régler ma table » (rg-).
@@ -61,7 +64,8 @@ function onbHighlight(id, svg = $('onbSvg'), pre = 'sv-'){
   svg.querySelectorAll('.hl').forEach(e => e.classList.remove('hl')); svg.querySelectorAll('.hl-ring').forEach(e => e.remove());
   if (!id) return; const el = svg.querySelector('#' + pre + id); if (!el) return;
   const t = el.tagName === 'g' ? el.firstElementChild : el; t.classList.add('hl');
-  const bb = t.getBBox ? t.getBBox() : null; if (!bb) return;
+  // l'anneau entoure toute la commande (le fader avec son bouton, pas seulement sa fente)
+  const bb = el.getBBox ? el.getBBox() : null; if (!bb) return;
   const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect'); r.setAttribute('class', 'hl-ring');
   r.setAttribute('x', bb.x - 8); r.setAttribute('y', bb.y - 8); r.setAttribute('width', bb.width + 16); r.setAttribute('height', bb.height + 16); r.setAttribute('rx', 10); svg.appendChild(r);
 }

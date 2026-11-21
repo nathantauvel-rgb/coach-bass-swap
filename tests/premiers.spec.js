@@ -72,7 +72,7 @@ test.describe('Premiers pas', () => {
     await expect(page.locator('#ppAsk')).toHaveText(/Branche-la en USB/);
     await expect(page.locator('#ppListe')).toBeVisible();
     const groupes = await page.locator('#ppModele optgroup').evaluateAll(g => g.map(x => x.label));
-    expect(groupes).toEqual(['Hercules', 'Numark', 'Pioneer', 'Reloop', 'Roland']);
+    expect(groupes).toEqual(['Hercules', 'Native Instruments', 'Numark', 'Pioneer', 'Reloop', 'Roland']);   // lot 73 : les Traktor aussi
     await page.locator('#ppModele').selectOption('inpulse300');
     await expect(page.locator('#ppAsk')).toHaveText('Je connais la Hercules DJControl Inpulse 300 : je la reconnaîtrai dès que tu la brancheras.');
     await page.locator('#ppModele').selectOption('autre');
@@ -85,21 +85,28 @@ test.describe('Premiers pas', () => {
     await choix(page, 1);
     await expect(page.locator('#ppNote')).toHaveText('Avec 10 min par jour, ta première vraie transition propre en 2 semaines !');
   });
-  test('table branchée : reconnue toute seule, même pendant l\'écran', async ({ page }) => {
+  test('table branchée : reconnue toute seule, même pendant l\'écran ; « Continuer » attend son test (lot 73)', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: '', stockage: NOUVEAU, midi: {} });
     await suite(page); await choix(page, 0); await suite(page); await passerOreille(page);
     await expect(page.locator('#ppGo')).toBeDisabled();
     await page.evaluate(() => window.__midi.brancher('DJControl Inpulse 300'));
-    await expect(page.locator('#ppAsk')).toHaveText('Je la reconnais : ta Hercules DJControl Inpulse 300 est prête à jouer !');
+    await expect(page.locator('#ppAsk')).toHaveText('Je la reconnais : ta Hercules DJControl Inpulse 300 ! Bouge le fader de gauche, pour voir.');
     await expect(page.locator('#ppOpts .pp-opt')).toHaveCount(1);
     await expect(page.locator('#ppOpts .pp-opt')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#ppGo')).toBeDisabled();
+    // lot 73 : le fader de gauche de sa fiche fait le test
+    const f = await page.evaluate(() => map.faderA);
+    for (const v of [0, 64, 127]) await page.evaluate(([c, n, x]) => window.__midi.envoyer(0xB0 | c, n, x), [f.ch, f.n, v]);
     await expect(page.locator('#ppGo')).toBeEnabled();
     // débranchée : on revient au choix
     await page.evaluate(() => window.__midi.debrancher());
     await expect(page.locator('#ppOpts .pp-opt')).toHaveCount(2);
-    // une table que le site ne connaît pas
+    // une table que le site ne connaît pas : ses 3 premiers boutons d'abord (ici, « Je n'ai pas ce bouton » trois fois)
     await page.evaluate(() => window.__midi.brancher('Controleur Mystere X1'));
     await expect(page.locator('#ppAsk')).toHaveText(/je ne la connais pas encore/);
+    await expect(page.locator('#ppGo')).toBeDisabled();
+    for (let i = 0; i < 3; i++) await page.locator('#ppTestLien').click();
+    await expect(page.locator('#ppGo')).toBeEnabled();
     await suite(page); await choix(page, 1); await suite(page);
     expect(await stocke(page, 'coach-accueil')).toMatchObject({ table: 'table', modele: 'inconnue' });
     expect(erreurs).toEqual([]);

@@ -93,6 +93,9 @@ test.describe('Premiers pas animés', () => {
     await expect(page.locator('#ppVini')).toHaveClass(/vn-parfait/);
     await expect(page.locator('#ppOpts .pp-big .ps-mini')).toBeVisible();
     await expect.poll(() => pose(page)).toMatchObject({ bras: null, fx: 'etoiles', cls: expect.stringContaining('vn-danse') });
+    // lot 73 : le test de 5 secondes (le fader de gauche de la FLX4), avant « Continuer »
+    for (const v of [0, 64, 127]) await page.evaluate(x => window.__midi.envoyer(0xB0, 19, x), v);
+    await expect(page.locator('#ppGo')).toBeEnabled();
     await suite(page);
     // l'objectif : il se balance, danse, ou se dépense
     await choix(page, 5);

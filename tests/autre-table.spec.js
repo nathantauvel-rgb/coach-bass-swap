@@ -90,7 +90,8 @@ test.describe('Régler ma table pas à pas', () => {
       '✓ Le potard LOW de droite : reconnu', '• Le potard MID de gauche : à l’écran', '✓ Le filtre de gauche : reconnu', '✓ Le bouton PLAY de droite : reconnu', '✓ Le bouton de l’effet : reconnu']);
     await page.locator('#regSave').click();
     await expect(page.locator('#reg')).toBeHidden();
-    expect(await stocke(page, 'coach-table')).toEqual({ nom: AUTRE });
+    // lot 73 : le MID passé se fera à l'écran, et le site ne le redemandera pas avant un niveau
+    expect(await stocke(page, 'coach-table')).toEqual({ nom: AUTRE, ecran: ['midA'] });
     expect(await stocke(page, 'coach-midi-map')).toEqual(REGLEE);
     await expect(page.locator('#midiPill')).toHaveText(AUTRE);
     await expect(page.locator('#midiPill')).toHaveClass(/\bon\b/);
@@ -164,7 +165,8 @@ test.describe('Une autre table déjà réglée', () => {
   });
   test('une commande qu\'elle n\'a pas se fait à l\'écran et ne bloque pas « Jouer »', async ({ page }) => {
     const sansLowA = Object.assign({}, REGLEE); delete sansLowA.lowA;
-    await ouvrir(page, { midi: { branchee: AUTRE }, stockage: { 'coach-table': S({ nom: AUTRE }), 'coach-midi-map': S(sansLowA) } });
+    // lot 73 : « ecran » = le joueur a dit qu'elle n'en a pas (sans lui, le LOW serait demandé en cliquant sur « Jouer »)
+    await ouvrir(page, { midi: { branchee: AUTRE }, stockage: { 'coach-table': S({ nom: AUTRE, ecran: ['lowA'] }), 'coach-midi-map': S(sansLowA) } });
     await page.locator('.node').nth(5).click();
     const etat = await miseEnPlace(page);
     expect(etat[0]).toContain('à l\'écran : ta table n\'en a pas');
