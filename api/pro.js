@@ -223,9 +223,10 @@ async function handler(req, res){
         if (!fin || await dejaAbonne(qui, cle)) return repond(res, 410, { erreur: 'rattrapage-fini' });
         coupon = await couponRattrapage(cle);
         // la page de paiement avec la remise se ferme à la fin de l'offre (Stripe : au moins 30 min, au plus 24 h après sa
-        // création) ; sans ça, une page ouverte à la 47e heure resterait payable 24 h de plus (gardien du lot 81)
+        // création) ; sans ça, une page ouverte à la 47e heure resterait payable 24 h de plus (gardien du lot 81). 2 minutes de
+        // marge de chaque côté : `t` est pris un instant avant que Stripe crée la page (second passage du gardien)
         const t = Math.floor(module.exports.maintenant() / 1000);
-        expire = Math.max(t + 1800, Math.min(fin, t + 86400));
+        expire = Math.max(t + 1800 + 120, Math.min(fin, t + 86400 - 120));
       }
       // lot 80 : le site en anglais envoie { langue: 'en' } : la page de Stripe en anglais, et l'abonnement le retient
       // (metadata.langue) pour que le mail de rappel de l'essai (api/rappel.js) parte en anglais

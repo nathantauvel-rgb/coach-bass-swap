@@ -354,7 +354,8 @@ function proOffre(box, q){
       el('p', 'offre-sous', 'Sans carte bancaire : merci d’avoir été là avant Pro. Ensuite, 4,99 € par mois ou 49,99 € par an, seulement si tu continues.'));
   } else {
     box.appendChild(el('p', 'offre-t', r ? 'Ta première année à 34,99 €' : s ? `Essaie Pro ${PRO_ESSAI_JOURS} jours, gratuitement` : 'Continue avec DJingood Pro'));
-    if (r){ box.appendChild(el('p', 'offre-sous', `Au lieu de 49,99 €, ${proRattrapageFin()}.`)); stat1('rattrapage-vu'); }
+    // compté seulement si l'offre est vraiment à l'écran (la carte de fin se dessine aussi derrière un autre onglet, gardien)
+    if (r){ box.appendChild(el('p', 'offre-sous', `Au lieu de 49,99 €, ${proRattrapageFin()}.`)); if (box.offsetParent) stat1('rattrapage-vu'); }
     else { const p = proPlan(); if (p){ const e = el('p', 'offre-plan'); if (p[0]) e.appendChild(el('b', '', p[0])); if (p[1]) e.appendChild(el('span', '', p[1])); box.appendChild(e); } }
     // les deux formules, côte à côte : l'année (d'office, lot 81) ou le mois
     const choix = el('div', 'offre-choix'); choix.setAttribute('role', 'group'); choix.setAttribute('aria-label', 'Formule');

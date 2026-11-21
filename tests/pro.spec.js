@@ -419,11 +419,11 @@ test.describe('La fonction /api/pro', () => {
         expect(corps).toContain(m);
       expect(corps).not.toContain('allow_promotion_codes');
       // la page avec la remise se ferme au plus tard 24 h après (limite de Stripe), et jamais après la fin de l'offre
-      expect(corps).toContain('expires_at=' + (s + 86400));
-      // gardien : l'offre finit dans 12 min : la page se ferme 30 min après (le minimum de Stripe)
+      expect(corps).toContain('expires_at=' + (s + 86400 - 120));   // 2 min de marge sous les 24 h de Stripe
+      // gardien : l'offre finit dans 12 min : la page se ferme 30 min après (le minimum de Stripe), plus 2 min de marge
       stripe.appels = []; stripe.pages = [[page('u1', 47.8)]];
       await appel({ action: 'payer', formule: 'an', rattrapage: true });
-      expect(decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps)).toContain('expires_at=' + (s + 1800));
+      expect(decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps)).toContain('expires_at=' + (s + 1800 + 120));
       stripe.appels = []; stripe.pages = [[page('u1', 30)]];   // il reste 18 h : la page se ferme à la fin de l'offre
       await appel({ action: 'payer', formule: 'an', rattrapage: true });
       expect(decodeURIComponent(stripe.appels.find(a => a.url.endsWith('/checkout/sessions')).corps)).toContain('expires_at=' + (s - 30 * H + 48 * H));
