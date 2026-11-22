@@ -25,14 +25,15 @@
 <link rel="icon" href="img/vini-icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="img/icone-180.png">
 <link rel="stylesheet" href="styles.css">
-<!-- Lot 53 : en anglais, la page reste cachée le temps que js/anglais.js la traduise (4 s au plus, si un fichier ne vient pas) -->
-<script>try{var l=(location.search.match(/[?&]lang=(en|fr)/)||[])[1]||localStorage.getItem('coach-langue');if(l==='en'){document.documentElement.classList.add('trad');setTimeout(function(){document.documentElement.classList.remove('trad')},4000)}}catch(e){}</script>
+<!-- Lot 53 : en anglais, la page reste cachée le temps que js/anglais.js la traduise (4 s au plus, si un fichier ne vient pas).
+     Lot 84 : même ordre que LANGUE (js/langue.js) : ?lang, puis l'anglais de la visite, puis le choix gardé -->
+<script>try{var l=(location.search.match(/[?&]lang=(en|fr)/)||[])[1],s=null;try{s=sessionStorage.getItem('coach-langue-visite')}catch(e){}l=l||s||localStorage.getItem('coach-langue');if(l==='en'){document.documentElement.classList.add('trad');setTimeout(function(){document.documentElement.classList.remove('trad')},4000)}}catch(e){}</script>
 </head>
 <body class="pres">
 <div class="wrap">
   <header class="top">
     <a class="brand" href="presentation.html"><img class="blogo" src="img/vini-logo.svg" alt="" width="40" height="40"><div><div class="brand-name"><span class="dj">DJ</span>ingood</div><div class="brand-sub">Les transitions, un geste à la fois</div></div></a>
-    <span class="pres-haut"><button type="button" class="ghost langbtn" id="langBtn"></button><a class="ghost" href="index.html">Ouvrir le site</a></span>
+    <span class="pres-haut"><span class="langbtn" id="langBtn"></span><a class="ghost" href="index.html">Ouvrir le site</a></span>
   </header>
 
   <section class="hero pres-hero">
