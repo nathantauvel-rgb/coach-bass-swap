@@ -896,10 +896,10 @@ function renderTutos(){
   if (tu.phase !== 'ferme') return;
   $('tuFamilles').innerHTML = TU_FAMILLES.map(f => {
     const liste = TUTOS.filter(t => t.famille === f.id);
-    return `<section class="tu-famille"><h2>${f.titre}</h2><p class="tu-fam-resume">${tuTypo(f.resume)}</p><div class="cards tu-cartes">${liste.map(t => {
+    return `<section class="tu-famille"><h2>${f.titre}</h2><div class="cards tu-cartes">${liste.map(t => {
       const vu = tuVus.includes(t.id), etiquette = vu ? 'Vu' : t.gratuit ? 'Gratuit' : 'Pro', ferme = !proLibre(t);
       const cadenas = ferme ? '<svg class="tu-cadenas" viewBox="0 0 24 24" aria-label="Avec DJingood Pro"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>' : '';
-      return `<button type="button" class="card tu-carte${vu ? ' tu-vu' : ''}${ferme ? ' tu-ferme' : ''}" data-tu="${t.id}">${tuVignette(t.id)}<span class="soon tu-etiq${vu ? ' ok' : t.gratuit ? '' : ' pro'}">${etiquette}</span>${cadenas}<strong>${tuTypo(t.titre)}</strong><p>${tuTypo(t.resume)}</p><span class="tu-duree">${t.duree} · avec Vini</span></button>`;
+      return `<button type="button" class="card tu-carte${vu ? ' tu-vu' : ''}${ferme ? ' tu-ferme' : ''}" data-tu="${t.id}">${tuVignette(t.id)}<span class="soon tu-etiq${vu ? ' ok' : t.gratuit ? '' : ' pro'}">${etiquette}</span>${cadenas}<strong>${tuTypo(t.titre)}</strong><span class="tu-duree">${t.duree} · avec Vini</span></button>`;
     }).join('')}</div></section>`;
   }).join('');
   $('tuFamilles').querySelectorAll('[data-tu]').forEach(b => b.addEventListener('click', () => tuOuvre(b.dataset.tu)));
@@ -908,9 +908,9 @@ function renderTutos(){
   $('proBandeau').hidden = !fermes;
   const libres = TUTOS.filter(t => t.gratuit).map(t => `« ${t.titre} »`);   // lot 68 : un seul tuto gratuit, « Le fondu au fader »
   $('proBandeauTitre').textContent = libres.length > 1 ? `${libres.join(', ')} sont gratuits.` : `${libres[0] || 'Un tuto'} est gratuit.`;
-  $('proBandeauTxt').textContent = `Les ${fermes} autres, et un nouveau chaque mois, sont dans DJingood Pro.`;
+  $('proBandeauTxt').textContent = `Les ${fermes} autres sont dans DJingood Pro.`;
   const reste = tuDansLOrdre().filter(t => !tuVus.includes(t.id));
-  viniDit('tutos', tuTypo(!tuVus.length ? `Ici, je t'explique les techniques des DJ, une par une. Commence par « ${reste[0].titre} » !`
+  viniDit('tutos', tuTypo(!tuVus.length ? `Commence par « ${reste[0].titre} » !`
     : reste.length ? `Prochain tuto conseillé : « ${reste[0].titre} ».` : 'Tu as vu tous les tutos. Bravo !'), tuVus.length && !reste.length ? 'danse' : 'calme');
 }
 

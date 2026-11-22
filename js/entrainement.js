@@ -52,8 +52,7 @@ function renderTrain(){
     for (const id of ['tVarS', 'tEarS', 'tSetS', 'tQuizS']){ const e = $(id); e.textContent = 'Pro'; e.classList.remove('ok'); e.classList.add('pro'); }
     $('tSetP').textContent = 'Trois transitions d\'affilée, sans pouvoir rejouer : comme en soirée.';
     $('quizCard').disabled = false; $('quizCard').classList.add('tr-pro');
-    $('trainNote').innerHTML = (ok ? 'Le défi du jour reprend tes niveaux gratuits, sur d’autres morceaux.' : 'Joue d’abord un niveau gratuit dans <a href="#apprendre">Apprendre</a> : le défi du jour le reprendra, sur d’autres morceaux.')
-      + ' Le reste de l’entraînement est dans DJingood Pro.';
+    $('trainNote').innerHTML = (ok ? 'Le défi du jour est gratuit.' : 'Joue d’abord un niveau dans <a href="#apprendre">Apprendre</a>.') + ' Le reste est dans DJingood Pro.';   // lot 85 : plus court
   } else { $('quizCard').classList.remove('tr-pro'); $('tQuizS').classList.remove('pro'); }
   viniEntrainement();
 }

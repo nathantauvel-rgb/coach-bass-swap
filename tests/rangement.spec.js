@@ -34,7 +34,7 @@ test.describe('Écran d\'un niveau', () => {
   test('plus de paragraphe en bas de page : le clavier est expliqué dans « Comment faire ? »', async ({ page }) => {
     await ouvrir(page);
     await expect(page.locator('p.after')).toHaveCount(0);
-    await expect(page.locator('.howto')).toContainText('espace pour lancer B');
+    await expect(page.locator('.howto')).toContainText('espace = lancer B');
   });
 });
 

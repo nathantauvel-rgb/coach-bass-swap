@@ -167,7 +167,7 @@
     <label class="avq">Qu'est-ce qui t'a plu ?<textarea id="avPlu" rows="2" maxlength="1000"></textarea></label>
     <div class="avnote" id="avNote" role="group" aria-label="Ta note sur 5"><span>Ta note</span><button type="button" data-note="1" aria-pressed="false" aria-label="1 sur 5">★</button><button type="button" data-note="2" aria-pressed="false" aria-label="2 sur 5">★</button><button type="button" data-note="3" aria-pressed="false" aria-label="3 sur 5">★</button><button type="button" data-note="4" aria-pressed="false" aria-label="4 sur 5">★</button><button type="button" data-note="5" aria-pressed="false" aria-label="5 sur 5">★</button></div>
     <button type="button" class="rbtn go" id="avSave">Envoyer mon avis</button>
-    <p class="avsmall">Ton avis part chez l'équipe DJingood avec le nom de l'écran, ta table et ton navigateur. <a class="avlien" href="confidentialite.html" target="_blank" rel="noopener">Ce que DJingood garde sur toi</a></p>
+    <p class="avsmall">Ton avis part avec l'écran, ta table et ton navigateur. <a class="avlien" href="confidentialite.html" target="_blank" rel="noopener">Ce que DJingood garde sur toi</a></p>
     <p class="qwhy" id="avMsg" role="status" hidden></p>
     <!-- Lot 62 : le rapport des testeurs est replié (la fenêtre dépassait le bas d'un écran de PC) -->
     <details class="avrapport" id="avRapport"><summary>Ton rapport pour l'équipe</summary>
@@ -175,7 +175,7 @@
     <div class="rbrow"><button type="button" class="ghost" id="avCopy">Copier mon rapport</button><button type="button" class="ghost" id="avMail" hidden>Envoyer par e-mail</button></div>
     <textarea class="avtext" id="avText" rows="8" readonly hidden aria-label="Ton rapport"></textarea>
     </details>
-    <details class="avreset"><summary>Tout recommencer à zéro</summary><p class="avsmall">Efface ta progression, tes étoiles, tes badges, tes réponses au quiz et tes avis sur cet ordinateur, et aussi sur ton compte si tu es connecté. Les réglages et la vérification de ta table sont gardés.</p><button type="button" class="rbtn" id="avReset">Oui, tout effacer</button></details>
+    <details class="avreset"><summary>Tout recommencer à zéro</summary><p class="avsmall">Efface tes étoiles, tes badges et tes avis, ici et sur ton compte. Les réglages de ta table restent.</p><button type="button" class="rbtn" id="avReset">Oui, tout effacer</button></details>
   </div>
 </div>
 <div data-nosnippet class="quiz" id="verif" hidden role="dialog" aria-modal="true" aria-labelledby="vfTitle">
@@ -210,7 +210,7 @@
       <div class="rbrow"><button type="button" class="rbtn go" id="cptGardeCompte">Garder celle de mon compte</button><button type="button" class="ghost" id="cptGardeIci">Garder celle de cet ordinateur</button></div>
     </div>
     <button type="button" class="cptgoogle" id="cptIn"><img src="img/google.svg" alt="" width="22" height="22">Continuer avec Google</button>
-    <label class="pp-case cptaccord" id="cptAccord0" hidden><input type="checkbox" id="cptMails0"> <span>Recevoir les conseils de Vini par mail : 3 pour démarrer, puis un par semaine au plus. Désinscription en un clic.</span></label>
+    <label class="pp-case cptaccord" id="cptAccord0" hidden><input type="checkbox" id="cptMails0"> <span>Recevoir les conseils de Vini par mail (désinscription en un clic)</span></label>
     <p class="cptou" id="cptOu"><span id="cptOuTxt">ou</span></p>
     <div class="cptpas" id="cptAccueil" hidden>
       <button type="button" class="ghost cptavecmail" id="cptVersCreer">Créer un compte avec mon e-mail</button>
@@ -222,7 +222,7 @@
       <label class="cptch" id="cptChMdp"><span id="cptMdpLab">Ton mot de passe</span><span class="cptmdp"><input id="cptMdp" type="password" maxlength="100"><button type="button" id="cptOeil" aria-pressed="false">Voir</button></span></label>
       <div class="cptsousmdp"><p class="cptaide" id="cptAide"></p><button type="button" class="cptlien" id="cptOubli">Mot de passe oublié&nbsp;?</button></div>
       <button type="button" class="cptlien cptlienmail" id="cptLienBtn" hidden>Pas de mot de passe&nbsp;? Recevoir un lien de connexion</button>
-      <label class="pp-case cptaccord" id="cptAccord" hidden><input type="checkbox" id="cptMails"> <span>Recevoir les conseils de Vini par mail : 3 pour démarrer, puis un par semaine au plus. Désinscription en un clic.</span></label>
+      <label class="pp-case cptaccord" id="cptAccord" hidden><input type="checkbox" id="cptMails"> <span>Recevoir les conseils de Vini par mail (désinscription en un clic)</span></label>
       <button type="submit" class="rbtn go cptmain" id="cptGo">Créer mon compte</button>
       <p class="cptbas"><span id="cptBasTxt"></span> <button type="button" class="cptlien" id="cptBascule"></button></p>
     </form>
@@ -376,7 +376,9 @@
       <div>
         <span class="lnum" id="homeKicker" hidden>Ta prochaine étape</span>
         <h1 id="homeTitle">Tu as une table et tu n'y connais rien ?</h1>
-        <p class="lead" id="homeLead">En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.</p>
+        <!-- Lot 85 : les 7 niveaux du chapitre 1 en pastilles, à la place de la longue phrase (renderHome) -->
+      <div class="home-pas" id="homePas" hidden></div>
+      <p class="lead" id="homeLead">En deux semaines, tu fais tes premières vraies transitions propres, avec ta musique.</p>
         <p class="homepro" id="homePro" hidden><span class="homepro-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><b id="homeProTxt"></b><span class="pro-tag">Pro</span></p>
         <button type="button" class="cta" id="homeCta" hidden>Commencer</button>
         <button type="button" class="linkbtn homedefi" id="homeDefi" hidden>Ou fais le défi du jour (gratuit)</button>
@@ -418,13 +420,12 @@
       <div class="vcoin"><button type="button" class="hvini" id="trainViniBtn" aria-label="Faire sauter Vini"><span id="trainVini"></span></button><p class="bubble" id="trainTip" aria-live="polite"></p></div>
       <span class="lnum">Entraînement</span>
       <h1>S'entraîner</h1>
-      <p class="lead">Tu connais les gestes : ici, tu les répètes jusqu'à ce qu'ils deviennent naturels.</p>
       <div class="cards">
         <button type="button" class="card tr-defi" data-prac="defi"><span class="tr-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/><path d="m9.5 15 1.8 1.8 3.5-3.6"/></svg></span><span class="soon" id="tDefiS">À faire</span><strong>Défi du jour</strong><p id="tDefiP">Une transition différente chaque jour.</p></button>
-        <button type="button" class="card" data-prac="var"><span class="tr-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h11l-3-3M20 17H9l3 3"/><path d="M15 7h1a4 4 0 0 1 4 4M9 17H8a4 4 0 0 1-4-4"/></svg></span><span class="soon" id="tVarS">Nouveau</span><strong>Variations</strong><p>Un geste que tu connais, sur un autre morceau, un autre style, un autre tempo.</p></button>
-        <button type="button" class="card" data-prac="ear"><span class="tr-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 10a4 4 0 1 1 8 0c0 3-3 3.5-3 6.5a2.5 2.5 0 0 1-5 0"/><path d="M10.5 10a1.5 1.5 0 0 1 3 0"/></svg></span><span class="soon" id="tEarS">Nouveau</span><strong>À l'oreille</strong><p>Sans compte à rebours : tu comptes les phrases dans ta tête.</p></button>
-        <button type="button" class="card" data-prac="set"><span class="tr-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="12" r="3"/><path d="M9 12h6"/><circle cx="12" cy="5" r="2"/><circle cx="12" cy="19" r="2"/></svg></span><span class="soon" id="tSetS">Nouveau</span><strong>Mini-set</strong><p id="tSetP">Trois transitions d'affilée, sans pouvoir rejouer : comme en soirée.</p></button>
-        <button type="button" class="card" id="quizCard"><span class="tr-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5h16v10H10l-5 4v-4H4z"/><path d="M10.2 8.6a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.3M12 13.6v.1"/></svg></span><span class="soon" id="tQuizS">Nouveau</span><strong>Quiz éclair</strong><p>Cinq questions sur les gestes que tu connais déjà.</p></button>
+        <button type="button" class="card" data-prac="var"><span class="tr-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h11l-3-3M20 17H9l3 3"/><path d="M15 7h1a4 4 0 0 1 4 4M9 17H8a4 4 0 0 1-4-4"/></svg></span><span class="soon" id="tVarS">Nouveau</span><strong>Variations</strong><p>Autre morceau, autre tempo.</p></button>
+        <button type="button" class="card" data-prac="ear"><span class="tr-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 10a4 4 0 1 1 8 0c0 3-3 3.5-3 6.5a2.5 2.5 0 0 1-5 0"/><path d="M10.5 10a1.5 1.5 0 0 1 3 0"/></svg></span><span class="soon" id="tEarS">Nouveau</span><strong>À l'oreille</strong><p>Sans compte à rebours.</p></button>
+        <button type="button" class="card" data-prac="set"><span class="tr-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="12" r="3"/><path d="M9 12h6"/><circle cx="12" cy="5" r="2"/><circle cx="12" cy="19" r="2"/></svg></span><span class="soon" id="tSetS">Nouveau</span><strong>Mini-set</strong><p id="tSetP">3 transitions d'affilée.</p></button>
+        <button type="button" class="card" id="quizCard"><span class="tr-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5h16v10H10l-5 4v-4H4z"/><path d="M10.2 8.6a1.9 1.9 0 1 1 2.6 1.8c-.5.2-.8.6-.8 1.1v.3M12 13.6v.1"/></svg></span><span class="soon" id="tQuizS">Nouveau</span><strong>Quiz éclair</strong><p>5 questions.</p></button>
       </div>
       <p class="page-note" id="trainNote"></p>
     </section>
@@ -446,10 +447,9 @@
         <div class="mm-avant-g">
           <span class="lnum">Ma musique</span>
           <h1>Mixe ta musique</h1>
-          <p class="lead">Choisis un morceau que tu aimes : je te trouve ceux qui vont avec dans ta collection, et je t’explique comment faire la transition.</p>
-          <p class="mm-offre" id="mmOffre" hidden><span class="pro-tag">Pro</span>Gratuit : l’import, et la fiche d’un morceau. Tout le reste avec DJingood Pro.</p>
+          <p class="mm-offre" id="mmOffre" hidden><span class="pro-tag">Pro</span>Gratuit : l’import et 1 fiche.</p>
           <button type="button" class="cta mm-importer" id="rbPick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Importer ma collection rekordbox</button>
-          <p class="mm-rien"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Rien n’est envoyé : tout reste sur ton ordinateur.</p>
+          <p class="mm-rien"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Tout reste sur ton ordinateur.</p>
           <button type="button" class="linkbtn" id="rbDemo">Essayer avec des morceaux d’exemple</button>
           <details class="mm-comment"><summary>Comment exporter ma collection depuis rekordbox ?</summary>
             <ol><li>Dans rekordbox, ouvre le menu <b>Fichier</b>.</li><li>Choisis <b>« Exporter la collection au format xml »</b>, et enregistre le fichier.</li><li>Reviens ici, appuie sur « Importer ma collection rekordbox » et choisis ce fichier.</li></ol></details>
@@ -491,7 +491,6 @@
     <section class="page">
       <span class="lnum" id="tKick">Ta table</span>
       <h1>Ma table</h1>
-      <p class="lead">À quoi sert chaque commande, et lesquelles tu utilises dans les niveaux.</p>
       <p class="subnote" id="tState"></p>
       <details class="taide" id="tAide"><summary id="tAideSum">Ta table n’apparaît pas ?</summary><div class="taide-in" id="tAideBody"></div></details>
       <div class="tverif"><p><b>Tester ta table</b><span id="tVerifSub">10 minutes : le site vérifie chaque commande avec toi.</span></p><button type="button" class="ghost" id="tVerif">Vérifier ma table pas à pas</button></div>
@@ -542,8 +541,7 @@
     <section class="page" id="tuCatalogue">
       <div class="vcoin"><button type="button" class="hvini" id="tutosViniBtn" aria-label="Faire sauter Vini"><span id="tutosVini"></span></button><p class="bubble" id="tutosTip" aria-live="polite"></p></div>
       <h1>Tutos</h1>
-      <p class="lead">Les techniques des DJ, expliquées par Vini. Tu écoutes, tu regardes la table, et tu comprends pourquoi ça marche.</p>
-      <div class="pro-bandeau" id="proBandeau" hidden><img src="img/vini-logo.svg" alt=""><p><span id="proBandeauTitre">« Le fondu au fader » est gratuit.</span><small id="proBandeauTxt">Les autres, et un nouveau chaque mois, sont dans DJingood Pro.</small></p><button type="button" class="pro-mini" id="proBandeauBtn">Découvrir Pro</button></div>
+      <div class="pro-bandeau" id="proBandeau" hidden><img src="img/vini-logo.svg" alt=""><p><span id="proBandeauTitre">« Le fondu au fader » est gratuit.</span><small id="proBandeauTxt">Les autres sont dans DJingood Pro.</small></p><button type="button" class="pro-mini" id="proBandeauBtn">Découvrir Pro</button></div>
       <div id="tuFamilles"></div>
     </section>
     <section class="tu" id="tuLecteur" hidden aria-label="Tuto">
@@ -642,7 +640,7 @@
         <span class="lnum" id="lnum">Niveau 1</span>
         <h1 id="ltitle"></h1>
         <p class="goal" id="lgoal"></p>
-        <details class="howto"><summary>Comment faire ?</summary><p class="how" id="lhow"></p><p class="how lex" id="llex" hidden></p><span class="lfiches" id="lfiches" hidden></span><p class="how">Clavier : espace pour lancer B, E pour l'écho. Niveau réussi ? Refais le même geste dans rekordbox, avec ta musique.</p><p class="how lcredit" id="lcredit" hidden></p></details>
+        <details class="howto"><summary>Comment faire ?</summary><p class="how" id="lhow"></p><p class="how lex" id="llex" hidden></p><span class="lfiches" id="lfiches" hidden></span><p class="how">Clavier : espace = lancer B, E = écho.</p><p class="how lcredit" id="lcredit" hidden></p></details>
         <!-- Lot 76 : avec la vraie musique, les titres des morceaux (et leur source) passent dans « Comment faire ? » (#lcredit) ;
              Mode Expert passe sous « Jouer », à côté du choix des morceaux -->
         <div class="tags"><span class="styletag" id="styleTag">House · 124 BPM</span><span class="modetag" id="modeTag" hidden>À l'oreille</span></div>
@@ -764,7 +762,7 @@
         <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button></div>
         <div class="rplus"><button type="button" class="linkbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="linkbtn" id="slowBtn" hidden></button></div>
         <div class="rmeta"><span class="newbadge" id="rBadge" role="status" hidden></span><span class="goalline" id="rGoal"></span><span class="questline" id="rQuete" role="status" hidden></span></div>
-        <div class="rcompte" id="rCompte" hidden><img src="img/vini-icone.svg" alt=""><p><b>Garde ta progression.</b><span>Crée ton compte&nbsp;: tes étoiles et ta série te suivent sur tous tes appareils.</span></p><button type="button" class="rbtn" id="rCompteGo">Créer mon compte</button></div>
+        <div class="rcompte" id="rCompte" hidden><img src="img/vini-icone.svg" alt=""><p><b>Garde tes étoiles.</b><span>Crée ton compte gratuit.</span></p><button type="button" class="rbtn" id="rCompteGo">Créer mon compte</button></div>
         <!-- Lot 81 : l'essai de 7 jours, dès la première réussite avec sa table (essaiTot, js/niveaux.js) -->
         <div class="rcompte ressai" id="rEssai" hidden><img src="img/vini-icone.svg" alt=""><p><b>Ça marche avec ta table&nbsp;!</b><span id="rEssaiTxt"></span></p><button type="button" class="rbtn" id="rEssaiGo">Voir l’essai gratuit</button></div>
         <details class="rtout" id="rTout"><summary id="rToutSum">Voir le détail</summary>

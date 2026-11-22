@@ -67,7 +67,7 @@ test.describe('La case « Vini peut m’écrire »', () => {
     await expect(page.locator('#cptAccord')).toBeHidden();
     await expect(page.locator('#cptAccord0')).toBeVisible();
     await expect(page.locator('#cptMails0')).not.toBeChecked();
-    await expect(page.locator('#cptAccord0')).toContainText('Recevoir les conseils de Vini par mail : 3 pour démarrer, puis un par semaine au plus');
+    await expect(page.locator('#cptAccord0')).toContainText('Recevoir les conseils de Vini par mail (désinscription en un clic)');
     expect(await page.locator('#cptMails0').evaluate(e => getComputedStyle(e).appearance)).not.toBe('none');   // une vraie case, pas un dessin
     // cochée ici, elle l'est aussi dans le formulaire
     await page.locator('#cptAccord0').click();
@@ -269,7 +269,7 @@ test.describe('La carte de fin propose le compte', () => {
     const err = await ouvrir(page, { avant: FAUX });
     await bonMoment(page);
     await expect(page.locator('#rCompte')).toBeVisible();
-    await expect(page.locator('#rCompte')).toContainText('Garde ta progression.');
+    await expect(page.locator('#rCompte')).toContainText('Garde tes étoiles.');
     await expect(page.locator('#rCompte')).not.toContainText('mail');            // pas de promesse de mails : la case n'est jamais cochée d'avance
     await expect(page.locator('#next')).toHaveClass(/go/);                  // « Niveau suivant » reste le bouton principal
     await page.locator('#rCompteGo').click();

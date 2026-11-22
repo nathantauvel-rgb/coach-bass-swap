@@ -2959,4 +2959,75 @@ enDe({
 });
 /* ---------- Lot 82 : fin ---------- */
 
+/* ---------- Lot 85 « Moins de texte » : les phrases raccourcies ---------- */
+enDe({
+  // S'entraîner
+  'Autre morceau, autre tempo.': 'Another track, another tempo.',
+  'Sans compte à rebours.': 'No countdown.',
+  "3 transitions d'affilée.": '3 transitions in a row.',
+  '5 questions.': '5 questions.',
+  // Ma musique
+  '<span class="pro-tag">Pro</span>Gratuit : l’import et 1 fiche.': '<span class="pro-tag">Pro</span>Free: the import and 1 card.',
+  'Gratuit : l’import et 1 fiche.': 'Free: the import and 1 card.',
+  'Tout reste sur ton ordinateur.': 'Everything stays on your computer.',
+  // Tutos
+  'Les autres sont dans DJingood Pro.': 'The others are in DJingood Pro.',
+  // un niveau
+  'Clavier : espace = lancer B, E = écho.': 'Keyboard: space = start B, E = echo.',
+  'À toi de jouer !': 'Your turn!',
+  'Appuie sur LANCE B (ou PLAY de droite) quand le geste touche la ligne.': 'Press START B (or the right PLAY) when the move touches the line.',
+  'Monte doucement le fader de B, puis baisse celui de A avant le drop de B.': "Slowly raise B's fader, then lower A's before B's drop.",
+  "Sur la ligne, lance B et baisse d'un coup le fader de A, dans le même geste.": "On the line, start B and drop A's fader all at once, in the same move.",
+  "Juste avant la ligne, allume l'écho (ou touche E), puis baisse d'un coup le fader de A.": "Just before the line, turn on the echo (or press E), then drop A's fader all at once.",
+  "Quand « FILTRE » touche la ligne, tourne lentement le CFX de A vers la droite, jusqu'à « À FOND ».": 'When "FILTER" touches the line, slowly turn A\'s CFX to the right, until "FULL".',
+  "Sur « SWAP », échange les basses d'un geste : LOW de A coupé, LOW de B normal.": 'On "SWAP", swap the bass in one move: A\'s LOW all the way down, B\'s LOW at 12 o\'clock.',
+  'Lance B, monte son fader, échange les basses, puis baisse le fader de A avant le drop.': "Start B, raise its fader, swap the bass, then lower A's fader before the drop.",
+  // la carte d'un niveau réussi
+  'Garde tes étoiles.': 'Keep your stars.',
+  'Crée ton compte gratuit.': 'Create your free account.',
+  // Mon avis, le compte, Ma table
+  'Efface tes étoiles, tes badges et tes avis, ici et sur ton compte. Les réglages de ta table restent.': 'Erases your stars, badges and feedback, here and on your account. Your controller settings stay.',
+  "Ton avis part avec l'écran, ta table et ton navigateur.": 'Your feedback is sent with the screen, your controller and your browser.',
+  'Recevoir les conseils de Vini par mail (désinscription en un clic)': "Get Vini's tips by email (unsubscribe in one click)",
+  'Branche ta table : les commandes réagissent.': 'Plug in your controller: the controls respond.',
+  // le guide de la première visite, les fiches « Découvre ce bouton »
+  "Ici, tu apprends à passer d'un morceau à l'autre, geste par geste, sur ta table.": 'Here, you learn to go from one track to the next, one move at a time, on your controller.',
+  "Un « boum » = un temps. 32 temps = une phrase. Les transitions se font au début d'une phrase.": 'One "boom" = one beat. 32 beats = one phrase. Transitions happen at the start of a phrase.',
+  'Chaque partie a sa couleur sur la piste.': 'Each part has its color on the track.',
+  "Commence par le niveau 1. Si tu hésites, « Regarde d'abord » te montre le geste.": 'Start with level 1. If you\'re unsure, "Watch first" shows you the move.',
+  'En bas de chaque platine : il lance ou arrête le morceau.': 'At the bottom of each deck: it starts or stops the track.',
+  'Les deux curseurs du centre : le volume de A à gauche, de B à droite.': 'The two sliders in the middle: A\'s volume on the left, B\'s on the right.',
+  'Les basses. À midi : on les entend. Tout à gauche : coupées. Jamais deux ensemble.': 'The bass. At 12 o\'clock: you hear it. All the way left: cut. Never two at once.',
+  "À midi, il ne fait rien. Vers la droite, le morceau s'efface en douceur.": 'At 12 o\'clock, it does nothing. To the right, the track fades out smoothly.',
+  "Il répète le son en le laissant s'éteindre. On l'allume juste avant de couper un morceau.": 'It repeats the sound and lets it fade. You turn it on just before cutting a track.',
+  'Les voix et les mélodies. À midi : on entend tout. Tout à gauche : elles reculent.': 'Vocals and melodies. At 12 o\'clock: you hear everything. All the way left: they step back.',
+  // l'accueil : une phrase courte par étape
+  'Une minute, avec le son : compter la musique.': 'One minute, with sound: counting the music.',
+  'Les 7 gestes, sans aucune aide.': 'The 7 moves, with no help at all.',
+  'Plusieurs gestes d’affilée.': 'Several moves in a row.',
+  'Jusqu’à ta première transition complète.': 'Up to your first complete transition.',
+  'Refais tes gestes sur d’autres morceaux.': 'Replay your moves on other tracks.',
+  'Les mêmes gestes, à l’oreille.': 'The same moves, by ear.',
+  'De vrais morceaux, comme dans rekordbox.': 'Real tracks, like in rekordbox.',
+  'Caler deux morceaux, sans SYNC.': 'Beatmatch two tracks, without SYNC.',
+  'Partir au bon endroit, et boucler.': 'Start in the right place, and loop.',
+  'Des morceaux enchaînés, noté sur 100.': 'Tracks mixed back to back, scored out of 100.',
+  'Tes transitions, avec ta musique.': 'Your transitions, with your music.',
+  'Un défi par jour, gratuit.': 'One free challenge a day.',
+  '7 petites leçons, sans table : juste ton doigt et le son.': '7 short lessons, no controller: just your finger and the sound.',
+  'à garder aujourd’hui': 'keep it going today',
+  'Le défi du jour est gratuit.': 'The daily challenge is free.',
+  'Le reste est dans DJingood Pro.': 'The rest is in DJingood Pro.',
+  'Le défi du jour est gratuit. Le reste est dans DJingood Pro.': 'The daily challenge is free. The rest is in DJingood Pro.',
+  'Collection d’exemple : ouvre les fiches que tu veux !': 'Sample collection: open any card you like!',
+  'Avec ta collection : 1 fiche offerte, le reste dans Pro.': 'With your collection: 1 free card, the rest in Pro.'
+});
+enMotif('Essaie tout DJingood {#n} jours, gratuitement.', 'Try all of DJingood free for {n} days.');
+enMotif('Les {#n} autres sont dans DJingood Pro.', 'The other {n} are in DJingood Pro.');
+enMotif('Commence par « {x} » !', 'Start with "{x}"!');
+enMotif('Les {#n} premiers gestes, sans aucune aide.', 'The first {n} moves, with no help at all.');
+enMotif('Série de {#n} jours', '{n}-day streak');
+enMotif('Série de {#n} jour', '{n}-day streak');
+/* ---------- Lot 85 : fin ---------- */
+
 trPage();

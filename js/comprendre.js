@@ -130,7 +130,7 @@ const cpNbFaites = () => CP_LECONS.filter((_, k) => cpFaite(k)).length;
 
 // L'étape du parcours (en tête sur un téléphone, voir parcoursEtapes dans parcours.js)
 STAGES.comprendre = { title: 'Comprendre la musique',
-  text: 'Sept petites leçons, sans table : entendre les temps, compter les phrases, reconnaître les parties d’un morceau. Juste ton doigt et le son.',
+  text: '7 petites leçons, sans table : juste ton doigt et le son.',
   done: () => cpNbFaites() >= CP_LECONS.length, prog: () => `${cpNbFaites()} leçon${cpNbFaites() > 1 ? 's' : ''} sur ${CP_LECONS.length}`,
   cta: () => `Leçon ${cpProchaine() + 1} : ${CP_LECONS[cpProchaine()].titre}`, go: () => cpLecon(cpProchaine()) };
 

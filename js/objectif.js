@@ -41,7 +41,7 @@ function renderGoal(){
   const done = goalDone(), mins = Math.floor(goalSecs() / 60), sk = goalStreak(), p = Math.min(1, goalSecs() / (goal.min * 60));
   $('goalFill').style.strokeDashoffset = String(169.6 * (1 - p)); $('homeGoal').classList.toggle('done', done);
   $('goalTitle').textContent = done ? 'Objectif du jour atteint !' : `${mins} min sur ${goal.min} aujourd'hui`;
-  $('goalSub').textContent = sk ? `Série de ${plur(sk, 'jour', 'jours')}` + (done ? '. Reviens demain pour la continuer.' : ' : atteins ton objectif aujourd\'hui pour la garder.') : 'Atteins ton objectif chaque jour pour lancer une série.';
+  $('goalSub').textContent = sk ? `Série de ${plur(sk, 'jour', 'jours')}` + (done ? '' : ' · à garder aujourd’hui') : '';   // lot 85 : rien sans série
   document.querySelectorAll('#progGoalSet [data-goal]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.goal === goal.min)));
 }
 // Ligne de la carte de résultat (appelée par finish)

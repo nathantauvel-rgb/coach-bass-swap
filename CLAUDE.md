@@ -32,6 +32,22 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 85 « Moins de texte » : EN COURS (23 nov. 2026), pas publié.** Sa demande : « un tour de tout le site où il y a
+  trop de texte … ça donne aux gens envie de partir », puis « Oui, lance le 85 ». Bilan : `captures/audit-texte/` du dossier
+  principal (`audit.js` mesure chaque écran en 1366 × 768 : mots visibles sans défiler, pavés de 15 mots ou plus ;
+  `planche.png` = le bilan, `planche-avant-apres.png` = le lot). **Part de la branche du lot 82** (`b6e3739`), pas
+  d'`origin/main` : publier le 82 d'abord, puis fusionner `origin/main` ici si le 82 a encore changé. Copie
+  `Documents\coach-dj-lot85`, branche `lot-85-moins-de-texte`, serveur `coach-dj-lot85` (port 8816), tests `DJ_PORT=8817`.
+  Règle appliquée : une seule phrase par écran (celle de Vini), des cartes avec un titre et une image. Ce qui change :
+  guide de la première visite (4 étapes en une phrase chacune) et les 6 fiches « Découvre ce bouton » (`js/guide.js`) ;
+  l'accueil : une phrase courte par étape (`STAGES`, `js/parcours.js`, `js/comprendre.js`) et les 7 pastilles du chapitre 1
+  (`#homePas`) ; plus de phrase sous l'objectif du jour sans série (`js/objectif.js`) ; S'entraîner, Ma musique, Ma table,
+  Tutos : plus de paragraphe sous le titre, cartes en 3 mots ou sans phrase (`index.html`, `js/tutos.js`,
+  `js/rekordbox.js`, `js/entrainement.js`, `js/table.js`) ; « Comment faire ? » du chapitre 1 en une phrase, ligne du
+  clavier courte, bulle de Vini « À toi de jouer ! » (`js/niveaux.js`) ; carte d'un niveau réussi (« Garde tes étoiles. »),
+  essai proposé (« Essaie tout DJingood 7 jours, gratuitement. »), Mon avis, case des mails ; tout en anglais (bloc « Lot
+  85 » de `js/anglais.js`). Pas touché : « Comment faire ? » des chapitres 2 à 7, la présentation (titre décidé au lot 81),
+  le menu « Tous les niveaux » (des noms de niveaux).
 - **Lot 82 « Le chapitre 1 offert » : FAIT, NON PUBLIÉ (22 nov. 2026), attend l'accord de l'utilisateur.** Commits `6b41251`
   (le lot) et `3770068` (remarques du gardien) sur `lot-82-chapitre1-offert`, au-dessus d'`origin/main` = `63b7f90` (rien à
   fusionner au 22 nov. au soir ; les lots 83 et 84 existent dans d'autres copies, pas publiés : si l'un part avant, fusionner).

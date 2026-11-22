@@ -370,7 +370,7 @@ function mmRendMorceaux(){
   $('mmPanneau').hidden = !mmF.panneau; $('mmFiltresBtn').setAttribute('aria-expanded', String(mmF.panneau)); $('mmFiltresBtn').classList.toggle('on', mmF.panneau);
   if (mmF.panneau) mmMet($('mmPanneau'), mmPanneau());
   const n = mmMajListe();
-  if (!mmPro()) mmDit(rbExemple ? 'C’est la collection d’exemple : ouvre les fiches que tu veux. Avec ta vraie collection, la fiche d’un morceau est offerte.'
+  if (!mmPro()) mmDit(rbExemple ? 'Collection d’exemple : ouvre les fiches que tu veux !'
     : mmData.offerte ? 'Ta fiche offerte t’a plu ? Avec Pro, je fais pareil pour tous tes morceaux.' : 'Choisis le morceau que tu préfères : sa fiche est offerte.');
   else if (mmNbFiltres() || mmF.q.trim()) mmDit(n ? `${plur(n, 'morceau correspond', 'morceaux correspondent')}. Choisis-en un !` : 'Aucun morceau ne correspond : enlève un filtre.');
   else mmDit('Choisis un morceau que tu aimes : je te montre ceux qui vont avec.');
@@ -461,7 +461,7 @@ function mmRendRecents(){
 function mmRendAvant(){
   $('mmOffre').hidden = mmPro();
   const D = rbDemo().morceaux, a = D[0], P = [3, 1, 4].map(j => { const c = mmCompat(a, D[j]); return c && Object.assign(c, { j }); }).filter(Boolean);
-  mmMet($('mmApercu'), mmH`<div class="mm-ap-tete"><span class="mm-ap-ex">Exemple</span>Ce que tu vas obtenir</div><div class="mm-ap-m">${mmDisque('a', 'petit')}<div><b>${a[0]}</b><small>${a[1]} · ${rbBpm(a[3])} BPM · ${a[4]}</small></div></div>${P.map(c => mmH`<div class="mm-ap-p">${mmAnneau(c.note, true)}<div class="mm-ap-pt"><b>${D[c.j][0]}</b><small>${c.tempo} · ${c.cle}</small></div><span class="mm-ap-tech">${mmVg(c.tech)}${MM_TECH[c.tech].nom}</span></div>`)}<p class="mm-ap-pied">Pour chaque morceau de ta collection : ceux qui vont le mieux après, pourquoi, et la technique pour faire la transition.</p>`);
+  mmMet($('mmApercu'), mmH`<div class="mm-ap-tete"><span class="mm-ap-ex">Exemple</span>Ce que tu vas obtenir</div><div class="mm-ap-m">${mmDisque('a', 'petit')}<div><b>${a[0]}</b><small>${a[1]} · ${rbBpm(a[3])} BPM · ${a[4]}</small></div></div>${P.map(c => mmH`<div class="mm-ap-p">${mmAnneau(c.note, true)}<div class="mm-ap-pt"><b>${D[c.j][0]}</b><small>${c.tempo} · ${c.cle}</small></div><span class="mm-ap-tech">${mmVg(c.tech)}${MM_TECH[c.tech].nom}</span></div>`)}`);
   mmDit('Montre-moi ta collection rekordbox : je te trouve les morceaux qui vont ensemble.');
 }
 function mmRendPdj(){
@@ -471,7 +471,7 @@ function mmRendPdj(){
 }
 function mmBanniere(){
   const g = $('mmGratuit'), o = mmIdx(mmData.offerte);
-  const [titre, texte] = rbExemple ? ['C’est la collection d’exemple.', 'Ouvre les fiches que tu veux. Avec ta vraie collection, la fiche d’un morceau est offerte ; pour toutes les autres, les favoris et les missions, c’est DJingood Pro.']
+  const [titre, texte] = rbExemple ? ['C’est la collection d’exemple.', 'Avec ta collection : 1 fiche offerte, le reste dans Pro.']
     : !mmData.offerte ? ['Ta première fiche est offerte.', 'Choisis le morceau que tu préfères : je te montre ceux qui vont avec, et la technique pour chaque transition.']
     : [o >= 0 ? `Tu as vu ta fiche offerte : ${mmG(rbLib[o][0])}.` : 'Tu as déjà vu ta fiche offerte.', 'Avec DJingood Pro : ce qui va avec pour tous tes morceaux, la technique pour chaque transition, tes favoris et les missions.'];
   mmMet(g, mmH`<div><span class="pro-tag">Pro</span><b>${mmFr(titre)}</b><p>${mmFr(texte)}</p></div><button type="button" class="pro-mini" data-mm="pro">Découvrir Pro</button>`);

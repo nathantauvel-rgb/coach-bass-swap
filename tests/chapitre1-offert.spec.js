@@ -213,7 +213,7 @@ test.describe('Corrections du gardien', () => {
   test('l’accueil : après le chapitre 1, l’étape « S’entraîner » ne promet que le défi du jour gratuit', async ({ page }) => {
     await ouvrir(page, { avant: PRO, onglet: 'accueil', stockage: Object.assign({ 'coach-parcours': 'debut' }, SEPT) });
     await expect(page.locator('#homeTitle')).toHaveText('S\'entraîner');
-    await expect(page.locator('#homeLead')).toHaveText('Refais les 7 gestes sur d’autres morceaux : un défi par jour, gratuit.');
+    await expect(page.locator('#homeLead')).toHaveText('Un défi par jour, gratuit.');
   });
 });
 
