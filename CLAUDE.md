@@ -32,7 +32,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 82 « Le chapitre 1 offert » : FAIT, NON PUBLIÉ (22 nov. 2026), attend l'accord de l'utilisateur.** Commits `6b41251`
+- **Lot 82 « Le chapitre 1 offert » : FAIT, NON PUBLIÉ (22-23 nov. 2026), attend l'accord de l'utilisateur.** **État au 23 nov. :
+  fusionné avec `origin/main` = `e3cc902` (lot 84) dans `9a32298` ; suite complète après fusion : 966 sur 966 ; dernier passage du
+  gardien : feu orange, aucun blocage** (rien de perdu à la fusion, « FR | EN » et l'image anglaise de la démo marchent ensemble).
+  Le lot 85 « Moins de texte » (copie `coach-dj-lot85`) part de cette branche : le publier après celui-ci. Historique : Commits `6b41251`
   (le lot) et `3770068` (remarques du gardien) sur `lot-82-chapitre1-offert`, au-dessus d'`origin/main` = `63b7f90` (rien à
   fusionner au 22 nov. au soir ; les lots 83 et 84 existent dans d'autres copies, pas publiés : si l'un part avant, fusionner).
   Suite complète : 952 sur 952, puis 955 sur 955 après les remarques. **Gardien : feu orange, aucun blocage** ; corrigé : la
