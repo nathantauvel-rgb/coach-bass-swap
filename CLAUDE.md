@@ -32,7 +32,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 85 « Moins de texte » : EN COURS (23 nov. 2026), pas publié.** Sa demande : « un tour de tout le site où il y a
+- **Lot 85 « Moins de texte » : FAIT (23 nov. 2026), pas publié ; le lot 82 est publié et fusionné ici (`origin/main` = `37be1d6`).** Sa demande : « un tour de tout le site où il y a
   trop de texte … ça donne aux gens envie de partir », puis « Oui, lance le 85 ». Bilan : `captures/audit-texte/` du dossier
   principal (`audit.js` mesure chaque écran en 1366 × 768 : mots visibles sans défiler, pavés de 15 mots ou plus ;
   `planche.png` = le bilan, `planche-avant-apres.png` = le lot). **Part de la branche du lot 82** (`b6e3739`), pas
@@ -48,7 +48,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   essai proposé (« Essaie tout DJingood 7 jours, gratuitement. »), Mon avis, case des mails ; tout en anglais (bloc « Lot
   85 » de `js/anglais.js`). Pas touché : « Comment faire ? » des chapitres 2 à 7, la présentation (titre décidé au lot 81),
   le menu « Tous les niveaux » (des noms de niveaux).
-- **Lot 82 « Le chapitre 1 offert » : FAIT, NON PUBLIÉ (22 nov. 2026), attend l'accord de l'utilisateur.** Commits `6b41251`
+- **Lot 82 « Le chapitre 1 offert » : PUBLIÉ le 23 nov. 2026** (« Oui, publie » ; `1f8e939`, puis cette note = `origin/main` ;
+  production vérifiée en 1366 × 768, français et `?lang=en` : « Continuer » au niveau 7, fenêtre Pro avec l'image de la démo, la
+  pastille et la frise ; images `img/demo-apercu.jpg` et `img/en/demo-apercu.jpg` servies ; `/api/pro` répond). **Reste, par lui** :
+  les points 42 et 43 de la checklist sur sa FLX4 ; suivre chaque semaine les essais commencés pour 100 tables branchées
+  (`STATISTIQUES.md`, règle de retour : remettre 3 niveaux gratuits si le chiffre baisse après 3-4 semaines). **État avant publication :
+  fusionné avec `origin/main` = `e3cc902` (lot 84) dans `9a32298` ; suite complète après fusion : 966 sur 966 ; dernier passage du
+  gardien : feu orange, aucun blocage** (rien de perdu à la fusion, « FR | EN » et l'image anglaise de la démo marchent ensemble).
+  Le lot 85 « Moins de texte » (copie `coach-dj-lot85`) part de cette branche : le publier après celui-ci. Historique : Commits `6b41251`
   (le lot) et `3770068` (remarques du gardien) sur `lot-82-chapitre1-offert`, au-dessus d'`origin/main` = `63b7f90` (rien à
   fusionner au 22 nov. au soir ; les lots 83 et 84 existent dans d'autres copies, pas publiés : si l'un part avant, fusionner).
   Suite complète : 952 sur 952, puis 955 sur 955 après les remarques. **Gardien : feu orange, aucun blocage** ; corrigé : la
