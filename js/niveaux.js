@@ -825,7 +825,9 @@ function finish(){
 function finEssai(ch, st, before){
   const ici = proBloque() && !prac && !placement && ch === 1 && li === NIV_GRATUITS - 1 && st >= 2 && before < 2;
   document.querySelector('.rcard').classList.toggle('fin-ch1', ici);   // « Rejouer » caché (styles.css)
-  if ($('next').dataset.go === 'pro' && !ici){ delete $('next').dataset.go; $('next').textContent = 'Niveau suivant'; }
+  // la carte d'avant a pu être fermée sans « Continuer » (×, Échap) : on retire le rôle ; le texte, seulement hors entraînement
+  // (pracStep vient d'écrire « Retour à l'entraînement », gardien du lot 82)
+  if ($('next').dataset.go === 'pro' && !ici){ delete $('next').dataset.go; if (!prac && !placement) $('next').textContent = 'Niveau suivant'; }
   if (!ici) return;
   $('rTitle').textContent = 'Ta première transition complète\u00a0!';
   $('rGain').textContent = `Chapitre 1 terminé · ${sumStars(stars)} ★`;

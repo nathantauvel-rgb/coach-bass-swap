@@ -4016,16 +4016,50 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
 }
 
 /* ---------- Lot 53 : le site en anglais ----------
-   La page reste cachée le temps de la traduire (classe posée dans le <head>, retirée par trPage). Le bouton FR / EN
-   montre l'autre langue (lot 80 : plus de carte « Switch to English »). */
+   La page reste cachée le temps de la traduire (classe posée dans le <head>, retirée par trPage). Lot 80 : plus de carte
+   « Switch to English ». */
 .trad body{visibility:hidden}
-.langbtn{font-weight:800;letter-spacing:.06em;cursor:pointer;color:var(--fg)}
+/* Lot 84 : le bouton FR | EN (js/langue.js, langueBoutons) : deux côtés dans une pastille, comme sur tous les sites ; la
+   langue affichée est en évidence, l'autre se clique. Même dessin dans l'en-tête, les Premiers pas et la présentation. */
+.langbtn{display:inline-flex;align-items:center;gap:2px;flex:none;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
 .langbtn:empty{display:none}
-.pp-lang{flex-shrink:0;min-height:44px;padding:0 6px;border:0;background:none;color:var(--muted);font:inherit;font-weight:800;letter-spacing:.06em;cursor:pointer}
-.pp-lang:hover{color:var(--fg)}
-/* lot 80 : « English » en toutes lettres (navigateur pas en français) : un peu plus visible, comme une pastille */
-.pp-lang.langbtn-mot{align-self:center;min-height:36px;padding:0 14px;border:1px solid var(--line);border-radius:999px;color:var(--fg)}
-.pp-lang:focus-visible{outline:3px solid var(--brand-light);outline-offset:3px}
+.langbtn button{min-width:34px;height:28px;padding:0 9px;border:0;border-radius:999px;background:none;color:var(--muted);font:inherit;font-size:13px;font-weight:800;letter-spacing:.06em;line-height:1;cursor:pointer}
+.langbtn button:hover{color:var(--fg)}
+.langbtn button[aria-pressed="true"]{background:var(--xp-line);color:var(--fg);cursor:default}
+.langbtn button:focus-visible{outline:3px solid var(--brand-light);outline-offset:2px}
+/* lot 80 : « English » en toutes lettres pour un navigateur pas en français : en blanc, plus visible */
+.langbtn-mot button[lang="en"]{color:var(--fg);letter-spacing:.02em}
+/* l'en-tête du site : à la hauteur des autres pastilles, mêmes coins */
+/* (gardien du lot 84 : plus étroit que sur les autres pages, pour que le bouton du compte, même avec un long prénom, ne
+   dépasse pas le trait de l'en-tête entre 1270 et 1440 px) */
+.app > .top .hud .chip.langbtn{padding:0 3px;gap:1px}
+.app > .top .hud .chip.langbtn:hover{border-color:var(--line)}
+.app > .top .hud .chip.langbtn button{min-width:28px;height:28px;padding:0 5px;border-radius:8px;font-size:12px}
+/* « English » en toutes lettres sur les Premiers pas et la présentation (le premier écran de chaque nouveau venu) ; dans
+   l'en-tête, « EN » : le mot entier y pousserait les onglets entre 1270 et 1310 px, et le compte à la ligne sur téléphone */
+.langbtn .lb-court,.app > .top .hud .langbtn .lb-long{display:none}
+.app > .top .hud .langbtn .lb-court{display:inline}
+/* téléphone : le bouton se resserre pour que le compte reste sur la ligne du logo, même sur un écran de 360 px */
+@media (max-width:760px){
+  .app > .top .hud{gap:4px}
+  .app > .top .hud .chip.langbtn{padding:0 1px}
+  .app > .top .hud .chip.langbtn button{min-width:24px;padding:0 3px;letter-spacing:.03em}   /* 24 px : la taille minimale pour un doigt */
+}
+/* les Premiers pas : au bout de la barre d'avancement */
+.pp-lang{align-self:center}
+.pp-lang button{height:32px}
+/* la page de présentation : à la hauteur du bouton « Ouvrir le site » */
+.pres-haut .langbtn{border-width:2px;border-color:var(--xp-line)}
+.pres-haut .langbtn button{height:32px}
+/* téléphone : « Ouvrir le site » reste sur une ligne (gardien du lot 84 : il passait sur deux lignes à 360 px) */
+.pres-haut .ghost{white-space:nowrap}
+@media (max-width:760px){.pres-haut .langbtn button{height:28px;min-width:26px;padding:0 5px}}
+/* petit téléphone : « English » redevient « EN », comme dans l'en-tête du site (second passage du gardien : avec un
+   navigateur pas en français, « FR | English » + « Ouvrir le site » dépassaient de l'écran entre 360 et 389 px) ; à 340 px
+   et moins, « Ouvrir le site » peut de nouveau passer à la ligne, plutôt que de sortir de l'écran */
+@media (max-width:420px){.pres-haut .langbtn .lb-long{display:none}.pres-haut .langbtn .lb-court{display:inline}
+  .pres .pres-haut{gap:6px}.pres .top .pres-haut .ghost{padding:7px 10px}}   /* « Open the site » tient dans la marge de 16 px */
+@media (max-width:340px){.pres-haut .ghost{white-space:normal}}
 @media (max-width:1039px){:root[lang="en"] .mx [data-k^="cfx"]::before{content:"FILTER"}}   /* lot 80 : comme la règle française, seulement sur petit écran */
 .pres-haut{display:flex;gap:8px;align-items:center}
 /* Lot 80 : le guide du débutant n'existe qu'en français : ses liens disparaissent en anglais */
