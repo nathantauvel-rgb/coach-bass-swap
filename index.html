@@ -35,8 +35,9 @@
 <link rel="icon" href="img/vini-icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="img/icone-180.png">
 <link rel="stylesheet" href="styles.css">
-<!-- Lot 53 : en anglais, la page reste cachée le temps que js/anglais.js la traduise (4 s au plus, si un fichier ne vient pas) -->
-<script>try{var l=(location.search.match(/[?&]lang=(en|fr)/)||[])[1]||localStorage.getItem('coach-langue');if(l==='en'){document.documentElement.classList.add('trad');setTimeout(function(){document.documentElement.classList.remove('trad')},4000)}}catch(e){}</script>
+<!-- Lot 53 : en anglais, la page reste cachée le temps que js/anglais.js la traduise (4 s au plus, si un fichier ne vient pas).
+     Lot 84 : même ordre que LANGUE (js/langue.js) : ?lang, puis l'anglais de la visite, puis le choix gardé -->
+<script>try{var l=(location.search.match(/[?&]lang=(en|fr)/)||[])[1],s=null;try{s=sessionStorage.getItem('coach-langue-visite')}catch(e){}l=l||s||localStorage.getItem('coach-langue');if(l==='en'){document.documentElement.classList.add('trad');setTimeout(function(){document.documentElement.classList.remove('trad')},4000)}}catch(e){}</script>
 </head>
 <body>
 <canvas id="confetti" aria-hidden="true"></canvas>
@@ -50,7 +51,7 @@
       <button type="button" class="pp-back" id="ppBack" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
       <div class="pp-bar pp-onde" id="ppBar" role="progressbar" aria-label="Avancement" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="ppFill"></i></div>
       <button type="button" class="pp-son" id="ppSon" hidden></button>
-      <button type="button" class="pp-lang langbtn" id="ppLang"></button>
+      <div class="pp-lang langbtn" id="ppLang"></div>
     </div>
     <div class="pp-body" id="ppBody">
       <div class="pp-head"><div id="ppVini"></div><p class="pp-bubble" id="ppAsk" aria-live="polite"></p></div>
@@ -360,7 +361,7 @@
           <div class="volbips"><span class="cptligne-txt"><b id="volBipsNom">Petits sons du jeu</b><small>Réussi, raté, étoiles, coffres.</small></span><button type="button" class="inter" role="switch" id="volBips" aria-checked="true" aria-labelledby="volBipsNom"></button></div>
         </div>
       </div>
-      <button type="button" class="chip langbtn" id="langBtn"></button>
+      <div class="chip langbtn" id="langBtn"></div>
       <button type="button" class="chip avbtn" id="avisBtn" aria-label="Mon avis" title="Mon avis : ce qui t'a bloqué, ce qui t'a plu"><svg class="tico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4z"/></svg><span class="avtxt">Mon avis</span></button>
     </div>
     <button type="button" class="cptbtn" id="cptBtn" hidden><svg class="cptico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.4-6 8-6s6.8 2 8 6"/></svg><span id="cptNom">Se connecter</span></button>

@@ -1,5 +1,5 @@
 // Lot 53 : le site en anglais. Le français reste la langue par défaut et ne change pas ; l'anglais se choisit par
-// ?lang=en, par le bouton FR / EN, ou par la carte proposée aux navigateurs qui ne sont pas en français.
+// ?lang=en ou par le bouton FR | EN (lot 84 : deux côtés, la langue affichée en évidence).
 // window.__enManque liste les phrases qu'un écran anglais a laissées en français : elle doit rester vide.
 const { test, expect } = require('@playwright/test');
 const { ouvrir, sansBandeau } = require('./outils');
@@ -11,12 +11,15 @@ const SANS_MIDI = `Object.defineProperty(navigator, 'requestMIDIAccess', { value
   Object.defineProperty(navigator, 'userAgent', { value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1' });`;
 
 test.describe('Le français ne change pas', () => {
-  test('par défaut : la page est en français, rien n\'est traduit, le bouton propose l\'anglais', async ({ page }) => {
+  test('par défaut : la page est en français, rien n\'est traduit, le bouton FR | EN montre FR en évidence', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'accueil' });
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
     await expect(page.locator('#tabs a[data-view="apprendre"]')).toContainText('Apprendre');
-    await expect(page.locator('#langBtn')).toHaveText('EN');
-    await expect(page.locator('#langBtn')).toHaveAttribute('title', 'Read DJingood in English');
+    await expect(page.locator('#langBtn button')).toHaveText(['FR', 'EN']);
+    await expect(page.locator('#langBtn button[aria-pressed="true"]')).toHaveText('FR');
+    await expect(page.locator('#langBtn button[lang="en"]')).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('#langBtn button[lang="en"]')).toHaveAttribute('title', 'Read DJingood in English');
+    await expect(page.locator('#langBtn')).toHaveAttribute('role', 'group');
     // les fonctions du navigateur sont celles d'origine : en français, rien ne passe par le dictionnaire
     expect(await page.evaluate(() => [Object.getOwnPropertyDescriptor(Node.prototype, 'textContent').set, Element.prototype.setAttribute, CanvasRenderingContext2D.prototype.fillText]
       .every(f => /\[native code\]/.test(Function.prototype.toString.call(f))))).toBe(true);
@@ -33,7 +36,8 @@ test.describe('La page de présentation', () => {
     page.on('pageerror', e => erreurs.push(String(e)));
     await page.goto('/presentation.html?lang=en');
     await expect(page.locator('h1')).toHaveText('Your first real transition, in two weeks.');   // lot 81 : le titre dit le résultat
-    await expect(page.locator('#langBtn')).toHaveText('FR');
+    await expect(page.locator('#langBtn button')).toHaveText(['FR', 'EN']);
+    await expect(page.locator('#langBtn button[aria-pressed="true"]')).toHaveText('EN');
     await expect(page).toHaveTitle('Learning to mix as a beginner · How DJingood works');
     expect(await manque(page)).toEqual([]);
     expect(erreurs).toEqual([]);
@@ -41,7 +45,8 @@ test.describe('La page de présentation', () => {
 });
 
 test.describe('Choisir l\'anglais', () => {
-  test('?lang=en : la page passe en anglais, le choix est gardé, FR ramène le français', async ({ page }) => {
+  // Lot 84 : sur un navigateur en français, le lien des pubs ne garde pas l'anglais pour les visites suivantes
+  test('?lang=en sur un navigateur en français : anglais le temps de la visite, pas gardé ensuite ; FR ramène le français', async ({ page }) => {
     const erreurs = [];
     page.on('pageerror', e => erreurs.push(String(e)));
     await page.addInitScript(() => { try { if (!sessionStorage.getItem('__pret')){ localStorage.setItem('coach-accueil', '{"passe":true,"fini":"2026-10-16"}'); localStorage.setItem('coach-guide-vu', '1'); sessionStorage.setItem('__pret', '1'); } } catch (e) {} });
@@ -50,16 +55,61 @@ test.describe('Choisir l\'anglais', () => {
     await expect(page.locator('#tabs a[data-view="apprendre"]')).toContainText('Learn');
     await expect(page.locator('#tabs a[data-view="entrainer"]')).toContainText('Practice');
     await expect(page).toHaveTitle('DJingood · Learn to mix on your DJ controller, by playing');
-    await expect(page.locator('#langBtn')).toHaveText('FR');
-    expect(await page.evaluate(() => localStorage.getItem('coach-langue'))).toBe('en');
-    // sans le ?lang, le choix gardé suffit
+    await expect(page.locator('#langBtn button[aria-pressed="true"]')).toHaveText('EN');
+    expect(await page.evaluate(() => [localStorage.getItem('coach-langue'), sessionStorage.getItem('coach-langue-visite')])).toEqual([null, 'en']);
+    // dans le même onglet, sans le ?lang : toujours en anglais (la visite continue)
     await page.goto('/index.html#accueil');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-    await page.locator('#langBtn').click();
+    expect(await manque(page)).toEqual([]);
+    // un nouvel onglet (une autre visite) : le français revient
+    const autre = await page.context().newPage();
+    await autre.goto('/index.html#accueil');
+    await expect(autre.locator('html')).toHaveAttribute('lang', 'fr');
+    await expect(autre.locator('#tabs a[data-view="apprendre"]')).toContainText('Apprendre');
+    await expect(autre.locator('#langBtn button[aria-pressed="true"]')).toHaveText('FR');
+    await autre.close();
+    // un clic sur EN, déjà allumé : rien ne se recharge, mais l'anglais est gardé (gardien du lot 84)
+    await page.locator('#langBtn button[lang="en"]').click();
+    await page.waitForTimeout(300);
+    await expect(page).toHaveURL(/\/index\.html#accueil$/);   // pas rechargée
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    expect(await page.evaluate(() => localStorage.getItem('coach-langue'))).toBe('en');
+    // un clic sur FR : le français, gardé
+    await page.locator('#langBtn button[lang="fr"]').click();
     await expect(page).toHaveURL(/lang=fr/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
     await expect(page.locator('#tabs a[data-view="apprendre"]')).toContainText('Apprendre');
-    expect(await page.evaluate(() => localStorage.getItem('coach-langue'))).toBe('fr');
+    expect(await page.evaluate(() => [localStorage.getItem('coach-langue'), sessionStorage.getItem('coach-langue-visite')])).toEqual(['fr', null]);
+    expect(erreurs).toEqual([]);
+  });
+
+  test('?lang=en sur un navigateur en anglais : l\'anglais est gardé pour les visites suivantes', async ({ browser }) => {
+    const ctx = await browser.newContext({ locale: 'en-US' }), page = await ctx.newPage();
+    await ctx.addInitScript(() => { try { localStorage.setItem('coach-accueil', '{"passe":true,"fini":"2026-10-16"}'); localStorage.setItem('coach-guide-vu', '1'); } catch (e) {} });
+    await page.goto('/index.html?lang=en#accueil');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    expect(await page.evaluate(() => localStorage.getItem('coach-langue'))).toBe('en');
+    const autre = await ctx.newPage();
+    await autre.goto('/index.html#accueil');
+    await expect(autre.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(autre.locator('#langBtn button[aria-pressed="true"]')).toHaveText('EN');
+    await ctx.close();
+  });
+
+  test('un clic sur EN est gardé, même sur un navigateur en français ; un clic sur la langue affichée ne fait rien', async ({ page }) => {
+    const erreurs = await ouvrir(page, { onglet: 'accueil' });
+    // la langue affichée : rien ne bouge
+    await page.locator('#langBtn button[lang="fr"]').click();
+    await page.waitForTimeout(300);
+    await expect(page).not.toHaveURL(/lang=/);
+    await page.locator('#langBtn button[lang="en"]').click();
+    await expect(page).toHaveURL(/lang=en/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    expect(await page.evaluate(() => localStorage.getItem('coach-langue'))).toBe('en');
+    const autre = await page.context().newPage();
+    await autre.goto('/index.html#accueil');
+    await expect(autre.locator('html')).toHaveAttribute('lang', 'en');
+    await autre.close();
     expect(erreurs).toEqual([]);
   });
 
@@ -70,8 +120,11 @@ test.describe('Choisir l\'anglais', () => {
     await expect(page.locator('#pp')).toBeVisible();
     await expect(page.locator('#langOffre')).toHaveCount(0);
     await expect(page.locator('#ppGo')).toBeVisible();
-    await expect(page.locator('#ppLang')).toHaveText('English');   // lot 80 : en toutes lettres pour un navigateur pas en français
-    await page.locator('#ppLang').click();
+    // lot 80 : en toutes lettres pour un navigateur pas en français ; lot 84 : « FR | English », l'en-tête garde « EN »
+    await expect(page.locator('#ppLang button[aria-pressed="true"]')).toHaveText('FR');
+    await expect(page.locator('#ppLang button[lang="en"]')).toHaveText('English', { useInnerText: true });
+    await expect(page.locator('#langBtn button[lang="en"]')).toHaveText('EN', { useInnerText: true });
+    await page.locator('#ppLang button[lang="en"]').click();
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await expect(page.locator('#ppAsk')).toContainText("Hi, I'm Vini!");
     expect(await page.evaluate(() => localStorage.getItem('coach-langue'))).toBe('en');
@@ -85,6 +138,58 @@ test.describe('Choisir l\'anglais', () => {
     await expect(page.locator('#langOffre')).toHaveCount(0);
     await ctx.close();
   });
+});
+
+// Lot 84 : le bouton FR | EN est plus large que l'ancien « EN » : l'en-tête doit tenir sur sa ligne
+test.describe('Le bouton FR | EN tient dans l\'en-tête', () => {
+  for (const [largeur, hauteur] of [[360, 780], [375, 812]])
+    test('téléphone de ' + largeur + ' px : le compte reste sur la ligne du logo', async ({ page }) => {
+      await page.setViewportSize({ width: largeur, height: hauteur });
+      const erreurs = await ouvrir(page, { onglet: 'accueil' });
+      await expect(page.locator('#langBtn button')).toHaveCount(2);
+      const [lang, cpt, logo] = await Promise.all(['#langBtn', '#cptBtn', '.app > .top .brand'].map(s => page.locator(s).boundingBox()));
+      expect(Math.abs(cpt.y - lang.y)).toBeLessThan(12);
+      expect(Math.abs(cpt.y - logo.y)).toBeLessThan(20);
+      expect(lang.x + lang.width).toBeLessThanOrEqual(cpt.x);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(largeur);
+      expect(erreurs).toEqual([]);
+    });
+  test('ordinateur de 1270 px, navigateur en anglais : les onglets ne touchent pas les pastilles', async ({ browser }) => {
+    const ctx = await browser.newContext({ locale: 'en-US', viewport: { width: 1270, height: 768 } }), page = await ctx.newPage();
+    await ctx.addInitScript(() => { try { localStorage.setItem('coach-accueil', '{"passe":true,"fini":"2026-10-16"}'); localStorage.setItem('coach-parcours', 'debut'); localStorage.setItem('coach-guide-vu', '1'); } catch (e) {} });
+    await page.goto('/index.html#accueil');
+    await expect(page.locator('#langBtn button')).toHaveCount(2);
+    const [tabs, hud] = await Promise.all(['.app > .top .tabs', '.app > .top .hud'].map(s => page.locator(s).boundingBox()));
+    expect(Math.abs(tabs.y - hud.y)).toBeLessThan(12);   // une seule ligne au-dessus de 1269 px
+    expect(tabs.x + tabs.width).toBeLessThanOrEqual(hud.x);
+    expect(await page.evaluate(() => { const t = document.querySelector('.app > .top .tabs'); return t.scrollWidth - t.clientWidth; })).toBe(0);
+    await ctx.close();
+  });
+  test('ordinateur de 1270 px : le bouton du compte, même avec un long prénom, ne dépasse pas le trait de l\'en-tête', async ({ page }) => {
+    await page.setViewportSize({ width: 1270, height: 768 });
+    const erreurs = await ouvrir(page, { onglet: 'accueil' });
+    await expect(page.locator('#langBtn button')).toHaveCount(2);
+    const depasse = await page.evaluate(() => { const c = document.getElementById('cptBtn'), top = document.querySelector('.app > .top');
+      c.hidden = false; const r = [];
+      for (const nom of ['Se connecter', 'Jean-Baptiste']){ document.getElementById('cptNom').textContent = nom; c.classList.toggle('on', nom !== 'Se connecter');
+        r.push(Math.round(c.getBoundingClientRect().right - top.getBoundingClientRect().right)); }
+      return r; });
+    expect(depasse).toEqual([0, 0]);
+    expect(erreurs).toEqual([]);
+  });
+  // (le cas « navigateur en anglais, page en français » : le bouton dit « FR | English » ailleurs, « FR | EN » ici)
+  for (const [locale, q, largeur] of [['fr-FR', '', 360], ['en-US', '?lang=en', 360], ['en-US', '', 360], ['en-US', '', 375], ['en-US', '', 390]])
+    test('présentation sur un téléphone de ' + largeur + ' px (' + locale + (q ? ', ' + q : '') + ') : « Ouvrir le site » tient sur une ligne', async ({ browser }) => {
+      const ctx = await browser.newContext({ locale, viewport: { width: largeur, height: 780 } }), page = await ctx.newPage();
+      await page.goto('/presentation.html' + q);
+      await expect(page.locator('#langBtn button')).toHaveCount(2);
+      const [lang, ouvrir] = await Promise.all(['#langBtn', '.pres-haut a.ghost'].map(s => page.locator(s).boundingBox()));
+      expect(ouvrir.height).toBeLessThan(46);
+      expect(Math.abs(lang.y + lang.height / 2 - (ouvrir.y + ouvrir.height / 2))).toBeLessThan(4);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(largeur);
+      expect(ouvrir.x + ouvrir.width).toBeLessThanOrEqual(largeur - 16);   // dans la marge de la page (16 px), pas collé au bord
+      await ctx.close();
+    });
 });
 
 test.describe('En anglais, rien ne reste en français', () => {
