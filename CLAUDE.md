@@ -52,7 +52,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
      Les scripts en tête d'`index.html` et `presentation.html` (page cachée pendant la traduction) suivent le même ordre.
   Tests : `tests/anglais.spec.js` (bouton, visite, navigateur anglais, clic gardé, place dans l'en-tête à 360, 375 et
   1270 px). Captures : `captures/lot84/planche.png` de la copie (avant = djingood.fr, après = la copie ; `captures.js`).
-  Le lot 82 en cours touche aussi `js/langue.js` (une ligne d'`EN_IMAGES`) : fusion simple.
+  Le lot 82 en cours touche aussi `js/langue.js` (une ligne d'`EN_IMAGES`) et `styles.css` : celui qui part en second fusionne.
+  Commit `9dcdaba`, suite complète **941 sur 941** (`captures/lot84/suite/`). **Gardien (22 nov., nuit) : feu orange, aucun
+  blocage.** Ses remarques corrigées ensuite : le bouton du compte dépassait le trait de l'en-tête de 9 à 15 px entre 1270 et
+  1440 px (bouton FR | EN de l'en-tête resserré : 65 px au lieu de 85, mesuré par `captures/lot84/mesure.js`) ; « Ouvrir le
+  site » passait sur deux lignes à 360 px sur la présentation (`white-space:nowrap`, côtés plus étroits) ; côtés du bouton à
+  24 px au moins sur téléphone (taille minimale pour un doigt) ; un clic sur la langue affichée la garde sans recharger (arrivé
+  par le lien des pubs sur un navigateur en français, un clic sur EN garde l'anglais). Tests ajoutés (1270 px avec un long
+  prénom, présentation à 360 px en français et en anglais, clic sur EN déjà allumé). Remarque non corrigée, voulue : ceux qui
+  ont déjà ouvert `?lang=en` depuis le lot 80 ont l'anglais gardé ; ils restent en anglais jusqu'à un clic sur FR.
 - **Lot 81 « La caisse » : PUBLIÉ le 21 nov. 2026** (« Oui, publie » ; `c922a3f`, puis cette note = `origin/main` ; production vérifiée en 1366 × 768, en français et en anglais : année d'office, plan, essai dès le niveau 1, question après paiement, nouveau titre, CGV ; `/api/pro` répond). **Reste, par lui** : un essai sans payer avec son compte (page de paiement, flèche « ← » de Stripe, « 34,99 € » et la date, rouvrir Stripe : −15 € et 7 jours gratuits, repartir sans payer ; ce premier passage crée la remise chez Stripe) ; points 42, 38, 2 de la checklist FLX4. La fenêtre Pro qui se rouvre au retour de Stripe a été gardée (question posée, il a répondu « Oui, publie »). Né de l'analyse d'une vidéo YouTube sur les ventes d'un SaaS
   (`Documents\MARKETING\07-video-saas.md`). Décisions de l'utilisateur, mot pour mot : « Ok pour l'année d'office, rattrapage
   à 34,99 € pendant 48 h, Non pour le prix mensuel et annuel on n'y change rien en temps normal, Oui propose l'essai de 7 jours

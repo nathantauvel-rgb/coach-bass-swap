@@ -4030,9 +4030,11 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
 /* lot 80 : « English » en toutes lettres pour un navigateur pas en français : en blanc, plus visible */
 .langbtn-mot button[lang="en"]{color:var(--fg);letter-spacing:.02em}
 /* l'en-tête du site : à la hauteur des autres pastilles, mêmes coins */
-.app > .top .hud .chip.langbtn{padding:0 4px;gap:2px}
+/* (gardien du lot 84 : plus étroit que sur les autres pages, pour que le bouton du compte, même avec un long prénom, ne
+   dépasse pas le trait de l'en-tête entre 1270 et 1440 px) */
+.app > .top .hud .chip.langbtn{padding:0 3px;gap:1px}
 .app > .top .hud .chip.langbtn:hover{border-color:var(--line)}
-.app > .top .hud .chip.langbtn button{height:28px;border-radius:8px}
+.app > .top .hud .chip.langbtn button{min-width:28px;height:28px;padding:0 5px;border-radius:8px;font-size:12px}
 /* « English » en toutes lettres sur les Premiers pas et la présentation (le premier écran de chaque nouveau venu) ; dans
    l'en-tête, « EN » : le mot entier y pousserait les onglets entre 1270 et 1310 px, et le compte à la ligne sur téléphone */
 .langbtn .lb-court,.app > .top .hud .langbtn .lb-long{display:none}
@@ -4040,8 +4042,8 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
 /* téléphone : le bouton se resserre pour que le compte reste sur la ligne du logo, même sur un écran de 360 px */
 @media (max-width:760px){
   .app > .top .hud{gap:4px}
-  .app > .top .hud .chip.langbtn{padding:0 2px}
-  .app > .top .hud .chip.langbtn button{min-width:22px;padding:0 3px;font-size:12px;letter-spacing:.03em}
+  .app > .top .hud .chip.langbtn{padding:0 1px}
+  .app > .top .hud .chip.langbtn button{min-width:24px;padding:0 3px;letter-spacing:.03em}   /* 24 px : la taille minimale pour un doigt */
 }
 /* les Premiers pas : au bout de la barre d'avancement */
 .pp-lang{align-self:center}
@@ -4049,7 +4051,9 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
 /* la page de présentation : à la hauteur du bouton « Ouvrir le site » */
 .pres-haut .langbtn{border-width:2px;border-color:var(--xp-line)}
 .pres-haut .langbtn button{height:32px}
-@media (max-width:760px){.pres-haut .langbtn button{height:28px;min-width:30px;padding:0 7px}}
+/* téléphone : « Ouvrir le site » reste sur une ligne (gardien du lot 84 : il passait sur deux lignes à 360 px) */
+.pres-haut .ghost{white-space:nowrap}
+@media (max-width:760px){.pres-haut .langbtn button{height:28px;min-width:26px;padding:0 5px}}
 @media (max-width:1039px){:root[lang="en"] .mx [data-k^="cfx"]::before{content:"FILTER"}}   /* lot 80 : comme la règle française, seulement sur petit écran */
 .pres-haut{display:flex;gap:8px;align-items:center}
 /* Lot 80 : le guide du débutant n'existe qu'en français : ses liens disparaissent en anglais */

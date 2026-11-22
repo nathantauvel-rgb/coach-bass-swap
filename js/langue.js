@@ -250,7 +250,9 @@ function langueBoutons(){
       if (l === 'en' && enMot){   // « English », et « EN » pour l'en-tête du site (styles.css choisit)
         for (const [c, t] of [['lb-long', 'English'], ['lb-court', court]]){ const s = document.createElement('span'); s.className = c; trSans(s, null, t); b.appendChild(s); }
       } else trSans(b, null, court);
-      b.onclick = () => { if (l !== LANGUE) langueChange(l); };
+      // un clic sur la langue affichée ne recharge rien, mais la garde : arrivé en anglais par le lien des pubs sur un
+      // navigateur en français (l'anglais de la visite), un clic sur EN le garde pour les visites suivantes (gardien du lot 84)
+      b.onclick = () => { if (l !== LANGUE) langueChange(l); else { try { localStorage.setItem('coach-langue', l); } catch (e) {} } };
       g.appendChild(b);
     }
   });

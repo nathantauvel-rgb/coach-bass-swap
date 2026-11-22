@@ -68,6 +68,12 @@ test.describe('Choisir l\'anglais', () => {
     await expect(autre.locator('#tabs a[data-view="apprendre"]')).toContainText('Apprendre');
     await expect(autre.locator('#langBtn button[aria-pressed="true"]')).toHaveText('FR');
     await autre.close();
+    // un clic sur EN, déjà allumé : rien ne se recharge, mais l'anglais est gardé (gardien du lot 84)
+    await page.locator('#langBtn button[lang="en"]').click();
+    await page.waitForTimeout(300);
+    await expect(page).toHaveURL(/\/index\.html#accueil$/);   // pas rechargée
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    expect(await page.evaluate(() => localStorage.getItem('coach-langue'))).toBe('en');
     // un clic sur FR : le français, gardé
     await page.locator('#langBtn button[lang="fr"]').click();
     await expect(page).toHaveURL(/lang=fr/);
@@ -159,6 +165,29 @@ test.describe('Le bouton FR | EN tient dans l\'en-tête', () => {
     expect(await page.evaluate(() => { const t = document.querySelector('.app > .top .tabs'); return t.scrollWidth - t.clientWidth; })).toBe(0);
     await ctx.close();
   });
+  test('ordinateur de 1270 px : le bouton du compte, même avec un long prénom, ne dépasse pas le trait de l\'en-tête', async ({ page }) => {
+    await page.setViewportSize({ width: 1270, height: 768 });
+    const erreurs = await ouvrir(page, { onglet: 'accueil' });
+    await expect(page.locator('#langBtn button')).toHaveCount(2);
+    const depasse = await page.evaluate(() => { const c = document.getElementById('cptBtn'), top = document.querySelector('.app > .top');
+      c.hidden = false; const r = [];
+      for (const nom of ['Se connecter', 'Jean-Baptiste']){ document.getElementById('cptNom').textContent = nom; c.classList.toggle('on', nom !== 'Se connecter');
+        r.push(Math.round(c.getBoundingClientRect().right - top.getBoundingClientRect().right)); }
+      return r; });
+    expect(depasse).toEqual([0, 0]);
+    expect(erreurs).toEqual([]);
+  });
+  for (const [locale, q] of [['fr-FR', ''], ['en-US', '?lang=en']])
+    test('présentation sur un téléphone de 360 px (' + locale + ') : « Ouvrir le site » tient sur une ligne', async ({ browser }) => {
+      const ctx = await browser.newContext({ locale, viewport: { width: 360, height: 780 } }), page = await ctx.newPage();
+      await page.goto('/presentation.html' + q);
+      await expect(page.locator('#langBtn button')).toHaveCount(2);
+      const [lang, ouvrir] = await Promise.all(['#langBtn', '.pres-haut a.ghost'].map(s => page.locator(s).boundingBox()));
+      expect(ouvrir.height).toBeLessThan(46);
+      expect(Math.abs(lang.y + lang.height / 2 - (ouvrir.y + ouvrir.height / 2))).toBeLessThan(4);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
+      await ctx.close();
+    });
 });
 
 test.describe('En anglais, rien ne reste en français', () => {
