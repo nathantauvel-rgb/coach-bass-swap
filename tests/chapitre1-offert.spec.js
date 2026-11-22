@@ -183,6 +183,31 @@ test.describe('Le clic sur le chapitre 2 : la grande fenêtre Pro, avec la démo
   });
 });
 
+test.describe('Corrections du gardien', () => {
+  test('on change de chapitre pendant la préparation de la démo : la barre disparaît, les niveaux de Pro restent fermés', async ({ page }) => {
+    await ouvrir(page, { avant: PRO, stockage: SEPT });
+    await page.evaluate(() => { apercuDemarre(2, 0, 'fenetre'); setChapter(1); });
+    await expect.poll(() => page.evaluate(() => apercu), { timeout: 20000 }).toBe(null);
+    await expect(page.locator('#apercu')).toBeHidden();
+    expect(await page.evaluate(() => [chapter, !!run])).toEqual([1, false]);
+    expect(await page.evaluate(() => { LESSONS = lessonsOf(2); chapter = 2; selectLesson(1); return proIci(); })).toBe(true);
+  });
+
+  test('« Jouer » pendant l’aperçu (la démo pas encore partie) : jamais une vraie partie de Pro, la fenêtre Pro revient', async ({ page }) => {
+    await ouvrir(page, { avant: PRO, stockage: SEPT });
+    await page.evaluate(() => { apercuDemarre(2, 0, 'fenetre'); preparing = false; startRun(false); });
+    await expect(page.locator('#pro')).toBeVisible();
+    await expect(page.locator('#apercu')).toBeHidden();
+    expect(await page.evaluate(() => [apercu, chapter])).toEqual([null, 1]);
+  });
+
+  test('l’accueil : après le chapitre 1, l’étape « S’entraîner » ne promet que le défi du jour gratuit', async ({ page }) => {
+    await ouvrir(page, { avant: PRO, onglet: 'accueil', stockage: Object.assign({ 'coach-parcours': 'debut' }, SEPT) });
+    await expect(page.locator('#homeTitle')).toHaveText('S\'entraîner');
+    await expect(page.locator('#homeLead')).toHaveText('Refais les 7 gestes sur d’autres morceaux : un défi par jour, gratuit.');
+  });
+});
+
 test.describe('Les parcours et le plan', () => {
   test('Apprenti DJ et DJ confirmé gardent leurs 3 niveaux en Mode Expert avant leur vraie étape', async ({ page }) => {
     await ouvrir(page, { avant: PRO, onglet: 'accueil', stockage: { 'coach-parcours': 'confirme' } });

@@ -135,6 +135,9 @@ function renderHome(){
   $('homePro').hidden = !pro; $('homeDefi').hidden = !(pro && pracPool().length); $('homeCta').classList.toggle('pro', pro);
   if (pro){ $('homeProTxt').textContent = st.cta(); $('homeCta').textContent = 'Continuer avec Pro';
     if (cur === 'ch1' || cur === 'expert') $('homeLead').textContent = 'Bravo, tu as fini le chapitre 1. La suite : à l’oreille, avec de vrais morceaux, sans SYNC.'; }
+  // lot 82 (gardien) : sans abonnement, un Grand débutant arrive à « S'entraîner » après le chapitre 1 ; seul le défi du jour
+  // y est gratuit (variations, oreille et mini-set sont dans Pro)
+  if (cur === 'train' && proBloque()) $('homeLead').textContent = 'Refais les 7 gestes sur d’autres morceaux : un défi par jour, gratuit.';
   renderGoal(); homeVini();
   $('homeLien').hidden = !(typeof cpMobile === 'function' && cpMobile());   // lot 48 : sur un téléphone, s'envoyer le lien pour l'ordinateur
   // lot 65 : avec un compte, le lien part par mail et connecte tout seul sur l'ordinateur

@@ -2917,6 +2917,7 @@ enDe({
   // js/niveaux.js, js/parcours.js
   'Ce niveau est dans DJingood Pro. Le chapitre 1 est gratuit.': 'This level is in DJingood Pro. Chapter 1 is free.',
   "Bravo, tu as fini le chapitre 1. La suite : à l'oreille, avec de vrais morceaux, sans SYNC.": "Well done, you've finished chapter 1. Next: by ear, with real tracks, without SYNC.",
+  'Refais les 7 gestes sur d’autres morceaux : un défi par jour, gratuit.': 'Replay the 7 moves on other tracks: one free challenge a day.',
   // js/premiers.js : le plan du Grand débutant
   'Les 7 gestes du chapitre 1': 'The 7 moves of chapter 1',
   "Jusqu'à ta première transition complète, avec ta table.": 'Up to your first complete transition, with your controller.',

@@ -447,12 +447,14 @@ function setStartBtn(running){ $('stage').classList.toggle('joue', running); if 
 // lot 68 : le niveau affiché est dans Pro (sans abonnement) : « Jouer » ouvre la fenêtre Pro, pas de démo (l'entraînement
 // et l'ancien test de placement ne jouent que des niveaux gratuits). Lot 82 : sauf pendant l'aperçu d'un chapitre fermé
 // (apercu, plus bas), qui ne fait que regarder la démo.
-const proIci = () => !apercu && !prac && !placement && !!LESSONS[li] && niveauPro(chapter, li);
+const proIci = () => !(apercu && chapter === apercu.n && li === apercu.i) && !prac && !placement && !!LESSONS[li] && niveauPro(chapter, li);
 
 let START = 16, END = 116;
 function startRun(demo = false){
   // lot 68 : un niveau de Pro, sans abonnement : la fenêtre Pro, ni partie ni démo
   if (proIci()){ proOuvre('', { n: chapter, i: li }); return; }
+  // lot 82 (gardien) : pendant l'aperçu, seule la démo tourne ; « Jouer » ferme l'aperçu et rouvre la fenêtre Pro
+  if (apercu && !demo){ apercuFin(true); return; }
   // Table pas en place (par exemple après une fiche où l'on a tourné un potard) : on montre l'encadré et on le dit
   if (!demo && needSetup() && !setupReady()){ updateSetup(); say('Remets ta table en position de départ : « Jouer » se débloquera tout seul.'); $('setup').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' }); return; }
   ensureAudio(); if (ac.state !== 'running') ac.resume();
@@ -468,7 +470,7 @@ function startRun(demo = false){
     const bpmB = lw.cal ? calChoisitBpm(lw) : 0, vB = lw.cal ? bpmB / STYLE_DEFS[sel.sty].bpm : speed;
     try { if (lw.wave) tkW = await prepareCh3(lw).catch(() => prepareCh3(lw)); else { styW = sel.sty; vrW = sel.vr; const aD = !!(lw.hc && lw.hc.aDrop); [songA, songB] = await Promise.all([songSafe(styW, vrW, aD ? 'B1' : 'A', speed), songSafe(styW, hcVarB(lw, vrW), lw.bBass ? 'B1' : 'B0', vB)]); } }
     finally { preparing = false; $('watchBtn').disabled = false; }
-    if (li !== myLi || chapter !== myCh || run){ setStartBtn(false); return; }
+    if (li !== myLi || chapter !== myCh || run){ setStartBtn(false); if (demo && apercu && !run) apercuFin(false, false); return; }
     if (lw.wave){ const tk = tkW; waveTk = tk; tk.bufA = tk.bufA || bufferOf(tk.A); tk.bufB = tk.bufB || bufferOf(tk.B); tracks = { A: tk.bufA, B0: tk.bufB, B1: tk.bufB }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; $('styleTag').textContent = styleLabel(); }
     else { const d = STYLE_DEFS[styW]; BPM = d.bpm * speed; P = 60 / BPM; if (chapter === 4) $('styleTag').textContent = `${d.label} · ${Math.round(BPM)} BPM` + (speed !== 1 ? ` · ralenti ${Math.round(speed * 100)} %` : ''); tracks = { A: bufOf(songA), B0: bufOf(songB), B1: bufOf(songB) }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75;
       // vraie musique pas chargée (hors ligne…) : l'étiquette le dit pendant toute la partie
@@ -822,7 +824,7 @@ function finEssai(ch, st, before){
   const ici = proBloque() && !prac && !placement && ch === 1 && li === NIV_GRATUITS - 1 && st >= 2 && before < 2;
   $('rPro').hidden = !ici; $('rProGo').hidden = !ici; $('rProTard').hidden = !ici;
   if (!ici) return;
-  $('rTitle').textContent = 'Ta première transition complète !';
+  $('rTitle').textContent = 'Ta première transition complète\u00a0!';
   $('rProNiv').innerHTML = '';
   FIN_SUITE.forEach(([n, t]) => { const e = document.createElement('li'), s = document.createElement('small'), x = document.createElement('span');
     s.innerHTML = NIV_CADENAS + 'Chapitre ' + n; x.textContent = t; e.append(s, x); $('rProNiv').appendChild(e); });
@@ -896,10 +898,12 @@ function apercuDemarre(n, i = 0, depuis = 'fenetre'){
   stat('demo-pro', { chap: String(n), depuis });
   startRun(true);
 }
-function apercuFin(rouvre = true){
+// revenir = faux : on reste où le joueur est allé entre-temps (il a changé de chapitre pendant la préparation de la démo)
+function apercuFin(rouvre = true, revenir = true){
   const a = apercu; if (!a) return;
   apercu = null; $('apercu').hidden = true;
   if (run) stopRun();
+  if (!revenir){ selectLesson(li); return; }
   LESSONS = lessonsOf(a.ch); chapter = a.ch; selectLesson(Math.min(a.li, LESSONS.length - 1));
   // depuis la carte d'un niveau de Pro (nivFin), l'offre est déjà sur la carte : rien à rouvrir
   if (rouvre && a.depuis !== 'carte' && typeof proOuvre === 'function') proOuvre('', a.depuis === 'niveau' ? { n: a.n, i: a.i } : { chap: a.n });
