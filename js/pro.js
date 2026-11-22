@@ -87,7 +87,7 @@ if (proAnnule){ try { history.replaceState(null, '', location.pathname + locatio
 let proApres = null;   // { f: formule, essai } choisis avant de créer son compte : on enchaîne sur le paiement une fois connecté
 // Appelé par compte.js (cptChange) à chaque connexion ou déconnexion
 function proCompte(u){
-  if (!u){ proCompteRend(); if (view === 'tutos') renderTutos(); return; }
+  if (!u){ proCompteRend(); if (typeof view !== 'undefined' && view === 'tutos') renderTutos(); return; }   // view : demarrage.js, chargé après (gardien du lot 83)
   if (!proVerrou() && !proRetour) return;
   if (proRetour){
     const id = proRetour; proRetour = '';

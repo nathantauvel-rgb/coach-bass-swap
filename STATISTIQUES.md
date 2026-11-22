@@ -95,7 +95,11 @@ moins 15 points (par exemple 35 % contre 50 % qui finissent les questions de Vin
 parce qu'un groupe semble devant après quelques jours : au début, le hasard fait de grands écarts.
 
 **Arrêter ou garder** : `VITRINE_PART` en haut de `js/vitrine.js` (`1` : tout le monde voit la page ; `0` : personne).
-Pour la voir soi-même sans fausser le test : `djingood.fr/?accueil=page` (ou `?accueil=vini`), rien n'est compté.
+Pour la voir soi-même sans fausser le test : `djingood.fr/?accueil=page` (ou `?accueil=vini`) **dans une fenêtre de
+navigation privée** (Ctrl + Maj + N dans Chrome) : dans ton navigateur habituel, tu as déjà un parcours, donc ni la page ni
+les questions de Vini ne s'ouvrent. Rien n'est compté. Les liens « Essayer gratuitement » de `presentation.html` mènent à
+`?accueil=vini` : ceux qui viennent de lire la présentation ne voient pas une deuxième page d'accueil, et ne comptent pas dans
+le test.
 
 ## Où lire quoi
 

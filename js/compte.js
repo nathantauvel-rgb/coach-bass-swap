@@ -49,8 +49,10 @@ const CPT_MAX = 400000;                       // au-delà, on n'envoie pas (gard
    - `coach-compte-propose` : le jour où la carte de fin a proposé le compte (mails.js) ; ne sert qu'avant d'en avoir un.
    - `coach-source-pro` : la réponse à « Comment tu as connu DJingood ? » (lot 81, pro.js) ; ce n'est pas de la progression,
      et confidentialite.html promet que le compte ne garde que l'adresse, le prénom et la progression (gardien du lot 81).
+   - `coach-vitrine` : le groupe du test de la page d'accueil (lot 83, vitrine.js) ; ce n'est pas de la progression, et la
+     même promesse de confidentialite.html vaut ici (gardien du lot 83). Un ordinateur ouvert par le lien n'a donc pas de groupe.
    `coach-mails` (la réponse « Vini peut m'écrire », lot 54), elle, suit le compte : on ne repose pas la question ailleurs. */
-const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-musique', 'coach-bibliotheque', 'coach-sons', 'coach-volume', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, 'coach-langue', 'coach-source-pro', CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
+const CPT_LOCAL = ['coach-midi-map', 'coach-table', 'coach-tables', 'coach-verif', 'coach-collection', 'coach-musique', 'coach-bibliotheque', 'coach-sons', 'coach-volume', 'coach-journal', 'coach-ordre', 'coach-stats', 'coach-pro', ML_PROPOSE, 'coach-langue', 'coach-vitrine', 'coach-source-pro', CPT_KEY];   // coach-pro : la réponse de Stripe (lot 59), redemandée à chaque connexion
 const cptOn = () => !!(CPT_CFG && CPT_CFG.apiKey && CPT_CFG.projectId && CPT_CFG.appId);
 const cptSuivie = k => typeof k === 'string' && k.startsWith('coach-') && !CPT_LOCAL.includes(k);
 

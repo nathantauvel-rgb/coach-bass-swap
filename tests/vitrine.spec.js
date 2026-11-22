@@ -143,6 +143,29 @@ test.describe('Page d\'accueil (lot 83)', () => {
     expect(manque).toEqual([]);
   });
 
+  test('le groupe reste sur l\'appareil : il ne part pas dans le compte en ligne (gardien)', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: { 'coach-vitrine': 'page', 'coach-parcours': 'debut' } });
+    expect(await page.evaluate(() => cptSuivie('coach-vitrine'))).toBe(false);
+    expect(await page.evaluate(() => Object.keys(cptDonnees()))).not.toContain('coach-vitrine');
+  });
+
+  test('« Tout recommencer à zéro » garde le groupe : on ne change pas de groupe en cours de test (gardien)', async ({ page }) => {
+    await ouvrir(page, { stockage: { 'coach-vitrine': 'vini', 'coach-parcours': 'debut', 'coach-lecons': JSON.stringify({ 0: 3 }) } });
+    await page.locator('#avisBtn').click();
+    await page.locator('.avreset summary').click();
+    await page.locator('#avReset').click();
+    await expect(page.locator('#pp')).toBeVisible();   // redevenu un nouveau venu : les questions de Vini, son groupe
+    expect(await page.evaluate(() => localStorage.getItem('coach-vitrine'))).toBe('vini');
+    await expect(page.locator('#vitrine')).toBeHidden();
+  });
+
+  test('la présentation mène directement chez Vini : pas une deuxième page d\'accueil, pas compté dans le test', async ({ page }) => {
+    await page.goto('/presentation.html');
+    const liens = await page.locator('a.cta, .pres-haut a.ghost').evaluateAll(l => l.map(a => a.getAttribute('href')));
+    expect(liens.length).toBeGreaterThanOrEqual(3);
+    for (const h of liens) expect(h).toBe('index.html?accueil=vini');
+  });
+
   test('sur téléphone : la phrase pour l\'ordinateur, et le bouton collé en bas quand on descend', async ({ browser }) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, locale: 'fr-FR' });
     const page = await ctx.newPage();

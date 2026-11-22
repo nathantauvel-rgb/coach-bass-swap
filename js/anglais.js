@@ -2909,7 +2909,6 @@ enDe({
   'Branche ta table': 'Plug in your controller',
   "Une partie : la piste qui défile et la table à l'écran": 'A game: the scrolling track and the controller on screen',
   'Suis la piste': 'Follow the track',
-  'Parfait, transition de pro !': 'Perfect, pro transition!',
   'Vini te note': 'Vini scores you',
   'Gratuit pour commencer.': 'Free to start.',
   'Gratuit': 'Free',
