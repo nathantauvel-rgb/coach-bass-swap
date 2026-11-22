@@ -32,7 +32,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 84 « FR | EN » : FAIT, NON PUBLIÉ (22 nov. 2026).** Demande de l'utilisateur : « je veux pas que l'on mette le site
+- **Lot 84 « FR | EN » : PUBLIÉ le 23 nov. 2026, dans la nuit** (« Oui, publie » ; `5f65342`, puis cette note = `origin/main` ;
+  production vérifiée en 1366 × 768 : djingood.fr s'ouvre en français avec « FR | EN », `?lang=en` met tout en anglais sans
+  rien garder, un nouvel onglet revient au français, un clic sur EN puis sur FR est gardé ; aucune phrase oubliée en anglais).
+  **Reste, par lui** : si son navigateur s'ouvre encore en anglais, cliquer une fois sur FR (choix gardé avant ce lot).
+  Détail du lot ci-dessous. Demande de l'utilisateur : « je veux pas que l'on mette le site
   en anglais d'office, je veux qu'il soit en fr mais qu'il y ait un bouton FR/EN pour basculer », puis « Oui, lance le
   lot ». Constat : le site s'ouvrait déjà en français, mais ouvrir une fois `?lang=en` (lien des pubs, mail de rappel en
   anglais) gardait l'anglais pour toujours dans `coach-langue` (reproduit sur djingood.fr). Copie `Documents\coach-dj-lot84`,
