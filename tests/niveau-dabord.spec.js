@@ -228,30 +228,25 @@ test.describe('La carte de fin et les 7 jours gratuits', () => {
     await expect(page.locator('#nivFinOffre .offre-go')).toHaveText('Continuer avec Pro');
   });
 
-  test('la carte de résultat du niveau 7 : le même bouton mène tout droit au paiement', async ({ page }) => {
+  test('la carte de résultat du niveau 7 : « Continuer » ouvre la fenêtre Pro (l’année d’office, l’essai), puis le compte', async ({ page }) => {
     await ouvrir(page, { avant: FAUX + PRO, stockage: SIX });
     await page.evaluate(() => { selectLesson(6); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
-    await expect(page.locator('#rProGo')).toHaveText('Commencer mes 7 jours gratuits');
-    // lot 81 : l'année d'office
-    await expect(page.locator('#rProEssai')).toContainText('7 jours gratuits, puis 49,99 € pour l’année (soit 4,17 € par mois). Rien n’est prélevé avant le 7e jour.');
-    await expect(page.locator('#rProBascule')).toHaveText('Plutôt au mois (4,99 €) ?');
-    await page.locator('#rProBascule').click();
-    await expect(page.locator('#rProEssai')).toContainText('puis 4,99 € par mois');
-    await expect(page.locator('#rProBascule')).toHaveText('Plutôt à l’année (49,99 €, 2 mois offerts) ?');
-    await page.locator('#rProBascule').click();
-    await page.evaluate(() => { $('result').hidden = false; finEssai(1, 3, 0); });
-    await page.locator('#rProGo').click();
+    await page.locator('#next').click();
     await expect(page.locator('#result')).toBeHidden();
-    await expect(page.locator('#pro')).toBeHidden();
+    await expect(page.locator('#pro')).toBeVisible();
+    await expect(page.locator('#proSemaine')).toBeVisible();
+    await expect(page.locator('#proPrix')).toHaveText('49,99 €');
+    await page.locator('#proGo').click();
     await expect(page.locator('#compte')).toBeVisible();
   });
   // gardien : la carte de résultat est refermée ; si le paiement ne s'ouvre pas, il faut le dire quelque part
-  test('le paiement ne s’ouvre pas depuis la carte de résultat : la fenêtre Pro s’ouvre et le dit', async ({ page }) => {
+  test('le paiement ne s’ouvre pas depuis la fenêtre ouverte par « Continuer » : elle le dit', async ({ page }) => {
     await page.route('**/api/pro', r => { const d = JSON.parse(r.request().postData() || '{}');
       return r.fulfill({ status: d.action === 'payer' ? 503 : 200, contentType: 'application/json', body: S(d.action === 'payer' ? { erreur: 'pas-configure' } : { pro: false, essaiDispo: true }) }); });
     await ouvrir(page, { avant: dejaConnecte() + FAUX + PRO, stockage: SIX });
     await page.evaluate(() => { selectLesson(6); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
-    await page.locator('#rProGo').click();
+    await page.locator('#next').click();
+    await page.locator('#proGo').click();
     await expect(page.locator('#pro')).toBeVisible();
     await expect(page.locator('#proMsg')).toContainText('pas encore ouvert');
   });

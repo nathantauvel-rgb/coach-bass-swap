@@ -141,7 +141,7 @@ function proDit(t){ for (const m of [$('proMsg'), ...document.querySelectorAll('
    { fin: true } (la fin du chapitre 1, lot 82 : après le paiement, on ouvre le chapitre 2). */
 function proPour(id, q = {}){
   if (id){ const t = TUTOS.find(x => x.id === id); return { voulu: id, contexte: t ? `Pour regarder « ${t.titre} »` : '', depuis: 'tuto' }; }
-  if (q.fin) return { voulu: 'chap:2', contexte: 'Tu as fini le chapitre 1', depuis: 'fin' };
+  if (q.fin) return Object.assign(proPour('', { chap: 2 }), { depuis: 'fin' });   // « Pour ouvrir le chapitre 2 : « La maîtrise » »
   // lot 81 : l'essai proposé dès la première réussite (essaiTot, niveaux.js) ; après le paiement, on reprend au niveau suivant
   if (q.tot) return { voulu: 'niv:1:' + (q.i || 0), contexte: '', depuis: 'reussite' };
   if (q.n != null && lessonsOf(q.n)[q.i]) return { voulu: `niv:${q.n}:${q.i}`, contexte: `Pour jouer « ${lessonsOf(q.n)[q.i].title} »`, depuis: 'niveau' };
@@ -193,7 +193,7 @@ $('proQuandMeme').addEventListener('click', () => { $('proEssai').hidden = true;
 function proFerme(){ $('pro').hidden = true; document.body.classList.remove('pro-ouvert'); }
 // essai : true = le mois offert aux joueurs d'avant Pro ; 'semaine' = les 7 jours gratuits (lot 76). api/pro.js vérifie
 // que l'un comme l'autre ne sert qu'une fois par compte.
-const proBoutons = on => { for (const b of [$('proGo'), ...document.querySelectorAll('.offre-go'), $('rProGo')]) if (b) b.disabled = !on; };
+const proBoutons = on => { for (const b of [$('proGo'), ...document.querySelectorAll('.offre-go')]) if (b) b.disabled = !on; };
 // Lot 76 : on peut payer depuis la carte de résultat (déjà refermée) ou une offre : si aucun message n'est à l'écran, la
 // fenêtre Pro s'ouvre pour dire ce qui s'est passé (gardien : sinon, rien ne se passait)
 function proDitVu(t){ const vu = !$('pro').hidden || [...document.querySelectorAll('.offre-msg')].some(m => !!m.parentElement.offsetParent); if (!vu) proOuvre(''); proDit(t); }
@@ -396,7 +396,7 @@ function proOffre(box, q){
   box.appendChild(m);
 }
 // Redessine les offres affichées (la formule a changé, ou Stripe a répondu)
-function proOffresRend(){ document.querySelectorAll('.offre').forEach(b => { if (b.offsetParent || !b.closest('[hidden]')) proOffre(b, b._q); }); if (typeof finEssaiTexte === 'function') finEssaiTexte(); }
+function proOffresRend(){ document.querySelectorAll('.offre').forEach(b => { if (b.offsetParent || !b.closest('[hidden]')) proOffre(b, b._q); }); }
 // « Commencer mes 7 jours gratuits » : tout droit vers la page de paiement de Stripe (en créant d'abord le compte, s'il le
 // faut), sans la grande fenêtre Pro. La règle du lot 68 reste : jamais pousser à payer avant d'avoir joué avec sa table.
 function proDemarre(q){

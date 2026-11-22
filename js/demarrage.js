@@ -25,6 +25,8 @@ $('next').addEventListener('click', () => {
   if (prac){ pracNext(); return; }
   const go =$('next').dataset.go, goLi = +$('next').dataset.li || 0; delete $('next').dataset.go; delete $('next').dataset.li; $('retry').hidden = false; $('cmpBox').hidden = false;
   if (go === 'ch2'){ $('result').hidden = true; setChapter(2); return; }
+  // lot 82 : « Continuer » à la fin du chapitre 1 (finEssai) : la grande fenêtre Pro du chapitre 2, avec la démo
+  if (go === 'pro'){ $('next').textContent = 'Niveau suivant'; $('result').hidden = true; proOuvre('', { fin: true }); return; }
   if (go === 'ch1') LESSONS = BASE_LESSONS;
   if (go === 'ch1'){ $('result').hidden = true; chapter = 1; try { localStorage.setItem('coach-chapitre', '1'); } catch (e) {} selectLesson(goLi); return; }
   if (placement){ if (placement.i >= P_STEPS.length - 1){ placementVerdict(); return; } placement.i++; selectLesson(P_STEPS[placement.i]); updatePBanner(); return; }

@@ -42,8 +42,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   de l'accueil sans abonnement ne cite que le défi du jour ; point 43 de la checklist FLX4. Laissé : la barre couvre le bas
   de la table dessinée (CUE, PLAY) pendant la démo, et « Arrêter » sur téléphone (« Fermer » fait la même chose) ; la phrase
   « Bravo, tu as fini le chapitre 1… » de l'accueil ne sert que si l'on revient à 3 niveaux gratuits ; la carte du niveau 7
-  ne dit plus « ta carte est demandée » ni le mail de rappel (comme la maquette validée ; Stripe et la fenêtre Pro le disent).
-  Planche : `captures/lot82/planche.png` (envoyée). **Reste, par lui** : le point 43 de la checklist sur sa FLX4.
+  n'a plus d'offre du tout (voir « Continuer » plus bas).
+  **Puis sa demande, avant de publier** (« il faudrait qu'à la fin du chapitre 1 il y ait un bouton … comme continuer … et
+  qu'il se retrouve face à un paywall … sans qu'il ait besoin d'aller lui-même consciemment appuyer sur le truc payer ») :
+  la carte du niveau 7 fête et n'a qu'un bouton, « Continuer » (`#next`, `dataset.go = 'pro'`, curseur dessus), qui ouvre la
+  grande fenêtre Pro du chapitre 2 avec la démo ; l'offre qui était sur la carte (`#rPro`, `#rProGo`, `#rProTard`,
+  `#rProDemo`, `finEssaiTexte`, `FIN_SUITE`) est retirée. Planche refaite : `captures/lot82/planche.png`. **Reste, par lui** :
+  le point 43 de la checklist sur sa FLX4.
   Demande : « laisse le premier chapitre gratuit
   entièrement », et au clic sur le chapitre 2 « le meilleur taux de conversion au moment du paywall ». Analyse (chiffres,
   études, règle de retour) : `Documents\MARKETING\08-chapitre-1-offert.md`. Maquette v2 validée (« Oui, lance le lot ») :
@@ -53,10 +58,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (port 8802), tests `DJ_PORT=8803` (`captures/lot82/suite.sh`). Ce qui change :
   - `NIV_GRATUITS = 7` (`js/niveaux.js`) : les 7 niveaux du chapitre 1 (et leur Mode Expert, le défi du jour) sont gratuits ;
     les chapitres 2 à 7 restent dans Pro. Revenir en arrière : remettre 3 et relire les textes de `finEssai` / `nivFinRend`.
-  - La grande carte de résultat passe du niveau 3 au niveau 7 (`finEssai`) : « Ta première transition complète ! »,
-    « Chapitre 1 terminé · N ★ », la suite en 4 tuiles (`FIN_SUITE` : chapitres 2, 3, 5, 7, un titre chacune), l'essai en
-    une phrase, « Voir la démo du chapitre 2 » (`#rProDemo`), « Plus tard » (`#rProTard`, « Rejouer » caché par CSS), plus
-    « Voir tout ce qu'il y a dans Pro » ni le détail. Étape comptée : `ch1-fini` (`essai-fini` n'est plus envoyé).
+  - La fin du chapitre 1 passe du niveau 3 au niveau 7 (`finEssai`) : la carte fête (« Ta première transition complète ! »,
+    « Chapitre 1 terminé · N ★ ») et n'a qu'un bouton, « Continuer » (le bouton « Niveau suivant », `dataset.go = 'pro'`,
+    `.rcard.fin-ch1` cache « Rejouer ») : il ouvre la grande fenêtre Pro du chapitre 2 (`proOuvre('', { fin: true })`,
+    contexte « Pour ouvrir le chapitre 2 : « La maîtrise » », image de la démo). Étape comptée : `ch1-fini` (`essai-fini`
+    n'est plus envoyé) ; la fenêtre compte `pro-ouvert` avec `depuis: 'fin'`.
   - La petite proposition d'essai (lot 81, `essaiTot`) reste aux niveaux 1 et 2 seulement (`ESSAI_TOT_NIV`).
   - Clic sur un chapitre de Pro : la grande fenêtre Pro comme avant, avec la démo en image (`#proDemo`,
     `img/demo-apercu.jpg`, anglais `img/en/demo-apercu.jpg` par `EN_IMAGES` ; faites par `captures/lot82/vignette.js`) à la

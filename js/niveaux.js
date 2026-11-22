@@ -816,41 +816,24 @@ function finish(){
 /* ---------- La fin du chapitre 1 (lot 68, lot 82) ----------
    Le seul endroit où l'on pousse vraiment Pro : la première réussite (2 étoiles ou plus) du dernier niveau gratuit. Lot 82 :
    c'est le niveau 7, « La transition complète » : la personne vient de faire sa première transition complète, avec sa table.
-   Maquette validée le 22 nov. 2026 (captures/maquette-ch1-offert/ du dossier principal, v2) ; sa règle du même jour : très
-   peu d'écriture (« trop d'écriture, ça fait brouillon »). La suite en 4 tuiles (un titre chacune), l'essai en une phrase,
-   « Voir la démo du chapitre 2 », un gros bouton et « Plus tard ». Raté, ou déjà réussi avant : la carte normale. */
-const FIN_SUITE = [[2, 'À l’oreille'], [3, 'Les vrais morceaux'], [5, 'Caler sans SYNC'], [7, 'Ton premier set']];
+   Demande de l'utilisateur (22 nov. 2026, après la maquette) : « un bouton … comme continuer … et qu'il se retrouve face au
+   paywall … sans qu'il ait besoin d'aller lui-même consciemment appuyer sur le truc payer ». La carte fête (Vini, les étoiles,
+   « Ta première transition complète ! », « Chapitre 1 terminé ») et n'a qu'un bouton, « Continuer », le même que « Niveau
+   suivant », au même endroit : il ouvre la grande fenêtre Pro du chapitre 2, avec l'image de la démo (proOuvre, pro.js).
+   Pas d'offre sur la carte elle-même (l'essai, le prix, le rattrapage sont dans la fenêtre). Raté, ou déjà réussi avant :
+   la carte normale. */
 function finEssai(ch, st, before){
   const ici = proBloque() && !prac && !placement && ch === 1 && li === NIV_GRATUITS - 1 && st >= 2 && before < 2;
-  $('rPro').hidden = !ici; $('rProGo').hidden = !ici; $('rProTard').hidden = !ici;
+  document.querySelector('.rcard').classList.toggle('fin-ch1', ici);   // « Rejouer » caché (styles.css)
+  if ($('next').dataset.go === 'pro' && !ici){ delete $('next').dataset.go; $('next').textContent = 'Niveau suivant'; }
   if (!ici) return;
   $('rTitle').textContent = 'Ta première transition complète\u00a0!';
-  $('rProNiv').innerHTML = '';
-  FIN_SUITE.forEach(([n, t]) => { const e = document.createElement('li'), s = document.createElement('small'), x = document.createElement('span');
-    s.innerHTML = NIV_CADENAS + 'Chapitre ' + n; x.textContent = t; e.append(s, x); $('rProNiv').appendChild(e); });
   $('rGain').textContent = `Chapitre 1 terminé · ${sumStars(stars)} ★`;
-  // une seule chose à faire : on range ce qui détourne l'œil (À travailler, question bonus, compte, « Niveau suivant », le
-  // détail ; « Rejouer » laisse sa place à « Plus tard », styles.css)
-  $('rTravail').hidden = true; $('quizBtn').hidden = true; $('slowBtn').hidden = true; $('rCompte').hidden = true; $('next').hidden = true; $('rTout').hidden = true;
-  $('retry').classList.remove('go');
-  finEssaiTexte();
+  // une seule chose à faire : on range ce qui détourne l'œil (À travailler, question bonus, compte, le détail)
+  $('rTravail').hidden = true; $('quizBtn').hidden = true; $('slowBtn').hidden = true; $('rCompte').hidden = true; $('rEssai').hidden = true; $('rTout').hidden = true;
+  $('next').hidden = false; $('next').textContent = 'Continuer'; $('next').dataset.go = 'pro';
+  $('next').classList.add('go'); $('retry').classList.remove('go'); $('next').focus({ preventScroll: true });   // « Rejouer », qui avait le curseur, est caché
   stat1('ch1-fini');
-}
-// Lot 76 : la même offre que la carte de fin (pro.js) : 7 jours gratuits ; le bouton mène tout droit au paiement (proDemarre)
-function finEssaiTexte(){
-  if ($('rPro').hidden || typeof proEssaiType !== 'function') return;
-  const e = proEssaiType();
-  $('rProGo').textContent = e === true ? 'Prendre mon mois offert' : e === 'semaine' ? `Commencer mes ${PRO_ESSAI_JOURS} jours gratuits` : 'Continuer avec Pro';
-  $('rProEssai').hidden = e !== 'semaine';
-  // lot 81 : l'année d'office, comme l'offre de la carte de fin (offreFormule, pro.js) ; le mois est à un clic. Pendant le
-  // rattrapage, l'année à 34,99 € et sa date limite.
-  const r = typeof proRattrapage === 'function' && e !== true && proRattrapage();
-  $('rProRattrapage').hidden = !r;
-  if (r){ $('rProRattrapage').textContent = `Ta première année à 34,99 € au lieu de 49,99 €, ${proRattrapageFin()}.`; stat1('rattrapage-vu'); }
-  if (e === 'semaine'){
-    $('rProEssaiTxt').textContent = `${PRO_ESSAI_JOURS} jours gratuits, puis ${offrePrix(true)}. Rien n’est prélevé avant le ${PRO_ESSAI_JOURS}e jour.`;
-    $('rProBascule').textContent = offreFormule === 'an' ? 'Plutôt au mois (4,99 €) ?' : r ? 'Plutôt à l’année (34,99 € la 1re année) ?' : 'Plutôt à l’année (49,99 €, 2 mois offerts) ?';
-  }
 }
 /* ---------- Lot 81 : l'essai de 7 jours, dès la première réussite ----------
    Décision de l'utilisateur (21 nov. 2026, « Oui propose l'essai de 7 jours plus tôt. Dès la première réussite c'est très
@@ -873,10 +856,6 @@ function essaiTot(ch, st){
   return true;
 }
 $('rEssaiGo').addEventListener('click', () => { $('result').hidden = true; proOuvre('', { tot: true, n: 1, i: li + 1 }); });
-$('rProBascule').addEventListener('click', () => { offreFormule = offreFormule === 'an' ? 'mois' : 'an'; proOffresRend(); finEssaiTexte(); });
-$('rProGo').addEventListener('click', () => { $('result').hidden = true; if (typeof proDemarre === 'function') proDemarre({ fin: true }); else proOuvre('', { fin: true }); });
-$('rProTard').addEventListener('click', () => { $('result').hidden = true; });
-$('rProDemo').addEventListener('click', () => apercuDemarre(2, 0, 'fin'));
 /* ---------- Lot 82 : l'aperçu d'un chapitre fermé ----------
    Son idée préférée de la maquette (« l'idée de la démo est vraiment bien, ça peut vraiment convertir ») : avant de payer, on
    regarde la démo d'un niveau de Pro, sur la vraie table du site. On y arrive par « Voir la démo du chapitre 2 » (grande

@@ -43,44 +43,47 @@ test.describe('Le chapitre 1 gratuit', () => {
 });
 
 test.describe('La grande carte, au niveau 7', () => {
-  test('le niveau 7 réussi la première fois : la suite en 4 tuiles, l’essai, la démo, « Plus tard » ; elle tient dans 1366 × 768', async ({ page }) => {
+  test('le niveau 7 réussi la première fois : la carte fête, un seul bouton « Continuer », et la fenêtre Pro tombe dessus', async ({ page }) => {
     await page.setViewportSize({ width: 1366, height: 768 });
     const err = await ouvrir(page, { avant: PRO + UMAMI, stockage: SIX });
     await resultat(page, 6);
     await expect(page.locator('#rTitle')).toHaveText('Ta première transition complète !');
     await expect(page.locator('#rGain')).toHaveText('Chapitre 1 terminé · 18 ★');
-    await expect(page.locator('#rPro .rpro-t')).toHaveText('ProLa suite : mixer seul');
-    await expect(page.locator('#rProNiv li')).toHaveText(['Chapitre 2À l’oreille', 'Chapitre 3Les vrais morceaux', 'Chapitre 5Caler sans SYNC', 'Chapitre 7Ton premier set']);
-    await expect(page.locator('#rProEssaiTxt')).toHaveText('7 jours gratuits, puis 49,99 € pour l’année (soit 4,17 € par mois). Rien n’est prélevé avant le 7e jour.');
-    await expect(page.locator('#rProDemo')).toHaveText('Voir la démo du chapitre 2');
-    await expect(page.locator('#rProGo')).toHaveText('Commencer mes 7 jours gratuits');
-    await expect(page.locator('#rProTard')).toBeVisible();
-    // une seule chose à faire : ni « Rejouer », ni « Niveau suivant », ni le détail, ni la petite proposition
-    for (const id of ['#retry', '#next', '#rTout', '#rTravail', '#rEssai', '#rCompte']) await expect(page.locator(id)).toBeHidden();
-    const r = await page.evaluate(() => ({ bas: $('rProGo').getBoundingClientRect().bottom, carte: document.querySelector('.rcard').getBoundingClientRect().bottom, h: innerHeight }));
+    // un seul bouton, le même que « Niveau suivant », au même endroit, avec le curseur dessus ; pas d'offre sur la carte
+    await expect(page.locator('#next')).toHaveText('Continuer');
+    await expect(page.locator('#next')).toHaveClass(/\bgo\b/);
+    await expect(page.locator('#next')).toBeFocused();
+    for (const id of ['#retry', '#rTout', '#rTravail', '#rEssai', '#rCompte']) await expect(page.locator(id)).toBeHidden();
+    await expect(page.locator('#result')).not.toContainText('€');
+    const r = await page.evaluate(() => ({ bas: $('next').getBoundingClientRect().bottom, carte: document.querySelector('.rcard').getBoundingClientRect().bottom, h: innerHeight }));
     expect(r.bas).toBeLessThanOrEqual(r.h); expect(r.carte).toBeLessThanOrEqual(r.h);
     expect((await stats(page)).filter(s => s[0] === 'ch1-fini')).toHaveLength(1);
-    await page.locator('#rProTard').click();
+    await page.locator('#next').click();
     await expect(page.locator('#result')).toBeHidden();
-    await expect(page.locator('#pro')).toBeHidden();
+    await expect(page.locator('#pro')).toBeVisible();
+    await expect(page.locator('#proContexteTxt')).toHaveText('Pour ouvrir le chapitre 2 : « La maîtrise »');
+    await expect(page.locator('#proDemo')).toBeVisible();
+    await expect(page.locator('#proGo')).toContainText('Commencer mes 7 jours gratuits');
+    expect((await stats(page)).filter(s => s[0] === 'pro-ouvert').map(s => s[1].depuis)).toEqual(['fin']);
     expect(err).toEqual([]);
   });
 
-  test('le niveau 3 n’a plus la grande carte, ni le niveau 7 déjà réussi ; la carte suivante retrouve « Rejouer » et le détail', async ({ page }) => {
+  test('le niveau 3 n’a pas « Continuer » vers Pro, ni le niveau 7 déjà réussi ; la carte suivante retrouve « Rejouer » et le détail', async ({ page }) => {
     await ouvrir(page, { avant: PRO + UMAMI, stockage: SEPT });
     await resultat(page, 2);
-    await expect(page.locator('#rPro')).toBeHidden();
     await expect(page.locator('#rTitle')).toHaveText('Parfait, transition de pro !');
+    await expect(page.locator('#next')).toHaveText('Niveau suivant');
     await resultat(page, 6);   // 3 étoiles avant : déjà réussi
-    await expect(page.locator('#rPro')).toBeHidden();
+    await expect(page.locator('#rTitle')).toHaveText('Parfait, transition de pro !');
+    await expect(page.locator('.rcard.fin-ch1')).toHaveCount(0);
     await expect(page.locator('#retry')).toBeVisible();
     await expect(page.locator('#rTout')).toBeVisible();
     expect((await stats(page)).filter(s => s[0] === 'ch1-fini' || s[0] === 'essai-fini')).toEqual([]);
   });
 
-  test('« Commencer mes 7 jours gratuits » : après le paiement, on ouvre le chapitre 2', async ({ page }) => {
+  test('la fenêtre ouverte par « Continuer » : après le paiement, on ouvre le chapitre 2', async ({ page }) => {
     await ouvrir(page, { avant: PRO, stockage: SEPT });
-    expect(await page.evaluate(() => proPour('', { fin: true }))).toEqual({ voulu: 'chap:2', contexte: 'Tu as fini le chapitre 1', depuis: 'fin' });
+    expect(await page.evaluate(() => proPour('', { fin: true }))).toEqual({ voulu: 'chap:2', contexte: 'Pour ouvrir le chapitre 2 : « La maîtrise »', depuis: 'fin' });
     expect(await page.evaluate(() => proSuite('chap:2')[1])).toBe('Aller au chapitre 2');
   });
 });
@@ -142,11 +145,12 @@ test.describe('Le clic sur le chapitre 2 : la grande fenêtre Pro, avec la démo
     expect(err).toEqual([]);
   });
 
-  test('depuis la grande carte : « Arrêter » rouvre la fenêtre ; changer d’onglet pendant la démo ne rouvre rien', async ({ page }) => {
+  test('depuis la fin du chapitre 1 : « Continuer », la démo, « Arrêter » rouvre la fenêtre ; changer d’onglet pendant la démo ne rouvre rien', async ({ page }) => {
     await ouvrir(page, { avant: PRO, stockage: SIX });
     await resultat(page, 6);
-    await page.locator('#rProDemo').click();
-    await expect(page.locator('#result')).toBeHidden();
+    await page.locator('#next').click();
+    await page.locator('#proDemo').click();
+    await expect(page.locator('#pro')).toBeHidden();
     await expect.poll(() => page.evaluate(() => !!run && run.demo), { timeout: 20000 }).toBe(true);
     await page.locator('#startBtn').click();   // « Arrêter »
     await expect(page.locator('#pro')).toBeVisible();
@@ -236,11 +240,9 @@ test.describe('En anglais', () => {
     await resultat(page, 6);
     await expect(page.locator('#rTitle')).toHaveText('Your first complete transition!');
     await expect(page.locator('#rGain')).toHaveText('Chapter 1 done · 18 ★');
-    await expect(page.locator('#rProNiv li').nth(2)).toHaveText('Chapter 5Beatmatch without SYNC');
-    await expect(page.locator('#rProEssaiTxt')).toHaveText("7 days free, then €49.99 for the year (that's €4.17 a month). Nothing is charged before day 7.");
-    await expect(page.locator('#rProDemo')).toHaveText('Watch the chapter 2 demo');
-    await expect(page.locator('#rProTard')).toHaveText('Later');
-    await page.evaluate(() => { $('result').hidden = true; setChapter(2); });
+    await expect(page.locator('#next')).toHaveText('Continue');
+    await page.locator('#next').click();
+    await expect(page.locator('#proContexteTxt')).toContainText('chapter 2');
     await expect(page.locator('#proDemoTxt')).toHaveText('Watch the chapter 2 demo');
     expect(await page.locator('#proDemoImg').getAttribute('src')).toBe('img/en/demo-apercu.jpg');
     await expect(page.locator('.pro-atouts li').first()).toContainText('Chapters 2 to 7');

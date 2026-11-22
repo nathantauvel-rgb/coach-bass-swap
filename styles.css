@@ -4048,14 +4048,10 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
 /* ---------- Lot 82 : le chapitre 1 offert ----------
    Maquette v2 validée le 22 nov. 2026 (captures/maquette-ch1-offert/ du dossier principal). Sa règle du même jour : très peu
    d'écriture, très visuel. */
-/* La grande carte du niveau 7 : « Plus tard » à la place de « Rejouer », Vini un peu plus petit (la carte tient en 768 px) */
-.rcard:has(#rPro:not([hidden])) #retry{display:none}
-.rcard .rrow .rbtn.rpro-tard[hidden]{display:none}
-.rcard:has(#rPro:not([hidden])) .rvini{transform:scale(.8);margin:-18px auto -22px}
-.rpro-demo,.nivfin-demo{display:inline-flex;align-items:center;gap:9px;cursor:pointer}
-.rpro-demo::before,.nivfin-demo::before{content:"";flex:0 0 auto;width:0;height:0;border-style:solid;border-width:6px 0 6px 10px;border-color:transparent transparent transparent currentColor}
-.rpro-demo{margin-top:8px;padding:4px 0;font-size:14px;font-weight:900;color:var(--brand-light);text-decoration:none}
-.rpro-demo:hover{text-decoration:underline}
+/* La carte du niveau 7 : un seul bouton, « Continuer » (« Rejouer » caché) */
+.rcard.fin-ch1 #retry{display:none}
+.nivfin-demo{display:inline-flex;align-items:center;gap:9px;cursor:pointer}
+.nivfin-demo::before{content:"";flex:0 0 auto;width:0;height:0;border-style:solid;border-width:6px 0 6px 10px;border-color:transparent transparent transparent currentColor}
 
 /* La fenêtre Pro : la démo en image, à la place de la phrase sous le titre */
 .pro-demo{position:relative;display:block;width:min(440px,100%);aspect-ratio:966/430;margin:4px 0 26px;padding:0;border:1px solid var(--brand-line);border-radius:18px;

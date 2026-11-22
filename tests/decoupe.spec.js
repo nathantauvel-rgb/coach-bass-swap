@@ -114,23 +114,20 @@ test.describe('Pro allumé, sans abonnement', () => {
     expect(await page.evaluate(() => li)).toBe(3);
   });
 
-  test('la fin du niveau 7 réussi la première fois (lot 82 : plus au niveau 3) : la grande carte et la suite dans Pro', async ({ page }) => {
+  test('la fin du niveau 7 réussi la première fois (lot 82 : plus au niveau 3) : « Continuer » vers Pro', async ({ page }) => {
     const err = await ouvrir(page, { stockage: SEPT, avant: PRO });
     await page.evaluate(() => { selectLesson(2); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
-    await expect(page.locator('#rPro')).toBeHidden();
+    await expect(page.locator('.rcard.fin-ch1')).toHaveCount(0);
     await page.evaluate(() => { selectLesson(6); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
     await expect(page.locator('#rTitle')).toHaveText('Ta première transition complète !');
-    await expect(page.locator('#rPro')).toBeVisible();
-    await expect(page.locator('#rProNiv li')).toHaveCount(4);
-    await expect(page.locator('#rProNiv li').first()).toContainText('À l’oreille');
-    await expect(page.locator('#rProGo')).toBeVisible();
-    await expect(page.locator('#next')).toBeHidden();
-    await expect(page.locator('#retry')).toBeHidden();   // « Plus tard » à sa place
+    await expect(page.locator('#next')).toHaveText('Continuer');
+    await expect(page.locator('#retry')).toBeHidden();
     // déjà réussi avant, ou raté : la carte normale
     await page.evaluate(() => { $('result').hidden = false; finEssai(1, 3, 2); });
-    await expect(page.locator('#rPro')).toBeHidden();
+    await expect(page.locator('.rcard.fin-ch1')).toHaveCount(0);
+    await expect(page.locator('#next')).toHaveText('Niveau suivant');
     await page.evaluate(() => finEssai(1, 1, 0));
-    await expect(page.locator('#rPro')).toBeHidden();
+    await expect(page.locator('.rcard.fin-ch1')).toHaveCount(0);
     expect(err).toEqual([]);
   });
 
