@@ -75,6 +75,28 @@ Pas d'enregistrement de l'écran.
    l'ordre : `mur-vu` → `compte` → `lien-ordi-envoye` → `ordi-depuis-lien` → `table-branchee` → `premiere-reussite` →
    `essai-fini` → `pro`. Fenêtre de conversion : **14 jours**. Enregistre-le sous le nom « Du téléphone à Pro ».
 
+## 6. Le test de la page d'accueil (lot 83) : laquelle fait le mieux ?
+
+Depuis le lot 83, chaque **nouveau** visiteur est tiré au sort une fois pour toutes : la moitié voit la nouvelle page
+d'accueil (groupe `page`), l'autre moitié l'écran de Vini comme avant (groupe `vini`). Chaque étape envoyée par ces
+visiteurs porte leur groupe dans la propriété **`accueil`**. Les anciens joueurs n'ont pas de groupe.
+
+**Dans Umami** : **Events** → `test-accueil` → propriété `groupe` : combien de nouveaux dans chaque groupe. Puis, pour
+`premiers-pas-fin`, `table-branchee`, `premiere-reussite`, `essai-fini` et `pro` : propriété `accueil`, `page` contre `vini`.
+Le bon chiffre est toujours **une étape divisée par `test-accueil` du même groupe** (par exemple : `premiers-pas-fin` du
+groupe `page` ÷ `test-accueil` du groupe `page`), jamais deux totaux bruts.
+
+**Dans PostHog** : **Product analytics → New insight → Funnel**, étapes `test-accueil` → `premiers-pas-fin` →
+`table-branchee` → `premiere-reussite`, puis **Breakdown** par la propriété `accueil`.
+
+**Combien de temps ?** Avec environ 550 nouveaux visiteurs par mois, il faut environ 3 semaines pour voir un écart d'au
+moins 15 points (par exemple 35 % contre 50 % qui finissent les questions de Vini), et environ 6 semaines pour un écart de
+10 points. Un écart plus petit ne se voit pas de façon sûre avec ce nombre de visiteurs. Ne pas arrêter le test plus tôt
+parce qu'un groupe semble devant après quelques jours : au début, le hasard fait de grands écarts.
+
+**Arrêter ou garder** : `VITRINE_PART` en haut de `js/vitrine.js` (`1` : tout le monde voit la page ; `0` : personne).
+Pour la voir soi-même sans fausser le test : `djingood.fr/?accueil=page` (ou `?accueil=vini`), rien n'est compté.
+
 ## Où lire quoi
 
 | Tu veux savoir… | Où regarder |
@@ -94,6 +116,8 @@ Dans l'ordre où un joueur les rencontre :
 
 | Étape | Quand |
 |---|---|
+| `test-accueil` | Nouveau visiteur tiré au sort pour le test de la page d'accueil (lot 83), avec son `groupe` : `page` ou `vini` |
+| `page-accueil-go` | Il a cliqué sur « C'est parti » de la page d'accueil (groupe `page`) |
 | `anglais` | Il a ouvert le site en anglais (bouton EN, ou une adresse avec `?lang=en`), une fois par navigateur (lots 53 et 80) |
 | `sans-midi` | Le navigateur ne peut pas parler à une table (iPhone, appli TikTok, Safari, Firefox) |
 | `premiers-pas-fin` | Il a répondu aux questions de Vini (avec son parcours et s'il a une table) |

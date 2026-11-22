@@ -2893,4 +2893,60 @@ enMotif('Recopie ce lien : {=u}', 'Copy this link: {u}');   // (d'avant le lot 7
 enMotif(/^une table \(pas dans la liste : (.{1,40})\)$/, (m, x) => `a controller (not in the list: ${x})`);
 /* ---------- Lot 73 : fin ---------- */
 
+/* ---------- Lot 83 « La page d'accueil » (index.html, #vitrine ; js/vitrine.js) ---------- */
+enPareil('Pioneer DJ', 'DJingood', 'DJingood Pro');
+enDe({
+  'Apprends à mixer sur ta table, en jouant.': 'Learn to mix on your controller, by playing.',
+  'Branche ta table DJ. Vini te guide geste par geste.': 'Plug in your DJ controller. Vini guides you one move at a time.',
+  "C'est parti": "Let's go",
+  'Gratuit · rien à installer': 'Free · nothing to install',
+  "Commence ici, joue avec ta table sur l'ordi.": 'Start here, play with your controller on your computer.',
+  "Une vraie partie : les gestes sur la table, le jeu à l'écran": 'A real game: the moves on the controller, the game on screen',
+  'Marche avec ta table': 'Works with your controller',
+  'et les autres': 'and the rest',
+  'Trois étapes, et tu mixes.': "Three steps, and you're mixing.",
+  'Le site reconnaît la table branchée': 'The site recognizes the plugged-in controller',
+  'Branche ta table': 'Plug in your controller',
+  "Une partie : la piste qui défile et la table à l'écran": 'A game: the scrolling track and the controller on screen',
+  'Suis la piste': 'Follow the track',
+  'Parfait, transition de pro !': 'Perfect, pro transition!',
+  'Vini te note': 'Vini scores you',
+  'Gratuit pour commencer.': 'Free to start.',
+  'Gratuit': 'Free',
+  '0 €': '€0',
+  'pour toujours': 'forever',
+  '7 leçons sans table': '7 lessons without a controller',
+  'Le défi du jour': 'The daily challenge',
+  '4,17 €': '€4.17',
+  'par mois': 'a month',
+  '49,99 € par an · ou 4,99 € par mois': '€49.99 a year · or €4.99 a month',
+  '7 jours gratuits': '7 days free',
+  "Les 7 chapitres, jusqu'au vrai set": 'All 7 chapters, up to a real set',
+  'Tous les tutos de Vini': "All of Vini's tutorials",
+  'Ta musique, avec rekordbox': 'Your music, with rekordbox',
+  'Questions': 'Questions',
+  "Je n'y connais rien, c'est pour moi ?": "I know nothing about it. Is it for me?",
+  "Oui. On commence par apprendre à compter la musique, puis un seul geste par niveau. Vini t'explique chaque bouton juste avant de t'en servir.":
+    'Yes. You start by learning to count the music, then one move per level. Vini explains each button right before you use it.',
+  'Ça marche avec ma table ?': 'Does it work with my controller?',
+  'Les tables de débutant les plus courantes (Pioneer, Hercules, Numark, Roland, Reloop) sont reconnues toutes seules. Une autre se règle avec toi en 30 secondes.':
+    'The most common beginner controllers (Pioneer, Hercules, Numark, Roland, Reloop) are recognized on their own. Any other one is set up with you in 30 seconds.',
+  "C'est gratuit ?": 'Is it free?',
+  'Oui pour commencer, sans carte bancaire. Pour la suite, Pro a 7 jours gratuits : un mail te prévient 2 jours avant la fin, et tu arrêtes quand tu veux dans « Mon compte ».':
+    'Yes to start, no credit card. For the rest, Pro has 7 days free: an email warns you 2 days before the end, and you cancel anytime in "My account".',
+  'En combien de temps je sais mixer ?': 'How long until I can mix?',
+  'Ta première transition, dès ta première séance. Avec 10 minutes par jour, tes premières vraies transitions propres en deux semaines.':
+    'Your first transition, in your very first session. With 10 minutes a day, your first real clean transitions in two weeks.',
+  "J'ai déjà rekordbox, ça sert à quoi ?": 'I already have rekordbox. What is this for?',
+  'rekordbox (ou Serato) sert à mixer, pas à apprendre. DJingood te fait faire chaque geste sur ta table et te dit ce qui cloche.':
+    "rekordbox (or Serato) is for mixing, not for learning. DJingood has you do each move on your controller and tells you what's off.",
+  'Il me faut quoi ?': 'What do I need?',
+  'Ta table branchée en USB, un ordinateur (PC ou Mac) avec Chrome ou Edge, et un casque ou des enceintes. Rien à installer. Sur téléphone, tu peux déjà faire 7 leçons sans table.':
+    'Your controller plugged in over USB, a computer (PC or Mac) with Chrome or Edge, and headphones or speakers. Nothing to install. On a phone, you can already do 7 lessons without a controller.',
+  "Ta première transition propre, c'est aujourd'hui.": 'Your first clean transition is today.',
+  'CGV': 'Terms'
+});
+enMotif('Tes {#n} premiers niveaux avec ta table', 'Your first {n} levels with your controller');
+/* ---------- Lot 83 : fin ---------- */
+
 trPage();

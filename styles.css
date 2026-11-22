@@ -144,6 +144,8 @@
   --t-b-1:#9FD3FF; --t-b-2:#7CC4FF; --t-b-3:#2B8EE6; --t-b-cote:#1D5F99; --t-b-anneau:#6CBCFF;
   --t-casque-1:#FFC552; --t-casque-cote:#8A5A00; --t-echo-1:#E4E7EC; --t-echo-cote:#6E7480;
   --t-reflet-fort:rgba(255,255,255,.5); --t-reflet-moyen:rgba(255,255,255,.2);
+  /* La page d'accueil (lot 83) : le voile sous le bouton collé en bas (téléphone), les noms des marques, l'ombre de Vini */
+  --vt-voile:rgba(11,14,22,.96); --vt-marque:#c9cdd6; --vt-ombre:rgba(0,0,0,.45);
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -4045,3 +4047,98 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
 .pro-source-choix button:hover{border-color:var(--brand-light)}
 .pro-source-choix button:focus-visible{outline:3px solid var(--brand-light);outline-offset:2px}
 .pro-source .pro-source-merci{color:var(--fg)}
+
+/* ---------- Lot 83 « La page d'accueil » (js/vitrine.js) ----------
+   Une page comme celles des SaaS, montrée à la moitié des nouveaux venus à la place du premier écran de Vini. Maquette validée le
+   22 nov. 2026 (captures/maquette-accueil du dossier principal) : très peu de texte, la vidéo d'une vraie partie en haut, un seul
+   bouton (« C'est parti ») répété, collé en bas de l'écran sur téléphone. Par-dessus tout le site (comme #pp), sa propre défilée. */
+html.vitrine-open, html.vitrine-open body{overflow:hidden}
+.vt{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;overflow-x:hidden;color:var(--fg);font-family:var(--sans)}
+html.vitrine-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre du compte passe par-dessus la page */
+.vt-col{max-width:1180px;margin:0 auto;padding:0 32px}
+.vt-haut{height:68px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.vt-logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:21px}
+.vt-logo .dj{color:var(--brand-light)}
+.vt-haut-d{display:flex;gap:10px;align-items:center}
+.vt-pill{height:40px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:none;color:var(--fg);font:800 14px var(--sans);cursor:pointer}
+.vt-pill:hover{border-color:var(--brand-light)}
+.vt-pill:focus-visible,.vt-go:focus-visible,.vt summary:focus-visible,.vt-pied a:focus-visible{outline:3px solid var(--brand-light);outline-offset:2px}
+.vt-heros{display:grid;grid-template-columns:1fr 1.12fr;gap:56px;align-items:center;padding:34px 0 30px}
+.vt h1{font-size:58px;line-height:1.04;font-weight:900;margin:0 0 18px;letter-spacing:-.5px}
+.vt-sous{font-size:20px;line-height:1.45;color:var(--muted);margin:0 0 30px;max-width:30ch;font-weight:700}
+.vt-go{display:inline-flex;align-items:center;justify-content:center;height:62px;padding:0 44px;border-radius:18px;border:0;cursor:pointer;
+  background:var(--brand);color:var(--fg);font:900 19px var(--sans);letter-spacing:.6px;text-transform:uppercase;box-shadow:0 5px 0 var(--brand-edge)}
+.vt-go:hover{filter:brightness(1.08)}
+.vt-go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--brand-edge)}
+.vt-apres{margin:16px 0 0;font-size:15px;color:var(--muted);font-weight:700}
+.vt-tel{display:none}
+.vt-ecran{position:relative}
+.vt-ecran video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:22px;border:1.5px solid var(--line);background:var(--panel)}
+.vt-vini{position:absolute;left:-34px;bottom:-30px;width:92px;height:auto;filter:drop-shadow(0 8px 14px var(--vt-ombre))}
+.vt-marques{display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:22px 0 8px;border-top:1px solid var(--panel-2);margin-top:6px}
+.vt-marques span{font-size:14px;color:var(--muted);font-weight:800}
+.vt-marques ul{display:flex;gap:30px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+.vt-marques li{font-size:19px;font-weight:900;color:var(--vt-marque);letter-spacing:.3px}
+.vt-marques li.vt-autres{font-size:15px;font-weight:700;color:var(--muted);align-self:center}
+.vt-sec{padding:84px 0 0}
+.vt h2{font-size:38px;font-weight:900;margin:0 0 30px;letter-spacing:-.3px;text-align:center;line-height:1.15}
+.vt-etapes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.vt-etape{background:var(--panel);border:1px solid var(--panel-2);border-radius:22px;padding:14px 14px 20px}
+.vt-img{aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--panel);display:flex;align-items:center;justify-content:center;border:1px solid var(--panel-2)}
+.vt-img img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.vt-img.vt-contient img{object-fit:contain;object-position:center}
+.vt h3{display:flex;align-items:center;gap:12px;font-size:21px;font-weight:900;margin:18px 6px 0}
+.vt-num{width:30px;height:30px;border-radius:50%;background:var(--brand);display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+.vt-prix{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:900px;margin:0 auto}
+.vt-carte{background:var(--panel);border:1.5px solid var(--panel-2);border-radius:22px;padding:28px}
+.vt-carte.vt-pro{border-color:var(--brand);background:var(--brand-soft)}
+.vt-carte h3{margin:0 0 6px;font-size:20px}
+.vt-montant{font-size:40px;font-weight:900;margin:6px 0 4px}
+.vt-montant small{font-size:16px;color:var(--muted);font-weight:800}
+.vt-petit{color:var(--muted);font-size:15px;font-weight:700;margin:0 0 16px}
+.vt-badge{display:inline-block;background:var(--brand);color:var(--fg);font-weight:900;font-size:13px;padding:5px 12px;border-radius:999px;margin-bottom:16px}
+.vt-carte ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.vt-carte li{font-size:16px;font-weight:700;display:flex;gap:10px}
+.vt-carte li::before{content:"✓";width:20px;height:20px;flex:none;margin-top:1px;border-radius:50%;background:var(--brand);color:var(--fg);font-size:12px;font-weight:900;display:inline-flex;align-items:center;justify-content:center}
+.vt-faq{max-width:900px;margin:0 auto;display:grid;gap:12px}
+.vt details{background:var(--panel);border:1px solid var(--panel-2);border-radius:16px;padding:0 22px}
+.vt summary{cursor:pointer;list-style:none;font-weight:800;font-size:17px;padding:19px 0;display:flex;justify-content:space-between;gap:16px}
+.vt summary::-webkit-details-marker{display:none}
+.vt summary::after{content:"+";color:var(--brand-light);font-size:22px;line-height:1}
+.vt details[open] summary::after{content:"–"}
+.vt details p{margin:0 0 20px;color:var(--muted);font-weight:700;line-height:1.5}
+.vt-fin{text-align:center;padding:96px 0 40px}
+.vt-fin h2{font-size:40px;margin-bottom:28px}
+.vt-pied{border-top:1px solid var(--panel-2);margin-top:60px;padding:24px 0 40px;display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:14px;font-weight:700}
+.vt-pied nav{display:flex;gap:18px;flex-wrap:wrap}
+.vt-pied a{color:var(--muted);text-decoration:none}
+.vt-pied a:hover{color:var(--fg)}
+.vt-colle{display:none}
+@media (max-width:760px){
+  .vt-col{padding:0 18px}
+  .vt-haut{height:58px}
+  .vt-heros{grid-template-columns:1fr;gap:22px;padding:12px 0 8px}
+  .vt h1{font-size:37px;margin-bottom:12px}
+  .vt-sous{font-size:17px;margin-bottom:20px}
+  .vt-go{width:100%;height:58px}
+  .vt-apres{text-align:center;margin-top:12px}
+  .vt-tel{display:block;margin:10px 0 0;font-size:14px;color:var(--muted);text-align:center;font-weight:700}
+  .vt-vini{width:70px;left:auto;right:-6px;bottom:-24px}
+  .vt-marques{gap:10px;padding-top:26px}
+  .vt-marques ul{gap:8px 18px}
+  .vt-marques li{font-size:16px}
+  .vt-sec{padding-top:60px}
+  .vt h2{font-size:29px;margin-bottom:20px}
+  .vt-etapes,.vt-prix{grid-template-columns:1fr}
+  .vt-fin{padding:70px 0 20px}
+  .vt-fin h2{font-size:29px}
+  .vt-pied{flex-direction:column;padding-bottom:110px}
+  .vt-colle{display:block;position:fixed;left:0;right:0;bottom:0;z-index:1;padding:12px 18px 16px;background:var(--vt-voile);
+    border-top:1px solid var(--panel-2);transform:translateY(110%);transition:transform .25s}
+  .vt-colle.vt-vu{transform:none}
+}
+/* un téléphone à l'horizontale ou un petit portable : le titre plus petit pour que « C'est parti » reste visible */
+@media (min-width:761px) and (max-height:700px){ .vt h1{font-size:46px} .vt-heros{padding-top:16px} }
+/* un petit téléphone : le bouton de langue laisse la place à « J'ai déjà un compte » (les questions de Vini ont le leur) */
+@media (max-width:420px){ #vtLang{display:none} }
+@media (prefers-reduced-motion:reduce){ .vt-colle{transition:none} }

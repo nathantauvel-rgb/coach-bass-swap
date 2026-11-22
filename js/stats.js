@@ -25,7 +25,8 @@ const STATS_DOMAINES = ['djingood.fr', 'www.djingood.fr', 'coach-bass-swap.verce
 const STATS_KEY = 'coach-stats', STATS_NON = 'umami.disabled';
 // Les étapes comptées une fois par navigateur, dans l'ordre où un joueur les rencontre
 const STATS_ETAPES = ['anglais', 'sans-midi', 'premiers-pas-fin', 'premiers-pas-passes', 'comprendre-1', 'comprendre-fin', 'table-branchee', 'table-choisie', 'table-test', 'table-muet', 'table-reglee', 'premiere-partie', 'premiere-reussite', 'reglage-avant-niveau',
-  'chapitre-1', 'chapitre-2', 'chapitre-3', 'chapitre-4', 'chapitre-5', 'chapitre-6', 'chapitre-7', 'compte-propose', 'compte', 'quiz-oreille', 'plan-vu', 'mur-vu', 'mur-sans-compte', 'lien-ordi-envoye', 'ordi-depuis-lien', 'rekordbox', 'ma-musique-fiche', 'ma-musique-paire', 'revenu', 'jours-7', 'pro', 'essai-fini', 'fondateur-vu', 'essai-tot', 'rattrapage-vu'];   // pro : abonné (lot 59) ; essai-fini : les 3 niveaux gratuits réussis, fondateur-vu : le mois offert proposé (lot 68)   // lot 81 : essai-tot (l'essai proposé dès la première réussite), rattrapage-vu (l'offre à 34,99 € montrée)
+  'chapitre-1', 'chapitre-2', 'chapitre-3', 'chapitre-4', 'chapitre-5', 'chapitre-6', 'chapitre-7', 'compte-propose', 'compte', 'quiz-oreille', 'plan-vu', 'mur-vu', 'mur-sans-compte', 'lien-ordi-envoye', 'ordi-depuis-lien', 'rekordbox', 'ma-musique-fiche', 'ma-musique-paire', 'revenu', 'jours-7', 'pro', 'essai-fini', 'fondateur-vu', 'essai-tot', 'rattrapage-vu',
+  'test-accueil', 'page-accueil-go'];   // lot 83 : test-accueil (le groupe tiré au sort : page d'accueil ou écran de Vini), page-accueil-go (son « C'est parti »)   // pro : abonné (lot 59) ; essai-fini : les 3 niveaux gratuits réussis, fondateur-vu : le mois offert proposé (lot 68)   // lot 81 : essai-tot (l'essai proposé dès la première réussite), rattrapage-vu (l'offre à 34,99 € montrée)
 let statsFaits = []; try { statsFaits = JSON.parse(localStorage.getItem(STATS_KEY) || '[]'); } catch (e) {}
 if (!Array.isArray(statsFaits)) statsFaits = [];
 statsFaits = statsFaits.filter(n => STATS_ETAPES.includes(n));
@@ -82,7 +83,11 @@ function statQui(uid){
   if (uid) phEnvoie('identify', [uid]); else if (avant) phEnvoie('reset', []);
 }
 
+// Lot 83 : le groupe du test de la page d'accueil (coach-vitrine, tiré au sort par vitrine.js pour les nouveaux venus) part avec
+// chaque envoi, sous le nom `accueil` ('page' ou 'vini') : Umami et PostHog comparent alors les deux groupes, étape par étape
+function statGroupe(){ try { const g = localStorage.getItem('coach-vitrine'); return g === 'page' || g === 'vini' ? g : ''; } catch (e) { return ''; } }
 function stat(nom, d){
+  const g = statGroupe(); if (g) d = Object.assign({}, d || {}, { accueil: g });
   phEnvoie('capture', [nom, d || {}]);
   statUmami(nom, d);
 }

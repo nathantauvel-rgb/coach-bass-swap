@@ -91,4 +91,5 @@ if (Object.prototype.hasOwnProperty.call(GUIDE_VERS, guideVers)){
   stat('guide-vers-jeu', { page: guideVers });
 }
 // Premiers pas (lot 28) : un nouveau venu répond d'abord aux questions de Vini
-else if (ppAOuvrir() && !cptLienVu) openPremiers();   // un lien de connexion d'abord (lot 65) : les questions attendent
+// Lot 83 : la moitié des nouveaux venus voit d'abord la page d'accueil (vitrine.js), dont « C'est parti » ouvre les questions
+else if (ppAOuvrir() && !cptLienVu){ if (vitrineAMontrer()) vitrineOuvre(); else openPremiers(); }   // un lien de connexion d'abord (lot 65) : les questions attendent

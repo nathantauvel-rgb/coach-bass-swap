@@ -125,7 +125,9 @@ function ppAnnule(){
   if (pp.vol){ pp.vol.onfinish = null; pp.vol.cancel(); pp.vol = null; }
 }
 
-function openPremiers(){
+// depart = 'niveau' (lot 83) : la page d'accueil (vitrine.js) a déjà dit bonjour et son « C'est parti » a été cliqué : on ouvre
+// directement sur la première question, et la musique part avec ce clic
+function openPremiers(depart){
   if (pp.on) return;
   Object.assign(pp, { on: true, i: 0, rep: ppVide(), entree: false, sort: false, fini: false, mail: '', lien: '', envoi: false, rate: false, prenom: '', mailTape: '' });
   if (!$('ppVini').firstChild) viniMettre($('ppVini'));
@@ -134,7 +136,9 @@ function openPremiers(){
   // le quiz est déjà fait, le compte manque (rechargement, ou retour plus tard) : on reprend sur le plan
   if (accueil && accueil.mur){ Object.assign(pp.rep, { niveau: accueil.niveau, table: accueil.table, modele: accueil.modele, min: accueil.min, oreille: accueil.oreille, autre: accueil.autre || '' });
     pp.entree = true; pp.i = PP_I('plan'); }
+  else if (depart === 'niveau'){ pp.entree = true; pp.i = PP_I('niveau'); }
   ppRender(0);
+  if (depart === 'niveau') ppMusiqueLance();
 }
 function ppClose(){
   if (typeof regAnnulePp === 'function') regAnnulePp();   // lot 73 : un réglage de table pas fini n'est pas gardé

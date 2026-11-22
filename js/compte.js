@@ -218,6 +218,7 @@ function cptChange(u){
   cptNote(); cptEtat();
   if (cptFait !== cpt.uid){ cptFait = cpt.uid; cptSync().catch(e => { cptBloque = true; cptDit(cptErreur(e)); cptEtat(); }); }
   if (typeof ppCompteOk === 'function') ppCompteOk();   // l'écran du compte des Premiers pas passe à la suite (lot 65)
+  if (typeof vitrineConnecte === 'function') vitrineConnecte();   // connecté depuis la page d'accueil (lot 83) : elle s'efface
   // DJingood Pro (pro.js, chargé après ce fichier : une session reprise tout de suite arrive avant lui, il la rattrape)
   if (typeof proCompte === 'function') proCompte(u);
 }

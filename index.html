@@ -40,6 +40,80 @@
 </head>
 <body>
 <canvas id="confetti" aria-hidden="true"></canvas>
+<!-- Lot 83 « La page d'accueil » : une page comme celles des SaaS, montrée à un nouveau venu à la place du premier écran de Vini,
+     pour la moitié des nouveaux visiteurs (test moitié / moitié, js/vitrine.js). « C'est parti » ouvre directement la première
+     question des Premiers pas. -->
+<div class="vt" id="vitrine" hidden>
+  <div class="vt-col">
+    <header class="vt-haut">
+      <span class="vt-logo"><img src="img/vini-logo.svg" alt="" width="34" height="34"><span><span class="dj">DJ</span>ingood</span></span>
+      <span class="vt-haut-d"><button type="button" class="vt-pill langbtn" id="vtLang"></button><button type="button" class="vt-pill" id="vtDeja">J'ai déjà un compte</button></span>
+    </header>
+    <div class="vt-heros">
+      <div class="vt-texte">
+        <h1 id="vtTitre">Apprends à mixer sur ta table, en jouant.</h1>
+        <p class="vt-sous">Branche ta table DJ. Vini te guide geste par geste.</p>
+        <button type="button" class="vt-go" id="vtGo">C'est parti</button>
+        <p class="vt-apres">Gratuit · rien à installer</p>
+        <p class="vt-tel">Commence ici, joue avec ta table sur l'ordi.</p>
+      </div>
+      <div class="vt-ecran">
+        <video id="vtVideo" muted loop playsinline preload="metadata" poster="img/vitrine/partie.jpg" aria-label="Une vraie partie : les gestes sur la table, le jeu à l'écran"></video>
+        <img class="vt-vini" src="img/vini-logo.svg" alt="" width="92" height="92">
+      </div>
+    </div>
+    <div class="vt-marques">
+      <span>Marche avec ta table</span>
+      <ul><li>Pioneer DJ</li><li>Hercules</li><li>Numark</li><li>Roland</li><li>Reloop</li><li class="vt-autres">et les autres</li></ul>
+    </div>
+    <section class="vt-sec">
+      <h2>Trois étapes, et tu mixes.</h2>
+      <div class="vt-etapes">
+        <div class="vt-etape"><div class="vt-img"><img src="img/vitrine/branche.jpg" alt="Le site reconnaît la table branchée" loading="lazy"></div><h3><span class="vt-num">1</span>Branche ta table</h3></div>
+        <div class="vt-etape"><div class="vt-img"><img src="img/apprendre.jpg" alt="Une partie : la piste qui défile et la table à l'écran" loading="lazy"></div><h3><span class="vt-num">2</span>Suis la piste</h3></div>
+        <div class="vt-etape"><div class="vt-img vt-contient"><img src="img/vitrine/etoiles.jpg" alt="Parfait, transition de pro !" loading="lazy"></div><h3><span class="vt-num">3</span>Vini te note</h3></div>
+      </div>
+    </section>
+    <section class="vt-sec">
+      <h2>Gratuit pour commencer.</h2>
+      <div class="vt-prix">
+        <div class="vt-carte">
+          <h3>Gratuit</h3>
+          <div class="vt-montant">0 €</div>
+          <p class="vt-petit">pour toujours</p>
+          <ul><li id="vtNiv">Tes 3 premiers niveaux avec ta table</li><li>7 leçons sans table</li><li>Le défi du jour</li></ul>
+        </div>
+        <div class="vt-carte vt-pro">
+          <h3>DJingood Pro</h3>
+          <div class="vt-montant">4,17 € <small>par mois</small></div>
+          <p class="vt-petit">49,99 € par an · ou 4,99 € par mois</p>
+          <span class="vt-badge">7 jours gratuits</span>
+          <ul><li>Les 7 chapitres, jusqu'au vrai set</li><li>Tous les tutos de Vini</li><li>Ta musique, avec rekordbox</li></ul>
+        </div>
+      </div>
+    </section>
+    <section class="vt-sec">
+      <h2>Questions</h2>
+      <div class="vt-faq">
+        <details><summary>Je n'y connais rien, c'est pour moi ?</summary><p>Oui. On commence par apprendre à compter la musique, puis un seul geste par niveau. Vini t'explique chaque bouton juste avant de t'en servir.</p></details>
+        <details><summary>Ça marche avec ma table ?</summary><p>Les tables de débutant les plus courantes (Pioneer, Hercules, Numark, Roland, Reloop) sont reconnues toutes seules. Une autre se règle avec toi en 30 secondes.</p></details>
+        <details><summary>C'est gratuit ?</summary><p>Oui pour commencer, sans carte bancaire. Pour la suite, Pro a 7 jours gratuits : un mail te prévient 2 jours avant la fin, et tu arrêtes quand tu veux dans « Mon compte ».</p></details>
+        <details><summary>En combien de temps je sais mixer ?</summary><p>Ta première transition, dès ta première séance. Avec 10 minutes par jour, tes premières vraies transitions propres en deux semaines.</p></details>
+        <details><summary>J'ai déjà rekordbox, ça sert à quoi ?</summary><p>rekordbox (ou Serato) sert à mixer, pas à apprendre. DJingood te fait faire chaque geste sur ta table et te dit ce qui cloche.</p></details>
+        <details><summary>Il me faut quoi ?</summary><p>Ta table branchée en USB, un ordinateur (PC ou Mac) avec Chrome ou Edge, et un casque ou des enceintes. Rien à installer. Sur téléphone, tu peux déjà faire 7 leçons sans table.</p></details>
+      </div>
+    </section>
+    <div class="vt-fin">
+      <h2>Ta première transition propre, c'est aujourd'hui.</h2>
+      <button type="button" class="vt-go" id="vtGo2">C'est parti</button>
+    </div>
+    <footer class="vt-pied">
+      <span>DJingood</span>
+      <nav><a href="guide/">Guide du DJ débutant</a><a href="confidentialite.html">Confidentialité</a><a href="cgv.html">CGV</a><a href="mentions-legales.html">Mentions légales</a></nav>
+    </footer>
+  </div>
+  <div class="vt-colle" id="vtColle"><button type="button" class="vt-go" id="vtGo3">C'est parti</button></div>
+</div>
 <!-- data-nosnippet : Google lit ces fenêtres cachées avant l'accueil et en citait les boutons dans ses résultats
      (« Continuer 1 Continuer PLATINE A… »). Ce réglage lui interdit de s'en servir pour décrire le site (lot 50). -->
 <div data-nosnippet class="pp" id="pp" hidden role="dialog" aria-modal="true" aria-labelledby="ppAsk">
@@ -825,6 +899,7 @@
 <script src="js/mails.js"></script>
 <script src="js/compte.js"></script>
 <script src="js/pro.js"></script>
+<script src="js/vitrine.js"></script>
 <script src="js/demarrage.js"></script>
 </body>
 </html>
