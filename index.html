@@ -253,22 +253,23 @@
       <p class="pro-contexte" id="proContexte" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span id="proContexteTxt"></span></p>
       <span class="pro-badge">PRO</span>
       <h2 id="proTitre" tabindex="-1">Mixe comme<br><span class="pro-accent">un vrai DJ.</span></h2>
-      <p class="pro-sous" id="proSous">Toute la formation DJingood : les exercices avec ta table, les tutos de Vini, l’entraînement.</p>
       <!-- Lot 82 : la démo du chapitre qu'on voulait ouvrir, en image (apercuDemarre, js/niveaux.js) -->
       <button type="button" class="pro-demo" id="proDemo" hidden><img id="proDemoImg" src="img/demo-apercu.jpg" alt="" width="966" height="430"><span class="pro-demo-play" aria-hidden="true"></span><span class="pro-demo-txt" id="proDemoTxt">Voir la démo du chapitre 2</span></button>
       <ul class="pro-atouts">
-        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span><span>Les chapitres 2 à 7<small><b id="proNbEx">36</b> exercices de plus : à l’oreille, le calage, les hot cues, le set noté sur 100.</small></span></li>
-        <li><span class="pro-ic pro-ic-b"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></span><span>Tous les tutos de Vini<small><b id="proNbTu">10</b> de plus aujourd’hui, et un nouveau chaque mois.</small></span></li>
-        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>L’entraînement et Ma musique<small>Variations, à l’oreille, mini-sets, et ce qui va avec chaque morceau de ta collection rekordbox.</small></span></li>
+        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span><span>Les chapitres 2 à 7<small><b id="proNbEx">36</b> exercices</small></span></li>
+        <li><span class="pro-ic pro-ic-b"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></span><span>Tous les tutos de Vini<small><b id="proNbTu">10</b> tutos, un nouveau chaque mois</small></span></li>
+        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>L’entraînement et Ma musique<small>avec ta collection rekordbox</small></span></li>
       </ul>
     </div>
     <div class="pro-offre">
       <div class="pro-vinyle-zone"><div class="pro-vinyle"></div><img src="img/vini-logo.svg" alt=""></div>
+      <!-- Lot 82 : une pastille et une frise à la place des pavés verts (« il faut que ce soit visuel ») -->
+      <p class="pro-pastille" id="proSemaine" hidden>7 jours gratuits</p>
+      <p class="pro-pastille" id="proFond" hidden>1er mois offert · sans carte</p>
       <div class="pro-bascule" role="group" aria-label="Formule"><button type="button" data-f="mois" aria-pressed="false">Mensuel</button><button type="button" data-f="an" aria-pressed="true">Annuel<span class="pro-eco">−17 %</span></button></div>
       <p class="pro-prix"><b id="proPrix">49,99 €</b><span id="proPar">/ an</span></p>
       <p class="pro-prix-detail" id="proDetail"></p>
-      <p class="pro-fond" id="proFond" hidden><b>Ton premier mois est offert</b>, sans carte bancaire : merci d’avoir été là avant Pro. Ensuite, ce prix, seulement si tu continues.</p>
-      <p class="pro-semaine" id="proSemaine" hidden><b>7 jours gratuits</b>, puis ce prix. Ta carte est demandée, mais rien n’est prélevé avant le 7<sup>e</sup> jour&nbsp;; Vini t’envoie un mail 2 jours avant la fin de l’essai. Tu arrêtes quand tu veux, dans «&nbsp;Mon compte&nbsp;».</p>
+      <ol class="pro-frise" id="proFrise" hidden aria-label="Ton essai gratuit"><li><b>Aujourd’hui</b><span>Gratuit</span></li><li><b>Jour 5</b><span>Rappel</span></li><li><b>Jour 7</b><span id="proFrisePrix">49,99 €</span></li></ol>
       <div class="pro-essai" id="proEssai" hidden><b>D’abord, essaie avec ta table</b><p id="proEssaiTxt"></p><button type="button" class="pro-essai-go" id="proEssaiGo">Jouer le niveau 1 (gratuit)</button></div>
       <button type="button" class="pro-go" id="proGo">Passer à Pro<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       <button type="button" class="pro-lien pro-quandmeme" id="proQuandMeme" hidden>Passer à Pro quand même</button>
@@ -280,7 +281,6 @@
   </div>
   <div class="pro-dedans">
     <h3>Ce que tu débloques</h3>
-    <p id="proDedansTxt">Tous les tutos, et un nouveau chaque mois.</p>
     <div class="pro-vignettes"><div class="pro-vg"><span class="pro-vg-mot">À L’OREILLE</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><circle cx="50" cy="30" r="8"/><circle cx="50" cy="30" r="17" opacity=".6"/><circle cx="50" cy="30" r="26" opacity=".3"/></svg><strong>La maîtrise</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">VRAIS MORCEAUX</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M6 30h38"/><path d="M50 8v44"/><path d="M58 22h36v16H58z" opacity=".7"/></svg><strong>Les vrais morceaux</strong><small>4 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">CALAGE</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M6 14C40 14 60 46 94 46"/><path d="M6 46C40 46 60 14 94 14" opacity=".45"/></svg><strong>Le calage</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">HOT CUES</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M30 18h40a12 12 0 0 1 0 24H30a12 12 0 0 1 0-24"/><path d="M62 12l8 6-8 6"/></svg><strong>Hot cues et boucles</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">LE SET</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M8 50h16v-8h16v-8h16v-8h16v-8h16"/></svg><strong>Le set</strong><small>7 niveaux, noté sur 100</small></div></div>
   </div>
 </div>

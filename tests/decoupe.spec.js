@@ -136,7 +136,8 @@ test.describe('Pro allumé, sans abonnement', () => {
     await page.evaluate(() => proOuvre('', { chap: 5 }));
     await expect(page.locator('#pro .pro-atouts')).toContainText('Les chapitres 2 à 7');
     await expect(page.locator('#pro .pro-atouts')).not.toContainText('reste gratuit');
-    await expect(page.locator('#proDedansTxt')).toHaveText('36 exercices, 10 tutos, et un nouveau tuto chaque mois.');
+    await expect(page.locator('#pro .pro-atouts')).toContainText('36 exercices');
+    await expect(page.locator('#pro .pro-atouts')).toContainText('10 tutos');
     await expect(page.locator('#proEssai')).toBeVisible();
     await expect(page.locator('#proGo')).toBeHidden();
     await expect(page.locator('#proEssaiGo')).toHaveText('Jouer le niveau 1 (gratuit)');

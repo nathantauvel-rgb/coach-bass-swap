@@ -104,20 +104,25 @@ test.describe('Le clic sur le chapitre 2 : la grande fenêtre Pro, avec la démo
     await expect(page.locator('#pro')).toBeVisible();
     await expect(page.locator('#proContexteTxt')).toHaveText('Pour ouvrir le chapitre 2 : « La maîtrise »');
     await expect(page.locator('#proDemo')).toBeVisible();
-    await expect(page.locator('#proSous')).toBeHidden();
+    await expect(page.locator('#pro .pro-sous')).toHaveCount(0);   // plus de phrase sous le titre
     await expect(page.locator('#proDemoTxt')).toHaveText('Voir la démo du chapitre 2');
     expect(await page.locator('#proDemoImg').evaluate(i => i.complete && i.naturalWidth)).toBe(966);
     await expect(page.locator('.pro-atouts li').first()).toContainText('Les chapitres 2 à 7');
-    await expect(page.locator('.pro-atouts li').first()).toContainText(`${await page.evaluate(() => proNbExercices())} exercices de plus : à l’oreille, le calage`);
+    await expect(page.locator('.pro-atouts li').first()).toContainText(`${await page.evaluate(() => proNbExercices())} exercices`);
+    // le pavé vert de l'essai est devenu une pastille et une frise en 3 points (« enlève tout le texte en vert »)
+    await expect(page.locator('#proSemaine')).toHaveText('7 jours gratuits');
+    await expect(page.locator('#proFrise li')).toHaveText(['Aujourd’huiGratuit', 'Jour 5Rappel', 'Jour 749,99 €']);
+    await page.locator('#pro .pro-bascule [data-f="mois"]').click();
+    await expect(page.locator('#proFrise li').nth(2)).toHaveText('Jour 74,99 €');
     await expect(page.locator('.pro-atouts li').first()).not.toContainText('swap');
     await expect(page.locator('.pro-vg strong')).toHaveText(['La maîtrise', 'Les vrais morceaux', 'Le calage', 'Hot cues et boucles', 'Le set']);
     expect(err).toEqual([]);
   });
 
-  test('sans chapitre (le menu, un tuto) : la fenêtre d’avant, sans image ; un chapitre fermé du menu « Tous les niveaux » : avec', async ({ page }) => {
+  test('sans chapitre (le menu) : la démo du chapitre 2 ; pour un tuto : pas d’image ; un chapitre fermé du menu « Tous les niveaux » : le sien', async ({ page }) => {
     await ouvrir(page, { avant: PRO, stockage: SEPT });
     await page.evaluate(() => proOuvre(''));
-    await expect(page.locator('#proDemo')).toBeHidden(); await expect(page.locator('#proSous')).toBeVisible();
+    await expect(page.locator('#proDemoTxt')).toHaveText('Voir la démo du chapitre 2');
     await page.evaluate(() => { proFerme(); proOuvre('swap'); });
     await expect(page.locator('#proDemo')).toBeHidden();
     await page.evaluate(() => { proFerme(); proOuvre('', { chap: 5 }); });

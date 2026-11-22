@@ -109,6 +109,7 @@ function proPrix(){
   if (r) stat1('rattrapage-vu');   // proPrix n'est appelé que pour la fenêtre Pro, qui s'affiche juste après
   const [p, par, d] = proFormule === 'an' && r ? ['34,99 €', '/ 1re année', `<s>49,99 €</s> ${proRattrapageFin()} · ensuite 49,99 € par an`] : PRO_PRIX[proFormule];   // lot 81
   $('proPrix').textContent = p; $('proPar').textContent = par; $('proDetail').innerHTML = d;   // nos propres textes
+  $('proFrisePrix').textContent = proFormule === 'an' ? (r ? '34,99 €' : '49,99 €') : '4,99 €';   // lot 82 : le jour 7 de la frise
 }
 /* ---------- Lot 81 : le rattrapage ----------
    Décision de l'utilisateur (21 nov. 2026) : « rattrapage à 34,99 € pendant 48 h ». Quelqu'un qui a ouvert la page de
@@ -160,23 +161,22 @@ function proOuvre(id, q){
   proVoulu.ecrire(p.voulu);
   $('proContexte').hidden = !p.contexte; $('proContexteTxt').textContent = p.contexte;
   $('proNbEx').textContent = proNbExercices(); $('proNbTu').textContent = TUTOS.filter(t => !t.gratuit).length;   // « 10 de plus », comme plus bas (gardien)
-  $('proDedansTxt').textContent = `${proNbExercices()} exercices, ${TUTOS.filter(t => !t.gratuit).length} tutos, et un nouveau tuto chaque mois.`;
   proFormule = 'an'; proPrix(); proDit(''); $('proGo').disabled = false;
   // Règle du lot 68 : on ne pousse jamais à payer avant d'avoir joué avec sa table (certaines tables et Safari ne marchent
   // pas avec le site : payer avant de le savoir, c'est un remboursement). « Passer à Pro quand même » reste possible.
   const essai = !proAJoue() && !proFondateur(), tel = typeof cpMobile === 'function' && cpMobile();
   $('proEssai').hidden = !essai; $('proGo').hidden = essai; $('proQuandMeme').hidden = !essai;
   if (essai){
-    $('proEssaiTxt').textContent = `Le chapitre 1 est gratuit${tel ? ', sur ordinateur' : ''}. Vérifie que ta table marche avec DJingood avant de payer quoi que ce soit.`;
+    $('proEssaiTxt').textContent = tel ? 'Le chapitre 1 est gratuit, sur ordinateur : vérifie que ta table marche.' : 'Le chapitre 1 est gratuit : vérifie que ta table marche.';
     $('proEssaiGo').textContent = tel ? 'M’envoyer le lien pour l’ordi' : 'Jouer le niveau 1 (gratuit)'; $('proEssaiGo').disabled = false;
   }
-  // Lot 82 : la démo du chapitre (ou du niveau) qu'on voulait ouvrir, en image, à la place de la phrase sous le titre
-  // (maquette v2 validée le 22 nov. 2026 : la même fenêtre qu'avant, une image de plus, une phrase de moins). Pas sur un
-  // téléphone : on y envoie vers l'ordinateur.
-  const qq = q || {}, dn = qq.fin ? 2 : qq.chap ? qq.chap : qq.n && qq.n !== 1 ? qq.n : 0, di = qq.n && !qq.chap && !qq.fin ? qq.i || 0 : 0;
-  const demo = !id && !!dn && !tel && !!lessonsOf(dn)[di] && niveauPro(dn, di);
-  $('proDemo').hidden = !demo; $('proSous').hidden = demo;
-  if (demo){ Object.assign($('proDemo').dataset, { n: dn, i: di, depuis: qq.n && !qq.chap && !qq.fin ? 'niveau' : 'fenetre' });
+  // Lot 82 : la démo du chapitre (ou du niveau) qu'on voulait ouvrir, en image, sous le titre (maquette v2 validée le
+  // 22 nov. 2026). Sans chapitre précis (le menu, l'accueil, l'entraînement…), celle du chapitre 2. Pas pour un tuto, ni sur un
+  // téléphone (on y envoie vers l'ordinateur). Plus de phrase sous le titre (« trop d'écriture »).
+  const qq = q || {}, dn = qq.fin ? 2 : qq.chap ? qq.chap : qq.n && qq.n !== 1 ? qq.n : 2, di = qq.n && qq.n !== 1 && !qq.chap && !qq.fin ? qq.i || 0 : 0;
+  const demo = !id && !tel && !!lessonsOf(dn)[di] && niveauPro(dn, di);
+  $('proDemo').hidden = !demo;
+  if (demo){ Object.assign($('proDemo').dataset, { n: dn, i: di, depuis: qq.n && qq.n !== 1 && !qq.chap && !qq.fin ? 'niveau' : 'fenetre' });
     $('proDemoTxt').textContent = `Voir la démo du chapitre ${dn}`; }   // l'image anglaise : EN_IMAGES (langue.js)
   proFondateurPrix();
   $('pro').hidden = false; document.body.classList.add('pro-ouvert');
@@ -294,7 +294,7 @@ const fondVu = () => { try { return localStorage.getItem(FOND_CLE) === '1'; } ca
 // La fenêtre Pro d'un joueur d'avant Pro : le bouton prend le mois offert
 // Lot 76 : sinon, les 7 jours gratuits si ce compte n'a jamais été abonné (#proSemaine)
 function proFondateurPrix(){
-  const f = proFondateur(), s = !f && proSemaineDispo(); $('proFond').hidden = !f; $('proSemaine').hidden = !s;
+  const f = proFondateur(), s = !f && proSemaineDispo(); $('proFond').hidden = !f; $('proSemaine').hidden = !s; $('proFrise').hidden = !s;
   $('proGo').firstChild.textContent = f ? 'Prendre mon mois offert' : s ? `Commencer mes ${PRO_ESSAI_JOURS} jours gratuits` : 'Passer à Pro';
 }
 function proFondateurPropose(essais = 0){

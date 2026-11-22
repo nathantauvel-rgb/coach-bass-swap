@@ -54,6 +54,7 @@
   --pro-teinte:rgba(124,77,255,.28); --pro-teinte-b:rgba(255,122,69,.26); --pro-trait:rgba(155,116,255,.35); --pro-trait-b:rgba(255,170,130,.35);
   --pro-carte-1:rgba(23,28,41,.96); --pro-carte-2:rgba(17,21,31,.96); --pro-bord:rgba(255,255,255,.14); --pro-fond-doux:rgba(255,255,255,.05);
   --pro-ombre:rgba(0,0,0,.55); --pro-ombre-violet:rgba(124,77,255,.4); --pro-eco:rgba(53,208,127,.16); --pro-sillon-1:#0d0f16; --pro-sillon-2:#171b26;
+  --pro-cadeau:#FFC94A; --pro-cadeau-fond:rgba(255,201,74,.12);   /* lot 82 : la pastille « 7 jours gratuits » (le doré des récompenses) */
   --brand-soft:#1c1630;
   --brand-line:#3d2d7a;
   --on-brand:#ffffff;   /* blanc : le violet du brief (#7C4DFF) est trop sombre pour du texte noir (4,0 au lieu de 4,5) */
@@ -4065,6 +4066,21 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
 .pro-demo:focus-visible{outline:3px solid var(--brand-light);outline-offset:3px}
 .pro-demo-txt{position:absolute;z-index:1;left:0;right:0;bottom:14px;text-align:center;font-size:16px;font-weight:900;color:var(--fg)}
 @media (prefers-reduced-motion:reduce){.pro-demo-play{transition:none}}
+
+/* La fenêtre Pro, plus visuelle (« enlève tout le texte en vert, il faut que ce soit visuel ») : une pastille dorée en haut de
+   la carte de prix, une frise en 3 points sous le prix, des atouts sans phrases */
+.pro-pastille{display:block;width:max-content;max-width:100%;margin:-4px auto 16px;padding:7px 18px;border-radius:999px;background:var(--pro-cadeau-fond);
+  border:1px solid var(--pro-cadeau);color:var(--pro-cadeau);font-size:14px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.pro-pastille[hidden]{display:none}
+.pro-frise{position:relative;list-style:none;margin:2px 0 24px;padding:0;display:grid;grid-template-columns:repeat(3,1fr)}
+.pro-frise[hidden]{display:none}
+.pro-frise::before{content:"";position:absolute;left:16.7%;right:16.7%;top:7px;height:2px;background:var(--brand-line)}
+.pro-frise li{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding-top:24px;text-align:center}
+.pro-frise li::before{content:"";position:absolute;top:0;left:50%;translate:-50% 0;width:16px;height:16px;border-radius:50%;background:var(--panel-2);border:2px solid var(--brand-light);box-sizing:border-box}
+.pro-frise li:first-child::before{background:var(--brand);border-color:var(--brand)}
+.pro-frise b{font-size:14px;font-weight:900}
+.pro-frise span{font-size:14px;font-weight:800;color:var(--muted)}
+.pro-atouts small{font-size:15px}
 
 /* Pendant la démo d'un chapitre fermé : une barre en bas de l'écran, une étiquette et deux boutons */
 .apercu{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:14px;width:min(860px,calc(100% - 32px));
