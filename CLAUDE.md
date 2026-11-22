@@ -47,8 +47,16 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   qu'il se retrouve face à un paywall … sans qu'il ait besoin d'aller lui-même consciemment appuyer sur le truc payer ») :
   la carte du niveau 7 fête et n'a qu'un bouton, « Continuer » (`#next`, `dataset.go = 'pro'`, curseur dessus), qui ouvre la
   grande fenêtre Pro du chapitre 2 avec la démo ; l'offre qui était sur la carte (`#rPro`, `#rProGo`, `#rProTard`,
-  `#rProDemo`, `finEssaiTexte`, `FIN_SUITE`) est retirée. Planche refaite : `captures/lot82/planche.png`. **Reste, par lui** :
-  le point 43 de la checklist sur sa FLX4.
+  `#rProDemo`, `finEssaiTexte`, `FIN_SUITE`) est retirée. **Puis** (« une interface qui donne plus envie de payer … enlève
+  tout le texte en vert … il faut que ce soit visuel », `b6e3739`) : la fenêtre Pro a une pastille dorée « 7 jours gratuits »
+  (`#proSemaine`, et « 1er mois offert · sans carte » pour `#proFond`, couleurs `--pro-cadeau` dans `:root`) en haut de la
+  carte de prix, une frise en 3 points sous le prix (`#proFrise` : Aujourd'hui gratuit / Jour 5 rappel / Jour 7 le prix,
+  `#proFrisePrix` suit la formule et le rattrapage dans `proPrix`), des atouts sans phrases, plus de `.pro-sous` ni de
+  `#proDedansTxt` ; l'image de la démo aussi quand aucun chapitre n'est demandé (celle du chapitre 2), sauf pour un tuto et
+  sur téléphone. Gardien sur `b6e3739` : feu orange, aucun blocage (955 sur 955) ; corrigé : après une carte du niveau 7
+  fermée par × ou Échap, le défi du jour suivant n'écrit plus « Niveau suivant » sur son bouton ; point 43 de la checklist
+  réécrit. Le lot 84 « FR | EN » a été publié entre-temps (`origin/main` = `e3cc902`) : fusionné ici. Planche :
+  `captures/lot82/planche.png`. **Reste, par lui** : le point 43 de la checklist sur sa FLX4.
   Demande : « laisse le premier chapitre gratuit
   entièrement », et au clic sur le chapitre 2 « le meilleur taux de conversion au moment du paywall ». Analyse (chiffres,
   études, règle de retour) : `Documents\MARKETING\08-chapitre-1-offert.md`. Maquette v2 validée (« Oui, lance le lot ») :
