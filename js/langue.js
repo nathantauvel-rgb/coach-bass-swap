@@ -180,7 +180,8 @@ if (LANGUE === 'en'){ document.documentElement.lang = 'en'; trPose(); }
 // liens du site y mènent. La version française fait foi, et chaque page anglaise la cite.
 const EN_PAGES = { 'cgv.html': 'terms.html', 'confidentialite.html': 'privacy.html', 'mentions-legales.html': 'legal-notice.html' };
 // Les captures du site sur la page de présentation : leur version anglaise (img/en/, faite par tests/images-presentation.js en)
-const EN_IMAGES = { 'img/apprendre.jpg': 'img/en/apprendre.jpg', 'img/accueil.jpg': 'img/en/accueil.jpg', 'img/vrai.jpg': 'img/en/vrai.jpg' };
+const EN_IMAGES = { 'img/apprendre.jpg': 'img/en/apprendre.jpg', 'img/accueil.jpg': 'img/en/accueil.jpg', 'img/vrai.jpg': 'img/en/vrai.jpg',
+  'img/demo-apercu.jpg': 'img/en/demo-apercu.jpg' };   // lot 82 : la démo d'un chapitre fermé, dans la fenêtre Pro (captures/lot82/vignette.js)
 function trLiens(root){
   if (LANGUE !== 'en' || !trBrut || !root || typeof root.querySelectorAll !== 'function') return;
   root.querySelectorAll('a[href]').forEach(a => { const h = a.getAttribute('href'); if (EN_PAGES[h]) trBrut.setAttribute.call(a, 'href', EN_PAGES[h]); });

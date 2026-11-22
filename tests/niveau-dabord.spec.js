@@ -9,6 +9,10 @@ const S = o => JSON.stringify(o);
 const PRO = 'window.DJINGOOD_PRO = true;';
 const etoiles = (o, n = 'coach-lecons') => ({ [n]: S(o) });
 const DEUX = etoiles({ 0: 3, 1: 2 }), TROIS = etoiles({ 0: 3, 1: 2, 2: 2 });
+// Lot 82 : le chapitre 1 est gratuit en entier. La carte d'un niveau de Pro ne se voit plus qu'au chapitre 2 et après (un
+// ancien abonné qui y revient : ch2) ; la grande carte de résultat est au niveau 7 (SIX : les niveaux 1 à 6 réussis).
+const ch2 = page => page.evaluate(() => { LESSONS = lessonsOf(2); chapter = 2; selectLesson(0); });
+const SIX = etoiles({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2 });
 // La fausse fonction /api/pro : retient chaque appel ; etat = ce que Stripe répond pour ce compte
 async function fausseApi(page, { etat = {}, erreurPayer = '' } = {}){
   const s = { appels: [] };
@@ -125,7 +129,7 @@ test.describe('Le menu « Tous les niveaux »', () => {
     await expect(page.locator('#chapters .nivmenu-gt')).toContainText('Avec DJingood Pro');
     await expect(page.locator('#chapters .chap.pro')).toHaveCount(6);
     await expect(page.locator('#chapters .pro-tag')).toHaveCount(0);
-    await expect(page.locator('.nivmenu-pro')).toContainText('Les niveaux 4 à 7 sont dans DJingood Pro.');
+    await expect(page.locator('.nivmenu-pro')).toHaveCount(0);   // lot 82 : plus de niveau de Pro au chapitre 1
     await page.locator('#chapters .chap.pro', { hasText: 'Le calage' }).click();
     await expect(page.locator('#nivMenuD h3')).toHaveText('Chapitre 5 · Le calage');
     await expect(page.locator('.nivgrille .nivcarte.ferme')).toHaveCount(7);
@@ -140,14 +144,15 @@ test.describe('Le menu « Tous les niveaux »', () => {
 });
 
 test.describe('La carte de fin et les 7 jours gratuits', () => {
-  test('après les 3 niveaux gratuits : une carte à la place du niveau de Pro (ni piste ni table), l’offre et « Rejouer »', async ({ page }) => {
+  test('un niveau de Pro affiché (un ancien abonné revenu au chapitre 2) : une carte à sa place (ni piste ni table), l’offre et le niveau gratuit à jouer', async ({ page }) => {
     const err = await ouvrir(page, { avant: PRO, stockage: TROIS });
-    await page.evaluate(() => selectLesson(3));
+    await ch2(page);
     await expect(page.locator('#nivFin')).toBeVisible();
-    await expect(page.locator('#nivFinTitre')).toHaveText('Ta première transition est faite. Bravo !');
-    await expect(page.locator('#nivFinSur')).toHaveText('Chapitre 1 · Les bases · 7 ★ sur 9');
-    await expect(page.locator('#nivFinSuite span')).toHaveCount(4);
-    await expect(page.locator('#nivFinSuite span').first()).toHaveText("L'écho out");
+    await expect(page.locator('#nivFinTitre')).toHaveText('« Le bon moment » est dans DJingood Pro');
+    await expect(page.locator('#nivFinSur')).toHaveText('Chapitre 2 · La maîtrise');
+    await expect(page.locator('#nivFinSuite span')).toHaveCount(7);
+    await expect(page.locator('#nivFinSuite span').first()).toHaveText('Le bon moment');
+    await expect(page.locator('#nivFinDemo')).toHaveText('Voir la démo');
     for (const s of ['#startBtn', '#hw', '.deck', '#ltitle']) await expect(page.locator(s)).toBeHidden();
     await expect(page.locator('#map .node[aria-pressed="true"]')).toHaveCount(0);
     const o = page.locator('#nivFinOffre');
@@ -169,26 +174,26 @@ test.describe('La carte de fin et les 7 jours gratuits', () => {
     await expect(o.locator('.offre-f[data-f="mois"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(o.locator('.offre-frise li').nth(2)).toContainText('4,99 € par mois, sauf si tu arrêtes avant');
     await o.locator('.offre-f[data-f="an"]').click();
-    // « Rejouer » : le niveau gratuit le moins bien noté
-    await expect(page.locator('#nivFinRejouer')).toHaveText('Rejouer « La coupure sèche »');
+    // le niveau gratuit à jouer : le premier pas encore réussi du chapitre 1
+    await expect(page.locator('#nivFinRejouer')).toHaveText('Jouer « L\'écho out » (gratuit)');
     await page.locator('#nivFinRejouer').click();
     await expect(page.locator('#nivFin')).toBeHidden();
     await expect(page.locator('#startBtn')).toHaveText('Jouer');
-    expect(await page.evaluate(() => li)).toBe(2);
+    expect(await page.evaluate(() => [chapter, li])).toEqual([1, 3]);
     expect(err).toEqual([]);
   });
 
-  test('un lien vers un niveau de Pro, sans avoir fini les gratuits : la carte le dit, et propose le niveau gratuit à jouer', async ({ page }) => {
+  test('un niveau de Pro, sans avoir fini le chapitre 1 : la carte le dit, et propose le niveau gratuit à jouer', async ({ page }) => {
     await ouvrir(page, { avant: PRO, stockage: etoiles({ 0: 2 }) });
-    await page.evaluate(() => selectLesson(5));
-    await expect(page.locator('#nivFinTitre')).toHaveText('« Le swap des basses » est dans DJingood Pro');
+    await ch2(page);
+    await expect(page.locator('#nivFinTitre')).toHaveText('« Le bon moment » est dans DJingood Pro');
     await expect(page.locator('#nivFinRejouer')).toHaveText('Jouer « Le fader » (gratuit)');
   });
 
   test('sans compte, « Commencer mes 7 jours gratuits » fait créer le compte, puis ouvre le paiement avec l’essai', async ({ page }) => {
     const api = await fausseApi(page);
     await ouvrir(page, { avant: FAUX + PRO, stockage: TROIS });
-    await page.evaluate(() => selectLesson(3));
+    await ch2(page);
     await page.locator('#nivFinOffre .offre-go').click();
     await expect(page.locator('#pro')).toBeHidden();   // pas de détour par la grande fenêtre Pro
     await expect(page.locator('#compte')).toBeVisible();
@@ -205,7 +210,7 @@ test.describe('La carte de fin et les 7 jours gratuits', () => {
   test('connecté, l’essai déjà servi : le site le dit et propose de s’abonner tout de suite', async ({ page }) => {
     const api = await fausseApi(page, { erreurPayer: 'essai-deja' });
     await ouvrir(page, { avant: dejaConnecte() + FAUX + PRO, stockage: TROIS });
-    await page.evaluate(() => selectLesson(3));
+    await ch2(page);
     await page.locator('#nivFinOffre .offre-go').click();
     await expect(page.locator('#nivFinOffre .offre-msg')).toHaveText('Ton essai gratuit a déjà servi : tu peux t’abonner tout de suite.');
     await expect(page.locator('#nivFinOffre .offre-go')).toHaveText('Continuer avec Pro');
@@ -216,29 +221,24 @@ test.describe('La carte de fin et les 7 jours gratuits', () => {
   test('Stripe dit que ce compte a déjà été abonné : le prix, sans essai', async ({ page }) => {
     await fausseApi(page, { etat: { essaiDispo: false } });
     await ouvrir(page, { avant: dejaConnecte() + FAUX + PRO, stockage: TROIS });
-    await page.evaluate(() => selectLesson(3));
+    await ch2(page);
     await expect(page.locator('#nivFinOffre .offre-t')).toHaveText('Continue avec DJingood Pro');
     await expect(page.locator('#nivFinOffre .offre-f')).toHaveText([/À l’année4,17 €\/mois49,99 € par an/, /Au mois4,99 €\/mois/]);
     await expect(page.locator('#nivFinOffre .offre-frise')).toHaveCount(0);
     await expect(page.locator('#nivFinOffre .offre-go')).toHaveText('Continuer avec Pro');
   });
 
-  test('la carte de résultat du niveau 3 : le même bouton mène tout droit au paiement ; la fenêtre Pro reste à un lien', async ({ page }) => {
-    await ouvrir(page, { avant: FAUX + PRO, stockage: TROIS });
-    await page.evaluate(() => { selectLesson(2); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
+  test('la carte de résultat du niveau 7 : le même bouton mène tout droit au paiement', async ({ page }) => {
+    await ouvrir(page, { avant: FAUX + PRO, stockage: SIX });
+    await page.evaluate(() => { selectLesson(6); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
     await expect(page.locator('#rProGo')).toHaveText('Commencer mes 7 jours gratuits');
     // lot 81 : l'année d'office
-    await expect(page.locator('#rProEssai')).toContainText('7 jours gratuits, puis 49,99 € pour l’année (soit 4,17 € par mois). Ta carte est demandée');
+    await expect(page.locator('#rProEssai')).toContainText('7 jours gratuits, puis 49,99 € pour l’année (soit 4,17 € par mois). Rien n’est prélevé avant le 7e jour.');
     await expect(page.locator('#rProBascule')).toHaveText('Plutôt au mois (4,99 €) ?');
     await page.locator('#rProBascule').click();
     await expect(page.locator('#rProEssai')).toContainText('puis 4,99 € par mois');
     await expect(page.locator('#rProBascule')).toHaveText('Plutôt à l’année (49,99 €, 2 mois offerts) ?');
     await page.locator('#rProBascule').click();
-    await page.locator('#rProVoir').click();
-    await expect(page.locator('#pro')).toBeVisible();
-    await expect(page.locator('#proSemaine')).toBeVisible();
-    await expect(page.locator('#proGo')).toContainText('Commencer mes 7 jours gratuits');
-    await page.keyboard.press('Escape');
     await page.evaluate(() => { $('result').hidden = false; finEssai(1, 3, 0); });
     await page.locator('#rProGo').click();
     await expect(page.locator('#result')).toBeHidden();
@@ -249,8 +249,8 @@ test.describe('La carte de fin et les 7 jours gratuits', () => {
   test('le paiement ne s’ouvre pas depuis la carte de résultat : la fenêtre Pro s’ouvre et le dit', async ({ page }) => {
     await page.route('**/api/pro', r => { const d = JSON.parse(r.request().postData() || '{}');
       return r.fulfill({ status: d.action === 'payer' ? 503 : 200, contentType: 'application/json', body: S(d.action === 'payer' ? { erreur: 'pas-configure' } : { pro: false, essaiDispo: true }) }); });
-    await ouvrir(page, { avant: dejaConnecte() + FAUX + PRO, stockage: TROIS });
-    await page.evaluate(() => { selectLesson(2); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
+    await ouvrir(page, { avant: dejaConnecte() + FAUX + PRO, stockage: SIX });
+    await page.evaluate(() => { selectLesson(6); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
     await page.locator('#rProGo').click();
     await expect(page.locator('#pro')).toBeVisible();
     await expect(page.locator('#proMsg')).toContainText('pas encore ouvert');

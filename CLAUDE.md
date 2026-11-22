@@ -32,6 +32,39 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 82 « Le chapitre 1 offert » : EN COURS (22 nov. 2026), pas publié.** Demande : « laisse le premier chapitre gratuit
+  entièrement », et au clic sur le chapitre 2 « le meilleur taux de conversion au moment du paywall ». Analyse (chiffres,
+  études, règle de retour) : `Documents\MARKETING\08-chapitre-1-offert.md`. Maquette v2 validée (« Oui, lance le lot ») :
+  `captures/maquette-ch1-offert/` du dossier principal ; la v1 (carte du chapitre 2 sur la page) refusée : « beaucoup trop
+  d'écriture, ça fait brouillon » → **sa règle pour tout le site : très peu d'écriture, très visuel**. Copie
+  `Documents\coach-dj-lot82`, branche `lot-82-chapitre1-offert` depuis `origin/main` = `63b7f90` ; serveur `coach-dj-lot82`
+  (port 8802), tests `DJ_PORT=8803` (`captures/lot82/suite.sh`). Ce qui change :
+  - `NIV_GRATUITS = 7` (`js/niveaux.js`) : les 7 niveaux du chapitre 1 (et leur Mode Expert, le défi du jour) sont gratuits ;
+    les chapitres 2 à 7 restent dans Pro. Revenir en arrière : remettre 3 et relire les textes de `finEssai` / `nivFinRend`.
+  - La grande carte de résultat passe du niveau 3 au niveau 7 (`finEssai`) : « Ta première transition complète ! »,
+    « Chapitre 1 terminé · N ★ », la suite en 4 tuiles (`FIN_SUITE` : chapitres 2, 3, 5, 7, un titre chacune), l'essai en
+    une phrase, « Voir la démo du chapitre 2 » (`#rProDemo`), « Plus tard » (`#rProTard`, « Rejouer » caché par CSS), plus
+    « Voir tout ce qu'il y a dans Pro » ni le détail. Étape comptée : `ch1-fini` (`essai-fini` n'est plus envoyé).
+  - La petite proposition d'essai (lot 81, `essaiTot`) reste aux niveaux 1 et 2 seulement (`ESSAI_TOT_NIV`).
+  - Clic sur un chapitre de Pro : la grande fenêtre Pro comme avant, avec la démo en image (`#proDemo`,
+    `img/demo-apercu.jpg`, anglais `img/en/demo-apercu.jpg` par `EN_IMAGES` ; faites par `captures/lot82/vignette.js`) à la
+    place de la phrase sous le titre ; pas sur un téléphone. « Les chapitres 2 à 7 », plus « le swap des basses » ;
+    « Ce que tu débloques » : « Les vrais morceaux » remplace « La fin du chapitre 1 ».
+  - L'aperçu (`apercu`, `apercuDemarre`, `apercuFin` dans `js/niveaux.js`) : la démo d'un niveau de Pro joue sur la table du
+    site (`proIci` faux pendant l'aperçu), barre `#apercu` en bas (« Démo · Chapitre N · … », le bouton de l'essai, « Fermer ») ;
+    à la fin, « Arrêter » ou « Fermer » : retour où l'on était et la fenêtre Pro se rouvre (pas depuis la carte d'un niveau de
+    Pro, qui a déjà l'offre) ; changer d'onglet (`setView`) arrête sans rien rouvrir. Rien n'est enregistré. Étape :
+    `demo-pro` (`chap`, `depuis`). Aussi sur la carte d'un niveau de Pro (`#nivFinDemo`), que seul un ancien abonné revenu
+    sur un chapitre payant voit maintenant.
+  - Après le paiement depuis la grande carte : on ouvre le chapitre 2 (`proPour` `fin` → `chap:2`).
+  - Apprenti DJ et DJ confirmé gardent leurs 3 niveaux en Mode Expert avant leur étape (`NIV_ESSAI`, `js/parcours.js`) ;
+    plan du Grand débutant : « Les 7 gestes du chapitre 1 » (`PP_SEPT`, `js/premiers.js`) ; « Vérifier ma table » refait
+    jouer le swap (`vfNivMusique`).
+  - Textes : CGV et `terms.html`, présentation, 5 pages du guide, description de `index.html`, « comme les chapitres 2 à 7 »
+    (Ma musique) ; tout en anglais (bloc « Lot 82 » de `js/anglais.js`, plus « précision serrée » qui manquait) ;
+    `STATISTIQUES.md` (le chiffre à suivre et la règle de retour).
+  - Tests : `tests/chapitre1-offert.spec.js` (15) ; `decoupe`, `niveau-dabord`, `caisse` adaptés (un niveau de Pro affiché :
+    chapitre 2, `ch2`).
 - **Lot 81 « La caisse » : PUBLIÉ le 21 nov. 2026** (« Oui, publie » ; `c922a3f`, puis cette note = `origin/main` ; production vérifiée en 1366 × 768, en français et en anglais : année d'office, plan, essai dès le niveau 1, question après paiement, nouveau titre, CGV ; `/api/pro` répond). **Reste, par lui** : un essai sans payer avec son compte (page de paiement, flèche « ← » de Stripe, « 34,99 € » et la date, rouvrir Stripe : −15 € et 7 jours gratuits, repartir sans payer ; ce premier passage crée la remise chez Stripe) ; points 42, 38, 2 de la checklist FLX4. La fenêtre Pro qui se rouvre au retour de Stripe a été gardée (question posée, il a répondu « Oui, publie »). Né de l'analyse d'une vidéo YouTube sur les ventes d'un SaaS
   (`Documents\MARKETING\07-video-saas.md`). Décisions de l'utilisateur, mot pour mot : « Ok pour l'année d'office, rattrapage
   à 34,99 € pendant 48 h, Non pour le prix mensuel et annuel on n'y change rien en temps normal, Oui propose l'essai de 7 jours

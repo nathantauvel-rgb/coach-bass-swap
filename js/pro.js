@@ -2,7 +2,7 @@
 // Tous les fichiers de js/ partagent la même portée et sont chargés dans l'ordre indiqué dans index.html.
 'use strict';
 /* Décision de l'utilisateur du 10 nov. 2026 (lot 68), qui remplace celle des 6-8 nov. (« rien de ce qui existe ne passe en
-   Pro », Pro = les tutos) : 3 exercices gratuits pour comprendre le concept, tout le reste dans Pro. Ce qui est gratuit est
+   Pro », Pro = les tutos) : 3 exercices gratuits pour comprendre le concept (lot 82 : tout le chapitre 1), le reste dans Pro. Ce qui est gratuit est
    décidé dans niveaux.js (niveauPro, chapitrePro, proBloque) et tutos.js (le seul tuto `gratuit`). 4,99 € par mois ou
    49,99 € par an. Pas d'essai gratuit pour tout le monde, mais un mois offert, une fois, aux joueurs d'avant Pro (plus bas).
    Écran d'après la maquette v5 (captures/maquette-pro/, hors Git) : pas de texte en dégradé, pas de reflet animé, pas de
@@ -138,10 +138,10 @@ function proRattrapageMontre(){
 function proDit(t){ for (const m of [$('proMsg'), ...document.querySelectorAll('.offre-msg')]){ m.textContent = t; m.hidden = !t; } }
 /* Lot 68 : ce qu'on voulait quand la fenêtre s'est ouverte, pour le dire en haut (« Pour jouer « L'écho out » ») et le
    proposer juste après le paiement. id = un tuto ; q = { n, i } (un niveau), { chap }, { vue: 'entrainer' | 'vrai' },
-   { fin: true } (la fin des niveaux gratuits). */
+   { fin: true } (la fin du chapitre 1, lot 82 : après le paiement, on ouvre le chapitre 2). */
 function proPour(id, q = {}){
   if (id){ const t = TUTOS.find(x => x.id === id); return { voulu: id, contexte: t ? `Pour regarder « ${t.titre} »` : '', depuis: 'tuto' }; }
-  if (q.fin) return { voulu: 'niv:1:' + NIV_GRATUITS, contexte: `Tu as fini les ${NIV_GRATUITS} niveaux gratuits`, depuis: 'fin' };
+  if (q.fin) return { voulu: 'chap:2', contexte: 'Tu as fini le chapitre 1', depuis: 'fin' };
   // lot 81 : l'essai proposé dès la première réussite (essaiTot, niveaux.js) ; après le paiement, on reprend au niveau suivant
   if (q.tot) return { voulu: 'niv:1:' + (q.i || 0), contexte: '', depuis: 'reussite' };
   if (q.n != null && lessonsOf(q.n)[q.i]) return { voulu: `niv:${q.n}:${q.i}`, contexte: `Pour jouer « ${lessonsOf(q.n)[q.i].title} »`, depuis: 'niveau' };
@@ -167,9 +167,17 @@ function proOuvre(id, q){
   const essai = !proAJoue() && !proFondateur(), tel = typeof cpMobile === 'function' && cpMobile();
   $('proEssai').hidden = !essai; $('proGo').hidden = essai; $('proQuandMeme').hidden = !essai;
   if (essai){
-    $('proEssaiTxt').textContent = `Tes ${NIV_GRATUITS} premiers exercices sont gratuits${tel ? ', sur ordinateur' : ''}. Vérifie que ta table marche avec DJingood avant de payer quoi que ce soit.`;
+    $('proEssaiTxt').textContent = `Le chapitre 1 est gratuit${tel ? ', sur ordinateur' : ''}. Vérifie que ta table marche avec DJingood avant de payer quoi que ce soit.`;
     $('proEssaiGo').textContent = tel ? 'M’envoyer le lien pour l’ordi' : 'Jouer le niveau 1 (gratuit)'; $('proEssaiGo').disabled = false;
   }
+  // Lot 82 : la démo du chapitre (ou du niveau) qu'on voulait ouvrir, en image, à la place de la phrase sous le titre
+  // (maquette v2 validée le 22 nov. 2026 : la même fenêtre qu'avant, une image de plus, une phrase de moins). Pas sur un
+  // téléphone : on y envoie vers l'ordinateur.
+  const qq = q || {}, dn = qq.fin ? 2 : qq.chap ? qq.chap : qq.n && qq.n !== 1 ? qq.n : 0, di = qq.n && !qq.chap && !qq.fin ? qq.i || 0 : 0;
+  const demo = !id && !!dn && !tel && !!lessonsOf(dn)[di] && niveauPro(dn, di);
+  $('proDemo').hidden = !demo; $('proSous').hidden = demo;
+  if (demo){ Object.assign($('proDemo').dataset, { n: dn, i: di, depuis: qq.n && !qq.chap && !qq.fin ? 'niveau' : 'fenetre' });
+    $('proDemoTxt').textContent = `Voir la démo du chapitre ${dn}`; }   // l'image anglaise : EN_IMAGES (langue.js)
   proFondateurPrix();
   $('pro').hidden = false; document.body.classList.add('pro-ouvert');
   $('proTitre').focus({ preventScroll: true });
@@ -180,6 +188,7 @@ $('proEssaiGo').addEventListener('click', e => {
   if (typeof cpMobile === 'function' && cpMobile()){ cpEnvoieLien(e.currentTarget); return; }
   proFerme(); goLesson(1, firstTodo(stars, NIV_GRATUITS));
 });
+$('proDemo').addEventListener('click', e => { const d = e.currentTarget.dataset; apercuDemarre(+d.n, +d.i || 0, d.depuis); });
 $('proQuandMeme').addEventListener('click', () => { $('proEssai').hidden = true; $('proQuandMeme').hidden = true; $('proGo').hidden = false; $('proGo').focus(); });
 function proFerme(){ $('pro').hidden = true; document.body.classList.remove('pro-ouvert'); }
 // essai : true = le mois offert aux joueurs d'avant Pro ; 'semaine' = les 7 jours gratuits (lot 76). api/pro.js vérifie

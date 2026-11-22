@@ -7,7 +7,7 @@
 <!-- Ce que Google et les liens partagés montrent du site (lot 50). La seule adresse officielle est djingood.fr :
      www.djingood.fr et coach-bass-swap.vercel.app affichent la même page, « canonical » dit à Google laquelle garder.
      Les icônes et img/partage.jpg sont fabriquées par node tests/icones.js. -->
-<meta name="description" content="Tu as une table DJ et tu n'y connais rien ? DJingood t'apprend à mixer en jouant : le site écoute ta table et note tes gestes. Premiers exercices gratuits.">
+<meta name="description" content="Tu as une table DJ et tu n'y connais rien ? DJingood t'apprend à mixer en jouant : le site écoute ta table et note tes gestes. Tout le chapitre 1 est gratuit.">
 <link rel="canonical" href="https://djingood.fr/">
 <meta property="og:site_name" content="DJingood">
 <meta property="og:title" content="DJingood · Apprends à mixer sur ta table DJ, en jouant">
@@ -253,9 +253,11 @@
       <p class="pro-contexte" id="proContexte" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span id="proContexteTxt"></span></p>
       <span class="pro-badge">PRO</span>
       <h2 id="proTitre" tabindex="-1">Mixe comme<br><span class="pro-accent">un vrai DJ.</span></h2>
-      <p class="pro-sous">Toute la formation DJingood : les exercices avec ta table, les tutos de Vini, l’entraînement.</p>
+      <p class="pro-sous" id="proSous">Toute la formation DJingood : les exercices avec ta table, les tutos de Vini, l’entraînement.</p>
+      <!-- Lot 82 : la démo du chapitre qu'on voulait ouvrir, en image (apercuDemarre, js/niveaux.js) -->
+      <button type="button" class="pro-demo" id="proDemo" hidden><img id="proDemoImg" src="img/demo-apercu.jpg" alt="" width="966" height="430"><span class="pro-demo-play" aria-hidden="true"></span><span class="pro-demo-txt" id="proDemoTxt">Voir la démo du chapitre 2</span></button>
       <ul class="pro-atouts">
-        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span><span>Les 7 chapitres<small><b id="proNbEx">40</b> exercices de plus : le swap des basses, le calage, les hot cues, le set noté sur 100.</small></span></li>
+        <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span><span>Les chapitres 2 à 7<small><b id="proNbEx">36</b> exercices de plus : à l’oreille, le calage, les hot cues, le set noté sur 100.</small></span></li>
         <li><span class="pro-ic pro-ic-b"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></span><span>Tous les tutos de Vini<small><b id="proNbTu">10</b> de plus aujourd’hui, et un nouveau chaque mois.</small></span></li>
         <li><span class="pro-ic"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>L’entraînement et Ma musique<small>Variations, à l’oreille, mini-sets, et ce qui va avec chaque morceau de ta collection rekordbox.</small></span></li>
       </ul>
@@ -279,7 +281,7 @@
   <div class="pro-dedans">
     <h3>Ce que tu débloques</h3>
     <p id="proDedansTxt">Tous les tutos, et un nouveau chaque mois.</p>
-    <div class="pro-vignettes"><div class="pro-vg"><span class="pro-vg-mot">LES BASES</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M6 30h38"/><path d="M50 8v44"/><path d="M58 22h36v16H58z" opacity=".7"/></svg><strong>La fin du chapitre 1</strong><small>4 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">À L’OREILLE</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><circle cx="50" cy="30" r="8"/><circle cx="50" cy="30" r="17" opacity=".6"/><circle cx="50" cy="30" r="26" opacity=".3"/></svg><strong>La maîtrise</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">CALAGE</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M6 14C40 14 60 46 94 46"/><path d="M6 46C40 46 60 14 94 14" opacity=".45"/></svg><strong>Le calage</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">HOT CUES</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M30 18h40a12 12 0 0 1 0 24H30a12 12 0 0 1 0-24"/><path d="M62 12l8 6-8 6"/></svg><strong>Hot cues et boucles</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">LE SET</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M8 50h16v-8h16v-8h16v-8h16v-8h16"/></svg><strong>Le set</strong><small>7 niveaux, noté sur 100</small></div></div>
+    <div class="pro-vignettes"><div class="pro-vg"><span class="pro-vg-mot">À L’OREILLE</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><circle cx="50" cy="30" r="8"/><circle cx="50" cy="30" r="17" opacity=".6"/><circle cx="50" cy="30" r="26" opacity=".3"/></svg><strong>La maîtrise</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">VRAIS MORCEAUX</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M6 30h38"/><path d="M50 8v44"/><path d="M58 22h36v16H58z" opacity=".7"/></svg><strong>Les vrais morceaux</strong><small>4 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">CALAGE</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M6 14C40 14 60 46 94 46"/><path d="M6 46C40 46 60 14 94 14" opacity=".45"/></svg><strong>Le calage</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">HOT CUES</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M30 18h40a12 12 0 0 1 0 24H30a12 12 0 0 1 0-24"/><path d="M62 12l8 6-8 6"/></svg><strong>Hot cues et boucles</strong><small>7 niveaux</small></div><div class="pro-vg"><span class="pro-vg-mot">LE SET</span><svg class="pro-vg-dessin" viewBox="0 0 100 60" aria-hidden="true"><path d="M8 50h16v-8h16v-8h16v-8h16v-8h16"/></svg><strong>Le set</strong><small>7 niveaux, noté sur 100</small></div></div>
   </div>
 </div>
 <div data-nosnippet class="pro-page pro-merci" id="proMerci" hidden role="dialog" aria-modal="true" aria-labelledby="proMerciTitre">
@@ -436,7 +438,7 @@
         <span class="lnum">Ma musique</span>
         <h1>Mixe ta musique</h1>
         <p class="lead">Choisis un morceau de ta collection rekordbox : je te trouve ceux qui vont avec, et je t’explique comment faire la transition.</p>
-        <p class="rbpro-t"><span class="pro-tag">Pro</span>Avec DJingood Pro, comme les 7 chapitres et tous les tutos.</p>
+        <p class="rbpro-t"><span class="pro-tag">Pro</span>Avec DJingood Pro, comme les chapitres 2 à 7 et tous les tutos.</p>
         <button type="button" class="pro-mini" id="rbProBtn">Découvrir Pro</button>
       </div>
       <!-- Lot 72 : « Ma musique » (ancien « Passer au vrai »). Le reste de la page est dessiné par js/rekordbox.js. -->
@@ -627,11 +629,11 @@
 
   <section class="stage" id="stage">
     <!-- Lot 76 : un niveau de Pro, sans abonnement, n'est plus affiché avec sa piste et sa table : une carte à la place.
-         Après les 3 niveaux gratuits, elle dit bravo ; sinon, elle dit que ce niveau est dans Pro. L'offre : 7 jours gratuits. -->
+         Elle dit que ce niveau est dans Pro (lot 82 : le chapitre 1 est gratuit en entier). L'offre : 7 jours gratuits. -->
     <div class="nivfin" id="nivFin" hidden>
       <div class="nivfin-g"><img src="img/vini-logo.svg" alt=""><p class="nivfin-sur" id="nivFinSur"></p><h2 id="nivFinTitre"></h2>
         <p class="nivfin-txt">La suite du chapitre :</p><div class="nivfin-suite" id="nivFinSuite"></div><p class="nivfin-txt" id="nivFinPuis"></p>
-        <div class="nivfin-btns"><button type="button" class="nivfin-sec" id="nivFinRejouer"></button></div>
+        <div class="nivfin-btns"><button type="button" class="nivfin-sec nivfin-demo" id="nivFinDemo">Voir la démo</button><button type="button" class="nivfin-sec" id="nivFinRejouer"></button></div>
         <button type="button" class="linkbtn" id="nivFinCp"></button></div>
       <div class="offre" id="nivFinOffre"></div>
     </div>
@@ -759,11 +761,11 @@
         <p class="rgain"><span class="gain" id="rGain"></span></p>
         <div class="rtravail" id="rTravail" hidden><h3>À travailler</h3><p class="rquoi" id="rQuoi"></p><p class="rcout" id="rCout" hidden></p>
           <p class="rastuce" id="rAstuce" hidden><img src="img/vini-icone.svg" alt=""><span id="rAstuceTxt"></span></p></div>
-        <div class="rpro" id="rPro" hidden><p class="rpro-t"><span class="pro-tag">Pro</span>La suite, avec DJingood Pro</p><ol class="rpro-niv" id="rProNiv"></ol>
-          <p class="rpro-txt">Puis 6 chapitres : à l’oreille, les vrais morceaux, les combos, le calage, les hot cues et le set noté sur 100.</p>
+        <div class="rpro" id="rPro" hidden><p class="rpro-t"><span class="pro-tag">Pro</span>La suite : mixer seul</p><ol class="rpro-niv" id="rProNiv"></ol>
+          <p class="rpro-txt">Et aussi : les combos, les hot cues et les boucles.</p>
           <p class="rpro-ratt" id="rProRattrapage" hidden></p>
-          <p class="rpro-essai" id="rProEssai" hidden><span id="rProEssaiTxt"></span> <button type="button" class="linkbtn rpro-bascule" id="rProBascule"></button></p><button type="button" class="linkbtn rpro-voir" id="rProVoir" hidden>Voir tout ce qu’il y a dans Pro</button></div>
-        <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button><button type="button" class="rbtn rpro-go" id="rProGo" hidden>Continuer avec Pro</button></div>
+          <p class="rpro-essai" id="rProEssai" hidden><span id="rProEssaiTxt"></span> <button type="button" class="linkbtn rpro-bascule" id="rProBascule"></button></p><button type="button" class="linkbtn rpro-demo" id="rProDemo">Voir la démo du chapitre 2</button></div>
+        <div class="rrow"><button type="button" class="rbtn" id="retry">Rejouer</button><button type="button" class="rbtn go" id="next">Niveau suivant</button><button type="button" class="rbtn rpro-tard" id="rProTard" hidden>Plus tard</button><button type="button" class="rbtn rpro-go" id="rProGo" hidden>Continuer avec Pro</button></div>
         <div class="rplus"><button type="button" class="linkbtn" id="quizBtn" hidden>Question bonus · +5 XP</button><button type="button" class="linkbtn" id="slowBtn" hidden></button></div>
         <div class="rmeta"><span class="newbadge" id="rBadge" role="status" hidden></span><span class="goalline" id="rGoal"></span><span class="questline" id="rQuete" role="status" hidden></span></div>
         <div class="rcompte" id="rCompte" hidden><img src="img/vini-icone.svg" alt=""><p><b>Garde ta progression.</b><span>Crée ton compte&nbsp;: tes étoiles et ta série te suivent sur tous tes appareils.</span></p><button type="button" class="rbtn" id="rCompteGo">Créer mon compte</button></div>
@@ -781,6 +783,9 @@
 
   </div>
 </div>
+
+<!-- Lot 82 : pendant la démo d'un chapitre fermé (apercuDemarre, js/niveaux.js) -->
+<div class="apercu" id="apercu" hidden><p class="apercu-t"><span class="apercu-tag">Démo</span><b id="apercuTitre"></b></p><button type="button" class="apercu-go" id="apercuGo">Commencer mes 7 jours gratuits</button><button type="button" class="apercu-x" id="apercuX">Fermer</button></div>
 
 <div class="cpttoast" id="cptToast" role="status" hidden><img src="img/vini-icone.svg" alt="" width="40" height="40"><span><b id="cptToastTitre"></b><span id="cptToastTxt"></span></span></div>
 

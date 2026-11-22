@@ -2893,4 +2893,55 @@ enMotif('Recopie ce lien : {=u}', 'Copy this link: {u}');   // (d'avant le lot 7
 enMotif(/^une table \(pas dans la liste : (.{1,40})\)$/, (m, x) => `a controller (not in the list: ${x})`);
 /* ---------- Lot 73 : fin ---------- */
 
+/* ---------- Lot 82 « Le chapitre 1 offert » : la grande carte du niveau 7, la démo d'un chapitre fermé, les textes ---------- */
+enDe({
+  // index.html : la grande carte du niveau 7
+  '<span class="pro-tag">Pro</span>La suite : mixer seul': '<span class="pro-tag">Pro</span>Next: mixing on your own',
+  'La suite : mixer seul': 'Next: mixing on your own',
+  'Et aussi : les combos, les hot cues et les boucles.': 'Plus: combos, hot cues and loops.',
+  'Ta première transition complète !': 'Your first complete transition!',
+  'Caler sans SYNC': 'Beatmatch without SYNC',
+  'Ton premier set': 'Your first set',
+  // la carte d'un niveau de Pro, la barre de la démo
+  'Voir la démo': 'Watch the demo',
+  'Démo': 'Demo',
+  // (d'avant le lot 82) l'étiquette du chapitre 2, que la démo montre maintenant à tout le monde
+  'précision serrée': 'tight timing',
+  // la fenêtre Pro
+  'Les chapitres 2 à 7': 'Chapters 2 to 7',
+  "exercices de plus : à l'oreille, le calage, les hot cues, le set noté sur 100.": 'more exercises: by ear, beatmatching, hot cues, the set scored out of 100.',
+  'VRAIS MORCEAUX': 'REAL TRACKS',
+  'Tu as fini le chapitre 1': "You've finished chapter 1",
+  'Le chapitre 1 est gratuit. Vérifie que ta table marche avec DJingood avant de payer quoi que ce soit.': 'Chapter 1 is free. Check that your controller works with DJingood before paying anything.',
+  'Le chapitre 1 est gratuit, sur ordinateur. Vérifie que ta table marche avec DJingood avant de payer quoi que ce soit.': 'Chapter 1 is free, on a computer. Check that your controller works with DJingood before paying anything.',
+  // js/niveaux.js, js/parcours.js
+  'Ce niveau est dans DJingood Pro. Le chapitre 1 est gratuit.': 'This level is in DJingood Pro. Chapter 1 is free.',
+  "Bravo, tu as fini le chapitre 1. La suite : à l'oreille, avec de vrais morceaux, sans SYNC.": "Well done, you've finished chapter 1. Next: by ear, with real tracks, without SYNC.",
+  // js/premiers.js : le plan du Grand débutant
+  'Les 7 gestes du chapitre 1': 'The 7 moves of chapter 1',
+  "Jusqu'à ta première transition complète, avec ta table.": 'Up to your first complete transition, with your controller.',
+  "À l'oreille, sans SYNC": 'By ear, without SYNC',
+  'Avec de vrais morceaux, sans compte à rebours.': 'With real tracks, no countdown.',
+  'Les combos, le calage, les hot cues.': 'Combos, beatmatching, hot cues.',
+  "À l'oreille, le calage, les hot cues, jusqu'au set noté sur 100.": 'By ear, beatmatching, hot cues, all the way to the set scored out of 100.'
+});
+enMotif('Voir la démo du chapitre {#n}', 'Watch the chapter {n} demo');
+enMotif('Chapitre 1 terminé · {#n} ★', 'Chapter 1 done · {n} ★');
+enMotif("{#n} jours gratuits, puis {x}. Rien n'est prélevé avant le {#m}e jour.", '{n} days free, then {x}. Nothing is charged before day {m}.');
+// la page de présentation (lot 82 : tout le chapitre 1 gratuit)
+enDe({
+  '<b>Tout le chapitre 1 gratuit</b> · puis 4,99 € par mois, sans engagement · rien à installer': '<b>All of chapter 1 free</b> · then €4.99 a month, no commitment · nothing to install',
+  'Tout le chapitre 1 gratuit': 'All of chapter 1 free',
+  "Les 7 leçons « Comprendre », sans table. Tout le chapitre 1 avec ta table, jusqu'à ta première transition complète. Le défi du jour et un tuto. Dans « Ma musique », l'import de ta collection et la fiche d'un de tes morceaux.":
+    'The 7 "Understand" lessons, no controller needed. All of chapter 1 with your controller, up to your first complete transition. The daily challenge and a tutorial. In "My music", importing your collection and the card for one of your tracks.',
+  "Pour commencer, oui : les 7 leçons « Comprendre », tout le chapitre 1 avec ta table (7 niveaux), le défi du jour, un tuto, et dans « Ma musique » l'import de ta collection et la fiche d'un de tes morceaux sont gratuits. La suite (les chapitres 2 à 7, tous les tutos, l'entraînement, le reste de Ma musique) est dans DJingood Pro, à 4,99 € par mois ou 49,99 € par an, sans engagement : tu arrêtes en deux clics.":
+    'To start, yes: the 7 "Understand" lessons, all of chapter 1 with your controller (7 levels), the daily challenge, a tutorial, and in "My music" importing your collection and the card for one of your tracks are free. The rest (chapters 2 to 7, all the tutorials, practice, the rest of My music) is in DJingood Pro, at €4.99 a month or €49.99 a year, no commitment: you cancel in two clicks.'
+});
+enDe({
+  "Ou 49,99 € par an, sans engagement. Les chapitres 2 à 7, tous les tutos de Vini, l'entraînement et Ma musique.": "Or €49.99 a year, no commitment. Chapters 2 to 7, all of Vini's tutorials, practice and My music.",
+  '<span class="pro-tag">Pro</span>Avec DJingood Pro, comme les chapitres 2 à 7 et tous les tutos.': '<span class="pro-tag">Pro</span>With DJingood Pro, like chapters 2 to 7 and all the tutorials.',
+  'Avec DJingood Pro, comme les chapitres 2 à 7 et tous les tutos.': 'With DJingood Pro, like chapters 2 to 7 and all the tutorials.'
+});
+/* ---------- Lot 82 : fin ---------- */
+
 trPage();
