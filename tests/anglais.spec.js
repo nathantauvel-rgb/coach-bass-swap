@@ -177,15 +177,17 @@ test.describe('Le bouton FR | EN tient dans l\'en-tête', () => {
     expect(depasse).toEqual([0, 0]);
     expect(erreurs).toEqual([]);
   });
-  for (const [locale, q] of [['fr-FR', ''], ['en-US', '?lang=en']])
-    test('présentation sur un téléphone de 360 px (' + locale + ') : « Ouvrir le site » tient sur une ligne', async ({ browser }) => {
-      const ctx = await browser.newContext({ locale, viewport: { width: 360, height: 780 } }), page = await ctx.newPage();
+  // (le cas « navigateur en anglais, page en français » : le bouton dit « FR | English » ailleurs, « FR | EN » ici)
+  for (const [locale, q, largeur] of [['fr-FR', '', 360], ['en-US', '?lang=en', 360], ['en-US', '', 360], ['en-US', '', 375], ['en-US', '', 390]])
+    test('présentation sur un téléphone de ' + largeur + ' px (' + locale + (q ? ', ' + q : '') + ') : « Ouvrir le site » tient sur une ligne', async ({ browser }) => {
+      const ctx = await browser.newContext({ locale, viewport: { width: largeur, height: 780 } }), page = await ctx.newPage();
       await page.goto('/presentation.html' + q);
       await expect(page.locator('#langBtn button')).toHaveCount(2);
       const [lang, ouvrir] = await Promise.all(['#langBtn', '.pres-haut a.ghost'].map(s => page.locator(s).boundingBox()));
       expect(ouvrir.height).toBeLessThan(46);
       expect(Math.abs(lang.y + lang.height / 2 - (ouvrir.y + ouvrir.height / 2))).toBeLessThan(4);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(largeur);
+      expect(ouvrir.x + ouvrir.width).toBeLessThanOrEqual(largeur - 16);   // dans la marge de la page (16 px), pas collé au bord
       await ctx.close();
     });
 });

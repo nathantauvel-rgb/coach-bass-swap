@@ -61,6 +61,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   par le lien des pubs sur un navigateur en français, un clic sur EN garde l'anglais). Tests ajoutés (1270 px avec un long
   prénom, présentation à 360 px en français et en anglais, clic sur EN déjà allumé). Remarque non corrigée, voulue : ceux qui
   ont déjà ouvert `?lang=en` depuis le lot 80 ont l'anglais gardé ; ils restent en anglais jusqu'à un clic sur FR.
+  Commit `1f2df19`, suite complète **944 sur 944** (`captures/lot84/suite2/`). **Second passage du gardien : feu orange**, un
+  défaut venu de la retouche : sur la présentation, un navigateur pas en français (« FR | English ») + « Ouvrir le site » qui
+  ne passe plus à la ligne dépassaient de l'écran entre 360 et 389 px. Corrigé : sous 420 px, « English » redevient « EN » et
+  l'écart se resserre ; sous 340 px, « Ouvrir le site » peut de nouveau passer à la ligne. Mesuré (`mesure.js`) : dans la
+  marge de 16 px de 360 à 414 px dans les trois cas, aucun défilement de côté à 320 px. Tests de la présentation sur
+  téléphone étendus (navigateur anglais à 360, 375, 390 px) : `anglais.spec.js` + `presentation.spec.js` 31 sur 31 ; la suite
+  complète n'a pas été relancée pour cette dernière retouche (CSS de la présentation sous 420 px seulement).
 - **Lot 81 « La caisse » : PUBLIÉ le 21 nov. 2026** (« Oui, publie » ; `c922a3f`, puis cette note = `origin/main` ; production vérifiée en 1366 × 768, en français et en anglais : année d'office, plan, essai dès le niveau 1, question après paiement, nouveau titre, CGV ; `/api/pro` répond). **Reste, par lui** : un essai sans payer avec son compte (page de paiement, flèche « ← » de Stripe, « 34,99 € » et la date, rouvrir Stripe : −15 € et 7 jours gratuits, repartir sans payer ; ce premier passage crée la remise chez Stripe) ; points 42, 38, 2 de la checklist FLX4. La fenêtre Pro qui se rouvre au retour de Stripe a été gardée (question posée, il a répondu « Oui, publie »). Né de l'analyse d'une vidéo YouTube sur les ventes d'un SaaS
   (`Documents\MARKETING\07-video-saas.md`). Décisions de l'utilisateur, mot pour mot : « Ok pour l'année d'office, rattrapage
   à 34,99 € pendant 48 h, Non pour le prix mensuel et annuel on n'y change rien en temps normal, Oui propose l'essai de 7 jours

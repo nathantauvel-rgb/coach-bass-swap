@@ -4054,6 +4054,12 @@ html.pp-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fenêtre 
 /* téléphone : « Ouvrir le site » reste sur une ligne (gardien du lot 84 : il passait sur deux lignes à 360 px) */
 .pres-haut .ghost{white-space:nowrap}
 @media (max-width:760px){.pres-haut .langbtn button{height:28px;min-width:26px;padding:0 5px}}
+/* petit téléphone : « English » redevient « EN », comme dans l'en-tête du site (second passage du gardien : avec un
+   navigateur pas en français, « FR | English » + « Ouvrir le site » dépassaient de l'écran entre 360 et 389 px) ; à 340 px
+   et moins, « Ouvrir le site » peut de nouveau passer à la ligne, plutôt que de sortir de l'écran */
+@media (max-width:420px){.pres-haut .langbtn .lb-long{display:none}.pres-haut .langbtn .lb-court{display:inline}
+  .pres .pres-haut{gap:6px}.pres .top .pres-haut .ghost{padding:7px 10px}}   /* « Open the site » tient dans la marge de 16 px */
+@media (max-width:340px){.pres-haut .ghost{white-space:normal}}
 @media (max-width:1039px){:root[lang="en"] .mx [data-k^="cfx"]::before{content:"FILTER"}}   /* lot 80 : comme la règle française, seulement sur petit écran */
 .pres-haut{display:flex;gap:8px;align-items:center}
 /* Lot 80 : le guide du débutant n'existe qu'en français : ses liens disparaissent en anglais */
