@@ -32,7 +32,19 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 82 « Le chapitre 1 offert » : EN COURS (22 nov. 2026), pas publié.** Demande : « laisse le premier chapitre gratuit
+- **Lot 82 « Le chapitre 1 offert » : FAIT, NON PUBLIÉ (22 nov. 2026), attend l'accord de l'utilisateur.** Commits `6b41251`
+  (le lot) et `3770068` (remarques du gardien) sur `lot-82-chapitre1-offert`, au-dessus d'`origin/main` = `63b7f90` (rien à
+  fusionner au 22 nov. au soir ; les lots 83 et 84 existent dans d'autres copies, pas publiés : si l'un part avant, fusionner).
+  Suite complète : 952 sur 952, puis 955 sur 955 après les remarques. **Gardien : feu orange, aucun blocage** ; corrigé : la
+  barre de la démo restait si l'on changeait de chapitre pendant la préparation (et « Jouer » aurait pu lancer le niveau de
+  Pro) → `proIci` ne libère que le niveau de la démo, `startRun` réel pendant l'aperçu = `apercuFin(true)`,
+  `apercuFin(false, false)` si la préparation est abandonnée ; le « ! » du titre (espace insécable) ; l'étape « S'entraîner »
+  de l'accueil sans abonnement ne cite que le défi du jour ; point 43 de la checklist FLX4. Laissé : la barre couvre le bas
+  de la table dessinée (CUE, PLAY) pendant la démo, et « Arrêter » sur téléphone (« Fermer » fait la même chose) ; la phrase
+  « Bravo, tu as fini le chapitre 1… » de l'accueil ne sert que si l'on revient à 3 niveaux gratuits ; la carte du niveau 7
+  ne dit plus « ta carte est demandée » ni le mail de rappel (comme la maquette validée ; Stripe et la fenêtre Pro le disent).
+  Planche : `captures/lot82/planche.png` (envoyée). **Reste, par lui** : le point 43 de la checklist sur sa FLX4.
+  Demande : « laisse le premier chapitre gratuit
   entièrement », et au clic sur le chapitre 2 « le meilleur taux de conversion au moment du paywall ». Analyse (chiffres,
   études, règle de retour) : `Documents\MARKETING\08-chapitre-1-offert.md`. Maquette v2 validée (« Oui, lance le lot ») :
   `captures/maquette-ch1-offert/` du dossier principal ; la v1 (carte du chapitre 2 sur la page) refusée : « beaucoup trop
