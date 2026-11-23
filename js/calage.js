@@ -39,7 +39,7 @@ const CH5_LESSONS = [
     show: ['gTempoB', 'gJogB'], user: [], autoLaunch: true, launchBeat: 20, bCue: 0, bBass: true, init: CH5_INIT, start: 16, end: 60,
     cal: { decale: [20, 50], bpmB: [121, 122, 126, 127], compteur: true, bpm: false, grace: 16 } },
   { kind: 'cal', title: 'Au casque', goal: 'Prépare B au casque sans que la salle l’entende, puis fais-le entrer sur la phrase.',
-    how: 'Allume le CUE 🎧 de B, cale-le au casque, puis monte son fader au temps 64.',
+    how: 'Allume le CUE 🎧 de B, règle son tempo et cale-le au casque, puis monte son fader au temps 64.',
     show: ['gTempoB', 'gJogB', 'gCasqueB', 'gFad'], user: ['faderB'], autoLaunch: true, launchBeat: 36, bCue: 0, bBass: true, init: Object.assign({}, CH5_INIT, { faderB: 0 }), start: 32, end: 76,
     cal: { decale: [20, 60], bpmB: [122, 126], compteur: true, bpm: false, grace: 16, entre: 64 } },
   { kind: 'cal', title: 'Lancer et caler', goal: 'Tout toi-même : lance B, règle sa vitesse, cale-le, puis échange les basses.',

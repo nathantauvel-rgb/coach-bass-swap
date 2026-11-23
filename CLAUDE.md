@@ -32,7 +32,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 86 « Comment faire, en court » : EN COURS (23 nov. 2026), pas publié.** Sa demande, après le lot 85 : « Oui,
+- **Lot 86 « Comment faire, en court » : FAIT (23 nov. 2026), NON PUBLIÉ, attend l'accord de l'utilisateur.** Gardien : feu
+  orange, aucun blocage, 967 sur 967, aucune consigne fausse ; ses deux phrases à compléter corrigées (ch. 5 niv. 5 : « règle
+  son tempo » ; ch. 4 niv. 1 : le filtre « à fond au swap ») avec « une fois seul » au ch. 7 niv. 6 et « pull … down » au lieu
+  de « drop » comme verbe en anglais (aussi dans deux phrases du ch. 1) ; tests liés 71 sur 71. Reste, par lui : points 27 à
+  30, 32 et 34 de la checklist FLX4. Sa demande, après le lot 85 : « Oui,
   raccourcis-les » (les « Comment faire ? » des chapitres 2 à 7). Copie `Documents\coach-dj-lot86`, branche
   `lot-86-comment-faire` depuis `origin/main` = `5b9f2c6` (lot 85 publié) ; serveur `coach-dj-lot86` (port 8820), tests
   `DJ_PORT=8821`. Ce qui change : les 29 `how` des chapitres 3 à 7 en une phrase chacun (`js/niveaux.js` pour le chapitre 3,

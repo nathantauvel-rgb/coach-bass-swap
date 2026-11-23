@@ -65,7 +65,7 @@ const CH7_LESSONS = [
     how: 'Lance le suivant fader en bas, CUE 🎧 allumé : cale-le au casque, puis monte son fader sur une phrase.',
     set: { m: [[122], [125], [121, 'basse'], [124]], casque: true, aides: { bpm: false, decal: false, phrases: true, note: true } } },
   { title: 'La montée', goal: 'Cinq morceaux de plus en plus rapides : fais monter la soirée de 120 à 128 BPM, en douceur.',
-    how: 'Chaque morceau va 2 BPM plus vite : cale-le, puis ramène-le peu à peu à son tempo, jusqu\'à 126 BPM ou plus.',
+    how: 'Chaque morceau va 2 BPM plus vite : cale-le, puis, une fois seul, ramène-le peu à peu à son tempo, jusqu\'à 126 BPM ou plus.',
     set: { m: [[120], [122], [124], [126], [128]], montee: 126, aides: { bpm: true, decal: false, phrases: true, note: true } } },
   { title: 'Le grand set', goal: 'Le final : six morceaux surprise, de 120 à 130 BPM, sans aucune aide.',
     how: 'Tout à l\'oreille, sans aucune aide : lancer, caler, échanger les basses, faire sortir.',
