@@ -34,7 +34,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 ## Pour reprendre (état au 28 oct. 2026)
 - **Lot 85 « Moins de texte » : PUBLIÉ le 23 nov. 2026** (« ok publie le 85 quand c'est vert » ; second passage du gardien : feu
   orange, aucun blocage, 967 sur 967 ; l'orange ne tient qu'à la règle de l'essai FLX4, le lot ne changeant que des textes ;
-  production vérifiée plus bas). **Reste, par lui** : points 5, 7, 10 et 43 de la checklist FLX4 (au niveau 4 et sur la fiche de
+  `245292a`, puis cette note = `origin/main` ; production vérifiée en 1366 × 768, français et anglais : 7 pastilles de l'accueil,
+  cartes de S'entraîner en 3 mots, Tutos sans phrases, aucune phrase oubliée en anglais, aucune erreur). **Reste, par lui** : points 5, 7, 10 et 43 de la checklist FLX4 (au niveau 4 et sur la fiche de
   l'écho, le texte ne dit plus « le bouton ON de l'effet » : seul le dessin le montre). **Petites suites possibles** : la note de
   S'entraîner vue par les abonnés Pro (`js/entrainement.js`, vers la ligne 230) garde sa phrase longue ; sous 320 px de large,
   les pastilles passent sur 2 lignes ; une traduction de l'ancienne phrase de « Tout recommencer à zéro » ne sert plus.
