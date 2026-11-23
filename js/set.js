@@ -50,25 +50,25 @@ const ENC_TECH_COMMENT = {
 const ENC_TOUT = { bpm: true, decal: true, phrases: true, note: true };
 const CH7_LESSONS = [
   { title: 'Premier enchaînement', goal: 'Enchaîne trois morceaux sans jamais arrêter la musique.',
-    how: 'Le premier morceau joue sur la platine A. Lance le suivant sur B (PLAY de droite) au début d’une phrase, quand une ligne PHRASE touche MAINTENANT. Cale-le à la molette, monte son fader, puis fais sortir le premier avant la fin de son outro. Le troisième se charge tout seul sur A : recommence. Les trois morceaux ont le même tempo.',
+    how: 'Lance le suivant sur B au début d\'une phrase, cale-le, monte son fader, fais sortir le premier : recommence.',
     set: { m: [[124], [124], [124]], aides: ENC_TOUT } },
   { title: 'Les tempos bougent', goal: 'Trois morceaux qui n’ont pas le même tempo : règle chacun avant de le faire entrer.',
-    how: 'Chaque morceau a son tempo, affiché sur sa platine. Avant de monter le fader du morceau qui entre, règle son TEMPO pour qu’il ait le même BPM que celui qui joue, puis cale-le à la molette.',
+    how: 'Règle le TEMPO de celui qui entre sur le BPM de celui qui joue, puis cale-le à la molette.',
     set: { m: [[122], [124], [126]], aides: ENC_TOUT } },
   { title: 'Transitions imposées', goal: 'Quatre morceaux, et une technique pour chaque transition : swap, filtre, puis écho.',
-    how: 'La feuille de route donne la technique de chaque transition. Swap : coupe les basses du morceau qui sort et ouvre celles du morceau qui entre, dans le même geste. Filtre : tourne le filtre du morceau qui sort vers la droite, lentement, avant de baisser son fader. Écho : allume l’écho sur le dernier temps, puis coupe le morceau qui sort.',
+    how: 'Suis la feuille de route : swap des basses, filtre qui efface, ou écho sur le dernier temps.',
     set: { m: [[123], [125, 'basse'], [124], [126]], tech: ['swap', 'filtre', 'echo'], aides: ENC_TOUT } },
   { title: 'Morceaux pièges', goal: 'Une intro courte, un break, une intro avec basse, puis de la techno : lis chaque morceau.',
-    how: 'Regarde la piste avant de lancer. « Intro courte » : 16 temps seulement. « Break » : la musique se vide au milieu, ce n’est pas la fin. « Intro avec basse » : coupe son LOW avant de le faire entrer. Le dernier morceau est de la techno, plus rapide. Plus de BPM affiché sur les platines.',
+    how: 'Lis la piste : intro courte, break (pas la fin), intro avec basse (coupe son LOW) ; plus de BPM affiché.',
     set: { m: [[124, 'court'], [124, 'break'], [125, 'basse'], [128, 'normal', 'techno']], aides: { bpm: false, decal: true, phrases: true, note: true } } },
   { title: 'Au casque', goal: 'Prépare chaque morceau au casque avant de le faire entrer. Plus de compteur de décalage.',
-    how: 'Lance le morceau suivant fader en bas et allume son CUE 🎧 : tu l’entends au casque, la salle ne l’entend pas. Cale-le à l’oreille (tempo, puis molette), puis monte son fader sur une phrase. Sans sortie casque sur ta table, il est joué tout bas dans les enceintes.',
+    how: 'Lance le suivant fader en bas, CUE 🎧 allumé : cale-le au casque, puis monte son fader sur une phrase.',
     set: { m: [[122], [125], [121, 'basse'], [124]], casque: true, aides: { bpm: false, decal: false, phrases: true, note: true } } },
   { title: 'La montée', goal: 'Cinq morceaux de plus en plus rapides : fais monter la soirée de 120 à 128 BPM, en douceur.',
-    how: 'Chaque morceau est 2 BPM plus rapide que le précédent. Cale-le sur celui qui joue, puis, une fois seul, ramène-le petit à petit à son vrai tempo : la soirée monte toute seule. Le tempo ne doit jamais sauter d’un coup, et la soirée doit finir à 126 BPM ou plus.',
+    how: 'Chaque morceau va 2 BPM plus vite : cale-le, puis, une fois seul, ramène-le peu à peu à son tempo, jusqu\'à 126 BPM ou plus.',
     set: { m: [[120], [122], [124], [126], [128]], montee: 126, aides: { bpm: true, decal: false, phrases: true, note: true } } },
   { title: 'Le grand set', goal: 'Le final : six morceaux surprise, de 120 à 130 BPM, sans aucune aide.',
-    how: 'Ni BPM, ni compteur de décalage, ni phrases dessinées, ni note en direct : la piste s’arrête à MAINTENANT. Les morceaux changent à chaque partie. Tout se fait à l’oreille : lancer sur la phrase, caler, échanger les basses, faire sortir. La note s’affiche à la fin.',
+    how: 'Tout à l\'oreille, sans aucune aide : lancer, caler, échanger les basses, faire sortir.',
     set: { tirage: true, aides: { bpm: false, decal: false, phrases: false, note: false } } }
 ];
 // Toute la table sert, sauf les pads (cachés au set : sans eux, la table tient sous la piste sur un écran de PC)
