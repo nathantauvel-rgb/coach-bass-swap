@@ -213,7 +213,7 @@ test.describe('Corrections du gardien', () => {
   test('l’accueil : après le chapitre 1, l’étape « S’entraîner » ne promet que le défi du jour gratuit', async ({ page }) => {
     await ouvrir(page, { avant: PRO, onglet: 'accueil', stockage: Object.assign({ 'coach-parcours': 'debut' }, SEPT) });
     await expect(page.locator('#homeTitle')).toHaveText('S\'entraîner');
-    await expect(page.locator('#homeLead')).toHaveText('Refais les 7 gestes sur d’autres morceaux : un défi par jour, gratuit.');
+    await expect(page.locator('#homeLead')).toHaveText('Un défi par jour, gratuit.');
   });
 });
 
@@ -240,6 +240,17 @@ test.describe('Les parcours et le plan', () => {
 
 test.describe('En anglais', () => {
   const EN = { 'coach-langue': 'en' };
+  test('lot 85 : la série de l’accueil et la note de S’entraîner (avant la première partie) sont traduites', async ({ page }) => {
+    const d = new Date(); d.setDate(d.getDate() - 1);
+    const hier = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    await ouvrir(page, { avant: PRO, onglet: 'accueil', stockage: Object.assign({ 'coach-parcours': 'debut', 'coach-objectif': S({ min: 10, jours: {}, faits: [hier] }) }, EN) });
+    await expect(page.locator('#goalSub')).toHaveText('1-day streak · keep it going today');
+    await page.goto('/index.html#entrainer');
+    await expect(page.locator('#trainNote')).toHaveText('Play a level in Learn first. The rest is in DJingood Pro.');
+    await expect(page.locator('#tSetP')).toHaveText('3 transitions in a row.');
+    expect(await page.evaluate(() => [...window.__enManque])).toEqual([]);
+  });
+
   test('la grande carte, la fenêtre Pro et sa démo, la barre de la démo : tout est traduit', async ({ page }) => {
     await ouvrir(page, { avant: PRO, stockage: Object.assign({}, SIX, EN) });
     await resultat(page, 6);

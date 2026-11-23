@@ -44,16 +44,15 @@ function renderTrain(){
   tag('tVarS', pracNum('vars') ? plur(pracNum('vars'), 'jouée', 'jouées') : 'À essayer', pracNum('vars'));
   tag('tEarS', pracNum('ears') ? plur(pracNum('ears'), 'réussie', 'réussies') : 'À essayer', pracNum('ears'));
   tag('tSetS', pool.length < 3 ? 'Verrouillé' : pracNum('setBest') ? `Record : ${pracNum('setBest')}/9 ★` : 'À essayer', pool.length >= 3 && pracNum('setBest'));
-  $('tSetP').textContent = pool.length < 3 ? 'Joue 3 niveaux dans Apprendre pour débloquer les mini-sets.' : 'Trois transitions d\'affilée, sans pouvoir rejouer : comme en soirée.';
+  $('tSetP').textContent = pool.length < 3 ? 'Joue 3 niveaux pour le débloquer.' : '3 transitions d\'affilée.';
   renderQuizCard();
   $('trainNote').innerHTML = ok ? `L'entraînement reprend les niveaux que tu as déjà joués dans Apprendre (${pool.length} sur ${BASE_LESSONS.length}), sur d'autres morceaux.` : 'Joue d\'abord un niveau dans <a href="#apprendre">Apprendre</a> : l\'entraînement reprend les gestes que tu connais déjà.';
   // lot 68 : sans abonnement, une étiquette « Pro » sur les quatre cartes de Pro, et une phrase sous les cartes
   if (pro){
     for (const id of ['tVarS', 'tEarS', 'tSetS', 'tQuizS']){ const e = $(id); e.textContent = 'Pro'; e.classList.remove('ok'); e.classList.add('pro'); }
-    $('tSetP').textContent = 'Trois transitions d\'affilée, sans pouvoir rejouer : comme en soirée.';
+    $('tSetP').textContent = '3 transitions d\'affilée.';
     $('quizCard').disabled = false; $('quizCard').classList.add('tr-pro');
-    $('trainNote').innerHTML = (ok ? 'Le défi du jour reprend tes niveaux gratuits, sur d’autres morceaux.' : 'Joue d’abord un niveau gratuit dans <a href="#apprendre">Apprendre</a> : le défi du jour le reprendra, sur d’autres morceaux.')
-      + ' Le reste de l’entraînement est dans DJingood Pro.';
+    $('trainNote').innerHTML = (ok ? 'Le défi du jour est gratuit.' : 'Joue d’abord un niveau dans <a href="#apprendre">Apprendre</a>.') + ' Le reste est dans DJingood Pro.';   // lot 85 : plus court
   } else { $('quizCard').classList.remove('tr-pro'); $('tQuizS').classList.remove('pro'); }
   viniEntrainement();
 }

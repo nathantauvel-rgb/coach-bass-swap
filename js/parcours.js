@@ -54,43 +54,43 @@ function goLesson(ch, idx, visite){
   if (chapter === ch && idx != null) selectLesson(visite || niveauOuvert(idx) ? idx : Math.max(0, niveauEnCours()));
 }
 const STAGES = {
-  guide: { title: 'Découvre ta table', text: 'Un petit tour d\'une minute, avec le son : compter les phrases et reconnaître les parties d\'un morceau. Chaque bouton de ta table te sera présenté juste avant de t\'en servir.',
+  guide: { title: 'Découvre ta table', text: 'Une minute, avec le son : compter la musique.',
     done: () => guideSeen, cta: () => 'Commencer le guide', go: () => { location.hash = '#apprendre'; setView('apprendre'); } },
-  expert: { title: 'Les bases en Mode Expert', text: 'Les sept gestes, sans aucune aide : B part à l\'instant où tu appuies, pas de compte à rebours, chaque geste noté à la milliseconde. Vise 60 sur 100 à chaque niveau.',
+  expert: { title: 'Les bases en Mode Expert', text: 'Les 7 gestes, sans aucune aide.',
     done: () => xDone() >= BASE_LESSONS.length, prog: () => `${xDone()} niveau${xDone() > 1 ? 'x' : ''} sur ${BASE_LESSONS.length}`,
     cta: () => `Mode Expert, niveau ${xTodo() + 1} : ${BASE_LESSONS[xTodo()].title}`,
     go: () => { if (!expert){ expert = true; saveExpert(); } goLesson(1, xTodo()); } },
-  ch4: { title: 'Les combos', text: 'Plusieurs gestes enchaînés, au demi-temps près : filtre et swap, la transition éclair, écho et drop, le grand mix.',
+  ch4: { title: 'Les combos', text: 'Plusieurs gestes d’affilée.',
     done: () => ch4Done() >= CH4_LESSONS.length, prog: () => `${ch4Done()} niveau${ch4Done() > 1 ? 'x' : ''} sur ${CH4_LESSONS.length}`,
     cta: () => { const i = firstTodo(ch4Stars, CH4_LESSONS.length); return `Chapitre 4, niveau ${i + 1} : ${CH4_LESSONS[i].title}`; },
     go: () => goLesson(4, firstTodo(ch4Stars, CH4_LESSONS.length)) },
-  ch1: { title: 'Les bases', text: 'Sept gestes, un par niveau : lancer au bon moment, le fader, la coupure, l\'écho, le filtre, le swap des basses, puis la transition complète pour finir.',
+  ch1: { title: 'Les bases', text: 'Jusqu’à ta première transition complète.',
     done: () => ch2Open || sumStars(stars) >= 14, prog: () => `${sumStars(stars)} ★ sur 14`,
     cta: () => { const i = firstTodo(stars, BASE_LESSONS.length, testFail()); return `Niveau ${i + 1} : ${BASE_LESSONS[i].title}`; },
     go: () => goLesson(1, firstTodo(stars, BASE_LESSONS.length, testFail())) },
-  train: { title: 'S\'entraîner', text: 'Refais les gestes que tu connais sur d\'autres morceaux : défi du jour, variations, à l\'oreille, mini-set.',
+  train: { title: 'S\'entraîner', text: 'Refais tes gestes sur d’autres morceaux.',
     done: () => !!pracStr('lastOk') || pracNum('vars') + pracNum('ears') + pracNum('setBest') > 0, cta: () => 'Aller à l\'entraînement', go: () => { location.hash = '#entrainer'; } },
-  ch2: { title: 'La maîtrise', text: 'Les mêmes gestes à l\'oreille, sans compte à rebours, et deux fois plus précis.',
+  ch2: { title: 'La maîtrise', text: 'Les mêmes gestes, à l’oreille.',
     done: () => ch3Open || sumStars(ch2Stars) >= 10, prog: () => `${sumStars(ch2Stars)} ★ sur 10`,
     cta: () => { const i = firstTodo(ch2Stars, BASE_LESSONS.length); return `Chapitre 2, niveau ${i + 1} : ${BASE_LESSONS[i].title}`; },
     go: () => goLesson(2, firstTodo(ch2Stars, BASE_LESSONS.length)) },
-  ch3: { title: 'Les vrais morceaux', text: 'Lire la structure des morceaux, éviter le piège du break, une seule mélodie à la fois : comme dans rekordbox.',
+  ch3: { title: 'Les vrais morceaux', text: 'De vrais morceaux, comme dans rekordbox.',
     done: () => ch3Done() >= CH3_LESSONS.length, prog: () => `${ch3Done()} niveau${ch3Done() > 1 ? 'x' : ''} sur ${CH3_LESSONS.length}`,
     cta: () => { const i = firstTodo(ch3Stars, CH3_LESSONS.length); return `Chapitre 3, niveau ${i + 1} : ${CH3_LESSONS[i].title}`; },
     go: () => goLesson(3, firstTodo(ch3Stars, CH3_LESSONS.length)) },
-  ch5: { title: 'Le calage', text: 'Caler deux morceaux soi-même, sans SYNC : entendre le décalage, régler le tempo, rattraper à la molette, au casque, puis sans aucune aide.',
+  ch5: { title: 'Le calage', text: 'Caler deux morceaux, sans SYNC.',
     done: () => ch5Done() >= CH5_LESSONS.length, prog: () => `${ch5Done()} niveau${ch5Done() > 1 ? 'x' : ''} sur ${CH5_LESSONS.length}`,
     cta: () => { const i = firstTodo(ch5Stars, CH5_LESSONS.length); return `Chapitre 5, niveau ${i + 1} : ${CH5_LESSONS[i].title}`; },
     go: () => goLesson(5, firstTodo(ch5Stars, CH5_LESSONS.length)) },
-  ch6: { title: 'Hot cues et boucles', text: 'Partir au bon endroit et gagner du temps : poser un repère, lancer depuis lui, sortir d’une boucle sur la phrase, prolonger une outro, faire monter la tension.',
+  ch6: { title: 'Hot cues et boucles', text: 'Partir au bon endroit, et boucler.',
     done: () => ch6Done() >= CH6_LESSONS.length, prog: () => `${ch6Done()} niveau${ch6Done() > 1 ? 'x' : ''} sur ${CH6_LESSONS.length}`,
     cta: () => { const i = firstTodo(ch6Stars, CH6_LESSONS.length); return `Chapitre 6, niveau ${i + 1} : ${CH6_LESSONS[i].title}`; },
     go: () => goLesson(6, firstTodo(ch6Stars, CH6_LESSONS.length)) },
-  ch7: { title: 'Le set', text: 'Des morceaux enchaînés sans que la musique s’arrête, comme en soirée : lancer sur la phrase, caler, échanger les basses, faire sortir. Noté sur 100.',
+  ch7: { title: 'Le set', text: 'Des morceaux enchaînés, noté sur 100.',
     done: () => ch7Done() >= CH7_LESSONS.length, prog: () => `${ch7Done()} niveau${ch7Done() > 1 ? 'x' : ''} sur ${CH7_LESSONS.length}`,
     cta: () => { const i = firstTodo(ch7Stars, CH7_LESSONS.length); return `Chapitre 7, niveau ${i + 1} : ${CH7_LESSONS[i].title}`; },
     go: () => goLesson(7, firstTodo(ch7Stars, CH7_LESSONS.length)) },
-  vrai: { title: 'Ma musique', text: 'Avec ta musique : importe ta collection rekordbox, choisis un morceau, et prépare la transition avec un de ceux qui vont avec.',
+  vrai: { title: 'Ma musique', text: 'Tes transitions, avec ta musique.',
     done: () => rbMis.total > 0, cta: () => 'Aller à Ma musique', go: () => { location.hash = '#musique'; } }
 };
 /* lot 68 : sans abonnement, Apprenti DJ et DJ confirmé commencent par les niveaux gratuits, en Mode Expert (leur parcours
@@ -100,7 +100,7 @@ const STAGES = {
 const NIV_ESSAI = 3;
 const essaiFait = () => BASE_LESSONS.slice(0, NIV_ESSAI).every((_, i) => stars[i] >= 2 || xBest[i] >= X_OK);
 const essaiTodo = () => { const i = BASE_LESSONS.slice(0, NIV_ESSAI).findIndex((_, k) => !(stars[k] >= 2 || xBest[k] >= X_OK)); return i < 0 ? 0 : i; };
-STAGES.essai = { title: `Tes ${NIV_ESSAI} premiers gestes`, text: `Lancer au bon moment, le fader, la coupure : les ${NIV_ESSAI} premiers niveaux, gratuits. En Mode Expert, sans aucune aide, chaque geste noté à la milliseconde.`,
+STAGES.essai = { title: `Tes ${NIV_ESSAI} premiers gestes`, text: `Les ${NIV_ESSAI} premiers gestes, sans aucune aide.`,
   done: essaiFait, prog: () => `${BASE_LESSONS.slice(0, NIV_ESSAI).filter((_, i) => stars[i] >= 2 || xBest[i] >= X_OK).length} sur ${NIV_ESSAI}`,
   cta: () => `Mode Expert, niveau ${essaiTodo() + 1} : ${BASE_LESSONS[essaiTodo()].title}`,
   go: () => { if (!expert){ expert = true; saveExpert(); } goLesson(1, essaiTodo()); } };
@@ -137,7 +137,11 @@ function renderHome(){
     if (cur === 'ch1' || cur === 'expert') $('homeLead').textContent = 'Bravo, tu as fini le chapitre 1. La suite : à l’oreille, avec de vrais morceaux, sans SYNC.'; }
   // lot 82 (gardien) : sans abonnement, un Grand débutant arrive à « S'entraîner » après le chapitre 1 ; seul le défi du jour
   // y est gratuit (variations, oreille et mini-set sont dans Pro)
-  if (cur === 'train' && proBloque()) $('homeLead').textContent = 'Refais les 7 gestes sur d’autres morceaux : un défi par jour, gratuit.';
+  if (cur === 'train' && proBloque()) $('homeLead').textContent = 'Un défi par jour, gratuit.';
+  // lot 85 : le chapitre 1 en 7 pastilles (réussi, en cours, à venir ; le nom du niveau au survol), plutôt qu'une liste en phrase
+  const pas = $('homePas'); pas.hidden = choosing || cur !== 'ch1' || pro; pas.innerHTML = '';
+  if (!pas.hidden){ const ici = firstTodo(stars, BASE_LESSONS.length, testFail());
+    BASE_LESSONS.forEach((l, i) => { const s = document.createElement('span'); s.textContent = String(i + 1); s.title = l.title; s.className = niveauReussi(stars, i) ? 'fait' : i === ici ? 'ici' : ''; pas.appendChild(s); }); }
   renderGoal(); homeVini();
   $('homeLien').hidden = !(typeof cpMobile === 'function' && cpMobile());   // lot 48 : sur un téléphone, s'envoyer le lien pour l'ordinateur
   // lot 65 : avec un compte, le lien part par mail et connecte tout seul sur l'ordinateur

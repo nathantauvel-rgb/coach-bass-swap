@@ -4,25 +4,25 @@
 /* ---------- Niveaux ---------- */
 const BASE_LESSONS = [
   { kind: 'moment', title: 'Le bon moment', goal: 'Lance B pile quand A entre dans son outro.',
-    how: 'Le geste arrive sur la piste : appuie sur LANCE B (ou PLAY de droite sur ta table) quand il touche la ligne. Tout le reste est automatique.',
+    how: 'Appuie sur LANCE B (ou PLAY de droite) quand le geste touche la ligne.',
     show: ['gPlay'], bBass: false, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: [] },
   { kind: 'fader', title: 'Le fader', goal: 'Fais entrer B en douceur, puis fais sortir A avant le drop.',
-    how: 'B démarre tout seul, fader en bas. Monte son fader jusqu\'en haut, doucement, sur 16 à 32 temps. Puis baisse celui de A jusqu\'en bas : il doit y être quand le drop de B arrive sur la ligne.',
+    how: 'Monte doucement le fader de B, puis baisse celui de A avant le drop de B.',
     show: ['gFad'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 0, lowA: .5, lowB: .5 }, user: ['faderA', 'faderB'] },
   { kind: 'cut', title: 'La coupure sèche', goal: 'Coupe A et lance B sur son drop, au même instant.',
-    how: 'B est calé sur son drop. Quand les losanges touchent la ligne, lance B (PLAY droite ou espace) et baisse d\'un coup le fader de A, dans le même geste.',
+    how: 'Sur la ligne, lance B et baisse d\'un coup le fader de A, dans le même geste.',
     show: ['gPlay', 'gFad'], bBass: false, autoLaunch: false, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], start: 40, end: 96 },
   { kind: 'echo', title: 'L\'écho out', goal: 'Fais disparaître A dans un écho, puis B tombe sur son drop.',
-    how: 'Sur le dernier temps avant la ligne, active l\'écho (bouton ECHO, ON de l\'effet sur ta table, ou touche E), puis baisse d\'un coup le fader de A sur la ligne. B démarre tout seul sur son drop.',
+    how: 'Juste avant la ligne, allume l\'écho (ou touche E), puis baisse d\'un coup le fader de A sur la ligne.',
     show: ['gEcho', 'gFad'], bBass: false, autoLaunch: true, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], btn: ['echo'], start: 40, end: 96 },
   { kind: 'filter', title: 'Le filtre', goal: 'Efface A en douceur avec le filtre pendant que B joue.',
-    how: 'B joue déjà, tout seul. Quand « FILTRE » touche la ligne, tourne le potard CFX de A vers la droite, lentement : il doit être tout à droite quand « À FOND » arrive, juste avant le drop de B.',
+    how: 'Quand « FILTRE » touche la ligne, tourne lentement le CFX de A vers la droite, jusqu\'à « À FOND ».',
     show: ['gCfx'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['cfxA'], start: 24, end: 112 },
   { kind: 'swap', title: 'Le swap des basses', goal: 'Échange les basses de A et B pile sur la ligne.',
-    how: 'B joue déjà, tout seul, basses coupées. Quand le repère « SWAP » touche la ligne, échange les basses d\'un seul geste, une main sur chaque potard : LOW de A normal → coupé, LOW de B coupé → normal.',
+    how: 'Sur « SWAP », échange les basses d\'un geste : LOW de A coupé, LOW de B normal.',
     show: ['gLow'], bBass: true, autoLaunch: true, init: { faderA: 1, faderB: 1, lowA: .5, lowB: 0 }, user: ['lowA', 'lowB'] },
   { kind: 'full', title: 'La transition complète', goal: 'Le final : tout toi-même, comme en soirée.',
-    how: 'Le LOW de B est déjà coupé (position de départ) : B entre sans ses basses. Lance B quand le repère touche la ligne et monte son fader jusqu\'en haut. À la phrase suivante, échange les basses (LOW de A coupé, LOW de B normal). Enfin, baisse le fader de A jusqu\'en bas avant le drop.',
+    how: 'Lance B, monte son fader, échange les basses, puis baisse le fader de A avant le drop.',
     show: ['gPlay', 'gLow', 'gFad'], bBass: true, autoLaunch: false, init: { faderA: 1, faderB: 0, lowA: .5, lowB: 0 }, user: ['faderA', 'faderB', 'lowA', 'lowB'] }
 ];
 BASE_LESSONS.forEach(l => { l.init.cfxA = l.init.cfxA ?? .5; l.launchBeat = l.launchBeat || 32; l.bCue = l.bCue || 0; l.start = l.start || 16; l.end = l.end || 116; l.btn = l.btn || []; });
@@ -428,7 +428,7 @@ function selectLesson(i){
   $('stage').classList.remove('ear');
   chooseSongs();
   // Avant de jouer, la bulle ne donne jamais le geste (il est dans « Pendant le niveau ») : seulement quoi faire maintenant
-  const idle = proIci() ? 'Ce niveau est dans DJingood Pro. Le chapitre 1 est gratuit.' : needSetup() ? 'Place ta table en position de départ, puis appuie sur Jouer.' : l.set ? 'Pas de repère cette fois. Enchaîne comme en soirée !' : expertOn() ? 'Mode Expert : ni compte à rebours, ni repère, ni calage automatique. Chaque geste est noté en millisecondes.' : 'Lis les gestes à faire, ou regarde d\'abord la démo. Puis à toi !';
+  const idle = proIci() ? 'Ce niveau est dans DJingood Pro. Le chapitre 1 est gratuit.' : needSetup() ? 'Place ta table en position de départ, puis appuie sur Jouer.' : l.set ? 'Pas de repère cette fois. Enchaîne comme en soirée !' : expertOn() ? 'Mode Expert : ni compte à rebours, ni repère, ni calage automatique. Chaque geste est noté en millisecondes.' : 'À toi de jouer !';
   const fb = $('lfiches'); fb.innerHTML = '';
   for (const k of fichesOf(l)){ const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'linkbtn'; bt.textContent = 'Revoir la fiche : ' + FICHE_NAMES[k]; bt.addEventListener('click', () => { if (!run) openOnb([FICHES[k]], { fiche: true, keys: [k] }); }); fb.appendChild(bt); }
   fb.hidden = !fb.children.length;
@@ -853,7 +853,7 @@ function essaiTot(ch, st){
   $('rEssai').hidden = !ici;
   if (!ici) return false;
   $('rCompte').hidden = true;
-  $('rEssaiTxt').textContent = `Essaie tout DJingood ${PRO_ESSAI_JOURS} jours, gratuitement : les ${proNbExercices()} exercices, les tutos de Vini, l’entraînement.`;
+  $('rEssaiTxt').textContent = `Essaie tout DJingood ${PRO_ESSAI_JOURS} jours, gratuitement.`;
   stat1('essai-tot');
   return true;
 }

@@ -14,7 +14,7 @@ test.describe('L\'encart de l\'accueil', () => {
     await page.locator('[data-parcours=debut]').click();
     await expect(page.locator('#homeGoal')).toBeVisible();
     await expect(page.locator('#goalTitle')).toHaveText('0 min sur 10 aujourd\'hui');
-    await expect(page.locator('#goalSub')).toHaveText('Atteins ton objectif chaque jour pour lancer une série.');
+    await expect(page.locator('#goalSub')).toHaveText('');   // lot 85 : plus de petite phrase sans série
     // la bulle de l'accueil est maintenant celle de Vini (lot 31) : elle reste, avec un message du jour
     await expect(page.locator('#homeTip')).toHaveText(/Prêt pour ta prochaine transition\s\?$/);
   });
@@ -38,16 +38,16 @@ test.describe('L\'encart de l\'accueil', () => {
   });
   test('la série compte les jours d\'affilée, aujourd\'hui compris', async ({ page }) => {
     await accueil(page, { min: 5, jours: { [jour()]: 300 }, faits: [jour(-3), jour(-1), jour()] });
-    await expect(page.locator('#goalSub')).toHaveText('Série de 2 jours. Reviens demain pour la continuer.');
+    await expect(page.locator('#goalSub')).toHaveText('Série de 2 jours');
   });
   test('objectif pas encore atteint aujourd\'hui : la série d\'hier tient encore', async ({ page }) => {
     await accueil(page, { min: 10, jours: { [jour()]: 120 }, faits: [jour(-1)] });
     await expect(page.locator('#goalTitle')).toHaveText('2 min sur 10 aujourd\'hui');
-    await expect(page.locator('#goalSub')).toHaveText('Série de 1 jour : atteins ton objectif aujourd\'hui pour la garder.');
+    await expect(page.locator('#goalSub')).toHaveText('Série de 1 jour · à garder aujourd’hui');
   });
   test('un jour manqué remet la série à zéro', async ({ page }) => {
     await accueil(page, { min: 10, faits: [jour(-3), jour(-2)] });
-    await expect(page.locator('#goalSub')).toHaveText('Atteins ton objectif chaque jour pour lancer une série.');
+    await expect(page.locator('#goalSub')).toHaveText('');   // lot 85 : plus de petite phrase sans série
   });
   test('des données abîmées ne bloquent rien', async ({ page }) => {
     const erreurs = await accueil(page, { min: 7, jours: [1, 2], faits: 'x', best: 'beaucoup' });

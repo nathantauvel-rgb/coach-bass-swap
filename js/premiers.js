@@ -704,7 +704,7 @@ function ppCompteOpts(){
   const f = document.createElement('form'); f.className = 'pp-compte'; f.id = 'ppCompte'; f.noValidate = true;
   f.innerHTML = `<label class="pp-champ"><span>Ton prénom</span><input id="ppPrenom" autocomplete="given-name" maxlength="40" enterkeyhint="next"></label>
 <label class="pp-champ"><span>Ton e-mail</span><input id="ppMail" type="email" autocomplete="email" inputmode="email" maxlength="120" enterkeyhint="go"></label>
-<label class="pp-case" id="ppAccord"><input type="checkbox" id="ppMails"> <span>Recevoir les conseils de Vini par mail : 3 pour démarrer, puis un par semaine au plus. Désinscription en un clic.</span></label>
+<label class="pp-case" id="ppAccord"><input type="checkbox" id="ppMails"> <span>Recevoir les conseils de Vini par mail (désinscription en un clic)</span></label>
 <p class="pp-msg" id="ppMsg" role="status" hidden></p>
 <p class="pp-mdp">Pas de mot de passe : je t’envoie un lien pour te connecter.</p>
 <div class="pp-ou" id="ppOu"><span>ou</span></div>

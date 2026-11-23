@@ -157,7 +157,7 @@ test.describe('L’essai dès la première réussite', () => {
     await carte()(page);
     await expect(page.locator('#rEssai')).toBeVisible();
     await expect(page.locator('#rEssai b')).toHaveText('Ça marche avec ta table !');
-    await expect(page.locator('#rEssaiTxt')).toHaveText('Essaie tout DJingood 7 jours, gratuitement : les 36 exercices, les tutos de Vini, l’entraînement.');
+    await expect(page.locator('#rEssaiTxt')).toHaveText('Essaie tout DJingood 7 jours, gratuitement.');
     await expect(page.locator('#rCompte')).toBeHidden();
     await expect(page.locator('#next')).toBeVisible();
     await expect(page.locator('#next')).toHaveText('Niveau suivant');
@@ -247,7 +247,7 @@ test.describe('En anglais', () => {
     await expect(o.locator('.offre-plan span')).toHaveText('In 2 weeks: your first real transition.');
     await expect(o.locator('.offre-f[data-f="an"]')).toHaveText(/Yearly€4\.17\/month€49\.99 a year/);
     await page.evaluate(() => { midiCount = 1; selectLesson(0); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); resultatBoutons(3); essaiTot(1, 3); });
-    await expect(page.locator('#rEssaiTxt')).toHaveText("Try all of DJingood free for 7 days: the 36 exercises, Vini's tutorials, practice.");
+    await expect(page.locator('#rEssaiTxt')).toHaveText('Try all of DJingood free for 7 days.');
     await expect(page.locator('#rEssaiGo')).toHaveText('See the free trial');
     await page.evaluate(() => { $('result').hidden = true; proMerci(); });
     await expect(page.locator('#proSource p').first()).toHaveText('One last question: how did you hear about DJingood?');

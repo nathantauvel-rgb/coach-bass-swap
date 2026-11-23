@@ -73,7 +73,7 @@ function renderTable(){
   const svg = $('tSvg'); if (!svg.firstChild) svg.innerHTML = tableSvg();
   for (const k of MIDI_CC) tableSchemaSet(k, phys[k]);
   const et = tableEtat(), nom = midiNames.join(', ');
-  $('tState').textContent = !midiCount ? 'Aucune table vue pour l’instant : tu peux lire les explications, et brancher ta table pour voir les commandes réagir.'
+  $('tState').textContent = !midiCount ? 'Branche ta table : les commandes réagissent.'
     : et === 'nouvelle' ? `Table branchée : ${nom}. Elle n'est pas encore réglée : clique sur « Régler ma table pas à pas », puis bouge chaque commande quand le site te le demande.`
     : et === 'flx4' ? `Table branchée : ${nom}. Les réglages sont encore ceux de ton autre table : clique sur « Revenir aux réglages de la DDJ-FLX4 ».`
     : et === 'connue' ? `Table branchée : ${nom}. DJingood connaît ses réglages, mais ceux en place sont ceux de ta table réglée à la main : clique sur « ${tableResetTxt()} », en bas de la page.`

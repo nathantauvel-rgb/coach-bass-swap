@@ -96,6 +96,34 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     peut passer sur deux lignes proprement (« I already have an account » à 360 px) ; `'Pioneer DJ'` retiré d'`enPareil`.
     3 tests ajoutés (masque unique, bouton de la vidéo, pas de bouton sans « moins d'animations ») ; `vitrine.spec.js` 19 sur
     19 ; captures `captures/lot83/gardien2.js` → `captures/lot83/v2/` (premier écran de Vini, moins d'animations, anglais 360).
+- **Lot 85 « Moins de texte » : PUBLIÉ le 23 nov. 2026** (« ok publie le 85 quand c'est vert » ; second passage du gardien : feu
+  orange, aucun blocage, 967 sur 967 ; l'orange ne tient qu'à la règle de l'essai FLX4, le lot ne changeant que des textes ;
+  `245292a`, puis cette note = `origin/main` ; production vérifiée en 1366 × 768, français et anglais : 7 pastilles de l'accueil,
+  cartes de S'entraîner en 3 mots, Tutos sans phrases, aucune phrase oubliée en anglais, aucune erreur). **Reste, par lui** : points 5, 7, 10 et 43 de la checklist FLX4 (au niveau 4 et sur la fiche de
+  l'écho, le texte ne dit plus « le bouton ON de l'effet » : seul le dessin le montre). **Petites suites possibles** : la note de
+  S'entraîner vue par les abonnés Pro (`js/entrainement.js`, vers la ligne 230) garde sa phrase longue ; sous 320 px de large,
+  les pastilles passent sur 2 lignes ; une traduction de l'ancienne phrase de « Tout recommencer à zéro » ne sert plus.
+  Avant : le lot 82 publié et fusionné ici (`origin/main` = `37be1d6`). Sa demande : « un tour de tout le site où il y a
+  trop de texte … ça donne aux gens envie de partir », puis « Oui, lance le 85 ». Bilan : `captures/audit-texte/` du dossier
+  principal (`audit.js` mesure chaque écran en 1366 × 768 : mots visibles sans défiler, pavés de 15 mots ou plus ;
+  `planche.png` = le bilan, `planche-avant-apres.png` = le lot). **Part de la branche du lot 82** (`b6e3739`), pas
+  d'`origin/main` : publier le 82 d'abord, puis fusionner `origin/main` ici si le 82 a encore changé. Copie
+  `Documents\coach-dj-lot85`, branche `lot-85-moins-de-texte`, serveur `coach-dj-lot85` (port 8816), tests `DJ_PORT=8817`.
+  Règle appliquée : une seule phrase par écran (celle de Vini), des cartes avec un titre et une image. Ce qui change :
+  guide de la première visite (4 étapes en une phrase chacune) et les 6 fiches « Découvre ce bouton » (`js/guide.js`) ;
+  l'accueil : une phrase courte par étape (`STAGES`, `js/parcours.js`, `js/comprendre.js`) et les 7 pastilles du chapitre 1
+  (`#homePas`) ; plus de phrase sous l'objectif du jour sans série (`js/objectif.js`) ; S'entraîner, Ma musique, Ma table,
+  Tutos : plus de paragraphe sous le titre, cartes en 3 mots ou sans phrase (`index.html`, `js/tutos.js`,
+  `js/rekordbox.js`, `js/entrainement.js`, `js/table.js`) ; « Comment faire ? » du chapitre 1 en une phrase, ligne du
+  clavier courte, bulle de Vini « À toi de jouer ! » (`js/niveaux.js`) ; carte d'un niveau réussi (« Garde tes étoiles. »),
+  essai proposé (« Essaie tout DJingood 7 jours, gratuitement. »), Mon avis, case des mails ; tout en anglais (bloc « Lot
+  85 » de `js/anglais.js`). Pas touché : « Comment faire ? » des chapitres 2 à 7, la présentation (titre décidé au lot 81),
+  le menu « Tous les niveaux » (des noms de niveaux).
+  Suite complète : 966 sur 966. **Gardien : feu rouge** (deux phrases nouvelles restées en français en anglais : « Série de N
+  jours · à garder aujourd'hui », la fin passant par le motif du lot 80 `/^Série de (d+) jours?(.*)$/` qui traduit le reste à
+  part, d'où l'entrée `'· à garder aujourd’hui'` ; la note de S'entraîner avant la première partie) ; corrigé, avec ses petites
+  remarques (carte Mini-set réécrite par `js/entrainement.js`, pastilles plus petites sous 460 px, « Tout recommencer à zéro »
+  dit « toute ta progression », « sur la ligne » au niveau 4) et un test anglais neuf.
 - **Lot 82 « Le chapitre 1 offert » : PUBLIÉ le 23 nov. 2026** (« Oui, publie » ; `1f8e939`, puis cette note = `origin/main` ;
   production vérifiée en 1366 × 768, français et `?lang=en` : « Continuer » au niveau 7, fenêtre Pro avec l'image de la démo, la
   pastille et la frise ; images `img/demo-apercu.jpg` et `img/en/demo-apercu.jpg` servies ; `/api/pro` répond). **Reste, par lui** :
