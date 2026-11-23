@@ -77,7 +77,9 @@ function vitrineOuvre(){
   // la vidéo n'est chargée que pour ceux qui voient la page ; immobile si l'on a demandé moins d'animations
   const vid = $('vtVideo');
   if (!vid.getAttribute('src')) vid.src = 'img/vitrine/partie.mp4';
-  if (REDUCED) vid.controls = true;
+  // moins d'animations : la vidéo reste sur sa première image, et un bouton la lance ou la met en pause (gardien : les
+  // commandes du navigateur étaient cachées sous le voile et le texte posés sur la vidéo)
+  if (REDUCED){ $('vtLecture').hidden = false; vitrineLecture(false); }
   else { vid.autoplay = true; const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
   // sur téléphone, le bouton reste en bas dès que celui du haut n'est plus visible
   if ('IntersectionObserver' in window && !vitrineObs){
@@ -85,6 +87,17 @@ function vitrineOuvre(){
     vitrineObs.observe($('vtGo'));
   }
 }
+// Le bouton de la vidéo (moins d'animations seulement) : lance ou met en pause. Son texte suit l'état réel de la vidéo
+// (événements play / pause), pour ne jamais dire « Mettre en pause » si le navigateur a refusé de la lancer.
+function vitrineLecture(lire){
+  const vid = $('vtVideo');
+  if (lire){ const p = vid.play(); if (p && p.catch) p.catch(() => {}); } else { try { vid.pause(); } catch (e) {} }
+  vitrineLectureTexte();
+}
+function vitrineLectureTexte(){ $('vtLecture').textContent = $('vtVideo').paused ? 'Voir la vidéo' : 'Mettre en pause'; }
+$('vtLecture').addEventListener('click', () => vitrineLecture($('vtVideo').paused));
+$('vtVideo').addEventListener('play', vitrineLectureTexte);
+$('vtVideo').addEventListener('pause', vitrineLectureTexte);
 function vitrineFerme(){
   const v = $('vitrine');
   if (v.hidden) return;

@@ -180,6 +180,42 @@ test.describe('Page d\'accueil (lot 83)', () => {
     for (const h of liens) expect(h).toBe('index.html?accueil=vini');
   });
 
+  // Gardien de l'habillage « moins IA » : la scène de Vini du bas de la page avait le même masque (psDerriere) que le premier
+  // écran des Premiers pas, et le navigateur prenait la copie cachée : les pieds de Vini passaient devant la table
+  test('la scène du bas de la page a son propre masque : celui des Premiers pas reste le seul à son nom', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: Object.assign({ 'coach-vitrine': 'vini' }, NOUVEAU) });
+    await expect(page.locator('#pp')).toBeVisible();
+    const r = await page.evaluate(() => ({ ps: [...document.querySelectorAll('[id="psDerriere"]')].map(e => !!e.closest('#pp')),
+      vt: [...document.querySelectorAll('[id="vtDerriere"]')].map(e => !!e.closest('#vitrine')),
+      clipFin: getComputedStyle(document.querySelector('.vt-fin .ps-vini-clip')).clipPath }));
+    expect(r.ps).toEqual([true]);
+    expect(r.vt).toEqual([true]);
+    expect(r.clipFin).toContain('vtDerriere');
+  });
+
+  test('moins d\'animations : la vidéo reste immobile, un bouton la lance, et rien ne le recouvre', async ({ browser }) => {
+    const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 }, reducedMotion: 'reduce', locale: 'fr-FR' });
+    const page = await ctx.newPage();
+    // une fausse lecture (le Chromium des tests ne lit pas ce format) : la vidéo passe en lecture et le dit
+    await ouvrir(page, { onglet: '', stockage: PAGE, avant: `window.__lu = 0; HTMLMediaElement.prototype.play = function(){ window.__lu++;
+      Object.defineProperty(this, 'paused', { get: () => false, configurable: true }); this.dispatchEvent(new Event('play')); return Promise.resolve(); };` });
+    await expect(page.locator('#vtLecture')).toBeVisible();
+    await expect(page.locator('#vtLecture')).toHaveText('Voir la vidéo');
+    expect(await page.evaluate(() => [$('vtVideo').autoplay, $('vtVideo').controls, window.__lu])).toEqual([false, false, 0]);
+    // c'est bien le bouton qu'on touche en son milieu (pas le titre ni le voile posés sur la vidéo)
+    expect(await page.evaluate(() => { const b = $('vtLecture').getBoundingClientRect(); return document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2) === $('vtLecture'); })).toBe(true);
+    await page.locator('#vtLecture').click();
+    expect(await page.evaluate(() => window.__lu)).toBe(1);
+    await expect(page.locator('#vtLecture')).toHaveText('Mettre en pause');
+    await ctx.close();
+  });
+
+  test('sans « moins d\'animations », pas de bouton : la vidéo tourne toute seule', async ({ page }) => {
+    await ouvrir(page, { onglet: '', stockage: PAGE });
+    await expect(page.locator('#vtLecture')).toBeHidden();
+    expect(await page.evaluate(() => $('vtVideo').autoplay)).toBe(true);
+  });
+
   test('sur téléphone : la phrase pour l\'ordinateur, et le bouton collé en bas quand on descend', async ({ browser }) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, locale: 'fr-FR' });
     const page = await ctx.newPage();

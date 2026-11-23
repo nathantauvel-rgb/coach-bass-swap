@@ -2894,12 +2894,14 @@ enMotif(/^une table \(pas dans la liste : (.{1,40})\)$/, (m, x) => `a controller
 /* ---------- Lot 73 : fin ---------- */
 
 /* ---------- Lot 83 « La page d'accueil » (index.html, #vitrine ; js/vitrine.js) ---------- */
-enPareil('Pioneer DJ', 'DJingood', 'DJingood Pro');
+enPareil('DJingood', 'DJingood Pro');
 enDe({
   // le titre posé sur la vidéo (habillage « moins IA », 23 nov.) : traduit d'un bloc, avec ses retours à la ligne
   'Apprends <span class="vt-ensemble">à mixer</span><br>sur ta table,<br>en jouant': 'Learn <span class="vt-ensemble">to mix</span><br>on your controller,<br>by playing',
   "C'est parti": "Let's go",
   'Gratuit · rien à installer': 'Free · nothing to install',
+  'Voir la vidéo': 'Watch the video',   // moins d'animations demandées : le bouton qui lance la vidéo (gardien)
+  'Mettre en pause': 'Pause',
   "Commence ici, joue avec ta table sur l'ordi.": 'Start here, play with your controller on your computer.',
   "Une vraie partie : les gestes sur la table, le jeu à l'écran": 'A real game: the moves on the controller, the game on screen',
   'Le site reconnaît la table branchée': 'The site recognizes the plugged-in controller',

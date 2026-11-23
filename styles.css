@@ -4104,12 +4104,12 @@ html.vitrine-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fen�
   background:linear-gradient(90deg,var(--vt-voile-g) 0%,var(--vt-voile-m) 42%,var(--vt-voile-0) 68%),
              linear-gradient(0deg,var(--bg) 0%,var(--vt-voile-0) 22%)}
 .vt-heros-in{position:relative;z-index:1;height:100%;max-width:1180px;margin:0 auto;padding:0 32px;display:flex;flex-direction:column;pointer-events:none}
-.vt-heros-in > *{pointer-events:auto}   /* les commandes de la vidéo (moins d'animations demandées) restent cliquables */
+.vt-haut,.vt-go,.vt-lecture{pointer-events:auto}   /* seuls les boutons prennent les clics ; le reste laisse passer vers la vidéo */
 .vt-haut{height:68px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .vt-logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:21px}
 .vt-logo .dj{color:var(--brand-light)}
 .vt-haut-d{display:flex;gap:10px;align-items:center}
-.vt-pill{height:40px;padding:0 16px;border-radius:999px;border:1.5px solid var(--vt-trait);background:var(--vt-pastille);color:var(--fg);font:800 14px var(--sans);cursor:pointer}
+.vt-pill{min-height:40px;padding:6px 16px;line-height:1.15;border-radius:999px;border:1.5px solid var(--vt-trait);background:var(--vt-pastille);color:var(--fg);font:800 14px var(--sans);cursor:pointer}
 .vt-pill:hover{border-color:var(--brand-light)}
 .vt-haut .langbtn{height:40px;padding:0 4px;border:1.5px solid var(--vt-trait);background:var(--vt-pastille)}
 .vt-haut .langbtn button{height:30px}
@@ -4124,7 +4124,11 @@ html.vitrine-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fen�
 .vt-apres{margin:16px 0 0;font-size:15px;color:var(--muted);font-weight:700}
 .vt-heros .vt-apres{color:var(--fg);opacity:.75}
 .vt-tel{display:none}
-.vt-vini-heros{position:absolute;z-index:2;right:max(32px,calc((100vw - 1180px) / 2 + 32px));bottom:60px;width:150px;height:163px}
+.vt-vini-heros{position:absolute;z-index:2;right:max(32px,calc((100vw - 1180px) / 2 + 32px));bottom:60px;width:150px;height:163px;pointer-events:none}
+/* moins d'animations demandées : la vidéo reste sur sa première image, ce bouton la lance (gardien : les commandes du
+   navigateur étaient cachées sous le voile et le texte) */
+.vt-lecture{display:block;margin-top:14px}
+.vt-lecture[hidden]{display:none}
 
 /* Les étiquettes des parties, comme les panneaux d'un logiciel DJ (à la place des grands titres) */
 .vt-label{font-family:var(--vt-titre);font-weight:800;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 22px}
@@ -4177,6 +4181,8 @@ html.vitrine-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fen�
 /* 5. La fin : Vini qui mixe derrière sa table (la scène de presentation.html), le bouton */
 .vt-fin{padding:80px 0 40px;display:flex;flex-direction:column;align-items:center;text-align:center}
 .vt-fin .pres-scene{flex:none;width:380px;max-width:100%;margin:0 0 18px}
+/* la scène a son propre masque (vtDerriere) : celui des Premiers pas (psDerriere, js/premiers.js) doit rester le seul à ce nom */
+.vt-fin .pp-derriere .ps-vini-clip{clip-path:url(#vtDerriere)}
 .vt-fin .vt-apres{margin-top:14px}
 .vt-pied{border-top:1px solid var(--panel-2);margin-top:60px;padding:24px 0 40px;display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:14px;font-weight:700}
 .vt-pied nav{display:flex;gap:18px;flex-wrap:wrap}

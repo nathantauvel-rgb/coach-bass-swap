@@ -84,7 +84,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     parti », plus de slogan. Étiquettes de partie en petites capitales (`.vt-label`). Montserrat chargée seulement pour ceux qui
     voient la page (`link#vtPolice`). Les Vini décoratifs sont `aria-hidden`. Tests `vitrine.spec.js` adaptés (vidéo pleine
     largeur, plus de marques, Vini, onde, police, chapitre 1, anglais). Captures : `captures/lot83/v2.js` → `captures/lot83/v2/`
-    (français, anglais, 1366 × 768, 1366 × 625, 375 × 812).
+    (français, anglais, 1366 × 768, 1366 × 625, 375 × 812). Suite complète sur `72bab72` : **982 sur 982**.
+  - **Gardien sur `72bab72` : feu rouge** (coupé une fois par la limite d'utilisation, repris). Corrigé ensuite : 1) la scène de
+    Vini copiée en bas de la page avait le même masque `psDerriere` que le premier écran des Premiers pas (`js/premiers.js`) ;
+    la page venant avant dans le document, le navigateur prenait sa copie cachée et les pieds de Vini passaient devant la
+    table pour tous ceux qui voient l'écran de Vini → la copie s'appelle `vtDerriere` (règle `.vt-fin .pp-derriere
+    .ps-vini-clip` dans le bloc « Lot 83 ») ; 2) moins d'animations demandées : les commandes de la vidéo étaient cachées sous
+    le voile et le bloc du titre prenait les clics → plus de commandes du navigateur : la vidéo reste sur sa 1re image et un
+    bouton « Voir la vidéo » / « Mettre en pause » (`#vtLecture`, `vitrineLecture`, texte qui suit les événements play /
+    pause) la lance ; seuls les boutons de l'en-tête et du titre prennent les clics, Vini laisse passer. Aussi : `.vt-pill`
+    peut passer sur deux lignes proprement (« I already have an account » à 360 px) ; `'Pioneer DJ'` retiré d'`enPareil`.
+    3 tests ajoutés (masque unique, bouton de la vidéo, pas de bouton sans « moins d'animations ») ; `vitrine.spec.js` 19 sur
+    19 ; captures `captures/lot83/gardien2.js` → `captures/lot83/v2/` (premier écran de Vini, moins d'animations, anglais 360).
 - **Lot 82 « Le chapitre 1 offert » : PUBLIÉ le 23 nov. 2026** (« Oui, publie » ; `1f8e939`, puis cette note = `origin/main` ;
   production vérifiée en 1366 × 768, français et `?lang=en` : « Continuer » au niveau 7, fenêtre Pro avec l'image de la démo, la
   pastille et la frise ; images `img/demo-apercu.jpg` et `img/en/demo-apercu.jpg` servies ; `/api/pro` répond). **Reste, par lui** :
