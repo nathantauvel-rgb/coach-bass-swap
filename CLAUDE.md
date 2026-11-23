@@ -66,6 +66,25 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     refaite) ; les liens de `presentation.html` mènent à `index.html?accueil=vini` (pas deux pages d'accueil de suite, pas
     comptés) ; `STATISTIQUES.md` : `?accueil=page` dans une fenêtre privée ; `vitrine` dans l'ordre des fichiers, la liste des
     tests et celle des clés. Laissé exprès : pas de bouton FR / EN sur la page sous 420 px (les questions de Vini ont le leur).
+  - **Habillage « moins IA » (23 nov. 2026)**. Son avis sur la page : « vraiment pas mal mais ça fait un petit peu trop IA
+    classique » ; analyse et maquette v2 faites par la session du lot 84 (`captures/maquette-accueil-v2/` du dossier principal) ;
+    « bien mieux comme ça vasy », puis « pour le prix je préfère la version d'avant ». **D'abord, `origin/main` = `37be1d6`
+    (lots 84 « FR | EN » et 82 « chapitre 1 offert ») fusionné** (`6d2cf37` ; conflits stats / anglais / langue / présentation /
+    styles / CLAUDE.md, les deux côtés gardés ; `#vtLang` devient un `span`, le lot 84 y pose deux boutons). Puis, dans
+    `index.html` (`#vitrine` réécrit), `styles.css` (bloc « Lot 83 » réécrit, jetons `--vt-voile-g/-m/-0`, `--vt-pastille`,
+    `--vt-trait`, `--vt-titre` ; `--vt-marque` et `--vt-ombre` retirés), `js/vitrine.js` (`vitrineHabille`) et `js/anglais.js` :
+    1er écran = la vidéo d'un bord à l'autre (`100svh`, voile sombre pour lire le titre, seul dégradé), en-tête et titre posés
+    dessus (« Apprends à mixer / sur ta table, / en jouant », Montserrat 900 en capitales, `.vt-ensemble` pour ne pas couper
+    « à mixer ») ; Vini au casque en bas à droite (`#vtViniHeros`, `viniPose` bras `oreille`) ; plus de sous-titre ni de bande
+    de marques ; « Comment ça marche » : une onde à deux platines dessinée par `vitrineHabille` (A orange en haut qui sort, B
+    bleu en bas qui entre, tirage fixe), 3 repères de CUE blancs au-dessus des 3 captures, Vini qui danse sur l'onde
+    (`#vtViniOnde`) ; **prix : les deux cartes d'avant, sans changement de dessin** (contenu : « Tout le chapitre 1 avec ta
+    table » quand `NIV_GRATUITS` couvre le chapitre 1, « Les chapitres 2 à 7, jusqu'au vrai set ») ; questions en lignes
+    séparées par un trait ; fin = la scène de Vini qui mixe de `presentation.html` (copiée, avec son `clipPath`) + « C'est
+    parti », plus de slogan. Étiquettes de partie en petites capitales (`.vt-label`). Montserrat chargée seulement pour ceux qui
+    voient la page (`link#vtPolice`). Les Vini décoratifs sont `aria-hidden`. Tests `vitrine.spec.js` adaptés (vidéo pleine
+    largeur, plus de marques, Vini, onde, police, chapitre 1, anglais). Captures : `captures/lot83/v2.js` → `captures/lot83/v2/`
+    (français, anglais, 1366 × 768, 1366 × 625, 375 × 812).
 - **Lot 82 « Le chapitre 1 offert » : PUBLIÉ le 23 nov. 2026** (« Oui, publie » ; `1f8e939`, puis cette note = `origin/main` ;
   production vérifiée en 1366 × 768, français et `?lang=en` : « Continuer » au niveau 7, fenêtre Pro avec l'image de la démo, la
   pastille et la frise ; images `img/demo-apercu.jpg` et `img/en/demo-apercu.jpg` servies ; `/api/pro` répond). **Reste, par lui** :

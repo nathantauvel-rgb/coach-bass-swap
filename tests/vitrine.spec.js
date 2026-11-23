@@ -16,15 +16,27 @@ test.describe('Page d\'accueil (lot 83)', () => {
     const erreurs = await ouvrir(page, { onglet: '', stockage: PAGE });
     await expect(page.locator('#vitrine')).toBeVisible();
     await expect(page.locator('#pp')).toBeHidden();
-    await expect(page.locator('#vtTitre')).toHaveText('Apprends à mixer sur ta table, en jouant.');
+    await expect(page.locator('#vtTitre')).toHaveText(/^Apprends\s*à mixer\s*sur ta table,\s*en jouant$/);
     // la vidéo n'est chargée que pour ceux qui voient la page
     await expect(page.locator('#vtVideo')).toHaveAttribute('src', 'img/vitrine/partie.mp4');
-    // « C'est parti » et les marques sont visibles sans faire défiler
-    const go = await page.locator('#vtGo').boundingBox(), marques = await page.locator('.vt-marques').boundingBox();
+    // habillage « moins IA » (23 nov.) : la vidéo occupe tout le premier écran, « C'est parti » s'y voit sans faire défiler
+    const heros = await page.locator('.vt-heros').boundingBox(), go = await page.locator('#vtGo').boundingBox();
+    expect(heros.width).toBeGreaterThanOrEqual(1366 - 20);   // d'un bord à l'autre (moins la barre de défilement)
+    expect(heros.height).toBeGreaterThanOrEqual(700);
     expect(go.y + go.height).toBeLessThanOrEqual(768);
-    expect(marques.y + marques.height).toBeLessThanOrEqual(768);
-    // le nombre de niveaux gratuits suit NIV_GRATUITS
-    await expect(page.locator('#vtNiv')).toHaveText(`Tes ${await page.evaluate(() => NIV_GRATUITS)} premiers niveaux avec ta table`);
+    await expect(page.locator('.vt-marques')).toHaveCount(0);   // plus de bande de marques
+    // Vini au casque sur la vidéo et sur l'onde (sans nom lu à voix haute : il décore) ; l'onde des deux platines, 3 repères
+    await expect(page.locator('#vtViniHeros svg')).toHaveCount(1);
+    await expect(page.locator('#vtViniOnde svg')).toHaveCount(1);
+    await expect(page.locator('#vtViniHeros')).toHaveAttribute('aria-hidden', 'true');
+    expect(await page.locator('#vtOnde rect.vt-wa').count()).toBeGreaterThan(80);
+    expect(await page.locator('#vtOnde rect.vt-wb').count()).toBeGreaterThan(80);
+    await expect(page.locator('.vt-cue')).toHaveCount(3);
+    // les titres dans la police des vidéos (chargée seulement pour ceux qui voient la page)
+    await expect(page.locator('link#vtPolice')).toHaveCount(1);
+    // lot 82 : tout le chapitre 1 est offert (le texte suit NIV_GRATUITS)
+    const ch1 = await page.evaluate(() => NIV_GRATUITS >= BASE_LESSONS.length);
+    await expect(page.locator('#vtNiv')).toHaveText(ch1 ? 'Tout le chapitre 1 avec ta table' : `Tes ${await page.evaluate(() => NIV_GRATUITS)} premiers niveaux avec ta table`);
     await expect(page.locator('.vt-faq details')).toHaveCount(6);
     await expect(page.locator('.vt-tel')).toBeHidden();   // la phrase du téléphone ne s'affiche pas sur ordinateur
     await sansBandeau(page);
@@ -59,8 +71,9 @@ test.describe('Page d\'accueil (lot 83)', () => {
     await expect(page.locator('#pp')).toBeVisible();
     await expect(page.locator('#vitrine')).toBeHidden();
     expect(await page.evaluate(() => PP_ETAPES[pp.i])).toBe('salut');
-    // la vidéo n'est pas téléchargée
+    // la vidéo n'est pas téléchargée, ni la police des titres de la page
     expect(await page.locator('#vtVideo').getAttribute('src')).toBeNull();
+    await expect(page.locator('link#vtPolice')).toHaveCount(0);
   });
 
   test('un joueur déjà venu ne voit jamais la page, même rangé dans le groupe « page »', async ({ page }) => {
@@ -135,9 +148,10 @@ test.describe('Page d\'accueil (lot 83)', () => {
   test('en anglais : toute la page est traduite, avec les images anglaises', async ({ page }) => {
     await ouvrir(page, { onglet: '', stockage: Object.assign({ 'coach-langue': 'en' }, PAGE) });
     await page.waitForFunction(() => !document.documentElement.classList.contains('trad'));
-    await expect(page.locator('#vtTitre')).toHaveText('Learn to mix on your controller, by playing.');
+    await expect(page.locator('#vtTitre')).toHaveText(/^Learn\s*to mix\s*on your controller,\s*by playing$/);
     await expect(page.locator('#vtGo')).toHaveText("Let's go");
-    await expect(page.locator('#vtNiv')).toHaveText('Your first 3 levels with your controller');
+    await expect(page.locator('#vtNiv')).toHaveText('All of chapter 1 with your controller');
+    await expect(page.locator('.vt-label').first()).toHaveText('How it works');
     await expect(page.locator('.vt-etape img').first()).toHaveAttribute('src', 'img/vitrine/en/branche.jpg');
     const manque = await page.evaluate(() => [...window.__enManque].filter(t => document.getElementById('vitrine').textContent.includes(t)));
     expect(manque).toEqual([]);

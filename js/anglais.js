@@ -2896,15 +2896,12 @@ enMotif(/^une table \(pas dans la liste : (.{1,40})\)$/, (m, x) => `a controller
 /* ---------- Lot 83 « La page d'accueil » (index.html, #vitrine ; js/vitrine.js) ---------- */
 enPareil('Pioneer DJ', 'DJingood', 'DJingood Pro');
 enDe({
-  'Apprends à mixer sur ta table, en jouant.': 'Learn to mix on your controller, by playing.',
-  'Branche ta table DJ. Vini te guide geste par geste.': 'Plug in your DJ controller. Vini guides you one move at a time.',
+  // le titre posé sur la vidéo (habillage « moins IA », 23 nov.) : traduit d'un bloc, avec ses retours à la ligne
+  'Apprends <span class="vt-ensemble">à mixer</span><br>sur ta table,<br>en jouant': 'Learn <span class="vt-ensemble">to mix</span><br>on your controller,<br>by playing',
   "C'est parti": "Let's go",
   'Gratuit · rien à installer': 'Free · nothing to install',
   "Commence ici, joue avec ta table sur l'ordi.": 'Start here, play with your controller on your computer.',
   "Une vraie partie : les gestes sur la table, le jeu à l'écran": 'A real game: the moves on the controller, the game on screen',
-  'Marche avec ta table': 'Works with your controller',
-  'et les autres': 'and the rest',
-  'Trois étapes, et tu mixes.': "Three steps, and you're mixing.",
   'Le site reconnaît la table branchée': 'The site recognizes the plugged-in controller',
   'Branche ta table': 'Plug in your controller',
   "Une partie : la piste qui défile et la table à l'écran": 'A game: the scrolling track and the controller on screen',
@@ -2920,7 +2917,8 @@ enDe({
   'par mois': 'a month',
   '49,99 € par an · ou 4,99 € par mois': '€49.99 a year · or €4.99 a month',
   '7 jours gratuits': '7 days free',
-  "Les 7 chapitres, jusqu'au vrai set": 'All 7 chapters, up to a real set',
+  "Les chapitres 2 à 7, jusqu'au vrai set": 'Chapters 2 to 7, up to a real set',   // lot 82 : le chapitre 1 est offert
+  'Tout le chapitre 1 avec ta table': 'All of chapter 1 with your controller',
   'Tous les tutos de Vini': "All of Vini's tutorials",
   'Ta musique, avec rekordbox': 'Your music, with rekordbox',
   'Questions': 'Questions',
@@ -2942,7 +2940,6 @@ enDe({
   'Il me faut quoi ?': 'What do I need?',
   'Ta table branchée en USB, un ordinateur (PC ou Mac) avec Chrome ou Edge, et un casque ou des enceintes. Rien à installer. Sur téléphone, tu peux déjà faire 7 leçons sans table.':
     'Your controller plugged in over USB, a computer (PC or Mac) with Chrome or Edge, and headphones or speakers. Nothing to install. On a phone, you can already do 7 lessons without a controller.',
-  "Ta première transition propre, c'est aujourd'hui.": 'Your first clean transition is today.',
   'CGV': 'Terms'
 });
 enMotif('Tes {#n} premiers niveaux avec ta table', 'Your first {n} levels with your controller');
