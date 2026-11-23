@@ -96,6 +96,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     peut passer sur deux lignes proprement (« I already have an account » à 360 px) ; `'Pioneer DJ'` retiré d'`enPareil`.
     3 tests ajoutés (masque unique, bouton de la vidéo, pas de bouton sans « moins d'animations ») ; `vitrine.spec.js` 19 sur
     19 ; captures `captures/lot83/gardien2.js` → `captures/lot83/v2/` (premier écran de Vini, moins d'animations, anglais 360).
+    Suite complète sur `3b53c6f` : 985 sur 985. Entre-temps, **le lot 85 « Moins de texte » a été publié** (`origin/main` =
+    `5b9f2c6`) : fusionné (`60cbfb4`, seul conflit CLAUDE.md, les deux entrées gardées ; la page d'accueil n'en hérite d'aucun
+    texte). Suite complète sur `60cbfb4` : **986 sur 986** (`captures/lot83/suite-v4/`). **Second passage du gardien : feu
+    orange, aucun blocage** (les deux corrections vérifiées à 9 tailles, vidéo lancée pour de vrai dans Chrome ; rien du lot 85
+    perdu ; détail sans conséquence : sur une tablette en hauteur, 768 × 1024, le cadre de Vini touche la zone du titre sans
+    cacher de lettre). **Attend : l'accord de l'utilisateur pour publier** (revérifier avant qu'`origin/main` est toujours
+    `5b9f2c6`).
 - **Lot 85 « Moins de texte » : PUBLIÉ le 23 nov. 2026** (« ok publie le 85 quand c'est vert » ; second passage du gardien : feu
   orange, aucun blocage, 967 sur 967 ; l'orange ne tient qu'à la règle de l'essai FLX4, le lot ne changeant que des textes ;
   `245292a`, puis cette note = `origin/main` ; production vérifiée en 1366 × 768, français et anglais : 7 pastilles de l'accueil,
