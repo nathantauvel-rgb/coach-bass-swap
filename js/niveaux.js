@@ -36,24 +36,24 @@ const FULL = ['k', 'b', 'h', 'c', 'cl'], CH3_INIT = { faderA: 1, faderB: 0, lowA
 // la note tombe dès le geste. Le break a été resserré (break, 16 temps de A, puis son outro) pour garder le piège.
 const CH3_LESSONS = [
   { kind: 'shortintro', wave: true, title: 'L\'intro courte', goal: 'Lance B pour que son drop tombe pile quand A s\'arrête.',
-    how: 'Ici, B n\'a que 16 temps d\'intro. Sur la piste, B en pointillé montre où il tomberait si tu le lançais maintenant : lance-le quand le début de son drop s\'aligne sur la fin de A.',
+    how: 'B n\'a que 16 temps d\'intro : lance-le quand son drop en pointillé s\'aligne sur la fin de A.',
     show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 16, end: 44,
     A: [[0, 16, FULL], [16, 48, ['k', 'b', 'h']]], aEnd: 48, B: [[0, 16, ['k', 'h']], [16, 80, FULL]], bIntro: 16, bLoop: [16, 80], launchBeat: 32,
     targets: [[32, 'LANCE B', 'B']], caps: [[16, 'A entre dans son outro'], [32, 'B lancé : 16 temps avant la fin de A'], [38, 'Son drop tombera pile à la fin de A']] },
   { kind: 'break', wave: true, title: 'Le piège du break', goal: 'Ne te fais pas avoir par le break : attends la vraie fin de A.',
-    how: 'A a un break au milieu : la musique se vide, puis repart de plus belle. Repère sur la piste la vraie fin du morceau (le break n\'en est pas une), puis lance B (32 temps d\'intro) pour que son drop tombe quand A s\'arrête.',
+    how: 'Le break n\'est pas la fin : lance B pour que son drop tombe quand A s\'arrête vraiment.',
     show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 8, end: 60,
     A: [[0, 16, FULL], [16, 32, ['pad', 'h']], [32, 48, FULL], [48, 80, ['k', 'b', 'h']]], aEnd: 80, B: [[0, 32, ['k', 'h']], [32, 96, FULL]], bIntro: 32, bLoop: [32, 96], launchBeat: 48,
     targets: [[48, 'LANCE B', 'B']], caps: [[16, 'Break : ce n\'est pas la fin !'], [32, 'A repart à fond'], [48, 'Vraie outro : B est lancé'], [54, 'Son drop tombera pile à la fin de A']] },
   // Lot 47 : ce niveau avait deux voix fabriquées par le site ; l'utilisateur les trouvait très désagréables (« je veux plus
   // jamais l'entendre »). Ce sont maintenant deux mélodies (le « lead » des morceaux du site), et la voix n'existe plus.
   { kind: 'vocal', wave: true, title: 'Une seule mélodie à la fois', goal: 'Coupe le MID de A quand la mélodie de B arrive.',
-    how: 'A joue encore sa mélodie pendant son outro, et B a une mélodie dans son intro. Quand celle de B commence, coupe le MID de A (le potard des médiums, là où vivent les mélodies et les voix) pour qu\'on n\'entende jamais deux mélodies ensemble. B arrive tout seul.',
+    how: 'Quand la mélodie de B commence, coupe le MID de A : jamais deux mélodies ensemble.',
     show: ['gMid'], autoLaunch: true, init: CH3_INIT, user: ['midA'], start: 32, end: 56,
     A: [[0, 32, FULL.concat('lead')], [32, 80, ['k', 'b', 'h', 'lead']], [80, 96, ['k', 'b', 'h']]], aEnd: 96, B: [[0, 16, ['k', 'h']], [16, 64, ['k', 'h', 'lead']], [64, 128, FULL]], bIntro: 64, bLoop: [64, 128], launchBeat: 32,
     targets: [[48, 'MÉLODIE', 'A']], caps: [[32, 'B arrive, sans mélodie'], [48, 'La mélodie de B commence : MID de A coupé'], [52, 'Une seule mélodie à la fois']] },
   { kind: 'read', wave: true, random: true, title: 'Lecture express', goal: 'Structure inconnue : lis la piste et lance B au bon moment.',
-    how: 'À chaque partie, l\'outro de A et l\'intro de B changent de longueur. Lis la piste de A pour trouver sa fin, regarde la longueur de l\'intro de B, et lance B pour que son drop tombe quand A s\'arrête.',
+    how: 'Les longueurs changent à chaque partie : lis la piste, puis lance B pour que son drop tombe à la fin de A.',
     show: ['gPlay'], autoLaunch: false, init: CH3_INIT, user: [], start: 0, end: 100, launchBeat: 32, targets: [], caps: [] }
 ];
 CH3_LESSONS.forEach(l => { l.init = Object.assign({}, l.init); l.bCue = 0; l.btn = []; });

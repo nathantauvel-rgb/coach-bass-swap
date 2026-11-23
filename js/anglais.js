@@ -3037,4 +3037,40 @@ enMotif('Série de {#n} jours', '{n}-day streak');
 enMotif('Série de {#n} jour', '{n}-day streak');
 /* ---------- Lot 85 : fin ---------- */
 
+/* ---------- Lot 86 « Comment faire, en court » : les « Comment faire ? » des chapitres 3 à 7, la note de S'entraîner ---------- */
+enDe({
+  "B n'a que 16 temps d'intro : lance-le quand son drop en pointillé s'aligne sur la fin de A.": "B has only a 16-beat intro: start it when its dotted drop lines up with the end of A.",
+  "Le break n'est pas la fin : lance B pour que son drop tombe quand A s'arrête vraiment.": "The break isn't the end: start B so its drop lands when A really stops.",
+  "Quand la mélodie de B commence, coupe le MID de A : jamais deux mélodies ensemble.": "When B's melody starts, cut A's MID: never two melodies at once.",
+  "Les longueurs changent à chaque partie : lis la piste, puis lance B pour que son drop tombe à la fin de A.": "The lengths change every game: read the track, then start B so its drop lands at the end of A.",
+  "Dès « FILTRE », tourne lentement le CFX de A, puis au swap, échange les basses d'un geste.": "From \"FILTER\", slowly turn A's CFX, then on the swap, swap the bass in one move.",
+  "Lance B sur la ligne, monte son fader en 8 temps, puis au drop : swap des basses et A baissé d'un coup.": "Start B on the line, raise its fader over 8 beats, then on the drop: bass swap and A dropped all at once.",
+  "Sans compte à rebours : écho sur le dernier temps de la phrase, puis coupe A et lance B au temps suivant.": "No countdown: echo on the last beat of the phrase, then cut A and start B on the next beat.",
+  "Lance B, monte son fader, swap à la phrase suivante, filtre A jusqu'à « À FOND », puis baisse A avant le drop.": "Start B, raise its fader, swap on the next phrase, filter A until \"FULL\", then lower A before the drop.",
+  "Écoute sans toucher : un seul coup = calés, « ta-boum » = B en avance, « boum-ta » = B en retard.": "Listen without touching: one single hit = in sync, \"ta-boom\" = B early, \"boom-ta\" = B late.",
+  "Tourne la molette de B (sens horaire : il accélère) jusqu'à moins de 15 ms de décalage, et garde-le là.": "Turn B's jog wheel (clockwise: it speeds up) until it's off by less than 15 ms, and keep it there.",
+  "Ramène B à 124 BPM avec son TEMPO (vers le haut : plus lent), puis rattrape le décalage à la molette.": "Bring B back to 124 BPM with its TEMPO (up: slower), then fix the offset with the jog wheel.",
+  "Si le compteur monte vers « en avance », B va trop vite : corrige au TEMPO, puis à la molette.": "If the meter climbs toward \"early\", B is too fast: fix it with TEMPO, then the jog wheel.",
+  "Allume le CUE 🎧 de B, cale-le au casque, puis monte son fader au temps 64.": "Turn on B's CUE 🎧, beatmatch it in your headphones, then raise its fader on beat 64.",
+  "Lance B vers le temps 32, règle son tempo, cale-le, puis échange les basses au temps 64.": "Start B around beat 32, set its tempo, beatmatch it, then swap the bass on beat 64.",
+  "Pareil, sans aucune aide à l'écran : lance, cale à l'oreille, échange les basses au temps 64.": "Same thing, with no help on screen: start, beatmatch by ear, swap the bass on beat 64.",
+  "Au drop de B, appuie sur son pad 1 (mode HOT CUE) : c'est ton repère, rangé sur le temps par Quantize.": "On B's drop, press its pad 1 (HOT CUE mode): that's your cue point, snapped to the beat by Quantize.",
+  "Au temps 64, pad 1 de B : il part sur son drop ; baisse A d'un coup dans le même geste.": "On beat 64, B's pad 1: it starts on its drop; drop A's fader all at once in the same move.",
+  "Sors de la boucle de B (pad 4 « EXIT ») pendant la dernière mesure avant le temps 64.": "Exit B's loop (pad 4 \"EXIT\") during the last bar before beat 64.",
+  "Avant la fin de A, boucle 8 temps (pad « 8 ») sans dépasser la fin ; au drop de B, baisse A d'un coup.": "Before A ends, loop 8 beats (pad \"8\") without going past the end; on B's drop, drop A all at once.",
+  "Quantize éteint : boucle de 16 au temps 64, de 8 au 80, de 4 au 96, puis baisse A au drop de B.": "Quantize off: 16-beat loop on beat 64, 8 on 80, 4 on 96, then lower A on B's drop.",
+  "Au temps 64, pad 1 de B et swap des basses d'un geste : les deux drops tombent ensemble.": "On beat 64, B's pad 1 and the bass swap in one move: both drops land together.",
+  "Boucle la fin de A (pad 8), puis au temps 104 lance B depuis son hot cue et coupe A, sans aucun repère.": "Loop the end of A (pad 8), then on beat 104 start B from its hot cue and cut A, with no markers.",
+  "Lance le suivant sur B au début d'une phrase, cale-le, monte son fader, fais sortir le premier : recommence.": "Start the next one on B at the start of a phrase, beatmatch it, raise its fader, take the first one out: repeat.",
+  "Règle le TEMPO de celui qui entre sur le BPM de celui qui joue, puis cale-le à la molette.": "Set the incoming track's TEMPO to the playing track's BPM, then beatmatch it with the jog wheel.",
+  "Suis la feuille de route : swap des basses, filtre qui efface, ou écho sur le dernier temps.": "Follow the roadmap: bass swap, filter fade-out, or echo on the last beat.",
+  "Lis la piste : intro courte, break (pas la fin), intro avec basse (coupe son LOW) ; plus de BPM affiché.": "Read the track: short intro, break (not the end), intro with bass (cut its LOW); no more BPM shown.",
+  "Lance le suivant fader en bas, CUE 🎧 allumé : cale-le au casque, puis monte son fader sur une phrase.": "Start the next one with its fader down, CUE 🎧 on: beatmatch it in your headphones, then raise its fader on a phrase.",
+  "Chaque morceau va 2 BPM plus vite : cale-le, puis ramène-le peu à peu à son tempo, jusqu'à 126 BPM ou plus.": "Each track is 2 BPM faster: beatmatch it, then bring it back bit by bit to its own tempo, up to 126 BPM or more.",
+  "Tout à l'oreille, sans aucune aide : lancer, caler, échanger les basses, faire sortir.": "All by ear, with no help: start, beatmatch, swap the bass, take it out.",
+  "Joue d’abord un niveau dans <a href=\"#apprendre\">Apprendre</a>.": "Play a level in <a href=\"#apprendre\">Learn</a> first."
+});
+enMotif('Tes niveaux joués, sur d’autres morceaux : {#n} sur {#m}.', 'Your played levels, on other tracks: {n} of {m}.');
+/* ---------- Lot 86 : fin ---------- */
+
 trPage();

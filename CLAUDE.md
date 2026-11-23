@@ -32,6 +32,15 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 86 « Comment faire, en court » : EN COURS (23 nov. 2026), pas publié.** Sa demande, après le lot 85 : « Oui,
+  raccourcis-les » (les « Comment faire ? » des chapitres 2 à 7). Copie `Documents\coach-dj-lot86`, branche
+  `lot-86-comment-faire` depuis `origin/main` = `5b9f2c6` (lot 85 publié) ; serveur `coach-dj-lot86` (port 8820), tests
+  `DJ_PORT=8821`. Ce qui change : les 29 `how` des chapitres 3 à 7 en une phrase chacun (`js/niveaux.js` pour le chapitre 3,
+  `js/combos.js`, `js/calage.js`, `js/hotcues.js`, `js/set.js` ; le chapitre 2 reprend ceux du chapitre 1, raccourcis au
+  lot 85), en gardant ce qui sert à réussir (temps, pads, « Quantize éteint », 126 BPM au chapitre 7) ; la note de
+  S'entraîner des abonnés plus courte (`js/entrainement.js`) ; anglais (bloc « Lot 86 » de `js/anglais.js`). Retiré exprès :
+  « sans sortie casque, B est joué tout bas » (ch. 5 et 7), « réponds avec les trois boutons » (ch. 5), « Quantize est
+  allumé » (le ch. 6 niv. 1 dit maintenant « rangé sur le temps par Quantize », pour que le lexique explique le mot).
 - **Lot 85 « Moins de texte » : PUBLIÉ le 23 nov. 2026** (« ok publie le 85 quand c'est vert » ; second passage du gardien : feu
   orange, aucun blocage, 967 sur 967 ; l'orange ne tient qu'à la règle de l'essai FLX4, le lot ne changeant que des textes ;
   `245292a`, puis cette note = `origin/main` ; production vérifiée en 1366 × 768, français et anglais : 7 pastilles de l'accueil,
