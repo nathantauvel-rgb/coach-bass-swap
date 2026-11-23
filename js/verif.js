@@ -125,8 +125,9 @@ function vfEcoute(){
 // « Aller jouer » : on garde l'étape, on ouvre le bon niveau ; « Ma table » propose ensuite de reprendre
 function vfJouer(quoi){ closeVerif();
   if (quoi === 'expert'){ expert = true; saveExpert(); goLesson(1, 0); } else goLesson(1, vfNivMusique(), true); }   // le swap, même fermé : c'est la table qu'on vérifie (lot 64)
-// Lot 68 : sans abonnement, le swap est dans Pro ; « Le fader » (gratuit) fait aussi jouer A et B ensemble sur la vraie musique
-const vfNivMusique = () => BASE_LESSONS.findIndex(l => l.kind === (proBloque() ? 'fader' : 'swap'));
+// Lot 68 : sans abonnement, le swap était dans Pro, d'où « Le fader » (gratuit), qui fait aussi jouer A et B ensemble sur la
+// vraie musique. Lot 82 : le swap est gratuit (tout le chapitre 1) ; « Le fader » reste si un jour il repasse dans Pro.
+const vfNivMusique = () => { const s = BASE_LESSONS.findIndex(l => l.kind === 'swap'); return niveauPro(1, s) ? BASE_LESSONS.findIndex(l => l.kind === 'fader') : s; };
 
 function renderVerif(){
   if (!verif.on) return;

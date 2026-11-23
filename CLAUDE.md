@@ -66,6 +66,112 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     refaite) ; les liens de `presentation.html` mènent à `index.html?accueil=vini` (pas deux pages d'accueil de suite, pas
     comptés) ; `STATISTIQUES.md` : `?accueil=page` dans une fenêtre privée ; `vitrine` dans l'ordre des fichiers, la liste des
     tests et celle des clés. Laissé exprès : pas de bouton FR / EN sur la page sous 420 px (les questions de Vini ont le leur).
+- **Lot 82 « Le chapitre 1 offert » : PUBLIÉ le 23 nov. 2026** (« Oui, publie » ; `1f8e939`, puis cette note = `origin/main` ;
+  production vérifiée en 1366 × 768, français et `?lang=en` : « Continuer » au niveau 7, fenêtre Pro avec l'image de la démo, la
+  pastille et la frise ; images `img/demo-apercu.jpg` et `img/en/demo-apercu.jpg` servies ; `/api/pro` répond). **Reste, par lui** :
+  les points 42 et 43 de la checklist sur sa FLX4 ; suivre chaque semaine les essais commencés pour 100 tables branchées
+  (`STATISTIQUES.md`, règle de retour : remettre 3 niveaux gratuits si le chiffre baisse après 3-4 semaines). **État avant publication :
+  fusionné avec `origin/main` = `e3cc902` (lot 84) dans `9a32298` ; suite complète après fusion : 966 sur 966 ; dernier passage du
+  gardien : feu orange, aucun blocage** (rien de perdu à la fusion, « FR | EN » et l'image anglaise de la démo marchent ensemble).
+  Le lot 85 « Moins de texte » (copie `coach-dj-lot85`) part de cette branche : le publier après celui-ci. Historique : Commits `6b41251`
+  (le lot) et `3770068` (remarques du gardien) sur `lot-82-chapitre1-offert`, au-dessus d'`origin/main` = `63b7f90` (rien à
+  fusionner au 22 nov. au soir ; les lots 83 et 84 existent dans d'autres copies, pas publiés : si l'un part avant, fusionner).
+  Suite complète : 952 sur 952, puis 955 sur 955 après les remarques. **Gardien : feu orange, aucun blocage** ; corrigé : la
+  barre de la démo restait si l'on changeait de chapitre pendant la préparation (et « Jouer » aurait pu lancer le niveau de
+  Pro) → `proIci` ne libère que le niveau de la démo, `startRun` réel pendant l'aperçu = `apercuFin(true)`,
+  `apercuFin(false, false)` si la préparation est abandonnée ; le « ! » du titre (espace insécable) ; l'étape « S'entraîner »
+  de l'accueil sans abonnement ne cite que le défi du jour ; point 43 de la checklist FLX4. Laissé : la barre couvre le bas
+  de la table dessinée (CUE, PLAY) pendant la démo, et « Arrêter » sur téléphone (« Fermer » fait la même chose) ; la phrase
+  « Bravo, tu as fini le chapitre 1… » de l'accueil ne sert que si l'on revient à 3 niveaux gratuits ; la carte du niveau 7
+  n'a plus d'offre du tout (voir « Continuer » plus bas).
+  **Puis sa demande, avant de publier** (« il faudrait qu'à la fin du chapitre 1 il y ait un bouton … comme continuer … et
+  qu'il se retrouve face à un paywall … sans qu'il ait besoin d'aller lui-même consciemment appuyer sur le truc payer ») :
+  la carte du niveau 7 fête et n'a qu'un bouton, « Continuer » (`#next`, `dataset.go = 'pro'`, curseur dessus), qui ouvre la
+  grande fenêtre Pro du chapitre 2 avec la démo ; l'offre qui était sur la carte (`#rPro`, `#rProGo`, `#rProTard`,
+  `#rProDemo`, `finEssaiTexte`, `FIN_SUITE`) est retirée. **Puis** (« une interface qui donne plus envie de payer … enlève
+  tout le texte en vert … il faut que ce soit visuel », `b6e3739`) : la fenêtre Pro a une pastille dorée « 7 jours gratuits »
+  (`#proSemaine`, et « 1er mois offert · sans carte » pour `#proFond`, couleurs `--pro-cadeau` dans `:root`) en haut de la
+  carte de prix, une frise en 3 points sous le prix (`#proFrise` : Aujourd'hui gratuit / Jour 5 rappel / Jour 7 le prix,
+  `#proFrisePrix` suit la formule et le rattrapage dans `proPrix`), des atouts sans phrases, plus de `.pro-sous` ni de
+  `#proDedansTxt` ; l'image de la démo aussi quand aucun chapitre n'est demandé (celle du chapitre 2), sauf pour un tuto et
+  sur téléphone. Gardien sur `b6e3739` : feu orange, aucun blocage (955 sur 955) ; corrigé : après une carte du niveau 7
+  fermée par × ou Échap, le défi du jour suivant n'écrit plus « Niveau suivant » sur son bouton ; point 43 de la checklist
+  réécrit. Le lot 84 « FR | EN » a été publié entre-temps (`origin/main` = `e3cc902`) : fusionné ici. Planche :
+  `captures/lot82/planche.png`. **Reste, par lui** : le point 43 de la checklist sur sa FLX4.
+  Demande : « laisse le premier chapitre gratuit
+  entièrement », et au clic sur le chapitre 2 « le meilleur taux de conversion au moment du paywall ». Analyse (chiffres,
+  études, règle de retour) : `Documents\MARKETING\08-chapitre-1-offert.md`. Maquette v2 validée (« Oui, lance le lot ») :
+  `captures/maquette-ch1-offert/` du dossier principal ; la v1 (carte du chapitre 2 sur la page) refusée : « beaucoup trop
+  d'écriture, ça fait brouillon » → **sa règle pour tout le site : très peu d'écriture, très visuel**. Copie
+  `Documents\coach-dj-lot82`, branche `lot-82-chapitre1-offert` depuis `origin/main` = `63b7f90` ; serveur `coach-dj-lot82`
+  (port 8802), tests `DJ_PORT=8803` (`captures/lot82/suite.sh`). Ce qui change :
+  - `NIV_GRATUITS = 7` (`js/niveaux.js`) : les 7 niveaux du chapitre 1 (et leur Mode Expert, le défi du jour) sont gratuits ;
+    les chapitres 2 à 7 restent dans Pro. Revenir en arrière : remettre 3 et relire les textes de `finEssai` / `nivFinRend`.
+  - La fin du chapitre 1 passe du niveau 3 au niveau 7 (`finEssai`) : la carte fête (« Ta première transition complète ! »,
+    « Chapitre 1 terminé · N ★ ») et n'a qu'un bouton, « Continuer » (le bouton « Niveau suivant », `dataset.go = 'pro'`,
+    `.rcard.fin-ch1` cache « Rejouer ») : il ouvre la grande fenêtre Pro du chapitre 2 (`proOuvre('', { fin: true })`,
+    contexte « Pour ouvrir le chapitre 2 : « La maîtrise » », image de la démo). Étape comptée : `ch1-fini` (`essai-fini`
+    n'est plus envoyé) ; la fenêtre compte `pro-ouvert` avec `depuis: 'fin'`.
+  - La petite proposition d'essai (lot 81, `essaiTot`) reste aux niveaux 1 et 2 seulement (`ESSAI_TOT_NIV`).
+  - Clic sur un chapitre de Pro : la grande fenêtre Pro comme avant, avec la démo en image (`#proDemo`,
+    `img/demo-apercu.jpg`, anglais `img/en/demo-apercu.jpg` par `EN_IMAGES` ; faites par `captures/lot82/vignette.js`) à la
+    place de la phrase sous le titre ; pas sur un téléphone. « Les chapitres 2 à 7 », plus « le swap des basses » ;
+    « Ce que tu débloques » : « Les vrais morceaux » remplace « La fin du chapitre 1 ».
+  - L'aperçu (`apercu`, `apercuDemarre`, `apercuFin` dans `js/niveaux.js`) : la démo d'un niveau de Pro joue sur la table du
+    site (`proIci` faux pendant l'aperçu), barre `#apercu` en bas (« Démo · Chapitre N · … », le bouton de l'essai, « Fermer ») ;
+    à la fin, « Arrêter » ou « Fermer » : retour où l'on était et la fenêtre Pro se rouvre (pas depuis la carte d'un niveau de
+    Pro, qui a déjà l'offre) ; changer d'onglet (`setView`) arrête sans rien rouvrir. Rien n'est enregistré. Étape :
+    `demo-pro` (`chap`, `depuis`). Aussi sur la carte d'un niveau de Pro (`#nivFinDemo`), que seul un ancien abonné revenu
+    sur un chapitre payant voit maintenant.
+  - Après le paiement depuis la grande carte : on ouvre le chapitre 2 (`proPour` `fin` → `chap:2`).
+  - Apprenti DJ et DJ confirmé gardent leurs 3 niveaux en Mode Expert avant leur étape (`NIV_ESSAI`, `js/parcours.js`) ;
+    plan du Grand débutant : « Les 7 gestes du chapitre 1 » (`PP_SEPT`, `js/premiers.js`) ; « Vérifier ma table » refait
+    jouer le swap (`vfNivMusique`).
+  - Textes : CGV et `terms.html`, présentation, 5 pages du guide, description de `index.html`, « comme les chapitres 2 à 7 »
+    (Ma musique) ; tout en anglais (bloc « Lot 82 » de `js/anglais.js`, plus « précision serrée » qui manquait) ;
+    `STATISTIQUES.md` (le chiffre à suivre et la règle de retour).
+  - Tests : `tests/chapitre1-offert.spec.js` (15) ; `decoupe`, `niveau-dabord`, `caisse` adaptés (un niveau de Pro affiché :
+    chapitre 2, `ch2`).
+- **Lot 84 « FR | EN » : PUBLIÉ le 23 nov. 2026, dans la nuit** (« Oui, publie » ; `5f65342`, puis cette note = `origin/main` ;
+  production vérifiée en 1366 × 768 : djingood.fr s'ouvre en français avec « FR | EN », `?lang=en` met tout en anglais sans
+  rien garder, un nouvel onglet revient au français, un clic sur EN puis sur FR est gardé ; aucune phrase oubliée en anglais).
+  **Reste, par lui** : si son navigateur s'ouvre encore en anglais, cliquer une fois sur FR (choix gardé avant ce lot).
+  Détail du lot ci-dessous. Demande de l'utilisateur : « je veux pas que l'on mette le site
+  en anglais d'office, je veux qu'il soit en fr mais qu'il y ait un bouton FR/EN pour basculer », puis « Oui, lance le
+  lot ». Constat : le site s'ouvrait déjà en français, mais ouvrir une fois `?lang=en` (lien des pubs, mail de rappel en
+  anglais) gardait l'anglais pour toujours dans `coach-langue` (reproduit sur djingood.fr). Copie `Documents\coach-dj-lot84`,
+  branche `lot-84-fr-en` depuis `origin/main` = `63b7f90` ; serveur `coach-dj-lot84` (port 8812), tests `DJ_PORT=8813`.
+  Ce qui change :
+  1. **Bouton à deux côtés « FR | EN »** (`langueBoutons`, `js/langue.js`) dans l'en-tête, les Premiers pas et
+     `presentation.html` : un groupe (`role="group"`) de deux boutons, la langue affichée en évidence (`aria-pressed`),
+     l'autre se clique ; un clic sur la langue affichée ne fait rien. Les conteneurs gardent leurs identifiants (`#langBtn`,
+     `#ppLang`) mais deviennent des `div` / `span` (`index.html`, `presentation.html`). Styles : bloc « Lot 84 » à la place
+     des anciennes règles `.langbtn` / `.pp-lang` de `styles.css`. Règle du lot 80 gardée : sur la page en français, un
+     navigateur pas en français voit « FR | English » (Premiers pas, présentation) ; l'en-tête garde « EN » (le mot entier
+     poussait les onglets vers 1270-1310 px et le compte à la ligne sur téléphone). Sur téléphone, le bouton et l'écart des
+     pastilles se resserrent : le compte reste sur la ligne du logo jusqu'à 360 px (testé).
+  2. **Le lien `?lang=en` ne colle plus sur un navigateur en français** : l'anglais y dure le temps de la visite
+     (`sessionStorage` `coach-langue-visite`, propre à l'onglet). Sur un navigateur pas en français, il est gardé comme
+     avant (`coach-langue`). Un clic sur le bouton est toujours gardé (et efface l'anglais de la visite) ; `?lang=fr` aussi.
+     Les scripts en tête d'`index.html` et `presentation.html` (page cachée pendant la traduction) suivent le même ordre.
+  Tests : `tests/anglais.spec.js` (bouton, visite, navigateur anglais, clic gardé, place dans l'en-tête à 360, 375 et
+  1270 px). Captures : `captures/lot84/planche.png` de la copie (avant = djingood.fr, après = la copie ; `captures.js`).
+  Le lot 82 en cours touche aussi `js/langue.js` (une ligne d'`EN_IMAGES`) et `styles.css` : celui qui part en second fusionne.
+  Commit `9dcdaba`, suite complète **941 sur 941** (`captures/lot84/suite/`). **Gardien (22 nov., nuit) : feu orange, aucun
+  blocage.** Ses remarques corrigées ensuite : le bouton du compte dépassait le trait de l'en-tête de 9 à 15 px entre 1270 et
+  1440 px (bouton FR | EN de l'en-tête resserré : 65 px au lieu de 85, mesuré par `captures/lot84/mesure.js`) ; « Ouvrir le
+  site » passait sur deux lignes à 360 px sur la présentation (`white-space:nowrap`, côtés plus étroits) ; côtés du bouton à
+  24 px au moins sur téléphone (taille minimale pour un doigt) ; un clic sur la langue affichée la garde sans recharger (arrivé
+  par le lien des pubs sur un navigateur en français, un clic sur EN garde l'anglais). Tests ajoutés (1270 px avec un long
+  prénom, présentation à 360 px en français et en anglais, clic sur EN déjà allumé). Remarque non corrigée, voulue : ceux qui
+  ont déjà ouvert `?lang=en` depuis le lot 80 ont l'anglais gardé ; ils restent en anglais jusqu'à un clic sur FR.
+  Commit `1f2df19`, suite complète **944 sur 944** (`captures/lot84/suite2/`). **Second passage du gardien : feu orange**, un
+  défaut venu de la retouche : sur la présentation, un navigateur pas en français (« FR | English ») + « Ouvrir le site » qui
+  ne passe plus à la ligne dépassaient de l'écran entre 360 et 389 px. Corrigé : sous 420 px, « English » redevient « EN » et
+  l'écart se resserre ; sous 340 px, « Ouvrir le site » peut de nouveau passer à la ligne. Mesuré (`mesure.js`) : dans la
+  marge de 16 px de 360 à 414 px dans les trois cas, aucun défilement de côté à 320 px. Tests de la présentation sur
+  téléphone étendus (navigateur anglais à 360, 375, 390 px) : `anglais.spec.js` + `presentation.spec.js` 31 sur 31 ; la suite
+  complète n'a pas été relancée pour cette dernière retouche (CSS de la présentation sous 420 px seulement).
 - **Lot 81 « La caisse » : PUBLIÉ le 21 nov. 2026** (« Oui, publie » ; `c922a3f`, puis cette note = `origin/main` ; production vérifiée en 1366 × 768, en français et en anglais : année d'office, plan, essai dès le niveau 1, question après paiement, nouveau titre, CGV ; `/api/pro` répond). **Reste, par lui** : un essai sans payer avec son compte (page de paiement, flèche « ← » de Stripe, « 34,99 € » et la date, rouvrir Stripe : −15 € et 7 jours gratuits, repartir sans payer ; ce premier passage crée la remise chez Stripe) ; points 42, 38, 2 de la checklist FLX4. La fenêtre Pro qui se rouvre au retour de Stripe a été gardée (question posée, il a répondu « Oui, publie »). Né de l'analyse d'une vidéo YouTube sur les ventes d'un SaaS
   (`Documents\MARKETING\07-video-saas.md`). Décisions de l'utilisateur, mot pour mot : « Ok pour l'année d'office, rattrapage
   à 34,99 € pendant 48 h, Non pour le prix mensuel et annuel on n'y change rien en temps normal, Oui propose l'essai de 7 jours
@@ -3252,7 +3358,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 `coach-lecons`, `coach-lecons-oreille`, `coach-ch2`, `coach-ch2-ouvert`, `coach-ch3`, `coach-ch4` (étoiles des combos), `coach-ch5` (étoiles du calage), `coach-ch6` (étoiles des hot cues, lot 41), `coach-ch7` (étoiles du set, lot 44), `coach-comprendre` (étoiles des leçons « Comprendre », lot 48), `coach-tutos` (`{ vus: [identifiants] }`, les tutos vus jusqu'au bout, lot 56 ; l'ancien `vol` n'est plus écrit depuis le lot 60), `coach-set` (records sur 100 du set, `{ best: { niveau: note } }`), `coach-chapitre`, `coach-source-pro` (lot 81 : la réponse à « Comment tu as connu DJingood ? », sur cet appareil seulement, `CPT_LOCAL`).
 `coach-style` (`house`, `techno`, `afro`, `random` ou `vrai`), `coach-guide-vu`, `coach-fiches` (fiches « Découvre ce bouton » déjà vues), `coach-parcours`, `coach-test`, `coach-quiz` (identifiants des questions trouvées),
 `coach-badges` (identifiants des badges gagnés), `coach-objectif` (objectif du jour, secondes par jour, série), `coach-journal` (temps, parties, « C'était clair ? », avis des testeurs), `coach-entrainement` (défi, série, compteurs, record du mini-set),
-`coach-collection` (morceaux importés, `{ v: 2, n, t, p, ex }` depuis le lot 72, `ex: true` = la collection d'exemple, qui ne consomme pas la fiche offerte ; ne suit pas le compte), `coach-missions` (lot 72 : `{ v: 2, total, paires: { 'clé>clé': missions faites }, ok }` ; avant, une seule paire `{ pair, done, total }`), `coach-musique` (favoris, vus récemment, fiche offerte, lot 72 ; ne suit pas le compte), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; `ecran` : les commandes passées exprès d'une table réglée à la main, à l'écran, lot 73 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe` ; `autre` : le nom tapé d'une table pas dans la liste, lot 73), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert, semaine, essaiDispo }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; `semaine` = pendant les 7 jours gratuits, `essaiDispo` faux = ce compte a déjà été abonné, plus d’essai, lot 76 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré), `coach-langue` (`en` ou `fr` : la langue choisie, lots 53 et 80 ; posée par `?lang=`, le bouton FR / EN ou la carte « Switch to English » ; ne suit pas le compte, gardée par « Tout recommencer à zéro »), `coach-vitrine` (`page` ou `vini` : le groupe du test de la page d'accueil, tiré au sort une fois pour un nouveau venu, lot 83 ; dans `CPT_LOCAL`, ne suit pas le compte, gardée par « Tout recommencer à zéro »). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami).
+`coach-collection` (morceaux importés, `{ v: 2, n, t, p, ex }` depuis le lot 72, `ex: true` = la collection d'exemple, qui ne consomme pas la fiche offerte ; ne suit pas le compte), `coach-missions` (lot 72 : `{ v: 2, total, paires: { 'clé>clé': missions faites }, ok }` ; avant, une seule paire `{ pair, done, total }`), `coach-musique` (favoris, vus récemment, fiche offerte, lot 72 ; ne suit pas le compte), `coach-midi-map` (partagée avec `coach.html`), `coach-table` (`{ nom }` d'une autre table réglée pas à pas, ou `{ nom, modele }` d'une table reconnue par sa fiche, lot 38 ; `ecran` : les commandes passées exprès d'une table réglée à la main, à l'écran, lot 73 ; gardée par « Tout recommencer à zéro »), `coach-tables` (réglages gardés de chaque table connue, `{ flx4: {...}, ddj400: {...} }`, pour passer d'une table à l'autre sans perdre ce qui a été appris ; gardée aussi, ne suit pas le compte), `coach-verif` (« Vérifier ma table » : étape, réponses, numéros MIDI relevés ; gardée aussi), `coach-expert` (Mode Expert choisi, records sur 100), `coach-ordre` (`2` : progression passée au nouvel ordre du chapitre 1), `coach-accueil` (réponses des Premiers pas, ou `passe` ; `autre` : le nom tapé d'une table pas dans la liste, lot 73), `coach-quetes` (quêtes du jour, compteurs, coffres ouverts, XP des coffres), `coach-sons` (`0` : sons du jeu coupés), `coach-volume` (volume de tout le site, de 0 à 1, lot 60 ; sur l'appareil seulement, gardé par « Tout recommencer à zéro »), `coach-compte` (`{ uid, prenom, maj, sale }` du dernier compte connecté : `maj` = horodatage du dernier document écrit ou repris, `sale` = des changements pas encore enregistrés en ligne), `coach-bibliotheque` (`coach.html`), `coach-stats` (étapes déjà comptées par les statistiques, lot 46 ; gardée par « Tout recommencer à zéro », ne suit pas le compte), `coach-pro` (lot 59 : ce que Stripe a répondu pour le dernier compte, `{ uid, actif, formule, jusqua, annule }`, ne suit pas le compte), `coach-mails` (réponse « Vini peut m'écrire », `{ uid, rep, le, ou }`, lot 54 ; suit le compte, gardée par « Tout recommencer à zéro »), `coach-compte-propose` (dernier jour où la carte de fin a proposé le compte ; ne suit pas le compte). `coach-pro` (`{ uid, actif, formule, jusqua, annule, essai, offert, semaine, essaiDispo }` : ce que Stripe a dit de l’abonnement de ce compte ; `essai` = pendant le mois offert, `offert` = le mois offert l’attend, lot 68 ; `semaine` = pendant les 7 jours gratuits, `essaiDispo` faux = ce compte a déjà été abonné, plus d’essai, lot 76 ; sur l’ordinateur seulement, dans `CPT_LOCAL`), `coach-fondateur` (`1` : le message du mois offert aux comptes déjà créés a été montré, lot 68 ; suit le compte ; toute autre valeur = pas encore montré), `coach-langue` (`en` ou `fr` : la langue choisie, lots 53 et 80 ; posée par `?lang=` (lot 84 : `?lang=en` seulement sur un navigateur pas en français) ou par le bouton FR | EN ; ne suit pas le compte, gardée par « Tout recommencer à zéro »). Hors localStorage : `coach-langue-visite` (sessionStorage, lot 84 : `en` = l'anglais du lien `?lang=en` sur un navigateur en français, le temps de la visite). Hors `coach-` : `umami.disabled` (`1` = le joueur refuse les statistiques, réglage d'Umami), `coach-vitrine` (`page` ou `vini` : le groupe du test de la page d'accueil, tiré au sort une fois pour un nouveau venu, lot 83 ; dans `CPT_LOCAL`, ne suit pas le compte, gardée par « Tout recommencer à zéro »).
 Toute valeur lue doit être validée : des données abîmées ne doivent jamais bloquer la page.
 
 ## Tester

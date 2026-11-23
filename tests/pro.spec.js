@@ -55,7 +55,7 @@ test.describe('Pro allumé, sans abonnement', () => {
     await page.locator('[data-tu="swap"]').click();
     await expect(page.locator('#pro')).toBeVisible();
     await expect(page.locator('#tuLecteur')).toBeHidden();
-    await expect(page.locator('#proDedansTxt')).toContainText('10 tutos');
+    await expect(page.locator('#pro .pro-atouts')).toContainText('10 tutos');
     await expect(page.locator('#proContexteTxt')).toHaveText('Pour regarder « Le swap des basses »');
     expect(err).toEqual([]);
   });

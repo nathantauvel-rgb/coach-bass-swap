@@ -320,8 +320,14 @@ function niveauRefuse(i, b){
    pour comprendre le concept, tout le reste dans Pro. Gratuit : les 3 premiers niveaux du chapitre 1 (Mode Expert compris),
    Comprendre, le défi du jour (sur ces 3 niveaux) et un tuto (tutos.js). Le reste (40 exercices, l'entraînement, Passer au
    vrai, 10 tutos) demande l'abonnement. Maquette validée : captures/maquette-pro-decoupe/ (dossier principal, hors Git).
-   Tout dépend de proVerrou (pro.js, chargé bien plus tard : d'où le `typeof`) : tant que PRO_PRET est faux, rien ne change. */
-const NIV_GRATUITS = 3;
+   Tout dépend de proVerrou (pro.js, chargé bien plus tard : d'où le `typeof`) : tant que PRO_PRET est faux, rien ne change.
+   Lot 82 (décision de l'utilisateur du 22 nov. 2026, « laisse le premier chapitre gratuit entièrement ») : les 7 niveaux du
+   chapitre 1 sont gratuits (Mode Expert compris, puisqu'il rejoue ces niveaux). La grande carte de Pro arrive à la fin du
+   niveau 7 (finEssai) ; un chapitre fermé se regarde en démo avant de payer (apercu, plus bas). Pour revenir en arrière
+   (si les essais commencés baissent, analyse de MARKETING\08-chapitre-1-offert.md) : remettre 3 ici, et relire
+   les textes de la grande carte (finEssai, faits pour le niveau 7) et de la carte d'un niveau de Pro (nivFinRend). */
+const NIV_GRATUITS = 7;
+let apercu = null;   // lot 82 : l'aperçu d'un chapitre fermé en cours ({ n, i, depuis, ch, li } : la démo regardée, d'où l'on vient)
 const proBloque = () => typeof proVerrou === 'function' && proVerrou() && !proActif();
 const niveauGratuit = (n, i) => n === 1 && i < NIV_GRATUITS;
 const niveauPro = (n = chapter, i = li) => proBloque() && !niveauGratuit(n, i);
@@ -369,20 +375,21 @@ function renderHud(){
 }
 /* ---------- Lot 76 : la carte de fin ----------
    Un niveau de Pro, sans abonnement (proIci), n'est plus affiché avec sa piste et sa table qu'on ne peut pas jouer : une
-   carte à la place. Après les 3 niveaux gratuits : « Ta première transition est faite. Bravo ! » ; sinon (un lien du guide
-   vers un niveau de Pro) : « … est dans DJingood Pro ». À droite, l'offre (proOffre, pro.js : 7 jours gratuits). */
+   carte à la place : « … est dans DJingood Pro » (un lien du guide, « Vérifier ma table »…). À droite, l'offre (proOffre,
+   pro.js : 7 jours gratuits). Lot 82 : le chapitre 1 est gratuit en entier, la carte ne sert plus qu'aux autres chapitres ;
+   « Voir la démo » montre ce niveau-là (apercu). */
 function nivFinIci(){ try { return typeof proIci === 'function' && proIci() && !run; } catch (e) { return false; } }
 function nivFinRend(){
   const on = nivFinIci(); $('stage').classList.toggle('fin-on', on); $('nivFin').hidden = !on; if (!on) return;
-  const l = LESSONS[li], faits = [0, 1, 2].every(i => niveauReussi(stars, i)), c = CHAPTERS.find(x => x.n === chapter);
-  const etoiles = [0, 1, 2].reduce((s, i) => s + (stars[i] || 0), 0), nCh = CHAPTERS.filter(x => !x.soon && x.n !== chapter).length;
-  $('nivFinSur').textContent = faits && chapter === 1 ? `Chapitre 1 · ${c.title} · ${etoiles} ★ sur 9` : `Chapitre ${chapter} · ${c.title}`;
-  $('nivFinTitre').textContent = faits && chapter === 1 ? 'Ta première transition est faite. Bravo !' : `« ${l.title} » est dans DJingood Pro`;
+  const l = LESSONS[li], c = CHAPTERS.find(x => x.n === chapter), nCh = CHAPTERS.filter(x => !x.soon && x.n !== chapter && x.n !== 1).length;
+  $('nivFinSur').textContent = `Chapitre ${chapter} · ${c.title}`;
+  $('nivFinTitre').textContent = `« ${l.title} » est dans DJingood Pro`;
   const suite = $('nivFinSuite'); suite.innerHTML = '';
   LESSONS.forEach((x, i) => { if (!niveauPro(chapter, i)) return; const s = nivEl('span'); s.innerHTML = NIV_CADENAS; s.appendChild(document.createTextNode(x.title)); suite.appendChild(s); });
-  $('nivFinPuis').textContent = chapter === 1 ? `Puis ${nCh} chapitres, jusqu'au set noté sur 100.` : `Et ${nCh} autres chapitres, jusqu'au set noté sur 100.`;
+  $('nivFinPuis').textContent = `Et ${nCh} autres chapitres, jusqu'au set noté sur 100.`;
   // le niveau gratuit à (re)jouer : le premier pas encore réussi, sinon le moins bien noté
-  let r = [0, 1, 2].find(i => !niveauReussi(stars, i)); const rejoue = r == null;
+  const libres = BASE_LESSONS.map((_, i) => i).slice(0, NIV_GRATUITS);
+  let r = libres.find(i => !niveauReussi(stars, i)); const rejoue = r == null;
   if (rejoue){ r = 0; for (let i = 0; i < NIV_GRATUITS; i++) if ((stars[i] || 0) <= (stars[r] || 0)) r = i; }
   $('nivFinRejouer').textContent = rejoue ? `Rejouer « ${BASE_LESSONS[r].title} »` : `Jouer « ${BASE_LESSONS[r].title} » (gratuit)`;
   $('nivFinRejouer').dataset.i = r;
@@ -391,6 +398,7 @@ function nivFinRend(){
   if (typeof proOffre === 'function') proOffre($('nivFinOffre'), { n: chapter, i: li });
 }
 $('nivFinRejouer').addEventListener('click', e => goLesson(1, +e.currentTarget.dataset.i || 0));
+$('nivFinDemo').addEventListener('click', () => apercuDemarre(chapter, li, 'carte'));
 $('nivFinCp').addEventListener('click', e => { e.stopPropagation(); nivMenuCp(); });
 function styleLabel(){ if (chapter === 7) return encEtiquette(LESSONS[li]); if (chapter === 3) return 'House · 124 BPM'; if (chapter === 2){ const d = STYLE_DEFS[CH2_STYLE[li]]; return d.label + ' · ' + d.bpm + ' BPM · à l\'oreille · précision serrée'; }
   return styleChoice === 'random' ? 'Style surprise à chaque partie' : STYLE_DEFS[styleChoice].label + ' · ' + STYLE_DEFS[styleChoice].bpm + ' BPM'; }
@@ -420,7 +428,7 @@ function selectLesson(i){
   $('stage').classList.remove('ear');
   chooseSongs();
   // Avant de jouer, la bulle ne donne jamais le geste (il est dans « Pendant le niveau ») : seulement quoi faire maintenant
-  const idle = proIci() ? `Ce niveau est dans DJingood Pro. Les ${NIV_GRATUITS} premiers niveaux du chapitre 1 sont gratuits.` : needSetup() ? 'Place ta table en position de départ, puis appuie sur Jouer.' : l.set ? 'Pas de repère cette fois. Enchaîne comme en soirée !' : expertOn() ? 'Mode Expert : ni compte à rebours, ni repère, ni calage automatique. Chaque geste est noté en millisecondes.' : 'Lis les gestes à faire, ou regarde d\'abord la démo. Puis à toi !';
+  const idle = proIci() ? 'Ce niveau est dans DJingood Pro. Le chapitre 1 est gratuit.' : needSetup() ? 'Place ta table en position de départ, puis appuie sur Jouer.' : l.set ? 'Pas de repère cette fois. Enchaîne comme en soirée !' : expertOn() ? 'Mode Expert : ni compte à rebours, ni repère, ni calage automatique. Chaque geste est noté en millisecondes.' : 'Lis les gestes à faire, ou regarde d\'abord la démo. Puis à toi !';
   const fb = $('lfiches'); fb.innerHTML = '';
   for (const k of fichesOf(l)){ const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'linkbtn'; bt.textContent = 'Revoir la fiche : ' + FICHE_NAMES[k]; bt.addEventListener('click', () => { if (!run) openOnb([FICHES[k]], { fiche: true, keys: [k] }); }); fb.appendChild(bt); }
   fb.hidden = !fb.children.length;
@@ -437,13 +445,16 @@ function stageIntoView(force){
 function setStartBtn(running){ $('stage').classList.toggle('joue', running); if (running && !$('vLearn').hidden) requestAnimationFrame(() => stageIntoView(true)); const b = $('startBtn'), pro = !running && proIci();
   b.textContent = running ? 'Arrêter' : pro ? 'Continuer avec Pro' : 'Jouer'; b.classList.toggle('stop', running); b.classList.toggle('pro', pro); $('watchBtn').hidden = pro; }
 // lot 68 : le niveau affiché est dans Pro (sans abonnement) : « Jouer » ouvre la fenêtre Pro, pas de démo (l'entraînement
-// et l'ancien test de placement ne jouent que des niveaux gratuits)
-const proIci = () => !prac && !placement && !!LESSONS[li] && niveauPro(chapter, li);
+// et l'ancien test de placement ne jouent que des niveaux gratuits). Lot 82 : sauf pendant l'aperçu d'un chapitre fermé
+// (apercu, plus bas), qui ne fait que regarder la démo.
+const proIci = () => !(apercu && chapter === apercu.n && li === apercu.i) && !prac && !placement && !!LESSONS[li] && niveauPro(chapter, li);
 
 let START = 16, END = 116;
 function startRun(demo = false){
   // lot 68 : un niveau de Pro, sans abonnement : la fenêtre Pro, ni partie ni démo
   if (proIci()){ proOuvre('', { n: chapter, i: li }); return; }
+  // lot 82 (gardien) : pendant l'aperçu, seule la démo tourne ; « Jouer » ferme l'aperçu et rouvre la fenêtre Pro
+  if (apercu && !demo){ apercuFin(true); return; }
   // Table pas en place (par exemple après une fiche où l'on a tourné un potard) : on montre l'encadré et on le dit
   if (!demo && needSetup() && !setupReady()){ updateSetup(); say('Remets ta table en position de départ : « Jouer » se débloquera tout seul.'); $('setup').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' }); return; }
   ensureAudio(); if (ac.state !== 'running') ac.resume();
@@ -459,7 +470,7 @@ function startRun(demo = false){
     const bpmB = lw.cal ? calChoisitBpm(lw) : 0, vB = lw.cal ? bpmB / STYLE_DEFS[sel.sty].bpm : speed;
     try { if (lw.wave) tkW = await prepareCh3(lw).catch(() => prepareCh3(lw)); else { styW = sel.sty; vrW = sel.vr; const aD = !!(lw.hc && lw.hc.aDrop); [songA, songB] = await Promise.all([songSafe(styW, vrW, aD ? 'B1' : 'A', speed), songSafe(styW, hcVarB(lw, vrW), lw.bBass ? 'B1' : 'B0', vB)]); } }
     finally { preparing = false; $('watchBtn').disabled = false; }
-    if (li !== myLi || chapter !== myCh || run){ setStartBtn(false); return; }
+    if (li !== myLi || chapter !== myCh || run){ setStartBtn(false); if (demo && apercu && !run) apercuFin(false, false); return; }
     if (lw.wave){ const tk = tkW; waveTk = tk; tk.bufA = tk.bufA || bufferOf(tk.A); tk.bufB = tk.bufB || bufferOf(tk.B); tracks = { A: tk.bufA, B0: tk.bufB, B1: tk.bufB }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; $('styleTag').textContent = styleLabel(); }
     else { const d = STYLE_DEFS[styW]; BPM = d.bpm * speed; P = 60 / BPM; if (chapter === 4) $('styleTag').textContent = `${d.label} · ${Math.round(BPM)} BPM` + (speed !== 1 ? ` · ralenti ${Math.round(speed * 100)} %` : ''); tracks = { A: bufOf(songA), B0: bufOf(songB), B1: bufOf(songB) }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75;
       // vraie musique pas chargée (hors ligne…) : l'étiquette le dit pendant toute la partie
@@ -520,7 +531,9 @@ function launchB(){
 function stopRun(){ encStop(); if (run) goalAdd((performance.now() - run.gT) / 1000); $('calQuiz').hidden = true; $('calBar').hidden = true; plQuantize = true; setFocus([]); lastAct = ''; const wasDemo = run && run.demo; if (ac){ stop('A'); stop('B'); setEcho(false); } run = null; viniCale(); setStartBtn(false); $('launchB').disabled = true;
   $('stage').classList.remove('demo', 'ear', 'running'); $('demoTag').hidden = true; $('watchBtn').disabled = false;
   if (wasDemo){ for (const [k, w] of [['lowA', 'wLowA'], ['lowB', 'wLowB'], ['faderA', 'wFadA'], ['faderB', 'wFadB'], ['cfxA', 'wCfxA'], ['midA', 'wMidA']]) $(w).classList.toggle('auto', isAuto(k)); Object.assign(ctrl, CTRL_NEUTRE, LESSONS[li].init); applyCtrl(); }
-  updateSetup(); }
+  updateSetup();
+  // lot 82 : la démo d'un aperçu est finie (ou arrêtée) : retour, et la fenêtre Pro (après la fin de finish, d'où le délai)
+  if (wasDemo && apercu) setTimeout(() => apercuFin(true), 0); }
 // L'écho est sur A dans les leçons ; au chapitre 7, sur le morceau en cours, qui peut être sur B (echoDeck)
 let echoOn = false, echoDeck = 'A';
 function setEcho(on, k = 'A'){
@@ -800,41 +813,29 @@ function finish(){
   else if (st >= 2){ for (let i = 0; i < st; i++) setTimeout(() => son('etoile', i), 120 + i * 180); setTimeout(() => son('fin'), 160 + st * 180); }
   else son('finRatee');
 }
-/* ---------- La fin des niveaux gratuits (lot 68) ----------
-   Le seul endroit où l'on pousse vraiment Pro : la première réussite (2 étoiles ou plus) du dernier niveau gratuit. La
-   personne vient de faire sa première transition et sait que le site marche avec sa table. On montre la suite (les niveaux
-   suivants, puis les chapitres) et un seul bouton, « Continuer avec Pro ». Raté, ou déjà réussi avant : la carte normale. */
+/* ---------- La fin du chapitre 1 (lot 68, lot 82) ----------
+   Le seul endroit où l'on pousse vraiment Pro : la première réussite (2 étoiles ou plus) du dernier niveau gratuit. Lot 82 :
+   c'est le niveau 7, « La transition complète » : la personne vient de faire sa première transition complète, avec sa table.
+   Demande de l'utilisateur (22 nov. 2026, après la maquette) : « un bouton … comme continuer … et qu'il se retrouve face au
+   paywall … sans qu'il ait besoin d'aller lui-même consciemment appuyer sur le truc payer ». La carte fête (Vini, les étoiles,
+   « Ta première transition complète ! », « Chapitre 1 terminé ») et n'a qu'un bouton, « Continuer », le même que « Niveau
+   suivant », au même endroit : il ouvre la grande fenêtre Pro du chapitre 2, avec l'image de la démo (proOuvre, pro.js).
+   Pas d'offre sur la carte elle-même (l'essai, le prix, le rattrapage sont dans la fenêtre). Raté, ou déjà réussi avant :
+   la carte normale. */
 function finEssai(ch, st, before){
   const ici = proBloque() && !prac && !placement && ch === 1 && li === NIV_GRATUITS - 1 && st >= 2 && before < 2;
-  $('rPro').hidden = !ici; $('rProGo').hidden = !ici;
+  document.querySelector('.rcard').classList.toggle('fin-ch1', ici);   // « Rejouer » caché (styles.css)
+  // la carte d'avant a pu être fermée sans « Continuer » (×, Échap) : on retire le rôle ; le texte, seulement hors entraînement
+  // (pracStep vient d'écrire « Retour à l'entraînement », gardien du lot 82)
+  if ($('next').dataset.go === 'pro' && !ici){ delete $('next').dataset.go; if (!prac && !placement) $('next').textContent = 'Niveau suivant'; }
   if (!ici) return;
-  $('rTitle').textContent = 'Ta première transition !';
-  $('rProNiv').innerHTML = '';
-  BASE_LESSONS.slice(NIV_GRATUITS).forEach((l, k) => { const e = document.createElement('li'), s = document.createElement('small'), t = document.createElement('span');
-    s.innerHTML = NIV_CADENAS + 'Niveau ' + (NIV_GRATUITS + k + 1); t.textContent = l.title; e.append(s, t); $('rProNiv').appendChild(e); });
-  $('rGain').textContent = [`Tu as fini les ${NIV_GRATUITS} niveaux gratuits`, $('rGain').textContent].filter(Boolean).join(' · ');
-  // une seule chose à faire : on range ce qui détourne l'œil (À travailler, question bonus, compte, « Niveau suivant »)
-  $('rTravail').hidden = true; $('quizBtn').hidden = true; $('slowBtn').hidden = true; $('rCompte').hidden = true; $('next').hidden = true;
-  $('retry').classList.remove('go');
-  finEssaiTexte();
-  stat1('essai-fini');
-}
-// Lot 76 : la même offre que la carte de fin (pro.js) : 7 jours gratuits ; le bouton mène tout droit au paiement (proDemarre),
-// « Voir tout ce qu'il y a dans Pro » ouvre la grande fenêtre
-function finEssaiTexte(){
-  if ($('rPro').hidden || typeof proEssaiType !== 'function') return;
-  const e = proEssaiType();
-  $('rProGo').textContent = e === true ? 'Prendre mon mois offert' : e === 'semaine' ? `Commencer mes ${PRO_ESSAI_JOURS} jours gratuits` : 'Continuer avec Pro';
-  $('rProEssai').hidden = e !== 'semaine'; $('rProVoir').hidden = false;
-  // lot 81 : l'année d'office, comme l'offre de la carte de fin (offreFormule, pro.js) ; le mois est à un clic. Pendant le
-  // rattrapage, l'année à 34,99 € et sa date limite.
-  const r = typeof proRattrapage === 'function' && e !== true && proRattrapage();
-  $('rProRattrapage').hidden = !r;
-  if (r){ $('rProRattrapage').textContent = `Ta première année à 34,99 € au lieu de 49,99 €, ${proRattrapageFin()}.`; stat1('rattrapage-vu'); }
-  if (e === 'semaine'){
-    $('rProEssaiTxt').textContent = `${PRO_ESSAI_JOURS} jours gratuits, puis ${offrePrix(true)}. Ta carte est demandée, mais rien n’est prélevé avant le ${PRO_ESSAI_JOURS}e jour ; un mail te prévient 2 jours avant.`;
-    $('rProBascule').textContent = offreFormule === 'an' ? 'Plutôt au mois (4,99 €) ?' : r ? 'Plutôt à l’année (34,99 € la 1re année) ?' : 'Plutôt à l’année (49,99 €, 2 mois offerts) ?';
-  }
+  $('rTitle').textContent = 'Ta première transition complète\u00a0!';
+  $('rGain').textContent = `Chapitre 1 terminé · ${sumStars(stars)} ★`;
+  // une seule chose à faire : on range ce qui détourne l'œil (À travailler, question bonus, compte, le détail)
+  $('rTravail').hidden = true; $('quizBtn').hidden = true; $('slowBtn').hidden = true; $('rCompte').hidden = true; $('rEssai').hidden = true; $('rTout').hidden = true;
+  $('next').hidden = false; $('next').textContent = 'Continuer'; $('next').dataset.go = 'pro';
+  $('next').classList.add('go'); $('retry').classList.remove('go'); $('next').focus({ preventScroll: true });   // « Rejouer », qui avait le curseur, est caché
+  stat1('ch1-fini');
 }
 /* ---------- Lot 81 : l'essai de 7 jours, dès la première réussite ----------
    Décision de l'utilisateur (21 nov. 2026, « Oui propose l'essai de 7 jours plus tôt. Dès la première réussite c'est très
@@ -842,9 +843,12 @@ function finEssaiTexte(){
    7 jours. La règle du lot 68 tient : on vient de jouer avec sa table, on sait que le site marche avec elle. C'est une
    proposition à côté, pas le bouton principal (« Niveau suivant » reste le bouton orange) ; elle prend la place de « Garde ta
    progression » (créer son compte), puisque l'essai fait créer le compte. Le bouton ouvre la fenêtre Pro (l'année d'office,
-   le mois à côté, l'essai expliqué). Le niveau 3 garde sa grande carte (finEssai). */
+   le mois à côté, l'essai expliqué). Le dernier niveau gratuit garde sa grande carte (finEssai).
+   Lot 82 (« Ok garde-la », 22 nov. 2026) : le chapitre 1 entier est gratuit, mais la proposition reste aux niveaux 1 et 2
+   seulement (ESSAI_TOT_NIV), pour ne pas parler de Pro à chaque niveau. */
+const ESSAI_TOT_NIV = 2;
 function essaiTot(ch, st){
-  const ici = proBloque() && !prac && !placement && ch === 1 && li < NIV_GRATUITS - 1 && st >= 2 && midiCount > 0
+  const ici = proBloque() && !prac && !placement && ch === 1 && li < ESSAI_TOT_NIV && st >= 2 && midiCount > 0
     && typeof proSemaineDispo === 'function' && proSemaineDispo();
   $('rEssai').hidden = !ici;
   if (!ici) return false;
@@ -854,9 +858,39 @@ function essaiTot(ch, st){
   return true;
 }
 $('rEssaiGo').addEventListener('click', () => { $('result').hidden = true; proOuvre('', { tot: true, n: 1, i: li + 1 }); });
-$('rProBascule').addEventListener('click', () => { offreFormule = offreFormule === 'an' ? 'mois' : 'an'; proOffresRend(); finEssaiTexte(); });
-$('rProGo').addEventListener('click', () => { $('result').hidden = true; if (typeof proDemarre === 'function') proDemarre({ fin: true }); else proOuvre('', { fin: true }); });
-$('rProVoir').addEventListener('click', () => { $('result').hidden = true; proOuvre('', { fin: true }); });
+/* ---------- Lot 82 : l'aperçu d'un chapitre fermé ----------
+   Son idée préférée de la maquette (« l'idée de la démo est vraiment bien, ça peut vraiment convertir ») : avant de payer, on
+   regarde la démo d'un niveau de Pro, sur la vraie table du site. On y arrive par « Voir la démo du chapitre 2 » (grande
+   carte du niveau 7) ou par l'image de la démo dans la fenêtre Pro (pro.js). Pendant l'aperçu, proIci est faux (la démo peut
+   tourner) ; une barre en bas garde le bouton de l'essai et « Fermer ». À la fin de la démo (ou « Arrêter », « Fermer »), on
+   revient où l'on était et la fenêtre Pro de ce chapitre se rouvre ; en changeant d'onglet, on revient sans rien rouvrir.
+   Rien n'est enregistré : ni étoiles (c'est une démo), ni chapitre (coach-chapitre). */
+function apercuDemarre(n, i = 0, depuis = 'fenetre'){
+  const L = lessonsOf(n);
+  if (run || preparing || apercu || !L[i] || !niveauPro(n, i)) return;
+  apercu = { n, i, depuis, ch: chapter, li };
+  $('result').hidden = true; if (typeof proFerme === 'function' && !$('pro').hidden) proFerme();
+  if ($('vLearn').hidden){ location.hash = '#apprendre'; setView('apprendre'); }
+  LESSONS = L; chapter = n; selectLesson(i);
+  const c = CHAPTERS.find(x => x.n === n), e = typeof proEssaiType === 'function' ? proEssaiType() : false;
+  $('apercuTitre').textContent = `Chapitre ${n} · ${c ? c.title : ''}`;
+  $('apercuGo').textContent = e === true ? 'Prendre mon mois offert' : e === 'semaine' ? `Commencer mes ${PRO_ESSAI_JOURS} jours gratuits` : 'Continuer avec Pro';
+  $('apercu').hidden = false;
+  stat('demo-pro', { chap: String(n), depuis });
+  startRun(true);
+}
+// revenir = faux : on reste où le joueur est allé entre-temps (il a changé de chapitre pendant la préparation de la démo)
+function apercuFin(rouvre = true, revenir = true){
+  const a = apercu; if (!a) return;
+  apercu = null; $('apercu').hidden = true;
+  if (run) stopRun();
+  if (!revenir){ selectLesson(li); return; }
+  LESSONS = lessonsOf(a.ch); chapter = a.ch; selectLesson(Math.min(a.li, LESSONS.length - 1));
+  // depuis la carte d'un niveau de Pro (nivFin), l'offre est déjà sur la carte : rien à rouvrir
+  if (rouvre && a.depuis !== 'carte' && typeof proOuvre === 'function') proOuvre('', a.depuis === 'niveau' ? { n: a.n, i: a.i } : { chap: a.n });
+}
+$('apercuX').addEventListener('click', () => apercuFin(true));
+$('apercuGo').addEventListener('click', () => { const n = apercu ? apercu.n : 2; apercuFin(false); if (typeof proDemarre === 'function') proDemarre({ chap: n }); });
 /* ---------- Carte de résultat ----------
    Lot 29 : Vini (joie ou déception) et le titre, façon Duolingo. Lot 44 (23 oct. 2026), à la demande de l'utilisateur
    (« trop de couleurs, trop d'informations ») : plus de cartes de couleur. Une ligne (record, XP), puis « À travailler » :

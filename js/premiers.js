@@ -642,17 +642,18 @@ const PP_PLAN = {
 };
 /* Lot 68 : avec DJingood Pro, le plan dit dès le début ce qui est gratuit et ce qui est dans Pro (personne ne doit tomber sur
    le mur par surprise). Apprenti DJ et DJ confirmé commencent par les 3 niveaux gratuits en Mode Expert (avant, le confirmé
-   commençait par le set, qui est dans Pro). Le 5e élément de chaque étape : 'gratuit' ou 'pro'. */
-const PP_TROIS = ['Tes 3 premiers gestes', 'Lancer au bon moment, le fader, la coupure : ta première transition, avec ta table.'];
+   commençait par le set, qui est dans Pro). Le 5e élément de chaque étape : 'gratuit' ou 'pro'. Lot 82 : le Grand débutant a
+   tout le chapitre 1 gratuit (PP_SEPT) ; Apprenti et Confirmé gardent leurs 3 niveaux en Mode Expert (NIV_ESSAI, parcours.js). */
+const PP_SEPT = ['Les 7 gestes du chapitre 1', 'Jusqu’à ta première transition complète, avec ta table.'];
 const PP_TROIS_X = ['Tes 3 premiers gestes, en Mode Expert', 'Lancer, le fader, la coupure : sans aide, notés à la milliseconde.'];
 const PP_PLAN_PRO = {
   debut: tel => tel
     ? [['tel', 'Aujourd’hui · sur ton téléphone', 'Comprendre la musique', 'Le temps, la phrase, les basses : 7 leçons de 2 minutes, au doigt.', 'gratuit'],
-       ['table', 'Sur ton ordinateur · avec ta table', ...PP_TROIS, 'gratuit'],
-       ['etoile', 'Ensuite', `Les ${proNbExercices()} autres exercices`, 'Le swap des basses, le calage, les hot cues, jusqu’au set noté sur 100.', 'pro']]
-    : [['table', 'Aujourd’hui · avec ta table', ...PP_TROIS, 'gratuit'],
-       ['oreille', 'Ensuite', 'Les 4 autres gestes', 'L’écho, le filtre, le swap des basses, la transition complète.', 'pro'],
-       ['etoile', '', 'Jusqu’au set noté sur 100', 'Les vrais morceaux, le calage, les hot cues.', 'pro']],
+       ['table', 'Sur ton ordinateur · avec ta table', ...PP_SEPT, 'gratuit'],
+       ['etoile', 'Ensuite', `Les ${proNbExercices()} autres exercices`, 'À l’oreille, le calage, les hot cues, jusqu’au set noté sur 100.', 'pro']]
+    : [['table', 'Aujourd’hui · avec ta table', ...PP_SEPT, 'gratuit'],
+       ['oreille', 'Ensuite', 'À l’oreille, sans SYNC', 'Avec de vrais morceaux, sans compte à rebours.', 'pro'],
+       ['etoile', '', 'Jusqu’au set noté sur 100', 'Les combos, le calage, les hot cues.', 'pro']],
   apprenti: tel => tel
     ? [['tel', 'Aujourd’hui · sur ton téléphone', 'Révise les bases', '7 leçons de 2 minutes, au doigt : va vite si tu connais.', 'gratuit'],
        ['table', 'Sur ton ordinateur · avec ta table', ...PP_TROIS_X, 'gratuit'],

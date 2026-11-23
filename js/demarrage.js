@@ -25,6 +25,8 @@ $('next').addEventListener('click', () => {
   if (prac){ pracNext(); return; }
   const go =$('next').dataset.go, goLi = +$('next').dataset.li || 0; delete $('next').dataset.go; delete $('next').dataset.li; $('retry').hidden = false; $('cmpBox').hidden = false;
   if (go === 'ch2'){ $('result').hidden = true; setChapter(2); return; }
+  // lot 82 : « Continuer » à la fin du chapitre 1 (finEssai) : la grande fenêtre Pro du chapitre 2, avec la démo
+  if (go === 'pro'){ $('next').textContent = 'Niveau suivant'; $('result').hidden = true; proOuvre('', { fin: true }); return; }
   if (go === 'ch1') LESSONS = BASE_LESSONS;
   if (go === 'ch1'){ $('result').hidden = true; chapter = 1; try { localStorage.setItem('coach-chapitre', '1'); } catch (e) {} selectLesson(goLi); return; }
   if (placement){ if (placement.i >= P_STEPS.length - 1){ placementVerdict(); return; } placement.i++; selectLesson(P_STEPS[placement.i]); updatePBanner(); return; }
@@ -54,7 +56,7 @@ function setView(h){
   if (!VIEWS[v] || (v === 'tutos' && !tutosOn())) v = 'accueil';   // tutos : caché tant que TUTOS_PRET est faux (lot 56)
   if (v === view){ if (v === 'vrai'){ renderReal(); window.scrollTo(0, 0); } return; }
   closeQuiz(); closeAvis(); if (prac) quitPrac();
-  if (view === 'apprendre'){ if (onb.active) closeOnb(); if (placement) quitPlacement(); stopRun(); $('result').hidden = true; }
+  if (view === 'apprendre'){ if (onb.active) closeOnb(); if (placement) quitPlacement(); if (apercu) apercuFin(false); stopRun(); $('result').hidden = true; }   // lot 82 : un aperçu s'arrête sans rouvrir la fenêtre Pro
   if (view === 'table') learnKey = null;   // un apprentissage commencé sur « Ma table » ne doit pas continuer ailleurs
   if (view === 'tutos') tuFerme();         // un tuto qui joue s'arrête quand on change d'onglet
   view = v;

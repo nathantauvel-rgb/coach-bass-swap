@@ -6,15 +6,32 @@
    js/anglais.js : EN pour les phrases fixes, enMotif() pour celles qui contiennent un nombre ou un nom. Une phrase absente
    du dictionnaire reste en français et elle est notée dans window.__enManque : les tests s'en servent pour vérifier qu'un
    écran est entièrement traduit.
-   Choix de la langue : ?lang=en ou ?lang=fr dans l'adresse (le choix est gardé dans coach-langue), sinon coach-langue, sinon
-   le français. Jamais de bascule automatique : Google lit le site avec un navigateur réglé en anglais, il doit continuer à
-   voir la version française (lot 50). Un visiteur dont le navigateur n'est pas en français se voit proposer l'anglais
-   (langueOffre). Changer de langue recharge la page (langueChange) : chaque fichier écrit ses textes au chargement. */
+   Choix de la langue : ?lang=en ou ?lang=fr dans l'adresse, sinon l'anglais de la visite (LANGUE_VISITE), sinon coach-langue,
+   sinon le français. Jamais de bascule automatique : Google lit le site avec un navigateur réglé en anglais, il doit
+   continuer à voir la version française (lot 50). Le bouton FR | EN (langueBoutons) change de langue et recharge la page
+   (langueChange) : chaque fichier écrit ses textes au chargement.
+   Lot 84 (demande de l'utilisateur du 22 nov. 2026 : « je veux qu'il soit en fr mais qu'il y ait un bouton FR/EN pour
+   basculer ») : ?lang=en (le lien des pubs anglaises, le mail de rappel en anglais) n'est gardé pour de bon que sur un
+   navigateur qui n'est pas réglé en français. Sur un navigateur en français, l'anglais dure le temps de la visite
+   (sessionStorage, propre à l'onglet) : quelqu'un qui ouvre une fois le lien des pubs ne retrouve plus djingood.fr en
+   anglais les jours suivants. Un clic sur le bouton, lui, est toujours gardé. ?lang=fr est toujours gardé. */
+const LANGUE_VISITE = 'coach-langue-visite';
 const LANGUE = (() => {
-  let q = null, garde = null;
+  let q = null, garde = null, visite = null;
   try { q = new URLSearchParams(location.search).get('lang'); } catch (e) {}
   try { garde = localStorage.getItem('coach-langue'); } catch (e) {}
-  if (q === 'en' || q === 'fr'){ try { localStorage.setItem('coach-langue', q); } catch (e) {} return q; }
+  try { visite = sessionStorage.getItem(LANGUE_VISITE); } catch (e) {}
+  if (q === 'fr'){
+    try { localStorage.setItem('coach-langue', 'fr'); } catch (e) {}
+    try { sessionStorage.removeItem(LANGUE_VISITE); } catch (e) {}
+    return 'fr';
+  }
+  if (q === 'en'){
+    if (langueNavigateurFr()){ try { sessionStorage.setItem(LANGUE_VISITE, 'en'); } catch (e) {} }
+    else { try { localStorage.setItem('coach-langue', 'en'); } catch (e) {} }
+    return 'en';
+  }
+  if (visite === 'en') return 'en';
   return garde === 'en' ? 'en' : 'fr';
 })();
 // Les dates, les heures et les grands nombres s'écrivent à l'anglaise en anglais (lot 80 : pro.js, compte.js, objectif.js,
@@ -182,7 +199,8 @@ const EN_PAGES = { 'cgv.html': 'terms.html', 'confidentialite.html': 'privacy.ht
 // Les captures du site sur la page de présentation : leur version anglaise (img/en/, faite par tests/images-presentation.js en)
 const EN_IMAGES = { 'img/apprendre.jpg': 'img/en/apprendre.jpg', 'img/accueil.jpg': 'img/en/accueil.jpg', 'img/vrai.jpg': 'img/en/vrai.jpg',
   // lot 83 : les étapes de la page d'accueil (tests/images-vitrine.js en)
-  'img/vitrine/branche.jpg': 'img/vitrine/en/branche.jpg', 'img/vitrine/etoiles.jpg': 'img/vitrine/en/etoiles.jpg' };
+  'img/vitrine/branche.jpg': 'img/vitrine/en/branche.jpg', 'img/vitrine/etoiles.jpg': 'img/vitrine/en/etoiles.jpg',
+  'img/demo-apercu.jpg': 'img/en/demo-apercu.jpg' };   // lot 82 : la démo d'un chapitre fermé, dans la fenêtre Pro (captures/lot82/vignette.js)
 function trLiens(root){
   if (LANGUE !== 'en' || !trBrut || !root || typeof root.querySelectorAll !== 'function') return;
   root.querySelectorAll('a[href]').forEach(a => { const h = a.getAttribute('href'); if (EN_PAGES[h]) trBrut.setAttribute.call(a, 'href', EN_PAGES[h]); });
@@ -201,6 +219,7 @@ function trPage(){
 // Changer de langue : le choix est gardé, et l'adresse le porte aussi (?lang=…), au cas où le navigateur refuse de le garder
 function langueChange(l){
   try { localStorage.setItem('coach-langue', l); } catch (e) {}
+  try { sessionStorage.removeItem(LANGUE_VISITE); } catch (e) {}   // lot 84 : le clic remplace l'anglais de la visite
   const u = new URL(location.href); u.searchParams.set('lang', l);
   location.replace(u.href);
 }
@@ -215,15 +234,30 @@ function langueNavigateurFr(){
   try { return (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || '']).some(x => /^fr/i.test(String(x))); }
   catch (e) { return true; }
 }
-// Le bouton FR / EN de l'en-tête et des Premiers pas : il montre l'autre langue. Lot 80 (choix de l'utilisateur, 21 nov.) :
-// pour un navigateur qui n'est pas en français, il dit « English » en toutes lettres, plus visible, sans fenêtre.
+// Le bouton FR | EN de l'en-tête, des Premiers pas et de la page de présentation (lot 84, à la place d'un bouton qui ne
+// montrait que l'autre langue) : deux côtés, la langue affichée en évidence (aria-pressed), l'autre se clique. Écrit sans
+// passer par le dictionnaire : chaque côté parle sa propre langue. Lot 80 (choix de l'utilisateur, 21 nov.) : sur la page
+// en français, pour un navigateur qui n'est pas en français, le côté anglais dit « English » en toutes lettres (lot 84 :
+// sur les Premiers pas et la présentation ; l'en-tête du site garde « EN », faute de place).
+const LANGUE_COTES = [['fr', 'FR', 'Lire DJingood en français'], ['en', 'EN', 'Read DJingood in English']];
 function langueBoutons(){
-  const autre = LANGUE === 'en' ? 'fr' : 'en', titre = autre === 'en' ? 'Read DJingood in English' : 'Lire DJingood en français';
-  const texte = autre === 'en' && !langueNavigateurFr() ? 'English' : autre.toUpperCase();
-  document.querySelectorAll('.langbtn').forEach(b => {
-    trSans(b, null, texte); trSans(b, 'title', titre); trSans(b, 'aria-label', titre); trSans(b, 'lang', autre);
-    b.classList.toggle('langbtn-mot', texte.length > 2);
-    b.onclick = () => langueChange(autre);
+  const enMot = LANGUE === 'fr' && !langueNavigateurFr();
+  document.querySelectorAll('.langbtn').forEach(g => {
+    if (g.childElementCount) return;
+    trSans(g, 'role', 'group'); trSans(g, 'aria-label', 'Langue · Language');
+    g.classList.toggle('langbtn-mot', enMot);
+    for (const [l, court, titre] of LANGUE_COTES){
+      const b = document.createElement('button');
+      trSans(b, 'type', 'button'); trSans(b, 'lang', l); trSans(b, 'title', titre);
+      trSans(b, 'aria-pressed', String(l === LANGUE));
+      if (l === 'en' && enMot){   // « English », et « EN » pour l'en-tête du site (styles.css choisit)
+        for (const [c, t] of [['lb-long', 'English'], ['lb-court', court]]){ const s = document.createElement('span'); s.className = c; trSans(s, null, t); b.appendChild(s); }
+      } else trSans(b, null, court);
+      // un clic sur la langue affichée ne recharge rien, mais la garde : arrivé en anglais par le lien des pubs sur un
+      // navigateur en français (l'anglais de la visite), un clic sur EN le garde pour les visites suivantes (gardien du lot 84)
+      b.onclick = () => { if (l !== LANGUE) langueChange(l); else { try { localStorage.setItem('coach-langue', l); } catch (e) {} } };
+      g.appendChild(b);
+    }
   });
 }
 // Lot 80 : plus de carte « Switch to English » qui s'ouvrait toute seule (elle cachait le bouton des Premiers pas, et la

@@ -24,7 +24,9 @@ async function fausseApi(page, { etat = {}, erreurPayer = '' } = {}){
   });
   return s;
 }
-const finCarte = async page => { await page.evaluate(() => selectLesson(3)); await expect(page.locator('#nivFin')).toBeVisible(); return page.locator('#nivFinOffre'); };
+// lot 82 : le chapitre 1 est gratuit en entier ; la carte d'un niveau de Pro se voit au chapitre 2 (un ancien abonné qui y revient)
+const finCarte = async page => { await page.evaluate(() => { LESSONS = lessonsOf(2); chapter = 2; selectLesson(0); }); await expect(page.locator('#nivFin')).toBeVisible(); return page.locator('#nivFinOffre'); };
+const SIX = etoiles({ 0: 3, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2 });
 
 test.describe('L’année d’office et le plan', () => {
   test('la carte de fin : l’année en premier, choisie, à 4,17 € par mois ; le plan des Premiers pas ; elle tient dans 1366 × 768', async ({ page }) => {
@@ -81,9 +83,9 @@ test.describe('Le rattrapage', () => {
     expect(err).toEqual([]);
   });
 
-  test('au mois, pas de rattrapage ; la fenêtre Pro le montre aussi (−30 %) ; la carte du niveau 3 aussi', async ({ page }) => {
+  test('au mois, pas de rattrapage ; la fenêtre Pro le montre aussi (−30 %), y compris ouverte par « Continuer » au niveau 7', async ({ page }) => {
     const api = await fausseApi(page, { etat: { rattrapage: dans(10) } });
-    await ouvrir(page, { avant: dejaConnecte() + FAUX + PRO, stockage: DEUX });
+    await ouvrir(page, { avant: dejaConnecte() + FAUX + PRO, stockage: SIX });
     await expect.poll(() => page.evaluate(() => proRattrapage())).toBe(true);
     await page.evaluate(() => proOuvre(''));
     await expect(page.locator('#proPrix')).toHaveText('34,99 €');
@@ -94,12 +96,11 @@ test.describe('Le rattrapage', () => {
     await page.locator('#pro .pro-bascule [data-f="mois"]').click();
     await expect(page.locator('#proPrix')).toHaveText('4,99 €');
     await page.keyboard.press('Escape');
-    await page.evaluate(() => { selectLesson(2); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
-    await expect(page.locator('#rProRattrapage')).toBeVisible();
-    await expect(page.locator('#rProRattrapage')).toContainText('Ta première année à 34,99 € au lieu de 49,99 €, jusqu’au');
-    await expect(page.locator('#rProEssai')).toContainText('7 jours gratuits, puis 34,99 € pour ta première année.');
-    await page.locator('#rProBascule').click();   // au mois
-    await page.locator('#rProGo').click();
+    await page.evaluate(() => { selectLesson(6); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); $('next').hidden = false; resultatBoutons(3); finEssai(1, 3, 0); });
+    await page.locator('#next').click();   // « Continuer »
+    await expect(page.locator('#proPrix')).toHaveText('34,99 €');
+    await page.locator('#pro .pro-bascule [data-f="mois"]').click();   // au mois
+    await page.locator('#proGo').click();
     await page.waitForURL(/paye=1/, { timeout: 15000 });
     const payer = api.appels.find(a => a.action === 'payer');
     expect(payer.formule).toBe('mois'); expect(payer).not.toHaveProperty('rattrapage');
@@ -156,10 +157,10 @@ test.describe('L’essai dès la première réussite', () => {
     await carte()(page);
     await expect(page.locator('#rEssai')).toBeVisible();
     await expect(page.locator('#rEssai b')).toHaveText('Ça marche avec ta table !');
-    await expect(page.locator('#rEssaiTxt')).toHaveText('Essaie tout DJingood 7 jours, gratuitement : les 40 exercices, les tutos de Vini, l’entraînement.');
+    await expect(page.locator('#rEssaiTxt')).toHaveText('Essaie tout DJingood 7 jours, gratuitement : les 36 exercices, les tutos de Vini, l’entraînement.');
     await expect(page.locator('#rCompte')).toBeHidden();
     await expect(page.locator('#next')).toBeVisible();
-    await expect(page.locator('#rPro')).toBeHidden();
+    await expect(page.locator('#next')).toHaveText('Niveau suivant');
     expect(await page.evaluate(() => window.__stats.some(x => x[0] === 'essai-tot'))).toBe(true);
     // gardien : la proposition du compte n'est ni comptée ni consommée pour la journée
     expect(await page.evaluate(() => [window.__stats.some(x => x[0] === 'compte-propose'), localStorage.getItem('coach-compte-propose')])).toEqual([false, null]);
@@ -174,7 +175,7 @@ test.describe('L’essai dès la première réussite', () => {
     expect(err).toEqual([]);
   });
 
-  test('pas proposé : sans table branchée, partie ratée, au niveau 3 (sa grande carte), sans Pro, ou l’essai déjà servi', async ({ page }) => {
+  test('pas proposé : sans table branchée, partie ratée, au niveau 3 et après (lot 82), sans Pro, ou l’essai déjà servi', async ({ page }) => {
     await fausseApi(page, { etat: { essaiDispo: false } });
     await ouvrir(page, { avant: PRO, stockage: etoiles({ 0: 3, 1: 2 }) });
     await carte()(page);
@@ -183,8 +184,10 @@ test.describe('L’essai dès la première réussite', () => {
     await carte(1)(page);
     await expect(page.locator('#rEssai')).toBeHidden();   // ratée
     await carte(3, 2)(page);
-    await expect(page.locator('#rEssai')).toBeHidden();   // niveau 3
-    await expect(page.locator('#rPro')).toBeVisible();
+    await expect(page.locator('#rEssai')).toBeHidden();   // niveau 3 (lot 82 : plus de grande carte ici, elle est au niveau 7)
+    await expect(page.locator('.rcard.fin-ch1')).toHaveCount(0);
+    await carte(3, 4)(page);
+    await expect(page.locator('#rEssai')).toBeHidden();   // niveau 5
     await carte(2, 1)(page);
     await expect(page.locator('#rEssai')).toBeVisible();   // niveau 2 réussi : oui
     await page.evaluate(() => { semaineUtilisee = true; });
@@ -244,7 +247,7 @@ test.describe('En anglais', () => {
     await expect(o.locator('.offre-plan span')).toHaveText('In 2 weeks: your first real transition.');
     await expect(o.locator('.offre-f[data-f="an"]')).toHaveText(/Yearly€4\.17\/month€49\.99 a year/);
     await page.evaluate(() => { midiCount = 1; selectLesson(0); $('result').hidden = false; resultatCarte(3, [['ok', 'Pile.', 1]]); resultatBoutons(3); essaiTot(1, 3); });
-    await expect(page.locator('#rEssaiTxt')).toHaveText("Try all of DJingood free for 7 days: the 40 exercises, Vini's tutorials, practice.");
+    await expect(page.locator('#rEssaiTxt')).toHaveText("Try all of DJingood free for 7 days: the 36 exercises, Vini's tutorials, practice.");
     await expect(page.locator('#rEssaiGo')).toHaveText('See the free trial');
     await page.evaluate(() => { $('result').hidden = true; proMerci(); });
     await expect(page.locator('#proSource p').first()).toHaveText('One last question: how did you hear about DJingood?');

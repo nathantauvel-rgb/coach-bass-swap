@@ -94,11 +94,14 @@ const STAGES = {
     done: () => rbMis.total > 0, cta: () => 'Aller à Ma musique', go: () => { location.hash = '#musique'; } }
 };
 /* lot 68 : sans abonnement, Apprenti DJ et DJ confirmé commencent par les niveaux gratuits, en Mode Expert (leur parcours
-   commence sinon par des étapes de Pro). Le Grand débutant les a déjà dans l'étape « Les bases ». */
-const essaiFait = () => BASE_LESSONS.slice(0, NIV_GRATUITS).every((_, i) => stars[i] >= 2 || xBest[i] >= X_OK);
-const essaiTodo = () => { const i = BASE_LESSONS.slice(0, NIV_GRATUITS).findIndex((_, k) => !(stars[k] >= 2 || xBest[k] >= X_OK)); return i < 0 ? 0 : i; };
-STAGES.essai = { title: `Tes ${NIV_GRATUITS} premiers gestes`, text: `Lancer au bon moment, le fader, la coupure : les ${NIV_GRATUITS} premiers niveaux, gratuits. En Mode Expert, sans aucune aide, chaque geste noté à la milliseconde.`,
-  done: essaiFait, prog: () => `${BASE_LESSONS.slice(0, NIV_GRATUITS).filter((_, i) => stars[i] >= 2 || xBest[i] >= X_OK).length} sur ${NIV_GRATUITS}`,
+   commence sinon par des étapes de Pro). Le Grand débutant les a déjà dans l'étape « Les bases ». Lot 82 : tout le chapitre 1
+   est gratuit, mais ils gardent leurs 3 niveaux en Mode Expert avant leur vraie étape (7 niveaux faciles les retiendraient
+   trop longtemps) ; le reste du chapitre 1 leur reste ouvert. */
+const NIV_ESSAI = 3;
+const essaiFait = () => BASE_LESSONS.slice(0, NIV_ESSAI).every((_, i) => stars[i] >= 2 || xBest[i] >= X_OK);
+const essaiTodo = () => { const i = BASE_LESSONS.slice(0, NIV_ESSAI).findIndex((_, k) => !(stars[k] >= 2 || xBest[k] >= X_OK)); return i < 0 ? 0 : i; };
+STAGES.essai = { title: `Tes ${NIV_ESSAI} premiers gestes`, text: `Lancer au bon moment, le fader, la coupure : les ${NIV_ESSAI} premiers niveaux, gratuits. En Mode Expert, sans aucune aide, chaque geste noté à la milliseconde.`,
+  done: essaiFait, prog: () => `${BASE_LESSONS.slice(0, NIV_ESSAI).filter((_, i) => stars[i] >= 2 || xBest[i] >= X_OK).length} sur ${NIV_ESSAI}`,
   cta: () => `Mode Expert, niveau ${essaiTodo() + 1} : ${BASE_LESSONS[essaiTodo()].title}`,
   go: () => { if (!expert){ expert = true; saveExpert(); } goLesson(1, essaiTodo()); } };
 // Une étape qui mène à du contenu de Pro, sans abonnement : l'accueil propose Pro à la place
@@ -131,7 +134,10 @@ function renderHome(){
   const pro = !!cur && stagePro(cur);
   $('homePro').hidden = !pro; $('homeDefi').hidden = !(pro && pracPool().length); $('homeCta').classList.toggle('pro', pro);
   if (pro){ $('homeProTxt').textContent = st.cta(); $('homeCta').textContent = 'Continuer avec Pro';
-    if (cur === 'ch1' || cur === 'expert') $('homeLead').textContent = `Bravo, tu as fini les ${NIV_GRATUITS} niveaux gratuits. La suite : l’écho, le filtre, le swap des basses, puis la transition complète.`; }
+    if (cur === 'ch1' || cur === 'expert') $('homeLead').textContent = 'Bravo, tu as fini le chapitre 1. La suite : à l’oreille, avec de vrais morceaux, sans SYNC.'; }
+  // lot 82 (gardien) : sans abonnement, un Grand débutant arrive à « S'entraîner » après le chapitre 1 ; seul le défi du jour
+  // y est gratuit (variations, oreille et mini-set sont dans Pro)
+  if (cur === 'train' && proBloque()) $('homeLead').textContent = 'Refais les 7 gestes sur d’autres morceaux : un défi par jour, gratuit.';
   renderGoal(); homeVini();
   $('homeLien').hidden = !(typeof cpMobile === 'function' && cpMobile());   // lot 48 : sur un téléphone, s'envoyer le lien pour l'ordinateur
   // lot 65 : avec un compte, le lien part par mail et connecte tout seul sur l'ordinateur

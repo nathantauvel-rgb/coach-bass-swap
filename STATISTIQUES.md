@@ -74,6 +74,18 @@ Pas d'enregistrement de l'écran.
 5. Après la mise en ligne, crée l'entonnoir : **Product analytics** → **New insight** → **Funnel**, avec ces étapes dans
    l'ordre : `mur-vu` → `compte` → `lien-ordi-envoye` → `ordi-depuis-lien` → `table-branchee` → `premiere-reussite` →
    `essai-fini` → `pro`. Fenêtre de conversion : **14 jours**. Enregistre-le sous le nom « Du téléphone à Pro ».
+   **Depuis le lot 82 (chapitre 1 gratuit en entier)**, remplace `essai-fini` (les 3 niveaux gratuits, plus envoyé) par
+   `ch1-fini` (le niveau 7 réussi : la grande carte de Pro est montrée).
+
+### Lot 82 : savoir si le chapitre 1 offert vend mieux
+
+- **Le chiffre à suivre, chaque semaine** : les essais commencés (`pro-offre`, puis `pro`) pour 100 tables branchées
+  (`table-branchee`), avant et après la mise en ligne du lot 82.
+- `ch1-fini` : le niveau 7 réussi pour la première fois (une fois par navigateur).
+- `demo-pro` : la démo d'un chapitre fermé regardée (chaque fois), avec `chap` (le chapitre) et `depuis` (`fin` : la grande
+  carte du niveau 7 ; `fenetre` : l'image de la fenêtre Pro ; `niveau` ou `carte` : un niveau de Pro).
+- La règle décidée avant (analyse de `Documents\MARKETING\08-chapitre-1-offert.md`) : après 3 à 4 semaines, si ce chiffre
+  est plus bas qu'avant, on remet 3 niveaux gratuits (`NIV_GRATUITS` dans `js/niveaux.js`), ou on essaie 6.
 
 ## 6. Le test de la page d'accueil (lot 83) : laquelle fait le mieux ?
 
