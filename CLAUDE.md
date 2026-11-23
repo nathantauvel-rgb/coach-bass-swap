@@ -48,6 +48,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   essai proposé (« Essaie tout DJingood 7 jours, gratuitement. »), Mon avis, case des mails ; tout en anglais (bloc « Lot
   85 » de `js/anglais.js`). Pas touché : « Comment faire ? » des chapitres 2 à 7, la présentation (titre décidé au lot 81),
   le menu « Tous les niveaux » (des noms de niveaux).
+  Suite complète : 966 sur 966. **Gardien : feu rouge** (deux phrases nouvelles restées en français en anglais : « Série de N
+  jours · à garder aujourd'hui », la fin passant par le motif du lot 80 `/^Série de (d+) jours?(.*)$/` qui traduit le reste à
+  part, d'où l'entrée `'· à garder aujourd’hui'` ; la note de S'entraîner avant la première partie) ; corrigé, avec ses petites
+  remarques (carte Mini-set réécrite par `js/entrainement.js`, pastilles plus petites sous 460 px, « Tout recommencer à zéro »
+  dit « toute ta progression », « sur la ligne » au niveau 4) et un test anglais neuf.
 - **Lot 82 « Le chapitre 1 offert » : PUBLIÉ le 23 nov. 2026** (« Oui, publie » ; `1f8e939`, puis cette note = `origin/main` ;
   production vérifiée en 1366 × 768, français et `?lang=en` : « Continuer » au niveau 7, fenêtre Pro avec l'image de la démo, la
   pastille et la frise ; images `img/demo-apercu.jpg` et `img/en/demo-apercu.jpg` servies ; `/api/pro` répond). **Reste, par lui** :

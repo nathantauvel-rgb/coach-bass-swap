@@ -3020,12 +3020,19 @@ enDe({
   'Le reste est dans DJingood Pro.': 'The rest is in DJingood Pro.',
   'Le défi du jour est gratuit. Le reste est dans DJingood Pro.': 'The daily challenge is free. The rest is in DJingood Pro.',
   'Collection d’exemple : ouvre les fiches que tu veux !': 'Sample collection: open any card you like!',
-  'Avec ta collection : 1 fiche offerte, le reste dans Pro.': 'With your collection: 1 free card, the rest in Pro.'
+  'Avec ta collection : 1 fiche offerte, le reste dans Pro.': 'With your collection: 1 free card, the rest in Pro.',
+  'Joue d’abord un niveau dans <a href="#apprendre">Apprendre</a>. Le reste est dans DJingood Pro.': 'Play a level in <a href="#apprendre">Learn</a> first. The rest is in DJingood Pro.',
+  'Joue d’abord un niveau dans': 'Play a level in',
+  'Joue 3 niveaux pour le débloquer.': 'Play 3 levels to unlock it.',
+  'Efface toute ta progression, ici et sur ton compte. Les réglages de ta table restent.': 'Erases all your progress, here and on your account. Your controller settings stay.',
+  "Juste avant la ligne, allume l'écho (ou touche E), puis baisse d'un coup le fader de A sur la ligne.": "Just before the line, turn on the echo (or press E), then drop A's fader all at once on the line."
 });
 enMotif('Essaie tout DJingood {#n} jours, gratuitement.', 'Try all of DJingood free for {n} days.');
 enMotif('Les {#n} autres sont dans DJingood Pro.', 'The other {n} are in DJingood Pro.');
 enMotif('Commence par « {x} » !', 'Start with "{x}"!');
 enMotif('Les {#n} premiers gestes, sans aucune aide.', 'The first {n} moves, with no help at all.');
+// la fin de « Série de N jours · à garder aujourd'hui » : le motif du lot 80 (/^Série de (d+) jours?(.*)$/) la traduit à part
+enDe({ '· à garder aujourd’hui': ' · keep it going today' });
 enMotif('Série de {#n} jours', '{n}-day streak');
 enMotif('Série de {#n} jour', '{n}-day streak');
 /* ---------- Lot 85 : fin ---------- */

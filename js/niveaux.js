@@ -13,7 +13,7 @@ const BASE_LESSONS = [
     how: 'Sur la ligne, lance B et baisse d\'un coup le fader de A, dans le même geste.',
     show: ['gPlay', 'gFad'], bBass: false, autoLaunch: false, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], start: 40, end: 96 },
   { kind: 'echo', title: 'L\'écho out', goal: 'Fais disparaître A dans un écho, puis B tombe sur son drop.',
-    how: 'Juste avant la ligne, allume l\'écho (ou touche E), puis baisse d\'un coup le fader de A.',
+    how: 'Juste avant la ligne, allume l\'écho (ou touche E), puis baisse d\'un coup le fader de A sur la ligne.',
     show: ['gEcho', 'gFad'], bBass: false, autoLaunch: true, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], btn: ['echo'], start: 40, end: 96 },
   { kind: 'filter', title: 'Le filtre', goal: 'Efface A en douceur avec le filtre pendant que B joue.',
     how: 'Quand « FILTRE » touche la ligne, tourne lentement le CFX de A vers la droite, jusqu\'à « À FOND ».',
