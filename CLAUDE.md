@@ -32,7 +32,8 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 86 « Comment faire, en court » : FAIT (23 nov. 2026), NON PUBLIÉ, attend l'accord de l'utilisateur.** Gardien : feu
+- **Lot 86 « Comment faire, en court » : PUBLIÉ le 23 nov. 2026** (« Oui, publie » ; `fecac8c` = `origin/main`, puis cette
+  note ; production vérifiée sur djingood.fr, français et anglais). Gardien : feu
   orange, aucun blocage, 967 sur 967, aucune consigne fausse ; ses deux phrases à compléter corrigées (ch. 5 niv. 5 : « règle
   son tempo » ; ch. 4 niv. 1 : le filtre « à fond au swap ») avec « une fois seul » au ch. 7 niv. 6 et « pull … down » au lieu
   de « drop » comme verbe en anglais (aussi dans deux phrases du ch. 1) ; tests liés 71 sur 71. Reste, par lui : points 27 à
