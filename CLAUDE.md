@@ -101,8 +101,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     texte). Suite complète sur `60cbfb4` : **986 sur 986** (`captures/lot83/suite-v4/`). **Second passage du gardien : feu
     orange, aucun blocage** (les deux corrections vérifiées à 9 tailles, vidéo lancée pour de vrai dans Chrome ; rien du lot 85
     perdu ; détail sans conséquence : sur une tablette en hauteur, 768 × 1024, le cadre de Vini touche la zone du titre sans
-    cacher de lettre). **Attend : l'accord de l'utilisateur pour publier** (revérifier avant qu'`origin/main` est toujours
-    `5b9f2c6`).
+    cacher de lettre). Accord : « Oui, publie ». Entre-temps, le lot 86 avait été publié (`origin/main` = `7c9c7fc`) :
+    fusionné (`7afa4bd`, seul conflit CLAUDE.md) ; suite complète **986 sur 986** (`captures/lot83/suite-v5/` ; le 4e morceau,
+    coupé une nuit, relancé en entier). **PUBLIÉ le 24 nov. 2026** (`7afa4bd`, puis cette note = `origin/main` ; production
+    vérifiée en 1366 × 768 : `?accueil=page` en français et en anglais sans phrase oubliée, onde, deux Vini, « Tout le
+    chapitre 1 avec ta table », police chargée ; `?accueil=vini` : premier écran de Vini avec son seul masque `psDerriere`).
+    **Reste, par lui** : suivre le test moitié / moitié (section 6 de `STATISTIQUES.md` : ~3 semaines pour 15 points d'écart).
 - **Lot 86 « Comment faire, en court » : PUBLIÉ le 23 nov. 2026** (« Oui, publie » ; `fecac8c` = `origin/main`, puis cette
   note ; production vérifiée sur djingood.fr, français et anglais). Gardien : feu
   orange, aucun blocage, 967 sur 967, aucune consigne fausse ; ses deux phrases à compléter corrigées (ch. 5 niv. 5 : « règle
