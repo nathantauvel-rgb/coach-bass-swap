@@ -32,7 +32,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 87 « Les Inpulse d'aujourd'hui » (25 nov. 2026, « Oui, lance le lot »)** : copie `Documents\coach-dj-lot87`, branche
+- **Lot 87 « Les Inpulse d'aujourd'hui » : PUBLIÉ le 25 nov. 2026** (« Oui, publie » ; `18a4476`, puis cette note =
+  `origin/main` ; production vérifiée en 1366 × 768, français et `?lang=en`, statistiques refusées : une fausse 300 MK2 est
+  reconnue aux Premiers pas, une fausse 200 MK2 dans « Ma table », aucune erreur ; script `captures/lot87/production.js` de la
+  copie). **Reste, par lui** : envoyer le mail à Hercules (`Documents\MARKETING\12-mail-hercules.md`) ; si une Inpulse MK2 ou
+  MK3 arrive, « Vérifier ma table pas à pas ». Ci-dessous, l'entrée telle qu'elle était avant la publication.
+  (25 nov. 2026, « Oui, lance le lot ») : copie `Documents\coach-dj-lot87`, branche
   `lot-87-inpulse` depuis `origin/main` = `61f6d83` ; serveur `coach-dj-lot87` (port 8822), tests `DJ_PORT=8823`. Né de la
   préparation d'un mail à Hercules (`Documents\MARKETING\12-mail-hercules.md`) : le site ne reconnaissait que les anciennes
   Inpulse, alors qu'Hercules vend l'Inpulse 200 MK3 (mars 2026) et la 300 MK2. Ce qui change :
