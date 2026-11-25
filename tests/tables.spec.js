@@ -28,12 +28,12 @@ test.describe('Les fiches', () => {
   });
   test('les noms de port : variantes reconnues, MK2 des Inpulse 200 et 300 aussi (lot 87), autres MK2, MK3 et tables voisines non', async ({ page }) => {
     await ouvrir(page);
-    const r = await page.evaluate(() => ['DDJ-400', '2- DDJ-400', 'PIONEER DDJ-SB3', 'DJControl Inpulse 200', 'DJControl Inpulse 200 MK2', 'DJControl Inpulse 200 MKII', 'DJControl Inpulse 200 MK3', 'DJControl Inpulse 200 MKIII',
+    const r = await page.evaluate(() => ['DDJ-400', '2- DDJ-400', 'PIONEER DDJ-SB3', 'DJControl Inpulse 200', 'DJControl Inpulse 200 MK2', 'DJControl Inpulse 200mk2', 'DJControl Inpulse 200 MKII', 'DJControl Inpulse 200 MK3', 'DJControl Inpulse 200 MKIII',
       'DJControl Inpulse 300', 'DJControl Inpulse 300 MK2', '2- DJControl Inpulse 300 Mk2', 'DJControl Inpulse 300 MK3', 'DJControl Inpulse 500',
       'MIXTRACK PLATINUM FX', 'Mixtrack Pro FX', 'Mixtrack Pro', 'Numark Party Mix', 'Party Mix MKII', 'DJ2GO2 Touch', 'DJ-505', 'Reloop Mixage IE', 'DDJ-FLX4', 'DDJ-2000',
       'XDJ-RR', '2- XDJ-RR', 'XDJ-RX2', 'XDJ-RX3']
       .map(n => [n, (modeleDe(n) || {}).id || null]));
-    expect(Object.fromEntries(r)).toEqual({ 'DDJ-400': 'ddj400', '2- DDJ-400': 'ddj400', 'PIONEER DDJ-SB3': 'ddjsb3', 'DJControl Inpulse 200': 'inpulse200', 'DJControl Inpulse 200 MK2': 'inpulse200mk2',
+    expect(Object.fromEntries(r)).toEqual({ 'DDJ-400': 'ddj400', '2- DDJ-400': 'ddj400', 'PIONEER DDJ-SB3': 'ddjsb3', 'DJControl Inpulse 200': 'inpulse200', 'DJControl Inpulse 200 MK2': 'inpulse200mk2', 'DJControl Inpulse 200mk2': 'inpulse200mk2',
       'DJControl Inpulse 200 MKII': 'inpulse200mk2', 'DJControl Inpulse 200 MK3': null, 'DJControl Inpulse 200 MKIII': null, 'DJControl Inpulse 300': 'inpulse300',
       'DJControl Inpulse 300 MK2': 'inpulse300mk2', '2- DJControl Inpulse 300 Mk2': 'inpulse300mk2', 'DJControl Inpulse 300 MK3': null,
       'DJControl Inpulse 500': 'inpulse500', 'MIXTRACK PLATINUM FX': 'mixtrackplatinumfx', 'Mixtrack Pro FX': 'mixtrackprofx', 'Mixtrack Pro': null, 'Numark Party Mix': 'partymix',

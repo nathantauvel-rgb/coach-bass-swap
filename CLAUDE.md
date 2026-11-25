@@ -52,6 +52,12 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   - Captures avant / après en 1366 × 768 : `captures/lot87/planche.png` (script `captures/lot87/captures.js`, qui sert aussi une
     copie de la version en ligne prise dans le brouillon de la session).
   **Aucune Inpulse essayée en vrai** (comme toutes les fiches) : le mail à Hercules demande le prêt de la 200 MK3 et de la 300 MK2.
+  Commit `5aacbf5` ; suite complète 988 sur 988 (`captures/lot87/suite-*.txt`). **Gardien : feu orange, aucun blocage** (988 sur
+  988 chez lui ; il a téléchargé la fiche Mixxx de la 200 MK2 et l'a comparée à celle de la 200 : les 36 différences ne touchent
+  que LOOP, VINYL, molettes, pads d'effets, SYNC et la liste, les 19 numéros du site sont ceux de Mixxx ; 33 noms voisins
+  essayés). Ses remarques corrigées : le nom de port « DJControl Inpulse 200mk2 » (celui de la fiche Mixxx) ajouté aux tests,
+  `README.md` cite les deux MK2. À savoir : après publication, les MK2 apparaissent sous leur nom dans Umami / PostHog au lieu
+  de « autre table ». **Attend : son accord pour publier.**
 - **Lot 83 « La page d'accueil » (22 nov. 2026, soir ; « go » après la maquette)** : copie `Documents\coach-dj-lot83`, branche
   `lot-83-page-accueil` depuis `origin/main` = `63b7f90` ; serveur local `DJ_PORT=8806 node tests/serveur.js`, tests
   `DJ_PORT=8807`. Demande : « une page d'onboarding classique comme sur tous les SaaS, pour voir si c'est mieux au niveau de la
