@@ -14,7 +14,8 @@
    message), pas du code repris. La Pioneer XDJ-RR (lot 55), absente de Mixxx, vient d'autres sources : voir sa fiche.
    **Aucune de ces tables n'a été essayée en vrai** : `teste` passe à true quand un joueur
    l'a vérifiée avec « Vérifier ma table ». Sur les variantes « MK2 » ou « MKII », les numéros peuvent changer : elles ne
-   sont pas reconnues (réglage pas à pas).
+   sont pas reconnues (réglage pas à pas), sauf quand une source écrite dit qu'elles envoient les mêmes messages
+   (lot 87 : Inpulse 200 MK2 et 300 MK2, voir leurs fiches).
    La DDJ-FLX4 n'a pas de fiche ici : c'est la table de référence du site (DEFAULT_MAP dans midi.js), qui ne change pas. */
 const MODELES = [
   // Pioneer DJ : même plan que la FLX4 (voie A sur le canal 1, voie B sur le canal 2, filtres sur le canal 7)
@@ -41,6 +42,18 @@ const MODELES = [
     cmd: { faderA: [1, 0], faderB: [2, 0], lowA: [1, 2], lowB: [2, 2], cfxA: [1, 1], playA: [1, 7], playB: [2, 7] },
     plus: { hiA: [1, 4], hiB: [2, 4], trimA: [1, 5], trimB: [2, 5], cfxB: [2, 1], xfader: [0, 0], tempoA: [1, 8], tempoB: [2, 8], cueA: [1, 6], cueB: [2, 6], pflA: [1, 12], pflB: [2, 12] } },
   { id: 'inpulse300', nom: 'Hercules DJControl Inpulse 300', re: /Inpulse\s*300(?!\s*MK)/i,
+    cmd: { faderA: [1, 0], faderB: [2, 0], lowA: [1, 2], lowB: [2, 2], midA: [1, 3], midB: [2, 3], cfxA: [1, 1], playA: [1, 7], playB: [2, 7] },
+    plus: { hiA: [1, 4], hiB: [2, 4], trimA: [1, 5], trimB: [2, 5], cfxB: [2, 1], xfader: [0, 0], tempoA: [1, 8], tempoB: [2, 8], cueA: [1, 6], cueB: [2, 6], pflA: [1, 12], pflB: [2, 12] } },
+  // Lot 87 : les MK2, mêmes messages que la première version pour la table de mixage et PLAY (seuls LOOP et VINYL ont bougé).
+  // Sources : DJ_Phatso, auteur des fiches Mixxx des Inpulse « for Hercules Technical Support » : sa fiche de la 200 MK2 est
+  // celle de la 200 avec LOOP et VINYL déplacés (forum Mixxx, 1er sept. 2023, mixxx.discourse.group/t/27961) ; il a essayé
+  // la fiche de la 300 sur la 300 et la 300 MK2 (github.com/mixxxdj/mixxx/pull/14057, 5 févr. 2025). La 300 MK2 donne
+  // peut-être à son port le même nom que la 300 (elle est alors reconnue comme une 300, mêmes numéros). La 200 MK3 (2026)
+  // n'est PAS reconnue : elle a un MID que la 200 n'a pas, et aucune source écrite ne donne ses numéros.
+  { id: 'inpulse200mk2', nom: 'Hercules DJControl Inpulse 200 MK2', re: /Inpulse\s*200\s*MK\s*(?:2|II)(?!\w)/i,
+    cmd: { faderA: [1, 0], faderB: [2, 0], lowA: [1, 2], lowB: [2, 2], cfxA: [1, 1], playA: [1, 7], playB: [2, 7] },
+    plus: { hiA: [1, 4], hiB: [2, 4], trimA: [1, 5], trimB: [2, 5], cfxB: [2, 1], xfader: [0, 0], tempoA: [1, 8], tempoB: [2, 8], cueA: [1, 6], cueB: [2, 6], pflA: [1, 12], pflB: [2, 12] } },
+  { id: 'inpulse300mk2', nom: 'Hercules DJControl Inpulse 300 MK2', re: /Inpulse\s*300\s*MK\s*(?:2|II)(?!\w)/i,
     cmd: { faderA: [1, 0], faderB: [2, 0], lowA: [1, 2], lowB: [2, 2], midA: [1, 3], midB: [2, 3], cfxA: [1, 1], playA: [1, 7], playB: [2, 7] },
     plus: { hiA: [1, 4], hiB: [2, 4], trimA: [1, 5], trimB: [2, 5], cfxB: [2, 1], xfader: [0, 0], tempoA: [1, 8], tempoB: [2, 8], cueA: [1, 6], cueB: [2, 6], pflA: [1, 12], pflB: [2, 12] } },
   { id: 'inpulse500', nom: 'Hercules DJControl Inpulse 500', re: /Inpulse\s*500(?!\s*MK)/i,

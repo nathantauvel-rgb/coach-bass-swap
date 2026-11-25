@@ -32,6 +32,26 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 87 « Les Inpulse d'aujourd'hui » (25 nov. 2026, « Oui, lance le lot »)** : copie `Documents\coach-dj-lot87`, branche
+  `lot-87-inpulse` depuis `origin/main` = `61f6d83` ; serveur `coach-dj-lot87` (port 8822), tests `DJ_PORT=8823`. Né de la
+  préparation d'un mail à Hercules (`Documents\MARKETING\12-mail-hercules.md`) : le site ne reconnaissait que les anciennes
+  Inpulse, alors qu'Hercules vend l'Inpulse 200 MK3 (mars 2026) et la 300 MK2. Ce qui change :
+  - `js/tables.js` : deux fiches, `inpulse200mk2` et `inpulse300mk2`, avec exactement les numéros de la 200 et de la 300
+    (motifs `/Inpulse\s*200\s*MK\s*(?:2|II)(?!\w)/i` et le même pour 300 ; les fiches d'avant gardent `(?!\s*MK)`, donc une
+    MK3 n'est toujours pas reconnue). Sources écrites, dans le commentaire de la fiche : DJ_Phatso, auteur des fiches Mixxx des
+    Inpulse « for Hercules Technical Support » : fiche 200 MK2 = celle de la 200 avec LOOP et VINYL déplacés (forum Mixxx,
+    1er sept. 2023, https://mixxx.discourse.group/t/hercules-djcontrol-inpulse-200mk2/27961) ; fiche de la 300 essayée sur la
+    300 et la 300 MK2 (https://github.com/mixxxdj/mixxx/pull/14057, 5 févr. 2025). La 300 MK2 donne peut-être à son port le nom
+    de la 300 (d'après une proposition openDJ non fusionnée) : elle serait alors reconnue comme une 300, mêmes numéros.
+    La 200 MK3 a un MID que la 200 n'a pas (page DJUCED de la MK3) et aucune source ne donne ses numéros : réglage pas à pas.
+  - La liste des Premiers pas les montre « reconnue toute seule » (elle se construit depuis `MODELES`, rien à toucher).
+  - `presentation.html` (« Et si j'ai une autre table ? ») et sa clé dans `js/anglais.js` : « Hercules Inpulse 200, 300 et 500
+    (et les 200 et 300 MK2) et Starlight » ; les deux noms et leurs noms de port ajoutés aux `enPareil` des tables.
+  - `tests/tables.spec.js` : noms de port (MK2, MKII, « 2- », MK3 et MKIII refusées), 300 MK2 branchée (MID, PLAY, aucun
+    bandeau), mêmes numéros que la première version, liste des Hercules des Premiers pas.
+  - Captures avant / après en 1366 × 768 : `captures/lot87/planche.png` (script `captures/lot87/captures.js`, qui sert aussi une
+    copie de la version en ligne prise dans le brouillon de la session).
+  **Aucune Inpulse essayée en vrai** (comme toutes les fiches) : le mail à Hercules demande le prêt de la 200 MK3 et de la 300 MK2.
 - **Lot 83 « La page d'accueil » (22 nov. 2026, soir ; « go » après la maquette)** : copie `Documents\coach-dj-lot83`, branche
   `lot-83-page-accueil` depuis `origin/main` = `63b7f90` ; serveur local `DJ_PORT=8806 node tests/serveur.js`, tests
   `DJ_PORT=8807`. Demande : « une page d'onboarding classique comme sur tous les SaaS, pour voir si c'est mieux au niveau de la

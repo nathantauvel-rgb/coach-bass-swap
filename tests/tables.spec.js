@@ -26,13 +26,16 @@ test.describe('Les fiches', () => {
     });
     expect(pb).toEqual([]);
   });
-  test('les noms de port : variantes reconnues, MK2 et tables voisines non', async ({ page }) => {
+  test('les noms de port : variantes reconnues, MK2 des Inpulse 200 et 300 aussi (lot 87), autres MK2, MK3 et tables voisines non', async ({ page }) => {
     await ouvrir(page);
-    const r = await page.evaluate(() => ['DDJ-400', '2- DDJ-400', 'PIONEER DDJ-SB3', 'DJControl Inpulse 200', 'DJControl Inpulse 200 MK2', 'DJControl Inpulse 500',
+    const r = await page.evaluate(() => ['DDJ-400', '2- DDJ-400', 'PIONEER DDJ-SB3', 'DJControl Inpulse 200', 'DJControl Inpulse 200 MK2', 'DJControl Inpulse 200 MKII', 'DJControl Inpulse 200 MK3', 'DJControl Inpulse 200 MKIII',
+      'DJControl Inpulse 300', 'DJControl Inpulse 300 MK2', '2- DJControl Inpulse 300 Mk2', 'DJControl Inpulse 300 MK3', 'DJControl Inpulse 500',
       'MIXTRACK PLATINUM FX', 'Mixtrack Pro FX', 'Mixtrack Pro', 'Numark Party Mix', 'Party Mix MKII', 'DJ2GO2 Touch', 'DJ-505', 'Reloop Mixage IE', 'DDJ-FLX4', 'DDJ-2000',
       'XDJ-RR', '2- XDJ-RR', 'XDJ-RX2', 'XDJ-RX3']
       .map(n => [n, (modeleDe(n) || {}).id || null]));
-    expect(Object.fromEntries(r)).toEqual({ 'DDJ-400': 'ddj400', '2- DDJ-400': 'ddj400', 'PIONEER DDJ-SB3': 'ddjsb3', 'DJControl Inpulse 200': 'inpulse200', 'DJControl Inpulse 200 MK2': null,
+    expect(Object.fromEntries(r)).toEqual({ 'DDJ-400': 'ddj400', '2- DDJ-400': 'ddj400', 'PIONEER DDJ-SB3': 'ddjsb3', 'DJControl Inpulse 200': 'inpulse200', 'DJControl Inpulse 200 MK2': 'inpulse200mk2',
+      'DJControl Inpulse 200 MKII': 'inpulse200mk2', 'DJControl Inpulse 200 MK3': null, 'DJControl Inpulse 200 MKIII': null, 'DJControl Inpulse 300': 'inpulse300',
+      'DJControl Inpulse 300 MK2': 'inpulse300mk2', '2- DJControl Inpulse 300 Mk2': 'inpulse300mk2', 'DJControl Inpulse 300 MK3': null,
       'DJControl Inpulse 500': 'inpulse500', 'MIXTRACK PLATINUM FX': 'mixtrackplatinumfx', 'Mixtrack Pro FX': 'mixtrackprofx', 'Mixtrack Pro': null, 'Numark Party Mix': 'partymix',
       'Party Mix MKII': null, 'DJ2GO2 Touch': 'dj2go2touch', 'DJ-505': 'dj505', 'Reloop Mixage IE': 'mixage', 'DDJ-FLX4': null, 'DDJ-2000': null,
       'XDJ-RR': 'xdjrr', '2- XDJ-RR': 'xdjrr', 'XDJ-RX2': null, 'XDJ-RX3': null });
@@ -40,6 +43,23 @@ test.describe('Les fiches', () => {
 });
 
 test.describe('Une table connue, branchée', () => {
+  test('lot 87 : l\'Inpulse 300 MK2 est prête tout de suite, avec son MID, et l\'Inpulse 200 MK2 suit les numéros de la 200', async ({ page }) => {
+    const erreurs = await ouvrir(page, { midi: { branchee: 'DJControl Inpulse 300 MK2' } });
+    await expect(page.locator('#midiPill')).toHaveText('DJControl Inpulse 300 MK2');
+    await expect(page.locator('#midiPill')).toHaveClass(/\bon\b/);
+    await expect(page.locator('#tableBar')).toBeHidden();
+    expect(await stocke(page, 'coach-table')).toEqual({ nom: 'DJControl Inpulse 300 MK2', modele: 'inpulse300mk2' });
+    expect(await page.evaluate(() => [map.midA, map.faderB, map.playB])).toEqual([{ ch: 1, n: 3 }, { ch: 2, n: 0 }, { ch: 2, n: 7 }]);
+    // les MK2 ont exactement les numéros de leur première version (même source : la fiche Mixxx de DJ_Phatso)
+    expect(await page.evaluate(() => [['inpulse200', 'inpulse200mk2'], ['inpulse300', 'inpulse300mk2']]
+      .map(([a, b]) => JSON.stringify(modeleMap(modeleId(a))) === JSON.stringify(modeleMap(modeleId(b)))))).toEqual([true, true]);
+    expect(erreurs).toEqual([]); await sansBandeau(page);
+  });
+  test('lot 87 : dans la liste des Premiers pas, les deux MK2 sont « reconnues toutes seules », la 200 MK3 n\'y est pas', async ({ page }) => {
+    await ouvrir(page);
+    const herc = await page.evaluate(() => PP_LISTE.filter(t => /^Hercules /.test(t.nom)).map(t => t.nom.replace('Hercules DJControl ', '') + ' : ' + t.statut));
+    expect(herc).toEqual(['Inpulse 200 : ok', 'Inpulse 200 MK2 : ok', 'Inpulse 300 : ok', 'Inpulse 300 MK2 : ok', 'Inpulse 500 : ok', 'Inpulse T7 : regler', 'Starlight : ok']);
+  });
   test('Hercules Inpulse 200 : prête tout de suite, sans bandeau, et elle pilote le niveau', async ({ page }) => {
     const erreurs = await ouvrir(page, { midi: { branchee: 'DJControl Inpulse 200' } });
     await expect(page.locator('#midiPill')).toHaveText('DJControl Inpulse 200');
