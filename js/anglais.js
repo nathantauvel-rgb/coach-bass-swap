@@ -3162,4 +3162,13 @@ enDe({
 });
 /* ---------- Lot 89 : fin ---------- */
 
+/* ---------- Lot 90 : début (l'en-tête respire : le son, la langue, « Mon avis » et le guide dans un menu) ---------- */
+enDe({
+  'Son, langue, mon avis': 'Sound, language, feedback',
+  'Son coupé, langue, mon avis': 'Sound off, language, feedback',
+  'Mon compte, le son, la langue, mon avis': 'My account, sound, language, feedback',
+  'Langue': 'Language'
+});
+/* ---------- Lot 90 : fin ---------- */
+
 trPage();

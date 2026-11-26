@@ -19,7 +19,7 @@ const ECRANS = [
   ['10-ma-table', VENU, 'table', async p => { await p.evaluate(() => window.__midi.envoyer(0xB0, 15, 90)); }, true],
   ['18-verifier-liste', VENU, 'table', async p => { await p.locator('#tVerif').click(); await p.evaluate(() => { vfAller(3); window.__midi.envoyer(0xB0, 11, 0); window.__midi.envoyer(0xB0, 11, 127); }); }, true],
   ['19-verifier-questions', VENU, 'table', async p => { await p.locator('#tVerif').click(); await p.evaluate(() => vfAller(17)); await p.locator('.vfopt').first().click(); }, true],
-  ['12-avis', VENU, 'apprendre', async p => { await p.locator('#avisBtn').click(); await p.locator('#avBloque').fill('Je ne sais pas quand lancer B.'); await p.locator('#avNote [data-note="3"]').click(); }],
+  ['12-avis', VENU, 'apprendre', async p => { await p.locator('#menuBtn:visible, #cptBtn[aria-controls]').first().click(); await p.locator('#avisBtn').click(); await p.locator('#avBloque').fill('Je ne sais pas quand lancer B.'); await p.locator('#avNote [data-note="3"]').click(); }],
   // Le compte : Firebase n'est pas chargé ici, on pose juste de quoi afficher la fenêtre
   ['20-compte', VENU, 'apprendre', async p => { await p.evaluate(() => {
     const auth = { onAuthStateChanged(){}, signInWithPopup(){ return Promise.resolve({ user: {} }); }, signOut(){ return Promise.resolve(); } };

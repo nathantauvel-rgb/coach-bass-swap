@@ -504,13 +504,17 @@ function cptBoutons(off){ for (const id of ['cptGo', 'cptIn', 'cptOut', 'cptVers
 // Le bouton du compte, en haut à droite de l'en-tête : « Se connecter », ou l'initiale et le prénom. L'initiale est
 // dessinée par la feuille de style (data-initiale), pour que le texte du bouton reste le prénom.
 const cptInitiale = () => (Array.from((cpt && cpt.prenom !== 'toi' && cpt.prenom) || '?')[0] || '?').toUpperCase();
+// Lot 90 : connecté (sans progression en attente d'un choix), le bouton du prénom ouvre le menu de l'en-tête (entete.js), qui
+// mène à « Mon compte » ; sinon il ouvre la fenêtre du compte, comme avant
+const cptMenu = () => cptOn() && !!cpt && !cptAttente;
 function cptEtat(){
   const b = $('cptBtn'); if (!b) return;
   b.hidden = !cptOn();
   $('cptNom').textContent = cpt ? cpt.prenom + (cptAttente ? ' ·' : '') : 'Se connecter';
   b.dataset.initiale = cpt ? cptInitiale() : '';
   b.classList.toggle('on', !!cpt);
-  b.title = cptAttente ? 'Choisis quelle progression garder' : cpt ? 'Mon compte DJingood' : 'Se connecter pour garder ta progression';
+  b.title = cptAttente ? 'Choisis quelle progression garder' : cpt ? 'Mon compte, le son, la langue, mon avis' : 'Se connecter pour garder ta progression';
+  if (typeof menuRend === 'function') menuRend();   // qui ouvre le menu : ce bouton, ou « ⋯ » (lot 90)
   if ($('compte') && !$('compte').hidden) cptRend();
   mlPret();   // la réponse « Vini peut m'écrire », une fois la progression comparée (mails.js)
 }
@@ -713,7 +717,7 @@ $('ordiFerme').addEventListener('click', () => ordiFerme(false));
 $('ordi').addEventListener('click', e => { if (e.target === $('ordi')) ordiFerme(false); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('ordi').hidden){ e.stopPropagation(); ordiFerme(false); } }, true);
 
-$('cptBtn').addEventListener('click', openCompte);
+$('cptBtn').addEventListener('click', () => { if (cptMenu()) menuBascule(); else openCompte(); });
 $('cptClose').addEventListener('click', closeCompte);
 $('compte').addEventListener('click', e => { if (e.target === $('compte')) closeCompte(); });
 $('cptVersCreer').addEventListener('click', () => cptVa('creer'));

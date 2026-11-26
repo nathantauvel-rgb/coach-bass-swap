@@ -32,6 +32,67 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 90 « L'en-tête respire »** (26 nov. 2026 ; lot D du diagnostic UX, constat F4, demandé dans une session à part ; maquette
+  posée sur le vrai site, validée : « Go ») : copie `Documents\coach-dj-lot90` (git worktree du clone de ce PC, comme aux lots 88
+  et 89), branche `lot-90-entete` depuis `origin/main` = `273320c` ; **le lot 89, publié pendant ce temps, y est fusionné**
+  (`origin/main` = `c761aa0` ; conflits seulement aux blocs de fin de `styles.css` et `js/anglais.js`, les deux gardés, 89 puis
+  90). Ce qui change :
+  - **L'en-tête sur ordinateur** : connecté, 9 éléments au lieu de 14 (le logo, les 5 onglets, la pastille série / étoiles,
+    l'état de la table, le bouton du prénom) ; pas connecté, 10 au lieu de 13 (« ⋯ » et « Se connecter », qui reste violet plein :
+    sa demande du lot 54) ; sans Firebase, 9. Le haut-parleur (`#sonsBtn`, `.volbox`), FR | EN, « Mon avis » et « ? » quittent
+    l'en-tête pour **un menu** (`#menuPanneau`, `js/entete.js`, chargé juste après `compte.js`). Connecté, le bouton du prénom
+    l'ouvre (petite flèche, `aria-expanded`, `aria-controls`), avec « Mon compte » en tête (`#menuCompte` : l'initiale, le prénom,
+    « Mon compte » → `openCompte`) ; sinon « ⋯ » (`#menuBtn`). Une progression en attente d'un choix (`cptAttente`) : le bouton du
+    prénom ouvre tout de suite la fenêtre du compte, « ⋯ » garde le menu (`cptMenu()`, compte.js). Dans le menu : la partie « Son »
+    du lot 60 telle quelle (`#volPanneau` est cette partie : `#volMuet`, `#volCurseur`, `#volBips`), « Langue » et `#langBtn`
+    (FR | EN ; « English » en toutes lettres pour un navigateur pas en français, comme aux Premiers pas : le menu a la place),
+    « Mon avis » (`#avisBtn`), « Revoir le guide » (`#guideBtn`, sur Apprendre seulement et pas sur téléphone, comme avant).
+    Mêmes identifiants, mêmes fonctions : seule l'entrée bouge (le clic sur FR ou EN gardé, `?lang=en` le temps de la visite).
+    Le menu s'ouvre sous son bouton (`--menu-haut`, posé à l'ouverture : juste sous le bouton même quand les onglets passent sur
+    leur seconde ligne, de 761 à 1269 px) et le premier choix prend la main ; Échap (écouteur en capture,
+    `stopImmediatePropagation` : pas aussi la carte de fin), un clic ailleurs ou Tab qui en sort le ferment ; « Mon compte »,
+    « Mon avis » et le guide le referment et rendent la main à son bouton avant d'ouvrir leur fenêtre (écouteur en capture sur le
+    menu, avant `openAvis`), et la fenêtre fermée y revient. `z-index` 29 : sous toutes les fenêtres (30 et plus), au-dessus de la
+    barre des onglets du téléphone (25). **Son coupé** (`volSite` = 0) : un petit haut-parleur barré (`.menumuet`) sur le bouton qui
+    ouvre le menu, et « ⋯ » s'appelle « Son coupé, langue, mon avis » (le dessin n'est pas lu avec le prénom). `renderSons`
+    (sons.js) ne rend plus que la partie « Son » et appelle `menuRend` ; `volPanneau()` est retirée.
+  - **Téléphone (760 px et moins)** : les onglets passent dans une barre fixe en bas de l'écran (62-63 px ; icône au-dessus du
+    nom, l'onglet en cours en lavande sur `--brand-soft`, marges `env(safe-area-inset-*)`). En haut : le logo, la pastille, « ⋯ »
+    et le compte (« Se connecter » écrit en entier dès 360 px, en icône en dessous ; connecté, l'initiale). La page garde 80 px en
+    bas ; la barre « Jouer » d'un niveau (`.actionbar`, collante) se pose 74 px au-dessus du bas, au-dessus des onglets, et reprend
+    sa place pendant la partie. **La barre des onglets se cache** pendant une partie (`.stage.joue`), sur la carte de fin
+    (`#result`), pendant la démo d'un chapitre (`#apercu`), dès qu'une fenêtre `role="dialog"` est ouverte (compte, guide, avis,
+    quiz, Pro, série, Premiers pas, Comprendre…) et sur la page d'accueil du test (`#vitrine`) : `body:has(…)`, avec
+    `html.pp-open` / `html.vitrine-open` pour les navigateurs sans `:has()`. Pastille un peu resserrée et boîte vide du nom du logo
+    retirée : le compte reste sur la ligne du logo de 320 à 414 px, même avec une série de 120 jours et 150 étoiles.
+  - Grand écran (lot 75) : rien ne change. La coupure à deux lignes reste sous 1270 px (`captures/lot90/mesure.js` : une ligne
+    tiendrait dès 1180 px, mais trop juste quand la pastille a des nombres à trois chiffres). Plus d'air entre les onglets
+    (14 px de côté au-dessus de 1100 px, 6 px entre eux au-dessus de 1300 px).
+  - Retiré de `styles.css` : les règles devenues mortes du haut-parleur (`.sonsbtn`, `.volbox`, `.volpan`), de « Mon avis » et
+    du guide dans l'en-tête (`.avbtn`, `.avtxt`, `.guidebtn`), et le bouton FR | EN resserré de l'en-tête (lot 84). Anglais :
+    bloc « Lot 90 » de `js/anglais.js` (les anciennes traductions « Son : … » ne servent plus). Couleurs : seulement les jetons
+    de `:root` (bloc « Lot 90 » à la fin de `styles.css`). Ni MIDI ni `DEFAULT_MAP` ; le premier écran de Vini et `#vitrine` pas
+    touchés (un commentaire de `js/premiers.js` parle encore du « haut-parleur de l'en-tête » : laissé pour ne pas toucher au
+    fichier du premier écran pendant le test).
+  - Tests : `tests/entete.spec.js` (18) ; `tests/outils.js` : `ouvrirMenu(page)` et `menuAvis(page)` ; `tests/faux-firebase.js` :
+    `ouvrirCompte` et `rouvrirCompte` passent par le menu une fois connecté (`compteDepuisEntete`) ; mis à jour : volume, avis,
+    vini-sons, anglais (FR | EN dans le menu, « English » en entier), parcours, compte, stats, autre-table, vitrine, site (ordre
+    des fichiers : `entete` après `compte`) ; `tests/captures.js` (« 12-avis » ouvre d'abord le menu). Points 20 et 36 de la
+    checklist FLX4 réécrits (le son est dans le menu ; pas de point nouveau : rien du MIDI ni du son ne change).
+  - Vérifié : **suite complète 1023 sur 1023** (`DJ_PORT=8906`, 22,9 min, `captures/lot90/suite.txt` ; les 1005 du lot 89 et
+    les 18 nouveaux) ; contraste (`tests/captures.js --vite`) : seules les étoiles estompées, voulues, et le script va maintenant au
+    bout (« 12-avis » passe par le menu, aussi sur téléphone, où il s'arrêtait) ; premier écran de Vini : identique au pixel près
+    sur ordinateur, identique à l'œil sur téléphone (`captures/lot90/vini.js` : 44 pixels du bord du bouton FR | EN diffèrent
+    d'1 à 3 niveaux sur 255 ; la feuille de style du lot posée sur la version en ligne ne change aucun pixel, et la nouvelle
+    version donne elle-même deux empreintes différentes d'une fois à l'autre : un bruit de rendu) ;
+    de 320 à 414 px (`captures/lot90/telephones.js`, connecté ou pas, français et anglais, avec Tutos et de grands nombres) : aucun défilement de côté, compte sur la ligne du logo, aucun nom d'onglet coupé ; captures avant /
+    après en 1366 × 768, 1920 × 1080, 1180 × 760, 390 × 844, 360 et 320 px : `captures/lot90/` (hors Git ; `captures.js`, l'avant
+    servi depuis un `git archive origin/main` du brouillon de la session ; `planche.js` → `planche.png` ; `maquette/` : la
+    maquette validée). Contrôles du gardien faits par la session (l'agent n'était pas chargé : session ouverte hors du dépôt) :
+    aucune couleur en dur ajoutée, les 6 noms nouveaux uniques (`menuOuvreur`, `menuOuvert`, `menuRend`, `menuOuvre`,
+    `menuBascule`, `cptMenu`), rien n'est appelé au chargement avant d'exister (`typeof menuRend` dans `cptEtat` et
+    `renderSons`), le prénom écrit avec `textContent`, aucune clé `coach-` nouvelle, `DEFAULT_MAP` intact, rien de `captures/` ni
+    de MP3, aucun `test.fail`. Accord : « Publie » (après la planche avant / après).
 - **Lot 89 « Le niveau en une consigne » : PUBLIÉ le 26 nov. 2026** (« Oui, publie » ; `3d4a74d`, puis cette note =
   `origin/main` ; production vérifiée en 1366 × 768, 390 × 844 et `?lang=en`, statistiques refusées : plus de phrase sous le
   titre, pastilles B bleue et A orange dans les étapes, « espace » sur l'étape « Lance B », « Comment faire ? » en une ligne,
@@ -3473,7 +3534,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   `erreurs` (bandeau d'erreur) → `langue` (français ou anglais, `tr()`, lots 53 et 80) → `anglais` (le dictionnaire anglais, chargé seulement en anglais) → `stats` (statistiques Umami, lot 46) → `pro-pret` (l’interrupteur de Pro, `PRO_PRET`, lot 68 ; aussi lu par `presentation.html`) → `morceaux` (outils communs `$`, `SR`, moteur de production, Workers) →
   `audio` → `platines` (position, tempo, molette, CUE, hot cues, boucles, casque) → `vrais` (vraie musique) → `sons` (sons du jeu) → `controles` → `commandes` (table complète à l'écran) → `combos` (chapitre 4) → `calage` (chapitre 5) → `hotcues` (chapitre 6, lot 41) → `set` (chapitre 7 « Le set », lot 44) → `niveaux` (niveaux, progression, partie, notation) → `piste` → `expert` (Mode Expert) → `tables` (fiches des tables reconnues) → `midi` →
   `placement` → `entrainement` → `rekordbox` → `guide` → `objectif` (objectif du jour) → `quiz` (quiz et badges) → `parcours` (accueil, les trois parcours) → `vini` (la mascotte) → `premiers` (Premiers pas) → `quetes` (quêtes du jour) → `comprendre` (leçons sans table, lot 48) → `tutos` (l'onglet « Tutos », lot 56) →
-  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `mails` (les mails de Vini, lot 54) → `compte` (se connecter avec Google) → `pro` (DJingood Pro, lot 59) →
+  `table` (page « Ma table ») → `reglage` (régler une autre table pas à pas) → `verif` (vérifier ma table pas à pas) → `avis` (avis des testeurs, rapport) → `mails` (les mails de Vini, lot 54) → `compte` (se connecter avec Google) → `entete` (le menu de l’en-tête : son, langue, « Mon avis », guide, lot 90) → `pro` (DJingood Pro, lot 59) →
   `vitrine` (la page d'accueil du test moitié / moitié, lot 83) → `demarrage` (démarrage et onglets).
   Conséquences : un nom déclaré dans un fichier existe dans tous les autres (chercher avant de nommer) ;
   le code exécuté au chargement d'un fichier ne peut appeler que ce qui est défini dans ce fichier ou
@@ -3502,6 +3563,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   (fin du script) suit l'adresse : `#accueil` (défaut), `#apprendre`, `#entrainer`, `#musique` (« Ma musique », lot 72, suivi de sa page : `#musique/morceau/…`, `#musique/paire/…/…`, `#musique/favoris`, `#musique/recents` ; l'ancien `#vrai` marche encore), et aussi `#table` (« Ma table ») et `#progres` (« Mes progrès »). Quitter
   Apprendre arrête la partie en cours ; le guide de premier lancement s'ouvre à la première entrée dans
   Apprendre, plus au chargement. Les tests ouvrent `index.html#apprendre`.
+- **En-tête** (lot 90, `js/entete.js`) : le logo, les onglets, la pastille série / étoiles, l'état de la table et le compte ;
+  le son (`#volPanneau`, sons.js), FR | EN (`#langBtn`), « Mon avis » (`#avisBtn`) et « Revoir le guide » (`#guideBtn`) sont dans
+  le menu `#menuPanneau`, qu'ouvre le bouton du prénom une fois connecté (`cptMenu()`, compte.js), sinon « ⋯ » (`#menuBtn`).
+  `menuRend()` (appelé par `cptEtat` et `renderSons`) choisit le bouton qui l'ouvre ; `menuOuvre(ouvert, revenir)`. Sur
+  téléphone, les onglets sont une barre fixe en bas de l'écran (bloc « Lot 90 » de `styles.css`), cachée pendant une partie et
+  dès qu'un élément `role="dialog"` est affiché : **une nouvelle fenêtre plein écran prend `role="dialog"` et l'attribut
+  `hidden` quand elle est fermée**, sinon la barre des onglets se voit à travers elle (ou par-dessus, si son `z-index` est sous 25).
 - **Parcours** (`js/parcours.js`) : `PARCOURS` (ordre des étapes de chaque parcours), `STAGES` (pour
   chaque étape : `done()` calculé depuis la progression existante, `cta()`, `go()`), `nextStage()`,
   `renderHome()`. Seul le choix est enregistré (`coach-parcours` : `debut`, `apprenti` ou `confirme` depuis le lot 37 ;
@@ -3595,6 +3663,8 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `tests/vitrine.spec.js` : la page d'accueil et son test moitié / moitié (lot 83).
   `tests/consigne.spec.js` : la carte du niveau (pastilles A et B, touche du clavier), « Comment faire ? » en une ligne, les
   titres de la vraie musique sous la table, le bouton ⚙ « Options » (lot 89).
+  `tests/entete.spec.js` : l'en-tête et son menu (son, langue, « Mon avis », guide ; « ⋯ » ou le bouton du prénom), la barre des
+  onglets du téléphone et quand elle se cache (lot 90).
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,
   onglets, S'entraîner, Passer au vrai.

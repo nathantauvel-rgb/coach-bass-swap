@@ -939,7 +939,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('visibilitychange', () => { if (document.hidden && tu.phase !== 'ferme' && tu.phase !== 'charge' && !tu.pause) tuMetPause(true); });
 /* ---------- Le volume du lecteur ----------
    Une glissière et un haut-parleur, comme sous une vidéo (demande de l'utilisateur, 7 nov. 2026). Depuis le lot 60, la
-   glissière règle le volume de TOUT le site (volSite, js/audio.js), comme le haut-parleur de l'en-tête et « Mon compte » :
+   glissière règle le volume de TOUT le site (volSite, js/audio.js), comme la partie « Son » du menu de l'en-tête et « Mon compte » :
    c'est un curseur .volcurseur, que sons.js suit tout seul (volRend). Le haut-parleur du lecteur coupe et remet le son du
    site. TU_NIVEAU garde l'équilibre d'avant entre les tutos et les exercices (0,7 au carré : l'ancien réglage du lecteur). */
 const TU_NIVEAU = .49;

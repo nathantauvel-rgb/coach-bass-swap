@@ -3,7 +3,7 @@
 // Le site ne charge ses scripts que si `window.firebase` n'existe pas encore, donc il prend le faux
 // et tout le reste du chemin (connexion, lecture, écriture, rechargement) est bien celui du vrai code.
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau } = require('./outils');
+const { ouvrir, sansBandeau, menuAvis } = require('./outils');
 const { FAUX, dansLaBase, dejaConnecte, base, ouvrirCompte, rouvrirCompte, seConnecter, creerCompte } = require('./faux-firebase');
 
 // Ce que cet appareil retient de son dernier enregistrement
@@ -142,7 +142,7 @@ test.describe('Se déconnecter et effacer', () => {
     await seConnecter(page);
     await expect(page.locator('#cptMsg')).toContainText('Ton compte est créé');
     await expect(page.locator('#compte')).toBeHidden();   // la fenêtre s'est fermée toute seule
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await page.locator('.avreset summary').click();
     await page.locator('#avReset').click();
     await expect.poll(async () => Object.keys(await base(page)).length, { timeout: 15000 }).toBe(0);
@@ -226,7 +226,7 @@ test.describe('Sans connexion internet', () => {
     await ouvrir(page, { avant: dejaConnecte() + FAUX + dansLaBase('u1', { 'coach-lecons': '{"0":3}' }, 2000), stockage: { 'coach-compte': marque(2000), 'coach-lecons': '{"0":3}' } });
     await expect(page.locator('#cptBtn')).toHaveText('Nathan');
     await page.evaluate(() => { window.__horsLigne = true; });
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await page.locator('.avreset summary').click();
     await page.locator('#avReset').click();
     // Firestore ne répond jamais : au bout de 3 s le site renonce, sans rien effacer ici non plus
@@ -239,7 +239,7 @@ test.describe('Sans connexion internet', () => {
     await ouvrir(page, { avant: dejaConnecte() + FAUX + dansLaBase('u1', { 'coach-lecons': '{"0":3}' }, 2000), stockage: { 'coach-compte': marque(2000), 'coach-lecons': '{"0":3}' } });
     await expect(page.locator('#cptBtn')).toHaveText('Nathan');
     await page.evaluate(() => { window.__horsLigne = true; });
-    await page.locator('#cptBtn').click();
+    await ouvrirCompte(page);
     await page.locator('#cptOut').click();
     await expect(page.locator('#cptBtn')).toHaveText('Se connecter', { timeout: 20000 });
     await expect(page.locator('#cptOut')).toBeHidden();
@@ -268,7 +268,7 @@ test.describe('Jamais de rechargement en boucle', () => {
     expect(await chargements(page)).toBeLessThanOrEqual(2);
     // la progression du compte est bien arrivée, et le site dit quoi faire
     expect(await page.evaluate(() => localStorage.getItem('coach-lecons'))).toBe('{"0":3,"1":3,"2":3}');
-    await page.locator('#cptBtn').click();
+    await ouvrirCompte(page);
     await expect(page.locator('#cptEtatTxt')).toContainText('recharge la page toi-même');
   });
 
@@ -300,7 +300,7 @@ test.describe('Pas de réseau au chargement', () => {
       stockage: { 'coach-compte': marque(2000, true), 'coach-lecons': '{"0":3,"1":2}' }
     });
     await expect(page.locator('#cptBtn')).toHaveText('Nathan');
-    await page.locator('#cptBtn').click();
+    await ouvrirCompte(page);
     await expect(page.locator('#cptEtatTxt')).toContainText('Pas de connexion internet', { timeout: 15000 });
     // rien n'est parti : la progression du compte est intacte
     expect((await base(page)).u1.donnees['coach-lecons']).toBe('{"0":3}');

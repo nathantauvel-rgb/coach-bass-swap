@@ -2,7 +2,7 @@
 // ?lang=en ou par le bouton FR | EN (lot 84 : deux côtés, la langue affichée en évidence).
 // window.__enManque liste les phrases qu'un écran anglais a laissées en français : elle doit rester vide.
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau } = require('./outils');
+const { ouvrir, sansBandeau, ouvrirMenu } = require('./outils');
 
 const manque = page => page.evaluate(() => [...window.__enManque]);
 const EN = { 'coach-langue': 'en' };
@@ -69,6 +69,7 @@ test.describe('Choisir l\'anglais', () => {
     await expect(autre.locator('#langBtn button[aria-pressed="true"]')).toHaveText('FR');
     await autre.close();
     // un clic sur EN, déjà allumé : rien ne se recharge, mais l'anglais est gardé (gardien du lot 84)
+    await ouvrirMenu(page);   // lot 90 : le bouton FR | EN est dans le menu de l'en-tête
     await page.locator('#langBtn button[lang="en"]').click();
     await page.waitForTimeout(300);
     await expect(page).toHaveURL(/\/index\.html#accueil$/);   // pas rechargée
@@ -98,6 +99,7 @@ test.describe('Choisir l\'anglais', () => {
 
   test('un clic sur EN est gardé, même sur un navigateur en français ; un clic sur la langue affichée ne fait rien', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'accueil' });
+    await ouvrirMenu(page);   // lot 90 : le bouton FR | EN est dans le menu de l'en-tête
     // la langue affichée : rien ne bouge
     await page.locator('#langBtn button[lang="fr"]').click();
     await page.waitForTimeout(300);
@@ -120,10 +122,12 @@ test.describe('Choisir l\'anglais', () => {
     await expect(page.locator('#pp')).toBeVisible();
     await expect(page.locator('#langOffre')).toHaveCount(0);
     await expect(page.locator('#ppGo')).toBeVisible();
-    // lot 80 : en toutes lettres pour un navigateur pas en français ; lot 84 : « FR | English », l'en-tête garde « EN »
+    // lot 80 : en toutes lettres pour un navigateur pas en français ; lot 84 : « FR | English » ; lot 90 : aussi dans le menu
+    // de l'en-tête, où le mot entier a sa place (avant, l'en-tête gardait « EN »)
     await expect(page.locator('#ppLang button[aria-pressed="true"]')).toHaveText('FR');
     await expect(page.locator('#ppLang button[lang="en"]')).toHaveText('English', { useInnerText: true });
-    await expect(page.locator('#langBtn button[lang="en"]')).toHaveText('EN', { useInnerText: true });
+    await expect(page.locator('#langBtn button[lang="en"] .lb-long')).not.toHaveCSS('display', 'none');
+    await expect(page.locator('#langBtn button[lang="en"] .lb-court')).toHaveCSS('display', 'none');
     await page.locator('#ppLang button[lang="en"]').click();
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await expect(page.locator('#ppAsk')).toContainText("Hi, I'm Vini!");
@@ -140,17 +144,23 @@ test.describe('Choisir l\'anglais', () => {
   });
 });
 
-// Lot 84 : le bouton FR | EN est plus large que l'ancien « EN » : l'en-tête doit tenir sur sa ligne
-test.describe('Le bouton FR | EN tient dans l\'en-tête', () => {
+// Lot 84 : le bouton FR | EN est plus large que l'ancien « EN » : l'en-tête doit tenir sur sa ligne. Lot 90 : le bouton est
+// dans le menu de l'en-tête ; sur un téléphone, « ⋯ » et « Se connecter » restent sur la ligne du logo, et le menu tient
+test.describe('Le bouton FR | EN, dans le menu de l\'en-tête', () => {
   for (const [largeur, hauteur] of [[360, 780], [375, 812]])
-    test('téléphone de ' + largeur + ' px : le compte reste sur la ligne du logo', async ({ page }) => {
+    test('téléphone de ' + largeur + ' px : le compte reste sur la ligne du logo, et le menu montre FR | EN en entier', async ({ page }) => {
       await page.setViewportSize({ width: largeur, height: hauteur });
       const erreurs = await ouvrir(page, { onglet: 'accueil' });
       await expect(page.locator('#langBtn button')).toHaveCount(2);
-      const [lang, cpt, logo] = await Promise.all(['#langBtn', '#cptBtn', '.app > .top .brand'].map(s => page.locator(s).boundingBox()));
-      expect(Math.abs(cpt.y - lang.y)).toBeLessThan(12);
+      await expect(page.locator('#langBtn')).toBeHidden();
+      const [plus, cpt, logo] = await Promise.all(['#menuBtn', '#cptBtn', '.app > .top .brand'].map(s => page.locator(s).boundingBox()));
+      expect(Math.abs(cpt.y - plus.y)).toBeLessThan(12);
       expect(Math.abs(cpt.y - logo.y)).toBeLessThan(20);
-      expect(lang.x + lang.width).toBeLessThanOrEqual(cpt.x);
+      expect(plus.x + plus.width).toBeLessThanOrEqual(cpt.x);
+      await ouvrirMenu(page);
+      const lang = await page.locator('#langBtn').boundingBox();
+      expect(lang.x).toBeGreaterThanOrEqual(0);
+      expect(lang.x + lang.width).toBeLessThanOrEqual(largeur);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(largeur);
       expect(erreurs).toEqual([]);
     });
