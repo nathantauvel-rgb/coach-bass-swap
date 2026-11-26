@@ -18,7 +18,7 @@ const TKINDS = {
   hi: ['Potard HI', 'Les aigus : charleys, cymbales, tout ce qui brille dans le morceau.'],
   mid: ['Potard MID', 'Les médiums : les voix et les mélodies. À couper sur un morceau quand l\'autre chante.'],
   low: ['Potard LOW', 'Les basses : grosse caisse et ligne de basse. Deux basses en même temps, ça fait de la bouillie : c\'est le potard clé des transitions.'],
-  cfx: ['Potard CFX, le filtre', 'Un filtre : vers la droite le son s\'affine, vers la gauche il s\'étouffe, à midi (neutre) il ne fait rien.'],
+  cfx: ['Le filtre (CFX sur la FLX4)', 'Un filtre : vers la droite le son s\'affine, vers la gauche il s\'étouffe, à midi (neutre) il ne fait rien.'],
   casque: ['Bouton CUE du casque', 'Envoie ce morceau dans ton casque, pour le préparer sans que le public l\'entende.'],
   fader: ['Fader de volume', 'Le volume du morceau dans les enceintes. Tout en bas, on ne l\'entend plus.'],
   cross: ['Crossfader', 'Glisse d\'un morceau à l\'autre en un seul geste : à gauche la platine A, à droite la platine B.'],
@@ -50,7 +50,7 @@ function tableSvg(){
     let pads = `<rect class="hit" x="${dx + 94}" y="291" width="188" height="108" rx="12"/>`; for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++) pads += `<rect x="${dx + 100 + c * 46}" y="${297 + r * 54}" width="38" height="42" rx="8"/>`;
     s += g('pads' + side, pads);
   }
-  [['TRIM', 49], ['HI', 99], ['MID', 149], ['LOW', 199], ['CFX', 254], ['CASQUE', 298], ['VOLUME', 362]].forEach(([t, y]) => { s += `<text class="tt" x="460" y="${y}" text-anchor="middle">${t}</text>`; });
+  [['TRIM', 49], ['HI', 99], ['MID', 149], ['LOW', 199], ['FILTRE', 254], ['CASQUE', 298], ['VOLUME', 362]].forEach(([t, y]) => { s += `<text class="tt" x="460" y="${y}" text-anchor="middle">${t}</text>`; });
   for (const [side, cx] of [['A', 400], ['B', 520]]){
     s += knob('trim' + side, cx, 45) + knob('hi' + side, cx, 95) + knob('mid' + side, cx, 145) + knob('low' + side, cx, 195) + knob('cfx' + side, cx, 250);
     s += g('casque' + side, `<rect x="${cx - 22}" y="283" width="44" height="22" rx="7"/>`);
@@ -141,5 +141,5 @@ $('tReset').addEventListener('click', () => {
   const fi = tableResetModele(), autre = !!tableCfg; tableReset = false; learnKey = null;
   if (fi){ modeleApply(tableEtat() === 'connue' ? midiNames.find(modeleDe) : tableCfg.nom); renderPill(); updateSetup(); renderTableBar(); tableNote = `Réglages de la ${fi.nom} en place.`; renderTable(); return; }
   flx4Map();
-  tableNote = (autre ? 'Réglages de la DDJ-FLX4 rétablis.' : 'Réglages d\'origine rétablis.') + ' Le filtre CFX et le bouton d\'effet seront à réapprendre.'; renderTable();
+  tableNote = (autre ? 'Réglages de la DDJ-FLX4 rétablis.' : 'Réglages d\'origine rétablis.') + ' Le filtre et le bouton d\'effet seront à réapprendre.'; renderTable();
 });

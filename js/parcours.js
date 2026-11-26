@@ -147,7 +147,8 @@ function renderHome(){
   // lot 65 : avec un compte, le lien part par mail et connecte tout seul sur l'ordinateur
   $('homeLienTxt').textContent = typeof cpt !== 'undefined' && cpt ? 'Les 7 gestes, avec ta table : ouvre le lien sur ton ordinateur, tu seras déjà connecté.'
     : 'Les 7 gestes, avec ta table : ouvre djingood.fr sur ton ordinateur.';
-  const etapes = parcoursEtapes(parcours), n = etapes.indexOf(cur); $('pathSum').textContent = cur ? `Voir tout mon parcours · étape ${n + 1} sur ${etapes.length}` : 'Voir tout mon parcours · terminé';
+  const etapes = parcoursEtapes(parcours);
+  $('pathSum').textContent = cur ? 'Voir tout mon parcours' : 'Voir tout mon parcours · terminé';   // lot 88 : plus d'« étape N sur 9 » (un compteur de trop)
   $('homePathName').textContent = PARCOURS[parcours].name;
   const ol = $('homeStages'); ol.innerHTML = '';
   etapes.forEach((id, n) => { const s = STAGES[id], done = s.done(), now = id === cur;

@@ -51,7 +51,7 @@ test.describe('Sur un ordinateur, rien n\'est imposé', () => {
     await expect(page.locator('.nivgrille .nivcarte .t')).toContainText(['Le temps', 'Compter jusqu’à 4', 'La vitesse', 'La phrase', 'Les parties d’un morceau', 'Grave, médium, aigu', 'La transition']);
     await expect(page.locator('.nivgrille .nivcarte').nth(0)).not.toHaveClass(/ferme/);
     await expect(page.locator('.nivgrille .nivcarte').nth(1)).toHaveClass(/ferme/);
-    await expect(page.locator('#starTot')).toHaveText('0/150');
+    await expect(page.locator('#starTot')).toHaveText('0');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('Apprenti DJ et DJ confirmé : toutes les leçons sont ouvertes', async ({ page }) => {
@@ -123,7 +123,7 @@ test.describe('Une leçon', () => {
     await expect(page.locator('.cp-gain')).toContainText('+30 XP');
     await expect(page.locator('.cp-retenir')).toContainText('Un temps, c’est un « boum »');
     expect(await etoiles(page)).toEqual({ 0: 3 });
-    await expect(page.locator('#starTot')).toHaveText('3/150');
+    await expect(page.locator('#starTot')).toHaveText('3');
     await expect(page.locator('#xpTxt')).toHaveText('30 XP');
     expect(await page.evaluate(() => window.__stats.map(e => e[0]))).toContain('comprendre-1');
     await page.locator('.cp-fin .cp-vgo').click();   // « Leçon suivante »
@@ -288,13 +288,13 @@ test.describe('Ailleurs sur le site', () => {
     await expect(page.locator('#pgChaps li').first()).toContainText('Comprendre');
     await expect(page.locator('#pgChaps li').first()).toContainText('5 ★ sur 21');
     expect(await page.evaluate(() => avisRapport())).toContain('Comprendre 5/21');
-    await expect(page.locator('#starTot')).toHaveText('5/150');
+    await expect(page.locator('#starTot')).toHaveText('5');
     await expect(page.locator('#xpTxt')).toHaveText('50 XP');
   });
   test('une valeur abîmée dans coach-comprendre ne bloque rien', async ({ page }) => {
     const erreurs = await ouvrir(page, { stockage: { 'coach-comprendre': '{"0":9,"x":2' } });
     expect(await page.evaluate(() => cpStars)).toEqual({});
-    await expect(page.locator('#starTot')).toHaveText('0/150');
+    await expect(page.locator('#starTot')).toHaveText('0');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
 });

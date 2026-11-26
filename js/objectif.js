@@ -33,7 +33,7 @@ function goalCheck(){
 function goalAdd(secs){
   secs = Math.min(1800, Math.max(0, +secs || 0)); if (!secs) return;
   const d = dayKey(); goal.jours[d] = Math.min(86400, (goal.jours[d] || 0) + secs);
-  goalCheck(); saveGoal();
+  goalCheck(); saveGoal(); hudSerie();   // lot 88 : la série de l'en-tête suit tout de suite
 }
 function goalSet(min){ if (!GOAL_MINS.includes(min)) return; goal.min = min; goalCheck(); goalFresh = false; saveGoal(); renderGoal(); }
 // Encart de l'accueil (appelé par renderHome)
@@ -43,6 +43,7 @@ function renderGoal(){
   $('goalTitle').textContent = done ? 'Objectif du jour atteint !' : `${mins} min sur ${goal.min} aujourd'hui`;
   $('goalSub').textContent = sk ? `Série de ${plur(sk, 'jour', 'jours')}` + (done ? '' : ' · à garder aujourd’hui') : '';   // lot 85 : rien sans série
   document.querySelectorAll('#progGoalSet [data-goal]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.goal === goal.min)));
+  hudSerie();
 }
 // Ligne de la carte de résultat (appelée par finish)
 function goalNote(){

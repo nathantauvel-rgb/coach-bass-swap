@@ -12,7 +12,7 @@
 const CH4_INIT = { faderA: 1, faderB: 0, lowA: .5, lowB: .5, cfxA: .5, midA: .5, midB: .5 };
 const CH4_LESSONS = [
   { kind: 'c-filtswap', title: 'Filtre et swap', goal: 'Efface A au filtre, puis échange les basses pile sur la phrase.',
-    how: 'Dès « FILTRE », tourne lentement le CFX de A : il doit être à fond au swap, où tu échanges les basses d\'un geste.',
+    how: 'Dès « FILTRE », tourne lentement le filtre de A : il doit être à fond au swap, où tu échanges les basses d\'un geste.',
     show: ['gCfx', 'gLow'], bBass: true, autoLaunch: true, launchBeat: 32, bCue: 0, init: Object.assign({}, CH4_INIT, { lowB: 0 }), user: ['cfxA', 'lowA', 'lowB'], start: 32, end: 72,
     c: { filt: [48, 64], swap: 64 },
     targets: [[48, 'FILTRE', 'A'], [64, 'SWAP', 'AB']],

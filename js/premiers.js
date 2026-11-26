@@ -677,7 +677,10 @@ function ppPlanOpts(){
   const quand = r.min === 5 ? 'À ton rythme' : r.min === 15 ? 'En moins de 2 semaines' : 'Dans 2 semaines';
   const ol = document.createElement('ol'); ol.className = 'pp-frise';
   const plans = typeof proVerrou === 'function' && proVerrou() ? PP_PLAN_PRO : PP_PLAN;   // lot 68
-  (plans[r.niveau] || plans.debut)(cpMobile()).forEach(([ic, q, titre, txt, prix], i) => {
+  // lot 88 : sans table, sur ordinateur, l'étape d'aujourd'hui se joue à la souris (le plan ne promet plus « avec ta table »)
+  const souris = r.table === 'souris' && !cpMobile();
+  (plans[r.niveau] || plans.debut)(cpMobile()).map(e => souris && /^Aujourd.hui\s·\savec ta table$/.test(e[1])
+    ? ['souris', 'Aujourd’hui · à la souris', e[2], e[3].replace(/, avec ta table\.$/, '.'), e[4]] : e).forEach(([ic, q, titre, txt, prix], i) => {
     const li = document.createElement('li'); li.className = i === 0 ? 'pp-maint' : '';
     li.innerHTML = `<span class="pp-pt" aria-hidden="true">${PP_IC[ic]}</span><span><span class="pp-quand"></span><b></b><small></small></span>`;
     li.querySelector('.pp-quand').textContent = q || quand; li.querySelector('b').textContent = titre; li.querySelector('small').textContent = txt;

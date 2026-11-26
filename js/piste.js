@@ -81,7 +81,7 @@ function drawHighway(b){
   for (const [y, lab, col] of [[yA, 'A', COL.a], [yB, 'B', COL.b]]){ g.fillStyle = COL.panel; g.beginPath(); g.arc(22, y + H / 2, 15, 0, Math.PI * 2); g.fill();
     g.fillStyle = col; g.beginPath(); g.arc(22, y + H / 2, 12, 0, Math.PI * 2); g.fill(); g.fillStyle = COL.ink; g.font = '800 14px ' + COL.disp; g.textAlign = 'center'; g.fillText(lab, 22, y + H / 2 + 5); }
 }
-const SHORT = { midA: 'MID A', faderA: 'Fader A', faderB: 'Fader B', lowA: 'LOW A', lowB: 'LOW B', cfxA: 'CFX A', echo: 'Écho' };
+const SHORT = { midA: 'MID A', faderA: 'Fader A', faderB: 'Fader B', lowA: 'LOW A', lowB: 'LOW B', cfxA: 'Filtre A', echo: 'Écho' };
 const FK = { midA: 'ma', faderA: 'fa', faderB: 'fb', lowA: 'la', lowB: 'lb', cfxA: 'ca', echo: 'ec' };
 let cmpLast = null;   // dernier schéma demandé, redessiné quand on ouvre « Voir mon geste »
 function drawCompare(fr, i, launch){

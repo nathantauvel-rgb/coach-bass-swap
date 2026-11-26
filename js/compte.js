@@ -591,8 +591,7 @@ function cptRend(){
 }
 // « Ta progression » dans « Mon compte » (lot 60) : les mêmes chiffres que la pastille de l'en-tête (renderHud), en phrases
 function cptRendProgres(){
-  const niv = ($('lvl').textContent || '').replace(/^(Niv\.|Lvl)\s*/, ''), xp = parseInt($('xpTxt').textContent, 10) || 0;   // « Lvl 3 » en anglais (lot 80)
-  const [eu, tot] = ($('starTot').textContent || '0/0').split('/').map(n => parseInt(n, 10) || 0);
+  const { niv, xp, eu, tot } = hudChiffres();   // lot 88 : calculés (niveaux.js), plus relus dans la pastille de l'en-tête
   const serie = typeof goalStreak === 'function' ? goalStreak() : 0;
   $('cptProgNiv').textContent = 'Niveau ' + (niv || '1') + ' · ' + xp.toLocaleString(LOCALE) + ' XP';
   $('cptProgTxt').textContent = eu + (eu > 1 ? ' étoiles' : ' étoile') + ' sur ' + tot

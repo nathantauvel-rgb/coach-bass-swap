@@ -24,7 +24,7 @@ test.describe('Le chapitre', () => {
     await ch7(page, 0);
     await expect(page.locator('.node')).toHaveCount(7);
     await expect(page.locator('#ltitle')).toHaveText('Premier enchaînement');
-    await expect(page.locator('#starTot')).toHaveText(/\/150$/);
+    expect(await page.evaluate(() => hudChiffres().tot)).toBe(150);   // lot 88 : la pastille de l'en-tête ne montre plus le total
     // la feuille de route : trois morceaux, A puis B puis A
     await expect(page.locator('#setRoute')).toBeVisible();
     await expect(page.locator('#setRouteList li:not(.sep)')).toHaveText([/«\sNéon\s»/, /«\sMinuit\s»/, /«\sVelours\s»/]);   // espaces insécables dans les guillemets

@@ -16,7 +16,7 @@ const BASE_LESSONS = [
     how: 'Juste avant la ligne, allume l\'écho (ou touche E), puis baisse d\'un coup le fader de A sur la ligne.',
     show: ['gEcho', 'gFad'], bBass: false, autoLaunch: true, launchBeat: 64, bCue: 64, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['faderA'], btn: ['echo'], start: 40, end: 96 },
   { kind: 'filter', title: 'Le filtre', goal: 'Efface A en douceur avec le filtre pendant que B joue.',
-    how: 'Quand « FILTRE » touche la ligne, tourne lentement le CFX de A vers la droite, jusqu\'à « À FOND ».',
+    how: 'Quand « FILTRE » touche la ligne, tourne lentement le filtre de A vers la droite, jusqu\'à « À FOND ».',
     show: ['gCfx'], bBass: false, autoLaunch: true, init: { faderA: 1, faderB: 1, lowA: .5, lowB: .5, cfxA: .5 }, user: ['cfxA'], start: 24, end: 112 },
   { kind: 'swap', title: 'Le swap des basses', goal: 'Échange les basses de A et B pile sur la ligne.',
     how: 'Sur « SWAP », échange les basses d\'un geste : LOW de A coupé, LOW de B normal.',
@@ -341,12 +341,26 @@ const chapPct = n => { const L = lessonsOf(n); return L.length ? Math.round(sumS
 function niveauVisite(n, i){ if (run || !lessonsOf(n)[i]) return; LESSONS = lessonsOf(n); chapter = n; selectLesson(i); }
 // XP : 10 par étoile au chapitre 1, 15 au chapitre 2, 20 aux chapitres 3 et 4, 25 aux chapitres 5 et 6, 30 au chapitre 7, plus le quiz (un niveau tous les 30 XP)
 const xpTotal = () => sumStars(stars) * 10 + sumStars(ch2Stars) * 15 + sumStars(ch3Stars) * 20 + sumStars(ch4Stars) * 20 + sumStars(ch5Stars) * 25 + sumStars(ch6Stars) * 25 + sumStars(ch7Stars) * 30 + quizXp() + questXp() + (typeof cpXp === 'function' ? cpXp() : 0);   // questXp : coffres des quêtes du jour (quetes.js)
+// Les chiffres de la progression, pour l'en-tête et « Mon compte » (compte.js) : les XP, le niveau de joueur (un tous les
+// 30 XP), les étoiles gagnées et les étoiles possibles (+ les leçons de « Comprendre », lot 48 : 7 leçons de 3 étoiles)
+function hudChiffres(){
+  const xp = xpTotal(), tc = typeof cpEtoiles === 'function' ? cpEtoiles() : 0;
+  const eu = sumStars(stars) + sumStars(ch2Stars) + sumStars(ch3Stars) + sumStars(ch4Stars) + sumStars(ch5Stars) + sumStars(ch6Stars) + sumStars(ch7Stars) + tc;
+  const tot = 21 + BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3 + CH4_LESSONS.length * 3 + CH5_LESSONS.length * 3 + (CH6_PRET ? CH6_LESSONS.length * 3 : 0) + CH7_LESSONS.length * 3;
+  return { xp, niv: 1 + Math.floor(xp / 30), eu, tot };
+}
+// Lot 88 « Un mot pour une chose » : la pastille de l'en-tête montre la série de jours (objectif du jour atteint,
+// js/objectif.js) et les étoiles gagnées, sans « Niv. N » (qui se confondait avec « Niveau 3 : … », la leçon) ni « /150 ».
+// Le niveau de joueur et les XP restent dans « Mes progrès » et « Mon compte ». Rappelée par renderGoal et goalAdd.
+function hudSerie(){
+  const el = $('hudSerie'); if (!el) return;
+  const n = typeof goalStreak === 'function' ? goalStreak() : 0;   // objectif.js est chargé après ce fichier
+  $('serieTot').textContent = String(n); el.classList.toggle('vide', !n);
+}
 function renderHud(){
-  const t1 = sumStars(stars), t2 = sumStars(ch2Stars), t3 = sumStars(ch3Stars), t4 = sumStars(ch4Stars), t5 = sumStars(ch5Stars), t6 = sumStars(ch6Stars), t7 = sumStars(ch7Stars), xp = xpTotal();
-  $('lvl').textContent = 'Niv. ' + (1 + Math.floor(xp / 30)); $('xpFill').style.width = (xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = xp + ' XP';
-  // + les leçons de « Comprendre » (lot 48, 7 leçons de 3 étoiles)
-  const tc = typeof cpEtoiles === 'function' ? cpEtoiles() : 0;
-  $('starTot').textContent = (t1 + t2 + t3 + t4 + t5 + t6 + t7 + tc) + '/' + (21 + BASE_LESSONS.length * 6 + CH3_LESSONS.length * 3 + CH4_LESSONS.length * 3 + CH5_LESSONS.length * 3 + (CH6_PRET ? CH6_LESSONS.length * 3 : 0) + CH7_LESSONS.length * 3);
+  const h = hudChiffres();
+  $('xpFill').style.width = (h.xp % 30) / 30 * 100 + '%'; $('xpTxt').textContent = h.xp + ' XP';
+  $('starTot').textContent = String(h.eu); hudSerie();
   const bank = bankOf(chapter), map = $('map'); map.querySelectorAll('.node').forEach(n => n.remove()); map.style.setProperty('--n', LESSONS.length);
   let lastDone = -1;
   // lot 76 : la carte de fin (un niveau de Pro affiché) : aucune pastille n'est « le niveau choisi »
@@ -715,7 +729,7 @@ function evalSwap(fr){
 function evalFilter(fr){
   const out = [], st = firstAt(fr, 40, x => x.ca > .56), full = firstAt(fr, 40, x => x.ca >= .9);
   if (fr.some(x => x.ca < .4)) out.push(['bad', 'Tu as tourné le filtre vers la gauche : de ce côté il enlève les aigus et garde les basses. Pour effacer A, tourne vers la droite.', 0]);
-  out.push(st == null ? ['bad', 'Le filtre n\'a jamais été tourné : tourne le CFX de A vers la droite.', 0] : Math.abs(st - 64) <= 6 * TOL ? ['ok', `Filtre lancé au temps ${Math.round(st)}, au début de la phrase.`, 1] : ['mid', `Filtre lancé au temps ${Math.round(st)} : commence quand « FILTRE » touche la ligne (temps 64).`, .5]);
+  out.push(st == null ? ['bad', 'Le filtre de A n\'a jamais été tourné : tourne-le vers la droite.', 0] : Math.abs(st - 64) <= 6 * TOL ? ['ok', `Filtre lancé au temps ${Math.round(st)}, au début de la phrase.`, 1] : ['mid', `Filtre lancé au temps ${Math.round(st)} : commence quand « FILTRE » touche la ligne (temps 64).`, .5]);
   if (st != null) out.push(full == null || full > 96 + 3 * TOL ? ['bad', 'A n\'était pas complètement filtré au drop de B : va jusqu\'au bout du potard avant « À FOND ».', 0] : full - st < 12 ? ['mid', `Filtre monté trop vite (${Math.round(full - st)} temps) : étale le geste sur 16 à 32 temps.`, .5] : ['ok', `Filtre monté en ${Math.round(full - st)} temps : A s'efface en douceur.`, 1]);
   return out;
 }

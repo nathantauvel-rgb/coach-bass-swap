@@ -120,17 +120,17 @@ test.describe('Apprentissage d\'un contrôle', () => {
     await ouvrir(page, { midi: { branchee: true } });
     await niveau(page, 4);
     await page.locator('#setupList .learn').click();
-    await expect(page.locator('#setupList .learn')).toHaveText('Tourne le potard CFX de A…');
+    await expect(page.locator('#setupList .learn')).toHaveText('Tourne le filtre de A…');
     await envoyer(page, 0xB6, 55, 10);           // octet de précision (CC 32 à 63) : refusé
     await envoyer(page, 0x96, 70, 127);          // une note : refusée pour un potard
     expect(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).toBeNull();
     await envoyer(page, 0xB6, 23, 64);
     expect(JSON.parse(await page.evaluate(() => localStorage.getItem('coach-midi-map')))).toEqual(Object.assign({}, PAR_DEFAUT, { cfxA: { ch: 6, n: 23 } }));
-    expect((await miseEnPlace(page))[0]).toMatch(/^ok .*CFX de A/);
+    expect((await miseEnPlace(page))[0]).toMatch(/^ok .*Filtre de A/);
     await page.reload();
     await niveau(page, 4);
     await envoyer(page, 0xB6, 23, 64);
-    expect((await miseEnPlace(page))[0]).toMatch(/^ok .*CFX de A/);
+    expect((await miseEnPlace(page))[0]).toMatch(/^ok .*Filtre de A/);
   });
   test('le bouton ON de l\'effet s\'apprend et active l\'écho', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: true } });
@@ -151,7 +151,7 @@ test.describe('Apprentissage d\'un contrôle', () => {
     await page.locator('#setupList .learn').click();
     await envoyer(page, 0xB0, 19, 64);           // le fader A, déjà attribué : refusé, on attend toujours
     expect(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).toBeNull();
-    await expect(page.locator('#setupList .learn')).toHaveText('Tourne le potard CFX de A…');
+    await expect(page.locator('#setupList .learn')).toHaveText('Tourne le filtre de A…');
     await envoyer(page, 0xB6, 23, 64);
     expect(JSON.parse(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).cfxA).toEqual({ ch: 6, n: 23 });
   });
@@ -159,7 +159,7 @@ test.describe('Apprentissage d\'un contrôle', () => {
     await ouvrir(page, { midi: { branchee: true }, stockage: { 'coach-midi-map': JSON.stringify({ faderA: 'x', cfxA: { ch: 6, n: 23 }, fxOn: { ch: 4, n: 71 } }) } });
     await niveau(page, 4);
     await envoyer(page, 0xB6, 23, 64);
-    expect((await miseEnPlace(page))[0]).toMatch(/^ok .*CFX de A/);
+    expect((await miseEnPlace(page))[0]).toMatch(/^ok .*Filtre de A/);
     await niveau(page, 1);
     await envoyer(page, 0xB0, 19, 127); await envoyer(page, 0xB1, 19, 0);
     await expect(page.locator('#startBtn')).toBeEnabled();

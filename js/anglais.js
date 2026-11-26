@@ -3127,4 +3127,30 @@ enDe({
 enMotif('Tes niveaux joués, sur d’autres morceaux : {#n} sur {#m}.', 'Your played levels, on other tracks: {n} of {m}.');
 /* ---------- Lot 86 : fin ---------- */
 
+/* ---------- Lot 88 : début (une couleur, un rôle ; un mot pour une chose) ---------- */
+enDe({
+  // la pastille de l'en-tête : la série de jours et les étoiles (plus « Niv. N » ni « N/150 »)
+  'Mes progrès : série, étoiles, badges': 'My progress: streak, stars, badges',
+  'Série :': 'Streak:', 'Étoiles :': 'Stars:',
+  // le plan des Premiers pas, sans table sur ordinateur
+  'Aujourd’hui · à la souris': 'Today · with the mouse',
+  'Jusqu’à ta première transition complète.': 'Up to your first complete transition.',
+  // le potard du filtre s'appelle « FILTRE » partout (CFX reste le nom écrit sur la FLX4)
+  'Le filtre (CFX sur la FLX4)': 'The filter (CFX on the FLX4)',
+  "Le filtre et le bouton d'effet seront à réapprendre.": 'The filter and the effect button will need to be learned again.',
+  // la note de « Ma table » s'écrit d'un seul bloc (table.js) : les deux phrases ensemble
+  "Réglages d'origine rétablis. Le filtre et le bouton d'effet seront à réapprendre.": 'Original settings restored. The filter and the effect button will need to be learned again.',
+  "Réglages de la DDJ-FLX4 rétablis. Le filtre et le bouton d'effet seront à réapprendre.": 'DDJ-FLX4 settings restored. The filter and the effect button will need to be learned again.',
+  'Tourne le filtre de A…': "Turn A's filter…",
+  'Tourne le filtre…': 'Turn the filter…',
+  'Filtre A': 'Filter A',
+  "Quand « FILTRE » touche la ligne, tourne lentement le filtre de A vers la droite, jusqu'à « À FOND ».": 'When "FILTER" touches the line, slowly turn A\'s filter to the right, until "FULL".',
+  "Le filtre de A n'a jamais été tourné : tourne-le vers la droite.": "A's filter was never turned: turn it to the right.",
+  "Dès « FILTRE », tourne lentement le filtre de A : il doit être à fond au swap, où tu échanges les basses d'un geste.": "From \"FILTER\", slowly turn A's filter: it must be all the way at the swap, where you swap the bass in one move.",
+  'Sur la FLX4, quel potard sert de filtre ?': 'On the FLX4, which knob is the filter?',
+  "Sur la FLX4, le filtre s'appelle CFX : c'est le potard sous les trois potards d'égalisation. Tourné vers la droite, il retire peu à peu les graves du morceau.": "On the FLX4, the filter is called CFX: it's the knob below the three EQ knobs. Turned to the right, it gradually removes the lows from the track.",
+  'LOW règle les basses, MID les médiums (où se trouvent les voix), et le FILTRE agit sur tout le son.': 'LOW controls the lows, MID the mids (where the vocals are), and the FILTER works on the whole sound.'
+});
+/* ---------- Lot 88 : fin ---------- */
+
 trPage();

@@ -32,6 +32,52 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 88 « Couleurs et mots » (26 nov. 2026, nuit ; « Lance A et B »)** : les lots A et B du diagnostic UX du 26 nov.
+  (page privée https://claude.ai/artifact/LveAZbHNMmyjsEGKsqndhJ : 7 constats, 14 choses à enlever, lots A à H ; les autres
+  lots attendent son choix ; **E « Jouer en moins d'une minute » = retirer le test du kick et le guide de 4 écrans, compte
+  après la première réussite, à faire en test moitié / moitié APRÈS la fin du test de l'accueil**). Copie
+  `Documents\coach-dj-lot88` : git worktree du clone `Documents\GitHub\coach-bass-swap` **de ce PC** (en retard de 277 commits,
+  sa branche `renommage-djingood` pas touchée ; ni copies de lots ni `Documents\MARKETING` sur ce PC), `core.autocrlf=false`
+  posé par worktree, `node_modules` relié par jonction ; branche `lot-88-couleurs-mots` depuis `origin/main` = `9a98356`, sans
+  suivi. Ce qui change :
+  - **A « Une couleur, un rôle »** (`styles.css`, remplacements sur place + bloc « Lot 88 » à la fin) : le bouton principal est
+    violet partout (`.start` « Jouer », `.rbtn.go` / `.onb-nav .go` / `.cta`, `.rcard .rrow .rbtn.go`, Comprendre `.cp .pp-go`
+    et `.cp-vgo`, `.pro-go` uni avec relief, `#startBtn.pro` / `.rpro-go` / `#homeCta.pro` unis, `.pro-essai`) ; l'orange et le
+    bleu ne servent plus qu'aux platines : défi du jour (`.tr-defi`) violet, barres en dégradé violet → lavande (`.xpbar i`,
+    `.pgbar i`, `.map .prog`, `.chapters .cbar i`, `.pp-frise::before`), `.pro-accent` et `.pro-ic-b` en lavande, centre du
+    vinyle de Pro violet, une vignette sur deux (`.pro-vg`, `.tu-vg`) en bleu-gris `--hi` ; **un seul bouton violet plein par
+    écran** : étiquettes « Pro » (`.pro-tag`, `.tu-pro`, `.card .soon.pro`, `.pro-badge`, `.etat-pro .etq`) en lavande sur
+    `--brand-soft` (7,6 de contraste), pastilles réussies (`#map .etat-reussi .dot`, `.nivcarte.reussi .num`, `.home-pas .fait`)
+    en lavande, puces de « Pendant le niveau » en contour lavande, « Préparer › » de Ma musique (`.mm-violet.mm-petit`) en
+    contour, plein au survol ; « 122 → 122 » (`.mm-pourquoi em`) en `--muted` ; au plan et au compte des Premiers pas, les
+    éclats du drop passent derrière la bulle de Vini (`#pp:has(.pp-fin) .pp-col{z-index:4}`). `--a-edge` et `--pro-teinte-b` ne
+    servent plus (gardés dans `:root`). Texte blanc sur `--brand` : 4,8 de contraste.
+  - **Laissé exprès** : « Se connecter » reste plein (sa demande du lot 54 : « pas assez visible ») ; **le premier écran de Vini
+    et `#vitrine` ne sont pas touchés tant que le test moitié / moitié du lot 83 tourne** : après le test, passer en bleu la
+    platine B de la scène des Premiers pas (`.ps-b`, `.ps-pad-b`, `.ps-vu-v` dans `styles.css`, aujourd'hui `--brand`) et la
+    note orange `.ps-n2` ; les éclats (`ppFx.cols`) gardent l'orange (c'est la fête, pas un signal).
+  - **B « Un mot pour une chose »** : la pastille de l'en-tête montre la série de jours (flamme, `#hudSerie` / `#serieTot`,
+    classe `.hud-serie` : **jamais `.serie`, déjà prise par l'écran plein écran de la série, qui couvrait alors toute la page et
+    bloquait les clics**) et les étoiles gagnées (`#starTot` = le nombre seul), plus « Niv. N » ni « N/150 » ;
+    `hudChiffres()` (niveaux.js) rend XP, niveau de joueur, étoiles gagnées et possibles pour l'en-tête et pour « Mon compte »
+    (`cptRendProgres` ne relit plus la pastille) ; `hudSerie()` est rappelée par `renderHud`, `renderGoal` et `goalAdd` ; textes
+    cachés « Série : » / « Étoiles : » (`.sr`) pour les lecteurs d'écran. Le potard du filtre s'appelle « FILTRE » sur les dessins
+    (fiches `ONB_KNOBS`, Ma table) et « le filtre de A » dans les phrases (consignes ch. 1 niv. 5 et ch. 4 niv. 1, bilan du
+    niveau, `LEARN_TXT` / `CTRL_LABEL`, « Voir mon geste » `SHORT`, quiz `b2b` et `c2a`) ; « CFX » reste là où l'on parle du
+    matériel : titre de la fiche « Le filtre CFX », Ma table « Le filtre (CFX sur la FLX4) », quiz `b4a` (« Sur la FLX4, quel
+    potard sert de filtre ? »), Vérifier et Régler ma table. Plan des Premiers pas sans table sur ordinateur : « Aujourd'hui · à
+    la souris » (icône souris, sans « avec ta table »). Accueil : « Voir tout mon parcours » sans « · étape N sur 9 ». Anglais :
+    bloc « Lot 88 » à la fin de `js/anglais.js`.
+  - Tests mis à jour : `#starTot` sans « /150 » (combos, comprendre, hotcues, site), total lu par `hudChiffres().tot` (set),
+    `#pathSum` (clarte), « Tourne le filtre de A… » et « Filtre de A » (midi). Captures avant / après en 1366 × 768 et 390 × 844 :
+    `captures/lot88/` (hors Git ; `planche.png`, scripts `avant-apres.js` et `planche.js`, l'avant servi depuis une copie
+    d'`origin/main` prise dans le brouillon de la session). Point 44 de la checklist FLX4 (le lot touche des textes de
+    `midi.js`, `niveaux.js` et `piste.js`, rien du MIDI ni du son). Suite de référence sur `origin/main` avant le lot : 988 sur
+    988 ; **suite complète du lot : 988 sur 988** (`DJ_PORT=8804`, 29,6 min, `captures/lot88/suite.txt`) ; contraste
+    (`tests/captures.js --vite`) : seules les étoiles estompées, voulues ; premier écran de Vini identique à l'image près.
+    Contrôles du gardien faits par la session (l'agent `gardien` n'était pas chargé : session ouverte hors du dépôt) : aucune
+    couleur en dur ajoutée, `hudChiffres` / `hudSerie` uniques, aucune clé `coach-` nouvelle, `DEFAULT_MAP` intact, rien de
+    `captures/` ni de MP3. Accord : « publie quand les tests sont verts ».
 - **Lot 87 « Les Inpulse d'aujourd'hui » : PUBLIÉ le 25 nov. 2026** (« Oui, publie » ; `18a4476`, puis cette note =
   `origin/main` ; production vérifiée en 1366 × 768, français et `?lang=en`, statistiques refusées : une fausse 300 MK2 est
   reconnue aux Premiers pas, une fausse 200 MK2 dans « Ma table », aucune erreur ; script `captures/lot87/production.js` de la

@@ -38,7 +38,7 @@ function withFiches(go){
 
 const onb = { active: false, i: 0, done: {}, base: {}, t0: 0, playing: false, raf: 0, steps: ONB, fiche: false, keys: [], after: null };
 let guideSeen = false; try { guideSeen = localStorage.getItem('coach-guide-vu') === '1'; } catch (e) {}
-const ONB_KNOBS = [['TRIM', 34], ['HI', 62], ['MID', 88], ['LOW', 114], ['CFX', 146]];
+const ONB_KNOBS = [['TRIM', 34], ['HI', 62], ['MID', 88], ['LOW', 114], ['FILTRE', 146]];
 (function drawOnbKnobs(){ const g = $('sv-knobs'); let h = '';
   for (const [lab, y] of ONB_KNOBS){ for (const [x, side] of [[266, 'A'], [334, 'B']]){ const id = `sv-${lab.toLowerCase()}${side}`;
       // lot 73 : en relief comme ceux des niveaux (lot 74) : son ombre, la jupe crantée (c'est elle qui s'éclaire), la tête, l'aiguille
@@ -120,7 +120,7 @@ function renderOnbTry(){
   if (btnKey){ const b = document.createElement('button'); b.type = 'button'; b.className = 'onb-play'; b.textContent = st.k === 'playB' ? 'PLAY' : 'ECHO'; b.addEventListener('click', () => onbMoved(st.k)); box.appendChild(b); }
   else { const r = document.createElement('input'); r.type = 'range'; r.min = '0'; r.max = '1'; r.step = '.01'; r.value = ctrl[st.k]; r.setAttribute('aria-label', st.act);
     r.addEventListener('input', () => { ctrl[st.k] = +r.value; applyCtrl(); onbSchemaSet($('onbSvg'), 'sv-', st.k, ctrl[st.k]); onbMoved(st.k); }); box.appendChild(r); }
-  if (st.k === 'cfxA' && tableOn() && !map.cfxA && !tableCfg){ const b = document.createElement('button'); b.type = 'button'; b.className = 'onb-learn'; b.textContent = learnKey === 'cfxA' ? 'Tourne le potard CFX…' : 'Faire reconnaître ce potard';
+  if (st.k === 'cfxA' && tableOn() && !map.cfxA && !tableCfg){ const b = document.createElement('button'); b.type = 'button'; b.className = 'onb-learn'; b.textContent = learnKey === 'cfxA' ? 'Tourne le filtre…' : 'Faire reconnaître ce potard';
     b.addEventListener('click', () => { learnKey = 'cfxA'; renderOnbTry(); }); box.appendChild(b); }
   if (onb.done[onb.i]){ const ok = document.createElement('span'); ok.className = 'ok'; ok.textContent = 'Bien joué !'; box.appendChild(ok); }
 }

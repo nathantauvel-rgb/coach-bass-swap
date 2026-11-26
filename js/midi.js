@@ -236,8 +236,8 @@ const phys = {}; let midiCount = 0, midiNames = [], mouseMode = false, learnKey 
 // (navigateur sans Web MIDI : Safari, iPhone…), 'refuse' (accès refusé) ou 'pret' ; midiEssais : nombre de « Réessayer »
 // midiLienEcrit : le presse-papiers a refusé « Copier le lien », le lien est écrit en toutes lettres
 let midiEtat = 'attente', midiEssais = 0, midiLienEcrit = false;
-const LEARN_TXT = { midA: 'Tourne le potard MID de A…', cfxA: 'Tourne le potard CFX de A…', fxOn: 'Appuie sur ON de l\'effet…' };
-const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B', cfxA: 'Potard CFX de A', midA: 'Potard MID de A', midB: 'Potard MID de B' };
+const LEARN_TXT = { midA: 'Tourne le potard MID de A…', cfxA: 'Tourne le filtre de A…', fxOn: 'Appuie sur ON de l\'effet…' };
+const CTRL_LABEL = { faderA: 'Fader de volume A', faderB: 'Fader de volume B', lowA: 'Potard LOW de A', lowB: 'Potard LOW de B', cfxA: 'Filtre de A', midA: 'Potard MID de A', midB: 'Potard MID de B' };
 // Vocabulaire du site (lot 18) : potard « normal » (à midi) ou « coupé » (tout à gauche), fader « en haut » ou « en bas »
 function targetText(k, v){ if (k.startsWith('fader')) return v >= .5 ? 'en haut' : 'en bas'; if (k === 'cfxA') return v > .9 ? 'tout à droite' : 'neutre (à midi)'; return v < .1 ? 'coupé (tout à gauche)' : 'normal (à midi)'; }
 // Petit dessin de la position : un potard avec son aiguille, ou un fader avec son curseur (couleur de la platine)
