@@ -32,7 +32,13 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 88 « Couleurs et mots » (26 nov. 2026, nuit ; « Lance A et B »)** : les lots A et B du diagnostic UX du 26 nov.
+- **Lot 88 « Couleurs et mots » : PUBLIÉ le 26 nov. 2026** (« publie quand les tests sont verts » ; `7dc2985`, puis cette
+  note = `origin/main` ; production vérifiée en 1366 × 768, 390 × 844 et `?lang=en`, statistiques refusées : série et étoiles
+  dans l'en-tête, plus de `#lvl`, « Jouer » et le bouton de l'accueil violets, « FILTRE » sur les dessins, « Voir tout mon
+  parcours », aucune erreur, aucune statistique envoyée ; script `captures/lot88/production.js` de la copie). **Reste, par
+  lui** : le point 44 de la checklist sur sa FLX4 ; après la fin du test de l'accueil, la platine B bleue du premier écran ;
+  choisir les lots suivants du diagnostic (C à H). Ci-dessous, l'entrée d'avant la publication.
+  (26 nov. 2026, nuit ; « Lance A et B ») : les lots A et B du diagnostic UX du 26 nov.
   (page privée https://claude.ai/artifact/LveAZbHNMmyjsEGKsqndhJ : 7 constats, 14 choses à enlever, lots A à H ; les autres
   lots attendent son choix ; **E « Jouer en moins d'une minute » = retirer le test du kick et le guide de 4 écrans, compte
   après la première réussite, à faire en test moitié / moitié APRÈS la fin du test de l'accueil**). Copie
