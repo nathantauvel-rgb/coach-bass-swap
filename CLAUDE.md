@@ -32,7 +32,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 90 « L'en-tête respire »** (26 nov. 2026 ; lot D du diagnostic UX, constat F4, demandé dans une session à part ; maquette
+- **Lot 90 « L'en-tête respire » : PUBLIÉ le 26 nov. 2026** (« Publie » ; `c5abc2f`, puis cette note = `origin/main` ;
+  production vérifiée en 1366 × 768, 390 × 844 et `?lang=en`, statistiques refusées : 10 boutons dans l'en-tête sans compte (avec
+  Tutos), « ⋯ » ouvre le menu (son, FR | EN, « Mon avis », et « Revoir le guide » sur Apprendre), barre des onglets fixe en bas
+  sur téléphone, « Jouer » 11 px au-dessus, « Sign in » et le menu en anglais, aucune erreur, aucune statistique envoyée, rien
+  d'oublié en anglais, aucun défilement de côté ; script `captures/lot90/production.js` de la copie). **Reste, par lui** :
+  essayer sur son vrai téléphone (jamais vu sur un appareil : la barre des onglets en bas, au-dessus de la barre du navigateur,
+  et le menu « ⋯ ») ; choisir la suite du diagnostic. Ci-dessous, l'entrée d'avant la publication.
+  (26 nov. 2026 ; lot D du diagnostic UX, constat F4, demandé dans une session à part ; maquette
   posée sur le vrai site, validée : « Go ») : copie `Documents\coach-dj-lot90` (git worktree du clone de ce PC, comme aux lots 88
   et 89), branche `lot-90-entete` depuis `origin/main` = `273320c` ; **le lot 89, publié pendant ce temps, y est fusionné**
   (`origin/main` = `c761aa0` ; conflits seulement aux blocs de fin de `styles.css` et `js/anglais.js`, les deux gardés, 89 puis
