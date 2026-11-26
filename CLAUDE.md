@@ -32,7 +32,14 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 89 « Le niveau en une consigne » (26 nov. 2026 ; le lot C du diagnostic UX, demandé dans une session à part)** : copie
+- **Lot 89 « Le niveau en une consigne » : PUBLIÉ le 26 nov. 2026** (« Oui, publie » ; `3d4a74d`, puis cette note =
+  `origin/main` ; production vérifiée en 1366 × 768, 390 × 844 et `?lang=en`, statistiques refusées : plus de phrase sous le
+  titre, pastilles B bleue et A orange dans les étapes, « espace » sur l'étape « Lance B », « Comment faire ? » en une ligne,
+  titres des morceaux sous la table, ⚙ caché pour un Grand débutant et ouvert en Apprenti DJ (« Morceaux », « Mode Expert »),
+  barre du téléphone sur une ligne, aucune erreur, aucune statistique envoyée, rien d'oublié en anglais ; script
+  `captures/lot89/production.js` de la copie). **Reste, par lui** : le point 45 de la checklist sur sa FLX4 ; s'il le veut,
+  retirer les mots du DJ de « Comment faire ? » (gardés dessous, voir plus bas). Ci-dessous, l'entrée d'avant la publication.
+  (26 nov. 2026 ; le lot C du diagnostic UX, demandé dans une session à part) : copie
   `Documents\coach-dj-lot89` (git worktree du clone de ce PC, comme au lot 88 : `core.autocrlf=false` par worktree,
   `node_modules` relié par jonction), branche `lot-89-niveau-consigne` depuis `origin/main` = `273320c`, sans suivi. Ce qui
   change sur l'écran d'un niveau :
