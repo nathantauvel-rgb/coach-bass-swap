@@ -1,29 +1,34 @@
-// Lot 60 : le volume de tout le site (panneau « Son » de l'en-tête, « Mon compte », lecteur des tutos) et « Mon compte »
-// refait (sections : progression, abonnement, réglages).
+// Lot 60 : le volume de tout le site (partie « Son » du menu de l'en-tête depuis le lot 90, « Mon compte », lecteur des tutos)
+// et « Mon compte » refait (sections : progression, abonnement, réglages).
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau } = require('./outils');
+const { ouvrir, sansBandeau, ouvrirMenu } = require('./outils');
 const { FAUX, dejaConnecte, ouvrirCompte } = require('./faux-firebase');
 
+// le volume affiché dans le menu de l'en-tête (avant le lot 90, l'étiquette du haut-parleur : « Son : 50 % »)
+const affiche = page => page.locator('#volPanneau .volpct-txt');
 const gains = page => page.evaluate(() => new Promise(r => { ensureAudio(); setTimeout(() => r({ master: +master.gain.value.toFixed(4), casque: +pflBus.gain.value.toFixed(4) }), 300); }));
 
 test.describe('Le volume du site', () => {
   test('au départ : 50 %, soit 4 fois moins fort qu’avant ; le casque de la table suit aussi', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'accueil' });
-    await expect(page.locator('#sonsBtn')).toHaveAttribute('aria-label', 'Son : 50 %');
+    await expect(affiche(page)).toHaveText('50 %');
+    await expect(page.locator('#volCurseur')).toHaveValue('50');
     expect(await gains(page)).toEqual({ master: .1875, casque: .25 });
     // chaque voie envoie son CUE casque au bus du volume, pas directement au casque
     expect(await page.evaluate(() => !!pflBus && deck.A.pfl.numberOfOutputs === 1)).toBe(true);
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
 
-  test('le panneau « Son » s’ouvre sous le haut-parleur, et se ferme avec Échap ou un clic ailleurs', async ({ page }) => {
+  // lot 90 : le son est la première partie du menu de l'en-tête (« ⋯ » quand on n'est pas connecté)
+  test('le son est dans le menu de l’en-tête, qui se ferme avec Échap ou un clic ailleurs', async ({ page }) => {
     await ouvrir(page, { onglet: 'accueil' });
-    const b = page.locator('#sonsBtn'), pan = page.locator('#volPanneau');
+    const b = page.locator('#menuBtn'), pan = page.locator('#menuPanneau');
     await expect(pan).toBeHidden();
     await b.click();
     await expect(pan).toBeVisible();
+    await expect(page.locator('#volPanneau')).toBeVisible();
     await expect(b).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.locator('#volCurseur')).toBeFocused();
+    await expect(page.locator('#volMuet')).toBeFocused();
     await expect(pan.locator('.volpct-txt')).toHaveText('50 %');
     await page.keyboard.press('Escape');
     await expect(pan).toBeHidden();
@@ -36,37 +41,41 @@ test.describe('Le volume du site', () => {
 
   test('le curseur règle tout le son tout de suite, et le réglage est gardé', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'accueil' });
-    await page.locator('#sonsBtn').click();
+    await ouvrirMenu(page);
     await page.locator('#volCurseur').fill('20');
     expect(await gains(page)).toEqual({ master: .03, casque: .04 });
     expect(await page.evaluate(() => localStorage.getItem('coach-volume'))).toBe('0.2');
-    await expect(page.locator('#volPanneau .volpct-txt')).toHaveText('20 %');
-    await expect(page.locator('#sonsBtn')).toHaveAttribute('aria-label', 'Son : 20 %');
+    await expect(affiche(page)).toHaveText('20 %');
     await page.reload();
-    await expect(page.locator('#sonsBtn')).toHaveAttribute('aria-label', 'Son : 20 %');
+    await expect(affiche(page)).toHaveText('20 %');
     await expect(page.locator('#volCurseur')).toHaveValue('20');
     await expect(page.locator('#tuVolume')).toHaveValue('0.2');   // le curseur des tutos est le même réglage
     expect(await gains(page)).toEqual({ master: .03, casque: .04 });
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
 
-  test('le bouton du panneau coupe tout le son, puis le remet comme avant', async ({ page }) => {
+  test('le bouton du panneau coupe tout le son, puis le remet comme avant ; coupé, le bouton du menu le montre', async ({ page }) => {
     await ouvrir(page, { onglet: 'accueil', stockage: { 'coach-volume': '0.6' } });
-    await page.locator('#sonsBtn').click();
+    await ouvrirMenu(page);
+    await expect(page.locator('#menuBtn .menumuet')).toBeHidden();
     await page.locator('#volMuet').click();
     expect((await gains(page)).master).toBe(0);
-    await expect(page.locator('#sonsBtn')).toHaveAttribute('aria-label', 'Son : coupé');
     await expect(page.locator('#volMuet')).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('#volPanneau .volpct-txt')).toHaveText('Coupé');
+    await expect(affiche(page)).toHaveText('Coupé');
+    // lot 90 : un petit haut-parleur barré sur le bouton du menu, et son nom le dit
+    await expect(page.locator('#menuBtn .menumuet')).toBeVisible();
+    await expect(page.locator('#menuBtn')).toHaveAttribute('aria-label', 'Son coupé, langue, mon avis');
     await page.locator('#volMuet').click();
     expect((await gains(page)).master).toBeCloseTo(.75 * .36, 3);
-    await expect(page.locator('#sonsBtn')).toHaveAttribute('aria-label', 'Son : 60 %');
+    await expect(affiche(page)).toHaveText('60 %');
+    await expect(page.locator('#menuBtn .menumuet')).toBeHidden();
+    await expect(page.locator('#menuBtn')).toHaveAttribute('aria-label', 'Son, langue, mon avis');
   });
 
   for (const abime of ['abc', '5', '-1', '']) {
     test(`un volume enregistré abîmé (« ${abime} ») revient à 50 %`, async ({ page }) => {
       const erreurs = await ouvrir(page, { onglet: 'accueil', stockage: { 'coach-volume': abime } });
-      await expect(page.locator('#sonsBtn')).toHaveAttribute('aria-label', 'Son : 50 %');
+      await expect(affiche(page)).toHaveText('50 %');
       expect(erreurs).toEqual([]);
     });
   }
@@ -93,7 +102,7 @@ test.describe('« Mon compte », connecté', () => {
     // le curseur de « Mon compte » règle le même volume
     await page.locator('#cptVol').fill('70');
     expect(await page.evaluate(() => localStorage.getItem('coach-volume'))).toBe('0.7');
-    await expect(page.locator('#sonsBtn')).toHaveAttribute('aria-label', 'Son : 70 %');
+    await expect(affiche(page)).toHaveText('70 %');
     // l'état de la progression est un texte simple, sans pastille verte
     const vert = await page.locator('#cptEtatTxt').evaluate(e => getComputedStyle(e, '::before').content);
     expect(['none', 'normal']).toContain(vert);
@@ -122,22 +131,22 @@ test.describe('« Mon compte », connecté', () => {
 });
 
 test.describe('Corrections du gardien (lot 60)', () => {
-  test('Échap ferme le panneau du son sans fermer la carte de fin d’un niveau', async ({ page }) => {
+  test('Échap ferme le menu du son sans fermer la carte de fin d’un niveau', async ({ page }) => {
     await ouvrir(page, { onglet: 'apprendre' });
     await page.evaluate(() => { $('result').hidden = false; });
-    await page.locator('#sonsBtn').click();
+    await ouvrirMenu(page);
     await page.keyboard.press('Escape');
-    await expect(page.locator('#volPanneau')).toBeHidden();
+    await expect(page.locator('#menuPanneau')).toBeHidden();
     await expect(page.locator('#result')).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.locator('#result')).toBeHidden();
   });
-  test('à 700 px de large, le panneau du son est entier (il sort de la ligne des pastilles qui défile)', async ({ page }) => {
+  test('à 700 px de large, le menu du son est entier', async ({ page }) => {
     await page.setViewportSize({ width: 700, height: 768 });
     await ouvrir(page, { onglet: 'accueil' });
-    await page.locator('#sonsBtn').click();
+    await ouvrirMenu(page);
     await expect(page.locator('#volBips')).toBeVisible();
-    const r = await page.locator('#volPanneau').evaluate(e => { const b = e.getBoundingClientRect(); return [b.left >= 0, b.right <= innerWidth, getComputedStyle(e).position]; });
-    expect(r).toEqual([true, true, 'fixed']);
+    const r = await page.locator('#menuPanneau').evaluate(e => { const b = e.getBoundingClientRect(); return [b.left >= 0, b.right <= innerWidth]; });
+    expect(r).toEqual([true, true]);
   });
 });

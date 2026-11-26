@@ -488,24 +488,27 @@
     <div class="hud">
       <a class="chip lvlchip" href="#progres" title="Mes progrès : série, étoiles, badges"><span class="hud-serie vide" id="hudSerie"><svg class="flamme" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3 0-3-1-6 1-9.5z"/></svg><span class="sr">Série : </span><span class="num" id="serieTot">0</span></span><span class="xpbar"><i id="xpFill" style="width:0"></i></span><span class="num" id="xpTxt">0 XP</span><span class="star" aria-hidden="true">★</span><span class="sr">Étoiles : </span><span class="num" id="starTot">0</span></a>
       <a class="chip status" id="midiPill" href="#table" title="Ma table : le schéma et les réglages"><svg class="tico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="7.5" cy="12" r="2.6"/><circle cx="16.5" cy="12" r="2.6"/><path d="M12 9v6"/></svg><i></i><span>Table…</span></a>
-      <button type="button" class="chip guidebtn" id="guideBtn" hidden aria-label="Revoir le guide" title="Revoir le guide"><svg class="tico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.4"/><path d="M12 16.8v.1"/></svg></button>
-      <div class="volbox">
-        <button type="button" class="chip sonsbtn" id="sonsBtn" aria-controls="volPanneau" aria-expanded="false"></button>
-        <div class="volpan" id="volPanneau" hidden role="group" aria-labelledby="volTitre">
-          <p class="volpan-titre" id="volTitre">Son</p>
-          <div class="volligne">
-            <button type="button" class="volmuet" id="volMuet"></button>
-            <input type="range" class="volcurseur" id="volCurseur" min="0" max="100" step="5" aria-label="Volume du site">
-            <span class="volpct-txt" aria-hidden="true"></span>
-          </div>
-          <p class="volpan-aide">Le volume de tout le site&nbsp;: exercices, tutos, leçons.</p>
-          <div class="volbips"><span class="cptligne-txt"><b id="volBipsNom">Petits sons du jeu</b><small>Réussi, raté, étoiles, coffres.</small></span><button type="button" class="inter" role="switch" id="volBips" aria-checked="true" aria-labelledby="volBipsNom"></button></div>
-        </div>
-      </div>
-      <div class="chip langbtn" id="langBtn"></div>
-      <button type="button" class="chip avbtn" id="avisBtn" aria-label="Mon avis" title="Mon avis : ce qui t'a bloqué, ce qui t'a plu"><svg class="tico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4z"/></svg><span class="avtxt">Mon avis</span></button>
     </div>
-    <button type="button" class="cptbtn" id="cptBtn" hidden><svg class="cptico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.4-6 8-6s6.8 2 8 6"/></svg><span id="cptNom">Se connecter</span></button>
+    <!-- Lot 90 : le son, la langue, « Mon avis » et le guide sont rangés dans un menu (js/entete.js). Connecté, il s'ouvre par
+         le bouton du prénom ; sinon par « ⋯ », à côté de « Se connecter ». Le petit haut-parleur barré dit que le son est coupé. -->
+    <button type="button" class="menubtn" id="menuBtn" aria-controls="menuPanneau" aria-expanded="false" aria-label="Son, langue, mon avis" title="Son, langue, mon avis"><svg class="menupts" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg><span class="menumuet" aria-hidden="true" hidden><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg></span></button>
+    <button type="button" class="cptbtn" id="cptBtn" hidden><svg class="cptico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.4-6 8-6s6.8 2 8 6"/></svg><span id="cptNom">Se connecter</span><span class="menumuet" aria-hidden="true" hidden><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg></span></button>
+    <div class="menupan" id="menuPanneau" hidden>
+      <button type="button" class="menu-moi" id="menuCompte" hidden><span class="menu-av" id="menuAv" aria-hidden="true"></span><span class="menu-moi-t"><b id="menuNom"></b><small>Mon compte</small></span><span class="menu-fl" aria-hidden="true">›</span></button>
+      <div class="menu-son" id="volPanneau" role="group" aria-labelledby="volTitre">
+        <p class="volpan-titre" id="volTitre">Son</p>
+        <div class="volligne">
+          <button type="button" class="volmuet" id="volMuet"></button>
+          <input type="range" class="volcurseur" id="volCurseur" min="0" max="100" step="5" aria-label="Volume du site">
+          <span class="volpct-txt" aria-hidden="true"></span>
+        </div>
+        <p class="volpan-aide">Le volume de tout le site&nbsp;: exercices, tutos, leçons.</p>
+        <div class="volbips"><span class="cptligne-txt"><b id="volBipsNom">Petits sons du jeu</b><small>Réussi, raté, étoiles, coffres.</small></span><button type="button" class="inter" role="switch" id="volBips" aria-checked="true" aria-labelledby="volBipsNom"></button></div>
+      </div>
+      <div class="menu-ligne menu-lang"><svg class="mico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg><span class="menu-t" aria-hidden="true">Langue</span><div class="langbtn" id="langBtn"></div></div>
+      <button type="button" class="menu-ligne menu-bouton" id="avisBtn" title="Mon avis : ce qui t'a bloqué, ce qui t'a plu"><svg class="mico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4z"/></svg><span class="menu-t">Mon avis</span></button>
+      <button type="button" class="menu-ligne menu-bouton menu-guide" id="guideBtn" hidden><svg class="mico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.4"/><path d="M12 16.8v.1"/></svg><span class="menu-t">Revoir le guide</span></button>
+    </div>
   </header>
   <div class="tablebar" id="tableBar" hidden role="status">
     <p id="tbText"></p>
@@ -972,6 +975,7 @@
 <script src="js/avis.js"></script>
 <script src="js/mails.js"></script>
 <script src="js/compte.js"></script>
+<script src="js/entete.js"></script>
 <script src="js/pro.js"></script>
 <script src="js/vitrine.js"></script>
 <script src="js/demarrage.js"></script>

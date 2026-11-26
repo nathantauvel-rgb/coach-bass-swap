@@ -1,6 +1,6 @@
 // Lot 31 : Vini sur l'accueil (il parle selon la journée, on peut le faire sauter) et les sons du jeu (avec un bouton pour les couper).
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau, jouer } = require('./outils');
+const { ouvrir, sansBandeau, jouer, ouvrirMenu } = require('./outils');
 
 const S = o => JSON.stringify(o);
 const jour = (n = 0) => { const d = new Date(); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
@@ -87,10 +87,10 @@ test.describe('Sons du jeu', () => {
     await page.locator('#ppGo').click(); await page.locator('#ppOpts .pp-opt').first().click();
     expect(await sons(page)).toEqual(['coffre', 'serie', 'clic']);
   });
-  // Lot 60 : le haut-parleur de l'en-tête ouvre le panneau « Son » ; les petits sons du jeu y ont leur interrupteur
+  // Lot 60 : le panneau « Son » (dans le menu de l'en-tête depuis le lot 90) ; les petits sons du jeu y ont leur interrupteur
   test('l’interrupteur du panneau « Son » coupe les sons du jeu, et le choix est gardé', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: 'accueil', stockage: BASE });
-    await page.locator('#sonsBtn').click();
+    await ouvrirMenu(page);
     const b = page.locator('#volBips');
     await expect(b).toHaveAttribute('aria-checked', 'true');
     // les vraies notes passent, sans erreur
@@ -102,7 +102,7 @@ test.describe('Sons du jeu', () => {
     await page.evaluate(() => { window.__notes = 0; son('fin'); son('coffre'); });
     expect(await page.evaluate(() => window.__notes)).toBe(0);
     await page.reload();
-    await page.locator('#sonsBtn').click();
+    await ouvrirMenu(page);
     await expect(page.locator('#volBips')).toHaveAttribute('aria-checked', 'false');
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });

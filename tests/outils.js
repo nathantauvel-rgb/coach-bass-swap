@@ -58,5 +58,12 @@ async function menuNiveaux(page){ if (await page.locator('#nivMenu').isHidden())
 // en Apprenti DJ (APPRENTI, à mettre dans le stockage).
 const APPRENTI = { 'coach-parcours': 'apprenti' };
 async function options(page){ if (await page.locator('#optsPanel').isHidden()) await page.locator('#optsBtn').click(); }
+// Lot 90 : le son, la langue, « Mon avis » et « Revoir le guide » sont dans le menu de l'en-tête, qu'ouvre « ⋯ », ou le bouton
+// du prénom une fois connecté
+async function ouvrirMenu(page){
+  if (await page.locator('#menuPanneau').isHidden()) await page.locator('#menuBtn:visible, #cptBtn[aria-controls]').first().click();
+  await page.locator('#menuPanneau').waitFor();
+}
+async function menuAvis(page){ await ouvrirMenu(page); await page.locator('#avisBtn').click(); }
 
-module.exports = { ouvrir, envoyer, miseEnPlace, sansBandeau, jouer, menuNiveaux, options, APPRENTI };
+module.exports = { ouvrir, envoyer, miseEnPlace, sansBandeau, jouer, menuNiveaux, options, APPRENTI, ouvrirMenu, menuAvis };

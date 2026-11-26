@@ -1,6 +1,6 @@
 // Tests avec des débutants : « Mon avis », « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau } = require('./outils');
+const { ouvrir, sansBandeau, ouvrirMenu, menuAvis } = require('./outils');
 
 const S = o => JSON.stringify(o);
 const journal = page => page.evaluate(() => JSON.parse(localStorage.getItem('coach-journal') || 'null'));
@@ -9,13 +9,17 @@ const finNiveau = (page, st) => page.evaluate(s => { $('result').hidden = false;
 const rapport = page => page.evaluate(() => avisRapport());
 
 test.describe('Mon avis', () => {
-  test('le bouton est sur chaque onglet et ouvre la fenêtre', async ({ page }) => {
+  // lot 90 : « Mon avis » est dans le menu de l'en-tête
+  test('le bouton est sur chaque onglet (dans le menu de l’en-tête) et ouvre la fenêtre', async ({ page }) => {
     const erreurs = await ouvrir(page, { onglet: '' });
     for (const o of ['accueil', 'apprendre', 'entrainer', 'vrai', 'table']) {
       await page.evaluate(h => { location.hash = '#' + h; }, o);
+      await ouvrirMenu(page);
       await expect(page.locator('#avisBtn')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(page.locator('#menuPanneau')).toBeHidden();
     }
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await expect(page.locator('#avis')).toBeVisible();
     await expect(page.locator('#avBloque')).toBeFocused();
     await expect(page.locator('#avMail')).toBeHidden();
@@ -24,7 +28,7 @@ test.describe('Mon avis', () => {
   test('un avis vide est refusé, un avis rempli est enregistré avec l\'écran et la note', async ({ page }) => {
     await ouvrir(page);
     await page.locator('.node').nth(5).click();
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await page.locator('#avSave').click();
     await expect(page.locator('#avMsg')).toHaveText('Écris au moins une réponse, ou choisis une note.');
     await page.locator('#avBloque').fill('Je ne trouve pas le potard LOW');
@@ -40,11 +44,11 @@ test.describe('Mon avis', () => {
   });
   test('Échap, la croix et un changement d\'onglet ferment la fenêtre', async ({ page }) => {
     await ouvrir(page);
-    await page.locator('#avisBtn').click(); await page.keyboard.press('Escape');
+    await menuAvis(page); await page.keyboard.press('Escape');
     await expect(page.locator('#avis')).toBeHidden();
-    await page.locator('#avisBtn').click(); await page.locator('#avClose').click();
+    await menuAvis(page); await page.locator('#avClose').click();
     await expect(page.locator('#avis')).toBeHidden();
-    await page.locator('#avisBtn').click(); await page.evaluate(() => { location.hash = '#accueil'; });
+    await menuAvis(page); await page.evaluate(() => { location.hash = '#accueil'; });
     await expect(page.locator('#vHome')).toBeVisible();
     await expect(page.locator('#avis')).toBeHidden();
   });
@@ -52,7 +56,7 @@ test.describe('Mon avis', () => {
     await ouvrir(page);
     await page.locator('#startBtn').click();
     await expect(page.locator('#startBtn')).toHaveText('Arrêter', { timeout: 60000 });
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await expect(page.locator('#startBtn')).toHaveText('Jouer');
   });
 });
@@ -98,7 +102,7 @@ test.describe('Le rapport', () => {
   test('« Copier mon rapport » met le rapport dans le presse-papiers', async ({ page, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     await ouvrir(page);
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await page.locator('#avRapport summary').click();   // le rapport est replié (lot 62)
     await page.locator('#avCopy').click();
     await expect(page.locator('#avMsg')).toContainText('Rapport copié');
@@ -106,7 +110,7 @@ test.describe('Le rapport', () => {
   });
   test('sans presse-papiers, le rapport s\'affiche pour être copié à la main', async ({ page }) => {
     await ouvrir(page, { avant: 'Object.defineProperty(navigator, "clipboard", { value: undefined });' });
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await page.locator('#avRapport summary').click();   // le rapport est replié (lot 62)
     await page.locator('#avCopy').click();
     await expect(page.locator('#avText')).toBeVisible();
@@ -134,7 +138,7 @@ test.describe('Tout recommencer à zéro', () => {
   test('efface la progression mais garde les réglages de la table', async ({ page }) => {
     const reglage = S({ faderA: { ch: 0, n: 19 } });
     await ouvrir(page, { stockage: { 'coach-parcours': 'debut', 'coach-lecons': S({ 0: 3 }), 'coach-badges': S(['pas']), 'coach-midi-map': reglage, 'coach-verif': '{"i":3}' } });
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await page.locator('.avreset summary').click();
     await page.locator('#avReset').click();
     await expect(page.locator('#vHome')).toBeVisible();

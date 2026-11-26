@@ -1,7 +1,7 @@
 // Lot 19 : une autre table que la DDJ-FLX4. Le site la reconnaît, ne la laisse rien piloter tant qu'elle n'est pas réglée,
 // et propose de la régler pas à pas. La fausse table porte un autre nom ; ses numéros MIDI sont inventés pour le test.
 const { test, expect } = require('@playwright/test');
-const { ouvrir, envoyer, miseEnPlace, sansBandeau } = require('./outils');
+const { ouvrir, envoyer, miseEnPlace, sansBandeau, menuAvis } = require('./outils');
 
 const S = o => JSON.stringify(o);
 const AUTRE = 'Controleur Mystere X1';
@@ -220,7 +220,7 @@ test.describe('Une autre table déjà réglée', () => {
   test('« Tout recommencer à zéro » garde la table réglée, et le rapport la nomme', async ({ page }) => {
     await ouvrir(page, { midi: { branchee: AUTRE }, stockage: Object.assign({ 'coach-parcours': 'debut' }, DEJA_REGLEE) });
     expect(await page.evaluate(() => avisRapport())).toContain(`table branchée : ${AUTRE} (réglée pas à pas)`);
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await page.locator('.avreset summary').click();
     await page.locator('#avReset').click();
     await expect(page.locator('#homeChoice')).toBeVisible();

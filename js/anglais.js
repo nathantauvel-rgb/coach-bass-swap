@@ -3162,6 +3162,15 @@ enDe({
 });
 /* ---------- Lot 89 : fin ---------- */
 
+/* ---------- Lot 90 : début (l'en-tête respire : le son, la langue, « Mon avis » et le guide dans un menu) ---------- */
+enDe({
+  'Son, langue, mon avis': 'Sound, language, feedback',
+  'Son coupé, langue, mon avis': 'Sound off, language, feedback',
+  'Mon compte, le son, la langue, mon avis': 'My account, sound, language, feedback',
+  'Langue': 'Language'
+});
+/* ---------- Lot 90 : fin ---------- */
+
 /* ---------- Lot 92 : début (trois choses en moins) ---------- */
 enDe({
   // Ma table : le canal, le numéro MIDI et « Réapprendre » repliés ; la note d'une commande inconnue, sans numéros ; l'apprentissage fini

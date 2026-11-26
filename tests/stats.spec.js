@@ -4,7 +4,7 @@
 const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
-const { ouvrir, sansBandeau, jouer } = require('./outils');
+const { ouvrir, sansBandeau, jouer, menuAvis } = require('./outils');
 
 const S = o => JSON.stringify(o);
 // Le faux Umami : chaque envoi est noté dans window.__stats (remis à zéro à chaque chargement de la page)
@@ -37,7 +37,7 @@ async function bonMoment(page) {
   await expect(page.locator('#result')).toBeVisible({ timeout: 60000 });
 }
 async function ecrireAvis(page, bloque, note) {
-  await page.locator('#avisBtn').click();
+  await menuAvis(page);
   await page.locator('#avBloque').fill(bloque);
   await page.locator(`#avNote [data-note="${note}"]`).click();
   await page.locator('#avSave').click();
@@ -122,7 +122,7 @@ test.describe('Statistiques de visite', () => {
   });
   test('« Tout recommencer à zéro » garde les étapes déjà comptées', async ({ page }) => {
     await ouvrir(page, { avant: FAUX_UMAMI, stockage: { 'coach-stats': S(['premiere-partie']), 'coach-lecons': S({ 0: 3 }) } });
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await page.locator('.avreset summary').click();
     await page.locator('#avReset').click();
     await expect(page.locator('#vHome')).toBeVisible();

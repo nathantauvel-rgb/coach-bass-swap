@@ -1,7 +1,7 @@
 // Lot 83 « La page d'accueil » : une page comme celles des SaaS, montrée à la moitié des nouveaux venus à la place du premier
 // écran de Vini (js/vitrine.js), et le groupe du test envoyé avec chaque statistique (js/stats.js).
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau } = require('./outils');
+const { ouvrir, sansBandeau, menuAvis } = require('./outils');
 const { FAUX } = require('./faux-firebase');
 
 // Un nouveau venu : ni réponses aux questions de Vini, ni guide vu
@@ -165,7 +165,7 @@ test.describe('Page d\'accueil (lot 83)', () => {
 
   test('« Tout recommencer à zéro » garde le groupe : on ne change pas de groupe en cours de test (gardien)', async ({ page }) => {
     await ouvrir(page, { stockage: { 'coach-vitrine': 'vini', 'coach-parcours': 'debut', 'coach-lecons': JSON.stringify({ 0: 3 }) } });
-    await page.locator('#avisBtn').click();
+    await menuAvis(page);
     await page.locator('.avreset summary').click();
     await page.locator('#avReset').click();
     await expect(page.locator('#pp')).toBeVisible();   // redevenu un nouveau venu : les questions de Vini, son groupe

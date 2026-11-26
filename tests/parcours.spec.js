@@ -1,6 +1,6 @@
 // Les trois parcours (lot 37) : choix à la première visite, prochaine étape, changement de parcours.
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau } = require('./outils');
+const { ouvrir, sansBandeau, ouvrirMenu } = require('./outils');
 
 const S = o => JSON.stringify(o);
 const CH1_FINI = S({ 0: 2, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 });
@@ -38,6 +38,7 @@ test.describe('Première visite', () => {
     await expect(page.locator('#vLearn')).toBeVisible();
     await expect(page.locator('#onb')).toBeHidden();
     await expect(page.locator('#expertBtn')).toHaveAttribute('aria-pressed', 'true');
+    await ouvrirMenu(page);   // lot 90 : « Revoir le guide » est dans le menu de l'en-tête
     await expect(page.locator('#guideBtn')).toBeVisible();
     await expect(page.locator('#chapters .chap:disabled')).toHaveCount(0);
     await expect(page.locator('#chapters')).not.toContainText('Test de placement');

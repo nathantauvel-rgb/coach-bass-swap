@@ -90,13 +90,18 @@ const dansLaBase = (uid, donnees, maj = 1) => `
 // Session Google déjà ouverte sur cet appareil : à mettre AVANT le faux Firebase, qui la lit à son démarrage
 const dejaConnecte = (uid = 'u1') => `try { sessionStorage.setItem('__faux_user', JSON.stringify({ uid: '${uid}', displayName: 'Nathan Tauvel', email: 'nathan@exemple.fr', emailVerified: true })); } catch (e) {}`;
 const base = page => page.evaluate(() => { try { return JSON.parse(sessionStorage.getItem('__faux_base') || '{}'); } catch (e) { return {}; } });
+// Lot 90 : connecté, le bouton du prénom ouvre le menu de l'en-tête, où « Mon compte » ouvre la fenêtre ; sinon il l'ouvre tout droit
+const compteDepuisEntete = async page => {
+  await page.locator('#cptBtn').click();
+  if (await page.locator('#menuCompte').isVisible()) await page.locator('#menuCompte').click();
+};
 // La fenêtre peut déjà être ouverte (après une déconnexion, par exemple) : le bouton de l'en-tête est
 // alors caché derrière elle, et cliquer dessus attendrait pour rien.
-const ouvrirCompte = async page => { if (await page.locator('#compte').isHidden()) await page.locator('#cptBtn').click(); };
+const ouvrirCompte = async page => { if (await page.locator('#compte').isHidden()) await compteDepuisEntete(page); };
 // Google est sur le premier écran de la fenêtre (lot 54)
 const seConnecter = async page => { await ouvrirCompte(page); await page.locator('#cptIn').click(); };
 // Après une connexion faite dans la page, la fenêtre se ferme toute seule (lot 54) : on attend, puis on la rouvre
-const rouvrirCompte = async page => { await page.locator('#compte').waitFor({ state: 'hidden', timeout: 15000 }); await page.locator('#cptBtn').click(); };
+const rouvrirCompte = async page => { await page.locator('#compte').waitFor({ state: 'hidden', timeout: 15000 }); await compteDepuisEntete(page); };
 // Créer un compte avec une adresse e-mail
 const creerCompte = async (page, prenom, mail, mdp) => {
   await ouvrirCompte(page);
@@ -110,4 +115,4 @@ const creerCompte = async (page, prenom, mail, mdp) => {
 // Le joueur clique le lien de confirmation reçu par mail
 const lienClique = (page, mail) => page.evaluate(m => { let v = []; try { v = JSON.parse(sessionStorage.getItem('__faux_verifies') || '[]'); } catch (e) {} v.push(m); sessionStorage.setItem('__faux_verifies', JSON.stringify(v)); }, mail);
 
-module.exports = { lienClique, FAUX, dansLaBase, dejaConnecte, base, ouvrirCompte, rouvrirCompte, seConnecter, creerCompte };
+module.exports = { lienClique, FAUX, dansLaBase, dejaConnecte, base, ouvrirCompte, rouvrirCompte, compteDepuisEntete, seConnecter, creerCompte };
