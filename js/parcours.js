@@ -120,7 +120,10 @@ function renderHome(){
   const choosing = !parcours || parcoursPick, cur = nextStage(), st = STAGES[cur];
   $('homePro').hidden = true; $('homeDefi').hidden = true; $('homeCta').classList.remove('pro');   // lot 68, montrés plus bas
   $('homeLien').hidden = true;   // montré plus bas, sur un téléphone, hors du choix du parcours (lot 48)
-  $('homeChoice').hidden = !choosing; $('homeQuetes').hidden = choosing; if (!choosing) renderQuetes(); $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing; $('homeGoal').hidden = choosing;
+  // lot 92 : les quêtes du jour attendent le premier niveau réussi (qtMontre, quetes.js) ; elles sont tirées comme avant, même
+  // cachées : le premier jour, à 0 étoile, aucune quête qu'un débutant ne pourrait pas faire (gardien du lot 92)
+  const quetes = !choosing && qtMontre();
+  $('homeChoice').hidden = !choosing; $('homeQuetes').hidden = !quetes; if (!choosing) renderQuetes(); $('homePath').hidden = choosing; $('homeKicker').hidden = choosing; $('homeCta').hidden = choosing; $('homeNeed').hidden = !choosing; $('homeGoal').hidden = choosing;
   document.querySelectorAll('#homeChoice [data-parcours]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.parcours === parcours)));
   if (choosing){
     $('homeTitle').textContent = 'Tu en es où avec le mix ?'; $('homeLead').textContent = 'Choisis ton niveau : DJingood te prépare le parcours qui va avec. Tu pourras en changer quand tu veux.';
@@ -161,7 +164,7 @@ function renderHome(){
 // Vini sur l'accueil (lot 31) : un coffre à ouvrir, l'objectif atteint, la série à garder, ou un simple bonjour selon l'heure
 function homeVini(){
   if (!parcours || parcoursPick){ viniDit('home', 'Un geste à la fois, et ça vient vite\u00a0!', 'danse'); return; }
-  const coffres = questCoffres(), fait = goalDone(), sk = goalStreak(), h = new Date().getHours();
+  const coffres = qtMontre() ? questCoffres() : 0, fait = goalDone(), sk = goalStreak(), h = new Date().getHours();   // lot 92 : pas de coffre caché
   const salut = h < 5 ? 'Encore debout\u00a0?' : h < 12 ? 'Bonjour\u00a0!' : h < 18 ? 'Salut\u00a0!' : 'Bonsoir\u00a0!';
   viniDit('home', coffres ? (coffres > 1 ? `${coffres} coffres t’attendent dans tes quêtes\u00a0!` : 'Un coffre t’attend dans tes quêtes\u00a0!')
     : fait ? 'Objectif du jour atteint, bravo\u00a0! Reviens demain pour ta série.'

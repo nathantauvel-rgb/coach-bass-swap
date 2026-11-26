@@ -4,6 +4,8 @@ const { ouvrir, envoyer, miseEnPlace, sansBandeau, jouer } = require('./outils')
 
 const carte = page => page.evaluate(() => JSON.parse(localStorage.getItem('coach-midi-map')));
 const commande = (page, id) => page.locator(`#tSvg [data-c="${id}"]`);
+// Lot 92 : le canal, le numéro et « Réapprendre » d'une commande réglée sont sous « Réglages avancés », replié : l'ouvrir
+async function avances(page){ if (!(await page.locator('#tAvance').evaluate(d => d.open))) await page.locator('#tAvance summary').click(); }
 const APPRIS = JSON.stringify({ cfxA: { ch: 6, n: 23 }, fxOn: { ch: 4, n: 71 } });
 
 test.describe('Schéma et explications', () => {
@@ -84,8 +86,9 @@ test.describe('En direct avec la table', () => {
     await expect(page.locator('#tPanel strong')).toHaveText('Bouton PLAY B');
     await expect(page.locator('#tPanel .tlive')).toHaveText('Appuyée !');
   });
-  test('une commande inconnue est signalée avec son canal et son numéro', async ({ page }) => {
+  test('une commande inconnue est signalée avec son canal et son numéro (« Réglages avancés » ouvert)', async ({ page }) => {
     await ouvrir(page, { onglet: 'table', midi: { branchee: true } });
+    await commande(page, 'faderA').click(); await avances(page);   // lot 92 : sans le repli ouvert, la note ne dit pas les numéros
     await envoyer(page, 0xB5, 99, 64);
     await expect(page.locator('#tNote')).toHaveText('Commande reçue mais pas encore utilisée par le site (potard ou fader, canal 6, numéro 99).');
     await envoyer(page, 0x97, 40, 127);
@@ -127,13 +130,14 @@ test.describe('Réglages', () => {
     expect(await page.evaluate(() => localStorage.getItem('coach-midi-map'))).toBeNull();
     await envoyer(page, 0xB6, 23, 64);
     expect((await carte(page)).cfxA).toEqual({ ch: 6, n: 23 });
-    await expect(page.locator('#tNote')).toHaveText('');
+    await expect(page.locator('#tNote')).toHaveText('C’est appris : le site reconnaît maintenant cette commande.');   // lot 92
     await expect(page.locator('#tPanel .tmap')).toHaveText('Réglage : canal 7, numéro 23.');
     await expect(page.locator('#tLearn')).toHaveText('Réapprendre cette commande');
   });
   test('réapprendre PLAY B avec un autre bouton, puis s\'en servir dans un niveau', async ({ page }) => {
     await ouvrir(page, { onglet: 'table', midi: { branchee: true } });
     await commande(page, 'playB').click();
+    await avances(page);
     await page.locator('#tLearn').click();
     await expect(page.locator('#tLearn')).toContainText('Appuie dessus');
     await envoyer(page, 0xB3, 50, 64);                 // un potard : refusé pour un bouton
@@ -152,6 +156,7 @@ test.describe('Réglages', () => {
   test('annuler un apprentissage, et quitter la page l\'annule aussi', async ({ page }) => {
     await ouvrir(page, { onglet: 'table', midi: { branchee: true } });
     await commande(page, 'faderA').click();
+    await avances(page);
     await page.locator('#tLearn').click(); await page.locator('#tLearn').click();
     await expect(page.locator('#tLearn')).toHaveText('Réapprendre cette commande');
     await page.locator('#tLearn').click();

@@ -32,6 +32,68 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 92 « Trois choses en moins » : codé, PAS ENCORE PUBLIÉ** (26 nov. 2026 ; trois lignes de la liste « Ce que
+  j'enlèverais ou cacherais » du diagnostic UX, qui ne sont dans aucun autre lot ou peuvent partir sans attendre la fin du
+  test de l'accueil ; maquette validée : « Go, choix B »). Copie `Documents\coach-dj-lot92` (git worktree du clone de ce PC,
+  comme aux lots 88 et 89), branche `lot-92-en-moins` depuis `origin/main` = `c761aa0`, sans suivi. Ce qui change :
+  - **Tutos : un seul signe par carte** (`renderTutos`, tutos.js) : un tuto de Pro n'a plus que le cadenas (`.tu-cadenas`) ;
+    l'étiquette « Pro » n'est plus posée (10 cartes sur 11 portaient les deux). L'étiquette `.tu-etiq` ne reste que pour
+    « Vu » et « Gratuit ». « Pro » n'est écrit qu'une fois, dans le bandeau du haut (`#proBandeau`) : le cadenas
+    (`.tu-cadenas-legende`, `aria-hidden`, dans index.html) est posé devant `#proBandeauTxt` (« Les 10 autres sont dans
+    DJingood Pro. »), qui est devenu un `span` dans le `small`. Un abonné ou Pro éteint : ni cadenas ni étiquette « Pro ».
+  - **Ma table : « Réglages avancés », replié** (`renderTable`, table.js ; pas le dessin `tableSvg`) : pour une commande
+    réglée, la ligne « Réglage : canal N, numéro N (d'origine) » (`.tmap`) et « Réapprendre cette commande » (`#tLearn`)
+    sont dans `<details class="tavance" id="tAvance">`, replié ; `tableAvance` garde son état pendant la visite (le panneau
+    est refait à chaque mouvement de la table, et quand on choisit une autre commande) ; **il est relu sur le repli lui-même
+    (`tableAvanceLu`) juste avant de refaire le panneau ou d'écrire la note** : l'événement « toggle » arrive un instant
+    après le clic, trop tard si la table parle tout de suite (défaut vu par la suite complète, corrigé). Une commande pas encore réglée (le
+    filtre A d'une FLX4, sans réglage d'origine) garde « Pas encore réglée… » et « Apprendre cette commande » en vue, sans
+    la ligne « Bouge-la sur ta table pour la voir réagir » (elle ne pouvait pas encore réagir). La note d'une commande que
+    le site n'utilise pas (`tableInconnue`) : « Commande reçue, mais le site ne s'en sert pas encore. », avec le canal et
+    le numéro seulement quand le repli est ouvert. Un apprentissage commencé avec `#tLearn` et réussi (le réglage est un
+    objet neuf, même pour la même commande : `tableApprend` garde l'ancien) écrit « C'est appris : le site reconnaît
+    maintenant cette commande. » (`TABLE_APPRIS`) dans `#tNote` ; le message reste tant que c'est cette commande qui bouge
+    (`tableAppris` : un potard qu'on vient d'apprendre tourne encore, gardien), et part dès qu'une autre bouge ;
+    `tableApprend` est oublié en changeant de commande, avec « Revenir aux réglages d'origine », « Régler ma table pas à
+    pas » et « Vérifier ma table » (pas en quittant la page : si la commande est apprise ailleurs entre-temps, « C'est
+    appris » s'affiche au retour, ce qui reste vrai). Rien ne change dans le MIDI (midi.js pas
+    touché) ni dans `DEFAULT_MAP` ; le bouton « Revenir aux réglages d'origine » reste en bas de la page.
+  - **Accueil : les quêtes du jour attendent le premier niveau réussi** (choix B de l'utilisateur ; le choix A était « à
+    partir du 2e jour ») : `qtMontre()` (quetes.js) = un niveau à 2 étoiles ou plus dans n'importe quel chapitre (le Mode
+    Expert range ses étoiles dans le même chapitre) ; `renderHome` cache `#homeQuetes` **mais tire les quêtes comme avant
+    (`renderQuetes`, même cachées)** : le premier jour, à 0 étoile, aucune quête qu'un débutant ne pourrait pas faire
+    (gardien : tirées seulement à la fin de la première partie, elles pouvaient donner « Réussis un niveau à l'oreille »,
+    dans Pro, ou « Joue 2 niveaux en Mode Expert », caché avant la fin du chapitre 1) ; `homeVini` ne parle pas d'un coffre
+    caché ; `questLigne` (carte de fin) se tait. Les compteurs du jour avancent quand même : à la
+    première réussite, les quêtes arrivent peut-être déjà entamées, coffre compris (Vini le dit). Rectifié dans le
+    diagnostic : la quête du quiz était déjà réservée, depuis le lot 30, à qui a au moins une étoile (`QT_JOUE`). C'est un
+    point du lot F, avancé seul ; la page d'accueil du test (`#vitrine`) et le premier écran de Vini ne changent pas.
+  - Anglais : bloc « Lot 92 » de `js/anglais.js` (« Réglages avancés », la note courte, « C'est appris »). Couleurs :
+    seulement les jetons de `:root` (bloc « Lot 92 » à la fin de `styles.css`, tailles et arrondis déjà existants).
+  - Tests : `tests/en-moins.spec.js` (12) ; mis à jour : tutos (étiquettes), pro (abonné : pas d'étiquette « Pro »), table
+    (`avances(page)` ouvre le repli avant `#tLearn`, la note avec ses numéros, « C'est appris »), quetes (un débutant : quêtes
+    cachées mais tirées dès l'accueil ; `coach-quetes` abîmé : avec un niveau réussi), vini-sons (coffre : avec un niveau réussi).
+    Point 46 de `tests/CHECKLIST-FLX4.md`. Maquette, captures et scripts : `captures/lot92/` (hors Git ; `planche.png`,
+    `captures.js`, `maquette.js`, `planche.js`, `test-accueil.js`).
+  - Vérifié : tests des fichiers touchés, 142 puis 165 sur 165 ; première suite complète 1014 sur 1016 (`captures/lot92/suite.txt`) :
+    le défaut du repli (corrigé, voir plus haut) et `vini-sons` « fin de partie » (dépend du moment de l'appui sur espace,
+    machine chargée ; repassé ensuite) ; **suite complète finale : 1017 sur 1017** (`DJ_PORT=8851`, 27 min,
+    `captures/lot92/suite2.txt` ; un premier essai, coupé au 405e test par un redémarrage de la session, n'avait aucun échec).
+    Contraste (`tests/captures.js --vite`, sur `origin/main` puis sur la copie, l'un après l'autre) : seules les étoiles
+    estompées, voulues ; écrans identiques image par image sauf Ma table (voulu), le niveau (les titres de la vraie musique,
+    tirés au hasard) et les combos (la fenêtre Pro, identique à l'œil) ; l'arrêt du script sur « 12-avis » en téléphone (le
+    bouton « Mon avis » n'est pas visible à 390 px) existait déjà au lot 89. Test moitié / moitié : `?accueil=vini` et
+    `?accueil=page`, 1366 × 768 et 390 × 844, identiques à l'image près avant / après (`captures/lot92/test-accueil.js` ; au
+    premier passage, 46 pixels du bord d'un faisceau de lumière différaient en téléphone, identiques au second). Gardien :
+    un sous-agent avec les consignes de `.claude/agents/gardien.md` (l'agent n'est pas chargé dans une session ouverte hors du
+    dépôt ; il n'a pas lancé la suite lui-même, une autre tournait sur ce PC) : feu rouge pour deux défauts réels, corrigés
+    (le tirage des quêtes, « C'est appris » effacé par un potard qui tourne encore) ; contrôles propres : aucune couleur en
+    dur, noms nouveaux uniques, aucune clé `coach-` nouvelle, `DEFAULT_MAP` et midi.js intacts, `tableSvg` identique,
+    anglais complet, rien de `captures/` ni de MP3, aucun `test.fail`.
+  - **Signalé par le gardien, pas corrigé** (hors du lot, déjà en ligne) : à partir du 2e jour, le tirage des quêtes peut
+    donner à un Grand débutant « Réussis un niveau à l'oreille » (l'entraînement à l'oreille est dans Pro) ou « Joue 2 niveaux
+    en Mode Expert » (caché avant la fin du chapitre 1, lot 89) : leur `dispo` (quetes.js) ne regarde ni `proBloque()` ni
+    `optionsOuvertes()`. À faire dans un lot à part.
 - **Lot 89 « Le niveau en une consigne » : PUBLIÉ le 26 nov. 2026** (« Oui, publie » ; `3d4a74d`, puis cette note =
   `origin/main` ; production vérifiée en 1366 × 768, 390 × 844 et `?lang=en`, statistiques refusées : plus de phrase sous le
   titre, pastilles B bleue et A orange dans les étapes, « espace » sur l'étape « Lance B », « Comment faire ? » en une ligne,
@@ -3595,6 +3657,8 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `tests/vitrine.spec.js` : la page d'accueil et son test moitié / moitié (lot 83).
   `tests/consigne.spec.js` : la carte du niveau (pastilles A et B, touche du clavier), « Comment faire ? » en une ligne, les
   titres de la vraie musique sous la table, le bouton ⚙ « Options » (lot 89).
+  `tests/en-moins.spec.js` : un seul signe par carte dans les tutos, « Réglages avancés » replié dans Ma table, les quêtes du
+  jour après le premier niveau réussi (lot 92).
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,
   onglets, S'entraîner, Passer au vrai.

@@ -4343,3 +4343,17 @@ html.vitrine-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fen�
 @media (max-width:1039px){
   .btnrow > .optsbtn{order:-1;width:46px;height:46px}
 }
+
+/* ---------- Lot 92 « Trois choses en moins » ----------
+   Diagnostic UX du 26 nov. 2026, liste « Ce que j'enlèverais ou cacherais » : le double signe des tutos, les réglages
+   techniques de Ma table. Seulement les jetons de :root, et des tailles et des arrondis qui existent déjà. */
+/* Tutos : le cadenas, seul signe d'un tuto de Pro, expliqué une fois devant « Les 10 autres sont dans DJingood Pro » */
+.pro-bandeau small .tu-cadenas-legende{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:6px;stroke:var(--brand-light);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+/* Ma table : « Réglages avancés », replié (le canal, le numéro MIDI et « Réapprendre »), sous l'explication de la commande */
+.tavance{align-self:stretch;margin-top:4px;padding-top:10px;border-top:1px solid var(--line)}
+.tavance>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;color:var(--muted)}
+.tavance>summary::-webkit-details-marker{display:none}
+.tavance>summary::before{content:"+";width:22px;height:22px;border-radius:50%;background:var(--hi);display:grid;place-items:center;font-weight:900;color:var(--muted);flex:none}
+.tavance[open]>summary::before{content:"−"}
+.tavance>summary:hover{color:var(--fg)}
+.tavance-in{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin-top:10px}

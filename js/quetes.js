@@ -9,6 +9,12 @@ const QT_KEY = 'coach-quetes';
 const QT_GAIN = [10, 15, 20];   // XP du coffre selon la difficulté
 const QT_CPT = ['parties', 'demos', 'reussies', 'trois', 'expert', 'oreille', 'combos', 'quiz'];
 const QT_JOUE = () => sumStars(stars) > 0;   // a déjà réussi au moins un niveau : quiz et entraînement ont du sens
+/* Lot 92 « Trois choses en moins » (diagnostic UX du 26 nov. 2026, choix B de l'utilisateur) : les quêtes n'arrivent sur
+   l'accueil qu'après le premier niveau réussi (2 étoiles, la règle de « réussi » du site), dans n'importe quel chapitre
+   (le Mode Expert range ses étoiles dans le même chapitre). Avant, un nouveau venu voyait trois quêtes et trois coffres
+   avant même son premier geste. Tant qu'elles sont cachées, Vini n'en parle pas et la carte de fin non plus ; les compteurs
+   du jour avancent quand même : à la première réussite, elles arrivent peut-être déjà entamées, coffre compris. */
+const qtMontre = () => [1, 2, 3, 4, 5, 6, 7].some(n => lessonsOf(n).some((_, i) => niveauReussi(bankOf(n), i)));
 const QUETES = [
   { id: 'demo', niv: 0, txt: 'Regarde une démo', but: 1, cpt: 'demos', ic: 'oeil' },
   { id: 'parties2', niv: 0, txt: 'Joue 2 niveaux', but: 2, cpt: 'parties', ic: 'play' },
@@ -100,5 +106,6 @@ function renderQuetes(){
     li.append(ic, mid, b); box.appendChild(li); }
 }
 // Ligne de la carte de résultat (appelée par finish) quand la partie vient de terminer une quête
-function questLigne(faites){ const e = $('rQuete'); e.hidden = !faites.length;
+function questLigne(faites){ const e = $('rQuete'); if (!qtMontre()) faites = [];   // lot 92 : quêtes encore cachées
+  e.hidden = !faites.length;
   e.textContent = faites.length ? `Quête terminée : ${faites.map(q => q.txt).join(', ')} ! Ton coffre t’attend sur l’accueil.` : ''; }

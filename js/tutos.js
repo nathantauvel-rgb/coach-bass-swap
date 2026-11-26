@@ -897,9 +897,12 @@ function renderTutos(){
   $('tuFamilles').innerHTML = TU_FAMILLES.map(f => {
     const liste = TUTOS.filter(t => t.famille === f.id);
     return `<section class="tu-famille"><h2>${f.titre}</h2><div class="cards tu-cartes">${liste.map(t => {
-      const vu = tuVus.includes(t.id), etiquette = vu ? 'Vu' : t.gratuit ? 'Gratuit' : 'Pro', ferme = !proLibre(t);
+      // Lot 92 « Trois choses en moins » : un seul signe par carte. Un tuto de Pro n'a plus que le cadenas (il portait aussi
+      // l'étiquette « Pro » : 10 cartes sur 11, la page se lisait comme un mur) ; « Pro » est écrit une seule fois, dans le
+      // bandeau du haut, avec le cadenas devant (sa légende, index.html). L'étiquette ne reste que pour « Vu » et « Gratuit ».
+      const vu = tuVus.includes(t.id), etiquette = vu ? 'Vu' : t.gratuit ? 'Gratuit' : '', ferme = !proLibre(t);
       const cadenas = ferme ? '<svg class="tu-cadenas" viewBox="0 0 24 24" aria-label="Avec DJingood Pro"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>' : '';
-      return `<button type="button" class="card tu-carte${vu ? ' tu-vu' : ''}${ferme ? ' tu-ferme' : ''}" data-tu="${t.id}">${tuVignette(t.id)}<span class="soon tu-etiq${vu ? ' ok' : t.gratuit ? '' : ' pro'}">${etiquette}</span>${cadenas}<strong>${tuTypo(t.titre)}</strong><span class="tu-duree">${t.duree} · avec Vini</span></button>`;
+      return `<button type="button" class="card tu-carte${vu ? ' tu-vu' : ''}${ferme ? ' tu-ferme' : ''}" data-tu="${t.id}">${tuVignette(t.id)}${etiquette ? `<span class="soon tu-etiq${vu ? ' ok' : ''}">${etiquette}</span>` : ''}${cadenas}<strong>${tuTypo(t.titre)}</strong><span class="tu-duree">${t.duree} · avec Vini</span></button>`;
     }).join('')}</div></section>`;
   }).join('');
   $('tuFamilles').querySelectorAll('[data-tu]').forEach(b => b.addEventListener('click', () => tuOuvre(b.dataset.tu)));

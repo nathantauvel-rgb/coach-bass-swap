@@ -123,6 +123,7 @@ test.describe('Pro allumé, abonné', () => {
     const err = await ouvrir(page, { onglet: 'tutos', avant: dejaConnecte() + FAUX + TUTOS + PRO });
     await expect(page.locator('.tu-cadenas')).toHaveCount(0, { timeout: 15000 });
     await expect(page.locator('#proBandeau')).toBeHidden();
+    await expect(page.locator('.tu-etiq')).toHaveText(['Gratuit']);   // lot 92 : pas d'étiquette « Pro » non plus pour un abonné
     expect(JSON.parse(await page.evaluate(() => localStorage.getItem('coach-pro')))).toMatchObject({ uid: 'u1', actif: true, formule: 'an' });
     await page.locator('[data-tu="swap"]').click();
     await expect(page.locator('#tuLecteur')).toBeVisible();

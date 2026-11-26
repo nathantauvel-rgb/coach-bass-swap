@@ -5,14 +5,16 @@ const { ouvrir, sansBandeau, jouer } = require('./outils');
 const S = o => JSON.stringify(o);
 const jour = (n = 0) => { const d = new Date(); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const BASE = { 'coach-parcours': 'debut' };
+// lot 92 : les quêtes n'arrivent sur l'accueil qu'après le premier niveau réussi (2 étoiles)
 const quetes = (cpt, ouverts = []) => S({ jour: jour(), ids: ['parties2', 'reussies2', 'trois3'], cpt, ouverts, xp: 0 });
+const REUSSI = { 'coach-lecons': S({ 0: 2 }) };
 // Remplace son() par un espion : la liste des sons demandés, dans l'ordre
 const espion = page => page.evaluate(() => { window.__sons = []; son = (nom, ...a) => window.__sons.push(a.length ? nom + a[0] : nom); });
 const sons = page => page.evaluate(() => window.__sons);
 
 test.describe('Vini sur l\'accueil', () => {
   test('un coffre à ouvrir : il le dit et il danse ; une fois ouvert, il passe à autre chose', async ({ page }) => {
-    const erreurs = await ouvrir(page, { onglet: 'accueil', stockage: Object.assign({ 'coach-quetes': quetes({ parties: 2 }) }, BASE) });
+    const erreurs = await ouvrir(page, { onglet: 'accueil', stockage: Object.assign({ 'coach-quetes': quetes({ parties: 2 }) }, REUSSI, BASE) });
     await expect(page.locator('#homeVini svg')).toBeVisible();
     await expect(page.locator('#homeTip')).toHaveText('Un coffre t’attend dans tes quêtes !');
     await expect(page.locator('#homeVini')).toHaveClass(/vn-danse/);
@@ -76,7 +78,7 @@ test.describe('Sons du jeu', () => {
     expect((await sons(page)).slice(-1)).toEqual(['finRatee']);
   });
   test('coffre, série, quiz et Premiers pas ont leur son', async ({ page }) => {
-    await ouvrir(page, { onglet: 'accueil', stockage: Object.assign({ 'coach-quetes': quetes({ parties: 2 }) }, BASE) });
+    await ouvrir(page, { onglet: 'accueil', stockage: Object.assign({ 'coach-quetes': quetes({ parties: 2 }) }, REUSSI, BASE) });
     await espion(page);
     await page.locator('[data-q="parties2"] .qt-coffre').click();
     await page.evaluate(() => openSerie());

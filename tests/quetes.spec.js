@@ -27,6 +27,8 @@ test.describe('Quêtes du jour sur l\'accueil', () => {
   });
   test('un débutant n\'a que des quêtes qu\'il peut faire', async ({ page }) => {
     await ouvrir(page, { onglet: 'accueil', stockage: BASE });
+    // lot 92 : rien de réussi, les quêtes sont cachées (en-moins.spec.js), mais tirées quand même dès l'accueil, comme avant
+    await expect(page.locator('#homeQuetes')).toBeHidden();
     const ids = (await stocke(page, 'coach-quetes')).ids;
     for (const id of ids) expect(['quiz3', 'defi', 'oreille', 'expert2', 'combo']).not.toContain(id);
   });
@@ -93,7 +95,7 @@ test.describe('Un nouveau jour', () => {
   });
   for (const v of ['{oops', '[1]', S({ jour: 5, ids: ['zzz', 'demo', 'demo'], cpt: { parties: -4, quiz: 'x' }, ouverts: 'x', xp: -3 })]) {
     test(`« coach-quetes » abîmé (${v.slice(0, 20)}) : trois quêtes quand même, sans erreur`, async ({ page }) => {
-      const erreurs = await ouvrir(page, { onglet: 'accueil', stockage: Object.assign({ 'coach-quetes': v }, BASE) });
+      const erreurs = await ouvrir(page, { onglet: 'accueil', stockage: Object.assign({ 'coach-quetes': v, 'coach-lecons': S({ 0: 2 }) }, BASE) });   // lot 92 : un niveau réussi, sinon pas de quêtes
       await expect(page.locator('#qtList .qt')).toHaveCount(3);
       const q = await stocke(page, 'coach-quetes');
       expect(q.xp).toBe(0); expect(Object.values(q.cpt).every(n => Number.isInteger(n) && n >= 0)).toBe(true);

@@ -36,6 +36,18 @@ function usedIn(key){ const out = []; if (!key) return out;
   for (const [list, pre] of [[BASE_LESSONS, ''], [CH3_LESSONS, 'chapitre 3, '], [CH4_LESSONS, 'chapitre 4, ']]) list.forEach(l => { if (l.user.includes(key) || (key === 'playB' && !l.autoLaunch) || (key === 'fxOn' && l.btn.includes('echo'))) out.push(pre + l.title); });
   return out; }
 let tableSel = '', tableLive = {}, tableNote = '', tableReset = false, tableTimer = {};
+/* Lot 92 « Trois choses en moins » (diagnostic UX du 26 nov. 2026) : le canal, le numéro MIDI et « Réapprendre » sont du
+   vocabulaire technique pour un débutant. Ils sont rangés sous « Réglages avancés » (#tAvance), replié ; tableAvance garde
+   son état pendant la visite (le panneau est refait à chaque mouvement de la table) : il est relu sur le repli lui-même
+   juste avant d'en avoir besoin (l'événement « toggle » arrive un instant après le clic, trop tard si la table parle tout de
+   suite). La note d'une commande que le site n'utilise pas ne donne son canal et son numéro que s'il est ouvert.
+   tableApprend : la commande qu'on apprend depuis cette page et son réglage d'avant, pour dire « C'est appris » (la ligne du
+   réglage, elle, est repliée). */
+let tableAvance = false, tableApprend = null, tableAppris = '';
+const TABLE_APPRIS = 'C’est appris : le site reconnaît maintenant cette commande.';
+const tableAvanceLu = () => { const d = $('tAvance'); if (d) tableAvance = d.open; return tableAvance; };
+const tableInconnue = (genre, ch, n) => tableAvanceLu() ? `Commande reçue mais pas encore utilisée par le site (${genre}, canal ${ch + 1}, numéro ${n}).`
+  : 'Commande reçue, mais le site ne s’en sert pas encore.';
 function tableSvg(){
   const g = (id, inner) => `<g class="tc t${tSide(id).toLowerCase() || 'm'}${usedIn(TKEY[id]).length ? ' site' : ''}" data-c="${id}" tabindex="0" role="button" aria-label="${tName(id).replace(/"/g, '')}">${inner}</g>`;
   const knob = (id, cx, cy) => g(id, `<circle cx="${cx}" cy="${cy}" r="17"/><line class="mk" x1="${cx}" y1="${cy - 5}" x2="${cx}" y2="${cy - 14}"/>`);
@@ -85,9 +97,14 @@ function renderTable(){
   $('tKick').textContent = tableCfg || (midiCount && !midiNames.some(isFlx4)) || !midiCount ? 'Ta table' : 'Ta DDJ-FLX4';
   $('tReg').hidden = !midiCount; renderVerifBtn();
   svg.querySelectorAll('.tc').forEach(el => { el.classList.toggle('sel', el.dataset.c === tableSel); el.setAttribute('aria-pressed', String(el.dataset.c === tableSel)); });
+  // lot 92 : l'apprentissage commencé ici vient de finir et le réglage a changé : on le dit (midi.js vient de vider la note)
+  if (tableApprend && learnKey !== tableApprend.k){
+    if (!learnKey && map[tableApprend.k] !== tableApprend.avant){ tableNote = TABLE_APPRIS; tableAppris = tableApprend.k; }   // midi.js pose toujours un réglage neuf, même pour la même commande
+    tableApprend = null; }
   $('tNote').textContent = tableNote;
+  tableAvanceLu();   // lot 92 : l'état du repli, lu avant de refaire le panneau
   const box = $('tPanel'); box.innerHTML = '';
-  const add = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; box.appendChild(e); return e; };
+  const add = (tag, cls, txt, dans = box) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; dans.appendChild(e); return e; };
   if (!tableSel){ add('strong', '', 'Choisis une commande'); add('p', '', 'Clique sur une commande du schéma pour savoir à quoi elle sert. En couleur : celles que le site utilise dans ses niveaux.'); }
   else { const key = TKEY[tableSel], used = usedIn(key), m = key ? map[key] : null;
     add('strong', '', tName(tableSel)); add('p', '', TKINDS[tKind(tableSel)][1]);
@@ -95,13 +112,19 @@ function renderTable(){
     // Table branchée mais pas encore réglée (ou FLX4 avec les réglages d'une autre table) : on règle d'abord tout, pas à pas
     if (key && midiCount && !tableOn()) add('p', 'tmap', tableEtat() === 'flx4' ? 'Reprends d\'abord les réglages de la DDJ-FLX4 (bouton en bas de la page).' : 'Règle d\'abord ta table : clique sur « Régler ma table pas à pas », en bas de la page.');
     else if (key){
-      const live = tableLive[tableSel] || tablePos(key); if (live || midiCount) add('p', 'tlive', live || 'Bouge-la sur ta table pour la voir réagir.');
+      // lot 92 : « Bouge-la… » seulement pour une commande réglée (pas encore réglée, elle ne peut pas réagir : « Apprendre » suit)
+      const live = tableLive[tableSel] || tablePos(key); if (live || (midiCount && m)) add('p', 'tlive', live || 'Bouge-la sur ta table pour la voir réagir.');
       // le réglage d'origine : celui de la fiche de la table, ou de la FLX4 ; une table réglée à la main n'en a pas
       const fi = tableCfg && tableCfg.modele ? modeleId(tableCfg.modele) : null, fc = fi && fi.cmd[key];
       const def = fi ? (fc ? { ch: fc[0], n: fc[1] } : null) : tableCfg ? null : DEFAULT_MAP[key], same = m && def && m.ch === def.ch && m.n === def.n;
-      add('p', 'tmap', m ? `Réglage : canal ${m.ch + 1}, numéro ${m.n}${same ? ' (d\'origine)' : def || tableCfg ? ' (appris)' : ''}.` : tableCfg ? 'Pas sur ta table : tu la fais à l\'écran. Si ta table l\'a, clique sur « Apprendre », puis bouge-la.' : 'Pas encore réglée : clique sur « Apprendre », puis bouge-la sur ta table.');
-      const b = add('button', 'ghost', learnKey === key ? (MIDI_NOTE.includes(key) ? 'Appuie dessus sur ta table… (annuler)' : 'Bouge-la sur ta table… (annuler)') : m ? 'Réapprendre cette commande' : 'Apprendre cette commande'); b.type = 'button'; b.id = 'tLearn';
-      b.addEventListener('click', () => { learnKey = learnKey === key ? null : key; tableNote = ''; renderTable(); });
+      // lot 92 : une commande réglée range son canal, son numéro et « Réapprendre » sous « Réglages avancés », replié ; une
+      // commande pas encore réglée garde « Apprendre » en vue (le filtre A d'une FLX4 : le débutant en a besoin)
+      let ici = box;
+      if (m){ const d = add('details', 'tavance'); d.id = 'tAvance'; d.open = tableAvance;
+        add('summary', '', 'Réglages avancés', d); ici = add('div', 'tavance-in', null, d); }
+      add('p', 'tmap', m ? `Réglage : canal ${m.ch + 1}, numéro ${m.n}${same ? ' (d\'origine)' : def || tableCfg ? ' (appris)' : ''}.` : tableCfg ? 'Pas sur ta table : tu la fais à l\'écran. Si ta table l\'a, clique sur « Apprendre », puis bouge-la.' : 'Pas encore réglée : clique sur « Apprendre », puis bouge-la sur ta table.', ici);
+      const b = add('button', 'ghost', learnKey === key ? (MIDI_NOTE.includes(key) ? 'Appuie dessus sur ta table… (annuler)' : 'Bouge-la sur ta table… (annuler)') : m ? 'Réapprendre cette commande' : 'Apprendre cette commande', ici); b.type = 'button'; b.id = 'tLearn';
+      b.addEventListener('click', () => { learnKey = learnKey === key ? null : key; tableApprend = learnKey ? { k: key, avant: map[key] } : null; tableNote = ''; renderTable(); });
     } }
   const r = $('tReset'); r.textContent = tableReset ? 'Confirmer : effacer mes réglages appris' : tableResetTxt();
 }
@@ -115,30 +138,32 @@ function tableResetTxt(){ const fi = tableResetModele();
 function tableDejaPris(k){ const id = Object.keys(TKEY).find(x => TKEY[x] === k), nom = id ? tName(id) : k;
   tableNote = `Ça, c'est déjà le réglage de « ${nom} » : une même commande de ta table ne peut pas servir à deux endroits. Bouge celle que tu veux régler, ou refais « Régler ma table pas à pas » pour tout remettre en ordre.`;
   $('tNote').textContent = tableNote; }
-function tableSelect(id){ if (!TKINDS[tKind(id)]) return; if (learnKey) learnKey = null; tableSel = id; tableReset = false; renderTable(); }
+function tableSelect(id){ if (!TKINDS[tKind(id)]) return; if (learnKey) learnKey = null; tableApprend = null; tableSel = id; tableReset = false; renderTable(); }
 // Une commande connue vient de bouger sur la table : on la montre et on l'allume un instant
 function tableSeen(key, txt){
   const id = Object.keys(TKEY).find(x => TKEY[x] === key); if (!id) return;
-  tableLive[id] = txt; tableNote = ''; tableSel = id; tableReset = false; renderTable();
+  // lot 92 : un potard qu'on vient d'apprendre tourne encore : « C'est appris » reste tant que c'est lui qui bouge (gardien)
+  tableLive[id] = txt; if (tableNote !== TABLE_APPRIS || key !== tableAppris) tableNote = ''; tableSel = id; tableReset = false; renderTable();
   const el = $('tSvg').querySelector(`[data-c="${id}"]`); if (el){ el.classList.add('live'); clearTimeout(tableTimer[id]); tableTimer[id] = setTimeout(() => el.classList.remove('live'), 700); }
 }
 function tableMidi(type, ch, d1, d2, val){
   if (type === 0xB0){ const kb = MIDI_NOTE.find(x => map[x] && map[x].cc && midiSame(map[x], ch, d1)); if (kb){ if (d2 >= 64) tableSeen(kb, 'Appuyée !'); return; }
     const k = MIDI_CC.find(x => midiSame(map[x], ch, d1)); if (!k && msgFin(d1)) return;
-    if (k){ phys[k] = val; tableSeen(k, `Position : ${Math.round(val * 100)} %`); } else { tableNote = `Commande reçue mais pas encore utilisée par le site (potard ou fader, canal ${ch + 1}, numéro ${d1}).`; $('tNote').textContent = tableNote; } }
+    if (k){ phys[k] = val; tableSeen(k, `Position : ${Math.round(val * 100)} %`); } else { tableNote = tableInconnue('potard ou fader', ch, d1); $('tNote').textContent = tableNote; } }
   else if (type === 0x90 && d2 > 0){ const k = MIDI_NOTE.find(x => map[x] && !map[x].cc && midiSame(map[x], ch, d1));
-    if (k) tableSeen(k, 'Appuyée !'); else { tableNote = `Commande reçue mais pas encore utilisée par le site (bouton, canal ${ch + 1}, numéro ${d1}).`; $('tNote').textContent = tableNote; } }
+    if (k) tableSeen(k, 'Appuyée !'); else { tableNote = tableInconnue('bouton', ch, d1); $('tNote').textContent = tableNote; } }
 }
 // Retour aux réglages de la DDJ-FLX4 : on oublie aussi l'autre table réglée pas à pas
 function flx4Map(){ map = cleanMap(null); tableCfg = null; for (const k of Object.keys(phys)) delete phys[k];
   try { localStorage.removeItem('coach-midi-map'); localStorage.removeItem('coach-table'); } catch (e) {}
   renderPill(); updateSetup(); renderTableBar(); }
-$('tReg').addEventListener('click', () => openReg());
+$('tReg').addEventListener('click', () => { tableApprend = null; openReg(); });
+$('tVerif').addEventListener('click', () => { tableApprend = null; });   // lot 92 : « Vérifier ma table » (verif.js) arrête aussi l'apprentissage
 $('tSvg').addEventListener('click', e => { const el = e.target.closest('.tc'); if (el) tableSelect(el.dataset.c); });
 $('tSvg').addEventListener('keydown', e => { const el = e.target.closest('.tc'); if (el && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); tableSelect(el.dataset.c); } });
 $('tReset').addEventListener('click', () => {
   if (!tableReset){ tableReset = true; renderTable(); return; }
-  const fi = tableResetModele(), autre = !!tableCfg; tableReset = false; learnKey = null;
+  const fi = tableResetModele(), autre = !!tableCfg; tableReset = false; learnKey = null; tableApprend = null;
   if (fi){ modeleApply(tableEtat() === 'connue' ? midiNames.find(modeleDe) : tableCfg.nom); renderPill(); updateSetup(); renderTableBar(); tableNote = `Réglages de la ${fi.nom} en place.`; renderTable(); return; }
   flx4Map();
   tableNote = (autre ? 'Réglages de la DDJ-FLX4 rétablis.' : 'Réglages d\'origine rétablis.') + ' Le filtre et le bouton d\'effet seront à réapprendre.'; renderTable();

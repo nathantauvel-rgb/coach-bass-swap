@@ -3162,4 +3162,13 @@ enDe({
 });
 /* ---------- Lot 89 : fin ---------- */
 
+/* ---------- Lot 92 : début (trois choses en moins) ---------- */
+enDe({
+  // Ma table : le canal, le numéro MIDI et « Réapprendre » repliés ; la note d'une commande inconnue, sans numéros ; l'apprentissage fini
+  'Réglages avancés': 'Advanced settings',
+  'Commande reçue, mais le site ne s’en sert pas encore.': "Control received, but the site doesn't use it yet.",
+  'C’est appris : le site reconnaît maintenant cette commande.': 'Learned: the site now recognizes this control.'
+});
+/* ---------- Lot 92 : fin ---------- */
+
 trPage();
