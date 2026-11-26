@@ -15,19 +15,28 @@ const QT_JOUE = () => sumStars(stars) > 0;   // a déjà réussi au moins un niv
    avant même son premier geste. Tant qu'elles sont cachées, Vini n'en parle pas et la carte de fin non plus ; les compteurs
    du jour avancent quand même : à la première réussite, elles arrivent peut-être déjà entamées, coffre compris. */
 const qtMontre = () => [1, 2, 3, 4, 5, 6, 7].some(n => lessonsOf(n).some((_, i) => niveauReussi(bankOf(n), i)));
+/* Lot 93 « Des quêtes faisables » (signalé par le gardien du lot 92) : trois quêtes pouvaient être tirées alors que le joueur
+   ne pouvait pas les faire. « À l'oreille » : l'entraînement à l'oreille et le chapitre 2 sont dans Pro (lot 68) ; « Mode
+   Expert » : rangé derrière ⚙, caché à un Grand débutant tant que le chapitre 1 n'est pas fini (lot 89, optionsOuvertes) ;
+   « Un combo du chapitre 4 » : le chapitre 4 s'ouvre avec 14 étoiles (ou d'office en Apprenti DJ), mais il est dans Pro.
+   « 3 bonnes réponses au quiz » (gardien du lot 93) : sans Pro, le quiz éclair est fermé ; il ne reste que la question bonus
+   de fin de niveau (quizBonus, quiz.js), qui ne pose que des questions pas encore trouvées, du chapitre 1 (b0 à b6) ou de
+   culture générale (g) : la quête demande qu'il en reste au moins 3.
+   Les quêtes déjà tirées aujourd'hui restent jusqu'à minuit (on ne change pas des quêtes peut-être entamées). */
+const qtQuizGratuites = () => QUIZ.filter(q => /^[bg]/.test(q[1]) && !quizOk.includes(q[0])).length;
 const QUETES = [
   { id: 'demo', niv: 0, txt: 'Regarde une démo', but: 1, cpt: 'demos', ic: 'oeil' },
   { id: 'parties2', niv: 0, txt: 'Joue 2 niveaux', but: 2, cpt: 'parties', ic: 'play' },
-  { id: 'quiz3', niv: 0, txt: 'Trouve 3 bonnes réponses au quiz', but: 3, cpt: 'quiz', ic: 'quiz', dispo: QT_JOUE },
+  { id: 'quiz3', niv: 0, txt: 'Trouve 3 bonnes réponses au quiz', but: 3, cpt: 'quiz', ic: 'quiz', dispo: () => QT_JOUE() && (!proBloque() || qtQuizGratuites() >= 3) },
   { id: 'parties4', niv: 1, txt: 'Joue 4 niveaux', but: 4, cpt: 'parties', ic: 'play' },
   { id: 'reussies2', niv: 1, txt: 'Réussis 2 transitions', but: 2, cpt: 'reussies', ic: 'ok' },
   { id: 'trois1', niv: 1, txt: 'Fais une partie à 3 étoiles', but: 1, cpt: 'trois', ic: 'etoile' },
   { id: 'defi', niv: 1, txt: 'Réussis le défi du jour', but: 1, cpt: 'defi', ic: 'cible', dispo: () => pracPool().length > 0 },
-  { id: 'oreille', niv: 1, txt: 'Réussis un niveau à l’oreille', but: 1, cpt: 'oreille', ic: 'oreille', dispo: () => pracPool().length > 0 },
+  { id: 'oreille', niv: 1, txt: 'Réussis un niveau à l’oreille', but: 1, cpt: 'oreille', ic: 'oreille', dispo: () => pracPool().length > 0 && !proBloque() },
   { id: 'reussies4', niv: 2, txt: 'Réussis 4 transitions', but: 4, cpt: 'reussies', ic: 'ok' },
   { id: 'trois3', niv: 2, txt: 'Fais 3 parties à 3 étoiles', but: 3, cpt: 'trois', ic: 'etoile' },
-  { id: 'expert2', niv: 2, txt: 'Joue 2 niveaux en Mode Expert', but: 2, cpt: 'expert', ic: 'eclair', dispo: () => sumStars(stars) >= 3 },
-  { id: 'combo', niv: 2, txt: 'Réussis un combo du chapitre 4', but: 1, cpt: 'combos', ic: 'combo', dispo: () => ch4Unlocked() }
+  { id: 'expert2', niv: 2, txt: 'Joue 2 niveaux en Mode Expert', but: 2, cpt: 'expert', ic: 'eclair', dispo: () => sumStars(stars) >= 3 && optionsOuvertes() },
+  { id: 'combo', niv: 2, txt: 'Réussis un combo du chapitre 4', but: 1, cpt: 'combos', ic: 'combo', dispo: () => ch4Unlocked() && !chapitrePro(4) }
 ];
 const QT_IC = {
   oeil: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',

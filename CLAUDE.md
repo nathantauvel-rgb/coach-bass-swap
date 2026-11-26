@@ -32,6 +32,26 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 93 « Des quêtes faisables » : FAIT le 26 nov. 2026, NON PUBLIÉ** (« go », session ouverte sur le PC de Nathan, avec un
+  autre compte Claude). Copie `Documents\coach-dj-lot93` (git worktree de `Documents\coach-dj`, `node_modules` relié par jonction), branche
+  `lot-93-quetes` depuis `origin/main` = `b01b48d`, sans suivi ; numéro 91 sauté (peut-être pris sur l'autre PC). La suite du
+  défaut signalé par le gardien du lot 92, plus un troisième cas trouvé en relisant : une quête du jour n'est tirée que si le
+  joueur peut la faire (`QUETES`, quetes.js) : « Réussis un niveau à l'oreille » demande aussi `!proBloque()` (l'entraînement
+  à l'oreille et le chapitre 2 sont dans Pro) ; « Joue 2 niveaux en Mode Expert » demande `optionsOuvertes()` (⚙ caché à un
+  Grand débutant avant la fin du chapitre 1, lot 89) ; « Réussis un combo du chapitre 4 » demande `!chapitrePro(4)` (ouvert à
+  14 étoiles ou d'office en Apprenti DJ, mais dans Pro) ; trouvé par le gardien : « Trouve 3 bonnes réponses au quiz », sans
+  Pro, demande qu'il reste au moins 3 questions bonus pas encore trouvées (`qtQuizGratuites` : les 17 questions b0 à b6 et g ;
+  le quiz éclair est dans Pro, la question bonus de fin de niveau ne pose que des questions pas trouvées). Un abonné dont la
+  réponse de Stripe n'est pas encore arrivée au premier affichage de l'accueil n'a pas « à l'oreille » ni le combo ce
+  jour-là (trois quêtes faisables quand même). Les quêtes déjà tirées aujourd'hui restent jusqu'à minuit. Pro
+  éteint ou abonné : rien ne change. Aucun texte, aucune couleur, rien du MIDI ni de l'écran (les quêtes gardent leur
+  place). Tests : `tests/quetes-faisables.spec.js` (8, dont un tirage sur 60 jours avec `page.clock.setFixedTime`) ; sur le
+  code d'`origin/main`, les 3 premiers échouent (le défaut). **Suite complète : 1042 sur 1043** (`DJ_PORT=8932`, 4 morceaux,
+  `captures/lot93/suite-N.txt`, hors Git) ; le seul échec, `comprendre.spec.js:261` (le rond qui compte 1, 2, 3, 4), est
+  instable sur un PC chargé (le gardien faisait tourner ses tests en même temps) et repasse seul. Sur le code final (la quête
+  du quiz ajoutée pendant la suite) : quêtes, quêtes faisables, lot 92 et quiz 45 sur 45 ; vini-sons, découpe, Mode Expert et
+  ce test de Comprendre 46 sur 46. **Gardien : feu orange, aucun blocage** (sa remarque sur la quête du quiz corrigée, le
+  prénom d'un tiers retiré de cette note). **Attend : l'accord de l'utilisateur pour publier.**
 - **Lot 92 « Trois choses en moins » : PUBLIÉ le 26 nov. 2026** (« Oui, publie » ; `9395078`, la fusion avec le lot 90
   `dcfd4bf`, puis cette note = `origin/main` ; suite complète après la fusion : **1035 sur 1035** (30 min,
   `captures/lot92/suite3.txt`) ; production vérifiée en 1366 × 768, 390 × 844 et `?lang=en`, statistiques refusées : Tutos
@@ -39,7 +59,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   fois sur la page ; Ma table avec « Réglages avancés » replié et la note courte, puis, ouvert, le réglage et la note avec ses
   numéros ; accueil sans quêtes au premier jour, avec les quêtes après un niveau réussi ; aucune erreur, aucune statistique
   envoyée, rien d'oublié en anglais ; script `captures/lot92/production.js` de la copie). **Reste, par lui** : le point 46 de
-  la checklist sur sa FLX4. **À faire dans un lot à part** : les deux quêtes impossibles pour un Grand débutant à partir du
+  la checklist sur sa FLX4. **Fait au lot 93** : les deux quêtes impossibles pour un Grand débutant à partir du
   2e jour (voir la fin de cette entrée) ; en anglais, « (d'origine) » et « (appris) » restent en français dans « Setting:
   channel N, number N (d'origine). » (le `{=r}` du motif « Réglage : canal… » de `js/anglais.js`, d'avant ce lot).
   Ci-dessous, l'entrée d'avant la publication.
@@ -103,10 +123,10 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
     (le tirage des quêtes, « C'est appris » effacé par un potard qui tourne encore) ; contrôles propres : aucune couleur en
     dur, noms nouveaux uniques, aucune clé `coach-` nouvelle, `DEFAULT_MAP` et midi.js intacts, `tableSvg` identique,
     anglais complet, rien de `captures/` ni de MP3, aucun `test.fail`.
-  - **Signalé par le gardien, pas corrigé** (hors du lot, déjà en ligne) : à partir du 2e jour, le tirage des quêtes peut
+  - **Signalé par le gardien, corrigé au lot 93** (hors du lot, déjà en ligne) : à partir du 2e jour, le tirage des quêtes peut
     donner à un Grand débutant « Réussis un niveau à l'oreille » (l'entraînement à l'oreille est dans Pro) ou « Joue 2 niveaux
     en Mode Expert » (caché avant la fin du chapitre 1, lot 89) : leur `dispo` (quetes.js) ne regarde ni `proBloque()` ni
-    `optionsOuvertes()`. À faire dans un lot à part.
+    `optionsOuvertes()`. Fait au lot 93 « Des quêtes faisables ».
 - **Lot 90 « L'en-tête respire » : PUBLIÉ le 26 nov. 2026** (« Publie » ; `c5abc2f`, puis cette note = `origin/main` ;
   production vérifiée en 1366 × 768, 390 × 844 et `?lang=en`, statistiques refusées : 10 boutons dans l'en-tête sans compte (avec
   Tutos), « ⋯ » ouvre le menu (son, FR | EN, « Mon avis », et « Revoir le guide » sur Apprendre), barre des onglets fixe en bas
@@ -3740,7 +3760,7 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   `navigator.requestMIDIAccess` avant le chargement ; le site y branche lui-même `onMidi`, donc les
   messages simulés suivent le même chemin que ceux de la vraie FLX4.
 - `tests/midi.spec.js` : détection, faders, LOW, MID, PLAY, apprentissage, rebranchement, messages
-  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/musique.spec.js` : « Ma musique » (lot 72 : liste, filtres, fiche, transition, favoris, vus récemment, adresses, sans abonnement, téléphone). `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/table-debut.spec.js` : la table dès le début (test, réglage des 3 premiers boutons, liste, avant un niveau ; lot 73). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Ma musique. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/posthog.spec.js` : PostHog reçoit les mêmes envois, compte relié, refus (lot 77, faux PostHog). `tests/mails.spec.js` : les mails de Vini et la fonction `api/mails.js` (lot 54) ; `tests/faux-firebase.js` : le faux Firebase partagé. `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
+  inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/musique.spec.js` : « Ma musique » (lot 72 : liste, filtres, fiche, transition, favoris, vus récemment, adresses, sans abonnement, téléphone). `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/table-debut.spec.js` : la table dès le début (test, réglage des 3 premiers boutons, liste, avant un niveau ; lot 73). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/quetes-faisables.spec.js` : aucune quête impossible tirée (Pro, ⚙, chapitre 4, quiz ; lot 93). `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Ma musique. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/posthog.spec.js` : PostHog reçoit les mêmes envois, compte relié, refus (lot 77, faux PostHog). `tests/mails.spec.js` : les mails de Vini et la fonction `api/mails.js` (lot 54) ; `tests/faux-firebase.js` : le faux Firebase partagé. `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/vitrine.spec.js` : la page d'accueil et son test moitié / moitié (lot 83).
   `tests/consigne.spec.js` : la carte du niveau (pastilles A et B, touche du clavier), « Comment faire ? » en une ligne, les
