@@ -32,7 +32,18 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 92 « Trois choses en moins » : codé, PAS ENCORE PUBLIÉ** (26 nov. 2026 ; trois lignes de la liste « Ce que
+- **Lot 92 « Trois choses en moins » : PUBLIÉ le 26 nov. 2026** (« Oui, publie » ; `9395078`, la fusion avec le lot 90
+  `dcfd4bf`, puis cette note = `origin/main` ; suite complète après la fusion : **1035 sur 1035** (30 min,
+  `captures/lot92/suite3.txt`) ; production vérifiée en 1366 × 768, 390 × 844 et `?lang=en`, statistiques refusées : Tutos
+  avec 10 cadenas, la seule étiquette « Gratuit », le cadenas devant « Les 10 autres sont dans DJingood Pro » et « Pro » deux
+  fois sur la page ; Ma table avec « Réglages avancés » replié et la note courte, puis, ouvert, le réglage et la note avec ses
+  numéros ; accueil sans quêtes au premier jour, avec les quêtes après un niveau réussi ; aucune erreur, aucune statistique
+  envoyée, rien d'oublié en anglais ; script `captures/lot92/production.js` de la copie). **Reste, par lui** : le point 46 de
+  la checklist sur sa FLX4. **À faire dans un lot à part** : les deux quêtes impossibles pour un Grand débutant à partir du
+  2e jour (voir la fin de cette entrée) ; en anglais, « (d'origine) » et « (appris) » restent en français dans « Setting:
+  channel N, number N (d'origine). » (le `{=r}` du motif « Réglage : canal… » de `js/anglais.js`, d'avant ce lot).
+  Ci-dessous, l'entrée d'avant la publication.
+  (26 nov. 2026 ; trois lignes de la liste « Ce que
   j'enlèverais ou cacherais » du diagnostic UX, qui ne sont dans aucun autre lot ou peuvent partir sans attendre la fin du
   test de l'accueil ; maquette validée : « Go, choix B »). Copie `Documents\coach-dj-lot92` (git worktree du clone de ce PC,
   comme aux lots 88 et 89), branche `lot-92-en-moins` depuis `origin/main` = `c761aa0`, sans suivi, puis fusion
