@@ -245,18 +245,42 @@ function pictoOf(k, v){ const s = document.createElement('span'); s.className = 
   if (k.startsWith('fader')) s.innerHTML = `<svg viewBox="0 0 16 28"><rect x="6" y="2" width="4" height="24" rx="2" class="track"/><rect x="2" y="${v >= .5 ? 2 : 20}" width="12" height="6" rx="2" class="cap"/></svg>`;
   else { const a = (-135 + 270 * v) * Math.PI / 180; s.innerHTML = `<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="11" class="dial"/><line x1="14" y1="14" x2="${(14 + 9 * Math.sin(a)).toFixed(1)}" y2="${(14 - 9 * Math.cos(a)).toFixed(1)}" class="cap"/></svg>`; }
   return s; }
-// « Pendant le niveau » : les gestes, dans l'ordre, écrits départ → arrivée
-function planSteps(l){
+// « Pendant le niveau » : les gestes, dans l'ordre, écrits départ → arrivée ({ t: la phrase, lab: le repère de la piste })
+function planEtapes(l){
   if (l.set) return [];   // chapitre 7 : la feuille de route remplace « Pendant le niveau » (set.js)
-  if (l.plan) return l.plan;   // chapitre 6 : les gestes des pads sont écrits dans le niveau (hotcues.js)
+  if (l.plan) return l.plan.map(t => ({ t, lab: '' }));   // chapitre 6 : les gestes des pads sont écrits dans le niveau (hotcues.js)
   const out = [], seen = new Set();
-  if (!l.autoLaunch && l.user.includes('lowB') && l.init.lowB >= .4) out.push('Avant de lancer B : LOW de B normal → coupé');
-  for (const [, lab] of (l.targets || []).slice().sort((x, y) => x[0] - y[0])){ if (seen.has(lab) || !ACT[lab]) continue; seen.add(lab); out.push(ACT[lab].charAt(0).toUpperCase() + ACT[lab].slice(1)); }
+  if (!l.autoLaunch && l.user.includes('lowB') && l.init.lowB >= .4) out.push({ t: 'Avant de lancer B : LOW de B normal → coupé', lab: '' });
+  for (const [, lab] of (l.targets || []).slice().sort((x, y) => x[0] - y[0])){ if (seen.has(lab) || !ACT[lab]) continue; seen.add(lab); out.push({ t: ACT[lab].charAt(0).toUpperCase() + ACT[lab].slice(1), lab }); }
   return out;
 }
+function planSteps(l){ return planEtapes(l).map(e => e.t); }
+/* Lot 89 : chaque A ou B tout seul d'une étape devient une pastille de sa platine (orange, bleue), comme sur la table et la
+   piste. La phrase est traduite d'un bloc, puis découpée : les morceaux s'écrivent sans repasser par le dictionnaire anglais
+   (« Lance » et « (PLAY de droite) » n'y sont pas à part). Pas de « regard en arrière » dans l'expression : un vieil iPhone
+   refuserait tout le fichier. */
+function etapePlatines(el, t){
+  const brut = s => (trBrut ? trBrut.createTextNode : Document.prototype.createTextNode).call(document, s);
+  const s = tr(t), re = /(^|[^\p{L}\p{N}])([AB])(?=[^\p{L}\p{N}]|$)/gu; let m, d = 0;
+  while ((m = re.exec(s))){
+    const a = m.index + m[1].length; if (a > d) el.appendChild(brut(s.slice(d, a)));
+    const p = document.createElement('span'); p.className = 'etp-pl etp-' + m[2].toLowerCase(); p.appendChild(brut(m[2])); el.appendChild(p);
+    d = a + 1;
+  }
+  if (d < s.length) el.appendChild(brut(s.slice(d)));
+}
+// Lot 89 : sans table (aucune table prête, ou « Je joue à la souris »), la touche du clavier s'affiche sur l'étape qu'elle fait
+// (à la place de la ligne « Clavier : espace = lancer B, E = écho. ») ; styles.css la cache sur un écran tactile
+const planSansTable = () => !(midiCount > 0 && tableOn()) || mouseMode;
+const planTouche = (l, lab) => lab === 'LANCE B' && !l.autoLaunch ? 'espace' : lab === 'ECHO' ? 'E' : '';
 function renderPlan(){
-  const l = LESSONS[li], steps = planSteps(l), box = $('plan'); box.hidden = !!run || !steps.length; if (box.hidden) return;
-  const ol = $('planList'); ol.innerHTML = ''; for (const t of steps){ const x = document.createElement('li'); x.textContent = t; ol.appendChild(x); }
+  const l = LESSONS[li], steps = planEtapes(l), box = $('plan'); box.hidden = !!run || !steps.length; if (box.hidden) return;
+  const ol = $('planList'), clavier = planSansTable(); ol.innerHTML = '';
+  for (const { t, lab } of steps){ const x = document.createElement('li'), k = clavier ? planTouche(l, lab) : '';
+    const tx = document.createElement('span'); tx.className = 'etp-t'; etapePlatines(tx, t); x.appendChild(tx);
+    if (k){ const c = document.createElement('span'); c.className = 'etp-touche'; const sr = document.createElement('span'); sr.className = 'sr'; sr.textContent = 'Clavier :';
+      const kb = document.createElement('kbd'); kb.textContent = k; c.append(sr, kb); x.appendChild(c); }
+    ol.appendChild(x); }
   $('planNote').textContent = expertOn() ? 'Mode Expert : pas de compte à rebours ni de repère, et B part exactement quand tu appuies. Chaque geste est noté en millisecondes, score sur 100.' : l.wave || chapter === 2 || l.noCount ? 'Ici, pas de compte à rebours : écoute la musique (ou lis la piste) et fais chaque geste au bon moment.' : 'Chaque geste arrive sur la piste avec un repère ◆ et un compte à rebours : fais-le quand il touche la ligne.';
 }
 function inPlace(k, v, p){ if (p == null) return null; return k.startsWith('fader') ? (v >= .5 ? p >= .94 : p <= .06) : (v < .1 ? p <= .05 : Math.abs(p - .5) <= .07); }

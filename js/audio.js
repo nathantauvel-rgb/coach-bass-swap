@@ -94,7 +94,7 @@ const bufOf = song => song.buf || (song.buf = bufferOf(song));
 const songSafe = (sty, vr, part, spd = 1) => getSong(sty, vr, part, spd).catch(() => getSong(sty, vr, part, spd));
 let sel = { sty: 'house', vr: 0 }, firstSel = true, warm = null;
 function chooseSongs(){
-  // lot 76 : les titres de la vraie musique sont rangés dans « Comment faire ? » (creditVrai, plus bas)
+  // lot 76 : les titres de la vraie musique ne sont plus sous le titre du niveau (creditVrai, plus bas ; lot 89 : sous la table)
   const l = LESSONS[li]; creditVrai(''); if (l.wave) return;
   if (l.set){ encPrepare(l); $('styleTag').textContent = encEtiquette(l); return; }   // chapitre 7 : ses propres morceaux (set.js)
   if (prac) sel = { sty: prac.sty, vr: prac.vr };
@@ -108,7 +108,8 @@ function chooseSongs(){
 }
 // Lot 76 : avec la vraie musique, la ligne sous le titre du niveau ne montre plus les titres des morceaux et leur source (ils
 // encombraient le premier écran d'un débutant) : ils sont dans « Comment faire ? ». Une panne de la vraie musique, elle,
-// reste sous le titre (niveaux.js retire alors .credit-vrai).
+// reste sous le titre (niveaux.js retire alors .credit-vrai). Lot 89 : « Comment faire ? » tient en une ligne ; les titres et
+// leur source (Pixabay) sont une ligne discrète sous la table (#lcredit, index.html), là pendant toute la partie.
 function creditVrai(t){ $('stage').classList.toggle('credit-vrai', !!t); $('lcredit').hidden = !t; $('lcredit').textContent = t ? 'Morceaux : ' + t : ''; }
 // Prépare à l'avance les morceaux du niveau choisi. La vraie musique (environ 2 Mo) n'est téléchargée que sur l'écran des
 // leçons : pas sur l'accueil (setView la prépare en arrivant dans Apprendre).

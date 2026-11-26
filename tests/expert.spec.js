@@ -1,9 +1,10 @@
 // Lot 20 : Mode Expert sur les 7 niveaux des bases (sans calage automatique, sans compte à rebours ni repère, score sur 100).
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau } = require('./outils');
+const { ouvrir, sansBandeau, options, APPRENTI } = require('./outils');
 
 const S = o => JSON.stringify(o);
-const EXPERT = { 'coach-expert': S({ on: true, best: {} }) };
+// lot 89 : Mode Expert n'agit que là où le bouton ⚙ « Options » est montré : en Apprenti DJ, ou une fois le chapitre 1 fini
+const EXPERT = Object.assign({ 'coach-expert': S({ on: true, best: {} }) }, APPRENTI);
 // Robot : lance B quand le temps entendu atteint la cible (+ décalage voulu, en temps), et garde le temps du lancement
 const robot = (decalage = 0) => { const tick = () => { if (run && run.expert && run.launch === null && heardBeat() >= LESSONS[li].launchBeat + decalage){ launchB(); window.__L = run.launch; }
   if (!document.getElementById('result').hidden) return; requestAnimationFrame(tick); }; requestAnimationFrame(tick); };
@@ -11,8 +12,9 @@ const expertDe = page => page.evaluate(() => JSON.parse(localStorage.getItem('co
 
 test.describe('Mode Expert', () => {
   test('le bouton : au chapitre 1, retenu d\'une visite à l\'autre', async ({ page }) => {
-    const erreurs = await ouvrir(page, { stockage: { 'coach-ch2-ouvert': '1' } });
+    const erreurs = await ouvrir(page, { stockage: Object.assign({ 'coach-ch2-ouvert': '1' }, APPRENTI) });
     const bt = page.locator('#expertBtn');
+    await options(page);   // lot 89 : derrière ⚙
     await expect(bt).toHaveText('Mode Expert');
     await expect(bt).toHaveAttribute('aria-pressed', 'false');
     expect(await page.evaluate(() => TOL)).toBe(1);
@@ -20,6 +22,7 @@ test.describe('Mode Expert', () => {
     await expect(bt).toHaveAttribute('aria-pressed', 'true');
     await expect(bt).toHaveText('Mode Expert · record —');
     expect(await page.evaluate(() => TOL)).toBe(.25);
+    await expect(page.locator('#modeTag')).toHaveText('Mode Expert');   // lot 89 : l'étiquette sous le titre le dit
     await expect(page.locator('#planNote')).toContainText('Mode Expert : pas de compte à rebours ni de repère');
     expect(await expertDe(page)).toEqual({ on: true, best: {} });
     await page.reload();
@@ -49,7 +52,7 @@ test.describe('Mode Expert', () => {
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('un lancement en retard fait baisser le score, et le record ne baisse pas', async ({ page }) => {
-    await ouvrir(page, { stockage: { 'coach-expert': S({ on: true, best: { 0: 99 } }) } });
+    await ouvrir(page, { stockage: Object.assign({ 'coach-expert': S({ on: true, best: { 0: 99 } }) }, APPRENTI) });
     await page.locator('.node').nth(0).click();
     await page.locator('#startBtn').click();
     await expect(page.locator('#startBtn')).toHaveText('Arrêter', { timeout: 60000 });
@@ -118,6 +121,7 @@ test('Mode Expert : mis de côté pendant le test de placement, il revient quand
   await expect(page.locator('#expertBtn')).toBeHidden();
   expect(await page.evaluate(() => TOL)).toBe(1);
   await page.locator('#pQuit').click();
+  await options(page);
   await expect(page.locator('#expertBtn')).toBeVisible();
   expect(await page.evaluate(() => TOL)).toBe(.25);
   await expect(page.locator('#planNote')).toContainText('Mode Expert');

@@ -10,8 +10,9 @@ try { const s = JSON.parse(localStorage.getItem('coach-expert') || 'null');
   if (s && typeof s === 'object' && !Array.isArray(s)){ expert = s.on === true;
     if (s.best && typeof s.best === 'object' && !Array.isArray(s.best)) for (const [k, v] of Object.entries(s.best)) if (/^\d$/.test(k) && Number.isInteger(v) && v >= 0 && v <= 100) xBest[k] = v; } } catch (e) {}
 const saveExpert = () => { try { localStorage.setItem('coach-expert', JSON.stringify({ on: expert, best: xBest })); } catch (e) {} };
-// Seulement au chapitre 1, hors entraînement et test de placement
-const expertOn = () => expert && chapter === 1 && !prac && !placement;
+// Seulement au chapitre 1, hors entraînement et test de placement ; lot 89 : et seulement quand le bouton ⚙ « Options » est
+// là (optionsOuvertes, plus bas) : un Grand débutant qui l'avait allumé ne pourrait plus l'éteindre
+const expertOn = () => expert && chapter === 1 && !prac && !placement && optionsOuvertes();
 // L'instant que l'on entend, pas celui que l'ordinateur calcule : la carte son a toujours un peu de retard
 function heardTime(){
   const ts = ac.getOutputTimestamp ? ac.getOutputTimestamp() : null;
@@ -51,7 +52,31 @@ function expertResult(score){
   return { xs, st: xs >= 90 ? 3 : xs >= 60 ? 2 : 1, txt: rec ? (prev == null ? `Expert : ${xs}/100 · premier record` : `Expert : ${xs}/100 · nouveau record (avant : ${prev})`) : `Expert : ${xs}/100 · record : ${prev}/100` };
 }
 function renderExpert(){
-  const b = $('expertBtn'); b.hidden = chapter !== 1 || !!prac || !!placement || niveauPro(1, li); if (b.hidden) return;   // lot 68 : rien à régler sur un niveau de Pro
-  b.setAttribute('aria-pressed', String(expert)); b.textContent = expert ? `Mode Expert · record ${xBest[li] != null ? xBest[li] + '/100' : '—'}` : 'Mode Expert';
+  const b = $('expertBtn'); b.hidden = chapter !== 1 || !!prac || !!placement || niveauPro(1, li);   // lot 68 : rien à régler sur un niveau de Pro
+  if (!b.hidden){ b.setAttribute('aria-pressed', String(expert)); b.textContent = expert ? `Mode Expert · record ${xBest[li] != null ? xBest[li] + '/100' : '—'}` : 'Mode Expert'; }
+  optionsRend();
 }
 $('expertBtn').addEventListener('click', () => { if (run || preparing) return; expert = !expert; saveExpert(); selectLesson(li); });
+
+/* ---------- Lot 89 : le bouton ⚙ « Options » ----------
+   Diagnostic UX du 26 nov. 2026 (lot C, « Le niveau en une consigne ») : « Morceaux : vraie musique » et « Mode Expert », des
+   options d'habitué, étaient proposés dès le niveau 3 d'un Grand débutant. Ils sont rangés derrière ⚙, sur la carte d'action,
+   à côté de « Regarde d'abord ». Apprenti DJ et DJ confirmé ont le bouton tout de suite ; les autres (Grand débutant, ou pas
+   encore de parcours) une fois le chapitre 1 fini (ses 7 niveaux à 2 étoiles ou plus). Le bouton se cache aussi quand il n'a
+   rien à montrer (le choix des morceaux et Mode Expert cachés : chapitres 2, 3, 5 à 7, entraînement). */
+function optionsOuvertes(){
+  try { if (parcoursAvance(parcours)) return true; } catch (e) {}   // parcours.js est chargé plus tard
+  return niveauEnCours(1) < 0;
+}
+function optsMenu(ouvert){
+  $('optsPanel').hidden = !ouvert; $('optsBtn').setAttribute('aria-expanded', String(ouvert));
+  if (!ouvert){ $('styleOpts').hidden = true; $('styleBtn').setAttribute('aria-expanded', 'false'); }
+}
+function optionsRend(){
+  const b = $('optsBtn'); b.hidden = ($('styleSeg').hidden && $('expertBtn').hidden) || !optionsOuvertes();
+  if (b.hidden) optsMenu(false);
+}
+$('optsBtn').addEventListener('click', () => { if (run || preparing) return; optsMenu($('optsPanel').hidden); });
+// un clic ailleurs, ou Échap, referme le menu
+document.addEventListener('click', e => { if (!$('optsPanel').hidden && !e.composedPath().includes($('actionbar'))) optsMenu(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('optsPanel').hidden) optsMenu(false); });

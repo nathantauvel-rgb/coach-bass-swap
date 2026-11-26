@@ -424,6 +424,9 @@ function selectLesson(i){
   if (!LESSONS[li]) li = 0;
   stopRun(); speed = 1; if (i !== li) slowFails = {}; li = i; const l = LESSONS[i]; if (l.random) randomizeRead(l); START = l.start; END = l.end; TOL = tolOf();
   $('lnum').textContent = (chapter > 1 ? `Chapitre ${chapter} · ` : '') + `Niveau ${i + 1} sur ${LESSONS.length}`; $('ltitle').textContent = l.title; $('lgoal').textContent = l.goal; $('lhow').textContent = l.how;
+  // Lot 89 : la phrase sous le titre ne s'affiche que là où « Pendant le niveau » ne donne pas tous les gestes : le calage
+  // (chapitre 5 : pas d'étape, ou seulement le swap) et le set (chapitre 7 : la feuille de route) ; ailleurs, elle les répétait
+  $('lgoal').hidden = planSteps(l).length > 0 && !l.cal;
   const lex = lexOf(l.title + ' ' + l.goal + ' ' + l.how); $('llex').hidden = !lex.length; $('llex').textContent = lex.map(([, n, d]) => n + ' : ' + d + '.').join('\n');
   // La table complète reste affichée : les commandes dont le niveau ne se sert pas sont éteintes et inertes (lot 39)
   tableAllume(l.show);
@@ -437,15 +440,21 @@ function selectLesson(i){
   if (l.set){ encAvant(l); const rc = encRecords[i]; $('cdNum').textContent = rc == null ? '—' : rc; $('cdLab').textContent = 'record'; }
   $('hint').textContent = chapter === 6 ? (l.hc.quant ? 'Chapitre 6 : hot cues et boucles. Quantize allumé, mais chaque appui est noté en millisecondes.' : 'Chapitre 6 : Quantize éteint. Repères et boucles partent exactement à l’appui.') : chapter === 5 ? 'Chapitre 5 : B ne se cale plus tout seul. Le site mesure le décalage pendant toute la partie.' : chapter === 4 ? 'Chapitre 4 : plusieurs gestes d\'affilée, notés au demi-temps près. 3 étoiles seulement si tout est juste.' : chapter === 3 ? 'Chapitre 3 : plus de compte à rebours. Lis la piste : elle montre l\'intro, le break et la fin de chaque morceau. La démo montre le bon moment.' : chapter === 2 ? 'Chapitre 2 : pas de compte à rebours, et il faut être deux fois plus précis. Regarde la démo si besoin.' : l.user.length && l.user.length < 4 ? 'Les contrôles grisés bougent tout seuls : regarde-les, ils te montrent le geste.' : '';
   ear = chapter === 2; $('styleSeg').hidden = chapter === 2 || chapter === 3 || chapter >= 5;
-  $('modeTag').hidden = !(chapter === 2 || chapter >= 4 || l.wave); $('modeTag').textContent = l.set ? 'Noté sur 100' : l.hc ? (l.hc.quant ? 'Quantize allumé · noté en ms' : 'Quantize éteint · noté en ms') : l.cal ? (l.cal.quiz ? 'À l\'oreille, sans geste' : `Calé à moins de ${CAL_OK} ms`) : l.wave ? 'Lis la piste' : chapter === 4 ? (l.noCount ? 'Sans compte à rebours · au demi-temps près' : 'Au demi-temps près') : 'À l\'oreille · précision ×2';
+  // lot 89 : Mode Expert est rangé derrière ⚙ « Options » : l'étiquette sous le titre dit qu'il est allumé
+  $('modeTag').hidden = !(chapter === 2 || chapter >= 4 || l.wave || expertOn()); $('modeTag').textContent = expertOn() ? 'Mode Expert' : l.set ? 'Noté sur 100' : l.hc ? (l.hc.quant ? 'Quantize allumé · noté en ms' : 'Quantize éteint · noté en ms') : l.cal ? (l.cal.quiz ? 'À l\'oreille, sans geste' : `Calé à moins de ${CAL_OK} ms`) : l.wave ? 'Lis la piste' : chapter === 4 ? (l.noCount ? 'Sans compte à rebours · au demi-temps près' : 'Au demi-temps près') : 'À l\'oreille · précision ×2';
   if (l.wave){ waveTk = null; if (hasWorkers()) prepareCh3(l).then(tk => { if (LESSONS[li] === l && !run){ waveTk = tk; drawHighway(START); } }).catch(() => {}); } else waveTk = null; $('styleTag').textContent = styleLabel();
   $('stage').classList.remove('ear');
   chooseSongs();
   // Avant de jouer, la bulle ne donne jamais le geste (il est dans « Pendant le niveau ») : seulement quoi faire maintenant
   const idle = proIci() ? 'Ce niveau est dans DJingood Pro. Le chapitre 1 est gratuit.' : needSetup() ? 'Place ta table en position de départ, puis appuie sur Jouer.' : l.set ? 'Pas de repère cette fois. Enchaîne comme en soirée !' : expertOn() ? 'Mode Expert : ni compte à rebours, ni repère, ni calage automatique. Chaque geste est noté en millisecondes.' : 'À toi de jouer !';
-  const fb = $('lfiches'); fb.innerHTML = '';
-  for (const k of fichesOf(l)){ const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'linkbtn'; bt.textContent = 'Revoir la fiche : ' + FICHE_NAMES[k]; bt.addEventListener('click', () => { if (!run) openOnb([FICHES[k]], { fiche: true, keys: [k] }); }); fb.appendChild(bt); }
-  fb.hidden = !fb.children.length;
+  // Lot 89 : « Comment faire ? » tient en une ligne : la phrase, puis « Revoir la fiche : le bouton PLAY · les faders », un lien
+  // par fiche (le nom seul ; le lecteur d'écran entend « Revoir la fiche : … » en entier)
+  const fb = $('lfiches'), ks = fichesOf(l); fb.innerHTML = '';
+  if (ks.length){ const t = document.createElement('span'); t.className = 'lfiches-t'; t.textContent = 'Revoir la fiche :'; fb.append(t, ' '); }
+  ks.forEach((k, n) => { if (n) fb.appendChild(document.createTextNode(' · '));
+    const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'linkbtn'; bt.textContent = FICHE_NAMES[k]; bt.setAttribute('aria-label', 'Revoir la fiche : ' + FICHE_NAMES[k]);
+    bt.addEventListener('click', () => { if (!run) openOnb([FICHES[k]], { fiche: true, keys: [k] }); }); fb.appendChild(bt); });
+  fb.hidden = !ks.length;
   $('hint').textContent = idle; say(idle);
   renderHud(); renderExpert(); drawHighway(START); updateSetup();
   if (!$('vLearn').hidden) stageIntoView();
@@ -457,6 +466,7 @@ function stageIntoView(force){
   if (force !== true && matchMedia('(min-width:1040px)').matches){ const j = $('startBtn').getBoundingClientRect(); if (j.height && j.top >= 0 && j.bottom <= innerHeight) return; }
   const r = $('stage').getBoundingClientRect(); if (r.bottom > innerHeight && r.top > 8) window.scrollTo({ top: scrollY + r.top - 8, behavior: REDUCED ? 'auto' : 'smooth' }); }
 function setStartBtn(running){ $('stage').classList.toggle('joue', running); if (running && !$('vLearn').hidden) requestAnimationFrame(() => stageIntoView(true)); const b = $('startBtn'), pro = !running && proIci();
+  if (running && typeof optsMenu === 'function') optsMenu(false);   // lot 89 : la partie part, le menu ⚙ se referme (expert.js)
   b.textContent = running ? 'Arrêter' : pro ? 'Continuer avec Pro' : 'Jouer'; b.classList.toggle('stop', running); b.classList.toggle('pro', pro); $('watchBtn').hidden = pro; }
 // lot 68 : le niveau affiché est dans Pro (sans abonnement) : « Jouer » ouvre la fenêtre Pro, pas de démo (l'entraînement
 // et l'ancien test de placement ne jouent que des niveaux gratuits). Lot 82 : sauf pendant l'aperçu d'un chapitre fermé
@@ -488,7 +498,7 @@ function startRun(demo = false){
     if (lw.wave){ const tk = tkW; waveTk = tk; tk.bufA = tk.bufA || bufferOf(tk.A); tk.bufB = tk.bufB || bufferOf(tk.B); tracks = { A: tk.bufA, B0: tk.bufB, B1: tk.bufB }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75; $('styleTag').textContent = styleLabel(); }
     else { const d = STYLE_DEFS[styW]; BPM = d.bpm * speed; P = 60 / BPM; if (chapter === 4) $('styleTag').textContent = `${d.label} · ${Math.round(BPM)} BPM` + (speed !== 1 ? ` · ralenti ${Math.round(speed * 100)} %` : ''); tracks = { A: bufOf(songA), B0: bufOf(songB), B1: bufOf(songB) }; if (deck.A.delay) deck.A.delay.delayTime.value = P * .75;
       // vraie musique pas chargée (hors ligne…) : l'étiquette le dit pendant toute la partie
-      if (songA.panne || songB.panne){ $('styleTag').textContent = 'House · 124 BPM · la vraie musique n’a pas pu se charger'; $('stage').classList.remove('credit-vrai'); } }
+      if (songA.panne || songB.panne){ $('styleTag').textContent = 'House · 124 BPM · la vraie musique n’a pas pu se charger'; $('stage').classList.remove('credit-vrai'); $('lcredit').hidden = true; } }   // lot 89 : la ligne des titres, sous la table, ne nomme pas des morceaux qui ne jouent pas
     const l = LESSONS[li]; Object.assign(ctrl, CTRL_NEUTRE, l.init); if (needSetup()) for (const k of l.user) if (phys[k] != null) ctrl[k] = phys[k]; applyCtrl();
     // En Expert, le départ change d'une partie à l'autre (0, 4 ou 8 temps plus tôt) : on ne peut pas jouer de mémoire
     const xp = expertOn() && !demo; START = Math.max(0, l.start - (xp ? 4 * Math.floor(Math.random() * 3) : 0));
@@ -793,6 +803,7 @@ function finish(){
   const xr = r.expert ? expertResult(score) : null, st = r.set ? encEtoiles(r.set.score) : LESSONS[li].cal ? calEtoiles(r, items) : LESSONS[li].hc ? hcEtoiles(items) : xr ? xr.st : speed < 1 ? Math.min(2, st0) : st0;
   const wasOpen = ch2Unlocked(), was3 = ch3Unlocked(), bank = bankOf(r.ch), before = bank[li] || 0;
   if (!prac){ bank[li] = Math.max(before, st); try { localStorage.setItem(BANK_KEY[r.ch], JSON.stringify(bank)); } catch (e) {} }
+  if (!prac && r.ch === 1) optionsRend();   // lot 89 : le chapitre 1 vient peut-être d'être fini : le bouton ⚙ « Options » arrive (expert.js)
   // statistiques : la première réussite (2 étoiles ou plus), puis le premier niveau réussi de chaque chapitre (stats.js)
   if (st >= 2){ stat1('premiere-reussite'); if (!prac && !placement) stat1('chapitre-' + r.ch); }
   const rs = $('rStars'); rs.innerHTML = '';

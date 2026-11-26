@@ -53,4 +53,10 @@ async function jouer(page, bouton = '#startBtn') {
 // Lot 76 : les chapitres et tous les niveaux sont dans le menu « Tous les niveaux » : l'ouvrir s'il est fermé
 async function menuNiveaux(page){ if (await page.locator('#nivMenu').isHidden()) await page.locator('#nivTous').click(); }
 
-module.exports = { ouvrir, envoyer, miseEnPlace, sansBandeau, jouer, menuNiveaux };
+// Lot 89 : « Morceaux » et « Mode Expert » sont rangés derrière le bouton ⚙ « Options » : l'ouvrir s'il est fermé. Un Grand
+// débutant (le parcours deviné des tests) ne voit ⚙ qu'une fois le chapitre 1 fini : les tests qui s'en servent ouvrent le site
+// en Apprenti DJ (APPRENTI, à mettre dans le stockage).
+const APPRENTI = { 'coach-parcours': 'apprenti' };
+async function options(page){ if (await page.locator('#optsPanel').isHidden()) await page.locator('#optsBtn').click(); }
+
+module.exports = { ouvrir, envoyer, miseEnPlace, sansBandeau, jouer, menuNiveaux, options, APPRENTI };

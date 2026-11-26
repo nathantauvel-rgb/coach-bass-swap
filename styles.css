@@ -4297,3 +4297,49 @@ html.vitrine-open #compte{z-index:45}   /* « J'ai déjà un compte » : la fen�
 .lvlchip .flamme{width:15px;height:15px;flex:none;fill:var(--mid)}
 .lvlchip .hud-serie.vide{color:var(--muted)}
 .lvlchip .hud-serie.vide .flamme{fill:var(--off-ink)}
+
+/* ---------- Lot 89 « Le niveau en une consigne » ----------
+   Diagnostic UX du 26 nov. 2026, lot C : la consigne d'un niveau était dite quatre fois (la phrase sous le titre, « Comment
+   faire ? », « Pendant le niveau », la piste). La carte garde le titre et les étapes numérotées ; « Comment faire ? » tient en
+   une ligne ; « Morceaux » et « Mode Expert » passent derrière ⚙ « Options ». Seulement les jetons de :root. */
+/* Les étapes : la consigne, juste sous le titre ; les pastilles A (orange) et B (bleu) des platines dans la phrase */
+.consigne .plan{margin-top:14px}
+.plan ol li .etp-t{min-width:0}
+.plan .etp-pl{display:inline-grid;place-items:center;width:1.4em;height:1.4em;margin:0 .1em;border-radius:50%;vertical-align:.06em;
+  font-size:.78em;font-weight:900;line-height:1;color:var(--ink)}
+.plan .etp-a{background:var(--a)}
+.plan .etp-b{background:var(--b)}
+/* sans table, la touche du clavier qui fait l'étape (rien sur un écran tactile, qui n'a pas de clavier) */
+.plan .etp-touche{flex:none;align-self:center}
+.plan .etp-touche kbd{display:inline-block;padding:1px 8px 2px;border-radius:7px;border:1px solid var(--line);border-bottom-width:3px;background:var(--panel);
+  color:var(--muted);font:800 12px/1.4 var(--sans);letter-spacing:.02em}
+@media (hover:none),(pointer:coarse),(max-width:760px){.plan .etp-touche{display:none}}
+/* « Comment faire ? » sous les étapes : une ligne, la phrase puis « Revoir la fiche : … » (des liens, donc en lavande) */
+.consigne .howto{margin-top:12px}
+.howto .how-ligne{margin-top:6px}
+.how-ligne .lfiches{display:inline;margin:0}
+.how-ligne .lfiches .linkbtn{padding:0 2px;font-size:inherit;color:var(--brand-light);cursor:pointer}
+.how-ligne .lfiches .linkbtn:hover{color:var(--fg)}
+/* les titres de la vraie musique : une ligne discrète sous la table */
+.credit-ligne{margin:14px 0 0;text-align:center;font-size:13px;color:var(--muted)}
+@media (min-width:1040px){.stage > .credit-ligne{grid-column:1 / -1;margin-top:0}}
+/* le bouton ⚙ « Options » : rond, en contour ; ouvert, il prend la lavande de la sélection */
+.btnrow > .optsbtn{flex:none;width:44px;height:44px;padding:0;border-radius:50%;border:2px solid var(--line);background:transparent;color:var(--muted);
+  display:grid;place-items:center;cursor:pointer;box-shadow:none;transition:color .15s,border-color .15s}
+.optsbtn svg{width:20px;height:20px}
+.optsbtn:hover{border-color:var(--muted);color:var(--fg)}
+.optsbtn[aria-expanded="true"]{border-color:var(--brand-line);background:var(--brand-soft);color:var(--brand-light)}
+.optsbtn:focus-visible{outline:3px solid var(--brand-light);outline-offset:2px}
+.stage.joue .optsbtn{display:none}
+@media (prefers-reduced-motion:reduce){.optsbtn{transition:none}}
+/* ordinateur : « Jouer » sur toute la largeur, puis « Regarde d'abord » et ⚙ côte à côte ; le menu s'ouvre dessous */
+@media (min-width:1040px){
+  .stage:not(.joue) .actionbar .btnrow{flex-direction:row;flex-wrap:wrap}
+  .stage:not(.joue) .actionbar .btnrow .start{flex:1 0 100%}
+  .stage:not(.joue) .actionbar .btnrow .watch{flex:1 1 0}
+  .actionbar .opts{padding-top:4px}
+}
+/* téléphone : la barre collée en bas garde une seule ligne, ⚙ à gauche, « Jouer » sous le pouce ; le menu s'ouvre au-dessus */
+@media (max-width:1039px){
+  .btnrow > .optsbtn{order:-1;width:46px;height:46px}
+}

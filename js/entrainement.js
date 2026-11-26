@@ -73,7 +73,7 @@ function pracSelect(){
   selectLesson(pick.li);
   const name = { defi: 'Défi du jour', var: 'Variation', ear: 'À l\'oreille', set: `Mini-set · transition ${prac.i + 1} sur 3` }[prac.kind];
   $('lnum').textContent = name; $('prTitle').textContent = name; $('prText').textContent = LESSONS[li].title + ', en ' + STYLE_DEFS[prac.sty].label;
-  $('styleSeg').hidden = true; $('retry').hidden = prac.kind === 'set'; $('cmpBox').hidden = false;
+  $('styleSeg').hidden = true; optionsRend(); $('retry').hidden = prac.kind === 'set'; $('cmpBox').hidden = false;   // lot 89 : ⚙ n'a plus rien à montrer
   if (prac.ear){ $('modeTag').hidden = false; $('modeTag').textContent = 'À l\'oreille'; const t = 'À l\'oreille : pas de compte à rebours. Compte les phrases dans ta tête.'; $('hint').textContent = t; say(t); }
 }
 function pracStep(st){

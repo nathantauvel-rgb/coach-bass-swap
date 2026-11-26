@@ -102,7 +102,7 @@ test.describe('Pro allumé, sans abonnement', () => {
     await page.evaluate(() => goLesson(1, 6));
     await expect(page.locator('#startBtn')).toHaveText('Jouer');
     await expect(page.locator('#watchBtn')).toBeVisible();
-    await expect(page.locator('#expertBtn')).toBeVisible();
+    await expect(page.locator('#expertBtn')).not.toHaveAttribute('hidden');   // lot 89 : proposé, derrière ⚙ « Options »
     expect(err).toEqual([]);
   });
 

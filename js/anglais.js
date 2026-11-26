@@ -3153,4 +3153,13 @@ enDe({
 });
 /* ---------- Lot 88 : fin ---------- */
 
+/* ---------- Lot 89 : début (le niveau en une consigne) ---------- */
+enDe({
+  // le bouton ⚙ qui range « Morceaux » et « Mode Expert »
+  'Options': 'Options',
+  // sans table, la touche du clavier sur l'étape de « Pendant le niveau » (« Clavier : » n'est lu que par le lecteur d'écran)
+  'Clavier :': 'Keyboard:', 'espace': 'space'
+});
+/* ---------- Lot 89 : fin ---------- */
+
 trPage();

@@ -2,7 +2,7 @@
 // la carte de fin d'un niveau de Pro et l'offre des 7 jours gratuits (carte demandée), Comprendre rangé dans le menu sur
 // ordinateur, les titres de la vraie musique dans « Comment faire ? ».
 const { test, expect } = require('@playwright/test');
-const { ouvrir } = require('./outils');
+const { ouvrir, options, APPRENTI } = require('./outils');
 const { FAUX, dejaConnecte } = require('./faux-firebase');
 
 const S = o => JSON.stringify(o);
@@ -253,12 +253,15 @@ test.describe('La carte de fin et les 7 jours gratuits', () => {
 });
 
 test.describe('Le reste de la page', () => {
-  test('la vraie musique : ses titres sont dans « Comment faire ? », plus sous le titre du niveau', async ({ page }) => {
+  // lot 89 : « Comment faire ? » tient en une ligne : les titres sont une ligne discrète sous la table
+  test('la vraie musique : ses titres sont sous la table, plus sous le titre du niveau ni dans « Comment faire ? »', async ({ page }) => {
     await ouvrir(page, { stockage: { 'coach-style': 'vrai' } });
     await expect(page.locator('#styleTag')).toBeHidden();
     await expect(page.locator('#lcredit')).toContainText('Morceaux : ');
-    await page.locator('.howto summary').click();
     await expect(page.locator('#lcredit')).toBeVisible();
+    await expect(page.locator('.howto #lcredit')).toHaveCount(0);
+    const [table, ligne] = await page.evaluate(() => [document.querySelector('.deck').getBoundingClientRect().bottom, $('lcredit').getBoundingClientRect().top]);
+    expect(ligne).toBeGreaterThanOrEqual(table);
     // la house du site : la ligne reste
     await page.evaluate(() => { styleChoice = 'house'; selectLesson(0); });
     await expect(page.locator('#styleTag')).toBeVisible();
@@ -286,9 +289,14 @@ test.describe('Le reste de la page', () => {
     expect(derniere).toBeLessThanOrEqual(bouton);
   });
 
-  test('Mode Expert est sous « Jouer », à côté du choix des morceaux', async ({ page }) => {
-    await ouvrir(page, { stockage: etoiles({ 0: 3 }) });
-    await expect(page.locator('.actionbar .opts #expertBtn')).toBeVisible();
+  // lot 89 : rangés derrière le bouton ⚙ « Options », à côté de « Regarde d'abord »
+  test('Mode Expert et le choix des morceaux sont derrière ⚙ « Options », sur la carte de « Jouer »', async ({ page }) => {
+    await ouvrir(page, { stockage: Object.assign(etoiles({ 0: 3 }), APPRENTI) });
+    await expect(page.locator('.actionbar .btnrow #optsBtn')).toBeVisible();
+    await expect(page.locator('#expertBtn')).toBeHidden();
+    await options(page);
+    await expect(page.locator('.actionbar #optsPanel #expertBtn')).toBeVisible();
+    await expect(page.locator('.actionbar #optsPanel #styleBtn')).toBeVisible();
   });
 });
 

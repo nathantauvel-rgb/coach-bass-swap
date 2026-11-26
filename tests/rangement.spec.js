@@ -1,6 +1,6 @@
 // Lot 11 : un écran = une chose à faire (chapitres et style repliés, « Mes progrès », carte de résultat).
 const { test, expect } = require('@playwright/test');
-const { ouvrir, sansBandeau, menuNiveaux } = require('./outils');
+const { ouvrir, sansBandeau, menuNiveaux, options, APPRENTI } = require('./outils');
 
 const S = o => JSON.stringify(o);
 
@@ -22,8 +22,10 @@ test.describe('Écran d\'un niveau', () => {
     expect(erreurs).toEqual([]); await sansBandeau(page);
   });
   test('le choix des morceaux est replié', async ({ page }) => {
-    await ouvrir(page, { stockage: { 'coach-style': 'techno' } });
+    await ouvrir(page, { stockage: Object.assign({ 'coach-style': 'techno' }, APPRENTI) });
     await expect(page.locator('#styleBtn')).toHaveText('Morceaux : Techno');
+    await expect(page.locator('#styleOpts')).toBeHidden();
+    await options(page);   // lot 89 : derrière ⚙ « Options »
     await expect(page.locator('#styleOpts')).toBeHidden();
     await page.locator('#styleBtn').click();
     await page.locator('#styleOpts [data-style=afro]').click();
@@ -31,10 +33,13 @@ test.describe('Écran d\'un niveau', () => {
     await expect(page.locator('#styleBtn')).toHaveText('Morceaux : Afro');
     expect(await page.evaluate(() => localStorage.getItem('coach-style'))).toBe('afro');
   });
-  test('plus de paragraphe en bas de page : le clavier est expliqué dans « Comment faire ? »', async ({ page }) => {
+  // lot 89 : la ligne « Clavier : espace = lancer B, E = écho. » de « Comment faire ? » est devenue la touche de l'étape
+  test('plus de paragraphe en bas de page : sans table, la touche du clavier est sur l\'étape qu\'elle fait', async ({ page }) => {
     await ouvrir(page);
     await expect(page.locator('p.after')).toHaveCount(0);
-    await expect(page.locator('.howto')).toContainText('espace = lancer B');
+    await expect(page.locator('.howto')).not.toContainText('Clavier');
+    await page.locator('.node').nth(0).click();
+    await expect(page.locator('#planList li').first().locator('kbd')).toHaveText('espace');
   });
 });
 

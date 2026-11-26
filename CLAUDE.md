@@ -32,6 +32,51 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
+- **Lot 89 « Le niveau en une consigne » (26 nov. 2026 ; le lot C du diagnostic UX, demandé dans une session à part)** : copie
+  `Documents\coach-dj-lot89` (git worktree du clone de ce PC, comme au lot 88 : `core.autocrlf=false` par worktree,
+  `node_modules` relié par jonction), branche `lot-89-niveau-consigne` depuis `origin/main` = `273320c`, sans suivi. Ce qui
+  change sur l'écran d'un niveau :
+  - **La carte** : la phrase sous le titre (`#lgoal`) n'est plus affichée là où « Pendant le niveau » donne les gestes
+    (`$('lgoal').hidden = planSteps(l).length > 0 && !l.cal`, niveaux.js) : cachée aux chapitres 1 à 4 et 6, gardée au calage
+    (chapitre 5 : pas d'étape, ou seulement le swap) et au set (chapitre 7, la feuille de route). `goal` reste dans les niveaux
+    (son seul autre usage : `lexOf`, les mots du DJ ; ni l'accueil ni Mode Expert ne s'en servent). « Pendant le niveau » passe
+    juste sous le titre ; chaque A ou B tout seul d'une étape devient une pastille orange (`--a`) ou bleue (`--b`), lettre en
+    `--ink` (`etapePlatines`, midi.js : la phrase est traduite d'un bloc, puis découpée, les morceaux écrits avec `trBrut` pour
+    ne pas repasser par le dictionnaire ; **pas de « regard en arrière » dans l'expression : un vieil iPhone refuserait tout le
+    fichier**). `planEtapes(l)` rend `{ t, lab }`, `planSteps` garde les phrases ; le texte d'une étape est dans `.etp-t`.
+  - **La touche du clavier** remplace la ligne « Clavier : espace = lancer B, E = écho. » : sans table (`planSansTable` : pas de
+    table prête, ou « Je joue à la souris »), l'étape « Lance B » porte `espace` (si B ne part pas tout seul) et « Allume l'écho »
+    porte `E` (`<kbd>` dans `.etp-touche`, « Clavier : » pour le lecteur d'écran) ; rien sur un écran tactile ou de moins de 761 px.
+  - **« Comment faire ? »**, sous les étapes, tient en une ligne (`p.how-ligne`) : la phrase (`#lhow`, un `span`) puis « Revoir la
+    fiche : le bouton PLAY · les faders » (un lien lavande par fiche, le nom seul, `aria-label` « Revoir la fiche : … »). Les mots
+    du DJ (`#llex`) restent dessous quand le niveau en emploie (choix : protégés par les tests, voulus au lot 86 pour
+    « Quantize »). Les titres de la vraie musique (`#lcredit`, `creditVrai`) sont une ligne discrète sous la table
+    (`p.credit-ligne`, dernier enfant de `.stage`), là aussi pendant la partie, cachée si la vraie musique n'a pas pu se charger.
+  - **Le bouton ⚙ « Options »** (`#optsBtn` ; expert.js : `optionsOuvertes`, `optionsRend`, `optsMenu`) : `.opts` devient
+    `#optsPanel`, caché, avec « Morceaux » et « Mode Expert » comme avant. Ordinateur : « Jouer » sur toute la largeur, puis
+    « Regarde d'abord » et ⚙ côte à côte, le menu s'ouvre dessous ; téléphone : la barre collée en bas tient sur une ligne,
+    ⚙ à gauche, le menu s'ouvre au-dessus. Échap, un clic ailleurs ou une partie le referment ; caché pendant la partie et quand
+    il n'a rien à montrer (chapitres 2, 3, 5 à 7, entraînement : `pracSelect` rappelle `optionsRend`). **Grand débutant, ou pas
+    encore de parcours : caché tant que le chapitre 1 n'est pas fini** (`niveauEnCours(1) < 0`) ; Apprenti DJ et DJ confirmé
+    l'ont tout de suite (`parcoursAvance`). `expertOn()` demande aussi `optionsOuvertes()` : un débutant qui l'avait allumé ne
+    pourrait plus l'éteindre (il revient, visible, après le chapitre 1). Mode Expert allumé : `#modeTag` « Mode Expert » sous le
+    titre. `finish` rappelle `optionsRend` (le chapitre 1 vient peut-être d'être fini).
+  - Anglais : bloc « Lot 89 » de `js/anglais.js`. Couleurs : seulement les jetons de `:root` (bloc « Lot 89 » à la fin de
+    `styles.css`). Ni MIDI ni `DEFAULT_MAP` ; le premier écran de Vini et `#vitrine` pas touchés.
+  - Tests : `tests/consigne.spec.js` (17) ; `tests/outils.js` : `options(page)` (ouvre ⚙) et `APPRENTI` (les tests qui se
+    servent de ⚙ ouvrent le site en Apprenti DJ : le parcours deviné des tests est Grand débutant) ; mis à jour : expert,
+    rangement, vrais, fiches, niveau-dabord, decoupe. Captures avant / après en 1366 × 768 et 390 × 844 : `captures/lot89/`
+    (hors Git ; `planche.png`, scripts `avant-apres.js` et `planche.js`, l'avant servi depuis un `git archive origin/main` pris
+    dans le brouillon de la session ; `explore.js`, `explore2.js`, `inventaire.js` : les états essayés). Point 45 de la checklist
+    FLX4.
+  - Vérifié : suite de référence 988 sur 988 (lot 88) ; **suite complète du lot : 1005 sur 1005** (`DJ_PORT=8805`, 25,5 min,
+    `captures/lot89/suite.txt`) ; un seul test à adapter (`clarte`, téléphone : la scène du niveau 1 tient maintenant dans
+    l'écran, le test fait défiler celle du niveau 7). Contraste (`tests/captures.js --vite`) : seules les étoiles estompées,
+    voulues ; premier écran de Vini identique à l'image près (empreintes de `01-accueil-nouveau`, ordinateur et téléphone, avant
+    et après) ; `02-accueil-parcours` ne diffère que par l'heure (« Encore debout ? » avant 5 h). Contrôles du gardien faits par
+    la session (l'agent n'était pas chargé : session ouverte hors du dépôt) : aucune couleur en dur ajoutée, les 7 noms nouveaux
+    uniques, aucune clé `coach-` nouvelle, `DEFAULT_MAP` intact, rien de `captures/` ni de MP3, aucun `test.fail`.
+  Accord : « Oui, publie » (après la planche avant / après).
 - **Lot 88 « Couleurs et mots » : PUBLIÉ le 26 nov. 2026** (« publie quand les tests sont verts » ; `7dc2985`, puis cette
   note = `origin/main` ; production vérifiée en 1366 × 768, 390 × 844 et `?lang=en`, statistiques refusées : série et étoiles
   dans l'en-tête, plus de `#lvl`, « Jouer » et le bouton de l'accueil violets, « FILTRE » sur les dessins, « Voir tout mon
@@ -3541,6 +3586,8 @@ npx playwright test tests/midi.spec.js   # seulement la liaison avec la table
   inattendus, `coach-midi-map` abîmée. `tests/quiz.spec.js` : contenu du quiz, badges, quiz éclair, question bonus. `tests/objectif.spec.js` : objectif du jour, série. `tests/presentation.spec.js` : page de présentation. `tests/rangement.spec.js` : chapitres et style repliés, « Mes progrès », schéma replié. `tests/musique.spec.js` : « Ma musique » (lot 72 : liste, filtres, fiche, transition, favoris, vus récemment, adresses, sans abonnement, téléphone). `tests/rythme.spec.js` : durée des niveaux. `tests/combos.spec.js` : chapitre 4. `tests/ralenti.spec.js` : ralenti des combos. `tests/fiches.spec.js` : fiches, « Pendant le niveau », position de départ. `tests/autre-table.spec.js` : autre table, « Régler ma table », retour à la FLX4. `tests/tables.spec.js` : tables reconnues par leur fiche (lot 38). `tests/aide-table.spec.js` : « Ta table n'apparaît pas ? » (lot 45). `tests/table-debut.spec.js` : la table dès le début (test, réglage des 3 premiers boutons, liste, avant un niveau ; lot 73). `tests/platines.spec.js`, `tests/commandes.spec.js` : la table complète (lot 39). `tests/calage.spec.js` : chapitre 5 (lot 40). `tests/expert.spec.js` : Mode Expert. `tests/verif.spec.js` : « Vérifier ma table ». `tests/vrais.spec.js` : vraie musique. `tests/ordre.spec.js` : ordre du chapitre 1 et progression déplacée. `tests/premiers.spec.js` : Premiers pas et Vini. `tests/premiers-anime.spec.js` : Premiers pas animés, poses de Vini, musique et drop (lot 52). `tests/ca-bouge.spec.js` : Vini en partie, carte de résultat, écran de la série. `tests/quetes.spec.js` : quêtes du jour. `tests/vini-sons.spec.js` : Vini sur l'accueil, sons du jeu. `tests/vini-partout.spec.js` : Vini sur Mes progrès, S'entraîner, Ma musique. `tests/compte.spec.js` : le compte Google (faux Firebase posé avant le chargement). `tests/clarte.spec.js` : lexique, échecs en écart, piste visible, badges de l'accueil. `tests/plus-court.spec.js` : niveaux plus courts, chapitre 3 joué par un robot, voix retirée (lot 47). `tests/comprendre.spec.js` : leçons « Comprendre » (lot 48). `tests/stats.spec.js` : statistiques et avis envoyés (lot 46, faux Umami et faux Firebase). `tests/posthog.spec.js` : PostHog reçoit les mêmes envois, compte relié, refus (lot 77, faux PostHog). `tests/mails.spec.js` : les mails de Vini et la fonction `api/mails.js` (lot 54) ; `tests/faux-firebase.js` : le faux Firebase partagé. `tests/seo.spec.js` : titre, description, icônes, plan du site, fichiers retirés de la mise en ligne (lot 50). `tests/guide.spec.js` : le guide du débutant (lot 51). `tests/avis.spec.js` : « Mon avis »,
   « C'était clair ? », rapport, remise à zéro, fiche des testeurs.
   `tests/vitrine.spec.js` : la page d'accueil et son test moitié / moitié (lot 83).
+  `tests/consigne.spec.js` : la carte du niveau (pastilles A et B, touche du clavier), « Comment faire ? » en une ligne, les
+  titres de la vraie musique sous la table, le bouton ⚙ « Options » (lot 89).
   `tests/parcours.spec.js` : choix du parcours, prochaine étape à
   chaque stade, changement de parcours, test de placement raté. `tests/site.spec.js` : chargement, Workers, parties, progression,
   onglets, S'entraîner, Passer au vrai.

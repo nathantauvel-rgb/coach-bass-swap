@@ -77,7 +77,10 @@ test.describe('Fiches « Découvre ce bouton »', () => {
     await ouvrir(page);
     await page.locator('.node').nth(3).click();
     await page.locator('.howto summary').click();
-    await expect(page.locator('#lfiches button')).toHaveText(['Revoir la fiche : les faders', 'Revoir la fiche : l\'écho']);
+    // lot 89 : « Comment faire ? » en une ligne : « Revoir la fiche : les faders · l'écho »
+    await expect(page.locator('#lfiches')).toHaveText('Revoir la fiche : les faders · l\'écho');
+    await expect(page.locator('#lfiches button')).toHaveText(['les faders', 'l\'écho']);
+    await expect(page.locator('#lfiches button').nth(1)).toHaveAttribute('aria-label', 'Revoir la fiche : l\'écho');
     await page.locator('#lfiches button', { hasText: 'écho' }).click();
     await expect(page.locator('#onbTitle')).toHaveText('L\'écho');
     await page.locator('#onbTry .onb-play').click();
@@ -106,7 +109,7 @@ test.describe('Avant de jouer : position de départ et gestes, bien séparés', 
   test('la transition complète : LOW de B déjà coupé au départ, puis les gestes dans l\'ordre', async ({ page }) => {
     await ouvrir(page);
     await page.locator('.node').nth(6).click();
-    await expect(page.locator('#planList li')).toHaveText(['Lance B (PLAY de droite)', 'Monte le fader de B jusqu\'en haut',
+    await expect(page.locator('#planList .etp-t')).toHaveText(['Lance B (PLAY de droite)', 'Monte le fader de B jusqu\'en haut',
       'Échange les basses : LOW de A normal → coupé, LOW de B coupé → normal', 'Baisse le fader de A jusqu\'en bas']);
   });
   test('l\'encadré disparaît pendant la partie et revient après', async ({ page }) => {

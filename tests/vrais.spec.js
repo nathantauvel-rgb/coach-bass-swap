@@ -2,7 +2,7 @@
 // des morceaux de Pixabay depuis le lot 57).
 const { test, expect } = require('@playwright/test');
 const fs = require('fs'), path = require('path');
-const { ouvrir, sansBandeau, jouer } = require('./outils');
+const { ouvrir, sansBandeau, jouer, options, APPRENTI } = require('./outils');
 
 const S = o => JSON.stringify(o);
 const CH1_OK = S({ 0: 2, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2 });
@@ -18,11 +18,12 @@ const robot = page => page.evaluate(() => { const l = LESSONS[li];
 
 test.describe('Choisir la vraie musique', () => {
   test('c’est le choix par défaut, en tête de la liste ; un style choisi soi-même est gardé', async ({ page }) => {
-    const erreurs = await ouvrir(page, { stockage: { 'coach-style': null } });
+    const erreurs = await ouvrir(page, { stockage: Object.assign({ 'coach-style': null }, APPRENTI) });
     await expect(page.locator('#styleBtn')).toHaveText('Morceaux : vraie musique');
     await expect(page.locator('#styleTag')).toHaveText(TITRES);
     await expect(page.locator('#styleOpts [data-style]').first()).toHaveAttribute('data-style', 'vrai');
     await expect(page.locator('#styleOpts [data-style=vrai]')).toHaveAttribute('aria-pressed', 'true');
+    await options(page);   // lot 89 : derrière ⚙ « Options »
     await page.locator('#styleBtn').click();
     await page.locator('#styleOpts [data-style=techno]').click();
     await page.reload();
@@ -34,7 +35,8 @@ test.describe('Choisir la vraie musique', () => {
     await expect(page.locator('#styleBtn')).toHaveText('Morceaux : vraie musique');
   });
   test('le choix est enregistré, le bouton et l\'étiquette le disent', async ({ page }) => {
-    const erreurs = await ouvrir(page);
+    const erreurs = await ouvrir(page, { stockage: APPRENTI });
+    await options(page);   // lot 89 : derrière ⚙ « Options »
     await page.locator('#styleBtn').click();
     await page.locator('#styleOpts [data-style=vrai]').click();
     expect(await page.evaluate(() => localStorage.getItem('coach-style'))).toBe('vrai');

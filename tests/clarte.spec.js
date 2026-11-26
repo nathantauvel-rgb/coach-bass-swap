@@ -70,10 +70,12 @@ test.describe('La piste reste visible', () => {
   });
 
   // Gardien du lot 36 : rangée dans une colonne, la barre ne pouvait plus rester collée en bas (elle ne sort jamais de sa boîte)
+  // Lot 89 : au niveau 1, la scène tient maintenant dans l'écran du téléphone (plus de phrase sous le titre, barre d'une ligne) :
+  // le test fait défiler celle du niveau 7, plus longue
   test('sur téléphone, « Jouer » reste collé en bas de l’écran pendant qu’on fait défiler la scène', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await ouvrir(page);
-    await page.locator('.node').first().click();
+    await page.locator('.node').nth(6).click();
     const [vus, n] = await page.evaluate(async () => { const st = $('stage'), y0 = scrollY + st.getBoundingClientRect().top, y1 = y0 + st.offsetHeight - innerHeight; let vus = 0, n = 0;
       for (let y = y0; y <= y1; y += 15){ window.scrollTo(0, y); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
         const b = $('startBtn').getBoundingClientRect(); n++; if (b.top >= 0 && b.bottom <= innerHeight) vus++; }
