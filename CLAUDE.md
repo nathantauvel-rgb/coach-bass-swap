@@ -32,7 +32,11 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
 - L'utilisateur valide chaque lot avant qu'il commence, et **rien ne part en ligne sans son accord explicite**.
 
 ## Pour reprendre (état au 28 oct. 2026)
-- **Lot 93 « Des quêtes faisables » : FAIT le 26 nov. 2026, NON PUBLIÉ** (« go », session ouverte sur le PC de Nathan, avec un
+- **Lot 93 « Des quêtes faisables » : PUBLIÉ le 26 nov. 2026** (« oui » ; `cd2cae9`, puis cette note = `origin/main` ;
+  production vérifiée en 1366 × 768 et `?lang=en`, statistiques refusées : un Grand débutant sans Pro avec 3 niveaux réussis
+  n'a plus « à l'oreille », Mode Expert ni combo dans les quêtes possibles, trois quêtes visibles, aucune erreur, aucune
+  statistique envoyée ; script `captures/lot93/production.js` de la copie). **Reste, par lui** : rien. Notion : pas d'accès
+  dans cette session (ligne du Journal donnée à l'utilisateur). Ci-dessous, l'entrée d'avant la publication. (« go », session ouverte sur le PC de Nathan, avec un
   autre compte Claude). Copie `Documents\coach-dj-lot93` (git worktree de `Documents\coach-dj`, `node_modules` relié par jonction), branche
   `lot-93-quetes` depuis `origin/main` = `b01b48d`, sans suivi ; numéro 91 sauté (peut-être pris sur l'autre PC). La suite du
   défaut signalé par le gardien du lot 92, plus un troisième cas trouvé en relisant : une quête du jour n'est tirée que si le
@@ -51,7 +55,7 @@ Hors du plan : refaire un logiciel de mix complet. rekordbox sert à mixer pour 
   instable sur un PC chargé (le gardien faisait tourner ses tests en même temps) et repasse seul. Sur le code final (la quête
   du quiz ajoutée pendant la suite) : quêtes, quêtes faisables, lot 92 et quiz 45 sur 45 ; vini-sons, découpe, Mode Expert et
   ce test de Comprendre 46 sur 46. **Gardien : feu orange, aucun blocage** (sa remarque sur la quête du quiz corrigée, le
-  prénom d'un tiers retiré de cette note). **Attend : l'accord de l'utilisateur pour publier.**
+  prénom d'un tiers retiré de cette note).
 - **Lot 92 « Trois choses en moins » : PUBLIÉ le 26 nov. 2026** (« Oui, publie » ; `9395078`, la fusion avec le lot 90
   `dcfd4bf`, puis cette note = `origin/main` ; suite complète après la fusion : **1035 sur 1035** (30 min,
   `captures/lot92/suite3.txt`) ; production vérifiée en 1366 × 768, 390 × 844 et `?lang=en`, statistiques refusées : Tutos
